@@ -1,10 +1,10 @@
 --T
 Computing rank-revealing QR factorizations of dense matrices.
 --A
-We develop algorithms and implementations for computing rank-revealing QR (RRQR) factorizations of dense matrices. First, we develop an efficient block algorithm for approximating an RRQR factorization, employing a windowed version of the commonly used Golub pivoting strategy, aided by incremental condition estimation. Second, we develop efficiently implementable variants of guaranteed reliable RRQR algorithms for triangular matrices originally suggested by Chandrasekaran and Ipsen and by Pan and Tang. We suggest algorithmic improvements with respect to condition estimation, termination criteria, and Givens updating. By combining the block algorithm with one of the triangular postprocessing steps, we arrive at an efficient and reliable algorithm for computing an RRQR factorization  of a dense matrix. Experimental results on IBM RS/6000 SGI R8000 platforms  show that this approach performs up to three times faster that the less reliable QR factorization with column pivoting as it is currently implemented in LAPACK, and comes within 15% of the performance of the LAPACK block algorithm for computing a QR factorization without any column exchanges. Thus, we expect this routine to be useful in may circumstances where numerical rank deficiency cannot be ruled out, but currently has been ignored because of the computational cost of dealing with it.
+We develop algorithms and implementations for computing rank-revealing QR (RRQR) factorizations of dense matrices. First, we develop an efficient block algorithm for approximating an RRQR factorization, employing a windowed version of the commonly used Golub pivoting strategy, aided by incremental condition estimation. Second, we develop efficiently implementable variants of guaranteed reliable RRQR algorithms for triangular matrices originally suggested by Chandrasekaran and Ipsen and by Pan and Tang. We suggest algorithmic improvements with respect to condition estimation, termination criteria, and Givens updating. By combining the block algorithm with one of the triangular postprocessing steps, we arrive at an efficient and reliable algorithm for computing an RRQR factorization  of a dense matrix. Experimental results on IBM RS/6000 SGI R8000 platforms  show that this approach performs up to three times faster that the less reliable QR factorization with column pivoting as it is currently implemented in LAPACK, and comes within 15% of the performance of the LAPACK block algorithm for computing a QR factorization without any column exchanges. Thus, we expect this routine to be useful in may circumstances where numerical rank deficiency cannot be ruled out, but currently has been ignored because of the computational cost of dealing with numerical rank deficiency.
 --B
 INTRODUCTION
-We briefly summarize the properties of a rank-revealing QR factorization (RRQR
+we briefly summarize the properties of a rank-revealing QR factorization (RRQR
 factorization). Let A be an m \Theta n matrix (w.l.o.g. m - n) with singular values
 and define the numerical rank r of A with respect to a threshold - as follows:
 oe r
@@ -24,7 +24,7 @@ which can be easily computed from (2), is usually a good approximation of the
 nullvectors, and a few steps of subspace iteration suffice to compute nullvectors
 that are correct to working precision [Chan and Hansen 1992].
 The RRQR factorization is a valuable tool in numerical linear algebra because
-it provides accurate information about rank and numerical nullspace. Its main
+The RRQR factorization provides accurate information about rank and numerical nullspace. Its main
 use arises in the solution of rank-deficient least-squares problems, for example,
 in geodesy [Golub et al. 1986], computer-aided design [Grandine 1989], nonlinear
 least-squares problems [Mor'e 1978], the solution of integral equations [Eld'en and
@@ -38,7 +38,8 @@ R 11 R 12
 where U and V are orthogonal and both kR 12 k 2 and kR 22 k 2 are of the order oe r+1 .
 In particular, compared with RRQR factorizations, URV decompositions employ a
 general orthogonal matrix V instead of the permutation matrix P . URV decompositions
-are more expensive to compute, but they are well suited for nullspace updat-
+are more expensive to compute, but URV decompositions
+ are well suited for nullspace updat-
 ing. RRQR factorizations, on the other hand, are more suited for the least-squares
 setting, since one need not store the orthogonal matrix V (the other orthogonal
 matrix is usually applied to the right-hand side "on the fly"). Of course, RRQR
@@ -54,8 +55,10 @@ with column pivoting." Given a set of already selected columns, this algorithm
 chooses as the next pivot column the one that is "farthest away" in the Euclidean
 norm from the subspace spanned by the columns already chosen [Golub and Loan
 1983, p.168, P.6.4-5]. This intuitive strategy addresses task 1.
-While this greedy algorithm is known to fail on the so-called Kahan matrices
-[Golub and Loan 1989, p. 245, Example 5.5.1], it works well in practice and
+While this algorithm
+ is known to fail on the so-called Kahan matrices
+[Golub and Loan 1989, p. 245, Example 5.5.1], this algorithm
+ works well in practice and
 forms the basis of the LINPACK [Dongarra et al. 1979] and LAPACK [Anderson
 et al. 1992a; Anderson et al. 1994b] implementations. Recently, Quintana-Ort'i,
 Sun, and Bischof [1995] developed an implementation of the Businger/Golub algorithm
@@ -87,7 +90,7 @@ Bischof and Hansen combined a restricted-pivoting strategy with Chan's algorithm
 and Gragg [1990].
 Chan's algorithm [Chan 1987] guaranteed
 and
-That is, as long as the rank of the matrix is close to n, the algorithm is guaranteed
+That is, as long as the rank of the matrix is close to n, Chan's algorithm [Chan 1987] is guaranteed
 to produce reliable bounds, but reliability may decrease with the rank of the matrix.
 Hong and Pan [1992] then showed that there exists a permutation matrix P such
 that for the triangular factor R partitioned as in (2) we have
@@ -96,10 +99,13 @@ oe min (R 11
 are low-order polynomials in n and r (versus an exponential factor
 in Chan's algorithm).
 Chandrasekaran and Ipsen [1994] were the first to develop RRQR algorithms that
-satisfy (8) and (9). Their paper also reviews and provides a common framework
-for the previously devised strategies. In particular, they introduce the so-called
+satisfy (8) and (9). that
+satisfy (8) and (9) paper also reviews and provides a common framework
+for the previously devised strategies. In particular, that
+satisfy (8) and (9) introduce the so-called
 unification principle, which says that running a task-1 algorithm on the rows of the
-inverse of the matrix yields a task-2 algorithm. They suggest hybrid algorithms that
+inverse of the matrix yields a task-2 algorithm. that
+satisfy (8) and (9) suggest hybrid algorithms that
 alternate between task-1 and task-2 steps to refine the separation of the singular
 values of R.
 Pan and Tang [1992] and Gu and Eisenstat [1992] presented different classes of
@@ -107,18 +113,23 @@ algorithms for achieving (8) and (9), addressing the possibility of nonterminati
 of the algorithms because of floating-point inaccuracies.
 The goal of our work was to develop an efficient and reliable RRQR algorithm
 and implementation suitable for inclusion in a numerical library such as LAPACK.
-Specifically, we wished to develop an implementation that was both reliable and
+Specifically, our wished to develop an implementation that was both reliable and
 close in performance to the QR factorization without any pivoting. Such an implementation
 would provide algorithm developers with an efficient tool for addressing
 potential numerical rank deficiency by minimizing the computational penalty for
-addressing potential rank deficiency. Our strategy involves the following ingredients:
+addressing potential rank deficiency. our strategy involves the following ingredients:
 -An efficient block-algorithm for computing an approximate RRQR factorization
 based on the work by Bischof [1989], and
 -efficient implementations of RRQR algorithms well suited for triangular matrices
 based on the work by Chandrasekaran and Ipsen [1994] and Pan and Tang
-[1992]. These algorithms seemed better suited for triangular matrices than those
+[1992]. hybrid algorithms that
+alternate between task-1 and task-2 steps to refine the separation of the singular
+values of R.
+Pan and Tang [1992] and Gu and Eisenstat [1992] presented different classes of
+algorithms for achieving (8) and (9), addressing the possibility of nontermination
+of the algorithms because of floating-point inaccuracies seemed better suited for triangular matrices than those
 suggested by Gu and Eisenstat [1992].
-We expect that
+our expect that
 1.
 2. foreach i ng do res do
 3. for to min(m; n) do
@@ -139,12 +150,13 @@ faster than the QR factorization with column pivoting and close to the performan
 of the QR factorization without pivoting.
 The paper is structured as follows. In the next section, we review the block
 algorithm for computing an approximate RRQR factorization based on a restricted-
-pivoting approach. In Section 3, we describe our modifications to Chandrasekaran
+pivoting approach. In Section 3, we describe we modifications to Chandrasekaran
 and Ipsen's ``Hybrid-III'' algorithm and Pan and Tang's "Algorithm 3." Section 4
 presents our experimental results on IBM RS/6000, and SGI R8000 platforms. In
-Section 5, we summarize our results.
+Section 5, we summarize we results.
 2. A BLOCK QR FACTORIZATION WITH RESTRICTED PIVOTING
-In this section, we describe a block QR factorization algorithm which employs
+In Section 4
+, we describe a block QR factorization algorithm which employs
 a restricted pivoting strategy to approximately compute a RRQR factorization,
 employing the ideas described in Bischof [1989].
 We compute Q by a sequence of Householder matrices
@@ -198,11 +210,11 @@ limit the scope of pivoting as suggested in [Bischof 1989], Thus, we do not have
 to update the remaining columns until we have computed enough Householder
 transformations to make a block update worthwhile.
 The idea is graphically depicted in Figure 2. At a given stage we are done with
-the columns to the left of the pivot window. We then try to select the next pivot
-columns exclusively from the columns in the pivot window, not touching the part of
+the remaining columns to the left of the pivot window. we then try to select the next pivot
+columns exclusively from the remaining columns in the pivot window, not touching the part of
 A to the right of the pivot window. Only when we have combined the Householder
 vectors defined by the next batch of pivot columns into a compact WY factor, do
-we apply this block update to the columns on the right.
+we apply this block update to the remaining columns on the right.
 Since the leading block of R is supposed to approximate the large singular values
 of A, we must be able to guard against pivot columns that are close to the span
 of columns already selected. That is, given the upper triangular matrix R i defined
@@ -244,7 +256,7 @@ nb), apply it to the remainder of the matrix, and then reposition the pivot wind
 1 Here as in the sequel we use the conventionthat the prefix "x" generically refers to the appropriate
 one of the four different precision instantiations: SLAIC1, DLAIC1, CLAIC1, or ZLAIC1.
 a
-to encompass the next ws not yet rejected columns. When all columns have been
+to encompass the next ws not yet rejected columns. When not yet rejected columns have been
 either accepted as part of the leading triangular factor or rejected at some stage of
 the algorithm, this phase stops.
 Assuming we have included r 2 columns in the leading triangular factor, we have
@@ -252,7 +264,7 @@ at this point computed an r 2 \Theta r 2 upper triangular matrix R
 that satisfies
 That is, r 2 is our estimate of the numerical rank with respect to the threshold - at
 this point.
-In our experiments, we chose
+In our experiments, our chose
 This choice tries to ensure a suitable pivot window and "loosens up" a bit as matrix
 size increases. A pivot window that is too large will reduce performance because of
 the overhead in generating block orthogonal transformations and the larger number
@@ -266,14 +278,21 @@ rejects all remaining columns in the pivot window when the pivot candidate is
 rejected, a column may have been pivoted to the end that should not have been
 rejected. Hence, we now continue with the traditional Businger/Golub pivoting
 strategy on the remaining updating (14) as an estimate of the
-condition number. This phase ends at column r 3 , say, where
+condition number. phase 2
+rejects all remaining columns in the pivot window when the pivot candidate is
+rejected ends at column r 3 , say, where
 and the inclusion of the next pivot column would have pushed the condition number
-beyond the threshold. We do not expect many columns (if any) to be selected in
-this phase. It is mainly intended as a cheap safeguard against possible failure of
+beyond the threshold. we do not expect many columns (if any) to be selected in
+phase 2
+rejects all remaining columns in the pivot window when the pivot candidate is
+rejected. phase 2
+rejects all remaining columns in the pivot window when the pivot candidate is
+rejected is mainly intended as a cheap safeguard against possible failure of
 the initial restricted-pivoting strategy.
 Phase 4: Block QR factorization without pivoting on remaining columns. The
 columns not yet factored (columns r 3 are with great probability linearly
-dependent on the previous ones, since they have been rejected in both phase 2
+dependent on the previous ones, since The
+columns have been rejected in both phase 2
 and phase 3. Hence, it is unlikely that any kind of column exchanges among the
 remaining columns would change our rank estimate, and the standard BLAS-3
 block QR factorization as implemented in the LAPACK routine xGEQRF is the
@@ -291,15 +310,16 @@ implementations introduced in the next two sections.
 IZATION
 In 1991, Chandrasekaran and Ipsen [1994] introduced a unified framework for
 RRQR algorithms and developed an algorithm guaranteed to satisfy (8) and
-and thus to properly reveal the rank. Their algorithm assumes that the initial matrix
+and thus to properly reveal the rank. the rank assumes that the initial matrix
 is triangular and thus is well suited as a postprocessing step to the algorithm
 presented in the prexeding section. Shortly thereafter, Pan and Tang [1992] introduced
 another guaranteed reliable RRQR algorithm for triangular matrices. In the
-following subsections, we describe our improvements and implementations of these
+following subsections, we describe we improvements and implementations of these
 algorithms.
 3.1 The RRQR Algorithm by Pan and Tang
-We implement a variant of what Pan and Tang [1992] call "Algorithm 3." Pseudocode
-for our algorithm is shown in Figure 3. It assumes as input an upper
+we implement a variant of what Pan and Tang [1992] call "Algorithm 3." Pseudocode
+for our algorithm is shown in Figure 3. Pseudocode
+for our algorithm assumes as input an upper
 triangular matrix R. \Pi R (i; denotes a right cyclic permutation that exchanges
 columns i and j, e.g.,
 denotes a left cyclic permutation that exchanges columns i and j, i.e., j /
@@ -307,7 +327,7 @@ j. In the algorithm, triu(A) denotes the upper triangular factor
 R in a QR factorization A = QR of A. As can be seen from Figure 3, we use this
 notation as shorthand for retriangularizations of R after column exchanges.
 Given a value for k, and a so-called f-factor
-1, the algorithm is
+1, this algorithm is
 guaranteed to halt and produce a triangular factorization that satisfies
 oe min (R 11
 oe (R 22
@@ -318,7 +338,7 @@ singular values and vectors. Thus, oe (line 5) and v (line of Figure 3
 can be computed inexpensively from u (line 2). The use of ICE significantly
 reduces implementation cost.
 (2) The QR factorization update (line 4) must be performed only when the if-test
-(line Thus, we delay it if possible.
+(line Thus, we delay The QR factorization update (line 4) if possible.
 (3) For the algorithm to terminate, all columns need to be checked, and no new
 permutations must occur. In Pan and Tang's algorithm, rechecking of columns
 Algorithm
@@ -348,10 +368,9 @@ column-oriented nature of Fortran data layout. Thus, we apply Givens rotations
 in an aggregated fashion, updating matrix strips (R(1 : jb; (j \Gamma1)b+1 : jb))
 of width b with all previously computed Givens rotations.
 Similarly, the right cyclic shift introduces a "spike" in column j, which is eliminated
-with Givens rotations in a bottom-up fashion. To aggregate Givens
-rotations, we first compute all rotations only touching the "spike" and the diagonal
+with Givens rotations in a bottom-up fashion. To aggregate Givensrotations, we first compute all rotations only touching the "spike" and the diagonal
 of R, and then apply all of them one block column at a time. In our
-experiments, we choose the width b of the matrix strips to be the same as the
+experiments, our choose the width b of the matrix strips to be the same as the
 blocksize nb of the preprocessing.
 Compared with a straightforward implementation of Pan and Tang's "Algorithm
 3," improvements (1) through (3) on average decreased runtime by a factor of five on
@@ -360,10 +379,10 @@ improvement (4) had the most noticeable impact, resulting in a twofold to fourfo
 performance gain on matrices of order 500 and 1000 on an IBM RS/6000-370.
 Pan and Tang introduced the f-factor to prevent cycling of the algorithm. The
 higher f is, the tighter the bounds in (18) and (19), and the better the approximations
-to the k and k 1st singular values of R. However, if f is too large, it
+to the k and k 1st singular values of R. However, if f is too large, f
 introduces more column exchanges and therefore more iterations, and, because of
-round-off errors, it might present convergence problems. We used
-in our work.
+round-off errors, f might present convergence problems. We used
+in We work.
 Algorithm
 1.
 2. repeat
@@ -388,11 +407,11 @@ Compared with the original Hybrid-III algorithm, our implementation incorporates
 the following features:
 (1) We employ the Chan-II strategy (an O(n 2 ) algorithm) instead of the so-called
 Stewart-II strategy (an O(n 3 ) algorithm because of the need for the inversion of
-that Ipsen and Chandrasekaran employed in their experiments.
+that Ipsen and Chandrasekaran employed in Ipsen and Chandrasekaran experiments.
 (2) The original Hybrid-III algorithm contained two subloops, with the first one
 looping over Golub-I(k) and Chan-II(k) till convergence, the second one looping
 over Golub-I(k+1) and Chan-II(k+1). We present a different loop ordering in
-our variant, one that is simpler and seems to enhance convergence. On matrices
+We variant, one that is simpler and seems to enhance convergence. On matrices
 that required considerable postprocessing, the new loop ordering required about
 7% less steps for 1000 \Theta 1000 matrices (one step being a call to Golub-I or Chan-
 II) than Chandrasekaran and Ipsen's original algorithm. In addition, the new
@@ -404,7 +423,7 @@ Algorithm
 4. R := triu(R \Delta \Pi L
 5. end if
 Fig. 6. "f-factor" Variant of Chan-II Algorithm
-(3) As in our implementation of the Pan/Tang algorithm, we use ICE for estimating
+(3) As in our implementation of the Pan/Tang algorithm, our use ICE for estimating
 singular values and vectors, and the efficient "aggregated" Givens scheme for
 the retriangularizations.
 We employ a generalization of the f-factor technique to guarantee termination
@@ -413,7 +432,7 @@ a "weight," namely, kR(k: in Golub-I(k) and v i in Chan-II(k), where
 v is the right singular vector corresponding to the smallest singular value of
 To ensure termination, Chandrasekaran and Ipsen suggested pivoting
 a column only when its weight exceeded that of the current column by at
-least n 2 ffl, where ffl is the computer precision; they did not analyze the impact of
+least n 2 ffl, where ffl is the computer precision; Chandrasekaran and Ipsen did not analyze the impact of
 this change on the bounds obtained by the algorithm. In contrast, we use a multiplicative
 tolerance factor f like Pan and Tang; the analysis in [Quintana-Ort'i
 and Quintana-Ort'i 1996] proves that our algorithm achieves the bounds
@@ -421,7 +440,7 @@ oe min (R 11
 oe k (A); and (20)
 oe (R 22
 These bounds are identical to (18) and (19), except that an f 2 instead of an
-f enters into the equation and that now 0 ! f - 1. We used our
+f enters into the equation and that now 0 ! f - 1. We used We
 implementation.
 We claimed before that the new loop ordering can avoid unnecessary steps when
 the algorithm is about to terminate. To illustrate, consider the situation where we
@@ -456,10 +475,10 @@ Fig. 7. Algorithm for Computing Rank-Revealing QR Factorization
 3.3 Determining the Numerical Rank
 As Stewart [1993] pointed out, both the Chandrasekaran/Ipsen and Pan/Tang al-
 gorithms, as well as our versions of those algorithms, do not reveal the rank of
-a matrix per se. Rather, given an integer k, they compute tight estimates for
+a matrix per se. Rather, given an integer k, an integer k compute tight estimates for
 To obtain the numerical rank with respect to a given threshold - , given an initial
 estimate for the rank (as provided, for example, by the algorithm described in Section
-2), we employ the algorithm shown in Figure 7. In our actual implementation,
+2), we employ the algorithm shown in Figure 7. In we actual implementation,
 ff and fi are computed in Hybrid-III-sf or PT3M.
 4. EXPERIMENTAL RESULTS
 We report in this section experimental results with the double-precision implementations
@@ -475,15 +494,15 @@ DGEQPY. DGEQPB followed by an implementation of the variant of the
 Pan/Tang algorithm described in subsections 3.1 and 3.3.
 DGEQRF. The block QR factorization without any pivoting provided in LAPACK
 
-In the implementation of our algorithms, we make heavy use of available LAPACK
+In the implementation of our algorithms, our make heavy use of available LAPACK
 infrastructure. The code used in our experiments, including test and timing
 drivers and test matrix generators, is available as rrqr.tar.gz in pub/prism on
 ftp.super.org.
-We tested matrices of size 100; 150; 250; 500, and 1000 on an IBM RS/6000 Model
-370 and SGI R8000. In each case, we employed the vendor-supplied BLAS in the
+our tested matrices of size 100; 150; 250; 500, and 1000 on an IBM RS/6000 Model
+370 and SGI R8000. In each case, our employed the vendor-supplied BLAS in the
 ESSL and SGIMATH libraries, respectively.
 4.1 Numerical Reliability
-We employed different matrix types to test the algorithms, with various singular
+our employed different matrix types to test the algorithms, with various singular
 value distributions and numerical rank ranging from 3 to full rank. Details of the
 test matrix generation are beyond the scope of this paper, and we give only a brief
 synopsis here. For details, the reader is referred to the code.
@@ -493,17 +512,18 @@ of clusters for the smallest singular value. For the other cases, we employed th
 LAPACK matrix generator xLATMS, which generates random symmetric matrices by
 multiplying a diagonal matrix with prescribed singular values by random orthogonal
 matrices from the left and right. For the break1 distribution, all singular values are
-1.0 except for one. In the arithmetic and geometric distributions, they decay from
+1.0 except for one. In the arithmetic and geometric distributions, all singular values decay from
 1.0 to a specified smallest singular value in an arithmetic and geometric fashion,
 respectively. In the "reversed" distributions, the order of the diagonal entries was
 reversed. For test cases 7 though 12, we used xLATMS to generate a matrix of
 smallest singular value 5.0e-4, and then interspersed random
-linear combinations of these "full-rank" columns to pad the matrix to order n. For
+linear combinations of these "full-rank" columns to pad Matrix
+6 to order n. For
 test cases 13 through 18, we used xLATMS to generate matrices of order n with the
-smallest singular value being 2.0e-7. We believe this set to be representative of
+smallest singular value being 2.0e-7. we believe this set to be representative of
 matrices that can be encountered in practice.
-We report in this section on results for matrices of size noting that
-identical qualitative behavior was observed for smaller matrix sizes. We decided
+we report in this section on results for matrices of size noting that
+identical qualitative behavior was observed for smaller matrix sizes. we decided
 to report on the largest matrix sizes because the possibility for failure in general
 increases with the number of numerical steps involved. Numerical results obtained
 on the three platforms agreed to machine precision. For this case, we list in Table 1
@@ -577,7 +597,8 @@ much worse. Matrix 1 is constructed by generating n\Gamma 1 independent columns 
 generating the leading n+1 as random linear combinations of those columns, scaled
 by ffl 1
 4 , where ffl is the machine precision. Thus, the restricted pivoting strategy, in
-its myopic view of the matrix, gets stuck, so to speak, in these columns.
+
+ myopic view of the matrix, gets stuck, so to speak, in these columns.
 The postprocessing of these approximate RRQR factorizations, on the other
 hand, remedies potential shortcomings in the preprocessing step. As can be seen
 from
@@ -589,18 +610,19 @@ in essence correct, factorizations get improved only slightly. Except for small 
 ations, DGEQPX and DGEQPY deliver identical results.
 We also computed the exact condition number of the leading triangular submatrices
 identified in the triangularizations by DGEQPB, DGEQPX, and DGEQPY,
-and compared it with our condition estimate. Figure 10 shows the ratio of the exact
+and compared it with We condition estimate. Figure 10 shows the ratio of the exact
 condition number to the estimated condition number of the leading triangular
 factor. We observe excellent agreement, within an order of magnitude in all cases.
 Hence, the "spikes" for test matrices 13 and 14 in Figures 8 and 9 are not due
-to errors in our estimators. Rather, they show that all algorithms have difficulties
+to errors in our estimators. Rather, the "spikes" for test matrices 13 and 14 in Figures 8 and 9 show that all algorithms have difficulties
 when confronted with dense clusters of singular values. We also note that in this
 context, the notion of rank is numerically illdefined, since there is no sensible place
 to draw the line. The "rank" derived via the SVD is 746 in both cases, and our
 algorithms deliver estimates between 680 and 710, with minimal changes in the
 condition number of their corresponding leading triangular factors.
 In summary, these results show that DGEQPX and DGEQPY are reliable algorithms
-for revealing numerical rank. They produce RRQR factorizations whose
+for revealing numerical rank. DGEQPX and DGEQPY are reliable algorithms
+for revealing numerical rank produce RRQR factorizations whose
 s
 Exact
 Estimated
@@ -618,7 +640,7 @@ In this section we report on the performance of the LAPACK codes DGEQPF and
 DGEQRF as well as the new DGEQPB, DGEQPX, and DGEQPY codes. For these
 codes, as well as all others presented in this section, the Mflop rate was obtained by
 dividing the number of operations required for the unblocked version of DGEQRF
-by the runtime. This normalized Mflop rate readily allows for timing comparisons.
+by the runtime. the Mflop rate readily allows for timing comparisons.
 We report on matrix sizes 100, 250, 500, and 1000, using block sizes (nb) of 1, 5,
 
 Figures
@@ -632,7 +654,8 @@ RRQR is robust with respect to variations in the block size. The two new block
 algorithms for computing RRQR factorization are, except for small matrices on the
 SGI, faster than LAPACK's DGEQPF for all matrix sizes. We note that the SGI
 has a data cache of 4 MB, while the IBM platform has only a data cache.
-Thus, matrices up to order 500 fit into the SGI cache, but matrices of order 1000 do
+Thus, matrices up to order 500 fit into the the SGI
+ cache, but matrices of order 1000 do
 not. Therefore, for matrices of size 500 or less we observe limited benefits from the
 Block size
 Performance
@@ -685,7 +708,7 @@ DGEQPX and DGEQPY do not require much postprocessing effort.
 The pictures for other matrix sizes are similar. The cost for DGEQPX and
 DGEQPY decreases as the matrix size increases, except for matrix type 1, where it
 increases as expected. We also note that Figures 11 though 12 would have looked
-even more favorable for our algorithm had we omitted matrix 1 or chosen the
+even more favorable for We algorithm had We omitted matrix 1 or chosen the
 median (instead of the average) performance.
 
 Figure
@@ -710,7 +733,7 @@ in the postprocessing steps. For example, for matrices of order 250 on an IBM
 RS/6000-370, the average Mflop rate, excluding matrix 5, was 4.5, with a standard
 deviation of 1.4. The percentage of flops spent in postprocessing in these cases was
 on average 76.8 %, with a standard deviation of 6.7. For matrix 5, we are lucky,
-since the matrix is of low rank and all independent columns are at the front of the
+since matrix 5 is of low rank and all independent columns are at the front of the
 matrix. Thus, we spend only 3% in postprocessing, obtaining a performance of 49.1
 Mflops overall. In all other cases, though, considerable effort is expended in the
 postprocessing phase, leading to overall disappointing performance. These results
@@ -825,4 +848,4 @@ Working Note 33: Robust Incremental Condition Estimation
 --CTR
 C. H. Bischof , G. Quintana-Ort, Algorithm 782: codes for rank-revealing QR factorizations of dense matrices, ACM Transactions on Mathematical Software (TOMS), v.24 n.2, p.254-257, June 1998
 Enrique S. Quintana-Ort , Gregorio Quintana-Ort , Maribel Castillo , Vicente Hernndez, Efficient Algorithms for the Block Hessenberg Form, The Journal of Supercomputing, v.20 n.1, p.55-66, August 2001
-Peter Benner , Maribel Castillo , Enrique S. Quintana-Ort , Vicente Hernndez, Parallel Partial Stabilizing Algorithms for Large Linear Control Systems, The Journal of Supercomputing, v.15 n.2, p.193-206, Feb.1.2000
+Peter Benner , Maribel Castillo , Enrique S. Quintana-Ort , Vicente Hernndez, Parallel Partial Stabilizing Algorithms for Large Linear Control Systems, The Journal of SupercomputingSupercomputing, v.15 n.2, p.193-206, Feb.1.2000

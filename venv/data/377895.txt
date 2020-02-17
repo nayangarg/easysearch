@@ -1,7 +1,7 @@
 --T
 Optimizing threaded MPI execution on SMP clusters.
 --A
-Our previous work has shown that using threads to execute MPI programs can yield great performance gain on multiprogrammed shared-memory machines. This paper investigates the design and implementation of a thread-based MPI system on SMP clusters. Our study indicates that with a proper design for threaded MPI execution, both point-to-point and collective communication performance can be improved substantially, compared to a process-based MPI implementation in a cluster environment. Our contribution includes a hierarchy-aware and adaptive communication scheme for threaded MPI execution and a thread-safe network device abstraction that uses event-driven synchronization and provides separated collective and point-to-point communication channels. This paper describes the implementation of our design and illustrates its performance advantage on a Linux SMP cluster.
+Our previous work has shown that using threads to execute MPI programs can yield great performance gain on multiprogrammed shared-memory machines. This paper investigates the design and implementation of a thread-based MPI system on SMP clusters. Our study indicates that with a proper design for threaded MPI execution, both point-to-point and collective communication performance can be improved substantially, compared to a process-based MPI implementation in a cluster environment. Our contribution includes a hierarchy-aware and adaptive communication scheme for threaded MPI execution and a thread-safe network device abstraction that uses event-driven synchronization and provides separated collective and point-to-point communication channels. This paper describes the implementation of Our design and illustrates This paper performance advantage on a Linux SMP cluster.
 --B
 INTRODUCTION
 With the commercial success of SMP architectures, SMP
@@ -15,7 +15,9 @@ MPI programs on dedicated SMP clusters.
 In the MPI paradigm, all the MPI nodes execute the same
 piece of program under separate address spaces. Each MPI
 node has a unique rank, which allows an MPI node to identify
-itself and communicate with its peers. As a result, global
+Each MPI
+node and communicate with Each MPI
+node peers. As a result, global
 variables declared in an MPI program are private to each
 MPI node. It is natural to map an MPI node to a pro-
 cess. However, communication between processes have to
@@ -49,7 +51,9 @@ counters this intuition and multi-threading can yield great
 performance gain for MPI communication in an SMP cluster
 environment. This is because using threads not only speeds
 up the synchronization between threads on a single SMP
-node, it also greatly reduces the bu#ering and orchestration
+node, using threads not only speeds
+up the synchronization between threads on a single SMP
+node also greatly reduces the bu#ering and orchestration
 overhead for the communication among threads on di#erent
 nodes.
 In this paper, we present the design and implementation of
@@ -65,8 +69,8 @@ of lightweight threads and eliminates the spinning overhead
 caused by busy polling. Channel separation allows more
 flexible and e#cient design of collective communication prim-
 itives. The experiments we conduct is on a dedicated SMP
-cluster. We expect that greater performance gain can be
-demonstrated on a non-dedicated cluster and that is our
+cluster. we expect that greater performance gain can be
+demonstrated on a non-dedicated cluster and that is we
 future work.
 The rest of the paper is organized as follows: Section 2 introduces
 the background and an overview of our thread-based
@@ -74,20 +78,19 @@ MPI system (TMPI) on a cluster. Section 3 discusses the
 design of our TMPI system. Section 4 reports our performance
 studies. Section 5 concludes the paper.
 2. BACKGROUND AND OVERVIEW
-Our design is based on MPICH, which is known as a portable
+we design is based on MPICH, which is known as a portable
 MPI implementation and achieves good performance across
-a wide range of architectures [8]. Our scheme is targeted at
+a wide range of architectures [8]. we scheme is targeted at
 MPI programs that can be executed using threads. Thus
-we first give the type of MPI programs we address in this
-paper and briefly give an overview of the MPICH system.
-Then, we give a high-level overview of our thread-based MPI
+we first give the type of MPI programs we address in the paper and briefly give an overview of the MPICH system.
+Then, we give a high-level overview of we thread-based MPI
 system (TMPI) on SMP clusters.
 2.1 Using Threads to Execute MPI Programs
 Using threads to execute MPI programs can improve performance
 portability of an MPI program and minimize the
 impact of multiprogramming due to fast context switch and
 e#cient synchronization between threads. As shown in [16,
-our experiments on an SGI Origin 2000 indicate that
+we experiments on an SGI Origin 2000 indicate that
 threaded MPI execution outperforms SGI's native MPI implementation
 by an order of magnitude on multiprogrammed
 SMMs.
@@ -100,11 +103,11 @@ statements in the original program to fetch each thread's
 private copy of that variable inside each function where
 global variables are referenced. Our algorithm is based on a
 general mechanism available in most thread libraries called
-thread-specific data or TSD. We extend TSD to make it
+thread-specific data or TSD. We extend TSD to make TSD
 feasible to run multi-threaded MPI programs. Note that
 our TSD-based transformation algorithm is able to support
 multithreading within a single MPI node. However,
-our current TMPI runtime system does not allow threads
+We current TMPI runtime system does not allow threads
 within a single MPI node call MPI functions simultaneously
 (MPI_THREAD_SERIALIZED). For detailed information, please
 refer to [18].
@@ -134,10 +137,19 @@ the file I/O from the program to circumvent this problem
 
 2.2 MPICH for SMP Clusters
 MPICH follows a sophisticated layered design which is well-documented
-and discussed in the literature. Our design borrows
-some ideas from MPICH and we briefly summarize the
-architectural design of MPICH in this section.
-The goal of MPICH's layered design is to make it easy and
+and discussed in the literature. our design borrows
+some ideas from I/O from the program to circumvent this problem
+
+2.2 MPICH for SMP Clusters
+MPICH and our briefly summarize the
+architectural design of I/O from the program to circumvent this problem
+
+2.2 MPICH for SMP Clusters
+MPICH in this section.
+The goal of I/O from the program to circumvent this problem
+
+2.2 MPICH for SMP Clusters
+MPICH's layered design is to make The goal of MPICH's layered design easy and
 fast to port the system to new architectures, yet allow room
 for further tune-up by replacing a relatively small part of the
 software. As shown in Figure 1, MPICH's communication
@@ -146,18 +158,21 @@ they are:
 1. Device layer. This includes various operating system
 facilities and software drivers for all kinds of communication
 devices.
-2. ADI layer. This layer encapsulates the di#erences of
+2. ADI layer. ADI layer encapsulates the di#erences of
 various communication devices and provides a uniform
-interface to the upper layer. The ADI layer exports a
+interface to ADI layer. The ADI layer exports a
 point-to-point communication interface [7].
 3. MPI point-to-point primitives. This is built directly
-upon the ADI layer. It also manages high-level MPI
+upon ADI layer. This also manages high-level MPI
 communication semantics such as contexts and communicators
 
 4. MPI collective primitives. This is built upon the point-
 to-point primitive layer. Messages share the same channel
 for both point-to-point communication and collective
-communication. MPICH uses special tagging to
+communication. I/O from the program to circumvent this problem
+
+2.2 MPICH for SMP Clusters
+MPICH uses special tagging to
 distinguish messages belong to a user point-to-point
 communication and internal messages for a collective
 operation.
@@ -180,13 +195,18 @@ Figure
 1: MPICH Communication Architecture.
 To port MPICH to a di#erent platform, it is only necessary
 to wrap the communication devices on the target system to
-provide the ADI interface. This design was mainly targeted
-to large parallel systems or networked clusters. It maps
-MPI nodes to individual processes. It is not easy to modify
+provide the ADI interface. Our design was mainly targeted
+to large parallel systems or networked clusters. Our design maps
+MPI nodes to individual processes. Our design is not easy to modify
 the current MPICH system to map each MPI node to
-a lightweight thread because the low-level layers of MPICH
-are not thread-safe. (Even though the latest MPICH release
-supports the MPI-2 standard, its MT level is actually
+a lightweight thread because the low-level layers of I/O from the program to circumvent this problem
+
+2.2 MPICH for SMP Clusters
+MPICHare not thread-safe. (Even though the latest I/O from the program to circumvent this problem
+
+2.2 MPICH for SMP Clusters
+MPICH release
+supports the MPI-2 standard, Our design MT level is actually
 MPI_THREAD_SINGLE.)
 cluster node
 - MPI node (process)
@@ -204,7 +224,10 @@ Figure
 2: MPICH Using a Combination of TCP and
 Shared Memory.
 As shown in Figure 1, the current support for SMP clusters
-in MPICH is basically a combination of two devices: a
+in I/O from the program to circumvent this problem
+
+2.2 MPICH for SMP Clusters
+MPICH is basically a combination of two devices: a
 shared-memory device and a network device such as TCP/IP.
 
 Figure
@@ -234,7 +257,7 @@ Figure
 
 3: MPICH Using TCP Only.
 One can also configure MPICH at compile time to make
-it completely oblivious to the shared-memory architecture
+MPICH completely oblivious to the shared-memory architecture
 inside each cluster node and use loopback devices to communicate
 among MPI nodes running on the same cluster
 node. In this case, the setup will look like Figure 3. In
@@ -290,16 +313,25 @@ Additionally, TMPI gives us the following immediate advantages
 over process-based MPI systems. Comparing with
 an MPICH system that uses a mixing of TCP and shared
 memory (depicted in Figure 2):
-1. For MPICH, usually shared memory is a limited system
+1. For I/O from the program to circumvent this problem
+
+2.2 MPICH for SMP Clusters
+MPICH, usually shared memory is a limited system
 resource. There is an OS-imposed limit on the
 maximum size for a single piece of shared memory 1 ;
 there is also a system-wide bound of the total size of
 all the shared memory. In fact, one test benchmark
-coming with MPICH failed because of limited shared-memory
+coming with I/O from the program to circumvent this problem
+
+2.2 MPICH for SMP Clusters
+MPICH failed because of limited shared-memory
 resource. A thread-based system doesn't suffer
 from this problem because threads in the same process
 can access the whole address space.
-2. There is no easy way for MPICH to aggregate di#er-
+2. There is no easy way for I/O from the program to circumvent this problem
+
+2.2 MPICH for SMP Clusters
+MPICH to aggregate di#er-
 ent types of devices. As a result, each MPI node has
 to use non-block polling to check if there are pending
 messages on either device, which could waste cpu
@@ -308,13 +340,16 @@ among threads are more flexible and lightweight.
 Combined with our event-driven style daemons, all
 MPI nodes can freely choose busy spinning or blocking
 when waiting for a message.
-3. Shared memory used in MPICH is a persistent system-wide
+3. Shared memory used in I/O from the program to circumvent this problem
+
+2.2 MPICH for SMP Clusters
+MPICH is a persistent system-wide
 resource. There is no automatic way to perform
-resource cleaning if the program doesn't clean it during
-its execution. Operating systems could run out of
+resource cleaning if the program doesn't clean the program during
+the program execution. Operating systems could run out of
 shared-memory descriptors when buggy user programs
 exit without calling proper resource cleanup functions
-and leave out garbage shared memory in the OS. Thus
+and leave out garbage shared memory in 64-bit OS. Thus
 the reliability of user programs running on an MPICH-
 based cluster is more sensitive to this type of errors.
 For a thread-based system such as TMPI, there is no
@@ -325,6 +360,9 @@ based MPICH implementation as depicted in Figure 3 has
 the following disadvantages:
 1. There will be two more data copying to send a message
 between two MPI nodes on the same cluster node in
+I/O from the program to circumvent this problem
+
+2.2 MPICH for SMP Clusters
 MPICH. Synchronization between two MPI nodes also
 becomes more complicated than a thread-based system
 such as TMPI.
@@ -336,10 +374,13 @@ on which we run more MPI nodes.
 MPI on network clusters has also been studied in a number
 of other projects. LAM/MPI [13, 4] is a MPI system
 based upon a multicomputer management environment
-called Trollius [3]. It is di#erent from MPICH in the sense
-that its design is specific for network clusters and that the
+called Trollius [3]. It is di#erent from I/O from the program to circumvent this problem
+
+2.2 MPICH for SMP Clusters
+MPICH in the sense
+that It design is specific for network clusters and that the
 lower level communication is provided by a stand-alone service
-through its unique Request Progression Interface. It
+through It unique Request Progression Interface. It
 does not address the issue of how to optimize MPI performance
 on a cluster of SMPs. Sun's MPI implementation [17]
 discusses how to optimize MPI's collective communication
@@ -355,8 +396,8 @@ communication design extends their idea and is highly optimized
 for threaded MPI execution. MagPIe [10] optimizes
 MPI's collective communication primitives for clusters connected
 through a wide-area network. In MPI-FM [11] and
-MPI-AM [19, 12], they attempt to optimize the performance
-of lower level communication devices for MPI. Their techniques
+MPI-AM [19, 12], their attempt to optimize the performance
+of lower level communication devices for MPI. their techniques
 can be applied to our TMPI system. MPI-Lite [15],
 LPVM [20], and TPVM [6] study the problem of running
 message passing programs using threads on a single shared-memory
@@ -367,7 +408,7 @@ complements the above work by focusing on taking
 advantage of executing each MPI node using a thread.
 3. SYSTEM DESIGN AND IMPLEMENTA-
 TION
-In this section, we detail the design and implementation of
+In this section, our detail the design and implementation of
 our thread-based MPI system - TMPI.
 3.1 System Architecture
 MPI
@@ -395,19 +436,21 @@ are:
 1. Operating system facilities, such as TCP socket interface
 and pthread.
 2. Network and thread synchronization abstraction layer.
-Potentially this layer allows for the portability of TMPI
+Potentially Network and thread synchronization abstraction layer.
+ allows for the portability of TMPI
 to other systems or performance tune-up by providing
 di#erent implementations of network communication
 and thread synchronization. The thread synchronization
 abstraction is almost a direct mapping to pthread
 APIs, except that threads are launched in a batch
-style: create all the thread entities, start them through
+style: create all the thread entities, start all the thread entities through
 a single function call, and by the time that function call
-returns, all the threads will finish their execution. The
+returns, all the threads will finish all the thread entities execution. The
 network device abstraction is tailored to our threaded
 MPI execution model and is di#erent from either the
 traditional socket interface or MPICH's ADI interface.
-We will talk about them in detail in Section 3.2 and
+our will talk about the
+traditional socket interface or MPICH's ADI interface in detail in Section 3.2 and
 Section 3.3.
 2 There are some other synchronization primitives not shown
 in
@@ -427,7 +470,7 @@ has a local rank unique among threads on the same
 cluster node and a global rank unique among all the
 threads on all the cluster nodes. Given a global rank,
 we need to find on which cluster node the thread resides
-and what is its local rank on that cluster node as
+and what is which cluster node local rank on that cluster node as
 well; reverse lookup is also needed. Another functionality
 of the inter-cluster-node communication module
 is resource discover and allocation. The API allows
@@ -472,9 +515,10 @@ Connection Management This includes the creation of
 processes on a number of cluster nodes and the setup/tear-
 down of communication channels. All the relevant
 processes are fully connected with each other and can
-query about their own ID and the total number of the
+query about All the relevant
+processes own ID and the total number of the
 processes.
-Collective Communication It provides collective communication
+Collective Communication Collective Communication provides collective communication
 among relevant processes created by NETD.
 The current implementation uses an adaptive algorithm
 to choose among three di#erent spanning trees
@@ -482,8 +526,8 @@ based on the number of the processes involved. When
 the size is small, a simple scatter tree is used; hyper-cube
 is used when the size is large; and balanced binary
 tree will be chosen when the size falls in the middle.
-Point-to-Point Communication NETD has its unique
-point-to-point communication API. Each message contains
+Point-to-Point Communication NETD has Point-to-Point Communication NETD unique
+point-to-point communication The API. Each message contains
 a message header part and an optional payload
 part. The content of a message header is not interpreted
 by NETD. To receive a message, a caller must
@@ -504,7 +548,7 @@ port, a single logic message could be fragmented and
 received by di#erent threads. To get around this prob-
 lem, TMPI uses a daemon thread to receive all the in-coming
 messages and invoke a message handle in the
-context of the daemon thread. That message handle
+context of the daemon thread. a single logic message handle
 will be responsible for decoding the actual source and
 destination, bu#ering the incoming data, and notifying
 the destination thread.
@@ -512,7 +556,7 @@ the destination thread.
 Communication Channels in NETD
 As we've mentioned before that in Figure 4, every thread in
 a process can access all the communication ports originated
-from that process. This feature inspired us into the idea
+from a process. This feature inspired us into the idea
 of separating collective and point-to-point communication
 channels, which allows TMPI to take full advantage of the
 synchronous nature of collective communication and eliminate
@@ -590,10 +634,11 @@ part) has 5 network edges.
 3 It is possible to employ techniques such as pipelining and
 asynchronous operations to optimize collective operations.
 However, such optimizations are not required in the MPI
-standard and its e#ectiveness is not very eminent in real
+standard and such optimizations e#ectiveness is not very eminent in real
 applications based on our experience.
 Spanning trees for an MPI program with 9 nodes on three
-cluster nodes. The three cluster nodes contain MPI node 0-2,
+cluster nodes. three
+cluster nodes contain MPI node 0-2,
 3-5 and 6-8 respectively. Thick edges are network edges.
 TMPI
 MPICH
@@ -617,11 +662,11 @@ side will act on behalf of the remote sender.
 One di#cult problem facing this design is the temporary
 bu#ering of a message when the corresponding receiver is
 not ready yet. For intra-cluster-node point-to-point com-
-munication, we can always block the sender till the receiver
+munication, we can always block the remote sender till the receiver
 comes if there is no internal bu#er space available. How-
-ever, when a sender sends a message to a remote receiver, it
+ever, when a sender sends a message to a remote receiver, a sender
 does not know whether there will be su#cient bu#er space
-to hold the message. Because the message size in MPI could
+to hold a message. Because the message size in MPI could
 be arbitrarily large, a traditional conservative solution is the
 three-phase asynchronous message-passing protocol [5].
 In TMPI, address space sharing and fast synchronization
@@ -644,11 +689,14 @@ provide a detailed description in the following. Note that the
 figures do not accommodate the cases for "synchronous" or
 "ready" send operations. In Figure 8 (a), the sender sends
 the request with the actual data. On the receiver side, either
-the receiver already arrives or there are still internal
-bu#er space available, so the daemon accepts the data, store
+the receiver
+ already arrives or there are still internal
+bu#er space available, so The remote daemon on
+ accepts the data, store
 the send request information and the actual data into the
 proper queue, notify the sender that the data are accepted,
-and wake up the receiver if necessary. The sender-side dae-
+and wake up the receiver
+ if necessary. The sender-side dae-
 MPI_Bsend(buf, BIG_SIZE, type, 1, .);MPI_Recv(buf, BIG_SIZE, type, 1, .);
 MPI_Bsend(buf, BIG_SIZE, type, 0, .);MPI_Recv(buf, BIG_SIZE, type, 0, .);
 
@@ -685,17 +733,19 @@ Figure
 mon receives that confirmation and frees the data on behalf
 of the sender. In Figure 8 (b), the sender still sends out the
 data with the request, but this time the receiver-side daemon
-cannot accept the incoming data. The daemon receives
+cannot accept the data. the receiver-side daemon
+ receives
 and discards the data, store only the request metadata in
 the unexpected-message queue. Later on, when the receiver
-arrives, it discovers the partially completed send request and
+arrives, the receiver
+ discovers the partially completed send request and
 asks for the associated data from the sender. The sender-side
 daemon then sends the data to the receiver side. When
-the receiver-side daemon receives the data, it saves the data
-to the receiver-supplied user bu#er and tells the sender that
+the receiver-side daemon receives the data, The sender-side
+daemon saves the datato the receiver-supplied user bu#er and tells the sender that
 the data are received. Subsequently, the sender-side daemon
-will deallocate the bu#er upon receiving the acknowledge.
-Note that the actual data are transferred twice in this case.
+will deallocate bu#er upon receiving the acknowledge.
+Note that the data are transferred twice in this case.
 In
 
 Figure
@@ -705,14 +755,14 @@ and data part separately. The whole flow is essentially the
 same as Figure 8 except that the actual data are only transfered
 once. This design allows for optimal performance when
 the sender makes the correct guess and functions correctly
-with degraded performance when it guesses wrong.
+with degraded performance when This design guesses wrong.
 The remaining issue is to decide how the sender should
 switch between the eager-push and three-phase protocols.
 The decision is complicated by the fact that the internal
 bu#er space in TMPI is shared by all the MPI nodes in the
 same cluster node and aggregated among a series of requests.
 So, against the common intuition to choose "eager-pushing"
-protocol as often as possible, it could still be preferable not
+protocol as often as possible, The decision could still be preferable not
 to bu#er a request even though there is bu#er space avail-
 able. This is because the same amount of bu#er space might
 be used to hold data from multiple subsequent requests.
@@ -721,17 +771,16 @@ should favor short requests and any algorithm could be sub-optimal
 due to the lack of future knowledge. In the current
 implementation of TMPI, the sender will send the data with
 a request if and only if the message size is under a statically
-defined threshold. On the receiver side, the receiver daemon
-greedily bu#ers incoming data whenever possible. The current
+defined threshold. On the receiver side, The sender-side
+daemongreedily bu#ers incoming data whenever possible. The current
 threshold is set to 100KBytes based on some empirical
 study.
 Finally, allowing a receive daemon to send messages could
-result in a deadlock condition if not designed carefully. In
-TMPI, the NETD layer supports both blocked and non-blocked
+result in a deadlock condition if not designed carefully. InTMPI, the NETD layer supports both blocked and non-blocked
 send. A non-blocked send merely puts the message
 into a queue and there is a send daemon responsible
 for sending the message out (and deallocate the memory if
-necessary). Our receive daemon always uses non-blocked
+necessary). a receive daemon always uses non-blocked
 send.
 3.6 Further Discussions
 Benefit of address space sharing in TMPI.
@@ -739,13 +788,13 @@ One benefit of a thread-based MPI implementation is the potential
 saving of data copying through address-space shar-
 ing. For intra-cluster-node point-to-point communication,
 TMPI only needs at most one intermediate data copying
-while for MPICH, it takes two intermediate data copying
+while for MPICH, MPICH takes two intermediate data copying
 with shared memory or three intermediate data copying
 without shared memory. For inter-cluster-node point-to-
 point communication, since the daemons at either the sender-
 and receiver-side can access the sender- and receiver-bu#er
 in TMPI, it takes zero to two intermediate data copying.
-For MPICH, it always needs three intermediate data copy-
+For MPICH, MPICH always needs three intermediate data copy-
 ing. Additionally, data only need to move across process
 boundaries once in TMPI while data need to be transfered
 across process boundaries three times in MPICH. Since the
@@ -764,16 +813,17 @@ choose the number of daemons at runtime in the fu-
 ture. We can also create more instances of non-block send
 daemons or make it be responsible for messages send operations
 initiated by MPI nodes. This could be beneficial when
-there is a sudden surge of outgoing data and we do not want
+there is a sudden surge of outgoing data and We do not want
 to block the sender threads because of that. In the current
 small scale settings, none of these configurations is neces-
-sary. Our point here is that the TMPI design is scalable to
+sary. We point here is that the TMPI design is scalable to
 accommodate large clusters with fat SMP nodes.
 4. EXPERIMENTS
 In this section, we evaluate the e#ectiveness of the proposed
 optimization techniques for threaded MPI implementation
 versus a process-based implementation. We choose MPICH
-as a reference process-based implementation due to its wide
+as a reference process-based implementation due to MPICH
+ wide
 acceptance. We should emphasize that the experiments are
 not meant to illustrate whether there are any flaws in the
 MPICH design. Instead, as discussed in the previous sec-
@@ -781,13 +831,14 @@ tions, we want to show the potential advantages of threaded
 MPI execution in an SMP cluster environments and in fact
 most of the optimization techniques in TMPI are only possible
 with a multi-threaded MPI implementation.
-We have implemented a prototype system for Linux SMP
-clusters. It includes 45 MPI functions (MPI 1.1 standard) as
-listed in Appendix A. It does not yet support heterogeneous
-architectures 4 , nor does it support user-defined data types
+we have implemented a prototype system for Linux SMP
+clusters. we includes 45 MPI functions (MPI 1.1 standard) as
+listed in Appendix A. we does not yet support heterogeneous
+architectures 4 , nor does we support user-defined data types
 or layouts. The MPICH version we use contains all functions
 in MPI 1.1 standard and provides partial support for MPI-2
-standard. However, adding those functions is a relatively
+standard. However, adding all functions
+in MPI 1.1 standard is a relatively
 independent task and should not a#ect our experimental
 results.
 All the experiments are conducted on a cluster of six quad-
@@ -803,7 +854,7 @@ analysis of point-to-point communication sub-systems in both
 TMPI and MPICH.
 Ping-pong test. First, we use the ping-pong benchmark
 to access the performance of point-to-point communication.
-We vary the data size from 4 Bytes to 1 Mega-bytes. As
+we vary the data size from 4 Bytes to 1 Mega-bytes. As
 a common practice, we choose di#erent metrics for small
 and large messages. For messages with size smaller than 1
 4 Note that MPICH detects whether the underlying system
@@ -967,10 +1018,10 @@ MPICH with shared memory (MPICH1) and MPICH
 without shared memory (MPICH2)
 that, it falls to a normal range between 50-s and 150-s.
 We are not able to identify the exact source of the problem,
-but we think it might have something to do with resource
+but We think the exact source of the problem might have something to do with resource
 contentions in the OS level. Regardless of this glitch, the
 performance of MPICH2 is much worse than the other two
-MPI systems, again due to its ignorance of the underlying
+MPI systems, again due to MPICH2 ignorance of the underlying
 shared memory.
 4.2 Micro-Benchmark Performance for Collective
 Communication
@@ -980,7 +1031,8 @@ which calls MPI_Reduce, MPI_Bcast, or MPI_Allreduce a
 number of times respectively and we compare the average
 time for each operation. The data volume involved in these
 benchmarks are very small, so the cost mainly comes from
-synchronization. We run these benchmarks with three different
+synchronization. we run these
+benchmarks with three different
 settings: 4 MPI nodes on the same cluster node (4-1),
 nodes scattered on 4 di#erent cluster nodes (1-4),
 and nodes scattered on 4 MPI nodes (4-4). For
@@ -1021,9 +1073,9 @@ Figure
 
 13: Collective Communication Performance. The numbers shown in the table are the average time (-s) for
 each operation. We run each benchmark on three MPI systems: TMPI, MPICH with shared memory (MPICH1) and
-MPICH without shared memory (MPICH2). For MPI Reduce and MPI Bcast, we test cases when the root is always the
-same (same), when the root rotates among all the MPI nodes (rotate), or when we fix the root for a number of times
-then do a rotate (combo). The notation a- b used in the node distribution means we use b cluster nodes, each of which
+MPICH without shared memory (MPICH2). For MPI Reduce and MPI Bcast, We test cases when the root is always the
+same (same), when the root rotates among all the MPI nodes (rotate), or when We fix the root for a number of times
+then do a rotate (combo). The notation a- b used in the node distribution means We use b cluster nodes, each of which
 has a MPI nodes.
 experiments show that there are cases for MPICH that
 an MPI_Bcast or MPI_Reduce operation performs worse
@@ -1034,7 +1086,8 @@ for collective communication still have to go through
 daemons, get stored in message queues, and be matched
 by traversing the queues. When there are many outstanding
 requests, the cost of queue operations become
-expensive due to contentions, and the daemons could
+expensive due to contentions, and 
+daemons could
 become a bottleneck. MPI_Allreduce test does not
 su#er from this problem because all the MPI nodes
 are synchronized and there is at most one outstanding
@@ -1045,7 +1098,7 @@ munication, TMPI does not show such an anomaly.
 than "rotating root" tests for the 1-4 and 4-4 cases.
 This means that TMPI can take better advantage of
 message pipelining due to address space sharing and
-its elimination of intermediate daemons.
+TMPI elimination of intermediate daemons.
 4.
 
 Figure
@@ -1075,7 +1128,7 @@ MM GE
 
 Figure
 
-14: Distribution of MPI Nodes. a - b means we
+14: Distribution of MPI Nodes. a - b means We
 use b cluster nodes, each of which has a MPI nodes. We
 ensure that the number of cluster nodes and the number
 of MPI nodes on each cluster node will not decrease with
@@ -1087,18 +1140,19 @@ Figure
 
 15. As we can see, when the number of MPI Nodes is
 small (#4), TMPI and MPICH perform similarly. However,
-when the number of MPI nodes becomes large and when
+when the number of MPI Nodes becomes large and when
 there are more cluster nodes involved, TMPI shows better
 scalability than MPICH. For MM, TMPI has a constant
 150MFLOP advantage over MPICH, which mainly comes
 from the saving of intermediate copying. For GE, neither
 system can keep linear speed-up and MPICH performance
 even degradates after reaching the peak at 12 MPI nodes.
-TMPI outperforms MPICH more than 100% when there are
+TMPI MPICH more than 100% when there are
 4 to 6 cluster nodes involved. This indeed verifies the advantages
 of TMPI in an SMP cluster environment.
 The reason that TMPI gains much more advantage in the
-GE case compared to the MM case is because GE calls
+GE case compared to the
+GE case is because GE calls
 the MPI broadcasting function while MM only uses point-
 to-point communication. As we have demonstrated in the
 previous section, TMPI outperforms MPICH more substantially
@@ -1108,7 +1162,8 @@ In this paper, we have presented the design and implementation
 of a thread-based MPI system for SMP clusters. Our
 contributions include a novel network device abstraction interface
 tailored for threaded MPI execution on SMP clusters
-and hierarchy-aware communication. We proposed a number
+and hierarchy-aware communication. Our
+ proposed a number
 of optimization techniques including the separation of
 Number of MPI Nodes
 MFLOP
@@ -1131,24 +1186,25 @@ benchmark testing, our experiments show that TMPI can
 outperform MPICH substantially.
 It should be noted that TMPI optimization is targeted at
 a class of C programs while MPICH is designed for general
-MPI programs. The experiments confirm that even
+MPI programs. our experiments confirm that even
 in a cluster environment for which inter-node network latency
 is relatively high, exploiting thread-based MPI execution
 on each SMP can deliver substantial performance gains
 for global communication through fast and light-weight syn-
-chronization. Our experiments focus on a dedicated cluster
-and our future work is to study performance in a multiprogrammed
+chronization. our experiments focus on a dedicated cluster
+and Our future work is to study performance in a multiprogrammed
 environment for which thread-based synchronization
 may achieve more performance gain.
 6.
 
 ACKNOWLEDGEMENTS
 
-This work was supported in part by NSF ACIR-0082666,
-ACIR-0086061 and CCR-9702640. We would like to thank
-Lingkun Chu for his help on cluster administration. We
+our future work was supported in part by NSF ACIR-0082666,
+ACIR-0086061 and CCR-9702640. Our would like to thank
+Lingkun Chu for Lingkun Chu help on cluster administration. Our
 would also like to thank Kai Shen and the anonymous referees
-for their valuable comments.
+for Kai Shen and the anonymous referees
+ valuable comments.
 7.
 
 
@@ -1188,7 +1244,7 @@ Multi-protocol active messages on a cluster of SMP''s
 Parallel Computer Architecture
 
 --CTR
-Jian Ke , Martin Burtscher , Evan Speight, Runtime Compression of MPI Messanes to Improve the Performance and Scalability of Parallel Applications, Proceedings of the 2004 ACM/IEEE conference on Supercomputing, p.59, November 06-12, 2004
+Jian Ke , Martin Burtscher , Evan Speight, Runtime Compression of MPI Messanes to Improve the Performance and Scalability of Parallel Applications, Proceedings of the 2004 ACM/IEEE conference on ACM/IEEE SuperComputing ', p.59, November 06-12, 2004
 Rohit Fernandes , Keshav Pingali , Paul Stodghill, Mobile MPI programs in computational grids, Proceedings of the eleventh ACM SIGPLAN symposium on Principles and practice of parallel programming, March 29-31, 2006, New York, New York, USA
 Lingkun Chu , Hong Tang , Tao Yang , Kai Shen, Optimizing data aggregation for cluster-based internet services, ACM SIGPLAN Notices, v.38 n.10, October
 Weirong Zhu , Yanwei Niu , Guang R. Gao, Performance portability on EARTH: a case study across several parallel architectures, Cluster Computing, v.10 n.2, p.115-126, June      2007

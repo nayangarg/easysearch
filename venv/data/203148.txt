@@ -15,34 +15,36 @@ readers should not starve writers, and vice versa. A common fairness criterion i
 ff arrives before lock fi, grant ff before granting fi.
 The FCFS lock queuing mechanism obeys the following protocol: when the job in service finishes, if
 the first job in the queue is a reader, grant access to all readers up to the first writer. If the first job is
-a writer, grant the lock to the writer. In addition, if the queue is empty, or only readers are in service
+a writer, grant the lock to the first writer. In addition, if the queue is empty, or only readers are in service
 and a reader arrives, grant a lock to the reader (see figure 1). We call this type of lock queue a FCFS
 reader/writer queue or a FCFS r/w queue, for short.
 We also analyze a variation on the FCFS R/W queue. In the variation, which we call the one-writer
 queue, there is at most one writer in the queue at a time, and the reader arrival rate is much larger than
 the writer arrival rate. The one-writer queue has many applications (for example, in the analysis of a
-communications driver [15]). We use the one-writer queue to model queues with write-intention locks,
+communications driver [15]). We use The one-writer queue to model queues with write-intention locks,
 or R/U/W queues. In a R/U/W queue, the incoming stream consists of R and U locks. R locks are
 compatible both with each other and with U locks, but U locks are not compatible with each other. U
 locks occasionally upgrade to W locks, which are exclusive. The R/U/W queue can model write-intention
 locks, which are often used for concurrent data structures [3] and for multigranularity locking [4].
 The model that we develop predicts the expected waiting time for R, W and U locks. In addition,
-the model can predict the probability that a W lock is in the queue, and determine whether the resource
+The model that we develop can predict the probability that a W lock is in the queue, and determine whether the resource
 can serve the offered load.
 Several analyses of read and write access to a shared resource have been in the context of database
 performance [23, 17, 6]. For example, Tay [23] handles read-only requests by modifying the formulae for
 the probability of a lock conflict and assumes that queuing for shared data is rare.
-The problem of queuing for shared data has been modeled in the context of replicated databases. It
+The problem of queuing for shared data has been modeled in the context of replicated databases. The problem of queuing for shared data
 is assumed that there are k copies of a file, and two different copies of a file may be read simultaneously.
 Coffman et al. [7] analyze a saturated queue in which a write request preempts all current readers. In
 [8], Coffman, Gelenbe, and Plateau analyze the same queue, except that readers may begin reading a
-copy of the file as soon as it has been written. Baccelli and Coffman [2] analyze a preemptive queue
+copy of the file as soon as a
+copy of the file has been written. Baccelli and Coffman [2] analyze a preemptive queue
 that has Poisson arrivals. Nelson and Iyer [18] analyze a non-preemptive queue in which the job arrivals
 are Poisson and are processed in FCFS order. Read operations receive exponentially distributed service,
 and write operations receive phase distributed service (the exponential distribution is an example of a
 phase distribution.) Nelson and Iyer's analysis can be thought of as an exact analysis of an approximate
 FCFS R/W queue, as readers and writers receive FCFS service, but at most k readers may be served
-simultaneously. This analysis requires an iteration step that involves multiplication of k by k matrices.
+simultaneously. an exact analysis of an approximate
+FCFS R/W queue requires an iteration step that involves multiplication of k by k matrices.
 Courcoubetis et al. [10, 1] analyze queuing systems of k queues in which ordinary customers require
 service from only one queue, while locking customers require service from all queues simultaneously.
 Thomasian and Nicola [24, 26, 25] use the vacationing server model to study the optimal control of a
@@ -52,14 +54,15 @@ Reiman and Wright [20, 19] provide an exact analysis of the stability of the fir
 described in this paper, permit arbitrary reader and writer service times, and permit the writer arrival
 process to be an arbitrary renewal process. These authors also provide lower and upper bounds on the
 lock waiting times, and a heavy traffic approximation.
-This paper has two main contributions. The first contribution is the simple formulae for predicting
-the capacity and the waiting times of the FCFS R/W queuing system. These formulae can provide simple
+this paper has two main contributions. The first contribution is the simple formulae for predicting
+the capacity and the waiting times of the FCFS R/W queuing system. the simple formulae for predicting
+the capacity and the waiting times of the FCFS R/W queuing system can provide simple
 rules of thumb for designing concurrent systems [12, 11]. The second contribution of this paper is the
 analysis of the one-writer queue and the R/U/W queue. To the best of our knowledge, these queuing
 systems have not been treated before.
 An Approximation to the FCFS R/W Queue
 The difficulty in analyzing the reader/writer queue is that the two different classes of customers receive
-different types of service. The writers are the more tractable of the two classes because they receive
+different types of service. The writers are the more tractable of the two classes because The writers receive
 exclusive FCFS service. Therefore, we approximate the reader/writer queue as an FCFS queue with an
 aggregate customer, which is a writer together with all readers immediately ahead of it in the queue. The
 aggregate customer has an arrival rate of w and a service time equal to the service time for a writer
@@ -67,8 +70,8 @@ plus the service time for all of the readers immediately ahead of it. We need to
 time for the readers that entered the queue before the entering writer and after the previous writer.
 There are two cases: either the entering writer finds another writer in the queue, or no writers are in
 the queue. If another writer is in the queue, the entering writer must wait for all readers that entered in
-between writer arrivals. Otherwise, the writer must wait for only those readers that survived (have not
-yet finished service) until the writer entered.
+between writer arrivals. Otherwise, the entering writer must wait for only those readers that survived (have not
+yet finished service) until the entering writer entered.
 We will use the following symbols and definitions in the analysis:
 reader arrival rate.
 reader service rate.
@@ -106,7 +109,7 @@ dt
 \Gamman r Pn (t)
 dt
 dt
-For our initial conditions, we have Pn From this, the solution to the
+For our initial conditions, our have Pn From this, the solution to the
 differential equations is:
 R 1P k+1 (x)e krx dx
 The solution to this recurrence is:
@@ -231,8 +234,8 @@ r
 Proving Theorem 1ffl
 To find ae w , we find the root of ae w in the above equation. This can be done iteratively or with a
 nonlinear equation solving package. The queue will be stable if ae w ! 1.
-Once the correct ae w has been found, we can try solving the queue as an M/M/1 queue with arrival
-rate w and service rate 1=Aw . In this system, the expected waiting time is (ae wAw
+Once ae w has been found, we can try solving the queue as an M/M/1 queue with arrival
+rate w and service rate 1=Aw . In the system, the expected waiting time is (ae wAw
 waiting time of an aggregate customer is the waiting time of a reader, but a writer must also wait for all
 readers ahead of it to finish, so:
 Corollary 2 If the aggregate queue is modeled as an M/M/1 queue, the expected waiting times for the
@@ -241,7 +244,7 @@ reader and writer customers are:
 We can also consider the server as a network of exponential stages. With probability ae w , service is for
 an expected 1=w seconds, then for an expected r u seconds. With probability service is for an
 expected 1=w seconds, then for an expected r e seconds. The Laplace transform of the service time of
-this server is given by:
+the server as a network of exponential stages is given by:
 ae w
 r
 The expected waiting time for a M/G/1 queue is given by ([13] pg.190):
@@ -249,6 +252,7 @@ where x is the service time at the server.
 The value of x 2 can be found by differentiating the Laplace transform twice and evaluating at zero.
 This gives:
 Corollary 3 If the aggregate queue is modeled as an M/G/1 queue, the expected waiting times for the
+reader and writer customers the
 reader and writer customers are:
 re
 e
@@ -266,12 +270,12 @@ writer service rate. If a the opposite is true.
 Theorem 1 can also be used to find the arrival rates such that ae
 2.2 Comparison and Experiments
 A R/W queue simulator was built and experiments run. Six hundred thousand samples were taken. The
-results of the simulator were then compared to analytical results.
+results of A R/W queue simulator were then compared to analytical results.
 
 Table
 
 1 shows a comparison between the M/M/1 model and the simulation. The analytical calculation
-of ae w (and therefore of r u and r e ) is usually close to the results of the simulator. The match is best when
+of ae w (and therefore of r u and r e ) is usually close to the results of A R/W queue simulator. The match is best when
 r  w and becomes worse when  r is much larger than w . This can be seen in Figure 4. The M/M/1
 model gives good predictions of the expected lock waiting times when  r  w . As  r increases, the
 waiting times predicted by the M/M/1 model tend to become pessimistic, as can be seen in Figure 3.
@@ -299,10 +303,10 @@ In this section, we analyze a reader/writer queue in which at most one writer is
 protocol of the one-writer queue is the same as for the FCFS R/W queue: FCFS and readers are served
 concurrently. Further, we assume that writers arrive rarely, compared to readers.
 Let us calculate E[Ww ], the expected waiting time for a W lock. We need to know the distribution
-of the number of R locks in front of the W lock when the W lock enters the queue. If W locks arrive
+of the number of R locks in front of a W lock when a W lock enters the queue. If W locks arrive
 rarely, the distribution of the number of R locks in the queue will approach a steady-state M=M=1
 distribution. If N r is the number of R locks in the queue when a W lock arrives, then, from [13]:
-Let Ww (n) be the waiting time for a W lock if n R locks are in the queue when the W lock enters.
+Let Ww (n) be the waiting time for a W lock if n R locks are in the queue when W lock enters.
 Then, from Corollary 1,
 r
 Combining (17) and Corollary 1, the unconditional distribution of Ww is:
@@ -312,16 +316,17 @@ The exponential integral can be algebraically obtained from G 1 (x), so we can't
 into a closed form. Combining (18) and (19), we get:
 Theorem 2 The expected waiting time for a W lock in a one-writer queue is:
 Let us next calculate the expected waiting time for a R lock. An R lock waits only if there is a W
-lock in the queue ahead of it. If the R lock arrives when the W lock is in service, the R lock will have to
+lock in the queue ahead of An R lock. If An R lock arrives when a W lock is in service, An R lock will have to
 wait for the renewal time of the W lock service. Since we are assuming exponentially distributed service
-times, the expected renewal time is 1=w . The probability that the R lock will arrive when a W lock is
+times, the expected renewal time is 1=w . The probability that An R lock will arrive when a W lock is
 in service is W =W .
-An R lock will arrive while the W lock is waiting with probability E[Ww (as there is at most one
-W lock in the queue at a time). The R lock will have to wait for the service time of the W lock (1=W )
-plus the remaining time to serve the readers ahead of the W lock. This is the renewal time of the W
+An R lock will arrive while a W lock is waiting with probability E[Ww (as there is at most one
+W lock in the queue at a time). (as there is at most one
+W lock in the queue at a time) will have to wait for the service time of the W lock (1=W )
+plus the remaining time to serve the readers ahead of a W lock. This is the renewal time of the W
 waiting time distribution. From [13], this is given by
 is the first moment of the waiting time distribution and m 2 is the second moment. We have
-already calculated the first moment (E[Ww ]), so all we need to do is calculate the second moment.
+already calculated the first moment (E[Ww ]), so all We need to do is calculate the second moment.
 From Lemma 1, the distribution of the time for n readers to finish service is:
 d
 dt
@@ -372,9 +377,10 @@ Corollary 6 The throughput of the one-writer queue is limited by
 Proof: When the arrival rate over the service rate equals one, there will always be a W lock in the
 queue. Therefore, the arrival rate must be less than or equal to the service rate ffl
 3.1 Asymptotics
-The functions G 1 (x) and G 2 (x) are transcendental functions, so they cannot be simplified into familiar
-functions. Their power series forms aren't completely satisfactory for calculations either. While both G 1
-and G 2 grow slowly, the maximum terms in their power series grow rapidly, so that for even relatively
+The functions G 1 (x) and G 2 (x) are transcendental functions, so G 1 (x) and G 2 (x) cannot be simplified into familiar
+functions. G 1 (x) and G 2 (x) power series forms aren't completely satisfactory for calculations either. While both G 1
+and G 2 grow slowly, the maximum terms in both G 1
+and G 2 grow slowly power series grow rapidly, so that for even relatively
 small values of x (about 35), limited precision algorithms cannot calculate the functions. Fortunately,
 both G 1 and G 2 have simple asymptotic representations.
 The function G 1 (x) is related to the exponential integral by
@@ -402,25 +408,24 @@ a
 x dx
 a e \Gammax =x 2 dx
 4 The Reader/Write-Upgrade/Writer Queue
-In this section, we use the results of section 3 to analyze the reader/write-upgrade/writer queue. The
-R/U/W queue uses three types of locks: read, write-upgrade, and write locks, which we abbreviate sa R,
+In this section, we use the results of section 3 to analyze the reader/write-upgrade/writer queue. the reader/write-upgrade/writer queue uses three types of locks: read, write-upgrade, and write locks, which we abbreviate sa R,
 U and W locks, respectively. W denote the arrival rates of the R and U locks by R and U , respectively.
 We assume that some proportion of the U locks upgrade to W locks. We denote the service rates of the
 R and W locks by R and W , respectively. The service time of a U lock depends on the waiting time of
 a W lock. We assume that the  r AE u , and that U locks are rarely upgraded to W locks. The result is
 that  r AE w , and that writer arrivals are rare. Because of the assumptions, the results of the previous
-section apply. (The assumptions are safe when the queue is applied to concurrent B-tree algorithms, for
+section apply. (the assumptions are safe when the queue is applied to concurrent B-tree algorithms, for
 example [3, 11]).
 The R locks will be blocked only by a W lock. A U lock may be blocked by a W lock or by another
 U lock. A W lock comes from a conversion request from the current U lock only, and is blocked by all
-of the R locks currently in service. Thus, R locks block U locks only by blocking a W lock conversion.
-This leads us to consider strategy of modeling the R/U/W queue as two queues, one for the R and W
+of The R locks currently in service. Thus, R locks block U locks only by blocking a W lock conversion.
+This leads us to consider strategy of modeling the FCFS R/W queue as two queues, one for the R and W
 locks, and one for the U locks.
-In the R/W queue, R locks are served simultaneously. If a W lock enters the queue, the W lock must
-wait for the preceding R locks to finish service before obtaining control of the queue. All R locks that
-enter the queue after the W lock must wait until the W lock finishes service. In the U queue, U locks
-receive FCFS service. The U lock in service might be upgraded to a W lock. The W lock blocks all U
-locks. Therefore, the R/W queue and the U queue are coupled by increasing the service time for a U
+In the R/W queue, R locks are served simultaneously. If a W lock enters the queue, a W lock must
+wait for The R locks to finish service before obtaining control of the queue. All R locks that
+enter the queue after a W lock must wait until the W lock service. In the U queue, U locks
+receive FCFS service. A W lock might be upgraded to a W lock. a W lock blocks all U
+locks. Therefore, the FCFS R/W queue and the U queue are coupled by increasing the service time for a U
 lock by the expected service period (waiting time and service time) of a W lock.
 We can now list the waiting times for the three types of locks.
 W: the waiting time for a W lock is the time for all preceding R locks to finish.
@@ -443,10 +448,10 @@ for a single U lock is:
 Therefore, the utilization of the U lock queue is:
 ae
 If we model the U lock queue as a M/M/1 queue then, from [13],
-Theorem 4 The expected waiting time for a U lock in the R/U/W queue is
-Since W locks are generated from U locks, the throughput of the R/U/W queue is limited by the
+Theorem 4 The expected waiting time for a U lock in the FCFS R/W queue is
+Since W locks are generated from U locks, the throughput of the FCFS R/W queue is limited by the
 service of the U locks.
-Corollary 7 The throughput of the R/U/W queue is limited by
+Corollary 7 The throughput of the FCFS R/W queue is limited by
 U +G1 (r=r )=r
 4.1 Comparison and Experiments
 A R/U/W queue was built and experiments run. Six hundred thousand samples were taken. Table 3

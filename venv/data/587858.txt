@@ -1,7 +1,7 @@
 --T
 A Multilevel Dual Reordering Strategy for Robust Incomplete LU Factorization of Indefinite Matrices.
 --A
-A dual reordering strategy based on both threshold and graph reorderings is introduced to construct robust incomplete LU (ILU) factorization of indefinite matrices. The ILU matrix is constructed as a preconditioner for the original matrix to be used in a preconditioned iterative scheme. The matrix is first divided into two parts according to a threshold parameter to control diagonal dominance. The first part with large diagonal dominance is reordered using a graph-based strategy, followed by an ILU factorization. A partial ILU factorization is applied to the second part to yield an approximate Schur complement matrix. The whole process is repeated on the Schur complement matrix and continues for a few times to yield a multilevel ILU factorization. Analyses are conducted to show how the Schur complement approach removes small diagonal elements of indefinite matrices and how the stability of the LU factor affects the quality of the preconditioner. Numerical results are used to compare the new preconditioning strategy with two popular ILU preconditioning techniques and a multilevel block ILU threshold preconditioner.
+A dual reordering strategy based on both threshold and graph reorderings is introduced to construct robust incomplete LU (ILU) factorization of indefinite matrices. The ILU matrix is constructed as a preconditioner for the original matrix to be used in a preconditioned iterative scheme. The ILU matrix is first divided into two parts according to a threshold parameter to control diagonal dominance. The first part with large diagonal dominance is reordered using a graph-based strategy, followed by an ILU factorization. A partial ILU factorization is applied to the second part to yield an approximate Schur complement matrix. The whole process is repeated on an approximate Schur complement matrix and continues for a few times to yield a multilevel ILU factorization. Analyses are conducted to show how the Schur complement approach removes small diagonal elements of indefinite matrices and how the stability of the LU factor affects the quality of the preconditioner. Numerical results are used to compare the new preconditioning strategy with two popular ILU preconditioning techniques and a multilevel block ILU threshold preconditioner.
 --B
 Introduction
 This paper is concerned with reordering strategies used in developing robust preconditioners based
@@ -15,11 +15,11 @@ work was supported in part by the University of Kentucky Center for Computationa
 University of Kentucky College of Engineering.
 y E-mail: jzhang@cs.uky.edu. URL: http://www.cs.uky.edu/~jzhang.
 ILU preconditioning techniques have been successful for solving many nonsymmetric and indefinite
-matrices, despite the fact that their existence in these applications is not guaranteed. However,
-their failure rates are still too high for them to be used as blackbox library software for solving general
+matrices, despite the fact that ILU preconditioning techniques existence in these applications is not guaranteed. However,
+ILU preconditioning techniques failure rates are still too high for ILU preconditioning techniques to be used as blackbox library software for solving general
 sparse matrices of practical interests [9]. In fact, the lack of robustness of preconditioned iterative
-methods is currently the major impediment for them to gain acceptance in industrial applications,
-in spite of their intrinsic advantage for large scale problems.
+methods is currently the major impediment for ILU preconditioning techniques to gain acceptance in industrial applications,
+in spite of ILU preconditioning techniques intrinsic advantage for large scale problems.
 For indefinite matrices, there are at least two reasons that make ILU factorization approaches
 problematic [9]. The first problem is due to small or zero pivots [23]. Pivots in an indefinite matrix can
 be arbitrarily small. This may lead to unstable and inaccurate factorizations. In such cases, the size
@@ -27,10 +27,10 @@ of the elements in the LU factors may be very large and these large size element
 factorization. The second problem is due to unstable triangular solves [18]. The incomplete factors
 of an indefinite matrix are usually not diagonally dominant. An indication of unstable triangular
 solves is when kL are extremely large while the offdiagonal elements of L and U are
-reasonably bounded. Such problems are usually caused by very small pivots. They may sometimes
+reasonably bounded. Such problems are usually caused by very small pivots. Such problems may sometimes
 happen without a small pivot. A statistic, condest, was introduced by Chow and Saad [9] to measure
 the stability of the triangular solves. It is defined to be k(LU) \Gamma1 ek1 , where e is a vector of all ones.
-This statistic is useful when its value is very large, e.g., in the order of 10 15 .
+This statistic is useful when This statistic value is very large, e.g., in the order of 10 15 .
 Small pivots are usually related small or zero diagonal elements. It can be argued that by
 restricting the magnitude of the diagonal elements, we may be able to alleviate, if not eliminate,
 these two problems of ILU factorizations to a certain degree. Such restrictions can be seen in the
@@ -41,9 +41,9 @@ Chow and Saad pointed [9], a poor pivoting sequence can occasionally trap a fact
 pivot, even if the factorization would have succeeded without pivoting. In addition, existing pivoting
 strategies for incomplete factorization cannot guarantee that a nonzero pivot can always be found,
 unlike the case with Gaussian elimination [9].
-Another obvious strategy of dealing with small pivots is to replace them by a larger value. The
+Another obvious strategy of dealing with small pivots is to replace dealing with small pivots by a larger value. The
 ILU factorization can continue and the resulting preconditioner may be well conditioned. In such a
-way, the ILU factorization is said to be stabilized. However, this strategy alters the values of the
+way, the factorization is said to be stabilized. However, this strategy alters the values of the
 matrix and the resulting preconditioner may be inaccurate. Thus, the choice of the replacing value
 for the small pivots is critical for a good performance and a good choice is usually problem dependent
 [23]. Too large a value will result in a stable but inaccurate factorization; too small a value will result
@@ -51,18 +51,18 @@ in an unstable factorization. A similar strategy is to factor a shifted matrix A
 positive scalar so that A+ ffI is well conditioned [27, 44]. Such a strategy too obviously has a tradeoff
 between stable and accurate factorization. For more studies on the stability of ILU factorizations,
 we refer to [19, 29, 42, 13, 45].
-It is also possible to reorder the rows of the matrix so that their diagonal dominance in a certain
+It is also possible to reorder the rows of the matrix so that the rows of the matrix diagonal dominance in a certain
 sense is in decreasing order. In this way, small pivots are in the last rows of the matrix and may not
-be used in an ILU factorization. This strategy also has some problems since the values of the pivots
+be used in an ILU factorization. this strategy also has some problems since the values of the pivots
 are modified in an unpredictable way, small pivots may still affect the ILU factorization. In addition,
 the effect of standard reordering schemes applied to general nonsymmetric sparse matrices is still an
 unsettled issue [17, 24, 43].
 This paper follows the above idea of putting the rows with small diagonal elements to the last
 few rows. However, these small diagonal elements will never be used in the ILU factorization. Instead,
-these rows form the rows of a Schur complement matrix and the values of the diagonal elements are
+the rows form the rows of a Schur complement matrix and the values of the diagonal elements are
 modified in a systematic way. This process is continued for a few times until all small diagonal
 elements are removed; or until the last Schur complement matrix is small enough that a complete
-pivoting strategy can be implemented inexpensively. With this reordering strategy, we can expect to
+pivoting strategy can be implemented inexpensively. With this strategy, we can expect to
 obtain a stable and accurate ILU factorization. We also implement a graph based reordering strategy
 (minimum degree algorithm) to reduce the fill-in amount during the stable ILU factorization.
 This paper is organized as follows. The next section introduces a dual reordering strategy
@@ -73,14 +73,14 @@ affects the quality of a preconditioner. Section 5 outlines the multilevel dual 
 Section 6 contains numerical experiments. Concluding remarks are included in Section 7.
 Reordering Strategy
 Most reordering strategies are originally developed for the direct solution of sparse matrices based on
-Gaussian elimination. They are mainly used to reduce the fill-in elements in the Gaussian elimination
-process or to extract parallelism from LU factorizations [15, 22]. They have also been used in ILU
+Gaussian elimination. Most reordering strategies are mainly used to reduce the fill-in elements in the Gaussian elimination
+process or to extract parallelism from LU factorizations [15, 22]. Most reordering strategies have also been used in ILU
 preconditioning techniques for almost the same reasons [16, 20, 30]. Various reordering strategies were
 first studied for preconditioned conjugate gradient methods, i.e., for the cases where the matrix is
 symmetric positive definite [1, 4, 5, 10, 11, 26, 31]. They were then extended for treating nonsymmetric
-problems [2, 7, 12, 14]. Most of these strategies are based on the adjacency graph but not on the
+problems [2, 7, 12, 14]. Most of 30]. Various reordering strategies are based on the adjacency graph but not on the
 values of the matrices. They are robust for general sparse matrices only if used with suitable pivoting
-strategies, which are based on the values of the matrices, to prevent unstable factorizations. Hence,
+strategies, which are based on the values of general sparse matrices, to prevent unstable factorizations. Hence,
 reordering strategies based on matrix values are needed to yield robust stable ILU factorizations.
 Such an observation has largely been overlooked in ILU techniques for some time, partly because the
 early ILU techniques were mainly developed to solve sparse matrices arising from finite difference
@@ -93,9 +93,10 @@ strength of the diagonal element with respect to a certain norm of the row in qu
 is an example of computing a diagonal dominance measure for each row of the matrix and was
 originally introduced in [41] as a diagonal threshold strategy in a multilevel ILU factorization.
 1 The reference to row diagonal dominance is due to the assumption that our matrix is stored in a row oriented
-format, such as in the compressed sparse row format [34]. The proposed strategy works equally well if the matrix is
+format, such as in the compressed sparse row format [34]. The proposed strategy works equally well if our matrix is
 stored in a column oriented format with the reference to column diagonal dominance.
-Algorithm 2.1 Computing a measure for each row of a matrix.
+Algorithm 2.1
+ Computing a measure for each row of a matrix.
 1. For do
 2. r
 3. If r i 6= 0, then
@@ -106,7 +107,8 @@ Algorithm 2.1 Computing a measure for each row of a matrix.
 8. For do
 9.
 10. End do
-In Line 2 of the Algorithm 2.1 the set defined as
+In Line 2 of Algorithm 2.1
+ the set defined as
 i.e., the nonzero row pattern for the row i. A row with a small absolute diagonal value will have a
 small t i measure. A row with a zero diagonal value will have an exact zero t i measure.
 denote the adjacency graph of the matrix A, where is the
@@ -124,10 +126,12 @@ example of such graph based reordering strategies to reduce the fill-in elements
 We denote by deg(v i ) the degree of the node v i , which equals the number of nonzero elements
 of the ith row minus one; i.e.,
 The set of the degrees of the rows of the matrix A can be conveniently computed when Algorithm 2.1
-is run to compute the diagonal dominance measure of A. For example, in Line 2 of Algorithm 2.1,
+is run to compute the diagonal dominance measure of A. For example, in Line 2 of Algorithm 2.1
+ 2.1,
 the number of nonzero elements of the ith row will be counted.
 After the first reordering based on the threshold tolerance ffl, we perform a second reordering
-based on the degrees of the nodes. But the second reordering is only performed with respect to the
+based on the degrees of the nodes. But a second reordering
+based on the degrees of the nodes is only performed with respect to the
 nodes in V 1 . To be more precise, we reorder the nodes in V 1 in a minimum degree fashion; i.e., the
 nodes with smaller degrees are listed first, those with larger degrees are listed last. After the two
 steps of reorderings, we have
@@ -135,8 +139,12 @@ are the permutation matrices corresponding to the threshold tolerance reordering
 and the minimum degree reordering, respectively. We use P g here to emphasize that it is just a graph
 based reordering strategy, and is not necessarily restricted to the minimum degree reordering. Other
 graph based reordering strategies such as the Cuthill-McKee or reverse Cuthill-McKee algorithms [25]
-may be used to replace the minimum degree strategy. But their meaning may be slightly changed
-since not all neighboring nodes of a node in V 1 belong to V 1 , some of them may be in V 2 . For
+may be used to replace the minimum degree strategy. But Other
+graph based reordering strategies such as the Cuthill-McKee or reverse Cuthill-McKee algorithms [25]
+ meaning may be slightly changed
+since not all neighboring nodes of a node in V 1 belong to V 1 , some of Other
+graph based reordering strategies such as the Cuthill-McKee or reverse Cuthill-McKee algorithms [25]
+ may be in V 2 . For
 simplicity, we use A to denote both the original and the permuted matrices in the sequel so that the
 permutation matrices will no longer appear explicitly. We also refer to the two reordering strategies
 as threshold reordering and graph reordering for short.
@@ -153,7 +161,7 @@ factorization has at most p elements in each row of the L and U parts. The use o
 strategy ensures that the memory requirement be met. It is easy to see that the total storage cost
 for ILUT is bounded by 2pn for a matrix of order n.
 The ILUT process is continued to the second part of the matrix A in (2) with respect to the
-C) submatrix. However, the elimination process is only performed with respect to the columns in
+C) submatrix. However, The ILUT process is only performed with respect to the columns in
 E, and linear combinations for columns in C are performed accordingly. In other words, the elements
 corresponding to the C submatrix are not eliminated. Such a process is called a partial Gaussian
 elimination or a partial LU factorization in [38]. Note that, due to the partial Gaussian elimination,
@@ -167,15 +175,17 @@ Schur complement indirectly, in contrast to some alternative methods, e.g., the 
 in [37], in which the Schur complement is constructed explicitly by matrix-matrix multiplications.
 The partial ILU factorization process just described yields a block LU factorization of the matrix
 A of the form ' D F
-where I and 0 are generic identity and zero matrices, respectively. If the factorization is exact and if
+where I and 0 are generic identity and zero matrices, respectively. If LU factorization of the matrix
+A of the form ' D F
+where I and 0 are generic identity and zero matrices, respectively is exact and if
 we can solve the Schur complement matrix A 1 , the solution of the original linear system (1) can be
-found by a backward substitution. This process is similar to the sparse direct solution method based
+found by a backward substitution. The partial ILU factorization process is similar to the sparse direct solution method based
 on one step cyclic reduction technique [22].
 The partial ILU factorization process is the backbone of a domain based multilevel ILU pre-conditioning
 technique (BILUTM) described in [38]. Such an ILU factorization with a suitable block
 independent set ordering yields a preconditioner (BILUTM) that is highly robust and possesses high
 degree of parallelism. However, in this paper, the parallelism due to block independent set ordering is
-not our concern, we restrict our attention to the robustness of multilevel ILU factorization resulting
+not our concern, our restrict our attention to the robustness of multilevel ILU factorization resulting
 from removing small pivots.
 We can heuristically argue that the ILU factorization resulting from applying the above partial
 ILU factorization to the reordered matrix is likely to be more stable than that would be generated
@@ -196,7 +206,7 @@ Notice that since the nodes with good diagonal dominance have all been factored 
 to think that the nodes of A 1 are not good for a stable ILUT factorization. This may not always be
 true, since the measure of diagonal dominance computed in Algorithm 2.1 is relatively to a certain
 norm of the row in question. We need to examine relative changes in size of the diagonal value when
-a node is considered as a node in A and when it is considered as a node in A 1 .
+a node is considered as a node in A and when a node is considered as a node in A 1 .
 4 Analyses
 Diagonal submatrix D. For the easy of analysis, unless otherwise indicated explicitly, we assume
 that the partial LU factorization described above is exact; i.e., no dropping strategy is enforced. We
@@ -205,15 +215,15 @@ achieved by an independent set search as in a multielimination strategy of Saad 
 factorization (4) is reduced to
 ED
 '' D F
-We now assume that all indices are local to individual submatrices. In other words, when we say the
-ith row of the matrix F , we mean the ith row of the submatrix F , not the ith row of the matrix A,
+We now assume that all indices are local to individual submatrices. In other words, when We say the
+ith row of the matrix F , We mean the ith row of the submatrix F , not the ith row of the matrix A,
 original or permuted. For convenience we assume that D is of dimension m and A 1 is of dimension
 m. We also use the notations:
 It can be shown [22, 38] that, with the partial LU factorization without dropping, an arbitrary
 element of the Schur complement matrix A 1 is:
 Since we assume that the nodes with large diagonal dominance measure are in V 1 and the nodes in
 have small or zero diagonal dominance measure, we are interested in knowing how the diagonal
-value of a node of A may change when it becomes a node in A 1 .
+value of a node of A may change when a node of A becomes a node in A 1 .
 row i
 F
 e ik
@@ -233,7 +243,7 @@ An immediate consequence of the independentness is the following corollary that 
 [39].
 Corollary 4.3 If a node v i in V 2 is independent to all the nodes in V 1 , then s i.e., the values
 of the ith row of C will not be modified in the partial LU factorization.
-We now modify our threshold tolerance reordering strategy slightly to a diagonal threshold
+We now modify We threshold tolerance reordering strategy slightly to a diagonal threshold
 strategy, similar to that discussed in [39]. We assume that the node v i is in V 1 if ja ii j - ffl and D
 is still a diagonal matrix. With such a modification, we have jd m. Denote by
 the size of the largest elements in absolute value of A.
@@ -243,7 +253,7 @@ Proof. Starting from Equation (6):
 +mM=ffl):Proposition 4.4 shows that the size of the elements of the Schur complement matrix cannot
 grow uncontrollably if ffl is large enough. This result indicates that our first level (I)LU factorization
 is stable.
-As we hinted previously, we will be interested in recursively applying our strategy to the successive
+As we hinted previously, we will be interested in recursively applying we strategy to the successive
 Schur complement matrices. We may assume that the matrix A is presparsified so that small
 nondiagonal elements are removed. To be more specific, for the parameter - used in the ILUT fac-
 torization, we assume min 1-i;j-n fja ij jg - for all nonzero elements of A, except for possibly the
@@ -257,7 +267,7 @@ and the ith column of the F submatrix, respectively. card(V ) denotes the cardin
 Proof. If either c ik f ki =d k - 0 or c ik f ki =d k - 0 holds for all 1 - k - m, we have
 The kth term in the right-hand side sum of (7) is nonzero if and only if both e ik and f ki are nonzero.
 This happens if and only if k 2 Nz(E
-Note that jc ik j -; jf ki j - and jd k m. It follows that
+Note ik ik j -; jf ki j - and jd k m. It follows that
 card
 :It is implicitly assumed that ffl ! M . In practice, ffl is small so that the set V 1 may be large
 enough to avoid constructing a large Schur complement matrix. Denote
@@ -274,7 +284,7 @@ are given to restrict the class of matrices under consideration, it is possible 
 bounds to characterize the size of the elements of the Schur complement matrix, especially the size
 of its diagonal elements.
 General submatrix D. For general submatrix D corresponding to the factorization (4), it is easy
-to see that, if the jth column of the submatrix F is zero, the jth column of the submatrix L \Gamma1 F is
+to see that, if the jth column of the submatrix F is zero, the jth column of the submatrix L the submatrix F is
 zero. Hence, Proposition 4.1 carries over to the general case.
 At this moment, we are unable to show results analogous to Propositions 4.4 and 4.5 for general
 submatrix D. However, it can be argued heuristically that, if D is not a diagonal matrix, the
@@ -288,9 +298,9 @@ w as an approximate
 to the correction term of the current iterate. The quality of the preconditioning step (9) can be
 judged by comparing (9) with the exact or perfect preconditioning step
 If Equation (10) could be solved to yield the exact correction term w, the preconditioned iterative
-method would converge in one step. Of course, solving the Equation (10) is as hard as solving the
+method would converge in one step. Of course, solving Equation (10) is as hard as solving the
 original system (1). However, we can measure the relative difference in the correction term when
-approximating the Equation (10) by the Equation (9). This difference may tell us how good the
+approximating Equation (10) by the Equation (9). the relative difference in the correction term may tell us how good the
 preconditioning step (9) approximates the exact preconditioning step (10). The following proposition
 is motivated by the work of Kershaw [23].
 Proposition 4.7 Suppose the matrix A and the factor LU from the incomplete LU factorization are
@@ -306,9 +316,9 @@ The desired result (11) follows immediately by dividing kwk on both sides. 2
 It is well known that the size of the error matrix E directly affects the convergence rate of the
 preconditioned iterative methods [16]. Proposition 4.7 shows that the quality of a preconditioning
 step is directly related to the size of both (LU) \Gamma1 and R. A high quality preconditioner must be
-accurate; i.e., it must have an error matrix that is small in size. A high quality preconditioner must
+accurate; i.e., high quality preconditioner must have an error matrix that is small in size. A high quality preconditioner must
 also have a stable factorization and stable triangular solves; i.e., the size of (LU) \Gamma1 must be small.
-Since the condition estimate, condest is a lower bound for k(LU) \Gamma1 k1 , it should
+Since the condition estimate, condest is a lower bound for k(LU) \Gamma1 k1 , \Gamma1 k1 should
 provide some information about the quality of the preconditioner and may be used to measure the
 stability of the LU factorization and of the triangular solves.
 5 Multilevel Dual Reordering and ILU Factorization
@@ -319,7 +329,8 @@ A 1 the procedures that were applied to A. This process may be repeated for a fe
 all small diagonal elements are modified to large values, or until the last Schur complement matrix
 is small enough that an ILU factorization with a complete pivoting strategy can be implemented
 inexpensively. Since the number of small or zero pivots in the last Schur complement matrix is small,
-a third strategy is to replace them by a large value. This will not introduce too much error to the
+a third strategy is to replace the number of small or zero pivots in the last Schur complement matrix is small,
+ by a large value. This will not introduce too much error to the
 overall factorization. Given a maximum level L and denote A the multilevel dual reordering
 strategy and ILU factorization can be formulated as Algorithm 5.1.
 Algorithm 5.1 Multilevel dual reordering and ILU factorization.
@@ -352,11 +363,12 @@ Standard implementations of multilevel preconditioning methods have been describ
 ILUT of [32], a column pivoting variant ILUTP [32], and the multilevel dual reordering preconditioner
 designed in this paper, abbreviated as MDRILU (multilevel dual reordering ILU factorization). All
 preconditioners used a safeguard (stabilization) procedure by replacing a zero pivot with (0:0001+-)r i ,
-where r i was computed as the average nonzero values of the row in question. They were used as right
+where r i was computed as the average nonzero values of the row in question. -)r i ,
+where r i was computed as the average nonzero values of the row in question were used as right
 preconditioners for GMRES [34]. The main parameters used in all three preconditioners are the pair
 (p; -) in the double dropping strategy. ILUTP needs another parameter 0 - oe - 1 to control the
 actual pivoting. A nondiagonal element a ij is a candidate for a permutation only when oeja
-It is suggested that reasonable values of oe are between 0:5 and 0:01, with 0:5 being the best in
+A nondiagonal element a ij is suggested that reasonable values of oe are between 0:5 and 0:01, with 0:5 being the best in
 many cases [34, p. 295]. MDRILU also needs another parameter ffl to enforce the diagonal threshold
 reordering as in Algorithm 5.1. The maximum possible level number in MDRILU was
 levels of dual reorderings the Schur complement A 10 is not empty, a stabilized ILUT factorization
@@ -371,7 +383,7 @@ of the preconditioner to that of the original matrix; "prec" shows the CPU time 
 constructing the preconditioners; is the condition estimate of the preconditioners
 as introduced in Section 1. Since these ILU preconditioners approach direct solvers as
 robustness with respect to the memory cost (sparsity ratio). We remark
-that our codes were not optimized and they computed and outputed information such as the number
+that We codes were not optimized and our codes computed and outputed information such as the number
 of zero diagonals, smallest pivots, ets. Consequently, the CPU times reported in this paper only have
 relative meaning. Note that the solution time at each iteration is mainly the cost of the matrix (both
 A and the preconditioner) vector products and is thus proportional to the product of the iteration
@@ -380,8 +392,8 @@ The numerical experiments were conducted on a Power-Challenge XL Silicon Graphic
 equipped with 512 MB of main memory, one 190 MHz R10000 processor, and 1 MB secondary
 cache. We used Fortran 77 programming language in 64 bit arithmetic computation.
 Test matrices. Three test matrices were selected from different applications. Table 1 contains
-simple descriptions of the test matrices. They have been used in several other papers [6, 9, 39, 46].
-None of the three matrices has a zero diagonal.
+simple descriptions of the test matrices. Three test matrices have been used in several other papers [6, 9, 39, 46].
+None of Three test matrices has a zero diagonal.
 Matrix order nonzeros description
 buckling problem for container model
 simulation
@@ -393,7 +405,7 @@ Table
 3 We found stabilized ILUT was better than ILUTP for solving the last system. We did not implement an ILUT
 factorization with a full pivoting strategy.
 WIGTO966 matrices. The WIGTO966 matrix 4 was supplied by L. Wigton from Boeing Com-
-pany. It is solvable by ILUT with large values of p [6]. This matrix was also used to compare BILUM
+pany. It is solvable by ILUT with large values of p [6]. The WIGTO966 matrix 4 was also used to compare BILUM
 with ILUT in [36], and BILUTM with ILUT in [38], and to test point and block preconditioning
 techniques in [8, 9]. Since ILUT requires very large amount of fill-in to converge, the WIGTO966
 matrix is ideal to test alternative preconditioners and to show the least memory that is required for
@@ -423,8 +435,7 @@ is more robust than ILUT for solving the WIGTO966 matrix. ILUT required high spa
 to converge. For those cases, ILUTP was able to converge with fewer iterations. When we chose
 failed to converge, but ILUTP converged in 49 iteration with a sparsity
 ratio 3:06. Notice that both ILUTP and ILUT did not converge with
-MDRILU could converge with these parameters. We point out that the condition estimates of ILUTP
-are much smaller than those of ILUT. This implies that ILUTP did stabilize the ILU factorization
+MDRILU could converge with these parameters. We point out that the condition estimates of ILUTPare much smaller than those of ILUT. This implies that ILUTP did stabilize the ILU factorization
 process with a column pivoting strategy, although there was no very small pivot in the factorization.
 The results of Table 3 also show that the additional cost of implementing ILUTP is not high in
 this test. However, as far as solving the WIGTO966 matrix is concerned, computing an MDRILU
@@ -432,7 +443,7 @@ preconditioner is much cheaper than computing either an ILUT or an ILUTP precond
 RAEFSKY4 matrices. The RAEFSKY4 matrix 5 was supplied by H. Simon from Lawrence
 Berkeley National Laboratory (originally created by A. Raefsky from Centric Engineering). This is
 4 The WIGTO966 matrix is available from the author.
-5 The RAEFSKY4 matrix is available online from the University of Florida Sparse Matrix Collection at
+5 The RAEFSKY4 matrix 5 is available online from the University of Florida Sparse Matrix Collection at
 http://www.cise.ufl.edu/~davis/sparse.
 ILUTP ILUT
 iter prec spar cond iter prec spar cond
@@ -467,11 +478,11 @@ We found that the iteration count and the condition estimate were linked
 to each other. A large value of condition estimate is usually accompanied by a large iteration count
 of MDRILU. We also see that the convergence rates of MDRILU are not very sensitive to the choice
 of the value of ffl. For 0:38 - ffl - 0:78, MDRILU gave very similar performance.
-UTM5940 matrix. The UTM5940 matrix 6 is the largest matrix from the TOKAMAK collection
+UTM5940 matrix. UTM5940 matrix is the largest matrix from the TOKAMAK collection
 and was provided by P. Brown of Lawrence Livermore National Laboratory. Table 4 contains a few
 runs with MDRILU and ILUT with different sparsity ratios. It is clear that MDRILU is more efficient
 than ILUT when the sparsity ratios are low. The results are also consistent with other test results,
-6 The UTM5940 matrix is available from online the MatrixMarket of the National Institute of Standards and Tech-
+6 UTM5940 matrix is available from online the MatrixMarket of the National Institute of Standards and Tech-
 RAEFSKY4 Matrix
 iterations
 epsilon
@@ -501,12 +512,12 @@ Figure
 iterations did not change very much when - changed from 1.0e-2 to 1.0e-5 and the sparsity ratio
 changed from 2:67 to 4:15. It seems that MDRILU worked quite well with a relatively strict dropping
 tolerance.
-FIDAP matrices. The FIDAP matrices 7 were extracted from the test problems provided in
-the FIDAP package [21]. They were generated by I. Hasbani of Fluid Dynamics International and
-B. Rackner of Minnesota Supercomputer Center. The matrices were resulted from modeling the incompressible
+FIDAP matrices. FIDAP matrices were extracted from the test problems provided in
+the FIDAP package [21]. FIDAP matrices were generated by I. Hasbani of Fluid Dynamics International and
+B. Rackner of Minnesota Supercomputer Center. FIDAP matrices were resulted from modeling the incompressible
 Navier-Stokes equations and were generated using whatever solution method was specified
 in the input decks. However, if the penalty method was used, there is usually a corresponding
-7 All FIDAP matrices are available online from the MatrixMarket of the National Institute of Standards and Tech-
+7 FIDAP matrices are available online from the MatrixMarket of the National Institute of Standards and Tech-
 2-norm
 residual
 iterations
@@ -521,11 +532,11 @@ Figure
 4: Convergence history of MDRILU with different values of dropping tolerance - for solving
 the UTM5940 matrix.
 FIDAPM matrix, which was constructed using a fully coupled solution method (mixed u-p formula-
-tion). The penalty method gives very ill conditioned matrices, whereas the mixed u-p method gives
+tion). the penalty method gives very ill conditioned matrices, whereas the mixed u-p method gives
 indefinite, larger systems (they include pressure variables).
-Many of these matrices contain small or zero diagonal values. 8 The zero diagonals are due to
+Many of FIDAP matrices contain small or zero diagonal values. 8 The zero diagonals are due to
 the incompressibility condition of the Navier-Stokes equations [9]. The substantial amount of zero
-diagonals makes these matrices indefinite. It is remarked in [6] that the FIDAP matrices are difficult
+diagonals makes FIDAP matrices indefinite. It is remarked in [6] that FIDAP matrices are difficult
 to solve with ILU preconditioning techniques, which require high level of fill-in to be effective and the
 performance of the preconditioners is unstable with respect to the amount of fill-in. Many of them
 cannot be solved by the standard BILUM preconditioner and in some cases, even the construction of
@@ -534,20 +545,20 @@ be solved by the enhanced version of BILUM using singular value decomposition ba
 inverse technique and variable block size [40].
 The details of all of the largest 31 FIDAP matrices (n ? 2000) are listed in Table 5 and the
 corresponding test results are given in Table 6. The second column of Table 6 lists the number of
-zero diagonals of the given matrix. In our tests, we first set
-0:5; 0:3; 0:1; 0:01. If none of these ffl values showed any promise, we increased the p value or decreased
+zero diagonals of the given matrix. In our tests, our first set
+0:5; 0:3; 0:1; 0:01. If none of these ffl values showed any promise, our increased the p value or decreased
 the - value. If for a given pair of (p; - ), MDRILU with a certain value of ffl converged or showed some
-convergence, we adjusted the value of ffl to get improved convergence rates if possible. However, there
-was no effort made to find the best parameters. We stopped refining the parameters when we found
+convergence, our adjusted the value of ffl to get improved convergence rates if possible. However, there
+was no effort made to find the best parameters. our stopped refining the best parameters when our found
 the iteration count was reasonable and the sparsity ratio was not high, or the computations took too
 much time in case of large matrices. Once MDRILU was tested, the same pair (p; -) was used to test
-ILUTP and ILUT. For ILUTP, we varied the value of oe analogously to what we did to choose the
+ILUTP and ILUT. For ILUTP, we varied the value of oe analogously to what our did to choose the
 value of ffl.
 
 Table
 
 6 shows that MDRILU can solve 27 out of the 31 largest FIDAP matrices. To the best of
-8 The FIDAP matrices have structural zeros added on the offdiagonals to make them structurally symmetric. Structural
+8 FIDAP matrices have structural zeros added on the offdiagonals to make FIDAP matrices structurally symmetric. Structural
 zeros were also added to the diagonals.
 Matrix order nonzeros description
 developing flow in a vertical channel
@@ -584,14 +595,15 @@ our knowledge, this is the first time that so many FIDAP matrices were solved by
 technique. (20 were solved in [40], in [46], 9 in [39], and 8 in [9].) In Table 6 the term "unstable"
 means that convergence was not reached in 100 iterations and the condition estimate was greater than
 Similarly the term "inaccurate" means that convergence was not reached, but the condition
-estimate did not exceed 10 15 . They are categorized according to Chow and Saad's arguments [9]. We
+estimate did not exceed 10 15 . the condition
+estimate are categorized according to Chow and Saad's arguments [9]. We
 remark that the results of "inaccurate" or "unstable" in Table 6 do not indicate that ILUT or ILUTP
 can or cannot solve the given matrices with different parameters. The results only mean that they
 did not converge with the parameters that made MDRILU converge. It is worth pointing out that,
 in several tests, we observed that ILUTP encountered zero pivots when ILUT did not.
 Although we allowed 10 levels of maximum dual reorderings to be performed, there were very
 few cases that 10 levels of reorderings were actually needed. In most cases, 3 to 4 levels of dual
-reorderings were performed for the FIDAP matrices. In many cases, the first Schur complement
+reorderings were performed for FIDAP matrices. In many cases, the first Schur complement
 MDRILU ILUTP ILUT
 Matrix zero-d p - ffl iter spar iter spar iter spar
 unstable unstable
@@ -614,11 +626,14 @@ For all the FIDAP matrices solved by MDRILU, only the FIDAP026 matrix had 12 zer
 in the last Schur complement A 5 . The test results show that the multilevel dual reordering strategy
 does have the effect of removing small and zero pivots from ILU factorizations.
 Remarks. Ironically, the four matrices, FIDAP011, FIDAP015, FIDAP018, and FIDAP035, that
-were not solved by MDRILU do not have any zero diagonals. They may be solved by ILUT with
-small values of - . Some of them may even be solved by GMRES without preconditioning if enough
-iterations are allowed. We think this is because these matrices are very nonsymmetric and the
+were not solved by MDRILU do not have any zero diagonals. the four matrices, FIDAP011, FIDAP015, FIDAP018, and FIDAP035, that
+were not solved by MDRILU may be solved by ILUT with
+small values of - . Some of the four matrices, FIDAP011, FIDAP015, FIDAP018, and FIDAP035, that
+were not solved by MDRILU may even be solved by GMRES without preconditioning if enough
+iterations are allowed. We think this is because the four matrices, FIDAP011, FIDAP015, FIDAP018, and FIDAP035, that
+were not solved by MDRILU are very nonsymmetric and the
 preconditioned matrices were worse conditioned than the original matrices, causing GMRES iteration
-to converge extremely slowly. One of our strong feeling in these numerical experiments is that, in
+to converge extremely slowly. One of We strong feeling in these numerical experiments is that, in
 general, MDRILU does not seem to work well when - is very small. Large values of p usually improve
 convergence. This observation can be seen in Figure 5 which depicts the convergence history of
 Matrix A 0 A 1 A 3 A 4 A 5
@@ -644,14 +659,16 @@ Figure
 the FIDAPM11 matrix.
 7 Conclusion
 We have proposed a multilevel dual reordering strategy for constructing robust ILU preconditioners
-for solving general sparse indefinite matrices. This reordering strategy is combined with a partial
+for solving general sparse indefinite matrices. a multilevel dual reordering strategy for constructing robust ILU preconditioners
+for solving general sparse indefinite matrices is combined with a partial
 ILU factorization procedure to construct recursive Schur complement matrices. The preconditioner
 is a multilevel ILU preconditioner. However, the constructed preconditioner (MDRILU) is different
 from all existing multilevel preconditioners in a fundamental concept [37, 47]. MDRILU never intends
-to utilize any traditional multilevel property, it uses the Schur complement approach solely for the
+to utilize any traditional multilevel property, 47]. MDRILU uses the Schur complement approach solely for the
 purpose of removing small pivots.
 We conducted analyses on simplified model problems to find out how the size of the small diagonal
-elements and other elements is modified when these elements become the elements of the Schur
+elements and other elements is modified when the small diagonal
+elements and other elements become the elements of the Schur
 complement matrix. We gave an upper bound for the size of general elements of the Schur complement
 matrix to show that their size will not grow uncontrollably if a suitable threshold reordering based
 on the diagonal dominance measure is implemented. We also showed that under certain conditions,
@@ -664,8 +681,7 @@ well as a small size error matrix. In other words, both accuracy and stability a
 preconditioner.
 We performed numerical experiments to compare MDRILU with two popular ILU precondi-
 tioners. Our numerical results show that MDRILU is much more robust than both ILUT and ILUTP
-for solving most indefinite matrices under current consideration. The most valuable advantage of
-MDRILU is that it can construct a sparse high quality preconditioner with low storage cost. The
+for solving most indefinite matrices under current consideration. The most valuable advantage ofMDRILU MDRILU is that MDRILU can construct a sparse high quality preconditioner with low storage cost. The
 preconditioners computed by MDRILU are more stable than those computed by ILUT and ILUTP,
 thanks to the ability of MDRILU to remove (not replace) the small diagonal values.
 Both analytic and numerical results strongly support our conclusion that the multilevel dual
@@ -737,5 +753,5 @@ Wang , Jun Zhang, A new stabilization strategy for incomplete LU preconditioning
 Kai Wang , Jun Zhang , Chi Shen, Parallel Multilevel Sparse Approximate Inverse Preconditioners in Large Sparse Matrix Computations, Proceedings of the ACM/IEEE conference on Supercomputing, p.1, November 15-21,
 Jeonghwa Lee , Jun Zhang , Cai-Cheng Lu, Incomplete LU preconditioning for large scale dense complex linear systems from electromagnetic wave scattering problems, Journal of Computational Physics, v.185 n.1, p.158-175, 10 February
 Chi Shen , Jun Zhang, Parallel two level block ILU Preconditioning techniques for solving large sparse linear systems, Parallel Computing, v.28 n.10, p.1451-1475, October 2002
-Chi Shen , Jun Zhang , Kai Wang, Distributed block independent set algorithms and parallel multilevel ILU preconditioners, Journal of Parallel and Distributed Computing, v.65 n.3, p.331-346, March 2005
+Chi Shen , Jun Zhang , Wang, Distributed block independent set algorithms and parallel multilevel ILU preconditioners, Journal of Parallel and Distributed Computing, v.65 n.3, p.331-346, March 2005
 Michele Benzi, Preconditioning techniques for large linear systems: a survey, Journal of Computational Physics, v.182 n.2, p.418-477, November 2002

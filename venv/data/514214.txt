@@ -1,7 +1,7 @@
 --T
 Markov model prediction of I/O requests for scientific applications.
 --A
-Given the increasing performance disparity between processors and storage devices, exploiting knowledge of spatial and temporal I/O requests is critical to achieving high performance, particularly on parallel systems. Although perfect foreknowledge of I/O requests is rarely possible, even estimates of request patterns can potentially yield large performance gains. This paper evaluates Markov models to represent the spatial patterns of I/O requests in scientific codes. The paper also proposes three algorithms for I/O prefetching. Evaluation using I/O traces from scientific codes shows that highly accurate prediction of spatial access patterns, resulting in reduced execution times, is possible.
+Given the increasing performance disparity between processors and storage devices, exploiting knowledge of spatial and temporal I/O requests is critical to achieving high performance, particularly on parallel systems. Although perfect foreknowledge of I/O requests is rarely possible, even estimates of request patterns can potentially yield large performance gains. This paper evaluates Markov models to represent the spatial patterns of I/O requests in scientific codes. This paper also proposes three algorithms for I/O prefetching. Evaluation using I/O traces from scientific codes shows that highly accurate prediction of spatial access patterns, resulting in reduced execution times, is possible.
 --B
 INTRODUCTION
 The disparity between processor and disk performance
@@ -10,11 +10,11 @@ high-performance processors and high-capacity storage
 devices. As parallel systems (e.g., clusters) are increasingly
 constructed using large numbers of commodity components,
 This work was supported in part by the National Science
-Foundation under grants NSF ASC 97-20202, NSF ASC 99-
+Foundation under grants NSF ASC 97-20202, NSF 99-
 75248 and NSF EIA-99-72884; by the Department of Energy
 under contracts LLNL B341494 and LLNL B505214; and by
 the NSF Alliance PACI Cooperative Agreement.
-Permission to make digital or hard copies of all or part of this work for
+Permission to make digital or hard copies of all or part of This work for
 personal or classroom use is granted without fee provided that copies are
 not made or distributed for profit or commercial advantage and that copies
 bear this notice and the full citation on the first page. To copy otherwise, to
@@ -43,7 +43,7 @@ complex, irregular patterns, an enumeration of the complete
 request stream often requires multilevel instrumentation to
 capture and record I/O patterns for reuse when guiding future
 executions. Not only is such instrumentation expensive,
-it requires storing the access pattern.
+such instrumentation requires storing the access pattern.
 Rather than specifying a complex I/O pattern exactly,
 probabilistic models can potentially capture the salient features
 more compactly by describing likely request sequences.
@@ -54,17 +54,18 @@ behind decisions. Hence, this paper explores techniques for
 constructing compact, Markov models of spatial access pat-
 terns, evaluating the e-cacy of the predictions using I/O
 traces drawn from large-scale scientic codes.
-The remainder of the paper is organized as follows. In x2,
+The remainder of this paper is organized as follows. In x2,
 we outline Markov model construction techniques. This is
 followed in x3{x4 by a description of our implementation and
-test suite. In x5, we describe the results of trace-driven simulations
+test suite. In x5, our describe the results of trace-driven simulations
 that evaluate the performance of several prediction
 algorithms, as well as timing experiments using scientic
 codes. Finally, in x6{x7, we summarize related work and
 results, and we outline plans for future work.
 2. MARKOV MODEL PREDICTION
 One of the lessons from experimental analysis of I/O patterns
-in parallel codes is that their behavior is far more
+in parallel codes is that I/O patterns
+in parallel codes behavior is far more
 complex than originally expected [4, 16, 14, 18, 13]. Unlike
 sequential I/O patterns on vector systems, parallel I/O
 1.5e+062.5e+063.5e+064.5e+060 2000 4000 6000 8000 10000 12000 14000 16000
@@ -80,7 +81,9 @@ patterns are often strided or irregular and vary widely in
 size.
 2.1 I/O Pattern Complexity
 Simple approaches to le system tuning such as N-block
-read ahead work well for sequential access patterns, but they
+read ahead work well for sequential access patterns, but I/O Pattern Complexity
+Simple approaches to le system tuning such as N-block
+
 are inappropriate for more irregular patterns. As an example
 
 Figure
@@ -103,8 +106,7 @@ model. A Markov model with N states can be fully described
 by its transition matrix P . Each value P ij of this N by N
 matrix represents the probability of a transition to state j
 from the current state i. Because the transition probabilities
-depend only on the current state, the transition path to the
-current state does not aect future state transitions; this
+depend only on the current state, the transition path to the current state does not aect future state transitions; this
 characteristic is known as the Markov property [7].
 Given a le system block size, we create a state for every
 block associated with each le. Because application I/O requests
@@ -143,7 +145,8 @@ likely after access to block zero. However, if block three has
 already been accessed, the next block to follow block zero is
 block four.
 2.3 Prediction Strategies
-Given an I/O access pattern Markov model, it can be
+Given an I/O access pattern Markov model, 2.3 Prediction Strategies
+ can be
 used during a subsequent application execution to predict
 future I/O accesses. Several dierent prediction strategies,
 based on the Markov model, are possible, ranging in complexity
@@ -159,8 +162,8 @@ directly on N-step transition models from Markov theory.
 Hence, we call this algorithm greedy-xed.
 The sequence of predicted blocks stops when a specied
 number of blocks is reached, though other terminating conditions
-are possible. For instance, the sequence might be
-terminated when the total likelihood of the sequence drops
+are possible. For instance, The sequence of predicted blocks might be
+terminated when the total likelihood of The sequence of predicted blocks drops
 below a given threshold. This results in predictions of varying
 length. In either case, the greedy-xed prediction strategy
 provides a (possibly variable length) le block sequence
@@ -168,14 +171,14 @@ that can be used for prefetching or write behind.
 Path Prediction. Greater prediction accuracy may be possible
 by choosing a sequence with the highest total likeli-
 hood, rather than choosing the most likely sequence of single
-step transitions. This method treats the Markov model
+step transitions. The simplest prediction method treats the Markov model
 as a graph and performs a depth-limited search, beginning
 at the current state, to nd the most likely path. We call
 this path-xed prediction. It can choose less likely initial
-transitions if they lead to high probability sequences.
+transitions if It lead to high probability sequences.
 Amortized Prediction. For I/O access patterns that revisit
 a block many times, the most likely predicted path may not
-visit the block. However, enough alternate paths may visit
+visit a block. However, enough alternate paths may visit
 the block to cause it to be accessed more often during the
 application execution. To explore the eectiveness
 of such a approach, we propose a method called amortized
@@ -256,7 +259,7 @@ variety of le caching, prefetching, and data policies. PPFS2
 executes atop a Linux cluster and uses the underlying le
 system for I/O. We have used PPFS2 to study temporal
 access pattern prediction via time series [19, 20].
-In conducting experiments, we used a cluster of 32 dual
+In conducting experiments, We used a cluster of 32 dual
 processor, 933 MHz Intel Pentium III systems linked though
 Gigabit Ethernet. Each machine contained 1 GB of memory
 and ran the Linux 2.2 kernel. Disk requests were serviced
@@ -264,11 +267,12 @@ by an on each machine.
 4. SCIENTIFIC APPLICATION SUITE
 To assess the accuracy of compact Markov models for
 I/O prediction and their utility for le block prefetching,
-we chose a suite of six scientic applications. These parallel
+We chose a suite of six scientic applications. These parallel
 applications have been the subject of extensive analysis [4,
-16, 14] and were chosen for their large size and variety of
+16, 14] and were chosen for These parallel
+applications large size and variety of
 I/O request characteristics.
-All I/O traces were obtained using our Pablo I/O characterization
+All I/O traces were obtained using We Pablo I/O characterization
 toolkit [4]. For simplicity, we have used the I/O
 trace data from a single node of each parallel application
 execution, and we model the application's requests to a sin-
@@ -283,16 +287,15 @@ Figure
 gle le. Each application code is brie
 y described in the
 paragraphs below.
-Cactus. The Cactus code [2] is a modular environment for
+Cactus. Each application code Cactus is a modular environment for
 developing high-performance, multidimensional simulations,
 particularly for numerical relativity; the test problem used
 to obtain the I/O trace was a black hole simulation.
 The read requests for this test problem were all extremely
 small, with the largest being a mere sixteen bytes, though
 the le request osets span almost a gigabyte. Over percent
-of the requests are sequential, and almost 98 percent
-are within 50 bytes of the previous request. However, the
-remaining requests are to regions at least 1 MB from the previous
+of The read requests for this test problem this test problem are sequential, and almost 98 percent
+are within 50 bytes of the previous request. However, The read requests for this test problem this test problem are to regions at least 1 MB from the previous
 request and often greater than 10 MB away. Figure 4
 shows a detailed view of the rst six hundred requests.
 CONTINUUM. CONTINUUM 1 is an unstructured mesh
@@ -315,9 +318,9 @@ Hartree-Fock. The Hartree-Fock code [5] calculates interactions
 among atomic nuclei and electrons in reaction paths,
 Trace data for the CONTINUUM and HYDRO codes are
 taken from codes that use an existing serial I/O library.
-Developers analyzed this library and determined it to be
+Developers analyzed this library and determined this library to be
 unsuitable for a parallel environment. Developers of the
-replacement I/O library expect a very dierent pattern of
+replacement this library expect a very dierent pattern of
 I/O once the new library is integrated into the codes.1e+063e+065e+060 50 100 150 200 250 300 350 400
 Initial
 offset
@@ -339,10 +342,10 @@ storing numerical quadrature data for subsequent reuse. I/O
 requests each retrieve 80 KB of data, and the le is accessed
 sequentially six times. Figure 6 shows the le osets and
 data reuse.
-HYDRO. HYDRO 1 is a block-structured mesh hydrodynamics
+HYDRO. HYDRO is a block-structured mesh hydrodynamics
 code with multi-group radiation diusion. The majority
 of I/O accesses are to three widely separated regions of
-the le. Sixty-seven percent of the accesses follow sequentially
+the le. Sixty-seven percent of /O accesses follow sequentially
 from the previous access, but seeks of up to almost
 eight million bytes also occur. The distribution of the request
 sizes ranges from one byte to almost one million bytes.
@@ -352,7 +355,7 @@ As
 
 Figure
 
-8 shows, the application issues two sequential re-
+8 shows, This application issues two sequential re-
 quests, followed by a seek to the next portion of the le.
 Request sizes range from 370 KB to almost 2 MB.
 5. EXPERIMENTAL ASSESSMENT
@@ -369,7 +372,17 @@ Figure
 
 8: SAR I/O Request Pattern
 the associated I/O patterns and analyzed the accuracy of
-these models by comparing model predictions with actual
+Markov models for
+Request
+position
+and
+extent
+(bytes)
+Request number
+
+Figure
+
+8 by comparing model predictions with actual
 I/O requests. We also investigated the eect of le block
 sizes on model size and complexity and analyzed prediction
 accuracy for both single and multiple block predictions.
@@ -391,7 +404,7 @@ Block Size. The most basic choice when building Markov
 models of I/O activity is the choice of block size. Matching
 the model's block size to le cache or disk block size is the
 most natural choice. Intuitively, larger block sizes reduce
-the model's storage requirements, but they provide weaker
+the model's storage requirements, but larger block sizes provide weaker
 bounds on the range of bytes requested. Larger blocks provide
 implicit prefetching, which interacts with access pattern
 sequentiality and request size.
@@ -402,7 +415,8 @@ Figure
 block lookahead) prediction accuracy of each I/O trace
 as a function of block size. The CONTINUUM, HYDRO,
 Cactus, and Dyna3D codes all show high accuracy for each
-block size, and this accuracy is near constant across block
+block size, and high accuracy for each
+block size is near constant across block
 sizes.
 In contrast, the prediction accuracy for the SAR code declines
 sharply as the block size increases due to repeated le
@@ -438,7 +452,8 @@ Figure
 the block size to the request size. As the block size approaches
 the request size from above, each state in the associated
 Markov model has a single transition to the next
-state and fewer transitions back to itself. From the other
+state and fewer transitions back to each state in the associated
+Markov model. From the other
 side, self-transitions interrupt the procession from one state
 to another more frequently. These factors result in a model
 where the most likely state transition has a low probability
@@ -491,7 +506,7 @@ after each block request, and the predicted blocks are loaded
 if not already there. Replacement is via a standard LRU
 policy, with predicted blocks already present in the cache
 placed with newly fetched blocks at the end of the LRU
-list. We conducted experiments using block sizes of 1 KB,
+list. we conducted experiments using block sizes of 1 KB,
 4 KB, 16 KB, and 64 KB, a variety of le cache sizes, and
 prediction horizons from 1 to 10 blocks.
 Given the relatively strong sequentiality in the application
@@ -500,10 +515,11 @@ high cache hit ratios. Figures 12{13 show the cache
 hit ratios for two typical cases, the HYDRO and Cactus
 codes. Here, the greedy and amortized prediction strategies
 always perform better than N block read ahead when
-prefetching multiple blocks, and they often perform better
+prefetching multiple blocks, and the greedy and amortized prediction strategies
+ often perform better
 when predicting only one or two steps ahead.
 5.3 File System Measurements
-The true test of any I/O prediction strategy is its performance
+The true test of any I/O prediction strategy is The true test of any I/O prediction strategy performance
 as part of a parallel le system. Only such tests
 capture the interplay of application and system features.
 Hence, we also conducted experiments using Cactus and a
@@ -516,7 +532,7 @@ To assess the benets of Markov model prediction over
 standard prefetch policies, we ran experiments using the
 Cactus code on a 50x50x50 grid for 2000 iterations. This results
 in over 2 million block read requests distributed across
-a 2 GB data le. We congured our PPFS2 testbed to use a
+a 2 GB data le. We congured We PPFS2 testbed to use a
 le cache with 4 KB and 8 KB blocks, an LRU cache0.960.981
 Hit
 rate
@@ -600,7 +616,8 @@ the two methods indicates that N block readahead is
 prefetching many blocks that go unused.
 To further quantify the overhead of Markov models, we
 wrote a synthetic code that issues requests in the Hartree-Fock
-pattern of x4. This synthetic code reads the 2.64 MB
+pattern of x4. a synthetic code that issues requests in the Hartree-Fock
+pattern of x4 reads the 2.64 MB
 input le sequentially six times via 396 requests. Each 80
 KB request is followed by a loop that iterates for approximately
 one millisecond, simulating a compute cycle. This
@@ -635,10 +652,10 @@ patterns. However, because the amortized strategy yielded
 results equal to those for greedy strategies in most cases and
 substantially better performance in some others, we believe
 the additional complexity of non-greedy strategies is justi-
-ed. In addition, our timing experiments, using a user-level
+ed. In addition, we timing experiments, using a user-level
 le system modied with Markov models, demonstrate that
-our approach can noticeably reduce the execution time of a
-sample scientic application. We also demonstrate that the
+we approach can noticeably reduce the execution time of a
+sample scientic application. we also demonstrate that the
 overhead is very low.
 6. RELATED WORK
 Many groups have examined the spatial and temporal I/O
@@ -661,18 +678,22 @@ are su-cient to describe these patterns, introduction
 of higher-level I/O libraries such as FlexIO [11] has led to
 even more complicated patterns.
 Patterson et al [12] used application-provided hints to
-guide prefetching and caching decisions. Their integrated
+guide prefetching and caching decisions. 
+guide prefetching and caching decisions integrated
 caching and prefetching system used a cost-benet analysis
 to decide when to prefetch and which blocks to replace in
 the cache.
 Vellanki and Chervenak [21] used an approach similar
-to Patterson's but replaced application-provided hints with
+to Patterson et al but replaced application-provided hints with
 an automatically-generated probabilistic model of the access
-stream. They built and used a prefetch tree using the
+stream. replaced application-provided hints with
+an automatically-generated probabilistic model of the access
+stream built and used a prefetch tree using the
 Lempel-Ziv scheme from Duke [22, 6]. In addition to reducing
-the size of the access stream, this tree allowed prediction
-of future accesses based on likely paths through the tree. Restricting
-the width of the tree allowed them to decrease its
+the size of the access stream, a prefetch tree allowed prediction
+of future accesses based on likely paths through a prefetch tree. Restricting
+the width of a prefetch tree allowed Restricting
+the width of a prefetch tree to decrease a prefetch tree
 storage requirements at the cost of additional inaccuracy in
 the predicted accesses. Our use of Markov models builds
 on many of these ideas but emphasizes congurability and
@@ -690,7 +711,7 @@ and to represent arbitrary access patterns.
 We have outlined an approach to access pattern prediction
 based on Markov models and several associated prediction
 strategies. Using I/O traces from large scientic ap-
-plications, our experiments explored the eects of varying
+plications, We experiments explored the eects of varying
 the block size used to build the model, the length of the
 predicted I/O stream, and the algorithm used to generate
 predictions.
@@ -701,7 +722,8 @@ complexity and predictive power. For reasonable block sizes,
 performance is largely independent of block size, allowing le
 system designers to choose a set of defaults, while achieving
 high performance. This allows users of these models to
-choose a block size appropriate to their tasks without affecting
+choose a block size appropriate to users of these models to
+ tasks without affecting
 prediction accuracy to a large degree. Finally, an
 amortized path scheme is generally more eective in predicting
 access patterns than simple greedy schemes.

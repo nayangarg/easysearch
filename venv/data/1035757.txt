@@ -1,65 +1,68 @@
 --T
 Communication-based prevention of useless checkpoints in distributed computations.
 --A
-A useless checkpoint is a local checkpoint that cannot be part of a consistent global checkpoint. This paper addresses the following problem. Given a set of processes that take (basic) local checkpoints in an independent and unknown way, the problem is to design communication-induced checkpointing protocols that direct processes to take additional local (forced) checkpoints to ensure no local checkpoint is useless. The paper first proves two properties related to integer timestamps which are associated with each local checkpoint. The first property is a necessary and sufficient condition that these timestamps must satisfy for no checkpoint to be useless. The second property provides an easy timestamp-based determination of consistent global checkpoints. Then, a general communication-induced checkpointing protocol is proposed. This protocol, derived from the two previous properties, actually defines a family of timestamp-based communication-induced checkpointing protocols. It is shown that several existing checkpointing protocols for the same problem are particular instances of the general protocol. The design of this general protocol is motivated by the use of communication-induced checkpointing protocols in "consistent global checkpoint"-based distributed applications such as the detection of stable or unstable properties and the determination of distributed breakpoints.
+A useless checkpoint is a local checkpoint that cannot be part of a consistent global checkpoint. This paper addresses the following problem. Given a set of processes that take (basic) local checkpoints in an independent and unknown way, the following problem is to design communication-induced checkpointing protocols that direct processes to take additional local (forced) checkpoints to ensure no local checkpoint is useless. This paper first proves two properties related to integer timestamps which are associated with each local checkpoint. The first property is a necessary and sufficient condition that integer timestamps which are associated with each local checkpoint must satisfy for no checkpoint to be useless. The first property provides an easy timestamp-based determination of consistent global checkpoints. Then, a general communication-induced checkpointing protocol is proposed. This protocol, derived from the two previous properties, actually defines a family of timestamp-based communication-induced checkpointing protocols. It is shown that several existing checkpointing protocols for the same problem are particular instances of the general protocol. The design of the general protocol is motivated by the use of communication-induced checkpointing protocols in "consistent global checkpoint"-based distributed applications such as the detection of stable or unstable properties and the determination of distributed breakpoints.
 --B
 Introduction
 A local checkpoint is a snapshot of a local state of a process, a global checkpoint is a set of local
 checkpoints, one from each process, and a consistent global checkpoint is a global checkpoint such
-that no message sent by a process after its local checkpoint is received by another process before its
-local checkpoint. So, the consistency of global checkpoints strongly depends on the flow of messages
+that no message sent by a process after a global checkpoint local checkpoint is received by another process before its local checkpoint. So, the consistency of global checkpoints strongly depends on the flow of messages
 exchanged by processes. The determination of consistent global checkpoints is a fundamental problem
 in distributed computing and arise in many applications such as detection of stable properties [5, 12,
 17], determination of breakpoints [7, 10, 20], detection of unstable properties [2, 6, 11, 13], rollback
 recovery upon failure occurences [8, 14, 22], etc.
-When processes independently take their local checkpoints there is a risk that no consistent global
-checkpoint can ever be formed (except the first one composed of their initial states). This is caused
+When processes independently take processes local checkpoints there is a risk that no consistent global
+checkpoint can ever be formed (except the first one composed of processes initial states). This is caused
 by the well-known unbounded domino effect [22]. Even if consistent global checkpoints can be formed,
 it is still possible that some local checkpoints can never be included in a consistent global checkpoint;
 such local checkpoints are called useless.
 To prevent useless checkpoints, and thus safely prevent the domino effect, some coordination in
 the taking of local checkpoints is required. In the family of coordinated protocols [5, 15], processes use
-additional control messages to synchronize their checkpointing activities. This additional synchronization
+additional control messages to synchronize additional control messages checkpointing activities. This additional synchronization
 may result in reduced process autonomy and degraded performance of the underlying application.
 These drawbacks have given rise to the development of a family of communication-induced checkpointing
 protocols. In this family the coordination is achieved by piggybacking control information on
 application messages: no control messages or synchronization is added to the application [8]. More
 precisely, processes take local checkpoints independently 1 (called basic checkpoints) and the protocol
-directs them to take additional local checkpoints (called forced checkpoints) to ensure that no local
+directs local checkpoints to take additional local checkpoints (called forced checkpoints) to ensure that no local
 checkpoint becomes useless. Taking a forced checkpoint before each message delivery is a safe strategy
 to prevent useless checkpoints but is very inefficient. Given a set of basic checkpoints, the fewer the
 forced checkpoints are taken by a communication-induced checkpointing protocol, the better the pro-
 tocol. A process decides whether to take a forced checkpoint when a message is received by evaluating
 a predicate. This predicate is based on local control variables of the receiving process and on control
-values carried by the message. The local control variables managed by a process are a coding of the
-causal dependencies appearing in its past. Distinct semantics for these control variables and distinct
+values carried by a message. The local control variables managed by a process are a coding of the
+causal dependencies appearing in a process past. Distinct semantics for these control variables and distinct
 definitions of the predicate give rise to different protocols [1, 3, 4, 14, 19, 23, 24, 26].
 In this paper, we present a new communication-induced checkpointing protocol that takes as few
-forced checkpoints as possible while ensuring no local checkpoint is useless. This protocol is based on
+forced checkpoints as possible while ensuring no local checkpoint is useless. a new communication-induced checkpointing protocol that takes as few
+forced checkpoints as possible while ensuring no local checkpoint is useless is based on
 the Z-path (and Z-cycle) theory introduced by Netxer and Xu [21] who showed that a useless checkpoint
 exactly corresponds to the existence of a Z-cycle in the distributed computation. At the model level,
 our protocol prevents Z-cycles 2 . At the operational level, a sequence number and Lamport timestamp
 are associated with each local checkpoint. Moreover, each message piggybacks an integer (Lamport
 clock value), a vector of integers (checkpoint sequence numbers) and two boolean vectors (the size
-of each vector is n, the number of processes). This protocol is more efficient 3 than past domino-free
+of each vector is n, the number of processes). a new communication-induced checkpointing protocol that takes as few
+forced checkpoints as possible while ensuring no local checkpoint is useless is more efficient 3 than past domino-free
 communication-induced checkpointing protocols. An interesting feature of the proposed protocol is
 the following one: for any local checkpoint A, there is a very easy determination of a consistent global
 checkpoint to which A belongs. Moreover, the proposed protocol enjoys a nice genericity property:
-if we reduce the size of its control information, or even eliminate some of it altogether, the protocol
+if we reduce the size of its control information, or even eliminate some of its altogether, the protocol
 1 For example, in the detection of unstable properties such as conjunctions of local predicates, each process takes a
-basic checkpoint each time its local predicate becomes true [13].
-2 So, in the Manivannan-Singhal's classification [18], this protocol belongs to the ZCF (Z-Cycle-Free) family.
+basic checkpoint each time a
+basic checkpoint local predicate becomes true [13].
+2 So, in the Manivannan-Singhal's classification [18], the proposed protocol belongs to the ZCF (Z-Cycle-Free) family.
 3 When considering the number of forced local checkpoints taken by processes.
 4 J.-M. H'elary & A. Mostefaoui & R. Netzer & M. Raynal
-reduces to already known protocols such as [1, 19, 23]. As a result, our protocol offers a very general
+reduces to already known protocols such as [1, 19, 23]. As a result, the proposed protocol offers a very general
 and efficient framework for a family of domino-free communication-induced checkpointing protocols.
 The paper is divided into seven sections. Section 2 presents the model of distributed computations,
 provides a definition for consistent global checkpoints, and defines Z-paths. Section 3 presents the
 design principles of the protocol. Section 4 describes a first version of the protocol and proves its
 main property, namely, given a local checkpoint C, there is an easy determination of a consistent
 global checkpoint to which C belongs. Then Section 5 reduces the size of data structures used by the
-protocol and presents an improved version of it. Finally, Section 6 discusses the protocol: it shows
-that it reduces to existing protocols when reducing its control information. Section 7 concludes the
+protocol and presents an improved version of it. Finally, Section 6 discusses the
+protocol: it shows
+that it reduces to existing protocols when reducing it control information. Section 7 concludes the
 paper.
 Distributed Computations, Checkpoints and Z-Paths
 2.1 Distributed Computations
@@ -67,16 +70,16 @@ A distributed computation consists of a finite set P of n processes fP that comm
 and synchronize only by exchanging messages. We assume that each ordered pair of processes is
 connected by an asynchronous, reliable, directed logical channel whose transmission delays are unpredictable
 but finite. (Note that channels are not required to be fifo.) Each process runs on a different
-processor, processors do not share a common memory, and there is no bound on their relative speeds.
-Also, they fail according to the fail-stop model.
+processor, processors do not share a common memory, and there is no bound on processors relative speeds.
+Also, processors fail according to the fail-stop model.
 A process can execute internal, send 4 and delivery statements. An internal statement does not
 involve communication. When P i executes the statement "send(m) to puts the message m into
-the channel from P i to P j . When P i executes the statement "deliver(m)", it is blocked until at least
-one message directed to P i has arrived, then a message is withdrawn from one of its input channels
+the channel from P i to P j . When P i executes the statement "deliver(m)", the statement is blocked until at least
+one message directed to P i has arrived, then a message is withdrawn from one of a message input channels
 and delivered to P i . Executions of internal, send and delivery statements are modeled by internal,
 sending and delivery events.
 Processes of a distributed computation are sequential; in other words, each process P i produces
-a sequence of events e This sequence can be finite or infinite. Every process P i has an
+a sequence of events e a sequence of events can be finite or infinite. Every process P i has an
 initial local state denoted oe i;0 . The local state oe i;s (s ? 0) results from the execution of the sequence
 applied to the intial state oe i;0 . More precisely, the event e i;s moves P i from the local state
 oe i;s\Gamma1 to the local state oe i;s . By definition, we say that "e i;x belongs to oe j;s " (sometimes denoted as
@@ -95,7 +98,7 @@ computation and C b
 H is a set of local checkpoints defined on b
 C i;x represents the x-th local checkpoint of process P i . The local checkpoint C i;x corresponds to
 some local state oe i;s with x - s. Figure 1 shows an example of a checkpoint and communication
-4 We assume a process does not send messages to itself.
+4 We assume a process does not send messages to a process.
 Irisa
 Communication-Based Prevention of Useless Checkpoints in Distributed Computations 5
 pattern 5 . We assume that each process P i takes an initial local checkpoint C i;0 (corresponding to
@@ -109,11 +112,11 @@ Figure
 message m sent by process P i to process P j is called orphan with respect to the ordered pair of
 local checkpoints (C i;x ,C j;y ) iff the delivery of m belongs to C j;y (deliver(m) 2 C j;y ) while its sending
 event does not belong to C i;x (send(m) 62 C i;x ). An ordered pair of local checkpoints is consistent iff
-there are no orphan messages with respect to this pair. For example, Figure 1 shows that the pair
+there are no orphan messages with respect to An ordered pair of local checkpoints. For example, Figure 1 shows that the pair
 (C k;1 ,C j;1 ) is consistent, while the pair (C i;2 ,C j;2 ) is inconsistent (because of orphan message m 5 ).
 Global checkpoints. A global checkpoint is a set of local checkpoints, one from each process. For
 example, are two global checkpoints depicted in the Figure 1.
-Definition 2.2 A global checkpoint is consistent iff all its pairs of local checkpoints are consistent.
+Definition 2.2 A global checkpoint is consistent iff all A global checkpoint pairs of local checkpoints are consistent.
 For example, Figure 1 shows that fC i;1 ; C is a consistent global checkpoint, and due to the
 inconsistent pair (C i;2 ; C j;2 ), the global checkpoint fC is not consistent.
 2.3 Z-Paths and Z-Cycles
@@ -152,7 +155,8 @@ Z-cycle. (We say that it involves the local checkpoint C i;x .)
 The Z-path [m is a Z-cycle that involves the local checkpoint C k;2 . We can observe that a
 Z-cycle always includes a Z-pattern.
 2.4 Useless Checkpoints
-Definition 2.7 A local checkpoint C i;x is useless iff it cannot belong to any consistent global check-point
+Definition 2.7 A local checkpoint C i;x is useless iff Useless Checkpoints
+Definition 2.7 A local checkpoint C i;x cannot belong to any consistent global check-point
 
 The following important characterization of useless checkpoints has been stated in [21]:
 Theorem 2.1 (Netzer-Xu 1995) A local checkpoint C i;x is useless iff it is involved in a Z-cycle.
@@ -167,13 +171,13 @@ and forced checkpoints. As indicated in the Introduction, why and when a basic c
 taken depends only on the application (such as for a property detection protocol or a rollback-recovery
 protocol). Forced checkpoints are taken by the communication-induced checkpointing protocol to ensure
 that no checkpoint is useless. The aim of the protocol we wish to design is to keep low the number
-of forced checkpoints. The protocol works by evaluating a predicate upon every message reception
+of forced checkpoints. the protocol we wish to design works by evaluating a predicate upon every message reception
 and possibly taking a forced checkpoint (hence the name communication-induced checkpointing pro-
 tocol). The predicate is based on past knowledge of the communication and checkpointing patterns,
 and forced checkpoints are taken to prevent Z-cycles from forming.
 3.1 Basic Idea: A Checkpoint Timestamping Mechanism
 With each checkpoint C, let us associate a timestamp denoted C:t. We consider in the following that
-the domain of timestamp values is the set of positive integers. The protocol is based on the following
+the domain of timestamp values is the set of positive integers. the protocol we wish to design is based on the following
 theorem.
 Theorem 3.1 (For any pair of checkpoints C j;y and C k;z , such that there is a Z-path from C j;y to
 (there is no Z-cycle).
@@ -191,9 +195,9 @@ no Z-cycles can possibly form, and no checkpoints will be useless. We assume eac
 local logical clock lc i managed in the following classical way [16]:
 ffl Before it takes a (basic or forced) checkpoint, P i increases by 1 its local clock (and associates
 the new value with the checkpoint).
-ffl Every message m is timestamped with the value of its sender clock (let m:t be the timestamp
+ffl Every message m is timestamped with the value of Every message m sender clock (let m:t be the timestamp
 associated with m).
-ffl When a process P i receives a message, m updates its local clock lc i := max(lc
+ffl When a process P i receives a message, m updates a process P local clock lc i := max(lc
 It follows from this classical mechanism that, if there is a causal Z-path from C j;y to C k;z , then we
 have C j;y :t ! C k;z :t. We examine now the case of non-causal Z-paths.
 3.2 To Checkpoint or Not to Checkpoint?
@@ -213,17 +217,18 @@ consistent with the assumption of Theorem 3.1.
 In this case, a safe strategy to prevent Z-cycle formation consists of directing P i
 to take a forced checkpoint C i;x before delivering m 1 (as shown in Figure 2.b). This "breaks"
 so it is no longer a Z-pattern.
-This strategy can be implemented in the following way. Each process P i manages a boolean
+a safe strategy to prevent Z-cycle formation consists of directing P i
+to take a forced checkpoint C i;x before delivering m 1 (as shown in Figure 2.b) can be implemented in the following way. Each process P i manages a boolean
 array sent to i [1::n] in order to know whether the reception of a message creates a Z-pattern;
 8 J.-M. H'elary & A. Mostefaoui & R. Netzer & M. Raynal
-sent to i [k] has the value true iff P i has sent a message to P k since its last checkpoint. Moreover,
+sent to i [k] has the value true iff P i has sent a message to P k since a message last checkpoint. Moreover,
 manages an array of integers min to i [1::n]; min to i [k] keeps the timestamp of the first message
 sent to P k since P i 's last checkpoint. The condition expressed as
 sent to i
 takes a forced checkpoint if C is true. The next section shows how this safe strategy can
 be improved by sharpening the predicate which will cause fewer forced checkpoints to be taken.
 3.3 Reducing the Number of Forced Checkpoints
-The previous strategy does not utilize the information that P i could have concerning the values of
+this safe strategy does not utilize the information that P i could have concerning the values of
 local clocks of the other processes. For each k(1 - k - n), let us denote by cl i (k) the value of P k 's
 local clock as perceived by P i (P i can obtain this knowledge with a classical piggybacking technique
 as will be shown in Section 4.1). If obviously cl i the perception of
@@ -236,7 +241,7 @@ property P in the case where m 1 carries the value of lc j when m 1 is sent,
 the first relation C j;y necessarily holds when m 1 is received. So, the property P can be
 violated only if, when m 1 is received, m 1 :t ? cl i (k) or if cl i (k) - C k;z :t. It follows that to prevent
 the formation of the Z-pattern [m that would violate property P (and consequently that could
-possibly be inconsistent with the assumptions of Theorem 3.1), the protocol requires P i to take a
+possibly be inconsistent with the assumptions of Theorem 3.1), the protocol we wish to design requires P i to take a
 forced checkpoint before delivering m 1 to the application if m 1 :t ? cl i (k) or if cl i
 The question now is to determine to which value of cl k the approximation cl i (k) refers. Let us
 examine the two possible cases.
@@ -259,7 +264,9 @@ situation is illustrated in Figure 4 (more precisely, the relevant causal Z-path
 and is in Figure 4.b; note that both figures can be redrawn as indicated in Figure 5
 where -, the causal Z-path that brings to P i the last value of P k 's local clock, is - 1 or - 2 \Delta [m 1 ]).
 In that case we have cl i (k) - C k;z :t. This exactly corresponds to the pattern described in Figure
-5. So, the problem for P i is to recognize this pattern and take a forced checkpoint if it occurs.
+5. So, the problem for P i is to recognize the pattern described in Figure
+5 and take a forced checkpoint if the pattern described in Figure
+5 occurs.
 Let C 1 be a predicate describing this pattern occurrence.
 a. b.
 
@@ -274,10 +281,10 @@ Figure
 From this discussion it follows that the previous condition C (which P i tests to know if it should
 take a forced checkpoint when it receives a message m 1 ) can be refined into C 0
 sent to i [k] - (m cl
-The next section shows how to express this predicate with appropriate data structures so it can
+The next section shows how to express this predicate with appropriate data structures so The next section can
 be evaluated on-line by each process.
 4 A First Version of the Protocol
-This section presents a first version of the protocol which is directly obtained from the previous
+The next section presents a first version of the protocol which is directly obtained from the previous
 analysis. (Then, from this version and a few theorems, Section 5 will provide a less costly version of
 this protocol.)
 4.1 Data Structures
@@ -299,17 +306,18 @@ Thus, with these elements, C 0 can be rewritten as
 The next two arrays provide a way to evaluate C 1 .
 Array ckpt i . This array is a vector clock that counts how many checkpoints have been taken by
 each process. So, ckpt i number of checkpoints taken by P k to P i 's knowledge. This vector clock
-is managed in the usual way [9]. Let m:ckpt be the value appended to m by its sender P i (i.e., the
+is managed in the usual way [9]. Let m:ckpt be the value appended to m by This vector clock
+ sender P i (i.e., the
 value of the array ckpt i at sending time).
-Array taken i . This boolean array is used in conjunction with ckpt i to evaluate C 1 . It has the
+Array taken i . Array is used in conjunction with ckpt i to evaluate C 1 . Array has the
 following meaning: taken i [k] is true iff there is a causal Z-path from the last checkpoint of P k known
-by P i to the next checkpoint of P i , and this causal Z-path includes a checkpoint. It is managed in the
+by P i to the next checkpoint of P i , and this causal Z-path includes a checkpoint. this causal Z-path is managed in the
 following way:
-When P i takes a checkpoint, it sets to true all its entries except the i-th one (taken i [i] always
+When P i takes a checkpoint, this causal Z-path sets to true all this causal Z-path entries except the i-th one (taken i [i] always
 remains
-ffl When it sends a message, P i appends to it the current value of taken i (let m:taken be this
+ffl When this causal Z-path sends a message, P i appends to this causal Z-path the current value of taken i (let m:taken be this
 value).
-ffl When it receives m, P i updates taken i in the following way in order to maintain its meaning:
+ffl When this causal Z-path receives m, P i updates taken i in the following way in order to maintain this causal Z-path meaning:
 docase
 With these data structures, the condition C 1 can be expressed in the following way:
 When considering Figure 5, the first part of condition C 1 states that there is a causal Z-path (namely,
@@ -317,7 +325,7 @@ starting after C i;x and arriving at P i before C i;x+1 , while the second part 
 some process has taken a checkpoint along this causal Z-path.
 Irisa
 Communication-Based Prevention of Useless Checkpoints in Distributed Computations 11
-4.2 The Protocol
+4.2 the Protocol
 The protocol executed by each process P i is described in Figure 6. S0, S1 and S2 describe the
 initialization, the statements executed by P i when it sends a message, and the statements it executes
 when it receives a message, respectively. The procedure take checkpoint is called each time P i takes a
@@ -328,7 +336,7 @@ procedure take checkpoint is
 8k do min to i [k] := +1 enddo;
 clock
 save the current local state with a copy of clock i [i];
-i;x be this checkpoint. We have C i;x
+i;x be a basic checkpoint. We have C i;x
 initialization
 8k do clock i [k] := 0; ckpt i [k] := 0 enddo;
 taken i [i] := false;
@@ -366,7 +374,7 @@ I i;x+1
 Figure
 
 7: Message m 2 is Orphan with Respect to (C i;x ; C k;z )
-Let C i;x+1 be the first checkpoint taken by P i after C i;x and let C k;z \Gamma1 be the last checkpoint taken by
+Let C a i;x+1 be the first checkpoint taken by P i after C i;x and let C k;z \Gamma1 be the last checkpoint taken by
 before C k;z (see Figure 7). By assumption, C i;x+1 :t ? a. This assumption, combined with P2, gives
 (P3). Moreover, this assumption, combined with P1, gives C k;z :t - C i;x+1
 (P4).
@@ -394,13 +402,13 @@ Figure
 ffl (because of m 2 ) sent to i
 ffl min to i (from P4 and as P j is the sender of
 :t, from which we can conclude that m 1 :clock[j] ? min to i [k] (P6).
-Recall that condition C 0 tested by P i to know if it has to take a forced checkpoint when it receives
+Recall that condition C 0 tested by P i to know if condition C 0 tested by P i has to take a forced checkpoint when condition C 0 tested by P i receives
 sent to i [k] -
 arrives, as shown by P5 and P6, the first two lines of this condition are satisfied.
 We show now by a case analysis that a checkpoint is necessarily taken by P i between C i;x and C i;x+1 ,
 which contradicts the hypothesis.
 ffl Case clock
-In that case we have, when m 1 is received, max(clock :t. Combining this
+In a case we have, when m 1 is received, max(clock :t. Combining this
 with P4, we get max(clock
 Irisa
 Communication-Based Prevention of Useless Checkpoints in Distributed Computations 13
@@ -412,12 +420,12 @@ in
 
 Figure
 
-4.b). In that case, when m 1 is received we have (m 1
+4.b). In a case, when m 1 is received we have (m 1
 (P8).
 From P5, P6 and P8, it follows that P i has to take a checkpoint between C i;x and C i;x+1 , which
 contradicts the hypothesis.
 ffl Case clock
-In this case, there is a causal Z-path - 1 starting from C k;z and arriving at P i after C i;x and
+In a case, there is a causal Z-path - 1 starting from C k;z and arriving at P i after C i;x and
 before (this is the situation described in Figure 4.a). Let m 0 be the message ending - 1 that
 is received by P i . Note that the message m 0 is received by P i after the sending of m 2 (if this was
 not the case, we would have C k;z
@@ -431,15 +439,17 @@ It follows that P i has taken a checkpoint between C i;x and C i;x+1 when it rec
 contradicts the hypothesis.
 Theorem 4:1
 5 An Improved Version of the Protocol
-This section first proves an invariant of the protocol. Then, this invariant is used to simplify the
+This section first proves an invariant of the protocol. Then, an invariant of the protocol is used to simplify the
 condition C 0 and, consequently, to derive a less costly version of the protocol.
 5.1 An Invariant
 Theorem 5.1 The following assertion I is invariant:
 I sent to i [k]
 Proof Let i and k be two given process numbers. We must show that the property I(i;
 ( sent to i [k] during the execution of P i .
-To this end, we show: (1) that the property holds at P i initialization (base case) and, (2) that, if the
-property holds before an event, then it still holds after its execution (induction). The only events to
+To this end, We show: (1) that the property holds at P i initialization (base case) and, (2) that, if the
+property holds before an event, then the
+property still holds after the
+property execution (induction). The only events to
 be considered are those that can modify the values of variables involved in the property, namely, the
 taking of a checkpoint, the sending and the reception of a message, denoted take checkpoint, (S1) and
 (S2) in
@@ -449,12 +459,14 @@ Figure
 6, respectively.
 Remind that, from Lamport clocks property, the relation clock i [i] - clock i [k] is always true and,
 consequently, for any message m sent by P j , we have m:clock[j] - m:clock[k]. When an event triggers
-actions modifying the value of a variable x, we will denote by x its value before the event and by x 0
-its value after the event.
+actions modifying the value of a variable x, we will denote by x its value before an event and by x 0
+its value after an event.
 14 J.-M. H'elary & A. Mostefaoui & R. Netzer & M. Raynal
-base case. As sent to i [k] is initialized to the value false, the property initially holds.
+base case. As sent to i [k] is initialized to the value false, the
+property initially holds.
 induction.
-Taking a checkpoint. The property holds at the beginning of each checkpoint interval, since the
+Taking a checkpoint. the
+property holds at the beginning of each checkpoint interval, since the
 array sent to i is reset to false.
 Sending of a message by P i to P k . Note that the array clock i is not modified by (S1).
 ffl sent to i [k] has the value false (first sending to P k ).
@@ -462,7 +474,7 @@ Then, before (S1) min to i thus, after (S1), min to i [k]
 clock i [k], we have clock i [i]
 after (S1). It follows that I holds after (S1).
 ffl sent to i [k] has the value true (not the first sending to P k ).
-As arrays clock i and min to i are not modified by this sending, it follows that I still holds after
+As arrays clock i and min to i are not modified by (not the first sending to P k ), it follows that I still holds after
 (S1).
 Reception by P i of a message m sent by P j . This can modify the values of clock i [i] and
 clock i [k].
@@ -474,13 +486,13 @@ Thus, we have only to examine the case where one of the two last terms is satisf
 implies:
 For the ease of the proof, we use the following notations :
 ck
-We have the following assumptions (A-G):
+we have the following assumptions (A-G):
 holds before the event)
 ck
 ck 0 (property of Lamport clocks)
 mck (property of Lamport clocks)
 checkpoint is taken)
-We must prove the relation (R) c remains true after (S2)).
+we must prove the relation (R) c remains true after (S2)).
 Two cases have to be considered, according to the two terms of the assumption (G).
 Irisa
 Communication-Based Prevention of Useless Checkpoints in Distributed Computations 15
@@ -501,9 +513,9 @@ The following theorem shows that this condition can be simplified.
 Theorem 5.2
 sent to i [k]
 We have C 0 j D.
-Proof Let us consider the following set of predicates:
+Proof Let We consider the following set of predicates:
 A j sent to i [k]
-ffl First we show that C 1
+ffl First We show that C 1
 Condition C 1 has been introduced in Section 3.2 to characterizes the situation depicted in Figure
 9. Message m (sent by P j ) terminates a causal Z-path [m 0 ]\Delta- 1 \Delta- 2 \Delta[m] that: (1) starts with m 0 after
 is about to arrive at P i before C i;x+1 (because
@@ -564,21 +576,22 @@ Figure
 
 10: Final Protocol
 6 Discussion
-This section discusses the protocol. It shows that it provides a general framework from which existing
+This section discusses The resulting protocol. This section shows that This section provides a general framework from which existing
 protocols can be obtained.
 ffl Let us suppress all the data structures except the array sent to i [1::n] which is replaced by a
 single boolean sent i with the following meaning: sent sent to i [k]), i.e., sent i is true
-iff a message has been sent by P i since its last checkpoint. The protocol becomes drastically
+iff a message has been sent by P i since a message last checkpoint. The resulting protocol becomes drastically
 simplified and reduces to the well-known Russell protocol [23] 8 , shown in Figure 11. Russel's
 protocol is characterized by the following property. When considering only deliver, send and
 checkpoint events, the behavior of each process corresponds to the following regular language:
 (deliver   send   checkpoint)
-In other words, no deliver event can follow immediately a send event. Of course, this protocol
-may take more forced checkpoints (and never less) than the proposed protocol.
+In other words, no deliver event can follow immediately a send event. Of course, The resulting protocolmay take more forced checkpoints (and never less) than the proposed protocol.
 ffl Another protocol can be obtained by considering only a subset of the data structures. For
 example, when we eliminate the arrays ckpt i [1::n] and taken i [1::n], we obtain a protocol characterized
 by the following condition C 00
-8 This protocol has been adapted to the context of mobile computing in [1].
+8 a protocol characterized
+by the following condition C 00
+ has been adapted to the context of mobile computing in [1].
 J.-M. H'elary & A. Mostefaoui & R. Netzer & M. Raynal
 procedure take checkpoint is
 do sent i := false enddo;
@@ -615,37 +628,37 @@ Figure
 9 The original quasi-synchronous protocol proposed in [19] differs from this variant in the following way. (1) Each
 process takes its basic checkpoints according to some local logical periodicity. (2) In (S2) lc i 'update is done in the then
 part, just before calling take checkpoint. (3) Within the procedure take checkpoint, the variable lc i is increased only if
-the checkpoint is basic.
+checkpoint is basic.
 Irisa
 Communication-Based Prevention of Useless Checkpoints in Distributed Computations 19
 New protocols can be designed by considering other simplifications of the basic protocol. This discussion
 shows that there is a tradeoff between the number of forced checkpoints that are taken and the
 size of control information piggybacked by application messages. In general, the smaller the control
 information, the greater the number of forced checkpoints. This raises an interesting question: is the
-proposed protocol the optimal one, i.e., is it a communication-induced checkpointing protocol that,
+proposed protocol the optimal one, i.e., is This a communication-induced checkpointing protocol that,
 without a priori knowledge of when basic checkpoints are taken, takes the fewest number of forced
 checkpoints to ensure that no checkpoint is useless? This optimality question remains an open problem.
 Some communication-induced checkpointing protocols use a heuristic approach to prevent useless
-checkpoints. In these protocols the condition tested at message reception is not safe in the sense some
+checkpoints. In protocols the condition tested at message reception is not safe in the sense some
 basic checkpoints may remain useless. A protocol of this family is described in [26]. Using experimental
-results, the authors show that their protocol reduces rollback distance to less than one checkpoint
+results, the authors show that the authors protocol reduces rollback distance to less than one checkpoint
 interval per process and the number of forced checkpoints is only 4% of the number of basic checkpoints.
-The proposed protocol encompasses some of these heuristic-based protocols. It is easy to show that
+A protocol of this family encompasses some of these heuristic-based protocols. It is easy to show that
 the heuristics used in [26] is a weakening of the condition used
-in the proposed protocol.
+in A protocol of this family.
 7 Conclusion
 A useless checkpoint is a local checkpoint that cannot be part of a consistent global checkpoint. This
 paper has addressed the following important problem. Given a set of processes that take (basic)
 local checkpoints in an independent and unknown way, we have designed a communication-induced
 checkpointing protocol that directs processes to take (as few as possible) additional local (forced)
 checkpoints to ensure that no local checkpoint is useless.
-Our protocol is general and efficient. It has also been shown to take fewer forced checkpoints than
+we is general and efficient. A protocol of this family has also been shown to take fewer forced checkpoints than
 existing protocols solving the same problem. These improvements were obtained by using control
-information composed booleans (n being the number of processes). It has
+information composed booleans (n being the number of processes). These improvements has
 also been shown that the size of this control information can be reduced (or even eliminated) at the
-price of additional forced checkpoints. So, the protocol can easily be tuned for any desired control-
+price of additional forced checkpoints. So, A protocol of this family can easily be tuned for any desired control-
 information-overhead / performance tradeoff.
-The design of this protocol has been motivated by the wide use of communication-induced check-pointing
+The design of A protocol of this family has been motivated by the wide use of communication-induced check-pointing
 protocols in applications that require consistent global checkpoints, such as the detection of
 stable or unstable properties, rollback-recovery, and determination of distributed breakpoints.
 

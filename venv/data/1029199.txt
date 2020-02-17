@@ -5,7 +5,9 @@ Anonymity networks have long relied on diversity of node location for protection
 --B
 INTRODUCTION
 Anonymity networks aim to provide communications privacy for
-individuals or groups on the Internet, but these networks are still
+individuals or groups on the Internet, but --B
+INTRODUCTION
+Anonymity networks are still
 vulnerable to powerful eavesdroppers. A variety of organizations,
 ranging from corrupt law enforcement to curious ISPs, can passively
 observe large pieces of the Internet. Against high-latency
@@ -25,7 +27,7 @@ dropper on both ends of the connection can quickly link sender to
 recipient through packet counting or timing attacks [16, 23, 35].
 Anonymity designs use three strategies to mitigate these attacks.
 Batching and pooling: The network collects a group of input
-messages and reorders them before they exit, to hinder
+messages and reorders messages before messages exit, to hinder
 the adversary from learning which message in the batch originated
 from a given sender [12, 34].
 Padding: Senders provide decoy traffic as well as normal
@@ -52,11 +54,10 @@ of a mix network and the path from the exit point will traverse
 the same AS. We then consider the topologies and node selection
 algorithms of two existing mix networks-Tor [18] and Mixmaster
 [27]-and evaluate the independence metric for these networks.
-This paper presents several interesting results. First, we find
+this paper presents several interesting results. First, we find
 that both Tor and Mixmaster have multiple nodes in the same autonomous
-system from different IP address spaces. Users of these
-networks should take care to avoid selecting two nodes from the
-same AS. In light of this, we argue that node selection algorithms
+system from different IP address spaces. Users of these networks should take care to avoid selecting two nodes from the
+same AS. In light of this, We argue that node selection algorithms
 that look only at IP prefixes, such as those used in Tarzan [19] and
 MorphMix [33], are likely to be less effective at achieving location
 independence.
@@ -81,14 +82,16 @@ path traverse the same AS.
 2. BACKGROUND
 We first describe the different types of mix networks and present
 a brief explanation of the types of attacks that each type of mix
-network must protect against. Then, we provide some background
+network must protect against. Then, We provide some background
 on Internet routing and topology.
 2.1 Anonymity networks
 Chaum [12] proposed hiding the correspondence between sender
 and recipient by wrapping messages in layers of public-key cryp-
-tography, and relaying them through a path composed of mixes.
+tography, and relaying the correspondence between sender
+and recipient through a path composed of mixes.
 Each mix in turn decrypts, delays, and re-orders messages, before
-relaying them onward.
+relaying the correspondence between sender
+and recipient onward.
 Subsequent anonymity systems have diverged in two directions.
 Systems like Babel [22], Mixmaster, and Mixminion [17] defend
 against powerful adversaries at the cost of requiring high and variable
@@ -141,74 +144,76 @@ Figure
 are routed between two arbitrary hosts on the Internet. In this sec-
 tion, we first present a brief overview of interdomain routing (i.e.,
 routing between ISPs) on the Internet and then describe available
-data on Internet topologies and our assumptions regarding how well
+data on Internet topologies and we assumptions regarding how well
 this data reflects the paths that packets actually travel.
 2.2.1 Border Gateway Protocol
-The Internet is composed of about 17,000 independently operated
+the Internet is composed of about 17,000 independently operated
 networks, or autonomous systems (ASes), that exchange
 reachability information using the Border Gateway Protocol (BGP) [32].
 An AS could be an Internet Service Provider (ISP), a corporate net-
-work, or a university. Each AS has a network of routers that route
+work, or a university. An AS An AS has a network of routers that route
 traffic to global destinations using the information propagated by
 routing protocols. To find the route to a destination IP address, a
-router performs a "longest prefix match" on that IP address to find
+router performs a "longest prefix match" on a destination IP address to find
 the most specific IP prefix in the routing table that contains that
 IP address. For example, to look up IP address 18.31.0.82, a
 router might use a route for the prefix 18.0.0.0/8. The router
 then forwards packets for that destination to the next hop specified
 for the route to the prefix. Routers will select the route that is
 the smallest prefix that contains the IP address; for example, if a
-router's routing table had a prefix for, say, 18.31.0.0/16, that
-router would prefer this route over the former.
+router's routing table had a prefix for, say, 18.31.0.0/16, a
+router would prefer the route over the former.
 The Internet's routing table has over 130,000 prefixes, each of
 which has an associated route. An AS that originates a route advertises
-this route to neighboring ASes via BGP and attaches its AS
+the route to neighboring ASes via BGP and attaches An AS that originates a route AS
 number to the AS path of the route. When a router in a neighboring
-AS learns this route, that router propagates it to all of the routers in
-the AS. Some of these routers will, in turn, exchange routes with
+AS learns the route, that router propagates When a router in a neighboring
+AS learns this route to all of the routers in
+the AS. Some of Routers will, in turn, exchange routes with
 other ASes. A router will typically readvertise the route to neighboring
-ASes, prepending its own AS number to the AS path in the
+ASes, prepending A router own AS number to the AS path in the
 process. In this fashion, BGP allows each AS to learn the AS-level
-path of a route to a destination that it learns via BGP.
+path of a route to a destination that each AS learns via BGP.
 ASes do not blindly propagate routes to all of their neighbors;
 rather, each pair of ASes has a commercial relationship, and an AS
 may prefer to send traffic via one AS over another for economic
 reasons. ASes form bilateral arrangements that can be broadly categorized
 as either (1) a customer-provider relationship, where the
 customer pays the provider to route traffic for it; or (2) a peering
-relationship, where two ASes exchange traffic between their own
-networks (and the networks of their customers), but neither pays
+relationship, where two ASes exchange traffic between the
+customer own
+networks (and the networks of the
+customer customers), but neither pays
 the other for this privilege.
 BGP routing is based on policy, not on shortest paths. For ex-
 ample, the AS in Figure 1 will typically prefer to route traffic to a
-destination via one of its customers (who pays it for connectivity)
-than via one of its providers (whom it must pay to send traffic to-
-ward) or one of its peers. These relationships also determine which
+destination via one of the AS in Figure 1 customers (who pays it for connectivity)
+than via one of the AS in Figure 1 providers (whom the AS in Figure 1 must pay to send traffic to-
+ward) or one of the AS in Figure 1 peers. These relationships also determine which
 routes one AS will advertise to another-an AS will not typically
-advertise a route learned from one of its peers or providers to any of
+advertise a route learned from one of AS peers or providers to any of
 Network Next Hop Metric LocPrf Path
 
 Figure
 
 2: Example BGP routing table entry (taken from a
 Cisco-like router).
-its other peers or providers: doing so would constitute an implicit
-agreement to forward traffic between two of its providers, two of its
-peers, etc. The AS in Figure 1 would advertise routes learned from
-its customer to all of its neighbors, but would not readvertise routes
-learned from Peer 1 to Peer 2 (and vice versa), nor to its provider.
-It would also advertise the routes learned from its provider to its
+Example BGP other peers or providers: doing so would constitute an implicit
+agreement to forward traffic between two of Example BGP providers, two of Example BGP
+peers, etc. the AS in Figure 1 would advertise routes learned from
+the AS in Figure 1 customer to all of the AS in Figure 1 neighbors, but would not readvertise routes
+learned from Peer 1 to Peer 2 (and vice versa), nor to the AS in Figure 1 provider.
+the AS in Figure 1 would also advertise the routes learned from the AS in Figure 1 provider to the AS in Figure 1
 customer, but not to other peers.
 
 Figure
 
-2 shows a simplified BGP routing table entry. This router
-has learned two routes to the destination prefix 18.0.0.0/8.
+2 shows a simplified BGP routing table entry. A routerhas learned two routes to the destination prefix 18.0.0.0/8.
 Each route has various attributes, including the "next hop" IP address
 (where to route packets that use this path), various attributes
 that affect which route is selected as the preferred route to the des-
 tination, and the AS path ("Path"). The ">" at the beginning of the
-first line indicates that the router has selected this route as the best
+first line indicates that A router has selected the route as the best
 route to the destination using the BGP decision process.
 Each router can only have a single best route to a destination
 at any time. This routing table entry allows us to be reasonably
@@ -222,22 +227,23 @@ Paths between end-hosts in the Internet traverse a sequence of
 ASes (or jurisdictions); to estimate the sequence of ASes that any
 given path crosses, we must first have a representation of the Internet
 topology at the AS-level (i.e., the ASes that each AS connects
-to, as well as their business relationships). Determining a complete
+to, as well as as well business relationships). Determining a complete
 view of the AS-level graph is notoriously difficult, because bilateral
 policies hide edges in the graph from some perspectives [11].
 For example, in Figure 1, a routing table captured at Peer 1 will not
-contain any routes with the AS $ Peer 2 link, since the AS in the
+contain any routes with the An AS $ Peer 2 link, since the AS in the
 center will not readvertise routes learned from one peer to another.
 There are many publicly available places that provide access to
 routing table data. The most prevalent is the Oregon RouteViews
 Project [28], which maintains a route server that peers with more
-than 50 ASes. Each of these ASes sends its routing tables to the
+than 50 ASes. Each of ASes sends ASes routing tables to the
 RouteViews server, which learns that AS's best route to each destination
-prefix. Each AS's routing table is slightly different, which
+prefix. Each the AS in the
+center's routing table is slightly different, which
 means that the AS-level topology constructed from the RouteViews
 route server is missing some inter-AS edges due to bilateral poli-
 cies, but the graph is representative enough for our purposes. In
-the future, we could improve our analysis by incorporating newer
+the future, our could improve our analysis by incorporating newer
 techniques for capturing AS-level topologies [11]. Knowing the
 AS-level topology is not enough to determine the AS-level path between
 two arbitrary mix nodes, though; to determine this, we need
@@ -251,12 +257,12 @@ recent work has observed that the AS path in the routing table may not
 always match the sequence of networks that a packet is forwarded through,
 but typically the differences are minor and occur infrequently [25].
 3. THREAT MODELS
-Alice wants to communicate with Bob without revealing her lo-
+Alice wants to communicate with Bob without revealing Alice lo-
 cation. We intend to improve Alice's anonymity against an adversary
 who can monitor a single AS (for example, a curious ISP or
 a corrupt law enforcement officer abusing his subpoena powers).
 We assume that the ability to observe multiple ASes is significantly
-more difficult than observing a single AS, because most ISPs do
+more difficult than observing a single An AS, because most ISPs do
 not control multiple ASes, and because law enforcement will be
 less willing to face the increased accountability and risk associated
 with obtaining multiple unapproved subpoenas.
@@ -266,7 +272,7 @@ attacks into intra-network attacks and endpoint attacks, as described
 in Section 2.1.
 Endpoint attacks on low-latency networks are the most straight-
 forward: an adversary observing both Alice and Bob can quickly
-learn that they are communicating. Previous analysis of Onion
+learn that both Alice and Bob are communicating. Previous analysis of Onion
 Routing has shown that an adversary observing c of the n nodes
 in the network can break (c=n) 2 of the transactions [36]. By requiring
 the path from Alice to the anonymity network and the path
@@ -283,18 +289,18 @@ adversary is common, these designs should reconsider path length.
 A successful endpoint attack against a high-latency system like
 Mixmaster takes a lot more time and effort than one against a low-latency
 system like Tor. However, because an observer of even a
-few Mixmaster nodes may be able to link Alice to her recipients
+few Mixmaster nodes may be able to link Alice to Alice recipients
 our work is also relevant for protecting such high-latency
 systems from a single-AS adversary. Further, intra-network
 observations (particularly during periods of low traffic) can be combined
 with active attacks such as message flooding to shrink the set
 of messages that mix with Alice's message [9, 17].
 4. MODELING TECHNIQUES
-We now describe how we model mix networks and Internet routing
+We now describe how We model mix networks and Internet routing
 to draw conclusions about an anonymity network's vulnerability
 to eavesdropping by the adversary detailed in Section 3. First
-we describe our model of node selection in a mix network. Then,
-we present our techniques for estimating the AS-level path between
+We describe We model of node selection in a mix network. Then,
+We present We techniques for estimating the AS-level path between
 two arbitrary hosts on the Internet.
 4.1 Node Selection in Mix Networks
 To establish a path in an anonymity network, clients must somehow
@@ -307,14 +313,14 @@ note whether each node is an exit node-meaning its operator is
 willing to allow traffic to exit the network from the node (some operators
 choose instead to be middleman nodes, to avoid needing to
 deal with abuse complaints.)
-We abstract how Alice gets the list: assume she has a set N of
+We abstract how Alice gets the list: assume Alice has a set N of
 possible choices, of which E  N are exit nodes. Also assume
 that all nodes in the network are listed as working (typically some
 nodes are listed as temporarily offline).
 To build a path of length ', Alice first selects an exit node at
 random from E, and then selects the other ' 1 nodes from N .
-In the remailer network case she selects nodes such that no node
-appears twice in a row; in the onion routing case she selects nodes
+In the remailer network case Alice selects nodes such that no node
+appears twice in a row; in the onion routing case Alice selects nodes
 such that no node appears twice anywhere in the path.
 4.2 AS-level Mix Network Path Estimation
 Active measurement tools such as "traceroute" could be used to
@@ -323,44 +329,44 @@ could execute traceroutes between each pair of mix nodes to determine
 the IP-level paths (and, hence, the AS-level paths) between
 them. First, note that these measurements would not be robust
 against single compromised mixes. More importantly, however,
-Alice must also determine the AS-level path between herself and
-the mix entry she selects, as well as the AS-level path between the
-mix exit she selects and the destination where she is sending pack-
-ets. To discover the AS-level path between herself and a good candidate
+Alice must also determine the AS-level path between Alice and
+the mix entry Alice selects, as well as the AS-level path between the
+mix exit Alice selects and the destination where Alice is sending pack-
+ets. To discover the AS-level path between Alice and a good candidate
 mix node, Alice must run traceroutes to nodes in the mix net-
-work, which may engender suspicion. Further, she will not be able
-to actively determine the AS-level path from her chosen exit node
-and her destination: routing tables at that node may be unavailable
+work, which may engender suspicion. Further, Alice will not be able
+to actively determine the AS-level path from Alice chosen exit node
+and Alice destination: routing tables at that node may be unavailable
 or difficult to obtain covertly, and a traceroute from candidate exit
 node to the destination is also likely to engender suspicion (this approach
 will not work anyway if the node has been compromised).
 Finally, without access to a host at the destination node, Alice will
-be unable to run a traceroute from the destination node to her chosen
+be unable to run a traceroute from the destination node to Alice chosen
 exit node (i.e., the path that traffic from the destination to Alice
-will traverse): in this case, Alice can only discover the AS-level
-path from the destination to her chosen exit node using passive inference
+will traverse): in the remailer network case, Alice can only discover the AS-level
+path from the destination to Alice chosen exit node using passive inference
 techniques, such as examining routing tables.
 If Alice had access to an up-to-date routing table from every net-work
-containing mix nodes, she could construct a reasonable estimate
+containing mix nodes, Alice could construct a reasonable estimate
 of the AS-level path fairly easily: to discover the AS-level
 path between nodes i and could look at i's
 routing table and determine the AS path associated with the route
 that is the longest prefix match for address.
 Unfortunately, Alice cannot ask for routing tables for each of the
-mix nodes when constructing a mix tunnel. First, her act of requesting
+mix nodes when constructing a mix tunnel. First, Alice act of requesting
 a routing table from a particular network might attract the attention
-of an eavesdropper, particularly if she asks for a large number
+of an eavesdropper, particularly if Alice asks for a large number
 of routing tables. Second, asking each network that contains a mix
-node for its current routing table is likely to be quite slow, since
+node for each network current routing table is likely to be quite slow, since
 each full routing table is approximately 10 megabytes; addition-
-ally, as routes are continually changing, parts of the table are likely
-to be out-of-date even before she requests it. Third, this method
+ally, as routes are continually changing, parts of its current routing table are likely
+to be out-of-date even before Alice requests it. Third, this method
 introduces another vulnerability to attack: an adversary who compromises
 any of the domains that contain a mix node could send
 back an inaccurate version of the routing table.
 Because of these shortcomings, Alice must passively determine
 the AS-level path (or a reasonable approximation of it) without having
-visibility into the routing tables of each hop in her intended mix
+visibility into the routing tables of each hop in Alice intended mix
 path. Fortunately, examining the AS paths in a BGP routing table
 gives a reasonable estimation of what ASes connect to what other
 ASes, and can provide reasonable information about what path an
@@ -384,7 +390,7 @@ relationships (e.g., an AS may filter routes learned
 from one peer when advertising routes to another peer or
 provider), certain edges in this graph will not be globally
 visible. As a result, our approximation of the AS-level graph
-may omit certain edges. Typically, these missing edges will
+may omit certain edges. Typically, certain edges will
 be between smaller ASes; thus, our algorithm may not realize
 that a particular edge exists between two ASes and, as a
 result, infer the wrong AS-level path to a destination.
@@ -413,10 +419,11 @@ customer edges. Therefore, each AS pair in an AS path
 can be assigned either a customer-provider or a provider-
 customer relationship: every pair before the AS with the
 highest degree in the path is assigned a customer-provider re-
-lationship, and every pair after this AS is assigned a provider-
+lationship, and every pair after AS AS is assigned a provider-
 customer relationship. If, for two separate AS paths, two
 ASes are customers of each other, then the algorithm designates
-them as peers. The complete details of the inference
+two separate AS paths, two
+ASes are customers of each other as peers. The complete details of the inference
 algorithm are provided in previous work [20].
 4. Estimate the AS-level path between the two ASes by finding
 the shortest AS path that complies with common policy practices
@@ -434,8 +441,9 @@ As AS-level path estimation techniques improve and techniques
 to estimate the actual AS-level forwarding path mature [25], determining
 ASes that mix networks traverse will become easier. These
 improvements will allow Alice to make informed decisions about
-the mix nodes she should choose to achieve location independence
-(it will also improve the accuracy of the type of analysis we present
+the mix nodes Alice should choose to achieve location independence
+(
+ will also improve the accuracy of the type of analysis we present
 in this paper).
 Given both a model for how anonymizing networks select nodes
 and an estimation of the AS-level path between two arbitrary hosts
@@ -443,12 +451,12 @@ on the Internet, Alice can determine the complete set of ASes that a
 typical mix network path traverses using only passive techniques. 2
 We explore these questions in further detail in Section 6.
 5.
-In this section, we summarize the data that we use in our analysis
-of AS-level paths in mix networks. We base our analysis on the
+In Section 6, We summarize the data that We use in We analysis
+of AS-level paths in mix networks. We base We analysis on the
 location of mix nodes in deployed systems today. We then describe
-the data we used to generate the AS-level network topology.
+the data We used to generate the AS-level network topology.
 5.1 Mix Networks, Senders, and Receivers
-To evaluate node selection in the Mixmaster and Tor models, we
+To evaluate node selection in the Mixmaster and Tor models, We
 use operational mix nodes for each respective network; the tables
 in
 
@@ -461,31 +469,31 @@ we must also estimate the ASes where Alice and Bob may typically
 be located. Unfortunately, usage data for these mix networks is not
 readily available, so it is not possible to drive our simulation with
 lists of common locations of senders and receivers. Nevertheless,
-we can perform reasonable approximations by assuming that Alice
-is located on a home network (e.g., a cable modem network, a
+our can perform reasonable approximations by assuming that Aliceis located on a home network (e.g., a cable modem network, a
 DSL network, etc.) and that Bob is a content host located at a data
 hosting ISP.
 To generate a set of ASes where senders might be located, we
 created a list of DSL and cable modem providers from www.-
 dslreports.com that would be likely senders and mapped these
-providers to their respective AS numbers. To generate a list of
+providers to these
+providers respective AS numbers. To generate a list of
 typical receivers, we sampled sites from comScore Media Metrix's
 "Top 50 US Internet Properties" from December [13], as well
 as sites that we think might be popular on anonymity networks. The
-lists of senders and receivers that we used in our experiments are in
+lists of senders and receivers that we used in we experiments are in
 
 
 Appendix
 
 A.
 In this paper, we use the topologies of existing mix networks to
-get a plausible set of nodes for our model. The Tor nodes represent
+get a plausible set of nodes for we model. The Tor nodes represent
 a newborn network where the only participants are developers and
 very early adopters, whereas the Mixmaster network represents a
-wider participant set because it has been deployed for many years.
+wider participant set because the Mixmaster network has been deployed for many years.
 We compare how each of these node sets performs when the initiators
 are typical DSL or cable modem users in the US, and the
-responders are popular websites in the US-in effect, we are evaluating
+responders are popular websites in the US-in effect, We are evaluating
 the location independence of the newborn Tor network and
 the independence of a node set that should resemble that of Tor
 network as Tor matures.
@@ -493,26 +501,36 @@ network as Tor matures.
 To generate an estimate of the Internet's AS-level topology, we
 use the routing table dump from the route-views.oregon-
 ix.net route server on January 25, 2004 at 10:22 p.m. GMT. The
-We performed our analysis in Section 6 using this passive technique because
-we could not run traceroutes between the Mixmaster nodes, and we
-wanted to directly compare the Tor and Mixmaster networks. As part of our
-future work, we plan to use traceroute to measure pairwise paths on
+we
+ performed we
+ analysis in Section 6 using this passive technique because
+we
+ could not run traceroutes between the Mixmaster nodes, and we
+
+wanted to directly compare the Tor and Mixmaster networks. As part of we
+
+future work, we
+ plan to use traceroute to measure pairwise paths on
 the Tor network and compare the accuracy of the AS-level estimations that
 Alice would make using this technique against the "ground truth".
 table has 67 external BGP (eBGP) feeds from 53 ASes (some ASes
-have multiple eBGP feeds to the route server). We use this table
-to (1) generate our view of the AS-level topology, including inter-AS
+have multiple eBGP feeds to the route server). we
+ use this table
+to (1) generate we
+ view of the AS-level topology, including inter-AS
 relationships, and compute pairwise AS-level shortest paths, as
-we described in Section 4.2 and (2) map IP addresses to the ASes
+we
+ described in Section 4.2 and (2) map IP addresses to the ASes
 where they are located.
 6. RESULTS
-First, we discuss the fundamental robustness properties of existing
+First, we
+ discuss the fundamental robustness properties of existing
 mix networks. In addition to maximizing location independence
 at the entry and exit points of the mix network, we should try
 to minimize the cases where one AS can observe multiple links
 along a mix network path. This analysis is independent of our
-model for mix network users (i.e., senders and receivers), since we
-are only examining properties of the mix nodes themselves. Next,
+model for mix network users (i.e., senders and receivers), since our
+are only examining properties of the mix nodes the mix. Next,
 we compute the probability that the AS-level path from the sender
 to the entry node and the path from the exit node to the receiver traverse
 the same AS (i.e., the probability that a single AS can observe
@@ -520,12 +538,12 @@ both endpoints of a mix network path), given the Tor and Mixmaster
 topologies and reasonable assumptions about the locations of
 senders and receivers.
 6.1 Independence of Mix Nodes and Paths
-In this section, we explore and quantify the location independence
-of the Mixmaster and Tor topologies. We examine cases
-where Tor and Mixmaster nodes are located in the same AS. We
+In Section 6, we explore and quantify the location independence
+of the Mixmaster and Tor topologies. we examine cases
+where Tor and Mixmaster nodes are located in the same AS. we
 also examine the AS-level path properties between pairs of existing
 mix nodes and quantify the extent to which the AS-level paths
-between two mix nodes traverse common ASes. We examine the
+between two mix nodes traverse common ASes. we examine the
 likelihood of mix-level paths traversing common ASes in both the
 forward (i.e., sender to recipient) and reverse (i.e., recipient's reply
 to sender) directions.
@@ -536,18 +554,20 @@ mix nodes in AS 23504 (Speakeasy DSL), and Mixmaster has two
 nodes each in ASes 3269 (Telecom Italia), 6939 (Hurricane Elec-
 tric), 7132 (SBC), 23504 (Speakeasy DSL), and 24940 (Hetzner
 Online). This lack of location independence in node placement is
-not surprising; in particular, it reflects the fact that these network
+not surprising; in particular, (Hetzner
+Online) reflects the fact that these network
 nodes are operated by volunteers, many of whom commonly operate
-mix nodes from their Internet connections at home (e.g., DSL
+mix nodes from many of whom Internet connections at home (e.g., DSL
 providers, etc. Nevertheless, the fact that both of these networks
-have multiple duplicate ASes suggests that users of these mix networks
+have multiple duplicate ASes suggests that users of these networks
 should exercise caution when selecting mix nodes (particu-
 larly the entry and exit nodes).
 Previous work (and conventional wisdom) has suggested that selecting
 nodes from disjoint subsets of the IP address space will
 achieve independence in node placement; it is clear from our survey
 of Mixmaster and Tor that these types of prefix-based mechanisms
-are, in general, ineffective, and they can give the user a false sense
+are, in general, ineffective, and these types of prefix-based mechanisms
+ can give the user a false sense
 of security. For example, Tarzan and MorphMix suggest subdividing
 the node space into /16 prefixes, and subsequently into /24
 prefixes and selecting nodes from distinct subsets of the IP prefix
@@ -556,7 +576,11 @@ of a single AS [19, 33]. Unfortunately, this technique does
 not necessarily increase the likelihood of location independence:
 of the five pairs of Mixmaster nodes that are located in the same
 AS, three of these pairs (those in ASes 3269, 7132, and 23504) not
-only have distinct /16 prefixes, they also have distinct /8 prefixes.
+only have distinct /16 prefixes, Unfortunately, this technique does
+not necessarily increase the likelihood of location independence:
+of the five pairs of Mixmaster nodes that are located in the same
+AS, three of these pairs (those in ASes 3269, 7132, and 23504) not
+only have distinct /16 prefixes also have distinct /8 prefixes.
 Similarly, one of the Tor network nodes in AS 23504 has a distinct
 Tor Mixmaster
 # of AS-disjoint mix node pairs 961 1764
@@ -576,10 +600,9 @@ Table
 
 1: Characterizing location independence in Mixmaster and Tor.
 prefix. To achieve location independence, a mix network must
-explicitly consider the actual AS of a host, not simply its IP address.
+explicitly consider the actual AS of a host, not simply a mix network IP address.
 Finally, we note that many of the Tor network's exit nodes are
-currently located in the United States. In practice, this network
-could achieve greater location independence by increasing exit node
+currently located in the United States. In practice, a mix networkcould achieve greater location independence by increasing exit node
 participation outside of the US.
 6.1.2 Path properties
 
@@ -587,17 +610,16 @@ Table
 
 1 shows the extent of location independence in Mixmaster
 and Tor. Tor has 35 nodes that are located in 31 distinct ASes,
-for a total of 961 AS-disjoint mix node pairs; similarly, Mixmaster
-has nodes located in 42 distinct ASes, or 1764 AS-disjoint node
+for a total of 961 AS-disjoint mix node pairs; similarly, Mixmasterhas nodes located in 42 distinct ASes, or 1764 AS-disjoint node
 pairs. The most striking statistic is that AS 3356 appears on 276,
 (nearly 30%) of Tor's AS-disjoint paths; AS 3356 also appears on
-about 17% of Mixmaster's AS-disjoint paths between node pairs.
+about 17% of Mixmaster AS-disjoint paths between node pairs.
 The reason for this prevalence can be explained by two factors:
 (1) the location of nodes in the mix network, and (2) fundamental
 properties of the AS-level topology (i.e., many paths ultimately
 traverse some tier-1 ISP; those in the mix topologies we examined
 seem particularly likely to traverse AS 3356).
-First, many of both Tor's and Mixmaster's nodes are located in
+First, many of TorTor's and Mixmaster's nodes are located in
 edge networks; this means that, for some nodes, the path both to
 and from that node will cross the same AS much of the time. This
 phenomenon is especially true for nodes that are located on edge
@@ -608,7 +630,7 @@ Second, many paths in the Internet, particularly those between
 two edge networks, will traverse at least one large "tier-1" ISP (i.e.,
 an ISP that operates its own backbone and does not buy upstream
 service from another ISP). Not surprisingly, Table 1 shows that
-many of the ASes that are between a large number of mix node
+many of ASes that are between a large number of mix node
 pairs are tier-1 ISPs (e.g., UUNet, Qwest, Global Crossing, AT&T,
 AOL, Verio, and Abovenet).
 The prevalence of certain ISPs between mix node pairs suggests
@@ -634,7 +656,8 @@ path of a certain length. (Figures 5 and 6 show the same properties
 for the reverse paths through the mix network.) Paths of length
 one and two have less than two links and, thus, are never observed
 by the same AS twice. The AS that contains the second node in a
-three-hop path will always observe all links in the path because it
+three-hop path will always observe all links in the path because The AS that contains the second node in a
+three-hop path
 is incident on both links in the path; for the same reason, the ASes
 of the second and third hops in a four-hop path will always be able
 to observe all but one link in the path.
@@ -674,7 +697,7 @@ To do this, we generated 10,000 random entry and exit pairs for
 each network and, for each sender/receiver pair, observed the number
 of times the path from the sender to the entry node traversed
 at least one AS on both paths; we performed this analysis for both
-forward and reverse paths through the mix network. Tables 2 and 3
+forward and reverse paths through a mix network. Tables 2 and 3
 show the probability, for each sender and receiver, of this event. We
 see that each pair of sender and receiver has at least some subset of
 entry and exit paths that traverse the same AS upon both entry and
@@ -755,7 +778,9 @@ exit. Upon further investigation, we learned that the AS that was
 traversed on both entry and exit most often was always a tier-1 ISP.
 These results suggest that the sender in a mix network should exercise
 care when selecting entry and exit nodes to avoid choosing
-entry and exit paths that traverse the same AS. They also suggest
+entry and exit paths that traverse the same AS. the sender in a mix network should exercise
+care when selecting entry and exit nodes to avoid choosing
+entry and exit paths that traverse the same AS also suggest
 that it is certainly possible for an intelligent sender to select entry
 and exit nodes such that the entry and exit paths do not traverse the
 same AS on entry and exit (e.g., between Speakeasy and Google,
@@ -763,7 +788,7 @@ only 7% of Tor entry/exit node pairs result in entry and exit paths
 that cross the same AS on both entry and exit). However, a careless
 sender that does not pay attention to the AS-level topology
 may well be observed by a single AS at both entry and exit. For
-example, if Alice uses AOL (AS 1668) as her ISP and attempts
+example, if Alice uses AOL (AS 1668) as Alice ISP and attempts
 to connect to cnn.com (AS 5662), a single AS (i.e., AS 1668)
 will observe both the entry and exit paths with absolute certainty,
 because AOL Time Warner owns Turner Broadcasting (AS 5662),
@@ -779,7 +804,8 @@ a user may wish to establish different mix-level paths for forward
 and reverse traffic to minimize the possibility that a single AS can
 observe both entry and exit traffic. This finding is not entirely un-
 expected, given the asymmetric path properties of the Internet.
-Interestingly, these tables also show that location independence
+Interestingly, Tables 2 and 3
+ also show that location independence
 is high when the sender, the receiver, or both are located in a tier-1
 ISP (e.g., AS 4999, which is part of Sprint). This might be because
 the path from the sender to the entry point is already located in a
@@ -814,56 +840,58 @@ Table
 
 3: Location independence for typical sending and receiving ASes for forward paths through the Mixmaster anonymity network
 topology. Numbers in parentheses show location independence properties for reverse paths (i.e., traffic from receiver to sender).
-senders increase the location independence of the paths they use,
+senders increase the location independence of the paths senders use,
 by explicitly choosing entry and exit nodes to avoid traversing the
 same AS upon entry and exit to the mix network.
 However, while this approach is clearly better against a small adversary
 who owns one AS, we must also consider the effect against
 a large adversary who owns many ASes. By narrowing the set of
-possible mixes Alice might use, she gives more information to a
+possible mixes Alice might use, Alice gives more information to a
 large adversary. For example, an adversary who observes a trans-action
 exiting the mix network at a Sprint node can deduce that
 Alice did not enter the mix network through a Sprint node. We
-must consider the effects of our suggested algorithm on all levels
-of adversary; we leave this investigation to future work.
+must consider the effects of We suggested algorithm on all levels
+of adversary; We leave this investigation to future work.
 7.2 Improved Node Placement
 As mix networks expand, would nodes in certain ASes help to
 achieve diversity better than others? Our results suggest that nodes
 in edge networks (e.g., cable modem and DSL providers, universi-
 ties, etc.) are likely to traverse the same AS on both the inbound
-and outbound paths to those nodes. Far-flung node locations that
+and outbound paths to nodes
+in edge networks. Far-flung node locations that
 provide geographical diversity, such as nodes in Asia, are likely to
 actually reduce location independence, because such nodes do not
 typically have diverse AS-level connectivity. Rather, the best place
 for new nodes is likely to be in ASes that have high degree-that
 is, those that connect to a large number of other ASes. Ironically,
-the ASes with the highest degree tend to be tier-1 ISPs themselves;
+the ASes with the highest degree tend to be tier-1 ISPs tier-1 ISPs;
 thus placing one node in each tier-1 ISP and building mix paths between
-those nodes may be the best strategy for increasing location
+nodes
+in edge networks may be the best strategy for increasing location
 independence. Exploring this question is an excellent direction for
 future work.
 7.3 Other issues
 Several other factors complicate our analysis, which we leave for
 future work. First, companies like Akamai provide Web hosting
 around the globe to serve content from locations that are close to
-any given user. They therefore present a challenge for this analysis.
-Because the exit node will choose a nearby Akamai server, Alice
-can no longer use the scheme in Section 4.2 to estimate the AS-level
-path between the exit node and her destination. Also, Akamai
-itself becomes a powerful global adversary with respect to certain
+any given user. First, companies like Akamai provide Web hosting
+around the globe to serve content from locations that are close to
+any given user therefore present a challenge for this analysis.
+Because the exit node will choose a nearby Akamai server, Alicecan no longer use the scheme in Section 4.2 to estimate the AS-level
+path between the exit node and Alice destination. Also, Akamai becomes a powerful global adversary with respect to certain
 popular websites. Second, more research remains to determine the
 sensitivity of our independence metric to the addition or removal of
 a few nodes in the topology. Third, our choice of popular locations
 for initiator and responder were all inside the United States. We
 should determine whether our analysis changes for users in foreign
-countries. Finally, for Alice to use this approach, she must periodically
+countries. Finally, for Alice to use this approach, Alice must periodically
 fetch routing tables and estimate the Internet's topology-
 which requires lots of computation and bandwidth. We must devise
 a way to condense this information; directory servers could then
 provide periodic signed snapshots.
 8. CONCLUSION
 We propose that mix networks should consider the underlying
-AS-level paths to achieve better location independence. Our paper
+AS-level paths to achieve better location independence. We paper
 presents several interesting and important results:
 While previous systems have proposed selecting nodes from
 disjoint IP address prefixes to select nodes in different juris-
@@ -907,7 +935,7 @@ Traffic analysis attacks and trade-offs in anonymity providing systems
 
 Web MIXes: A system for anonymous and unobservable Internet access.
 Dummy traffic against long term intersection attacks.
-The disadvantages of free MIX routes and how to overcome them.
+The disadvantages of free MIX routes and how to overcome free MIX routes.
 Freedom systems 2.0 architecture.
 Towards capturing representative AS-level internet topologies
 Untraceable electronic mail
@@ -938,7 +966,7 @@ Towards an Analysis of Onion Routing Security.
 --TR
 Untraceable electronic mail, return addresses, and digital pseudonyms
 Traffic analysis
-The disadvantages of free MIX routes and how to overcome them
+The disadvantages of free MIX routes and how to overcome free MIX routes
 Towards an analysis of onion routing security
 Web MIXes
 On inferring autonomous system relationships in the internet

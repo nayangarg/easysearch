@@ -1,19 +1,20 @@
 --T
 Efficient Address Generation for Affine Subscripts in Data-Parallel Programs.
 --A
-Address generation for compiling programs, written in HPF, to executable SPMD code is an important and necessary phase in a parallelizing compiler. This paper presents an efficient compilation technique to generate the local memory access sequences for block-cyclically distributed array references with affine subscripts in data-parallel programs. For the memory accesses of an array reference with affine subscript within a two-nested loop, there exist repetitive patterns both at the outer and inner loops. We use tables to record the memory accesses of repetitive patterns. According to these tables, a new start-computation algorithm is proposed to compute the starting elements on a processor for each outer loop iteration. The complexities of the table constructions are O(k+s2), where k is the distribution block size and s2 is the access stride for the inner loop. After tables are constructed, generating each starting element for each outer loop iteration can run in O(1) time. Moreover, we also show that the repetitive iterations for outer loop are Pk/gcd(Pk,s1), where P is the number of processors and s1 is the access stride for the outer loop. Therefore, the total complexity to generate the local memory access sequences for a block-cyclically distributed array with affine subscript in a two-nested loop is O(Pk/gcd(Pk,s1)+k+s2).
+Address generation for compiling programs, written in HPF, to executable SPMD code is an important and necessary phase in a parallelizing compiler. This paper presents an efficient compilation technique to generate the local memory access sequences for block-cyclically distributed array references with affine subscripts in data-parallel programs. For the memory accesses of an array reference with affine subscript within a two-nested loop, there exist repetitive patterns both at the outer and inner loops. We use tables to record the memory accesses of repetitive patterns. According to tables, a new start-computation algorithm is proposed to compute the starting elements on a processor for each outer loop iteration. The complexities of the table constructions are O(k+s2), where k is the distribution block size and s2 is the access stride for the inner loop. After tables are constructed, generating each starting element for each outer loop iteration can run in O(1) time. Moreover, we also show that the repetitive iterations for outer loop are Pk/gcd(Pk,s1), where P is the number of processors and s1 is the access stride for the outer loop. Therefore, the total complexity to generate the local memory access sequences for a block-cyclically distributed array with affine subscript in a two-nested loop is O(Pk/gcd(Pk,s1)+k+s2).
 --B
 Introduction
 Generally speaking, data-parallel languages support
 three regular data distributions: block, cyclic, and
 block-cyclic data distributions. The block distribution
 is to distribute contiguous array elements evenly
-onto processors. The cyclic distribution is to distribute
+onto processors. The block distribution
+ is to distribute
 each array element onto processors one at a
 time and in a round-robin fashion. The distribution
 that blocks of size k are distributed onto processors
 in a round-robin fashion is the block-cyclic
-distribution and is denoted as cyclic(k). The block-cyclic
+distribution and is denoted as cyclic(k). the block-cyclic
 distribution is known to be the most general
 data distribution. The block and cyclic distributions
 can be represented by the block-cyclic distribution as
@@ -34,10 +35,10 @@ The table construction needs to solve k linear Diophantine
 equations and incurs a sorting operation.
 The work improving the FSM approach [3] is proposed
 in [10, 11, 20]. Efficient FSM table generation
-is proposed. The improved work enumerates the local
+is proposed. The work improving the FSM approach [3] enumerates the local
 memory access sequences by viewing the accessed
 elements an integer lattice. The sorting step in [3]
-is avoided in the improved work. In [7], the authors
+is avoided in The work improving the FSM approach [3]. In [7], the authors
 use the virtual processors to generate communication
 sets for each processor. From different viewpoint
 of a block-cyclic distribution, the virtual processor
@@ -67,14 +68,14 @@ code will incur significant overhead. A table-based
 approach is proposed in [22]. The authors classify
 all blocks into classes and use a class table to record
 the memory accesses of the first repetitive pattern.
-By using the class table, they derived the communication
+By using the class table, The authors derived the communication
 sets for each processor. Both [1] and [22] are
 addressing the compilation of array references with
 affine subscripts within a multi-nested loop. How-
 ever, the proposed methods are not efficient enough
 for dealing with some special case.
 For compiling array references with affine sub-
-scripts, some researchers pay their attention on the
+scripts, some researchers pay some researchers attention on the
 array reference enclosed within a two-nested loop
 to find a better result [10, 11, 17]. Based on FSM
 approach [3], Kennedy et al. proposed another approach
@@ -86,14 +87,14 @@ exist repetitive patterns both at the outer and inner
 loops. Moreover, to fix each iteration of the
 outer loop, the affine subscript is reduced to a simple
 subscript. Therefore, for each iteration in the outer
-repetitive pattern, they use FSM approach to generate
+repetitive pattern, the affine subscript use FSM approach to generate
 the local memory access sequences for the inner
 loop. To use FSM approach at the inner loop, start-
 computations to decide the initial state of FSM for
 each iteration of the outer loop are necessary. They
 proposed an O(Pk) algorithm for a start-computation,
 where P is the number of processors and k is the
-distribution block size. For the outer loop, they
+distribution block size. For the outer loop, They
 found that the repetitive iterations are Pk iterations.
 Hence, the total complexity to generate the local
 memory access sequence for an array reference with
@@ -126,7 +127,7 @@ is O(Pk= gcd(Pk; s 1
 which is asymptotical
 to O(Pk). The proposed approach is not only
 correct but also efficient.
-The paper is organized as follows. Section 2 formulates
+this paper is organized as follows. Section 2 formulates
 the problem and describes the traditionally
 techniques to generate local memory access sequences
 for compiling the array references with affine subscripts
@@ -140,7 +141,7 @@ Address Generation for Affine
 Subscripts
 2.1 Problem Formulation
 Specifically, Fig. 1 illustrates the program model considered
-in the paper. Array A is distributed onto
+in this paper. Array A is distributed onto
 processors with cyclic(k) distribution. The array
 reference contains two induction variables i 1 and i 2 .
 The access strides of the array reference with respect
@@ -191,15 +192,15 @@ turns out to be A(2i 2
 ). Thus a finite state
 machine (FSM) can be built to enumerate the local
 memory access sequences for the SIV problem. Fig. 3
-illustrates the FSM to generate the local memory access
+illustrates FSM to generate the local memory access
 sequences when the array reference contains a
 single induction variable and the access stride is 2.
 Fig. 3(a) shows the FSM table, where Next records
 the next transition state and \DeltaM records the local
 memory gaps of successive array elements from current
 state transmitting to the next state. Fig. 3(b)
-is the transition diagram of the FSM.
-The initial state of the FSM depends on the position
+is the transition diagram of FSM.
+The initial state of FSM depends on the position
 of the starting array element in a block on the
 processor. For instance, when the starting
 element on processor p 0 is 0 and its position in a
@@ -217,18 +218,19 @@ State Next \DeltaM
 Fig. 3: A finite state machine (FSM) to generate the
 local memory access sequences for an SIV problem
 with access stride 2.
-block is 0, thus the initial state of the FSM for the
+block is 0, thus the initial state of FSM for the
 case when i 1
 0 is at state 0. In addition to the
-initial state of the FSM, we also need to know the
+initial state of FSM, we also need to know the
 local address of the starting element since FSM only
 records the local memory gaps between successive array
 elements allocated on the processor. FSM has no
 enough information to show where to start in terms
-of local address. In other words, although we have
-the FSM and its initial state, we still do not know
-the starting local address in this case. For exam-
-ple, besides the initial state of the FSM being state
+of local address. In other words, although FSM have
+the FSM and FSM initial state, FSM still do not know
+the starting local address in the
+case. For exam-
+ple, besides the initial state of FSM being state
 0 that we should know, we have to figure out the local
 address of the starting element. Obviously, when
 the local address of the starting element 0 on
@@ -244,16 +246,19 @@ the memory access stride is still the same (2, for this
 example). When i 1
 1, the starting element on
 processor
-is 49 and its position in a block is 1.
-Thus the initial state of the FSM for the case of i 1
+is 49 and processor
+ position in a block is 1.
+Thus the initial state of FSM for the case of i 1
 1 is at state 1. However, where to start in terms
 of local address is the key point now. When i 1
 1, the starting element on processor p 0
 is
-its local address on processor p 0
+p 0
+ local address on processor p 0
 is 13. Therefore,
 the local memory access sequence for processor p 0
-is 13; 15; and so on. Similarly, it is done likewise
+is 13; 15; and so on. Similarly, p 0
+ is done likewise
 when the outer loop iteration
 Accordingly, we can obtain the local memory access
 sequences on processors as Fig. 2(c) shows.
@@ -267,7 +272,7 @@ repetitive patterns. The following theorem demonstrates
 that the repetitive period of the outer loop
 is Pk= gcd(Pk; s 1
 iterations. Since the space is lim-
-ited, the proof of the theorem is omitted in the paper.
+ited, the proof of The following theorem is omitted in the paper.
 One can refer to [18] for more details.
 Theorem 1 For the program model shown in Fig. 1,
 the memory accesses of the array reference have a
@@ -288,17 +293,16 @@ The findings of the starting elements for outer loop
 iterations are important for solving the MIV address
 generation problem. It is obvious that for a given
 outer loop iteration the memory accesses just depend
-on the inner loop access stride s 2 . Therefore, in this
-section, we use s to indicate the inner loop access
+on the inner loop access stride s 2 . Therefore, in the next section, we use s to indicate the inner loop access
 stride s 2 except otherwise notified. The method to
 find the starting elements in case of s - k can be
 found in [10, 17]. Both of them are O(1) in com-
-plexity. However, their methods to find the starting
+plexity. However, Both of them methods to find the starting
 elements in case of s ? k are O(Pk) and O(k), re-
 spectively. We propose a new approach to find the
 starting elements in case of s ? k and the time complexity
 of the algorithm is O(1). The problem and
-its solution are described as follows.
+O(1 solution are described as follows.
 3.1 Problem Description
 We have given an overall description of the MIV address
 generation problem in Section 2.2. Finding the
@@ -329,7 +333,8 @@ global start is 37, which local address is 9 on processor
 . The starting elements on processors p 0 ,
 and p 3 are 49, 41, and 45, respectively, in terms of
 global addresses. The problem is to figure out the
-local addresses of these starting elements. That is,
+local addresses of The gray
+colored elements. That is,
 13, 9, and 9, respectively. The starting elements for
 every outer loop iteration are shown in Fig. 4. The
 global and local addresses of the starting elements
@@ -342,11 +347,11 @@ processor.
 3.2 Preprocessing
 Given a global start G, we propose a new approach
 to find the local address of the starting element S q
-for processor q in case of s ? k. The proposed approach
+for processor q in case of s ? k. a new approach
 is a table-based approach. In our approach,
 it is necessary to pre-compute a few tables in order
 to evaluate the starting elements for a given global
-start. In this section, we only describe the character-
+start. In this section, our only describe the character-
 Fig. 5: An one-level mapping example to illustrate
 the ideas of the tables used in the paper, where it
 assumes that array elements are distributed over 4
@@ -370,7 +375,7 @@ rule: b mod s
 of that block. A repetitive pattern contains blocks
 from class 0 to class s
 1 and which is termed
-a class cycle in [22]. In addition, since s ? k, there is
+a class cycle in [22]. In addition, since S ? k, there is
 at most one accessed element on a block. Therefore,
 we can use a table to record the position of the only
 accessed element for every class. Different from [22],
@@ -415,7 +420,8 @@ element on the block by using C2P table. However,
 it requires a search operation and, in some cases, we
 can not recognize the class number of a block according
 to the C2P table. For instance, when the number
-of classes is smaller than the block size, it is possible
+of classes is smaller than the block size, the number
+of classes is possible
 that, for some position, there is no class that its
 accessed element is at that position. It would cause
 confusion to recognize the class number by that posi-
@@ -454,7 +460,7 @@ more, as we construct P2C table, for the position
 that has no class number to correspond to, we assign
 the class number of the previous value to the current
 value. Nevertheless, according to C2P table,
-the class number has its real position to correspond
+the class number has the class number real position to correspond
 to. Consequently, there is a difference between the
 real position and the assumed position if we make
 such an assumption. In order to make use of C2P
@@ -462,9 +468,9 @@ table in every case, we use another table to record
 the difference in order to make up the shortcomings
 of C2P table. The table is denoted asOffset table
 in the paper.
-It has been discussed that when the number of
+The table has been discussed that when the number of
 classes is larger than the block size, each position has
-its suitable class number to correspond to. In such a
+The table suitable class number to correspond to. In such a
 case, Offset table is of no use. Fig. 5 is an example
 under such a condition and the Offset table is
 shown in Fig. 7(c). On the other hand, if the number
@@ -481,7 +487,7 @@ block of class 0 is at position 0 according to C2P ta-
 ble. Thus there is a 1 difference between the assumed
 value and the real value. As a result, Offset(1)=1.
 Similarly, Offset(3)=1. There is no problem on
-positions 0 and 2 since they have their suitable class
+positions 0 and 2 since they have they suitable class
 numbers to correspond to. Consequently, Offset
 table is (0, 1, 0, 1).
 3.2.2 NextActive and Jump Tables
@@ -518,7 +524,7 @@ and p 3
 are 0, 1, 2, and 3, respectively. We use the
 notation (0; 4; 3; 2; 1) to denote the ordered sequence.
 Clearly, all class numbers have appeared in the ordered
-sequence. Thus, we say that there is only one
+sequence. Thus, We say that there is only one
 group in the ordered sequence. Fig. 6(a) illustrates
 the one group ordered sequence for this example.
 It should be addressed that it is possible that
@@ -548,7 +554,7 @@ this example.
 It is important to have such a discovery since we
 can obtain the class number of the next block on a
 processor from current block if the class number of
-the current block is known. Based on the discovery,
+the current block is known. Based on such a discovery,
 we use one table to record the class number of the
 next active block from current block on a processor
 and another to record how many empty blocks we
@@ -557,11 +563,13 @@ Jump, respectively. The constructions of the two
 tables are based on the ordered sequence and C2P
 table. If current block is not an empty block, we need
 not to jump any block. Thus, the value in NextAct
-table for that block is recorded by its class number
+table for current block is recorded by NextAct
+ class number
 and that in Jump table is recorded by 0. Otherwise,
 we can traverse the ordered sequence to find an active
 block. Then the value in NextAct table for
-that block is recorded by the class number of the active
+an active
+block is recorded by the class number of the active
 block and that in Jump table is recorded by the
 number of blocks that we have traversed. If we can
 not find an active block, both the values in Nex-
@@ -577,9 +585,11 @@ on group. The NextAct and Jump tables for the
 example shown in Fig. 5 are illustrated in Fig. 7(d)
 and (e), respectively.
 3.3 The Algorithm
-With these tables we can evaluate the starting element
+With C2P and P2C
+tables we can evaluate the starting element
 from a given global start in O(1) time complex-
-ity. Fig. 8 illustrates the algorithm to evaluate the
+ity. Fig. 8 illustrates The Algorithm
+ to evaluate the
 starting element from a given global start. We term
 the algorithm Start Computation algorithm. The
 basic concept of the Start Computation algorithm
@@ -635,7 +645,7 @@ can get the position of the accessed element on the
 block of class c, if ever. Therefore, Step 4 can obtain
 the position on a block for the starting element on
 processor q. The obtained position is represented by
-pos s . If pos s does not equal "-", it means that there
+pos s . If pos s does not equal "-", pos s means that there
 is an accessed element on the block. Of course, the
 accessed element is the starting element. We can go
 direct to Step 11 to evaluate the distance between
@@ -661,10 +671,9 @@ NextAct tables, respectively. Since pos s in Step
 the block with the same course as the global start,
 hence, the distance caused by the number of blocks
 required to jump to an active block should be added
-to pos s in such a case. Thus, we have Step 8. Steps
-after 11 are the same as explained in the previous
+to pos s in such a case. Thus, we have Step 8. the Steps are the same as explained in the previous
 paragraph.
-Let us take Fig. 9 as an example, where it assumes
+Let we take Fig. 9 as an example, where it assumes
 that
 Given an global start 37, whose local address is 9 on
 processor we first to find the starting element for
@@ -698,7 +707,8 @@ which corresponds to
 the array element 67 in terms of global address.
 Evidently, the time complexity of Start Computation
 algorithm is O(1). The complexity analyses
-of the tables used in the algorithm and the performance
+of the tables used in The Algorithm
+ and the performance
 comparisons against the existing methods will
 be discussed in Section 4.
 Performance Analyses and
@@ -737,7 +747,7 @@ repetitive Pk Pk Pk
 iterations
 Total
 in data-parallel programs, assuming array is block-
-cyclically distributed and its subscript is affine. The
+cyclically distributed and O(Pk) subscript is affine. The
 approach is a table-based approach. The constructions
 of these tables require O(s
 plexity, where s 2 is the access stride of the inner loop.

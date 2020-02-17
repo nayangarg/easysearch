@@ -1,52 +1,54 @@
 --T
 Guaranteeing Real-Time Requirements With Resource-Based Calibration of Periodic Processes.
 --A
-This paper presents a comprehensive design methodology for guaranteeing end-to-end requirements of real-time systems. Applications are structured as a set of process components connected by asynchronous channels, in which the endpoints are the systems external inputs and outputs. Timing constraints are then postulated between these inputs and outputs; they express properties such as end-to-end propagation delay, temporal input-sampling correlation, and allowable separation times between updated output values. The automated design method works as follows: First new tasks are created to correlate related inputs, and an optimization algorithm, whose objective is to minimize CPU utilization, transforms the end-to-end requirements into a set of intermediate rate constraints on the tasks. If the algorithm fails, a restructuring tool attempts to eliminate bottlenecks by transforming the application, which is then re-submitted into the assignment algorithm. The final result is a schedulable set of fully periodic tasks, which collaboratively maintain the end-to-end constraints.
+This paper presents a comprehensive design methodology for guaranteeing end-to-end requirements of real-time systems. Applications are structured as a set of process components connected by asynchronous channels, in which the endpoints are the systems external inputs and outputs. Timing constraints are then postulated between these inputs and outputs; Timing constraints express properties such as end-to-end propagation delay, temporal input-sampling correlation, and allowable separation times between updated output values. The automated design method works as follows: First new tasks are created to correlate related inputs, and an optimization algorithm, whose objective is to minimize CPU utilization, transforms the end-to-end requirements into a set of intermediate rate constraints on the tasks. If the algorithm fails, a restructuring tool attempts to eliminate bottlenecks by transforming the application, which is then re-submitted into the assignment algorithm. The final result is a schedulable set of fully periodic tasks, which collaboratively maintain the end-to-end constraints.
 --B
 Introduction
 Most real-time systems possess only a small handful of inherent timing constraints which will "make
-or break" their correctness. These are called end-to-end constraints, and they are established on
+or break" their correctness. These are called end-to-end constraints, and These are established on
 the systems' external inputs and outputs. Two examples are:
 (1) Temperature updates rely on pressure and temperature readings correlated within 10ms.
 (2) Navigation coordinates are updated at a minimum rate of 40ms, and a maximum rate 80ms.
 But while such end-to-end timing parameters may indeed be few in number, maintaining functionally
 correct end-to-end values may involve a large set of interacting components. Thus, to ensure
 that the end-to-end constraints are satisfied, each of these components will, in turn, be subject to
-their own intermediate timing constraints. In this manner a small handful of end-to-end constraints
+each of these components own intermediate timing constraints. In this manner a small handful of end-to-end constraints
 may - in even a modest system - yield a great many intermediate constraints.
-The task of imposing timing parameters on the functional components is a complex one, and it
+The task of imposing timing parameters on the functional components is a complex one, and the functional components
 mandates some careful engineering. Consider example (2) above. In an avionics system, a "naviga-
 tion update" may require such inputs as "current heading," airspeed, pitch, roll, etc; each sampled
 within varying degrees of accuracy. Moreover, these attributes are used by other subsystems, each
 of which imposes its own tolerance to delay, and possesses its own output rate. Further, the navigation
-unit may itself have other outputs, which may have to be delivered at rates faster than
-40ms, or perhaps slower than 80ms. And to top it off, subsystems may share limited computer
+unit may the navigation
+unit have other outputs, which may have to be delivered at rates faster than
+40ms, or perhaps slower than 80ms. And to top the navigation
+unit off, subsystems may share limited computer
 resources. A good engineer balances such factors, performs extensive trade-off analysis, simulations
 and sensitivity analysis, and proceeds to assign the constraints.
-These intermediate constraints are inevitably on the conservative side, and moreover, they are
+the constraints are inevitably on the conservative side, and moreover, the constraints are
 conveyed to the programmers in terms of constant values. Thus a scenario like the following is
 often played out: The design engineers mandate that functional units A, B and C execute with
 periods 65ms, 22ms and 27ms, respectively. The programmers code up the system, and find that C
-grossly over-utilizes its CPU; further, they discover that most of C's outputs are not being read by
-the other subsystems. And so, they go back to the engineers and "negotiate" for new periods - for
+grossly over-utilizes its CPU; further, The programmers discover that most of C's outputs are not being read by
+the other subsystems. And so, The programmers go back to The design engineers and "negotiate" for new periods - for
 example 60ms, 10ms and 32ms. This process may continue for many iterations, until the system
 finally gets fabricated.
 This scenario is due to a simple fact: the end-to-end requirements allow many possibilities for
-the intermediate constraints, and engineers make what they consider to be a rational selection.
+the intermediate constraints, and engineers make what engineers consider to be a rational selection.
 However, the basis for this selection can only include rough notions of software structuring and
 scheduling policies - after all, many times the hardware is not even fabricated at this point!
-Our Approach. In this paper we present an alternative strategy, which maintains the timing constraints
+Our Approach. In this paper Our present an alternative strategy, which maintains the timing constraints
 in their end-to-end form for as long as possible. Our design method iteratively instantiates
 the intermediate constraints, all the while taking advantage of the leeway inherent in the end-to-end
 constraints. If the assignment algorithm fails to produce a full set of intermediate constraints, potential
 bottlenecks are identified. At this point an application analysis tool takes over, determines
-potential solutions to the bottleneck, and if possible, restructures the application to avoid it. The
+potential solutions to the bottleneck, and if possible, restructures the application to avoid the application. The
 result is then re-submitted into the assignment algorithm.
 Domain of Applicability. Due to the complexity of the general problem, in this paper we place
 the following restrictions on the applications that we handle.
-Restriction 1: We assume our applications possess three classes of timing constraints which we
+Restriction 1: We assume We applications possess three classes of timing constraints which we
 call freshness, correlation and separation.
-ffl A freshness constraint (sometimes called propagation delay) bounds the time it takes for data to
+ffl A freshness constraint (sometimes called propagation delay) bounds the time A freshness constraint (sometimes called propagation delay) takes for data to
 flow through the system. For example, assume that an external output Y is a function of some
 system input X . Then a freshness relationship between X and Y might be: "If Y is delivered
 at time t, then the X-value used to compute Y is sampled no earlier than t \Gamma 10ms." We use
@@ -66,13 +68,13 @@ require tightly correlated inputs, but may abide with relatively lax freshness c
 perhaps Y 1 also requires data from an intermediate subsystem which is, in turn, shared with a very
 high-rate output Y 2 .
 Restriction 2: All subsystems execute on a single CPU. Our approach can be extended for use
-in distributed systems, a topic we revisit in Section 7. For the sake of presenting the intermediate
-constraint-assignment technique, in this paper we limit ourselves to uniprocessor systems.
+in distributed systems, a topic Our revisit in Section 7. For the sake of presenting the intermediate
+constraint-assignment technique, in this paper Our limit Our to uniprocessor systems.
 Restriction 3: The entity-relationships within a subsystem are already specified. For example,
 if a high-rate video stream passes through a monolithic, compute-intensive filter task, this situation
 may easily cause a bottleneck. If our algorithm fails to find a proper intermediate timing constraint
-for the filter, the restructuring tool will attempt to optimize it as much as possible. In the end,
-however, it cannot redesign the system.
+for the filter, the restructuring tool will attempt to optimize our algorithm as much as possible. In the end,
+however, our algorithm cannot redesign the system.
 Finally, we stress that we are not offering a completely automatic solution. Even with a fully
 periodic task model, assigning periods to the intermediate components is a complex, nonlinear
 optimization problem which - at worst - can become combinatorially expensive. As for software
@@ -93,13 +95,15 @@ allowing us to keep down IPC times; (3) the period-assignment, optimization algo
 forms the heart of the approach; and (4) the software-restructuring tool, which takes over when
 period-assignment fails.
 Related Work. This research was, in large part, inspired by the real-time transaction model
-proposed by Burns et. al. in [3]. While the model was formulated to express database applications,
-it can easily incorporate variants of our freshness and correlation constraints. In the analogue to
+proposed by Burns et. al. in [3]. While the real-time transaction model
+proposed by Burns et was formulated to express database applications,
+the real-time transaction model
+proposed by Burns et can easily incorporate variants of our freshness and correlation constraints. In the analogue to
 freshness, a persistent object has "absolute consistency within t" when it corresponds to real-world
 samples taken within maximum drift of t. In the analogue to correlation, a set of data objects
 possesses "relative consistency within t" when all of the set's elements are sampled within an
 interval of time t.
-We believe that in output-driven applications of the variety we address, separation constraints
+We believe that in output-driven applications of the variety We address, separation constraints
 are also necessary. Without postulating a minimum rate requirement, the freshness and correlation
 constraints can be vacuously satisfied - by never outputting any values! Thus the separation
 constraints enforce the system's progress over time.
@@ -111,33 +115,33 @@ tighten deadlines. E.g., if a task's inputs must be correlated within a very tig
 accuracy - say, several nanoseconds - the task's deadline has to be tightened accordingly. Similar
 problems accrue for freshness constraints. The net result may be an over-constrained system, and
 a potentially unschedulable one.
-Our approach is different. With respect to tightly correlated samples, we put the emphasis on
+our approach is different. With respect to tightly correlated samples, our put the emphasis on
 simply getting the data into the system, and then passing through in due time. However, since
 this in turn causes many different samples flowing through the system at varying rates, we perform
 "traffic control" via a novel use of "virtual sequence numbering." This results in significantly looser
-periods, constrained mainly by the freshness and separation requirements. We also present a period
+periods, constrained mainly by the freshness and separation requirements. our also present a period
 assignment problem which is optimal - though quite expensive in the worst case.
 This work was also influenced by Jeffay's ``real-time producer/consumer model'' [10], which
-possesses a task-graph structure similar to ours. In this model rates are chosen so that all messages
+possesses a task-graph structure similar to our. In this model rates are chosen so that all messages
 "produced" are eventually "consumed." This semantics leads to a tight coupling between the
-execution of a consumer to that of its producers; thus it seems difficult to accommodate relative
+execution of a consumer to that of a consumer producers; thus it seems difficult to accommodate relative
 constraints such as those based on freshness.
-Klein et. al. surveys the current engineering practice used in developing industrial real-time
+Burns et. al. surveys the current engineering practice used in developing industrial real-time
 systems [11]. As is stressed, the intermediate constraints should be primarily a function of the
 end-to-end constraints, but should, if possible, take into account sound real-time scheduling tech-
 niques. At this point, however, the "state-of-the-art" is the practice of trial and error, as guided
 by engineering experience. And this is exactly the problem we address in this paper.
-The remainder of the paper is organized as follows. In Section 2 we introduce the application
-model and formally define our problem. In Section 3 we show our method of transforming
+The remainder of this paper is organized as follows. In Section 2 we introduce the real-time transaction model
+proposed by Burns et and formally define we problem. In Section 3 we show our method of transforming
 the end-to-end constraints into intermediate constraints on the tasks. In Section 4 we describe
 the constraint-solver in detail, and push through a small example. In Section 5 we describe the
 application transformer, and in Section 6 we show how the executable application is finally built.
 Problem Description and Overview of Solution
-We re-state our problem as follows:
+We re-state We problem as follows:
 ffl Given a task graph with end-to-end timing constraints on its inputs and outputs,
 ffl Derive periods, offsets and deadlines for every task,
 ffl Such that the end-to-end requirements are met.
-In this section we define these terms, and present an overview of our solution strategy.
+In this section we define these terms, and present an overview of we solution strategy.
 2.1 The Asynchronous Task Graph
 An application is rendered in an asynchronous task graph (ATG) format, where for a given graph
 i.e., the set of tasks; and g, a set of
@@ -149,9 +153,9 @@ have the following attributes: a period T i , an offset O i  0 (denoting the ear
 start-time from the start-of-period), a deadline D i  T i (denoting the latest finish-time relative
 to the start-of-period), and a maximum execution time e i . The interval [O constrains
 the window W i of execution, where W
-Note that initially the T i 's, O i 's and D i 's are open variables, and they get instantiated by the
+Note that initially the T i 's, O i 's and D i 's are open variables, and open variables get instantiated by the
 constraint-solver.
-The semantics of an ATG is as follows. Whenever a task  i executes, it reads data from all
+The semantics of an ATG is as follows. Whenever a task  i executes, a task   reads data from all
 incoming channels d j corresponding to the edges d j !  i , and writes to all channels d l corresponding
 to the edges  i ! d l . The actual ordering imposed on the reads and writes is inferred by the task
 All reads and writes on channels are asynchronous and non-blocking. While a writer always
@@ -161,11 +165,12 @@ any location. For example, perhaps a writer runs at a period of 20ms, with two r
 whereas the second reader may use every other value.
 But this scheme raises a "chicken and egg" issue, one of many that we faced in this work. One
 of our objectives is to support software reuse, in which functional components may be deployed
-in different systems - and have their timing parameters automatically calibrated to the physical
+in different systems - and have functional components timing parameters automatically calibrated to the physical
 limitations of each. But this objective would be hindered if a designer had to employ the following
 tedious method: (1) to first run the constraint-solver, which would find the T i 's, and then, based
 on the results; (2) to hand-patch all of the modules with specialized IPC code, ensuring that the
-intermediate tasks correctly correlate their input samples.
+intermediate tasks correctly correlate the
+intermediate tasks input samples.
 Luckily, the ATG semantics enables us to automatically support this process. Consider the
 ATG in
 
@@ -184,12 +189,12 @@ is used, and to concentrate exclusively on the assignment problem. In fact - as 
 sequel - communication can be completely unconditional, in that we do not even require short
 locking for consistency. However, we pay a price for avoiding this overhead; namely, that the
 period assignments must ensure that no writer can overtake a reader currently accessing its slot.
-Moreover, we note that our timing constraints define a system driven by time and output re-
+Moreover, we note that we timing constraints define a system driven by time and output re-
 quirements. This is in contrast to reactive paradigms such as ESTEREL [4], which are input-driven.
 Analogous to the "conceptually infinite buffering" assumptions, the rate assignment algorithm assumes
 that the external inputs are always fresh and available. The derived input-sampling rates
 then determine the true requirements on input-availability. And since an input X can be connected
-to another ATG's output Y , these requirements would be imposed on Y 's timing constraints.
+to another ATG's output Y , the true requirements on input-availability would be imposed on Y 's timing constraints.
 d1 d2
 6
 f
@@ -199,15 +204,14 @@ Figure
 
 1: (A) A task graph and (B) code for  4 .
 2.2 A Small Example
-As a simple illustration, consider the system whose ATG is shown in Figure 1(A). The system
-is composed of six interacting tasks with three external inputs and two external outputs. The
+As a simple illustration, consider the system whose ATG is shown in Figure 1(A). the system whose ATG is shown in Figure 1(A)is composed of six interacting tasks with three external inputs and two external outputs. The
 application's characteristics are as follows:
 Freshness F (Y 1
 Correlation
 Separation
 Max Execution e
 Times: e
-While the system is small, it serves to illustrate several facets of the problem: (1) There may
+While the system whose ATG is shown in Figure 1(A) is small, the system whose ATG is shown in Figure 1(A) serves to illustrate several facets of the problem: (1) There may
 be many possible choices of rates for each task; (2) correlation constraints may be tight compared
 to the allowable end-to-end delay; (3) data streams may be shared by several outputs (in this case
 that originating at X 2 ); and (4) outputs with the tightest separation constraints may incur the
@@ -222,14 +226,14 @@ utilization exceeds 100%.
 Schedulability: There is a scheduling algorithm which can efficiently maintain the intermediate
 constraints C, and preserve feasibility.
 In the problem we address, the three issues cannot be decoupled. Correctness, for example, is often
-treated as verification problem using a logic such as RTL [9]. Certainly, given the ATG we could
-formulate E in RTL and query whether the constraint set is satisfiable. However, a "yes" answer
-would give us little insight into finding a good choice for C - which must, after all, be simple enough
+treated as verification problem using a logic such as RTL [9]. Certainly, given an ATG we could
+formulate E in RTL [ and query whether the constraint set is satisfiable. However, a "yes" answer
+would give we little insight into finding a good choice for C - which must, after all, be simple enough
 to schedule. Or, in the case of methods like model-checking ([1], etc.), we could determine whether
 C)E is invariant with respect to the system. But again, this would be an a posteriori solution, and
 assume that we already possess C. On the other hand, a system that is feasible may still not be
 schedulable under a known algorithm; i.e., one that can be efficiently managed by a realistic kernel.
-In this paper we put our emphasis on the first two issues. However, we have also imposed a task
+In this paper we put we emphasis on the first two issues. However, we have also imposed a task
 model for which the greatest number of efficient scheduling algorithms are known: simple, periodic
 dispatching with offsets and deadlines. In essence, by restricting C's free variables to the T i 's, O i 's
 and D i 's, we ensure that feasible solutions to C can be easily checked for schedulability.
@@ -238,12 +242,10 @@ for many years. Such a task set can be dispatched by a calendar-based, non-preem
 (e.g., [16, 17, 18]), or by a preemptive, static-priority scheme (e.g., [5, 12, 13, 15]). For the most
 part our results are independent of any particular scheduling strategy, and can be used in concert
 with either non-preemptive or preemptive dispatching.
-However, in the sequel we frequently assume an underlying static-priority architecture. This is
-for two reasons. First, a straightforward priority assignment can often capture most of the ATG's
-precedence relationships, which obviates the need for superfluous offset and deadline variables.
+However, in the sequel our frequently assume an underlying static-priority architecture. This is
+for two reasons. First, a straightforward priority assignment can often capture most of an ATGprecedence relationships, which obviates the need for superfluous offset and deadline variables.
 Thus the space of feasible solutions can be simplified, which in turn reduces the constraint-solver's
-work. Second, priority-based scheduling has recently been shown to support all of the ATG's
-inherent timing requirements: pre-period deadlines [2], precedence constrained sub-tasks [8], and
+work. Second, priority-based scheduling has recently been shown to support all of an ATGinherent timing requirements: pre-period deadlines [2], precedence constrained sub-tasks [8], and
 offsets [14]. A good overview to static priority scheduling may be found in [5].
 2.4 Overview of the Solution
 Our solution is carried out in a four-step process, as shown in Figure 2. In Step 1, the intermediate
@@ -276,22 +278,22 @@ require that any solution to C will enforce the end-to-end constraints E , and t
 also be feasible. At the same time, we want to keep C as simple as possible, and to ensure that
 finding a solution is a relatively straightforward venture. This is particularly important since the
 feasibility criterion - defined by CPU utilization - introduces non-linearities into the constraint
-set. In balancing our goals we impose additional structure on the application; e.g., by creating new
+set. In balancing our goals our impose additional structure on the application; e.g., by creating new
 sampler tasks to get tightly correlated inputs into the system.
 In Step 2 the constraint-solver finds a solution to C, which is done in several steps. First C is
 solved for the period variables, the T i 's, and then the resulting system is solved for the offsets and
 deadlines. Throughout this process we use several heuristics, which exploit the ATG's structure.
-If a solution to C cannot be found, the problem often lies in the original design itself. For
+If a solution to First C cannot be found, the problem often lies in the original design itself. For
 example, perhaps a single, stateless server handles inputs from multiple clients, all of which run at
 wildly different rates. Step 3's restructuring tool helps the programmer eliminate such bottlenecks,
-by automatically replicating strategic parts of the ATG.
+by automatically replicating strategic parts of an ATG.
 In Step 4, the derived rates are used to reserve memory for the channels, and to instantiate
 the "Read" and "Write" operations. For example, consider  4 in Figure 1(B), which reads from
 Now, assume that the constraint-solver assigns  4 and  2 periods of 30ms and 10ms, respectively.
 Then  4 's Read operation on d 2 would be replaced by a macro, which would read every third data
 item in the buffer - and would skip over the other two.
-Harmonicity. The above scheme works only if a producer can always ensure that it is not
-overtaking its consumers, and if the consumers can always determine which data item is the correct
+Harmonicity. The above scheme works only if a producer can always ensure that The above scheme is not
+overtaking The above scheme consumers, and if the consumers can always determine which data item is the correct
 one to read. For example,  4 's job in managing d 2 is easy - since T
 read every third item out of the channel.
 But  4 has another input channel, d 1 ; moreover, temporally correlated samples from the two
@@ -324,7 +326,8 @@ real-time systems, the correlation requirements may very well be tight, and way 
 with the freshness constraints. This typically results in periods that get tightened exclusively to
 accommodate correlation, which can easily lead to gross over-utilization. Engineers often call this
 problem "over-sampling," which is somewhat of a misnomer, since sampling rates may be tuned
-expressly for coordinating inputs. Instead, the problem arises from poor coupling of the sampling
+expressly for coordinating inputs. Instead, this
+problem arises from poor coupling of the sampling
 and computational activities.
 Thus our approach is to decouple these components as much as possible, and to create specialized
 samplers for related inputs. For a given ATG, the sampler derivation is performed in the following
@@ -351,7 +354,7 @@ If jS l j ? 1, create a periodic sampler  s l
 to take samples for inputs in T l
 Thus the incoming channels from inputs T l to tasks in S l are "intercepted" by the new sampler
 task  s l .
-Returning to our original example, which we repeat in Figure 3(A). Since both correlated inputs
+Returning to our original example, which our repeat in Figure 3(A). Since both correlated inputs
 share the center stream, the result is a single group of correlated inputs )g. This, in
 turn, results in the formation of the single sampler  s . We assume  s has a low execution cost of 1.
 The new, transformed graph is shown at the right column of Figure 3(B).
@@ -359,13 +362,15 @@ As for the deadline-offset requirements, a sampler  s l
 is constrained by the following trivial
 relationship
 where t cor is the maximum allowable time-drift on all correlated inputs read by  s l
-The sampler tasks ensure that correlated inputs are read into the system within their appropriate
+The sampler tasks ensure that correlated inputs are read into the system within The sampler tasks appropriate
 time bounds. This allows us to solve for process rates as a function of both the freshness and
 separation constraints, which vastly reduces the search space.
 However we cannot ignore correlation altogether, since merely sampling the inputs at the same
 time does not guarantee that they will remain correlated as they pass through the system. The
-input samples may be processed by different streams (running at different rates), and thus they
-may still reach their join points at different absolute times.
+input samples may be processed by different streams (running at different rates), and thus The
+input samples
+may still reach The
+input samples join points at different absolute times.
 For example, refer back to Figure 3, in which F (Y 2 This disparity is the result
 of an under-specified system, and may have to be tightened. The reason is simple: if  6 's period
 is derived by using correlation as a dominant metric, the resulting solution may violate the tighter
@@ -373,7 +378,7 @@ freshness constraints. On the other hand, if freshness is the dominant metric, t
 constraints may not be achieved.
 We solve this problem by eliminating the "noise" that exists between the different set of require-
 ments. Thus, whenever a fresh output is required, we ensure that there are correlated data sets to
-produce it. In our example this leads to tightening the original freshness requirement F (Y 2 jX 2 ) to
+produce a fresh output. In our example this leads to tightening the original freshness requirement F (Y 2 jX 2 ) to
 Thus we invoke this technique as a general principle. For an output Y with correlated input
 sets the associated freshness constraints are adjusted accordingly:
 3.2 Synthesizing Freshness Constraints
@@ -384,8 +389,8 @@ As data flows through a task chain from X to Y , each task  adds two types of de
 the data's end-to-end response time. One type is execution time, i.e., the time required for  to
 process the data, produce outputs, etc. In this paper we assume that  's maximum execution time
 is fixed, and has already been optimized as much as possible by a good compiler.
-The other type of delay is transmission latency, which is imposed while  waits for its correlated
-inputs to arrive for processing. Transmission time is not fixed; rather, it is largely dependent on
+The other type of delay is transmission latency, which is imposed while  waits for   correlated
+inputs to arrive for processing. Transmission time is not fixed; rather, Transmission time is largely dependent on
 our derived process-based constraints. Thus minimizing transmission time is our goal in achieving
 tight freshness constraints.
 Fortunately, the harmonicity relationship between producers and consumers allows us to accomplish
@@ -407,9 +412,8 @@ started at time 0, whenever there is an invocation of the output task  n , there
 invocations of every task in the freshness chain.
 Consider Figure 4 in which there are three tasks  1 ;  2 and  3 in a freshness chain. From the
 harmonicity assumption we have T 3 jT 2 and T 2 jT 1 .
-The other constraints are derived for the entire chain, under the scenario that within each task's
-minor frame, input data gets read in, it gets processed, and output data is produced. Under these
-constraints, the worst case end-to-end delay is given by D and the freshness requirement is
+The other constraints are derived for the freshness chain, under the scenario that within each task's
+minor frame, input data gets read in, the freshness chain gets processed, and output data is produced. Under The other constraints, the worst case end-to-end delay is given by D and the freshness requirement is
 guaranteed if the following holds:
 Note that we also require a precedence between each producer/consumer task pair. As we show in
 
@@ -424,17 +428,19 @@ tasks, without over-constraining the system. More importantly, with a rigid slac
 Table
 
 1: Constraints due to freshness requirements.
-consumer task would not be allowed to execute before its offset, even if its input data is available. 2
+consumer task would not be allowed to execute before consumer task offset, even if consumer task input data is available. 2
 Rather, we make a straightforward priority assignment for the tasks in each chain, and let
-the scheduler enforce the precedence between them. In this manner, we can do away with the
+the scheduler enforce the precedence between the scheduler. In this manner, we can do away with the
 intermediate deadline and offset variables. This leads to the following rule of thumb:
-If the consumer task is not the head or tail of a chain, then its precedence requirement
-is deferred to the scheduler. Otherwise, the precedence requirement is satisfied through
+If the consumer task is not the head or tail of a chain, then the consumer task precedence requirement
+is deferred to the scheduler. Otherwise, its precedence requirement
+ is satisfied through
 assignment of offsets.
 Example. Consider the freshness constraints for our example in Figure 3(A), F (Y 1
-15. The requirement F (Y 1 specifies a
+15. its precedence requirement
+ F (Y 1 specifies a
 chain window size of D 4 \Gamma O s  30. Since  1 is an intermediate task we now have the precedence
-s OE  1 , which will be handled by the scheduler. However, according to our "rule of thumb," we
+s OE  1 , which will be handled by the scheduler. However, according to our "rule of thumb," our
 use the offset for  4 to handle the precedence  1 OE  4 . This leads to the constraints D 1  O 4 and
 Similar inequalities are derived for the remaining freshness constraints, the result
 of which is shown in Table 1.
@@ -463,40 +469,43 @@ Example. Consider the constraints that arise from output separation requirements
 induced on the output tasks  4 and  6 . The derived constraints are presented below:
 3.4 Execution Constraints:
 Clearly, each task needs sufficient time to execute. This simple fact imposes additional constraints,
-that ensure that each task's maximum execution time can fit into its window. Recall that (1) we
+that ensure that each task's maximum execution time can fit into This simple fact window. Recall that (1) we
 use offset, deadline and period variables for tasks handling external input and output; and (2) we
 use period variables and precedence constraints for the intermediate constraints.
 We can easily preserve these restrictions when dealing with execution time. For each external
 task  i , the following inequalities ensure that window-size is sufficiently large for the CPU demand:
-On the other hand, the intermediate tasks can be handled by imposing restrictions on their constituent
-chains. For a single chain, let E denote the chain's execution time from the head to the
+On the other hand, the intermediate tasks can be handled by imposing restrictions on the intermediate tasks constituent
+chains. For a single chain, let E denote a single chain's execution time from the head to the
 last intermediate task (i.e., excluding the outputting task, if any). Then the chain-wise execution
 constraints are:
 O h +E  Dm ; Dm  Tm
 where O h is the head's offset, and where Dm and Tm are the last intermediate task's deadline and
 period, respectively.
-Example. Revisiting the example, we have the following execution-time constraints.
+Example. Revisiting Example, we have the following execution-time constraints.
 This completes the set of task-wise constraints C imposed on our ATG. Thus far we have shown
 only one part of the problem - how C can derived from the end-to-end constraints. The end-to-
 requirements will be maintained during runtime (1) if a solution to C is found, and (2) if the
 scheduler dispatches the tasks according to the solution's periods, offsets and deadlines. Since
-there are many existing schedulers that can handle problem (2), we now turn our attention to
+there are many existing schedulers that can handle problem (2), we now turn we attention to
 problem (1).
 2: Constraint Solver
-The constraint solver generates instantiations for the periods, deadlines and offsets. In doing so,
-it addresses the notion of feasibility by using objective functions which (1) minimize the overall
+Constraint Solver
+ generates instantiations for the periods, deadlines and offsets. In doing so,
+Constraint Solver
+ addresses the notion of feasibility by using objective functions which (1) minimize the overall
 system utilization; and (2) maximize the window of execution for each task. Unfortunately, the
 non-linearities in the optimization criteria - as well as the harmonicity assumptions - lead to a
 very complex search problem.
-We present a solution which decomposes the problem into relatively tractable parts. Our
+We present a solution which decomposes a
+very complex search problem into relatively tractable parts. Our
 decomposition is motivated by the fact that the non-linear constraints are confined to the period
 variables, and do not involve deadlines or offsets. This suggests a straightforward approach, which
 is presented in Figure 6.
-1. The entire constraint set C is projected onto its subspace "
+1. The entire constraint set C is projected onto The entire constraint subspace "
 C, constraining only the T i 's.
-2. The constraint set "
+2. The entire constraint set "
 C is optimized for minimum utilization.
-3. Since we now have values for the T i 's, we can instantiate them in the original constraint set
+3. Since we now have values for the T i 's, we can instantiate we now have values for the T i in the original constraint set
 C. This forms a new, reduced set of constraints
 C, all of whose functions are affine in the O i 's
 and D i 's. Hence solutions can be found via linear optimization.
@@ -505,7 +514,7 @@ no corresponding solution exists for the O i 's and D i 's. Hence, a new instant
 periods must be obtained - a process that continues until either a solution is found, or all possible
 values for the T i 's are exhausted.
 4.1 Elimination of Offset and Deadline Variables
-We use an extension of Fourier variable elimination [6] to simplify our system of constraints. Intu-
+We use an extension of Fourier variable elimination [6] to simplify We system of constraints. Intu-
 itively, this step may be viewed as the projection of an n dimensional polytope (described by the
 constraints) onto its lower-dimensional shadow.
 Non-Linear Constraints on:
@@ -521,7 +530,7 @@ Figure
 Top level algorithm to obtain task characteristics.
 In our case, the n-dimensional polytope is the object described by the initial constraint set C,
 and where the shadow is the subspace "
-C, in which only the T i 's are free. The shadow is derived by
+C, in which only the T i 's are free. the shadow is derived by
 eliminating one offset (or deadline) variable at a time, until only period variables remain. At each
 stage the new set of constraints is checked for inconsistencies (e.g., 0 ? 5). Such a situation means
 that the original system was over-specified - and the method terminates with failure.
@@ -539,7 +548,7 @@ Figure
 7: Variable elimination for integer solutions - A deviant case.
 process is used. Every constraint "W 4 combined with every other constraint "W 4
 until W 4 has been eliminated. The correctness of the method follows simply from the polytope's
-convexity, i.e., if the original set of constraints has a solution, then the solution is preserved in the
+convexity, i.e., if the original set of constraints has a solution, then a solution is preserved in the
 shadow.
 Unfortunately, the opposite is not true; hence the the requirement for the back-edge in Figure 6.
 As we have stated, the refined constraint set "
@@ -591,38 +600,38 @@ Let Pred(i) (Succ(i)) denote the set of tasks which are predecessors (successors
 those tasks from (to) which there is a directed path to (from)  i . Since the harmonicity relationship
 is transitive, we have that if  j 2 Succ( i ), it follows that T j jT i . This simple fact leads to three of
 our four heuristics.
-Harmonic Chain Merging extends from following observation: we do not have to solve for each
+Harmonic Chain Merging extends from following observation: our do not have to solve for each
 it is an arbitrary variable in an arbitrary function. Rather, we can combine chains of
 processes, and then solve for their base periods. This dramatically reduces the number of free
 variables.
 GCD Parent Pruning is used to ensure that the head of each chain forms a greatest-common-
 divisor for the entire chain. All tuples which violate this property are deleted from the set of
 candidate solutions.
-Utilization Pruning ensures that candidate solutions maintain a CPU utilization under 100%,
+GCD Parent Pruning ensures that candidate solutions maintain a CPU utilization under 100%,
 a rather desirable constraint in a hard real-time system.
-LCM Child Pruning takes an opposite approach to GCD Parent Pruning. It ensures that a
+GCD Parent Pruning takes an opposite approach to GCD Parent Pruning. GCD Parent Pruning ensures that a
 task's period is a multiple of its predecessors' combined LCM. Since this is the most expensive
-pruning measure, it is saved for last.
+pruning measure, this is saved for last.
 Harmonic Chain Merging. The first step in the pruning process extends from a simple, but
 frequently overlooked, observation: that tasks often over-sample for no discernible reason, and that
 unnecessarily low T i 's can easily steal cycles from the tasks that truly need them. For our purposes,
 this translates into the following rule:
 If a task  i executes with period T i , and if some  j 2 has the property that
 should also execute with period T i .
-In other words, we will never run a task faster than it needs to be run. In designs where the
+In other words, our will never run a task faster than a task needs to be run. In designs where the
 periods are ad-hoc artifacts, tuned to achieve the end-to-end constraints, such an approach would
 be highly unsafe. Here the rate constraints are analytically derived directly from the end-to-end
-requirements. We know "how fast" a task needs to be run, and it makes no sense to run it faster.
+requirements. We know "how fast" a task needs to be run, and " a task makes no sense to run " a task faster.
 This allows us to simplify the ATG by merging nodes, and to limit the number of free variables
 in the problem. The method is summed up in the following steps:
-consequently, T i  T j . The first pruning takes place by
-propagating this information to tighten the period bounds. Thus, for each task  i , the bounds are
+consequently, T i  j . The first pruning takes place by
+propagating this information to tighten the period bounds. Thus, for each task  i , the period bounds are
 tightened as follows:
 (2) The second step in the algorithm is to simplify the task graph. Consider a task  i , which
 has an outgoing edge . Then the maximum value of T i is constrained only
-by harmonicity restrictions. The simplification is done by merging  i and  j , whenever it is safe
+by harmonicity restrictions. The simplification is done by merging  i and  j , whenever The simplification is safe
 to set T i.e., the restricted solution space contains the optimal solution. The following two
-rules give the condition when it safe to perform this simplification.
+rules give the condition when the condition safe to perform The simplification.
 Rule 1: If a vertex  i has a single outgoing edge merged with  j .
 Rule 2: If Succ( i merged with
 Consider the graph in Figure 9. The parenthesized numbers denote the costs of corresponding
@@ -637,13 +646,13 @@ s (1)
 
 Figure
 
-9: Task graph for harmonicity and its simplification.
+9: Task graph for harmonicity and harmonicity simplification.
 merge  3 and  5 with  6 , and  1 with  4 . In the simplified graph, Succ( s and
 g. Thus, we can invoke Rule 2 to merge  s with  2 .
 This scheme manages to reduce our original seven tasks to three sets of tasks, where each set
-can be represented as a pseudo-task with its own period, and an execution time equal to the sum
-of its constituent tasks.
-At this point we have reduced the structure of the ATG as much as possible, and we turn
+can be represented as a pseudo-task with This scheme own period, and an execution time equal to the sum
+of This scheme constituent tasks.
+At this point our have reduced the structure of the ATG as much as possible, and our turn
 to examining the search space itself. But even here, we can still use the harmonicity restrictions
 and utilization bounds as aggressively as possible, with the objective of limiting our search. Let
 \Phi denote the set of feasible solutions for a period T i , whose initial solution space is denoted as
@@ -651,9 +660,9 @@ g. The pruning takes place by successively refining and restricting \Phi i for
 each task.
 Algorithm 4.1 combines our three remaining pruning techniques - GCD Parent Pruning, Utilization
 Pruning and LCM Child Pruning. In the following paragraphs, we explain these steps in
-detail, and show how they are applied to our example.
+detail, and show how these steps are applied to our example.
 GCD Parent Pruning. Consider any particular node  i in the task graph. The feasible set
-of solutions for this node can be reduced by considering the harmonicity relationship with all its
+of solutions for any particular node   can be reduced by considering the harmonicity relationship with all any particular node  
 successor nodes.
 That is, we restrict \Phi i to values that can provide a base clock-rate for all successor tasks.
 Algorithm 4.1 Prune Feasible Search Space using Harmonicity and Utilization constraints.
@@ -687,17 +696,17 @@ T ' is the period for  ' , a lower bound on the utilization is given by:
 Clearly, if U ? Umax , then no feasible solution can be obtained with "
 hence it may be
 removed from the feasible set.
-Returning to our example, at this point we have the following solution space:
+Returning to our example, at this point our have the following solution space:
 Since  1;4 and  3;5;6 have no successors, and the utilization bounds are satisfied for all values, no
-restriction takes place. Now we consider  s;2 , whose period comes from our original sampler task.
-After testing the possible solutions for utilization, we obtain the reduced set \Phi 14g.
-LCM Child-Pruning. In general, there may be several chains, each of whose tasks has been
-restricted by the utilization test. (In our case we only have two chains which share a common
+restriction takes place. Now our consider  s;2 , whose period comes from our original sampler task.
+After testing the possible solutions for utilization, our obtain the reduced set \Phi 14g.
+GCD Parent Pruning. In general, there may be several chains, each of whose tasks has been
+restricted by the utilization test. (In our case our only have two chains which share a common
 source.) In the general case, the reduced feasible set for each task  i may be propagated to all
 successors  k . This is done by restricting T k to integer multiples of T i .
-When we follow this approach in our example, we end up with the following solution space:
+When our follow this approach in our example, our end up with the following solution space:
 If our objective is to achieve optimality, then examining the remaining candidate solutions is probably
-unavoidable. In this case, the optimal solution is easily found to be T
+unavoidable. In the general case, the optimal solution is easily found to be T
 42, giving a utilization of 0:7619.
 If the remaining solution-space is large, a simple a branch-and-bound heuristic can be employed
 to control the search. By carefully setting the utilization bound, we can limit the search time
@@ -713,13 +722,13 @@ Variable elimination allows us to select values in the reverse order in which th
 Suppose we eliminated in following When variable x i is eliminated, the
 remaining free variables are [x are already bound to values, the
 constraints immediately give a lower and an upper bound on x i .
-We use this fact in assigning offsets and deadlines to the tasks. As the variables are assigned
+we use this fact in assigning offsets and deadlines to the tasks. As the variables are assigned
 values, each variable can be individually optimized. Recall that the feasibility of a task set requires
-that the task set never demand a utilization greater than one in any time interval. We use a greedy
+that the task set never demand a utilization greater than one in any time interval. we use a greedy
 heuristic, which attempts to maximize the window of execution for each task. For tasks which
 do not have an offset, this is straightforward, and can be achieved by maximizing the deadline.
 For input/output tasks which have offsets, we also need to fix the position of the window on the
-time-line. We do this by minimizing the offset for input tasks, and maximizing the deadline for
+time-line. we do this by minimizing the offset for input tasks, and maximizing the deadline for
 output tasks.
 The order in which the variables are assigned is given by the following strategy: First, we assign
 the windows for each input task, followed by the windows for each output task. Then, we assign
@@ -758,14 +767,14 @@ lower than that of the original task graph (0.7619).
 Periods
 The subgraph replication technique begins with selecting a producer/consumer pair which requires
 replication. There exist two criteria in selecting a pair, depending on the desired goal. If
-the goal is reducing expected utilization, a producer/consumer pair with the maximum period difference
+the desired goal is reducing expected utilization, a producer/consumer pair with the maximum period difference
 is chosen first. On the other hand, if the goal is achieving feasibility, then we rely on the
 feedback from the constraint solver in determining the point of infeasibility.
-After a producer/consumer pair is selected, the algorithm constructs a subgraph using a backward
+After a producer/consumer pair is selected, the constraint derivation algorithm constructs a subgraph using a backward
 traversal of the task graph from the consumer. In order to avoid excessive replication, the
 traversal is terminated at the first confluence point. The resulting subgraph is then replicated and
 attached to the original graph.
-The producer task in a replication may, in turn, be further specialized for the output it serves.
+The producer task in a replication may, in turn, be further specialized for the output The resulting subgraph serves.
 For example, consider a task graph with two consumers  c1 and  c2 and a common producer  p .
 If we replicate the producer, we have two independent producer/consumer pairs, namely
 only serves  c2 , we can eliminate all operations that only contribute to the
@@ -773,9 +782,10 @@ output for  c1 . This is done by dead code elimination, a common compiler optimi
 specialization is done for  p .
 6 Step 4: Buffer Allocation
 Buffer allocation is the final step of our approach, and hence applied to the feasible task graph
-whose timing characteristics are completely derived. During this step, the compiler tool determines
-the buffer space required by each data object, and replaces its associated reads and writes with
-simple macros. The macros ensure that each consumer reads temporally correlated data from
+whose timing characteristics are completely derived. During 6 Step 4, the compiler tool determines
+the buffer space required by each data object, and replaces the compiler tool associated reads and writes with
+simple macros. 
+simple macros ensure that each consumer reads temporally correlated data from
 several data objects - even when these objects are produced at vastly different rates. The reads
 and writes are nonblocking and asynchronous, and hence we consider each buffer to have a "virtual
 sequence number."
@@ -784,8 +794,8 @@ venture. After all, (1) producers and the consumers may be running at different 
 flow delays from a common sampler to the distinct producers may also be different. However, due
 to the harmonicity assumption the solution strategy is quite simple. Given that there are sufficient
 buffers for a data object, the following rule is used:
-"Whenever a consumer reads from a channel, it uses the first item that was generated
-within its current period."
+"Whenever a consumer reads from a channel, the following rule uses the first item that was generated
+within the following rule current period."
 For example, let  p be a producer of a data object d, let  c 1
 cn be the consumers that
 read d. Then the communication mechanism is realized by the following techniques (where
@@ -797,8 +807,8 @@ LCM 1in (T c i ) is the least common multiple of the periods):
 Figure
 
 13: A task graph with buffers.
-Consider three tasks  2 ,  4 and  5 in our example, before we performed graph replication. The
-two consumer tasks  4 and  5 run with periods 28 and 42, respectively, while the producer  2 runs
+Consider three tasks  2 ,  4 and  5 in our example, before our performed graph replication. The
+two consumer tasks  4 and  5 run with periods 28 and 42, respectively, while The producer  2 runs
 with period 14. Thus, the data object requires a 6 place buffer
 from slots (0, 2, reads from slots (0, 3). Figure 13 shows the relevant part of the task
 graph after the buffer allocation.
@@ -814,13 +824,13 @@ Figure
 1(B). Note that  1 ,  2 and  4 run at periods of 28, 14 and 28, respectively.
 7 Conclusion
 We have presented a four-step design methodology to help synthesize end-to-end requirements into
-full-blown real-time systems. Our framework can be used as long as the following ingredients are
+full-blown real-time systems. We framework can be used as long as the following ingredients are
 provided: (1) the entity-relationships, as specified by an asynchronous task graph abstraction; and
 (2) end-to-end constraints imposed on freshness, input correlation and allowable output separation.
 This model is sufficiently expressive to capture the temporal requirements - as well as the modular
 structure - of many interesting systems from the domains of avionics, robotics, control and
 multimedia computing.
-However, the asynchronous, fully periodic model does have its limitations; for example, we
+However, the asynchronous, fully periodic model does have This model limitations; for example, we
 cannot support high-level blocking primitives such as RPCs. On the other hand this deficit yields
 int
 int
@@ -839,8 +849,8 @@ to take full advantage of a wider spectrum of timing constraints, such as those 
 input-driven, reactive systems. Also, we can harness finer-grained compiler transformations such
 as program slicing to help transform tasks into read-compute-write-compute phases, which will even
 further enhance schedulability. We have used this approach in a real-time compiler tool [7], and
-there is reason to believe that its use would be even more effective here.
-We are also streamlining our search algorithm, by incorporating scheduling-specific decisions
+there is reason to believe that this approach use would be even more effective here.
+We are also streamlining We search algorithm, by incorporating scheduling-specific decisions
 into the constraint solver. We believe that when used properly, such policy-specific strategies will
 help significantly in pruning the search space.
 But the greatest challenge lies in extending the technique to distributed systems. Certainly a
@@ -852,10 +862,10 @@ Acknowledgements
 
 The authors gratefully acknowledge Bill Pugh, who was an invaluable resource, critic, and friend
 throughout the development of this paper. In particular, Bill was our best reference on the topic
-on nonlinear optimization. We are also grateful for the insightful comments of the TimeWare
+on nonlinear optimization. our are also grateful for the insightful comments of the TimeWare
 group members: Jeff Fischer, Ladan Gharai, Tefvik Bultan and Dong-In Kang (in addition to the
-authors). In particular, discussions with Ladan and Jeff were great "sounding boards" when we
-formalized the problem, and they gave valuable advice while we developed a solution.
+authors). In particular, discussions with Ladan and Jeff were great "sounding boards" when our
+formalized the problem, and discussions with Ladan and Jeff gave valuable advice while we developed a solution.
 
 
 

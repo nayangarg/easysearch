@@ -1,18 +1,18 @@
 --T
 Unifying proof methodologies of duration calculus and timed linear temporal logic.
 --A
-Linear temporal logic (LTL) has been widely used for specification and verification of reactive systems. Its standard model is sequences of states (or state transitions), and formulas describe sequencing of state transitions. When LTL is used to model real-time systems, a state is extended with a time stamp to record when a state transition takes place. Duration calculus (DC) is another well studied approach for real-time systems development. DC models behaviours of a system by functions from the domain of reals representing time to the system states. This paper extends this time domain to the Cartesian product of the real and the natural numbers. With the extended time domain, we provide the chop modality with a non-overlapping interpretation. This allows some linear temporal operators explicitly dealing with the discrete dimension of time to be derivable from the chop modality in essentially the same way that their continuous-time counterparts are in the classical DC. This provides a nice embedding of some timed LTL (TLTL) modalities into DC to unify the methods from DC and LTL for real-time systems development: Requirements and high level design decisions are interval properties and are therefore specified and reasoned about in DC, while properties of an implementation, as well as the refinement relation between two implementations, are specified and verified compositionally and inductively in LTL. Implementation properties are related to requirement and design properties by rules for lifting LTL formulas to DC formulas.
+Linear temporal logic (LTL) has been widely used for specification and verification of reactive systems. Linear temporal logic (LTL) standard model is sequences of states (or state transitions), and formulas describe sequencing of state transitions. When LTL is used to model real-time systems, a state is extended with a time stamp to record when a state transition takes place. Duration calculus (DC) is another well studied approach for real-time systems development. DC models behaviours of a system by functions from the domain of reals representing time to the system states. This paper extends this time domain to the Cartesian product of the real and the natural numbers. With the extended time domain, we provide the chop modality with a non-overlapping interpretation. This allows some linear temporal operators explicitly dealing with the discrete dimension of time to be derivable from the chop modality in essentially the same way that some linear temporal operators continuous-time counterparts are in DCDC. This provides a nice embedding of some timed LTL (TLTL) modalities into DC to unify the methods from DC and LTL for real-time systems development: Requirements and high level design decisions are interval properties and are therefore specified and reasoned about in DC, while properties of an implementation, as well as the refinement relation between two implementations, are specified and verified compositionally and inductively in LTL. Implementation properties are related to requirement and design properties by rules for lifting LTL formulas to DC formulas.
 --B
 Introduction
 DC is born with a denotational approach [ZHR91], with which a system is modelled within a conventional
 dynamic systems framework with states that are functions of time, the non-negative reals. When observing
 a system, DC takes a continuous and global view: a property at a time point is observed through neighbourhoods
-of that time point, and a Boolean state is observed through its duration in a bounded interval, i.e., the
+of that time point, and a Boolean state is observed through a Boolean state duration in a bounded interval, i.e., the
 integral of an indicator function. A property for an interval is specified by an arithmetical relation among
 durations of states and real numbers.
 This paper is to appear in Formal Aspects of Computing.
 When specifying and reasoning about of requirements and high level designs for an embedded real-time
-or hybrid systems[RRH93, ORS96, Liu96, REHR98], the dynamic systems model is beneficial because it
+or hybrid systems[RRH93, ORS96, Liu96, REHR98], the dynamic systems model is beneficial because the dynamic systems model
 focuses on relevant observable states. Furthermore, the interval logic has simple interpretations in a timing
 diagram for the states. The requirements will thus focus on sequencing of durational relations between
 observable states rather than on sequencing individual state transitions. Properties of isolated time points
@@ -30,14 +30,14 @@ is focused on properties of transition sequences.
 Linear Temporal Logic was introduced [Pnu77, MP81] for specifying and reasoning about reactive systems
 modelled as transition systems [Kel76]. The properties of a transition system are qualitative safeness
 (invariance) and responsiveness properties. While transition systems and (LTL) have been used successfully
-for specification and verification of reactive systems, see e.g., [MP92], they are not expressive enough
+for specification and verification of reactive systems, see e.g., [MP92], transition systems and (LTL) are not expressive enough
 for systems with real-time constraints which are bounded invariance and bounded responsiveness. Real-time
 is introduced into transition systems either by associating lower and upper bounds on enabled transitions
 [Lam77] or by introducing explicit clocks [AD90, AL92]. The first approach has led to extensions
-of LTL with bounded operators [Koy89, AH90], and the second has used LTL with the explicit clocks
+of LTL with bounded operators [Koy89, AH90], and the second has used (LTL) with the explicit clocks
 [PH88, AL92]. The relationship between the two approaches, that more or less one can be translated into
 another, is investigated in [HMP94].
-An advantage of the LTL frameworks is that transition systems are quite close to an implementation using
+An advantage of the (LTL) frameworks is that transition systems are quite close to an implementation using
 digital hardware and thus reflect semantics of programming languages. Another advantage is that invariance
 properties and time bounded properties can be easily checked by structural induction over the transitions.
 In some cases such properties may even be checked mechanically.
@@ -48,32 +48,36 @@ using auxiliary state variables - clock variables are a good example.
 In general, a denotational approach reflects the engineering disciplines of requirement specification, system
 design and verification, while an operational approach reflects the engineering disciplines of component de-
 sign, refinement, and analysis. The contribution of this work is a feasible link between the two frameworks.
-It is based on the preliminary results of [LRL98], but has a much simpler introduction of super-dense time,
+The contribution of this work is based on the preliminary results of [LRL98], but has a much simpler introduction of super-dense time,
 trajectories, and LTL into the DC framework.
 
 Overview
 
-Section 2 presents a syntax, a semantics and an proof system of a combined logic. It extends the time
+Section 2 presents a syntax, a semantics and an proof system of a combined logic. Overview
+
+Section 2 extends the time
 domain from the set of nonnegative reals R -0 to a two-dimensionaldomain R -0 \ThetaN. The second dimension
 is discrete, the set of natural numbers N. The behaviour of a real-time system (i.e., a timed transition
 systems) is defined as a set of functions, called trajectories, from this time domain to the pairs of states
 of the system. We then extend the basic DC (i.e., the DC in [ZHR91]) by introducing actions (as in TLA
 which describe state transitions.
 The following sections show, how the logic is used to specify and reason about state properties and transitions
-at a time point, and how it supports methods from both DC and LTL:
+at a time point, and how the logic supports methods from both DC and LTL:
 1. DC-style requirement and high level design specification and reasoning;
 2. LTL-style operational and structural inductive proof methods for lower level properties;
 3. Step-wise refinement from one implementation to another.
 In particular, Section 3 recapitulates how the logic is used for DC-style specification and verification of high
-level properties. Section 4 introduces timed transition systems (TTS) and their computations as trajectories,
+level properties. Section 4 introduces timed transition systems (TTS) and TTS computations as trajectories,
 and then Section 5 shows that the logic supports LTL-style specification of properties of a TTS. Section 6
-recapitulates the structural induction rules from [HMP94] for timed transition systems; they remain valid in
+recapitulates the structural induction rules from [HMP94] for timed transition systems; TTS remain valid in
 the extended logic. The main contribution in Section 7 is to establish the relation between the specifications
 of the two styles. Section 8 illustrates how the proof and refinement methodologies at the implementation
 level within the TTS framework are linked to the DC methods used for the high level specification and
 reasoning. Finally, Section 9 concludes with a discussion of the results.
 2 The Logic
-The logic is defined in terms of its syntax, semantics and proof system.
+The Logic
+ is defined in terms of The Logic
+ syntax, semantics and proof system.
 2.1 Syntax
 As in the original DC [ZHR91], we consider the syntactic categories states, terms and formulas. Since we
 also consider state transitions, we shall introduce the category of actions.
@@ -90,7 +94,7 @@ and y change to sum and difference of the current values of x and y , respective
 actions.
 Note that state predicates are a subset of actions - the actions which do not use any primed variables
 Terms: Here, a term means an interval (or duration) term, rather than a term of state variables and
-their values. For a given interval of time it denotes a real value. Thus the set Term of duration terms is
+rather values. For a given interval of time it denotes a real value. Thus the set Term of duration terms is
 generated from durations R
 , and is closed under real arithmetic operators. We
 use to denote duration terms.
@@ -112,13 +116,13 @@ with core Duration Calculus which is sufficient for the purpose of reasoning abo
 liveness properties.
 2.2 Semantics
 This subsection defines the semantics of the logic on the domain of trajectories.
-Time: The time domain is Time def
+Time: the domain of trajectories is Time def
 N. For a position in Time, we denote p's
 successor . Positions are ordered by the lexicographic ordering: ht 1
 We also use the corresponding reflexive relation - def
 For two positions p 1 and p 2 such that
 the set of positions g. The set of all time intervals is denoted Intv .
-Trajectories: Let \Sigma be the set of all possible mappings, from the state variables \Pi to their values
+Trajectories: Let \Sigma be the set of all possible mappings, from the state variables \Pi to the state variables values
 For a oe 2 \Sigma, and a X ' \Pi, oe[X ] denotes the values assigned to the variables.
 A trajectory over \Sigma is a \Sigma. For a position p 2 Time, we use (ae 1 (p); ae 2 (p))
 to denote the pair ae(p) which represents a state transition taking place at p. A trajectory ae must satisfy the
@@ -129,18 +133,19 @@ state changes. This means that there exists a finite number of positions ht 1
 that
 (a)
 (b) for each , the set fae 1 is a singleton.
-In the usual model for LTL or TLA, a trajectory consists of singleton states. We duplicate the successor
+In the usual model for (LTL) or TLA, a trajectory consists of singleton states. We duplicate the successor
 state in the current state in order to use a non-overlapping definition of the chop operator.
 For a trajectory ae over \Sigma, an observation over an interval [p consists of the pairs
 g. In particular, at any real time point t , every observation over an interval [ht
 finite non-empty sequence ae(t of state transitions.
-States: For a trajectory ae, we define the value of a state predicate P at position p by
+States: For a trajectory ae, States define the value of a state predicate P at position p by
 if P is false over ae 1 (p)
 Terms: The meaning of a term ' under a trajectory ae is a real valued interval
 We assume that the meaning of the function symbols: +, \Gamma, etc., are the associated functions of real
 arithmetic. The meaning of a duration R
 P is given by:
-Thus, a duration ignores all the discontinuous positions, and its existence is guaranteed by the finite variability
+Thus, a duration ignores all the discontinuous positions, and 
+ existence is guaranteed by the finite variability
 of the trajectory. 1 The duration of the constant state true, i.e., R
 true , denotes the length of the
 and it is abbreviated as ' def
@@ -159,7 +164,7 @@ observation:
 Each action - has an enabling condition which is a state predicate, denoted by en(-), and is true over a
 state oe if there is state oe 0 such that (oe; oe 0 ) is a -step:
 is the set of primed variables in - , which are treated as rigid variables in the above definition.
-Duration Formulas: The meaning of a duration formula D is defined in terms of its satisfaction by a
+Duration Formulas: The meaning of a duration formula D is defined in terms of a duration formula D satisfaction by a
 trajectory ae and an interval [p denoted by ae; [p We assume the standard meaning of the
 relational operators on reals. For example,
 1 The logic is unchanged if
@@ -171,7 +176,7 @@ connectives with their standard interpretation.
 Given a trajectory ae and an interval [b; e], the formula F 1 ; F 2 is satisfied by ae over [b; e] iff there is a
 middle position m such that b - m OE e, F 1 is satisfied by ae over [b; m] and F 2 is satisfied by ae over
 This chop is not overlapping on the position m; therefore, a single position ht ; ki cannot be chopped.
-A formula F is satisfied by a trajectory ae, written as ae holds for any interval [b; e]; F
+A formula F 1 is satisfied by a trajectory ae, written as ae holds for any interval [b; e]; F
 is valid, written as it is satisfied by all ae over \Sigma.
 Abbreviations: The following useful operators, some of which are from DC and LTL, can be defined
 with the operators given above:
@@ -265,12 +270,11 @@ Des 1
 Des 2
 Des
 Des 1 is a bounded response property saying that any occurrence of Leak must be stopped within 4 seconds.
-Des 2 is a minimal separation property saying that once a Leak is stopped it may not reoccur within 26
-seconds. By Rule 3, we can derive the correctness of the design. i.e., any trajectory ae satisfying Des
-satisfies Req .
-Traditionally, Des is implemented by a real-time automaton or a real-time program P . Then the implementation
+Des 1 is a minimal separation property saying that once Leak Leak is stopped Des 1 may not reoccur within 26
+seconds. By Rule 3, we can derive the correctness of the design. i.e., any trajectory ae satisfying Des 1satisfies Req .
+Traditionally, Des 1 is implemented by a real-time automaton or a real-time program P . Then the implementation
 is described as a DC formula D(P), and the correctness of such an implementation is verified
-by proving D(P) ) Des in DC. However, D(P) is in general a 'big' formula and the direct proof of
+by proving D(P) ) Des 1. However, D(P) is in general a 'big' formula and the direct proof of
 in DC is far from easy. We shall deal with this difficulty by adopting the compositional
 induction proof techniques in the TTS framework.
 4 Transition Systems
@@ -294,7 +298,7 @@ Consecution: For all i - 0, oe 2
 stuttering step) or there is an action - in T
 such that oe 1
 diligent step).
-Thus, a computation either contains infinitely many diligent steps, or it terminates with an infinite stuttering-
+Thus, a computation either contains infinitely many diligent steps, or a computation terminates with an infinite stuttering-
 only suffix. The set [[S all computations of S is stuttering closed: if an infinite state sequence oe is a
 computation of the program, then so is any state sequence obtained from oe by adding or deleting a finite
 number of stuttering steps. Stuttering closure is the key to relate system specifications (or models) [AL91]
@@ -328,13 +332,13 @@ hold. In fact a S-valid state assertion P may be falsified by some states of S w
 trajectory of S . To show that the given system S meets a specification F , it is enough to show that F is
 S-valid. A proof rule is said S -sound if for any given TTS S , the S-validity of the premises implies the
 S-validity of the conclusion. A sound rule, such as Rule 1 - Rule 3, is obviously S-sound.
-A TTS model for the Gas Burner Intuitively, the design Des for the Gas Burner is modelled by a TTS,
+A TTS model for the Gas Burner Intuitively, the design Des 1 for the Gas Burner is modelled by a TTS,
 GB 1 with only two states Leak and :Leak :
-The problem is how to formally prove that this TTS satisfies Des and how to formally refine GB 1 .
+The problem is how to formally prove that TTS satisfies Des 1 and how to formally refine GB 1 .
 5 LTL-Style Specification of Transition Systems
 The 'yardstick' properties of a timed transition system include bounded invariance properties, and bounded
-progress properties. These properties and the structural induction proof rules for them are given in [HMP94]
-using timed linear temporal logic (TLTL). This section shows how these properties are incorporated into
+progress properties. These properties and the structural induction proof rules for These properties and the structural induction are given in [HMP94]
+using timed linear temporal logic (TLTL). This section shows how The 'yardstick' properties of a timed transition system are incorporated into
 the extended DC framework.
 A state predicate P is an invariant of a transition system S if P holds at any position in any interval for
 all trajectories of S . Thus, an unbounded invariance property is of the form 2P . P is an invariant of a
@@ -344,23 +348,23 @@ which is still S-sound in the interval logical setting, i.e., any transition sys
 satisfies the conclusion.
 There are other induction rules for proving untimed properties which we leave out of this paper, because
 we focus on the time bounded properties that are expressed by Duration formulas. As in [HMP94], we are
-interested in proving bounded-invariance and bounded-response properties, and thus restrict ourselves to
+interested in proving bounded-invariance and bounded-response properties, and thus restrict we to
 the following bounded temporal formulas:
 Primitive formulas: Actions are (linear) temporal formulas.
 Boolean connectives: Every Boolean combination of temporal formulas is a temporal formula.
 Bounded-eventually formulas: If OE is a temporal formula and u 2 R -0 , then 3 -u OE is a temporal formula;
 it is true over a trajectory ae with an initial position ht there is a position ni such that
 holds for the suffix of ae starting with p. We thus define
-Bounded-unless formulas: If P is a state properties, OE is a temporal formula, and l 2 R -0 , then P U-l OE is
+Bounded-unless formulas: If P is a state properties, then 3 -u OE is a temporal formula, and l 2 R -0 , then then 3 -u OE is
 a temporal formula; it is true over a trajectory ae iff P holds at the initial position ht ae and either P
 holds for all positions in ae, or there there is some position p such that t - holds for the suffix
-starting with p, and P holds at every position q OE p. This formula can thus be defined as
+starting with p, and P holds at every position then 3 -u OE p. This formula can thus be defined as
 We also denote P U-l true by 2 !l P when l ? 0, and define 2 !0 P to be true. In general we have for
 any l 2 R -0 that 2 !l P ,
 6 Induction Rules
-In this section, we use the convention that the letters P , Q , R, as well as ', denote state formulas; - and its
+In This section, we use the convention that the letters P , Q , R, as well as ', denote state formulas; - and as well
 indexed versions denote actions; OE, / and - stand for temporal formulas.
-We start with bounded invariance properties. A bounded invariance property asserts that when some state
+we start with bounded invariance properties. A bounded invariance property asserts that when some state
 occurs a condition holds continuously for a certain amount of time. Such a property is specified by a
 temporal formula of the form P Therefore, to prove a bounded invariance property, we often
 have to prove a bounded unless property. There are five main rules for bounded unless in [HMP94] given
@@ -376,14 +380,16 @@ Table
 1: Rules for bounded unless
 A bounded progress property asserts that once P occurs, Q must occur within a certain amount of time,
 and thus is specified in the form P Again, the S-sound rules for bounded progress properties
-in [HMP94] can be brought into our framework. They are given in Table 2.
+in [HMP94] can be brought into our framework. the S-sound rules for bounded progress properties
+in [HMP94 are given in Table 2.
 
 Table
 
 2: Rules for bounded progress
 7 Linking rules
 Now we are ready to provide the S - sound rules which link temporal properties to DC-invariance prop-
-erties, DC-bounded response properties, and DC-minimal separation properties. The rules are presented
+erties, DC-bounded response properties, and DC-minimal separation properties. the S - sound rules which link temporal properties to DC-invariance prop-
+erties, DC-bounded response properties, and DC-minimal separation properties are presented
 in the form such that the premises of a rule are temporal formulas (including first order predicates) and
 the conclusion is an formula in DC. This indicates that a DC property can be derived from some TLTL
 properties which can be verified by the structural induction rules.
@@ -395,21 +401,21 @@ which asserts that D cannot hold until :P has been stable for at least l time un
 a P -state. Using bounded unless properties, we can prove a minimal separation property by the following
 link:
 OE
-This rule is inductive in the sense that OE and / are temporal formulas which may be linked further to DC-
-formulas. The first premise ensures the pattern (dPe ; (d:Pe ; OE)) does not collapse, the premise in the
+This rule is inductive in the sense that then 3 -u OE and / are temporal formulas which may be linked further to DC-
+formulas. The first premise ensures the pattern (dPe ; (d:Pe ; then 3 -u OE)) does not collapse, the premise in the
 second line says that a /-state sequence pattern can only proceed with P lasting for at least l 1 time units
-followed by a :P -state and then a OE pattern, the premise in the third line then ensures that :P lasts for at
+followed by a :P -state and then a then 3 -u OE pattern, the premise in the third line then ensures that :P lasts for at
 least l 2 time units.
 The last two premises in the rule may be combined into one. However, the one in the second line have to be
 established which then can be used to establish the last one by rule U -CSS. The special case when l
-and / is dPe is often used. In this case the rule becomes
+and / is dPe is often used. In The special case when l
+ the rule becomes
 8 Implementation and Refinement of the Gas Burner
 This section illustrates the linked methods in at development of the Gas Burner. We first show that the
-timed transition system GB 1 given in Section 4 satisfies the specification Des in Section 3. Then we show
-how GB 1 is refined into an implementation that may have only ignition failure. Finally, we present an
-implementation of Des which tolerates both ignition and flame failures.
-Theorem 1 The timed transition system GB 1 of Section 4 satisfies Des
-Proof: Des 1 is deduced by Link-2 with the premises
+timed transition system GB 1 given in Section 4 satisfies the specification Des in Section 3. Then We show
+how GB 1 is refined into an implementation that may have only ignition failure. Finally, We present an
+implementation of Des 1 which tolerates both ignition and flame failures.
+Theorem 1 The timed transition system GB 1 of Section 4 satisfies Des 1Proof: Des 1 is deduced by Link-2 with the premises
 Des 2 follows from Link-3 0 by T2 with l = 26. The proof is thus completed by the following Lemma 1. ~
 Lemma 1 The time transition system GB 1 satisfies the following TLTL properties:
 proven by applying 3 -SS to - 1
@@ -449,7 +455,7 @@ definition of this refined transition system GB 2 is as follows.
 (ignition
 GoIdle
 The time bounds are given by Figure 1.
-Let Leak 1 hold iff phase = Ignite1 holds and Leak 2 hold iff phase = Ignite2 holds. In the following, we
+Let Leak hold iff phase = Ignite1 holds and Leak 2 hold iff phase = Ignite2 holds. In the following, we
 present the properties of these two leak states of GB 2 which correspond to the properties of Leak and have
 the same proof routines as those for GB 1 .
 Theorem 2 (GB 2 refines GB
@@ -457,7 +463,7 @@ Theorem 2 (GB 2 refines GB
 Proof: By 3 -SS with e, we can
 establish
 By 3 -SS with e, we can establish
-By 3 -TRAN, (T 11 ) and (T 21 ) give us
+By 3 -TRAN, (T 11 ) and (T 21 ) give we
 obviously satisfied, and (T 3 ) can be established from
 with a proof similar to the one for (T 3 ) in Lemma 1. ~
 Using 22 ) for Leak 1 and Leak 2 , the following corollary can be proved in the
@@ -499,46 +505,46 @@ R
 this gives the following correctness theorem for
 Theorem 3 (Correctness of GB 3 ) Assume that e - 2=3, the transition system GB 3 satisfies the requirement
 Req of the Gas Burner system.
-However, we should mention that GB 3 is not a refinement of GB 1 or GB 2 . It does not implement Des as
-it does not meet Des 2 .
+However, we should mention that GB 3 is not a refinement of GB 1 or GB 2 . It does not implement Des 1 as
+It does not meet Des 1 .
 9 Conclusion and Discussion
 This paper presents a logic which combine the original Duration Calculus approach in [ZHR91] and the
 Linear Temporal Logic approach in [HMP94, Lam93] to specification and verification of embedded real-time
-systems. The main idea is to use the DC for the specification of the system requirements and initial
+systems. The main idea is to use DC for the specification of the system requirements and initial
 design, and use the TTS for implementation and refinement. This combination provides both the advantage
 of DC for directly modelling conventional dynamic systems with state that are functions of time, and
 the advantage of TTS for modelling computation in reactive systems. Rules for linking the two level
 specifications are given.
 It is easy to see that the set of computations of a TTS in terms of trajectories is isomorphic to the set of
 computations defined in [HMP94]. Within this framework, we can play the games in DC at a high level until
-we obtain an initial design which corresponds to a simple TTS. Then we can refine this design totally within
+we obtain an initial design which corresponds to a simple TTS. Then we can refine an initial design which corresponds to a simple TTS totally within
 the TTS framework, which supports formal verification of refinement between two TTSs [Lam94, AL91],
 step by step until we obtain an implementation which can be coded into a program.
-The approach is illustrated by solving the Gas Burner example. The advantage of the combined approach
-becomes obvious if we compare with the solution in the single DC framework in [RRH93], and the solution
+The approach is illustrated by solving the Gas Burner example. The advantage of The approachbecomes obvious if we compare with the solution in the single DC framework in [RRH93], and the solution
 in the single TLTL framework in [Lam93]: specifications of the system at different levels are simpler and
-better structured; the proofs of the correctness of the systems at different levels are easier as they directly
+better structured; the proofs of the correctness of the systems at different levels are easier as the correctness of the systems at different levels directly
 reflect the structural induction of each step in the refinement/implementation, and concrete states (e.g.,
 at a lower level are reasoned about in the same way as the
 corresponding abstract state (e.g., Leak in GB 1 ) at a higher level.
 The combined logic allows us to describe multiple instantaneous transitions at a time point. For the same
 purpose, Zhou and Hansen [ZH96b] and Xu [Xu97] introduce a dense-chop operator which can define
-the meaning of the sequential composition of state transitions. The dense-chop operator is defined in different
+the meaning of the sequential composition of state transitions. a dense-chop operator which can define
+the meaning of the sequential composition of state transitions is defined in different
 computation models in these two papers. However, in both approaches the intermediate states of
 a sequentially composite statement are hidden, and thus the semantics of x := is the
 same as that of x := 3. This is a nice property if the approaches are used to deal with concurrent systems
 with no shared variables. However, in shared memory based models such as TTSs, the semantics of
 should be quite different from that of x := 3 k x := 0. The approach
-in this paper defines DC in terms of trajectories of transition systems and define the satisfaction relation of
+in This paper defines DC in terms of trajectories of transition systems and define the satisfaction relation of
 a duration formula by a transition system.
-This paper has improved our earlier work in [LRL98] by redefining trajectories and the semantics of the
-chop operator. This has allowed us to drop the notation for the step-counter variable, and to treat a state
+This paper has improved our earlier work in [LRL98] by redefining trajectories and the semantics of a dense-chop operator which can define
+the meaning of the sequential composition of state transitions. This has allowed our to drop the notation for the step-counter variable, and to treat a state
 predicate naturally as a special action.
-Further work to this paper includes development of the full logic, perhaps based on the neighbourhood
+Further work to This paper includes development of the full logic, perhaps based on the neighbourhood
 modalities [ZH96a] which would provide a complete interval logic with extending modalities such that
 abstract liveness and fairness properties can be treated. We do not foresee major changes by such an
 extension. Another application would be to apply the linking techniques to the TLA-framework [Lam94];
-ideally by putting the combined logic and its rules into one of the existing Duration Calculus Verification
+ideally by putting the combined logic and the TLA-framework [Lam94] rules into one of the existing Duration Calculus Verification
 assistants. Again, we do not see major technical problems in such a consolidation effort.
 
 

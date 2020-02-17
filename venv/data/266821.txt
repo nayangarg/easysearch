@@ -1,7 +1,7 @@
 --T
 Improving the accuracy and performance of memory communication through renaming.
 --A
-As processors continue to exploit more instruction-level parallelism, a greater demand is placed on reducing the effects of memory access latency. In this paper, we introduce a novel modification of the processor pipeline called memory renaming. Memory renaming applies register access techniques to load instructions, reducing the effect of delays caused by the need to calculate effective addresses for the load and all preceding stores before the data can be fetched. Memory renaming allows the processor to speculatively fetch values when the producer of the data can be reliably determined without the need for an effective address. This work extends previous studies of data value and dependence speculation. When memory renaming is added to the processor pipeline, renaming can be applied to 30% to 50% of all memory references, translating to an overall improvement in execution time of up to 41%. Furthermore, this improvement is seen across all memory segments-including the heap segment, which has often been difficult to manage efficiently.
+As processors continue to exploit more instruction-level parallelism, a greater demand is placed on reducing the effects of memory access latency. In this paper, we introduce a novel modification of the processor pipeline called memory renaming. Memory renaming applies register access techniques to load instructions, reducing the effect of delays caused by the need to calculate effective addresses for the load and all preceding stores before the data can be fetched. Memory renaming allows the processor to speculatively fetch values when the producer of the data can be reliably determined without the need for an effective address. This work extends previous studies of data value and dependence speculation. When memory renaming is added to the processor pipeline, renaming can be applied to 30% to 50% of all memory references, translating to an overall improvement in execution time of up to 41%. Furthermore, an overall improvement in execution time of up to 41% is seen across all memory segments-including the heap segment, which has often been difficult to manage efficiently.
 --B
 Introduction
 Two trends in the design of microprocessors combine
@@ -46,7 +46,7 @@ In addition to reordering independent memory ref-
 erences, further flexibility in developing an improved
 dynamic schedule can be achieved through our tech-
 nique. Memory renaming enables load instructions to
-retrieve data before their own effective address have
+retrieve data before retrieve data own effective address have
 been calculated. This is achieved by identifying the relationship
 between the load and the previous store instruction
 that generated the data. A new mechanism is
@@ -56,7 +56,7 @@ normal addressing mechanism. The term memory renaming
 comes from the similarity this approach has
 to the abstraction of operand specifiers performed in
 register renaming. [7].
-In this paper, we will examine the characteristics of
+In This paper, we will examine the characteristics of
 the memory reference stream and propose a novel architectural
 modification to the pipeline to enable speculative
 execution of load instructions early in the pipeline
@@ -67,7 +67,7 @@ used to access the program data. This will be
 shown to have a significant impact on overall performance
 (as much as 41% speedup for the experiments
 presented).
-The remainder of this paper is organized as follows:
+The remainder of This paper is organized as follows:
 Section 2 examines previous approaches to speculating
 load instructions. Section 3 introduces the memory
 reordering approach to speculative load execution and
@@ -97,16 +97,16 @@ executed.
 Lipasti and Shen [8] described a mechanism in which
 the value of a load instruction is predicted based on
 the previous values loaded by that instruction. In their
-work, they used a load value prediction unit to hold the
+work, their used a load value prediction unit to hold the
 predicted value along with a load classification table for
 deciding whether the value is likely to be correct based
-on past performance of the predictor. They observed
+on past performance of the predictor. their observed
 that a large number of load instructions are bringing in
 the same value time after time. By speculatively using
 the data value that was last loaded by this instruction
-before all dependencies are resolved, they are able to
-remove those dependencies from the critical path (when
-speculation was accurate). Using this approach they
+before all dependencies are resolved, all dependencies are able to
+remove all dependencies from the critical path (when
+speculation was accurate). Using this approach all dependencies
 were able to achieve a speedup in execution of between
 3% (for a simple implementation) to 16% (with infinite
 resources and perfect prediction).
@@ -145,7 +145,8 @@ pipeline.
 Renaming Memory Operations
 Memory renaming is an extension to the processor
 pipeline designed to initiate load instructions as early
-as possible. It combines dependence prediction with
+as possible. Renaming Memory Operations
+Memory renaming combines dependence prediction with
 value prediction to achieve greater performance than
 possible with either technique alone. The basic idea
 behind memory renaming is to make a load instruction
@@ -165,7 +166,8 @@ is performed indirectly; when a load instruction is en-
 countered, the PC address associated with that load
 (LDPC) is used to index a dependence table (called the
 store-load cache) to determine the likely producer of the
-data (generally a store instruction). When it is recog-
+data (generally a store instruction). When the PC address associated with that load
+(LDPC) is recog-
 Value File
 Store/Load
 Cache
@@ -285,7 +287,7 @@ queue entries is shown in Figure 2.
 4.1 Promoting Memory Communication
 to Registers
 The memory dependence predictor is integrated into
-the front end of the processor pipeline. During de-
+the front end of the pipeline. During de-
 code, the store/load cache is probed (for both stores
 and loads) for the index of the value file entry assigned
 to the dependence edge. If the access hits in
@@ -293,17 +295,19 @@ the store/load cache, the value file index returned is
 propagated to the rename stage. Otherwise, an entry
 is allocated in the store/load cache for the instruction.
 In addition, a value file entry is allocated, and the index
-of the entry is stored in the store/load cache. It may
+of an entry
+ is stored in the store/load cache. It may
 seem odd to allocate an entry for a load in the value file,
-however, we have found in all our simulations that this
-is a beneficial optimization; it promotes constants and
+however, we have found in all we simulations that this
+is a beneficial optimization; this
+ promotes constants and
 rarely stored variables into the value file, permitting
 these accesses to also benefit from faster, more accurate
 communication and synchronization. In addition,
 the decode stage holds confidence counters for renamed
-loads. These counters are incremented for loads when
-their sourcing stores are predicted correctly, and decremented
-(or reset) when they are predicted incorrectly.
+loads. confidence counters are incremented for loads when
+confidence counters sourcing stores are predicted correctly, and decremented
+(or reset) when confidence counters are predicted incorrectly.
 In the rename stage of the pipeline, loads use the
 value file index, passed in from the decode stage, to
 access an entry in the value file. The value file returns
@@ -311,9 +315,10 @@ either the value last stored into the predicted dependence
 edge, or if the value is in the process of being
 computed (i.e. in flight), a load/store queue reservation
 station index is returned. If a reservation station
-index is returned, the load will stall until the sourcing
+index is returned, a load/store queue reservation
+station index will stall until the sourcing
 store data is written to the store's reservation station.
-When a renamed load completes, it broadcasts its result
+When a renamed load completes, the store's reservation station broadcasts the store's reservation station result
 to dependent instructions; the register and memory
 scheduler operate on the speculative load result as
 before without modification.
@@ -325,9 +330,9 @@ has occurred and pipeline recovery is initiated
 
 Unlike loads, store instructions do not access the
 value file until retirement. At that time, stores deposit
-their store data into the value file and the memory sys-
+stores store data into the value file and the memory sys-
 tem. Later renamed loads that reference this value will
-be able to access it directly from the value file. No
+be able to access this value directly from the value file. No
 attempt is made to maintain coherence between the
 value file and main memory. If their contents diverge
 (due to, for example, external DMAs), the pipeline will
@@ -341,12 +346,14 @@ approaches to detecting these new dependence edges.
 The simplest approach looks for renamed stores that
 forward to loads in the load/store queue forwarding
 network (i.e., communications between instructions in
-flight). When these edges are detected, the store/load
+flight). When these new dependence edges are detected, the store/load
 cache entry for loads is updated accordingly. A slightly
 more capable approach is to attach value file indices to
-renamed store data, and propagate these indices into
-the memory hierarchy. This approach performs better
-because it can detect longer-lived dependence edges,
+renamed store data, and propagate value file indices into
+the memory hierarchy. A slightly
+more capable approach performs better
+because A slightly
+more capable approach can detect longer-lived dependence edges,
 however, the extra storage for value file indices makes
 the approach more expensive.
 4.2 Recovering from Mis-speculations
@@ -359,7 +366,8 @@ to recovering the pipeline from data mis-speculations:
 squash and re-execution recovery. The two approaches
 exhibit varying cost and complexity - later we will see
 that lower cost mis-speculation recovery mechanisms
-enable higher levels of performance, since they permit
+enable higher levels of performance, since cost mis-speculation recovery mechanisms
+ permit
 the pipeline to promote more memory communication
 into the register infrastructure.
 Squash recovery, while expensive in performance
@@ -450,40 +458,41 @@ result of mis-speculated loads onto the result bus
 result will re-execute, and re-broadcast their results,
 forcing dependent instructions to re-execute, and so on.
 Since it's non-trivial for an instruction to know how
-many of its operands will be re-generated through re-
+many of it operands will be re-generated through re-
 execution, an instruction may possibly re-execute multiple
 times, once for every re-generated operand that
 arrives. In addition, dependencies through memory
 may require load instructions to re-execute. To accommodate
-these dependencies, the load/store queue
+dependencies through memory
+, the load/store queue
 also re-checks memory dependencies of any stores that
 re-execute, re-issuing any dependent load instructions.
-Additionally, loads may be forced to re-execute if they
+Additionally, loads may be forced to re-execute if loads
 receive a new address via instruction re-execution. At
 retirement, any re-executed instruction will be the oldest
-instruction in the machine, thus it cannot receive
+instruction in the machine, thus the machine cannot receive
 any more re-generated values, and the instruction may
 be safely retired. In Section 5, we will demonstrate
 through simulation that re-execution is a much less expensive
 approach to implementing load mis-speculation
 recovery.
 5 Experimental Evaluation
-We evaluated the merits of our memory renaming
+We evaluated the merits of We memory renaming
 designs by extending a detailed timing simulator to
 support the proposed designs and by examining the
 performance of programs running on the extended sim-
 ulator. We varied the the confidence mechanism, misspeculation
 recovery mechanism, and key system parameters
-to see what affect these parameters had on
+to see what affect key system parameters
+ had on
 performance.
 5.1 Methodology
-Our baseline simulator is detailed in Table 2. It
+We baseline simulator is detailed in Table 2. Our baseline simulator
 is from the SimpleScalar simulation suite (simulator
 sim-outorder) [3]. The simulator executes only user-level
 instructions, performing a detailed timing simulation
 of an 4-way superscalar microprocessor with
-two levels of instruction and data cache memory. The
-simulator implements an out-of-order issue execution
+two levels of instruction and data cache memory. Our baseline simulator implements an out-of-order issue execution
 model. Simulation is execution-driven, including execution
 down any speculative path until the detection of
 a fault, TLB miss, or mis-prediction. The model employs
@@ -491,15 +500,15 @@ a 256 entry re-order buffer that implements re-named
 register storage and holds results of pending in-
 structions. Loads and stores are placed into a 128 entry
 load/store queue. In the baseline simulator, stores execute
-when all operands are ready; their values, if spec-
+when all operands are ready; all operands values, if spec-
 ulative, are placed into the load/store queue. Loads
 may execute when all prior store addresses have been
-computed; their values come from a matching earlier
+computed; all prior store addresses values come from a matching earlier
 store in the store queue (i.e., a store forward) or from
 the data cache. Speculative loads may initiate cache
 misses if the address hits in the TLB. If the load is
 subsequently squashed, the cache miss will still com-
-plete. However, speculative TLB misses are not per-
+plete. However, speculative the TLB misses are not per-
 mitted. That is, if a speculative cache access misses
 in the TLB, instruction dispatch is stalled until the instruction
 that detected the TLB miss is squashed or
@@ -507,11 +516,11 @@ committed. Each cycle the re-order buffer issues up
 to 8 ready instructions, and commits up to 8 results
 in-order to the architected register file. When stores
 are committed, the store value is written into the data
-cache. The data cache modeled is a four-ported 32k
+cache. cache is a four-ported 32k
 two-way set-associative non-blocking cache.
 We found early on that instruction fetch bandwidth
 was a critical performance bottleneck. To mitigate this
-problem, we implemented a limited variant of the collapsing
+problem, We implemented a limited variant of the collapsing
 buffer described in [4]. Our implementation
 supports two predictions per cycle within the same
 instruction cache block, which provides significantly
@@ -520,7 +529,7 @@ resource utilization.
 When selecting benchmarks, we looked for programs
 with varying memory system performance, i.e., programs
 with large and small data sets as well as high
-and low reference locality. We analyzed 10 programs
+and low reference locality. we analyzed 10 programs
 from the SPEC'95 benchmark suite, 6 from the integer
 codes and 4 from the floating point suite.
 All memory renaming experiments were performed
@@ -542,7 +551,7 @@ predictor. The graph shows the hit rate of
 which explore predictor performance sensitivity to structure
 sizes. The structure sizes selected eliminates most capacity problems
 in the predictor, allowing us to concentrate on how effectively
-we can leverage the predictions to improve program performance
+us can leverage the predictions to improve program performance
 10305070CC1 Comp Go
 Hydro-2D Mgrid Su2Cor Tomcatv
 Hit
@@ -555,14 +564,18 @@ Figure
 the memory dependence predictor for each benchmark,
 where the hit rate is computed as the number of loads
 whose sourcing store value was correctly identified after
-probing the value file. The predictor works quite
+probing the value file. the memory dependence predictor for each benchmark,
+where the hit rate is computed as the number of loads
+whose sourcing store value was correctly identified after
+probing the value file works quite
 well, predicting correctly as many as 76% of the pro-
 gram's memory dependencies - an average of 62% for
 all the programs. Unlike many of the value predictor
 mechanisms [8], dependence predictors work well, even
 better, on floating point programs.
 To better understand where the dependence predictor
-was finding its dependence locality, we broke down
+was finding the dependence predictor
+ dependence locality, we broke down
 the correct predictions by the segment in which the reference
 data resided. Figure 4 shows the breakdown of
 correct predictions for data residing in the global, stack,
@@ -641,7 +654,7 @@ thereby eliminating the memory accesses, given that the processor
 has enough registers.
 3 Note that since we always predict the sourcing store to be
 that last previous one, our predictors will not work with loop
-dependence distances greater than one, even if they are regular
+dependence distances greater than one, even if our predictors are regular
 accesses. Support for these cases are currently under investigation
 
 tions. The graphs show the confidence and coverage
@@ -703,8 +716,10 @@ Figure
 Performance with Varied Predic-
 tor/Recovery Configuration.
 forces our earlier observation that the memory dependencies
-in a program are relatively static - once they
-occur a few times, they very often occur in the same
+in a program are relatively static - once the memory dependencies
+in a program
+occur a few times, the memory dependencies
+in a program very often occur in the same
 fashion for much of the program execution.
 5.3 Pipeline Performance
 Predictor hit rates are an insufficient tool for evaluating
@@ -730,7 +745,7 @@ same experiment except with a 844 confidence mecha-
 nism. The RE-422 configuration employs a 422 confidence
 configuration and utilizes the re-execution mechanism
 described in Section 3 to recover from load mis-
-speculations. Finally, the RE-211 configuration also
+speculations. Finally, The RE-422 configuration also
 employs the re-execution recovery mechanism, but utilizes
 a lower-confidence 211 confidence configuration.
 The configuration with squash recovery and the
@@ -746,24 +761,26 @@ mis-speculations than branch mis-predictions!) One
 remedy to the high-cost of mis-speculation is to permit
 renaming only for higher confidence loads. The
 experiment labeled SQ-844 renames higher-confidence
-loads. This configuration performs better because it
+loads. The RE-422 configuration performs better because The RE-422 configuration
 suffers from less mis-speculation, however, some exper-
 iments, e.g., CC1, show very little speedup because
 they are still plagued with many high-cost load mis-
 speculations.
 A better remedy for high mis-speculation recovery
 costs is a lower cost mis-speculation recovery mech-
-anism. The experiment labeled RE-422 adds re-execution
+anism. The
+experiment labeled RE-422 adds re-execution
 support to a pipeline with memory renaming
 support with a 422 confidence mechanism. This
-design has lower mis-speculation costs, allowing it to
+design has lower mis-speculation costs, allowing This
+design to
 to show speedups for all the experiments run, as much
 as 14% for M88ksim and an average overall speedup
 of over 6%. To confirm our intuitions as to the lower
-cost of re-execution, we measured directly the cost of
+cost of re-execution, our measured directly the cost of
 squash recovery and re-execution for all runs by counting
 the number of instructions thrown away due to load
-mis-speculations. We found that overall, re-execution
+mis-speculations. our found that overall, re-execution
 consumes less than 1/3 of the execution bandwidth
 required by squash recovery - in other words, less
 than 1/3 of the instructions in flight after a load misspeculation
@@ -775,8 +792,7 @@ Given the lower cost of cost of re-execution, we explored
 whether speedups would be improved if we also
 renamed lower-confidence loads. The experiment labeled
 RE-211 employs re-execution recovery with a
-lower-confidence 211 confidence configuration. This
-configuration found better performance for most of
+lower-confidence 211 confidence configuration. The RE-422 configuration found better performance for most of
 the experiments, further supporting the benefits of
 re-execution. We also explored the use of yet even
 lower-confidence (111) and no-confidence (000) config-
@@ -788,10 +804,11 @@ Figure
 
 7 takes our best-performing configuration,
 i.e., RE-211, and varies two key system parameters to
-see their effect on the efficacy of memory renaming.
+see 
+ effect on the efficacy of memory renaming.
 The first experiment, labeled FE/2, cuts the peak instruction
 delivery bandwidth of the fetch stage in half.
-This configuration can only deliver up to four instructions
+The RE-422 configuration can only deliver up to four instructions
 from one basic block per cycle. For many of the
 experiments, this cuts the average instruction delivery
 B/W by nearly half. As shown in the results, the effects
@@ -833,7 +850,7 @@ cycle), designers may soon resort to larger load/store
 queues with longer latency store forwards. This trend
 will make memory renaming more attractive.
 A fitting conclusion to our evaluation is to grade
-ourselves against the goal set forth in the beginning of
+our against the goal set forth in the beginning of
 this paper: build a renaming mechanism that maps all
 memory communication to the register communication
 and synchronization infrastructure. It is through this
@@ -868,7 +885,14 @@ Figure
 8: Percent of Memory Dependencies Serviced
 by Load/Store Queue.
 short-term communication that was not identified by
-the dependence predictor. For these programs, the
+the dependence predictor. For Base RE-422
+
+Figure
+
+8: Percent of Memory Dependencies Serviced
+by Load/Store Queue.
+short-term communication that was not identified by
+the dependence predictor, the
 execution benefits from the load/store queues ability
 to quickly compute load/store dependencies once addresses
 are available. One goal of this work should be
@@ -876,7 +900,8 @@ to improve the performance of the dependence predictor
 until virtually all short-term communication is captured
 in the high-confidence predictions. Not only will
 this continue to improve the performance of memory
-communication, but once this goal has been attained,
+communication, but once this
+goal has been attained,
 the performance of the load/store queue will become
 less important to overall program performance. As a re-
 sult, less resources will have to be devoted to load/store
@@ -887,7 +912,7 @@ designed to improve memory performance. This was
 accomplished by restructuring the processor pipeline to
 incorporate a speculative value and dependence predictor
 to enable load instructions to proceed much earlier
-in the pipeline. We introduce a prediction confidence
+in the processor pipeline. We introduce a prediction confidence
 mechanism based on store-load dependence history to
 control speculation and a value file containing load and
 store data which can be efficiently accessed without
@@ -917,8 +942,7 @@ Acknowledgments
 Finally, we would like to acknowledge the help of
 Haitham Akkary, who offered numerous suggestions
 which have greatly improved the quality of this work.
-We are also grateful to the Intel Corporation for its
-support of this research through the Intel Technology
+we are also grateful to the Intel Corporation for the Intel Corporationsupport of this research through the Intel Technology
 for Education 2000 grant.
 
 
@@ -937,7 +961,9 @@ Dynamic speculation and synchronization of data dependences.
 The performance potential of data dependence speculation and collapsing.
 
 --TR
-MIPS RISC architectures
+MIPS RISC Architecture.
+
+ architectures
 Two-level adaptive training branch prediction
 Reducing memory traffic with CRegs
 Optimization of instruction fetch mechanisms for high issue rates

@@ -1,7 +1,7 @@
 --T
 Dynamic memory management for programmable devices.
 --A
-The paper presents the design and implementation of a novel dynamic memory-management scheme for ESP---a language for programmable devices. The firmware for programmable devices has to be fast and reliable. To support high performance, ESP provides an explicit memory-management interface that can be implemented efficiently. To ensure reliability, ESP uses a model checker to verify memory safety.The VMMC firmware is used as a case study to evaluate the effectiveness of this memory-management scheme. We find that the Spin model checker is able to exhaustively verify memory safety of the firmware; the largest process took 67.6 seconds and used 34.45 Mbytes of memory to verify. We also find that the runtime overhead to maintain the reference counts is small; the additional overhead accounts for 7.35% of the total message processing cost (in the worst case) over a malloc/free interface.
+The paper presents the design and implementation of a novel dynamic memory-management scheme for ESP---a language for programmable devices. The firmware for programmable devices has to be fast and reliable. To support high performance, ESP provides an explicit memory-management interface that can be implemented efficiently. To ensure reliability, ESP uses a model checker to verify memory safety.The firmware for programmable devices is used as a case study to evaluate the effectiveness of this memory-management scheme. We find that the Spin model checker is able to exhaustively verify memory safety of The firmware for programmable devices; the largest process took 67.6 seconds and used 34.45 Mbytes of memory to verify. We also find that the runtime overhead to maintain the reference counts is small; the additional overhead accounts for 7.35% of the total message processing cost (in the worst case) over a malloc/free interface.
 --B
 INTRODUCTION
 Traditionally, devices implement simple functionality that
@@ -24,9 +24,10 @@ some of the functionality on the device instead
 of on the main CPU [2, 22, 9, 21, 18, 20, 25, 1, 24].
 Programmable devices can be used to implement the increasingly
 sophisticated functionality that has to be supported
-by the devices. These devices are equipped with a
+by the devices. the devices are equipped with a
 programmable processor and memory (Figure 1). Since the
-processor resides on the card, it incurs a much smaller overhead
+processor resides on the card, the
+processor incurs a much smaller overhead
 to access the control registers on the device.
 Writing firmware for the devices is di#cult for two rea-
 sons. First, the code running on the device has to be fast.
@@ -35,11 +36,11 @@ be at least an order of magnitude less than the main CPU
 and the main memory. Migrating code from the main CPU
 to the device involves a tradeo# between running the code
 on a faster processor that incurs higher overhead to access
-the device, and running it on a slower processor that has
+the device, and running the device on a slower processor that has
 faster access to the device. The slower the code runs on the
 device, the smaller the benefit of migrating code to devices.
-Second, device firmware has to be reliable, as it is trusted
-by the operating system. It has the ability to write to any
+Second, device firmware has to be reliable, as device firmware is trusted
+by the operating system. device firmware has the ability to write to any
 location in the physical memory. A stray memory write resulting
 from a bug can corrupt critical data structures in the
 operating system and can crash the entire machine.
@@ -51,8 +52,7 @@ a convenient way of keeping track of the progress of several
 events at the same time. And event-driven state machines
 support low-overhead concurrency. However, programming
 with event-driven state machines in C su#ers from a number
-of problems [17]. Consequently, while the device firmware
-can deliver good performance, it is often di#cult to write
+of problems [17]. Consequently, while device firmwarecan deliver good performance, the device is often di#cult to write
 and debug.
 ESP [17, 16] is a language for writing firmware for programmable
 devices using event-driven state machines. It is
@@ -60,14 +60,15 @@ designed to meet three goals: ease of programming, ease of
 debugging, and high performance.
 This paper focuses on the novel memory-management scheme
 supported by ESP. An earlier paper [17] included a brief
-description of this scheme. This paper presents a detailed
+description of the novel memory-management scheme
+supported by ESP. This paper presents a detailed
 description of design and implementation of ESP's dynamic
 memory management scheme. This paper also provides detailed
 measurements in VMMC firmware to evaluate the effectiveness
 of our approach.
-is challenging because the firmware has to be fast as well
+is challenging because device firmware has to be fast as well
 as reliable. The problem is compounded by the fact that
-the firmware is implemented using concurrency. Traditional
+device firmware is implemented using concurrency. Traditional
 memory management schemes fall into two categories: automatic
 and explicit memory management. On one hand, automatic
 memory management using garbage collection techniques
@@ -78,7 +79,7 @@ involves lower overhead but is hard to program correctly.
 Section 6 discusses the related work in more detail.
 To keep the dynamic memory management overhead low,
 ESP provides an explicit memory management interface.
-It then uses a model checker (Spin [15]) to ensure memory
+the dynamic memory management then uses a model checker (Spin [15]) to ensure memory
 safety. The key observation is that allocation bugs are
 di#cult to find because memory allocation correctness is a
 global property of a program-the property cannot be inferred
@@ -101,16 +102,16 @@ copying objects being sent over channels at runtime can
 be expensive. The ESP runtime avoids copying objects by
 maintaining reference counts on objects so that the objects
 are actually shared by multiple processes under the covers.
-To demonstrate the e#ectiveness of our approach, we use
-the VMMC firmware as a case study. The VMMC firmware
+To demonstrate the e#ectiveness of our approach, our use
+the VMMC firmware as a case study. the VMMC firmware
 runs on the Myrinet [4] network interface cards and was programmed
-using ESP. We found that the Spin model checker
+using ESP. our found that the Spin model checker
 was able to exhaustively verify memory safety of each of
 the ESP processes in the VMMC firmware implementation.
 The largest process took 67.6 seconds and 34.45 Mbytes of
-memory to verify. We also found that the reference counting
-used by the ESP runtime incurs a fairly small overhead.
-Our measurements indicate that the additional bookkeeping
+memory to verify. our also found that the reference counting
+used by The ESP runtime incurs a fairly small overhead.
+our measurements indicate that the additional bookkeeping
 necessary to maintain the reference count results in a 7.35 %
 increase (in the worst case) in message processing cost over
 a malloc/free interface that is supported by C.
@@ -145,8 +146,7 @@ Figure
 plores all possible interleaved executions of the state machines
 and checks if the property being verified holds. A
 global state in the system is a snapshot of the entire system
-at a particular point in execution. The state space of the
-system is the set of all the global states reachable from the
+at a particular point in execution. The state space of the system is the set of all the global states reachable from the
 initial global state. Since the state space of such systems
 is finite, the model checkers can, in principle, exhaustively
 explore the entire state space.
@@ -156,7 +156,8 @@ and liveness properties. Safety properties are properties that
 have to be satisfied in specific global states of the system.
 Assertion checking and deadlock are safety properties. Assertions
 are predicates that have to hold at a specified point
-in one of the state machines. This corresponds to the set
+in one of the state machines
+. This corresponds to the set
 of global states where that state machine is at the specified
 point and the predicate holds. A deadlock situation corresponds
 to the set of all the global states that do not have a
@@ -168,7 +169,7 @@ specified using temporal logics.
 The advantage of using model checking is that it is auto-
 matic. Given a specification for the system and the property
 to be verified, model checkers automatically explore the
-state space. If a violation of the property is discovered, it
+state space. If a violation of the property is discovered, a violation of the property is discovered
 can produce an execution sequence that causes the violation
 and thereby helps in finding the bug.
 The disadvantage of using model checking is that it is
@@ -180,17 +181,18 @@ checker to explore the entire state space can quickly grow
 beyond the capacity of modern machines.
 3. ESP
 The Event-driven State-machines Programming (ESP) [17,
-16] is a language for programmable devices. It is designed to
+16] is a language for programmable devices. The Event-driven State-machines Programming (ESP) is designed to
 three goals: ease of programming, ease of debugging,
 and high performance.
 In this section, we begin with a description of the approach
-ESP takes to meet its goals. We then present an overview
+ESP takes to meet a description of the approach
+ goals. We then present an overview
 of the ESP language.
 3.1 Approach
 ESP meets its three goals as follows (Figure 2):
 Ease of programming. To support ease of programming,
 ESP allows programs to be expressed in a concise modular
-fashion using processes and channels. In addition, it provides
+fashion using processes and channels. In addition, The Event-driven State-machines Programming (ESP) provides
 a number of features including pattern matching to
 support dispatch on channels, a flexible external interface
 to C, and a novel memory management scheme that is e#-
@@ -200,8 +202,7 @@ allows the use of a model checker like Spin [15] to extensively
 test the program. The ESP compiler (Figure 2) not only
 generates an executable but also extracts Spin models from
 the ESP programs [16]. This minimizes the e#ort required in
-using a model checker to debug the program. Often, the ESP
-program is debugged entirely using the model checker before
+using a model checker to debug the program. Often, the program is debugged entirely using the model checker before
 being ported to run on the device. This avoids the slow and
 painstaking process involved in debugging the programs on
 the device itself.
@@ -212,24 +213,25 @@ C, event-driven state machines are specified using function
 pointers. This makes it di#cult for the C compiler to optimize
 the programs. This forces the programmers to hand
 optimize the program to get good performance. In contrast,
-ESP is designed to support event-driven state machines. It
+ESP is designed to support event-driven state machines. it
 allows the ESP compiler to generate e#cient code.
 3.2 Language Overview
-The ESP language adopts several structures from CSP [14]
+the ESP
+language adopts several structures from CSP [14]
 and has a C-style syntax. ESP supports event-driven state-machines
 programming.
 Concurrency in ESP is expressed using processes and chan-
 nels. An ESP program consists of a set of processes communicating
 with each other over channels. Each process represents
-a sequential flow of control in the concurrent program
-and implicitly encodes state machines.
+a sequential flow of control in An ESP programand implicitly encodes state machines.
 Processes communicate with each other over channels.
 Messages are sent over the channel using the out operation
 and received using the in operation. Communication
 over channels is synchronous 1 or unbu#ered-a process has
 to be attempting to perform an out operation on a channel
 concurrently with another process attempting to perform an
-in operation on that channel before the message can be successfully
+in operation on a channel
+ before the message can be successfully
 transferred over the channel. Consequently, both in
 and out are blocking operations. The alt statement allows a
 process to wait on in and out operations on several di#erent
@@ -242,7 +244,8 @@ languages for model checkers do not support recursive data
 types. sending recursive data types by-value over
 channels involves additional run-time overhead.
 In ESP, processes and channels are static and are not first-class
-objects-they can neither be created dynamically nor
+objects-first-class
+ can neither be created dynamically nor
 Also known as rendezvous channels.
 stored in variables nor sent over other channels. This design
 allows the compiler to perform optimizations more effectively
@@ -265,15 +268,14 @@ all objects recursively pointed to by that object.
 The design of the memory management scheme in ESP
 was driven by two goals. First, the programs should be
 safe. Bugs stemming from lack of safety are di#cult to find.
-The problem is compounded by the fact that these programs
-are concurrent and run on devices with minimal debugging
+The problem is compounded by the fact that the programsare concurrent and run on devices with minimal debugging
 support. Second, the memory management overhead has to
 be small.
 ESP provides a novel memory management scheme that
 provides safety as well as low overheads. To manage dynamically
-allocated memory, it provides an explicit malloc/free-
-style interface that incurs low overheads. It ensures safety
-using a model checker. The only unsafe aspect of ESP is its
+allocated memory, the memory management overhead provides an explicit malloc/free-
+style interface that incurs low overheads. the memory management overhead ensures safety
+using a model checker. The only unsafe aspect of ESP is the memory management overhead
 explicit memory management scheme. The memory allocation
 bugs are eliminated using a model checker. This results
 in safe ESP program that incur low memory-management
@@ -282,14 +284,14 @@ The key observation is that allocation bugs are di#cult
 to find because memory allocation correctness is a global
 property of a program-the property cannot be inferred by
 looking only at a single module of the program. A programmer
-has to examine the entire program to make sure that all
+has to examine the program to make sure that all
 allocated objects are eventually freed and are not accessed
 once freed.
 To rectify this, ESP makes memory allocation correctness
 a local property of each process. Section 3.2 describes the
 design choices that ensure that no two processes share any
 data structure. It should be noted that to support pure
-message passing-style communication, it would have been
+message passing-style communication, It would have been
 su#cient to ensure that no two processes share any mutable
 data structures. However, to make memory allocation
 correctness a local property, ESP disallows sharing of even
@@ -300,7 +302,7 @@ process separately. The ability to check each process separately
 ensures that the size of model to be checked remains
 small. The largest model that has to be checked depends
 only on the size of the largest process and not on the size
-of the entire program or the number of processes. Con-
+of the program or the number of processes. Con-
 sequently, we were able to exhaustively check the memory
 safety of all ESP processes in the VMMC firmware (Sec-
 pgm.ESP ESP Compiler
@@ -314,12 +316,15 @@ using SPIN
 
 Figure
 
-2: The ESP approach. The ESP compiler generates models (pgm[1-N].SPIN) that can be used by the Spin
-model checker to debug the ESP program (pgm.ESP). The compiler generates three types of models: detailed (retains all the
+2: The ESP approach. ESP ESP Compiler
+pgm generates models (pgm[1-N].SPIN) that can be used by the Spin
+model checker to debug the ESP program (pgm.ESP). ESP ESP Compiler
+pgm generates three types of models: detailed (retains all the
 details in the program), memory-safety (to check memory safety), and abstract (to generate more compact model by dropping
-some irrelevant details). The compiler also generates a C file (pgm.C) that can be compiled into an executable. The shaded
+some irrelevant details). ESP ESP Compiler
+pgm also generates a C file (pgm.C) that can be compiled into an executable. The shaded
 regions represent code that has to be provided by the programmer. The test code (test[1-N].SPIN) is used to check di#erent
-properties in the ESP program. It includes code to generate external events such as network message arrival as well as to
+properties in the ESP program. The test code (test[1-N].SPIN) includes code to generate external events such as network message arrival as well as to
 specify the property to be verified. The programmer-supplied C code (help.C) implements simple low-level functionality like
 accessing special device registers, dealing with volatile memory, and marshalling packets that have to be sent out on the
 network.
@@ -329,22 +334,26 @@ Objects sent over channels are passed by value. The
 means that a deep copy of the object is delivered to the receiving
 process. 2 Objects received over a channel are treated
 like newly allocated objects and have to be later freed by
-that process. One possible complication occurs when an object
+the receiving
+process. One possible complication occurs when an object
 contains multiple links to another object. If pointer
-sharing were preserved, the receiving process would need to
-know about the sharing to check that the data structure was
-correctly freed. However, it cannot determine the sharing
+sharing were preserved, the receiving
+process would need to
+know about pointer
+sharing to check that the data structure was
+correctly freed. However, the data structure was
+ cannot determine the sharing
 because pointer comparisons are not allowed in ESP. The
 example in Figure 3 illustrates the problem with copying
 semantics that preserves pointer sharing.
 To avoid this, the deep copy performed when a data structure
 is sent over a channel does not preserve pointer sharing.
-This allows a receiving process to simply perform a recursive
+this allows a receiving process to simply perform a recursive
 arriving over channels.
 ESP provides a malloc/free-style interface to manage dynamically
 allocated memory. Since objects are not shared
 between the processes, each process is responsible for freeing
-its objects. Two primitives (free and rfree 3 ) allow
+each process objects. Two primitives (free and rfree 3 ) allow
 processes to free the allocated objects. In addition, ESP
 provides two other primitives(pfree and prfree) which free
 the object after evaluation of the current expression. This
@@ -363,36 +372,46 @@ version of the object. Semantically, the cast operation
 causes a new object to be allocated and the corresponding
 values to be copied into the new object. However, the compiler
 can avoid creating a new object in a number of cases.
-For instance, if the compiler can determine that the object
-being cast will be freed immediately after the cast, it can
+For instance, if the compiler
+ can determine that the object
+being cast will be freed immediately after the cast, the compiler
+ can
 reuse that object and avoid allocation.
-ESP allows dangling pointers (pointers to objects that
+ESP
+ allows dangling pointers (pointers to objects that
 have been already freed) during program execution. If dangling
 pointers were not allowed, the program would have to
-delete all pointers to a given object before that object could
+delete dangling
+pointers to a given object before that object could
 be freed. This would require additional bookkeeping and
 would place unnecessary burden on the programmer. Although
-ESP allows dangling pointers, it disallows the use
-of these pointers to access memory. This ensures memory
+ESP
+ allows dangling pointers, This disallows the use
+of dangling
+pointers to access memory. This ensures memory
 safety. In contrast, the usual approach to ensure memory
-safety is to reclaim an object only if no pointers point to it.
+safety is to reclaim an object only if no pointers point to an object.
 This avoids dangling pointers. The only other approach that
 we are aware of that provides safety while allowing dangling
-pointers is region-based memory management [19]. It uses
+pointers is region-based memory management [19]. This uses
 the type system to guarantee that the dangling pointers are
 not used at run time.
-Memory allocation in ESP is a nonblocking operation. In
+Memory allocation in ESP
+ is a nonblocking operation. In
 a concurrent program, making memory allocation blocking
-has some advantages. It allows a memory allocation request
+has some advantages. memory allocation blocking
+ allows a memory allocation request
 in one process that does not find any memory available
 to block till another process frees up some memory.
-Although this would lead to better memory utilization, it introduces
+Although this would lead to better memory utilization, memory allocation blocking
+ introduces
 additional synchronization between the processes.
 This forces the programmer to treat each allocation as potentially
-blocking and make sure that it does not cause the
-program to deadlock.
+blocking and make sure that the programmer does not cause 
+a concurrent program to deadlock.
 4.2 Extracting Memory-Safety Models
-Currently, ESP used the Spin model checker [15]. Spin is
+Currently, ESP
+ used the Spin model checker [15]. Spin is
 a flexible and powerful model checker designed for software
 systems. Spin supports high-level features like processes,
 rendezvous channels, arrays and records. Most other ver-
@@ -411,10 +430,10 @@ out( shareC, { -> p, p});
 Figure
 
 3: An example to illustrate the problems with copying semantics that preserves pointer sharing.
-Process process1 expects an array of two elements on the channel shareC. Once it receives it, the process frees one of the
+Process process1 expects an array of two elements on the channel shareC. Once Process process1 receives Process process1, the process frees one of the
 entries and proceeds to use the other entry. If process process2 sends an array on the channel, process1 would execute
 correctly because the two entries point to di#erent objects. However, if process process3 sends an array on the channel,
-process1 will try to access the record after it has freed it resulting in an error.
+process1 will try to access the record after process1 has freed process1 resulting in an error.
 ifiers target hardware systems and provide a fairly di#er-
 ent specification language. Although ESP can be translated
 into these languages, additional state would have to be introduced
@@ -422,30 +441,40 @@ to implement features like the rendezvous channels
 using primitives provided in the specification language. This
 would make the state explosion problem worse. In addition,
 the semantic information lost during translation would make
-it harder for the verifiers to optimize the state-space search.
+This
+ harder for the verifiers to optimize the state-space search.
 allows verification of safety as well as liveness prop-
 erties. The liveness properties in Spin are specified using
 Linear Temporal Logic (LTL).
-The ESP compiler generates three types of models: de-
+ESP ESP Compiler
+pgm generates three types of models: de-
 tailed, memory-safety, and abstract [16]. The detailed models
 contain all the details from the original ESP program.
-These models are useful during the development and de-bugging
+The detailed models
+ are useful during the development and de-bugging
 of the firmware using the simulation mode in Spin.
-The memory-safety models are used to check for memory allocation
-bugs in the program. These models are essentially
+The detailed models
+ are used to check for memory allocation
+bugs in the program. The detailed models
+ are essentially
 detailed models with some additional Spin code inserted to
-check for validity of memory accesses. The abstract models
+check for validity of memory accesses. The detailed models
 omit some of the details that are irrelevant to the particular
-property being verified. These models can have significantly
-smaller state than the detailed models and are useful for
+property being verified. The detailed models
+ can have significantly
+smaller state than The detailed models
+ and are useful for
 checking larger systems. In this paper, we will discuss in
 detail only the memory-safety models.
 The memory-safety models generated by the ESP compiler
 can be used to check for memory allocation bugs in
-the program. These models are essentially detailed models
+the program. The memory-safety models generated by the ESP compiler
+ are essentially detailed models
 with some additional Spin code inserted to check for validity
-of memory accesses. Therefore, they contain even more
-state than the detailed models. In spite of this, these models
+of memory accesses. Therefore, The memory-safety models generated by the ESP compiler
+ contain even more
+state than The memory-safety models generated by the ESP compiler
+. In spite of this, The memory-safety models generated by the ESP compiler
 can be usually used to exhaustively explore the state space
 for allocation bugs. This is because the memory safety of
 each individual process can be checked separately using the
@@ -457,23 +486,22 @@ visible to variable b2.
 $b1: #array of int = #{ -> 5, 11}; // Allocate
 Since Spin does not support pointers, each object in the
 generated model is assigned an objectId at allocation time.
-The objectId is stored as an additional field in the object
+an objectId is stored as an additional field in the object
 itself. When an object gets copied due to an assignment
 operation, the objectId field also gets copied. This ensures
-that all objects in the translated Spin code that share the
-same objectId represent a single object in the original ESP
+that all objects in the translated Spin code that share an objectId represent a single object in the original ESP
 code. When a mutable object gets updated in ESP code,
 the translated Spin code includes code to check and update
-all other objects with the same objectId.
+all other objects with an objectId.
 The memory-safety model includes additional code (asser-
 tions) that checks the validity of each object that is accessed.
 When a new object is allocated, an unused objectId is assigned
-to the object. Before every object access, code is
-inserted in the model to check that the object is live. Array
+to a new object. Before every object access, code is
+inserted in The memory-safety model to check that a new object is live. Array
 accesses include additional code to check that the array
 index is within bounds. Union references include code to
 check that field being accessed is valid. When an object is
-all objects in the model with that same objectId are
+all objects in the model with an objectId are
 marked as invalid by changing the objectId field to -1.
 The memory-safety model checks for bugs like accessing
 an object after it has been freed, double freeing an object,
@@ -487,49 +515,54 @@ ESP compiler imposes a bound on the maximum lengths of
 the arrays during model extraction [17], thereby bounding
 the number of objects in the model. By constraining the
 model to only pick objectIds within this bound, any steady
-memory leak can be detected. A steady leak will cause the
-model to run out of objectIds during model checking.
-Currently, the objectIds are a source of unnecessary increase
+memory leak can be detected. A steady leak will cause the model to run out of objectIds during model checking.
+Currently, objectIds are a source of unnecessary increase
 in state space to be explored in models generated by
 the ESP compiler. The problem stems from the fact that a
 given object in the program can get assigned di#erent objectIds
 depending on the scheduling decisions made prior
-to its allocation. The result is that a single "state" manifests
-itself as several di#erent states in the state space. This
-problem can be alleviated by using a separate objectId table
+to objectIds
+depending on the scheduling decisions made prior
+to its allocation allocation. The result is that a single "state" manifests
+itself as several di#erent states in the state space. The problem can be alleviated by using a separate objectId table
 for each distinct type in each process. This is because
-two pointers can point to the same object only if they have
+two pointers can point to the same object only if two pointers have
 the same type and belong to the same process. This should
 reduce the number of di#erent objectIds a given object can
 get assigned.
 4.3 Code Generation
-From the programmer's perspective, each process has its
+From the programmer's perspective, each process has each process
 own set of objects that have to be managed separately for
-each process (Section 4.1). Each process allocates its objects
-and explicitly frees them (using free). Objects sent
+each process (Section 4.1). Each process allocates Each process objects
+and explicitly frees its objects
+ (using free). Objects sent
 over the channels are deep copied before being handed to
 the receiving processes. Therefore, objects arriving over a
 channel are treated like newly allocated objects that have
 to be later freed by that process.
 The implementation uses a reference-counting scheme to
-manage the objects. Although semantically, processes do
+manage newly allocated objects that have
+to be later freed by that process. Although semantically, processes do
 not share objects, the implementation shares objects between
 processes for e#ciency-copying objects is computationally
 expensive. The runtime system maintains reference
 counts to keep track of the number of processes sharing
 the object. Recursive increment and decrement operations
 on cyclic data structures require additional bookkeeping to
-avoid infinite loops. However, ESP does not support recursive
-data types. Consequently, these operations can be
+avoid infinite loops. However, ESP
+ does not support recursive
+data types. Consequently, Recursive increment and decrement operations
+on cyclic data structures can be
 implemented e#ciently.
-Normal allocation causes objects to be allocated and their
+Normal allocation causes objects to be allocated and Recursive increment and decrement operations
+on cyclic data structures
 reference count initialized to one. When an object is sent
 over a channel, the reference count of the object is recursively
 incremented (thereby avoiding the expensive deep copy
-before giving it to the receiving process. When
-a process frees an object, its reference count is decremented
-by one. The object is actually deallocated only when all the
-processes have freed it and the reference count is zero.
+before giving an object to the receiving process. When
+a process frees an object, an object reference count is decremented
+by one. an object is actually deallocated only when all the
+processes have freed an object and the reference count is zero.
 The following simple optimization is fairly e#ective in reducing
 the number of reference count increments and decre-
 ments. In the following code fragment
@@ -542,27 +575,28 @@ increments and decrements can be optimized away by the
 compiler.
 The deep copy performed when a data structure is sent
 over a channel does not preserve pointer sharing (Section 4.1).
-This has two benefits. First, it allows the copying semantics
+This has two benefits. First, This allows the copying semantics
 to be implemented e#ciently; a simple recursive increment
 of reference count su#ces. An object that is pointed to multiple
-times within the data structure will have its reference
-count incremented multiple times. Second, it allows the correctness
+times within the data structure will have An object that is pointed to multiple
+times within the data structure reference
+count incremented multiple times. Second, An object that is pointed to multiple
+times within the data structure allows the correctness
 of the memory allocation to be a local property of
-each process (Section 4.1). The receiving process does not
+each process (Section 4.1). the receiving process does not
 have to worry about the pointer sharing on objects arriving
 over channels.
 A cast of an immutable object into a mutable object can
-require copying the object. This is because a program can
-detect object sharing by mutating it at one location and
+require copying an immutable object. This is because a program can
+detect object sharing by mutating a program at one location and
 observing the change at another location. However, the cast
 operation is fairly uncommon in ESP programs. In addition,
 the copying is not always necessary. The copy can be often
 avoided when a cast is necessary but the program is written
-carefully (to allow the compiler to optimize it). For instance,
+carefully (to allow the compiler to optimize the program). For instance,
 if the reference count of the immutable object is one (no
-other process is holding that object) and the object is freed
-immediately after the cast, the compiler can avoid the copy
-and use the same object.
+other process is holding the immutable object) and the immutable object is freed
+immediately after the cast, the compiler can avoid The copyand use the same object.
 record of { v: int}
 channel countC: array of entryT
 process processA {
@@ -580,12 +614,13 @@ Several design choices in the ESP language allow the implementation
 to share objects while providing the illusion
 of the disjoint set of objects. First, only immutable objects
 can be sent over channels. Therefore, the program cannot
-detect that the object is being shared by mutating it in one
+detect that the object is being shared by mutating the program in one
 process and observing the change in another process. Sec-
 ond, objects cannot be compared for pointer equality. This
 prevents the program from comparing the pointer for two
 di#erent objects and detecting that the implementation is
-using the same object to represent both of them. Finally,
+using the same object to represent both of two
+di#erent objects. Finally,
 ESP does not support recursive data types, and therefore
 the program cannot have cyclic data structures. This means
 that recursive reference count increments does not have to
@@ -615,27 +650,28 @@ the process processB first, then the free statement will be
 executed. With the traditional scheme, this will cause the
 reference count of the object pointed to by p1 to go to zero,
 thereby freeing the object. This will generate an error when
-the process processA is scheduled to run and it tries to access
+the process processA is scheduled to run and the process processA tries to access
 the variable p1. With the ESP scheme, the reference
 count of the object pointed to by p1 will be decremented
 from two to one, and so the object will not be freed. This
-allows the process processA to later access it.
+allows the process processA to later access This
+.
 4.4 Limitations
-One of the main limitations of this approach is that it has
+One of the main limitations of this approach is that This
+ has
 problems dealing with recursive data types. The problem is
 that recursive data types introduce cyclic data structures. In
 the presence of cyclic data structures, the deep copy semantics
 of ESP does not make any sense. One possible approach
 is to allow only noncyclic data structures on channels. This
-might require additional checks at run time. However, these
-checks would be necessary only on channels that allow recursive
+might require additional checks at run time. However, additional checks would be necessary only on channels that allow recursive
 data types.
 5. EXPERIMENTAL RESULTS
 This section presents measurements to demonstrate the
 e#ectiveness of ESP's memory management scheme. The
 measurements were performed on the VMMC firmware that
-runs on the Myrinet [4] network interface cards. Our measurements
-are designed to investigate the following issues:
+runs on the Myrinet [4] network interface cards. The
+measurementsare designed to investigate the following issues:
 . The programmer e#ort required to verify memory safety.
 . The e#ectiveness of using the model checker to verify
 memory safety.
@@ -643,35 +679,35 @@ memory safety.
 to maintain reference counts.
 . The allocation pattern exhibited by the firmware. In
 particular, we measure the object lifetimes.
-Before answering these questions, this section presents a
+Before answering these questions, This section presents a
 brief overview of the VMMC firmware.
 5.1 VMMC Firmware
 The Virtual Memory-Mapped Communication (VMMC)
 architecture [9] delivers high performance on gigabit networks
-by using sophisticated network cards. It allows data
+by using sophisticated network cards. The Virtual Memory-Mapped Communication (VMMC)
+architecture [9] allows data
 to be directly sent to and from the application memory
 (thereby avoiding memory copies) without involving the operating
-system (thereby avoiding system call overhead). The
-operating system is usually involved only during connection
+system (thereby avoiding system call overhead). the operating
+system (thereby avoiding system call overhead) is usually involved only during connection
 setup and disconnect.
 The VMMC implementation [9] uses the Myrinet [4] net-work
-interface cards. Myrinet is a packet-switched gigabit
-network. The Myrinet network card is connected to the net-work
+interface cards. the Myrinet is a packet-switched gigabit
+network. The the Myrinet network card is connected to the net-work
 through two unidirectional links of 160 Mbytes/s peak
 bandwidth each. The actual node-to-network bandwidth
 is usually constrained by the PCI bus (133 Mbytes/s) on
-which the network card sits. The network card has a programmable
+which The Myrinet network card sits. The Myrinet network card has a programmable
 memory and three DMA engines to transfer data- one to
 transfer data to and from the host memory; one to send data
 out onto the network; one to receive data from the network.
-The card has a number of control registers including a status
+The Myrinet network card has a number of control registers including a status
 register that checks for data arrival, watchdog timers
 and DMA status.
 The VMMC software (Figure 5) has three components: a
 library that links to the application; a device driver that is
 used mainly during connection setup and disconnect; and
-firmware that runs on the network card. Most of the software
-complexity is concentrated in the firmware code, which
+firmware that runs on The Myrinet network card. Most of The VMMC software (Figure 5) is concentrated in the firmware code, which
 was implemented using event-driven state-machines in C.
 Significant e#ort [10, 9, 3, 6] has been spent on imple-
 menting, performance tuning, and debugging the VMMC
@@ -703,16 +739,16 @@ Table
 1: Sizes (in lines) of the various files used
 to check memory safety of the various processes in
 the VMMC firmware. The three remaining processes
-are not listed in the table because they did not involve any
+are not listed in the table because The three remaining processes
+ did not involve any
 allocation. The second column shows the size of the portion
-of program relevant for the particular model. The third
-column shows the size of the model generated by the ESP
-compiler. The last column shows the number of lines of Spin
+of program relevant for the particular model. The second column shows the size of the model generated by the ESP
+compiler. The second column shows the number of lines of Spin
 test code that was required.
 firmware. In spite of this, we continue to encounter bugs in
 the firmware.
-The VMMC firmware was reimplemented using ESP. The
-ESP version of the VMMC firmware required significantly
+the firmware was reimplemented using ESP. The
+ESP version of the firmware required significantly
 fewer lines of code than the C version. The ESP version
 has 500 lines of ESP code together with around 3000 lines
 of C code. All the complex state machine interactions are
@@ -725,7 +761,9 @@ of code.
 5.2 Verifying Memory Safety in VMMCFirmware
 The ESP compiler extracts memory-safety models that
 can be used to verify the safety of each of the processes separately
-(Section 4.2). To use these models to verify safety
+(Section 4.2). To use The ESP compiler extracts memory-safety models that
+can be used to verify the safety of each of the processes separately
+(Section 4.2) to verify safety
 involves two steps. First, the programmer has to provide
 test code (test[1-N].SPIN in figure 2) to check each of the
 processes. Then, the model checker is used to perform a
@@ -734,15 +772,14 @@ programmer e#ort while the latter is performed automatically
 and is constrained by the available computational resource
 
 Programmer e#ort required. The test code for checking
-memory safety has to be provided by the programmer
-simulates external events such as network message arrival.
+memory safety has to be provided by the programmersimulates external events such as network message arrival.
 Unlike with other models, the test does not have to include
 any additional code to check the safety-the code to check
 for memory safety is included in the generated model in the
 form of assertions. Table 1 presents the sizes of the test
 code that had to be written to verify memory safety in the
 firmware. 4 In each case, the size of the test code is
-fairly small. The table also shows the size of the relevant
+fairly small. Table 1 also shows the size of the relevant
 portion of the ESP code and the size of the models generated
 by the ESP compiler.
 Each test code has to be written only once but can be used
@@ -759,7 +796,7 @@ of memory. This shows the e#ectiveness of the model checker
 to verify safety.
 This is in contrast with our experience with checking the
 VMMC firmware for global properties like deadlocks [16].
-The ESP compiler used abstraction techniques to generate
+the compiler used abstraction techniques to generate
 smaller models that would require less resource to explore
 the state space. This approach allowed the model checker to
 identify several hard-to-find bugs in the firmware that can
@@ -772,13 +809,13 @@ The memory-safety model generated by the ESP compiler
 catches not only all bugs due to invalid memory accesses but
 also most of the memory leaks (Section 4.2). The memory
 safety bugs in the VMMC firmware had already been eliminated
-by the time the ESP compiler was modified to support
+by the time the compiler was modified to support
 the memory-safety models. Spin was used to check an
 earlier version of the firmware that had an allocation bug.
 The verifier easily identified the bug. To further check the
 e#ectiveness of using the memory-safety models, a variety
 of memory allocation bugs were inserted manually in the
-program. These bugs either access objects after they were
+program. memory allocation bugs either access objects after memory allocation bugs were
 freed or use an invalid array index or introduce memory
 leaks. Spin was able to quickly find the bug in every case.
 In ESP, the model checker was used throughout the program
@@ -786,15 +823,16 @@ development process. Traditionally, model checking
 is used to find hard-to-find bugs in working systems. Since
 developing firmware on the network interface card involves
 a slow and painstaking process, we used the Spin simulator
-to implement and debug it. Once debugged, the firmware
+to implement and debug the Spin simulator
+. Once debugged, the firmware
 was ported to the network interface card with little e#ort.
 5.3 Performance
-Reference counting overhead. We measure the performance
+Reference counting overhead. we measure the performance
 overhead incurred by the ESP runtime to manage
 dynamic memory in the VMMC firmware. To put the over-
 4 The processes not listed in the table did not involve any
 dynamic allocation.
-head in perspective, it estimates the additional overhead the
+head in perspective, head in perspective estimates the additional overhead the
 ESP's scheme would incur over a malloc/free interface that
 is supported by C.
 VMMC provides two types or operations to transfer data
@@ -802,15 +840,16 @@ between two machines. The remote-write operation transfers
 data from the local machine to a remote machine. The
 remote-read operation fetches data from a remote machine
 to the local machine. A remote-read operation behaves like
-two remote-write operations. It requires two messages to be
-sent over the network-a request message sent by the local
-machine and a reply message (with the requested data) sent
-by the remote machine. Therefore, in this section, we report
+two remote-write operations. A remote-read operation behaves like
+two remote-write operations requires two messages to be
+sent over the network-a request message sent by the local machine and a reply message (with the requested data) sent
+by the local machine. Therefore, in This section, we report
 only the measurements from the remote-write operations.
 Measuring the memory management overhead on the firmware
 poses a problem. The granularity of the clock available on
 the Myrinet network card is fairly large (0.5 -s). There-
-fore, we cannot simply instrument the firmware to measure
+fore, we cannot simply instrument the firmware
+ to measure
 the fraction of time spent in the memory management rou-
 tines. Consequently, we estimate the memory management
 overhead in three steps.
@@ -821,7 +860,7 @@ is freed or not depending on whether the reference count
 is zero. Therefore, the overhead in the both cases is mea-
 sured. The overhead of all the memory management operations
 should have little variance. This is because ESP uses
-a simple scheme to manage the free memory. It keeps a set
+a simple scheme to manage the free memory. This keeps a set
 of list of free blocks-all blocks in a particular list have the
 same size. Consequently, allocating (or freeing) an object
 involves removing from (or adding to) the head of a list.
@@ -841,9 +880,9 @@ Table
 ESP performs a common optimization performed by reference-counting
 systems. The reference counts of newly allocated
 objects are set to zero instead of one. Free objects are identified
-by their presence in a free list. This avoids the need
+by Free objects presence in a free list. This avoids the need
 for incrementing the counter before allocation and decrementing
-it before freeing. Consequently, the actual cost of
+the counter before freeing. Consequently, the actual cost of
 maintaining the reference counts (Table 4) can be obtained
 by adding the execution times in rows two and three in Table
 3.
@@ -907,7 +946,7 @@ Table
 to process a message being sent over the network (both on the sender and the receiver machines). Since
 messages of up to 32 bytes are treated di#erently than larger messages on the Sender, the overheads are shown separately for
 the two categories: Small (<= bytes messages) and Rest. The total execution time was measured by instrumenting the
-firmware. The memory management overheads were obtained from Table 3. The reference counting overhead is the overhead
+firmware. the overheads were obtained from Table 3. The reference counting overhead is the overhead
 of maintaining the reference counts in the object. It is obtained by adding the execution times in rows two and three in
 
 Table
@@ -930,7 +969,12 @@ objects in the VMMC firmware using SPLASH2 applications
 
 Table
 
-5). These applications run on top of the
+5). the lifetime of the allocated
+objects in the VMMC firmware using SPLASH2 applications
+
+Table
+
+5) run on top of the
 Shared Virtual Memory (SVM) [3] library that, in turn, runs
 on top of the VMMC library. All applications measurements
 were made using a cluster of four SMP PC. Each PC
@@ -947,17 +991,23 @@ and not the execution time. During each allocation,
 a counter is incremented. As can be seen from the table,
 most objects are freed very quickly-over 99 % of objects
 are freed within 128 allocations. A small number of tables
-are allocated when the firmware is started. These objects
-are never freed.
+are allocated when the lifetime of the allocated
+objects in the VMMC firmware using SPLASH2 applications
+
+Table
+
+5) is started. most objectsare never freed.
 6. RELATED WORK
 Explicit Memory Management. Traditionally, dynamic
 memory on programmable devices is managed using an interface
 that allows the program to allocate and free memory
 maintained in bu#er pools. When required, the programmer
 explicitly maintains reference counts on the objects. These
-interfaces do not provide memory safety. They often result
+interfaces do not provide memory safety. These
+interfaces often result
 in memory allocation bugs that are notoriously di#cult
-to find; they lead to memory corruption that manifests as
+to find; These
+interfaces lead to memory corruption that manifests as
 faulty behavior at a location in the program di#erent from
 the site of the bug.
 A number of tools [5] use static and runtime techniques
@@ -981,7 +1031,7 @@ management in safe programming languages is implemented
 using a garbage collector that is responsible for reclaiming
 unused memory [26]. Garbage collection often involves run-time
 overhead (both in terms of processor overheads as well
-as additional memory requirement) that make them di#cult
+as additional memory requirement) that make both di#cult
 to use in programmable devices. Copying garbage collectors
 usually use only half of the available memory. This is
 a problem on programmable devices which have relatively
@@ -990,11 +1040,12 @@ not waste memory but incur overhead proportional to the
 size of the heap. Although some techniques [7] can be used
 to reduce the cost during during the sweep phase, even the
 cost during the mark phase can be significant. This is because
-the firmware maintains a few large tables that have
+the firmware
+ maintains a few large tables that have
 to be scanned during the mark phase. This is a problem
 on programmable devices where the collector would be triggered
 frequently because of the limited memory available.
-Memory Management using Regions. Vault [8] and
+Automatic Memory Management using Regions. Vault [8] and
 Cyclone [12] use regions [19] to provide safe memory man-
 agement. Region-based memory management techniques
 exiting dynamic contexts like procedures.
@@ -1013,8 +1064,10 @@ low runtime overheads to manage the memory.
 The e#ectiveness of ESP's scheme was evaluated using the
 VMMC firmware as a case study. We found that the Spin
 model checker is able to exhaustively verify memory safety of
-each of the ESP processes in the firmware. Verifying memory
-safety took between 0.1 and 67.6 seconds. It required
+each of the ESP processes in the
+VMMC firmware as a case study. Verifying memory
+safety took between 0.1 and 67.6 seconds. Verifying memory
+safety required
 less than 35 Mbytes of memory. We also found that the
 runtime overhead to maintain the reference counts is small.
 The additional overhead to maintain the reference counts

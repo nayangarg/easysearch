@@ -1,15 +1,16 @@
 --T
 What are race conditions?.
 --A
-In shared-memory parallel programs that use explicit synchronization, race conditions result when accesses to shared memory are not properly synchronized. Race conditions are often considered to be manifestations of bugs, since their presence can cause the program to behave unexpectedly.  Unfortunately, there has been little agreement in the literature as to precisely what constitutes a race condition. Two different notions have been implicitly considered: one pertaining to programs intended to be deterministic (which we call general races) and the other to nondeterministic programs containing critical sections (which we call data races). However, the differences between general races and data races have not yet been recognized. This    paper examines these differences by characterizing races using a formal model and exploring their properties. We show that two variations of each type of race exist: feasible general races and data races capture the intuitive notions desired for debugging and apparent races capture less accurate notions implicitly assumed by most dynamic race detection methods. We also show that locating feasible races is an NP-hard problem, implying that only the apparent races, which are approximations to feasible races, can be detected in practice. The complexity of dynamically locating apparent races depends on the type of synchronization used by the program. Apparent races can be exhaustively located efficiently only for weak types of   synchronization that are incapable of implementing mutual exclusion. This result has important implications since we argue that debugging general races requires exhaustive race detection and is inherently harder than debugging data races (which requires only partial race detection). Programs containing data races can therefore be efficiently debugged by locating certain easily identifiable races. In contrast, programs containing general races require more complex debugging techniques.
+In shared-memory parallel programs that use explicit synchronization, race conditions result when accesses to shared memory are not properly synchronized. Race conditions are often considered to be manifestations of bugs, since Race conditions presence can cause the program to behave unexpectedly.  Unfortunately, there has been little agreement in the literature as to precisely what constitutes a race condition. Two different notions have been implicitly considered: one pertaining to programs intended to be deterministic (which we call general races) and the other to nondeterministic programs containing critical sections (which we call data races). However, the differences between general races and data races have not yet been recognized. This    paper examines the differences between general races and data races by characterizing races using a formal model and exploring races properties. We show that two variations of each type of race exist: feasible general races and data races capture the intuitive notions desired for debugging and apparent races capture less accurate notions implicitly assumed by most dynamic race detection methods. We also show that locating feasible races is an NP-hard problem, implying that only the apparent races, which are approximations to feasible races, can be detected in practice. The complexity of dynamically locating apparent races depends on the type of synchronization used by the program. Apparent races can be exhaustively located efficiently only for weak types of   synchronization that are incapable of implementing mutual exclusion. This result has important implications since we argue that debugging general races requires exhaustive race detection and is inherently harder than debugging data races (which requires only partial race detection). Programs containing data races can therefore be efficiently debugged by locating certain easily identifiable races. In contrast, programs containing general races require more complex debugging techniques.
 --B
 Introduction
 In shared-memory parallel programs, if accesses to shared memory are not properly synchronized, time-dependent
 failures called race conditions can result. Race conditions occur when different processes access shared
 data without explicit synchronization. Because races can cause the program to behave in ways unexpected by the
-programmer, detecting them is an important aspect of debugging. However, in the literature, there seems to be little
+programmer, detecting the
+programmer is an important aspect of debugging. However, in the literature, there seems to be little
 agreement as to precisely what constitutes a race condition. Indeed, two different notions have been used, but the
-distinction between them has not been previously recognized. Because no consistent terminology has appeared,
+distinction between two different notions has not been previously recognized. Because no consistent terminology has appeared,
 several terms have been used with different intended meanings, such as access anomaly[6-8, 12, 18], data
 race[1, 4, 5, 11, 16, 20, 22], critical race[13], harmful shared-memory access[24], race condition[10, 26], or just
 race[2, 9, 17]. This paper explores the nature of race conditions and uncovers some previously hidden issues
@@ -43,7 +44,7 @@ specification, and a fault is its algorithmic cause (although we use the term bu
 race have also been suggested.
 references "can potentially execute concurrently"[6] or have no "guaranteed run-time ordering"[10]. Our work is
 novel since we explicitly characterize two different types of race conditions using a formal model and explore their
-properties. The distinction between general races and data races is necessary because they are manifestations of different
+properties. The distinction between general races and data races is necessary because The distinction between general races and data races are manifestations of different
 types of program bugs and require different detection techniques. Using a model has the advantage that
 issues regarding the accuracy and complexity of dynamic race detection then become clear. The accuracy issues
 have implications for debugging: accurate race detection means that races that are direct manifestations of program
@@ -64,11 +65,14 @@ efficient only for programs using synchronization incapable of implementing mutu
 2. Examples
 Explicit synchronization is often added to shared-memory parallel programs to coordinate accesses to shared
 data. Without proper coordination, different types of race conditions can result. To motivate these different types
-of races, we present an example of each. In subsequent sections we will characterize them in terms of a formal
-model and investigate their properties.
+of races, we present an example of each. In subsequent sections we will characterize these different types
+of races in terms of a formal
+model and investigate these different types
+of races properties.
 One purpose of adding explicit synchronization to shared-memory parallel programs is to implement critical
 sections, which are blocks of code intended to execute as if they were atomic. Atomic execution means that the
-final state of variables read and written in the section depends only upon their initial state at the start of the section
+final state of variables read and written in the section depends only upon the
+final state of variables read and written in the section initial state at the start of the section
 and upon the operations performed by the code (and not operations performed by another process). Bernstein's conditions
 state that atomic execution is guaranteed if shared variables that are read and modified by the critical section
 are not modified by any other concurrently executing section of code[3]. A violation of these conditions has typically
@@ -76,13 +80,13 @@ been called a data race[1, 4, 5, 11, 16, 17, 20, 22] or access anomaly[6-8, 18].
 
 Figure
 
-1 shows an example program for which a data race is considered a failure. This program processes
+1 shows an example program for which a data race is considered a failure. an example program for which a data race is considered a failure processes
 commands from bank tellers that make deposits and withdrawals for a given bank account. Figure 1(a) shows a
-correct version of the program. Since the variables balance and interest are shared, operations that manipulate
+correct version of an example program for which a data race is considered a failure. Since the variables balance and interest are shared, operations that manipulate
 them are enclosed in critical sections. Because critical sections can never execute concurrently, this version
 will exhibit no data races. Figure 1(b) shows an erroneous version that can exhibit data races; the P and V operations
 that enforced mutual exclusion are missing. The deposit and withdraw code can therefore execute con-
-currently, causing their individual statements to effectively interleave, possibly violating the atomicity of one of the
+currently, causing The deposit and withdraw code individual statements to effectively interleave, possibly violating the atomicity of one of the
 Process 1 Process 2
 if (balance < amount)
 else {
@@ -95,47 +99,51 @@ data-race version
 Figure
 
 1. (a) C program fragment manipulating bank account, and (b) erroneous version exhibiting data races
-intended critical sections. The data races in this program are considered failures because the intent was that the
+intended critical sections. The data races in an example program for which a data race is considered a failure are considered failures because the intent was that the
 deposit and withdrawal code execute atomically, without interference from other processes.
-Even though programs like the one in Figure 1 may contain critical sections, they are often intended to be
+Even though programs like the one in Figure 1 may contain critical sections, Even though programs like the one in Figure 1 may contain critical sections are often intended to be
 nondeterministic (e.g., the order of deposits and withdrawals may occur unpredictably, depending on how fast the
 tellers type). However, other classes of programs are intended to be completely deterministic, and a different type
-of race condition pertains to such programs. In these programs, synchronization provides determinism by forcing
+of race condition pertains to such programs. In such programs, synchronization provides determinism by forcing
 all accesses to the same shared resource to always execute (on a given input) in a specific order. For a given input,
 all executions of such programs always produce the same result, regardless of any random timing variations among
-the processes in the program (e.g., due to unpredictable interrupts, or other programs that may be executing on the
+the processes in an example program for which a data race is considered a failure (e.g., due to unpredictable interrupts, or other programs that may be executing on the
 same processors). Nondeterminism is generally introduced when the order of two accesses to the same resource is
-not enforced by the program's synchronization. The existence of two such unordered accesses has been called a
+not enforced by an example program for which a data race is considered a failure's synchronization. The existence of two such unordered accesses has been called a
 race condition[9, 10, 26], access anomaly[12], critical race[13], or harmful shared-memory access[24]. For a more
 consistent terminology, we propose the term general race, since such a race is more general than a data race.
 As an example of programs for which general races are manifestations of bugs, consider parallel programs
 that are constructed from sequential programs by parallelizing loops. The sequential version of a program behaves
-deterministically, producing a particular result for any given input. Typically, the parallelized version is intended to
-have the same semantics. Preserving these semantics can be accomplished by adding synchronization to the program
+deterministically, producing a particular result for any given input. Typically, this version
+ is intended to
+have the same semantics. Preserving the same semantics can be accomplished by adding synchronization to the program
 that ensures all of the data dependences ever exhibited by the sequential version are also exhibited by the
 parallel version. Such programs exhibit no general races, since preserving these dependences requires that all
 operations on any specific location are performed in some specific order (independent of external timing variations).
-Both general races and data races are notions that are necessary for debugging. Although they both occur
-when shared-memory accesses occur in an incorrect or unexpected order, they are manifestations of different types
+Both general races and data races are notions that are necessary for debugging. Although Both general races and data races occur
+when shared-memory accesses occur in an incorrect or unexpected order, Both general races and data races are manifestations of different types
 of bugs that occur in different classes of parallel programs.
 The notion of a data race is needed to discover critical sections that were not implemented properly (i.e., those
 whose atomicity may have failed). The notion of a general race is needed to discover potential nondeterminism
 anywhere in the program execution. Data races alone will not suffice for these purposes, since a program can exhibit
 no data races but still be nondeterministic. General races alone will not suffice, since general races that are not
 data races are not always failures. The preceding examples illustrate these cases. For example, the no-data-race
-version of Figure 1 executes nondeterministically, depending on when commands are entered by the tellers. This
-version correctly exhibits no data races (its critical sections execute atomically), even though it is nondeterministic.
-However, even though general races occur, they are not considered to be manifestations of bugs.
+version of Figure 1 executes nondeterministically, depending on when commands are entered by the tellers. this version
+ correctly exhibits no data races (this version
+ critical sections execute atomically), even though this version
+ is nondeterministic.
+However, even though general races occur, general races are not considered to be manifestations of bugs.
 General races and data races also pertain to different classes of parallel programs. General races are typically
 of interest for programs in which determinism is implemented by forcing all shared-memory accesses (to the same
 location) to occur in a specific order. Many scientific programs fall into this category (e.g., those constructed by
 many automatic parallelization techniques). In contrast, data races are typically of interest for asynchronous pro-
-grams. Programs using shared work-pools fall into this category. They are not intended to be deterministic, but
+grams. Programs using shared work-pools fall into this category (e.g., those constructed by
+many automatic parallelization techniques). Programs using shared work-pools are not intended to be deterministic, but
 critical sections (that access shared data) are still expected to behave atomically.
 Emrath and Padua have also characterized different types of race conditions but have only addressed programs
-intended to be deterministic[9]. They considered four levels of nondeterminism of a program (on a given
+intended to be deterministic[9]. Emrath and Padua considered four levels of nondeterminism of a program (on a given
 input). Internally deterministic programs are those whose executions on the given input exhibit no general races.
-Externally deterministic programs exhibit general races, but they do not cause the final result of the program to
+Externally deterministic programs exhibit general races, but general races do not cause the final result of an example program for which a data race is considered a failure to
 change from run to run. Associatively nondeterministic programs exhibit general races only between associative
 arithmetic operations and are externally nondeterministic only because of roundoff errors (different runs can produce
 different roundoff errors). Finally, completely nondeterministic programs are those exhibiting general races
@@ -144,17 +152,17 @@ nondeterministic programs and data races, and by using a formal framework.
 3. Formal Model for Reasoning About Race Conditions
 Now that we have given examples illustrating different types of race conditions, we next discuss how they can
 be characterized using a formal model. Doing so not only provides unambiguous characterizations of each, but also
-provides a mechanism with which to reason about their properties. In this section, we briefly overview our model
+provides a mechanism with which to reason about each properties. In this section, we briefly overview we model
 for reasoning about race conditions that was first presented in an earlier paper[22] and that is based on Lamport's
 theory of concurrent systems[15]. Our model consists of two parts: one to represent the actual behavior exhibited
-by the program and the other to represent potential behaviors possibly exhibited by the program.
+by the program and the other to represent potential behaviors possibly exhibited by an example program for which a data race is considered a failure.
 3.1. Actual Program Executions
-The first part of our model is simply a notation for representing an execution of a shared-memory parallel program
+The first part of Our model is simply a notation for representing an execution of a shared-memory parallel program
 on a sequentially consistent[14] processor + . A program execution, P, is a triple, -E, T , D -, where E is a
-finite set of events, and T (the temporal ordering relation) and D (the shared-data dependence relation) are
+finite set of events, and T are
 relations # over those events. Intuitively, E represents the actions performed by the execution, T represents the
 order in which they are performed, and D shows how events affect one another through accesses to shared
-memory. We refer to P as an actual program execution when P represents an execution that the program at hand
+memory. Our refer to P as an actual program execution when P represents an execution that an example program for which a data race is considered a failure at hand
 actually performed.
 Each event e - E represents both the execution instance of a set of program statements and the sets of shared
 memory locations they read and write. A synchronization event represents an instance of some synchronization
@@ -167,23 +175,23 @@ means that a and b execute concurrently (i.e, neither completes before
 the other begins). We should emphasize that T is defined to describe the actual execution order between
 events in a particular execution; e.g., a /
 means that a and b actually execute concurrently; it does not mean
-that they could have executed in any order. A shared-data dependence a D b exists if a accesses a shared variable
+that a and b could have executed in any order. A shared-data dependence a D b exists if a accesses a shared variable
 that b later accesses (where at least one access modifies the variable), or if a precedes b in the same process
 (since data can in general flow through non-shared variables local to the process). A dependence also exists if there
 is a chain of dependences from a to b; e.g., if a accesses a shared variable that another event, c, later accesses, and c
 then references a variable that b later references.
 3.2. Feasible Program Executions
 An actual program execution is a convenient notation for describing the behavior of a particular execution.
-However, to characterize race conditions, it is necessary to also describe behavior that the program could have exhi-
+However, to characterize race conditions, it is necessary to also describe behavior that an example program for which a data race is considered a failure could have exhi-
 bited. Most previous work has not explicitly considered this issue; race conditions have typically been defined only
 as data-conflicting accesses "that can execute in parallel"[6] or whose execution order is not "guaranteed"[10].
 Such definitions implicitly refer to a set of alternative orderings that had the potential of occurring. Our work is
-novel in that we explicitly define these sets of orderings. The second part of our model characterizes sets of feasible
-program executions, which represent other executions that had the potential of occurring. We next discuss several
+novel in that Our explicitly define these sets of orderings. The second part of Our model characterizes sets of feasible
+program executions, which represent other executions that had the potential of occurring. Our next discuss several
 possible ways in which these sets can be defined. Instead of simply intuitively reasoning about alternative order-
 ings, formally defining these sets uncovers issues important for debugging.
-Sequential consistency ensures that shared-memory accesses behave as if they were all performed atomically and in some linear order.
-The model also contains axioms describing properties that any program execution must possess[22]. We omit these axioms here as they are un-necessary
+Sequential consistency ensures that shared-memory accesses behave as if shared-memory accesses were all performed atomically and in some linear order.
+The model also contains axioms describing properties that any program execution must possess[22]. Our omit these axioms here as they are un-necessary
 for simply characterizing race conditions.
 Superscripted arrows denote relations, and a b is a shorthand for -(a b) -(b a).
 To characterize when a race condition exists between two events, a and b, in an actual program execution
@@ -198,7 +206,7 @@ events in P - (because events are defined to represent the execution instance of
 We define three sets of program execution prefixes by considering successively fewer restrictions on the different
 ways in which P's events could have been performed. We will see that these different sets characterize races
 with varying accuracy and complexity. The first two sets are restricted to contain only program executions that are
-feasible (i.e., that could have actually occurred); these sets characterize races most accurately. The first set, denoted
+feasible (i.e., that could have actually occurred); The first two sets characterize races most accurately. The first set, denoted
 F SAME , contains all feasible executions that exhibit the same shared-data dependences as the second set, denoted
 F DIFF , contains feasible executions with no restrictions on their shared-data dependences. F DIFF includes all executions
 that perform a prefix of the events performed by P regardless of which shared-data dependences may result.
@@ -206,37 +214,37 @@ F SAME includes the executions that perform exactly the same events and exhibit 
 as P.
 Definition 3.1
 F SAME is the set of program executions, P-E-, T , D -, such that
-represents an execution that the program could actually perform,
+represents an execution that an example program for which a data race is considered a failure could actually perform,
 Definition 3.2
 F DIFF is the set of program executions, P-E-, T , D -, such that
-represents an execution the program could actually perform,
+represents an execution an example program for which a data race is considered a failure could actually perform,
 (2) P - is a prefix of P, and
 (3) D - represents any shared-data dependences that satisfy (1) and (2).
-The last set, denoted F SYNC , also contains executions with arbitrary shared-data dependences, but they are no
-longer required to be feasible; they are only required to obey the semantics of the program's explicit synchroniza-
+The last set, denoted F SYNC , also contains executions with arbitrary shared-data dependences, but executions with arbitrary shared-data dependences are no
+longer required to be feasible; executions with arbitrary shared-data dependences are only required to obey the semantics of an example program for which a data race is considered a failure's explicit synchroniza-
 tion. This simpler set characterizes races less accurately, but is a useful approximation to F DIFF that involves only
 the semantics of explicit synchronization (and not the program). Moreover, since previous race detection methods
-analyze only explicit synchronization, F SYNC is the set of alternative executions they implicitly assume.
+analyze only explicit synchronization, F SYNC is the set of alternative executions F SYNC implicitly assume.
 The structure of this set depends on the details of our definition of shared-data dependence. Although different definitions are possible
-(e.g., that characterize only flow dependences), they would not alter this structure in a significant way.
+(e.g., that characterize only flow dependences), different definitions would not alter The structure of this set in a significant way.
 F SYNC is the set of program executions, P-E-, T , D -, such that
-obeys the semantics of the program's explicit synchronization,
+obeys the semantics of an example program for which a data race is considered a failure's explicit synchronization,
 (2) P - is a prefix of P, and
 (3) D - represents any shared-data dependences that satisfy (1) and (2).
 F SYNC includes all executions that would have been possible had P not exhibited any shared-data dependences
 (or any dependences that affect control flow). Since programs in general access shared-memory, F SYNC may include
-executions the program could never exhibit. For example, assume that one process in P assigns to a shared variable
+executions an example program for which a data race is considered a failure could never exhibit. For example, assume that one process in P assigns to a shared variable
 S the value 1, and then another process conditionally executes a procedure only if S equals 1. If no explicit synchronization
 forces the assignment to occur before the procedure call, then F SYNC will contain an execution in which
 the procedure is called before S is assigned 1. However, since the procedure can be called only if S equals 1, such
 an execution is not feasible (assuming that S is not initialized to 1). In general, for another execution to perform the
 same events as P, it must also exhibit the same shared-data dependences as when general races occur (whether or
-not they are considered failures), F SYNC may contain infeasible executions[19, 22]. As discussed later, the existence
+not general races are considered failures), F SYNC may contain infeasible executions[19, 22]. As discussed later, the existence
 of such infeasible executions impacts the accuracy of races reported by methods that analyze only explicit synchron-
-ization. Nevertheless, we will see that this notion is useful because it allows a simple characterization of race conditions
+ization. Nevertheless, we will see that this notion is useful because this notion allows a simple characterization of race conditions
 that are easy to detect.
 4. Issues in Characterizing Race Conditions
-We now characterize general races and data races in terms of our model and explore some issues that arise.
+We now characterize general races and data races in terms of We model and explore some issues that arise.
 We show that two different types of each race exist. One type, the feasible race, captures the intuitive notion that
 we wish to express, but is NP-hard to locate exactly. The other type, the apparent race, captures a less accurate notion
 (assumed by most race detection methods) but can be more easily detected. Moreover, we argue that debugging
@@ -245,7 +253,8 @@ harder than debugging nondeterministic programs that use critical sections (to f
 only partial race detection.
 4.1. General Races and Data Races
 Intuitively, a general race potentially introduces nondeterminism and exists in a program execution P if two
-events a and b have data conflicts and their access order is not "guaranteed" by the execution's synchronization. A
+events a and b have data conflicts and two
+events access order is not "guaranteed" by the execution's synchronization. A
 data race potentially causes the atomicity of critical sections to fail and exists if a and b either execute concurrently
 or have the potential of doing so. To explore the nature of races, we first formalize what it means to potentially execute
 concurrently (or in a different order) by using the different sets of program executions discussed above. For
@@ -268,8 +277,8 @@ A data race -a,b- over F exists iff
 4.2. Feasible Races
 The most natural way to characterize a race -a,b- is to consider races over F DIFF , since F DIFF precisely captures
 the set of possible executions that also perform a and b. For general races, we have no choice: the smaller set
-F SAME is inadequate since, by definition, a general race exists between two accesses only if they execute in an order
-different than in P (and therefore the shared-data dependence between them is also different). In contrast, data races
+F SAME is inadequate since, by definition, a general race exists between two accesses only if two accesses execute in an order
+different than in P (and therefore the shared-data dependence between two accesses is also different). In contrast, data races
 could be reasonably viewed as occurring over either F DIFF or F SAME .
 Definition 4.3
 A feasible general race -a,b- exists iff a general race -a,b- over F DIFF exists.
@@ -287,9 +296,8 @@ In practice, locating the intuitive notion of a race (a feasible race) would req
 to determine if the execution could have allowed b to precede a (or b to execute concurrently with a). Previously
 proposed methods take a simpler approach and analyze only the explicit synchronization performed by the
 execution. For example, a and b are said to have potentially executed concurrently (or in some other order) if no
-explicit synchronization prevented them from doing so. We can characterize the races detected by this approach by
-using F SYNC , which is based only on orderings that the program's explicit synchronization might allow. Because the
-program may not be able to exhibit such orderings, these races capture a less accurate notion than feasible races.
+explicit synchronization prevented some other order) from doing so. We can characterize the races detected by this approach by
+using F SYNC , which is based only on orderings that the program's explicit synchronization might allow. Because the program may not be able to exhibit such orderings, these races capture a less accurate notion than feasible races.
 Definition 4.4
 An apparent general race -a,b- exists iff a general race -a,b- over F SYNC exists.
 An apparent data race -a,b- exists iff a data race -a,b- over F SYNC exists.
@@ -302,7 +310,7 @@ Such an execution has two apparent general races, between the accesses to BufEmp
 the buffer. However, the race involving the buffer is spurious - no feasible execution exists in which data is removed
 from the buffer before the buffer is filled (since BufEmpty is first tested before data is removed). If the
 operations on the shared buffer were instead complex and involved many shared-memory references, a large
-number of spurious races could be reported. Spurious races pose a problem since they are not direct manifestations
+number of spurious races could be reported. Spurious races pose a problem since Spurious races are not direct manifestations
 of any program bug[20, 22]. The programmer can be overwhelmed with large amounts of misleading information,
 irrelevant for debugging, that masks the location of actual failures. Nonetheless, apparent race detection provides
 valuable information, since apparent races exist if and only if at least one feasible race exists somewhere in the exe-
@@ -368,7 +376,7 @@ race detection. We show that two fundamentally different types of races can occu
 deterministic programs, and data races, pertaining to nondeterministic programs that use critical sections. We formally
 characterize these types of races. Previously, races have only been defined intuitively as occurring between
 data-conflicting blocks of code that "can potentially execute concurrently" or whose execution order is not
-"guaranteed". Our work is novel in that we explicitly characterize sets of alternative orderings that had the potential
+"guaranteed". We work is novel in that We explicitly characterize sets of alternative orderings that had the potential
 of occurring. Doing so is important because properties of the defined races, such as the accuracy and complexity
 of detecting them, depend upon which sets are considered. We uncover two variations of each type of race: one
 describes the intuitive notion of a race (the feasible race) and the other describes a less accurate notion (the apparent

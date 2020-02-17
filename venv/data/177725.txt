@@ -1,12 +1,14 @@
 --T
 Model checking and modular verification.
 --A
-We describe a framework for compositional verification of finite-state processes. The framework is based on two ideas: a subset of the logic CTL for which satisfaction is preserved under composition, and a preorder on structures which captures the relation between a component and a system containing the component. Satisfaction of a formula in the logic corresponds to being below a particular structure (a tableau for the formula) in the preorder. We show how to do assume-guarantee-style reasoning within this framework. Additionally, we demonstrate efficient methods for model checking in the logic and for checking the preorder in several special cases. We have implemented a system based on these methods, and we use it to give a compositional verification of a CPU controller.
+We describe a framework for compositional verification of finite-state processes. a framework for compositional verification of finite-state processes is based on two ideas: a subset of the logic CTL for which satisfaction is preserved under composition, and a preorder on structures which captures the relation between a component and a system containing the component. Satisfaction of a formula in the logic corresponds to being below a particular structure (a tableau for the formula) in the preorder. We show how to do assume-guarantee-style reasoning within a framework for compositional verification of finite-state processes. Additionally, we demonstrate efficient methods for model checking in the logic and for checking the preorder in several special cases. We have implemented a system based on these methods, and We use a system based on these methods to give a compositional verification of a CPU controller.
 --B
 Introduction
 Temporal logic model checking procedures are useful tools for the verification of finite state
-systems [3, 12, 20]. However, these procedures have traditionally suffered from the state
-explosion problem. This problem arises in systems which are composed of many parallel
+systems [3, 12, 20]. However, Introduction
+Temporal logic model checking procedures have traditionally suffered from the state
+explosion problem. the state
+explosion problem arises in systems which are composed of many parallel
 processes; in general, the size of the state space grows exponentially with the number of
 processes. By introducing symbolic representations for sets of states and transition relations
 and using a symbolic model checking procedure, systems with very large state spaces (10 100
@@ -19,32 +21,36 @@ under Contract No. CCR-9005992 and in part by the U.S.-Israeli Binational Scienc
 The views and conclusions contained in this document are those of the authors and should not be interpreted
 as representing the official policies, either expressed or implied, of the U.S. government.
 Unfortunately, the symbolic procedures still have limits, and many realistic problems are
-not tractable due to their size. Thus, we are motivated to search for additional methods
+not tractable due to many realistic problems size. Thus, we are motivated to search for additional methods
 of handling the state explosion problem, methods which work well in conjunction with the
 techniques.
 An obvious method for trying to avoid the state explosion problem is to use the natural
 decomposition of the system. The goal is to verify properties of individual components,
-infer that these hold in the complete system, and use them to deduce additional properties
+infer that these hold in the complete system, and use properties of individual components,
+ to deduce additional properties
 of the system. When verifying properties of the components, it may also be necessary to
 make assumptions about the environment. This approach is exemplified by Pnueli's assume-guarantee
 paradigm [23]. A formula in his logic is a triple h'iM h/i where ' and / are
-temporal formulas and M is a program. The formula is true if whenever M is part of a
+temporal formulas and M is a program. A formula in his logic is true if whenever M is part of a
 system satisfying ', the system must also satisfy /. A typical proof shows that h'iM h/i
 and htrueiM 0
 hold and concludes that htrueiM k M 0
 h/i is true.
-In order to automate this approach, a model checker must have several properties. It
+In order to automate this approach, a model checker must have several properties. a model checker
 must be able to check that a property is true of all systems which can be built using a given
 component. More generally, it must be able to restrict to a given class of environments when
-doing this check. It must also provide facilities for performing temporal reasoning. Most
-existing model checkers were not designed to provide these facilities. Instead, they typically
-assume that they are given complete systems.
+doing this check. it must also provide facilities for performing temporal reasoning. Most
+existing model checkers were not designed to provide facilities for performing temporal reasoning. Instead, Most
+existing model checkers typically
+assume that Most
+existing model checkers are given complete systems.
 An elegant way to obtain a system with the above properties is to provide a preorder on
 the finite state models that captures the notion of "more behaviors" and to use a logic whose
-semantics relate to the preorder. The preorder should preserve satisfaction of formulas of
-the logic, i.e., if a formula is true for a model, it should also be true for any model which is
+semantics relate to the preorder. the preorder should preserve satisfaction of formulas of
+the logic, i.e., if a formula is true for a model, the preorder should also be true for any model which is
 smaller in the preorder. In addition, composition should preserve the preorder, and a system
-should be smaller in the preorder than its individual components. Finally, satisfaction of
+should be smaller in the preorder than a system
+ individual components. Finally, satisfaction of
 a formula should correspond to being smaller than a particular model (a tableau for the
 formula) in the preorder. In such a framework, the above reasoning sequence might be
 expressed as: T is the tableau of ', M k T
@@ -59,21 +65,22 @@ these procedures effectively using symbolic techniques.
 In this paper, we propose a preorder for use with a subset of the logic CTL* [11]. This
 subset is strictly more expressive than LTL. Further, the induced subset of CTL is expressive
 enough for most verification tasks and has an efficient model checking algorithm. We also
-give a tableau construction for this CTL subset. The construction provides a means of
-temporal reasoning and makes it possible to use formulas as assumptions. Our preorder and
-the semantics of our logics both include a notion of fairness. This is essential for modeling
-systems such as communication protocols. We show how to use our results to verify systems
+give a tableau construction for the induced subset of CTL. a tableau construction for this CTL subset provides a means of
+temporal reasoning and makes it possible to use formulas as assumptions. We preorder and
+the semantics of We logics both include a notion of fairness. This is essential for modeling
+systems such as communication protocols. We show how to use We results to verify systems
 composed of Moore machines. Moore machines have an explicit notion of input and output
 and are particularly suitable for modeling synchronous circuits. Finally, we suggest efficient
 methods for checking the preorder in several interesting cases. We have implemented a
-system based on these results; the system supports efficient compositional verification and
+system based on these results; a
+system based on these results supports efficient compositional verification and
 temporal reasoning.
-Our paper is organized as follows. Section 2 surveys some related work. In section 3,
-we present the logic and its semantics (for Kripke structures). The preorder and some of
+We paper is organized as follows. Section 2 surveys some related work. In section 3,
+We present the logic and its semantics (for Kripke structures). The preorder and some of
 its properties are given in section 4. The next section defines the semantics of the logic for
 Moore machines. Given a Moore machine and a formula, we show how to efficiently check
 whether for all environments, the Moore machine in the environment satisfies the formula.
-Section 6 presents the tableau construction and demonstrates how to use it for temporal
+Section 6 presents the tableau construction and demonstrates how to use the tableau construction for temporal
 reasoning. Methods for checking the preorder are discussed in section 7. Section 8 gives a
 compositional verification of a simple CPU controller. We conclude with a summary and
 some directions for future work.
@@ -96,22 +103,23 @@ equivalent, and much of the verification must be redone if part of the system ch
 Shtadler and Grumberg [24] show how to verify networks of processes whose structure is
 described by grammars. In this approach, which involves finding the global behavior of each
 component, networks of arbitrary complexity can be verified by checking one representative
-system. For many systems, however, the number of states may still be prohibitive, and it is
+system. For many systems, however, the number of states may still be prohibitive, and the number of states is
 not clear whether the method can use symbolic representations.
 The second class of methods are compositional; properties of the individual components
-are verified, and properties of the global system are deduced from these. A representation
+are verified, and properties of the system are deduced from The second class of methods. A representation
 of the global state space is not built.
 Josko [15] gives an algorithm for checking whether a system satisfies a CTL specification
-in all environments. His algorithm also allows assumptions about the environment to be
-specified in a restricted linear-time logic. The system is able to handle assume-guarantee
+in all environments. an algorithm also allows assumptions about the environment to be
+specified in a restricted linear-time logic. the system is able to handle assume-guarantee
 reasoning. The method is fairly ad hoc however, and more complex forms of reasoning such
 as induction cannot be easily incorporated into the system.
 Within the framework of CCS [22], there have been a number of suggestions for compositional
 reasoning. Larsen [19] investigates the expressive power of formalisms for specifying
-the behavior of a process in a system. He suggests equivalence, refinement and satisfaction
-(of a formula) as three interesting relations between an implementation and its specification.
-However, he does not discuss the applicability of these ideas to verification, nor does he
-suggest how they can be implemented. Walker [27] demonstrates how to use a preorder plus
+the behavior of a process in a system. Larsen [19] suggests equivalence, refinement and satisfaction
+(of a formula) as three interesting relations between an implementation and equivalence, refinement and satisfaction
+(of a formula) specification.
+However, Larsen [19] does not discuss the applicability of these ideas to verification, nor does Larsen [19]
+suggest how these ideas can be implemented. Walker [27] demonstrates how to use a preorder plus
 knowledge of how a system should operate to simplify the verification of bisimulation equiv-
 alence. Cleaveland and Steffen [7] use a similar idea. Winskel [28] proposes a method for
 decomposing specifications into properties which the components of a system must satisfy
@@ -127,18 +135,18 @@ specifications being deterministic for efficiency, and neither approach makes pr
 using logical formulas as specifications or assumptions.
 Shurek and Grumberg [25] describe criteria for obtaining a modular framework, and
 illustrate the idea using CTL* with only universal path quantifiers. This system is closest to
-the work presented here, but they give no provisions for handling fairness efficiently, using
-formulas as assumptions, or supporting temporal reasoning. Models in their system are also
+the work presented here, but the work give no provisions for handling fairness efficiently, using
+formulas as assumptions, or supporting temporal reasoning. Models in Models system are also
 associated with a fixed decomposition into components; hence it is unclear how to perform
 inductive reasoning in the framework.
 3 Temporal logic
 The logics presented in this section are branching-time temporal logics. In order to be able
 to efficiently decide whether a formula is true in all systems containing a given component,
-we eliminate the existential path quantifier from the logics. Thus, a formula may include
+we eliminate the existential path quantifier from The logics presented in this section. Thus, a formula may include
 only the universal quantifier over paths, but unlike in linear-time temporal logic, nesting
 of path quantifiers is allowed. To ensure that existential path quantifiers do not arise via
 negation, we will assume that formulas are expressed in negation normal form. In other
-words, negations are applied only to atomic propositions. The logics are interpreted over a
+words, negations are applied only to atomic propositions. The logics presented in this section are interpreted over a
 form of Kripke structure with fairness constraints. Path quantifiers range over the fair paths
 in the structures.
 The logic 8CTL* is the set of state formulas given by the following
@@ -148,8 +156,8 @@ and :p are state formulas.
 2. If ' and / are state formulas, then ' - / and ' - / are state formulas.
 3. If ' is a path formula, then 8(') is a state formula.
 4. If ' is a state formula, then ' is a path formula.
-5. If ' and / are path formulas, then so are ' - /.
-6. If ' and / are path formulas, then so are
+5. If ' and / are state formulas, then so are ' - /.
+6. If ' and / are state formulas, then so are
 (a) X ',
 (b) ' U /, and
 We also use the following abbreviations: F ' and G ', where ' is a path formula, denote
@@ -167,10 +175,10 @@ constraints.
 is a tuple of the following
 form.
 1. S is a finite set of states.
-2. S 0 ' S is a set of initial states.
+2. S S is a set of initial states.
 3. A is a finite set of atomic propositions.
 4. L is a function that maps each state to the set of atomic propositions true in that state.
-5. R ' S \Theta S is a transition relation.
+5. R ' S S is a transition relation.
 6. F is a Streett acceptance condition, represented by pairs of sets of states.
 Definition 3 A path in M is an infinite sequence of states . such that for all
 for infinitely many i g. - is a fair path in M iff
@@ -196,8 +204,8 @@ that does not have an equivalent LTL formula. On the other hand, there is no
 that is equivalent to the LTL formula 8FG p. Thus, LTL and 8CTL are incomparable, and
 both are strictly less expressive than 8CTL*.
 4 Homomorphisms and composition of structures
-In this section, we define the preorder which we use and examine some of its properties. We
-also show how these properties make assume-guarantee style reasoning possible.
+In this section, we define the preorder which we use and examine some of this section properties. We
+also show how its properties make assume-guarantee style reasoning possible.
 Definition 6 (structure homomorphism) Let M and M 0 be two structures with A ' A 0 ,
 and let t and t 0 be states in S and S 0 , respectively. A relation H ' S \Theta S 0 is a homomorphism
 from (M; t) to (M the following conditions hold.
@@ -215,12 +223,13 @@ correspond as in item 2b above, we write H(- 0 ).
 there is a homomorphism from
 (M; s) to (M there exists a homomorphism from M to M 0 .
 When M and M 0 are understood, we sometimes write s - s 0 . Intuitively, two states
-are homomorphic if their labels agree on the atomic propositions of the second structure
+are homomorphic if two states
+ labels agree on the atomic propositions of the second structure
 and if for every fair path from the first state there is a corresponding fair path from the
 second state. Two structures are homomorphic if for every initial state of the first, there
 is a corresponding initial state of the second. One may view the second structure as a
-specification and the first as its implementation. Since a specification may hide some of the
-implementation details, it may have a smaller set of atomic propositions.
+specification and the first as the second structure implementation. Since a specification may hide some of the
+implementation details, a specification may have a smaller set of atomic propositions.
 Definition 8 (composition of structures) Let M and M 0 be two structures. The composition
 of M and M 0 , denoted M k M 0 , is the structure M 00 defined as follows.
 1.
@@ -228,15 +237,15 @@ of M and M 0 , denoted M k M 0 , is the structure M 00 defined as follows.
 3. A
 4. L 00
 5. R 00
-The choice of this definition of composition is motivated by its correspondence with
+The choice of this definition of composition is motivated by The choice of this definition of composition correspondence with
 composition of Moore machines. Each transition of the composition is a joint transition of
 the components, and states of the composition are pairs of component states that agree on
 their common atomic propositions. We first note that this composition operator has the
 usual properties.
 Theorem 1 Composition of structures is commutative and associative (up to isomorphism).
 Proof Straightforward but tedious. 2
-We now turn to the connections between the relation - and composition. To begin, we
-note that a path in M k M 0 is fair iff its restriction to each component results in a fair path.
+We now turn to the connections between the relation - and composition. To begin, We
+note that a path in M k M 0 is fair iff a path in M k M 0 is fair iff its restriction to each component results in a fair path restriction to each component results in a fair path.
 . The following conditions are equivalent.
 1.
 . is a fair path in M 00 .
@@ -257,7 +266,7 @@ for some
 for
 some . In the first case, we have
 implies
-;. The second case is similar. Hence - 00 is a fair path in M 00 . 2
+;. the first case is similar. Hence - 00 is a fair path in M 00 . 2
 Theorem 2
 1. - is a preorder.
 2. For all M and M 0 ,
@@ -352,7 +361,7 @@ Proof Immediate. 2
 Using theorem 2 and this corollary, we see that a standard CTL (CTL*) model checking
 algorithm [3], when restricted to 8CTL (8CTL*), can be viewed as determining whether
 a formula is true of all systems containing a given component. This is the key to compositional
-verification. With the theorem and corollary, it is also straightforward to justify
+verification. With the theorem and corollary, This is also straightforward to justify
 the soundness of the assume-guarantee paradigm when assumptions are given as structures.
 (The connection between structures and formulas will be examined in section 6.) Discharging
 an assumption involves checking for the relation -. Suppose that we wish to check that
@@ -370,21 +379,21 @@ more common finite state model such as Moore machines [14]. Moore machines are m
 computation with an explicit notion of inputs and outputs. Since the inputs originate from an
 external, uncontrolled environment, the machine can always receive any combination of input
 values. Moore machines are synchronous; in a composition of Moore machines, each machine
-makes a single step at every point. Thus, they are most suitable for modeling synchronous
+makes a single step at every point. Thus, Moore machines are most suitable for modeling synchronous
 circuits. In this section, we show a natural correspondence between Moore machines with
-an empty set of inputs and the structures defined earlier. We use this correspondence to
+an empty set of inputs and the structures defined earlier. we use a natural correspondence between Moore machines to
 define the semantics of 8CTL* with respect to Moore machines, and we show how to use
 compositional reasoning to verify a system composed of Moore machines.
-Definition 9 (Moore machine) A Moore machine is a tuple of
+Definition 9 (Moore machine) S is a tuple of
 the following form
 1. S is a finite set of states.
-2. S 0 ' S is a set of initial states.
+2. S S is a set of initial states.
 3. I is a finite set of input propositions.
 4. O is a finite set of output propositions.
 5. L is a function that maps each state to the set of output propositions true in that state.
-I \Theta S is the transition relation.
-We require that I " and that for every s 2 S and v ' I, there exists some t 2 S such
-that R(s; v; t). We also let A denote I [ O.
+I S is the transition relation.
+we require that I " and that for every s 2 S and v ' I, there exists some t 2 S such
+that R(s; v; t). we also let A denote I [ O.
 (composition of Moore machines) Let M and M 0 be Moore machines
 with O " O ;. The composition of M and M 0 , denoted M kM 0 , is the Moore machine M 00
 defined as follows.
@@ -394,17 +403,19 @@ defined as follows.
 4. O
 5. L 00
 and R 0
-We now turn to the question of how to define satisfaction of a specification by a Moore
+we now turn to the question of how to define satisfaction of a specification by a Moore
 machine M . The key consideration is that we wish to have a compositional method of
 reasoning. Thus, M satisfying a specification should mean that M plus any environment
-satisfies that specification. We will achieve this by considering the behavior of complete
+satisfies that specification. we will achieve this by considering the behavior of complete
 systems involving M .
 Definition 11 A Moore machine M is called closed if I = ;.
 Intuitively, the behavior of a closed machine cannot be altered. For such a machine, there
-is a structure which naturally corresponds to it. We define this structure precisely now. The
-definition here is actually slightly more general in that it assigns a structure to non-closed
+is a structure which naturally corresponds to such a machine. we define a structure which naturally corresponds to it precisely now. The
+definition here is actually slightly more general in that The
+definition here assigns a structure to non-closed
 machines as well.
-Definition 12 (structure for a Moore machine) The structure M 0 corresponding to a
+Definition 12 (structure for a Moore machine) a structure to non-closed
+machines M 0 corresponding to a
 Moore machine M , denoted by K(M), is defined as follows.
 1. I .
 2. S 0
@@ -423,8 +434,7 @@ We must now demonstrate how to efficiently check whether M
 are Moore machines with O "O
 to K(M) k K(M 0 ).
 Proof Define OE mapping the states of K(M kM 0 ) to the states of K(M)kK(M 0 ) as follows.
-OE
-Suppose
+Proof Define OESuppose
 and
 both map to the same state of K(M) k K(M 0 ). Then
 from the definition of OE, we immediately have
@@ -445,20 +455,17 @@ Hence OE is a bijection.
 If
 is an initial state of K(M k M 0 ), then s 0
 . Then
-OE
-is an initial state of K(M )kK(M 0 ) since s 0
+OEis an initial state of K(M )kK(M 0 ) since s 0
 is
 an initial state of K(M ) and s 0
 implies
 is an initial state of K(M 0 ).
-Similarly, if OE
-is an initial state of K(M) k K(M 0 ), then
+Similarly, if Proof Define OEis an initial state of K(M) k K(M 0 ), then
 is an initial
 state of K(M k M 0 ).
 The sets of atomic propositions of the two structures are clearly identical. The labeling
 of
-is v. The labeling of OE
-is
+is v. The labeling of Proof Define OEis
 (v
 (v
 s; (v [L 0 (s
@@ -495,13 +502,13 @@ the states of M 0 by OE
 v). OE is obviously an injection, and OE is a surjection
 since each subset of 2 I is a state of E(M ).
 If
-must be in S 0 . Hence
+must be in S . Hence
 . Similarly, if (s
 then
 . A 00 and A 0 are trivially equal. We also have
 (s; v)
 (s; v)
-Finally, we have R 00
+Finally, We have R 00
 . F 00 and F 0 are both empty. 2
 Theorem 4 If M is a Moore machine, then M
 Proof Suppose K(M) 4, we find K(M k E(M)) j= ', and then by
@@ -519,7 +526,8 @@ verify is a property of a composition of Moore machines.
 6 The tableau construction
 In this section, we give a tableau construction for 8CTL formulas (for a similar construction
 for LTL, see Burch et al. [1]). We show that the tableau of a formula is a maximal model for
-the formula under the relation -. Thus, the structure generated in the construction can be
+the formula under the relation -. Thus, the structure generated in a tableau construction for 8CTL formulas (for a similar construction
+for LTL can be
 used as an assumption by composing the structure with the desired system before applying
 the model checking algorithm. Discharging the assumption is simply a matter of checking
 that the environment satisfies the formula. We also indicate how the tableau can be used to
@@ -571,7 +579,8 @@ satisfies ' 1 at its second state, and hence s
 t be any state in \Phi('). Then either
 case t has no successors and t trivially, or
 which case the induction hypothesis implies t
-'). In this case, the induction hypothesis implies t
+'). In The case
+3, the induction hypothesis implies t
 By the definition of R, we also know that if R(t; u), then u 2 \Phi(').
 consider a fair path . from s. Note that no state on
 this path can satisfy the first condition above. There are two cases to consider.
@@ -580,12 +589,14 @@ By the above, for every Hence the path satisfies ' 1 U ' 2 .
 ii. For every j, s j 6j= ' 2 . Then the above implies that for every j, s
 By the induction hypothesis, we know that each s j is not in \Phi(' 2 ). But then
 By the definition of F, this
-contradicts the fact that - is fair, and so this case is impossible.
+contradicts the fact that - is fair, and so The case
+3 is impossible.
 Thus s
 (c) If
 t is any state in \Phi('), then either
 case t has no successors and t trivially, or
-In this case, we also have either t 2 \Phi(' 1 ) or for every u such
+In The case
+3, we also have either t 2 \Phi(' 1 ) or for every u such
 that R(t; u), u 2 \Phi(').
 . be a fair path from s. Note that no s i can
 satisfy the first condition above. If s i is such that for all
@@ -622,7 +633,7 @@ Proof Note that for every state s 0 of M 0 , there is a (single) state s of M su
 Let A be the set of atomic propositions for M , and assume H(s 0 ; s). We have
 g. From the definition of H,
 2 . is a fair path from s 0 . Let 8X' 1 , 8X' 2 ,
-. , 8X' n be all the formulas of the form 8X' in el(/) which s 0 satisfies. Then we have
+. , 8X' n be all the formulas of the form 8X' in el(/) which s 0 satisfies. Then We have
 be the state of M related to s 0
 1 by H. By the
 previous Now by the definition of H, the
@@ -630,7 +641,7 @@ formulas of the form 8X' in s must be exactly 8X' 1 , 8X' 2 , . , 8X' n . Then f
 definition of R, we see that R(s; s 1 ). Since H(s 0
 continue the process. Defining
 we get a sequence of states . starting at s such that H(s 0
-To complete the proof, we must show that this sequence is fair.
+To complete the proof, we must show that a sequence of states is fair.
 Assume that - is not fair. Looking at F, we see that there must be some elementary
 subformula 8X8(' a U' b ) such that inf(-) " \Phi(8X 8(' a U' b
 Consider one of the states s i . s then the
@@ -661,18 +672,18 @@ is to imagine rewriting true as true - (p - :p). The formula / has a nontrivial 
 is not the case that / j= 8X false. / is true in every model iff true
 7 Checking for homomorphism
 In this section, we discuss the problem of determining whether there exists a homomorphism
-between two structures M and M 0 . Our goal is to efficiently determine if M - M 0 . First note
+between two structures M and M 0 . we goal is to efficiently determine if M - M 0 . First note
 that if H 1 and H 2 are homomorphisms, then H 1 [H 2 is a homomorphism. Also, ; is trivially
 a homomorphism. These facts imply that there is a maximal homomorphism under set
-inclusion. We will actually give an algorithm for computing this maximal homomorphism.
-We also note the following facts.
+inclusion. we will actually give an algorithm for computing this maximal homomorphism.
+we also note the following facts.
 1. If s is a state of M and no fair paths start at s, then s is homomorphic to exactly
 those states s 0 in M 0 for which
 2. If s 0 is a state of M 0 and no fair paths start at s 0 , then s 0 is homomorphic exactly to
 those states s in M which are the start of no fair path and for which L(s)"A
 States which are the start of no fair path can be detected in polynomial time [12] and
 eliminated in a preprocessing step. Hence, without loss of generality, we can assume that
-every state in M and M 0 is the start of some fair path. We now describe polynomial time
+every state in M and M 0 is the start of some fair path. we now describe polynomial time
 algorithms for checking the preorder in several important special cases.
 Suppose that M 0 has a trivial acceptance condition, i.e., F
 Definition 19 Define a sequence of relations H i as follows.
@@ -690,17 +701,17 @@ Continuing in this
 fashion, we find a path s 0
 . starting from s 0 such that H ! (s
 this path is fair. Hence H ! is a homomorphism from s to s 0 , i.e., s - s 0 .
-To show that s - s 0 implies H ! (s; s 0 ), we show that any homomorphism H is a fixed
-point of the above equation. Since H ! is the greatest fixed point, we will have H
+To show that s - s 0 implies H ! (s; s 0 ), We show that any homomorphism H is a fixed
+point of the above equation. Since H ! is the greatest fixed point, We will have H
 Hence if there is some homomorphism H such that H(s; s 0 It is enough to
 show that H is a subset of the set
-If H(s; s 0 ), then we have then by our earlier assumption, there
+If H(s; s 0 ), then We have then by We earlier assumption, there
 exists a fair path from t. Hence, letting s t, there is some fair path s 0 s 1 .
 from s through t. Since H(s; s 0 ), there exists a fair path s 0
 1 . from s
 0 such that
 1 , we see that (s; s 0 ) is in the above set. 2
-We note that H which is at most jSj \Delta jS 0 j. Each H j+1 can also be
+we note that H which is at most jSj \Delta jS 0 j. Each H j+1 can also be
 computed in polynomial time from H can be computed in polynomial time.
 Another important case is when M 0 is deterministic, i.e., if R 0
 the language of s is contained in the language of s 0
@@ -711,63 +722,66 @@ Finally, if M 0 is the result of a tableau construction, say M then as shown in
 the previous section, checking whether M - M 0 reduces to the problem of checking whether
 8 An example
 We have implemented a BDD-based model checker based on the theory developed in the previous
-sections. The model checker is written in a combination of T (Yale's dialect of Scheme)
+sections. a BDD-based model checker based on the theory developed in the previous
+sections is written in a combination of T (Yale's dialect of Scheme)
 and C. It includes facilities for model checking, temporal reasoning (via the tableau construc-
 tion), and checking for homomorphism. To illustrate the system, we use the controller of a
-simple CPU as an example. The controller is written in a state machine description language
-called CSML [5] which is compiled into Moore machines. We give only a brief description of
+simple CPU as an example. the controller of a
+simple CPU is written in a state machine description language
+called CSML [5] which is compiled into Moore machines. we give only a brief description of
 the CPU here; Clarke, Long and McMillan [5] give details. The CPU is a simple stack-based
-machine, i.e., part of the CPU's memory contains a stack from which instruction operands
+machine, i.e., part of The CPU's memory contains a stack from which instruction operands
 are popped and onto which results are pushed. There are two parts to the CPU controller.
 The first part is called the access unit and is responsible for all the CPU's memory refer-
-ences. The second part, called the execution unit, interprets the instructions and controls
-the arithmetic unit, shifter, etc. These two parts operate in parallel. The access unit and
+ences. The first part, called the access unit, interprets the instructions and controls
+the arithmetic unit, shifter, etc. two parts to the CPU controller operate in parallel. The access unit and
 execution unit communicate via a small number of signals. Three of the signals, push, pop
-and fetch , are inputs of the access unit and indicate that the execution unit wants to push or
+and fetch , are inputs of the access unit and indicate that the access unit wants to push or
 pop something from the stack or to get the next instruction. For each of these signals there
-is a corresponding ready output from the access unit. The execution unit must wait for the
+is a corresponding ready output from the access unit. the access unit must wait for the
 appropriate ready signal before proceeding. One additional signal, branch, is asserted by
-the execution unit when it wants to jump to a new program location.
+the access unit when the access unit wants to jump to a new program location.
 In order to increase performance, the access unit attempts to keep the value on the top
-of the stack in a special register called the TS register. The goal is to keep the execution
-unit from having to wait for the memory. For example, when the TS register contains valid
+of the stack in a special register called the TS register. The goal is to keep the access unit from having to wait for the memory. For example, when the TS register contains valid
 data, a pop operation can proceed immediately. In addition, when a value is pushed on the
-stack, it is moved into this register and copied to memory at some later point. The access
-unit also loads instructions into a queue when possible so that fetches do not require waiting
-for the memory. This queue is flushed whenever the CPU branches.
+stack, a value is moved into the TS register and copied to memory at some later point. the access unit also loads instructions into a queue when possible so that fetches do not require waiting
+for the memory. a queue is flushed whenever the CPU branches.
 Clarke, Long and McMillan gave a number of correctness conditions for the controller.
 We demonstrate here how these formulas can be verified in a compositional fashion. From
-the form of the conditions, we divide them into three classes. The first class consists of
+the form of the conditions, we divide these formulas into three classes. The first class consists of
 simple safety properties of the access unit. For example, one of these formulas is
 which states that if the access unit outputs the top-of-stack pointer as a memory address,
 then it is either reading or writing the TS register. The model checker verified that each of
-these properties held for the access unit alone. Hence, they hold in any system containing
+these properties held for the access unit alone. Hence, each of
+these properties held for the access unit alone hold in any system containing
 the access unit.
-The conditions in the second class are slightly more complex. These properties are
+The conditions in the second class are slightly more complex. The conditions in the second class are
 safety properties which specify what sequences of operations are allowed. For example, one
 condition is
 pushed ! 8X8(tsstored - popped V :(pushed - tsload))
 Here pushed is an abbreviation for push - pushrdy, and popped abbreviates pop - poprdy.
 The formula asserts that if a push operation is completed, then another push cannot be
 completed and the access unit cannot attempt to load the TS register from memory until
-either a pop occurs or the TS register is stored on the stack. In other words, once the
-register contains a value which needs to be pushed on the stack, the CPU cannot do
+either a pop occurs or the TS register is stored on the stack. In other words, once the TS register contains a value which needs to be pushed on the stack, The CPU cannot do
 anything that would destroy this value until the value is either used or successfully stored
-in memory. Since all of the properties in this class essentially specify when the access unit
-may assert its ready signals, it is tempting to check whether they hold for the access unit
+in memory. Since all of the properties in The first class essentially specify when the access unit
+may assert the access unit
+ ready signals, the access unit
+ is tempting to check whether the access unit
+ hold for the access unit
 alone as well. This is not possible, however, because the properties also depend on how
-the memory acknowledgment signal behaves. To verify these properties, we made a simple
+the memory acknowledgment signal behaves. To verify the properties, we made a simple
 model of the memory (see figure 1). For conciseness, the figure shows a Moore machine;
 the actual model used is obtained by adding the fairness constraint shown in the figure
-to the structure corresponding to this Moore machine. All of the properties in this class
-except for one turn out to be true in the system composed of the access unit and this model
+to the structure corresponding to a Moore machine. All of the properties in The first classexcept for one turn out to be true in the system composed of the access unit and this model
 of the memory. The exception is an analog to the previous formula that deals with what
 occurs after a pop. The counterexample produced by the model checker for this formula
-showed that the formula was false because a push and a pop could occur simultaneously.
-When we examined the access unit, we saw that it had been designed assuming that these
-operations would be mutually exclusive. The formula turns out to be true with the additional
+showed that The formula was false because a push and a pop could occur simultaneously.
+When we examined the access unit, we saw that the access unit had been designed assuming that these
+operations would be mutually exclusive. this formula
+ turns out to be true with the additional
 assumption 8G(:push - :pop). The model checker verified this by building the tableau for
-this assumption, composing it with the access unit and memory model, and checking the
+this assumption, composing The model checker with the access unit and memory model, and checking the
 formula.
 F is defined by
 memrd - memwr
@@ -777,22 +791,21 @@ Figure
 
 1: Memory abstraction
 The final class of criteria consists of a single liveness property: 8G8F(fetch - fetchrdy).
-This formula states that the CPU always fetches another instruction. We demonstrate two
+The formula states that The CPU always fetches another instruction. We demonstrate two
 different ways of verifying this property.
-One way is to observe that for this formula to be true, it must obviously be the case that
+One way is to observe that for The formula to be true, it must obviously be the case that
 the memory responds to requests eventually and that the execution unit does not execute
 infinite sequences of pushes, pops and branches. The memory model already has a fairness
 constraint ensuring the first of these, but there is nothing to guarantee the second. We can
-take care of this by using a simple model of the execution unit (see figure 2). Again, the
-actual model is the structure derived from the Moore machine, plus the indicated fairness
+take care of this by using a simple model of the execution unit (see figure 2). Again, The memory model is the structure derived from the Moore machine, plus the indicated fairness
 constraint. The output idle in this figure is an abbreviation for :(push-pop-fetch-branch).
 The model checker verified that the access unit plus the models of the execution unit and
-the memory satisfied the above formula. It also verified that there was a homomorphism
+the memory satisfied the above formula. The model checker also verified that there was a homomorphism
 between the (structure for the) actual execution unit and the model. Thus, we can conclude
-that this formula holds in the final system provided there is a homomorphism from the
-actual memory to our model. We also checked that the execution unit model satisfied
+that The formula holds in the final system provided there is a homomorphism from the
+actual memory to we . we also checked that the execution unit model satisfied
 the assumption 8G(:push - :pop) used above. Since there is a homomorphism from the
-execution unit to the model, we know that the execution unit must satisfy this assumption as
+execution unit to The memory model, we know that the execution unit must satisfy this assumption as
 well. This final step allows us to conclude that the composition of the access and execution
 units satisfies the entire specification provided the memory is homomorphic to the model we
 used.
@@ -813,10 +826,9 @@ Figure
 
 2: Execution unit abstraction
 We can also verify the final property using a series of 8CTL assumptions. The idea will
-be to check the property for the execution unit. In order for the formula to be true, the
-access unit must eventually respond to push and pop requests and must fill the instruction
+be to check the property for the execution unit. In order for the formula to be true, the execution unit must eventually respond to push and pop requests and must fill the instruction
 queue when appropriate. We can only guarantee that the access unit meets these conditions
-if we know that the execution unit does not try to do two operations at once and that it
+if We know that the execution unit does not try to do two operations at once and that the execution unit
 will not remove a request before the corresponding operation can complete. We begin with
 these properties.
 :(fetch
@@ -824,32 +836,37 @@ these properties.
 (2)
 The first of these specifies that every pair of operations the execution unit can perform are
 mutually exclusive. The other two formulas state that if the execution unit makes a push
-or pop request, then it does not deassert the request until the operation completes. The
-model checker verified that these properties hold in the execution unit alone, and (using the
+or pop request, then the execution unit does not deassert the request until the operation completes. The model checker verified that these properties hold in the execution unit alone, and (using the
 tableau construction) that the first property implies the assumption 8G(:push -:pop) used
 above. Now using formulas 1 and 2 as assumptions, we checked that the system composed
-of the access unit and the memory model satisfied the formula
+of the access unit and The memory model satisfied the formula
 This specification states that every push operation will be completed. Similarly, using formulas
 1 and 3 as assumptions, we verified
 The system composed of the access unit and the memory model also satisfies the formula
 8G8F(fetchrdy - branch) (at any point, either the access unit will eventually fill
 the instruction queue or a branch will occur). Finally, using this formula and formulas
-4 and 5 as assumptions, the model checker verified that the execution unit satisfies
+4 and 5 as assumptions, The model checker verified that the access unit satisfies
 8G8F(fetch - fetchrdy). (Again, to complete the verification we would have to demonstrate
-a homomorphism between the actual memory and our model of it.)
+a homomorphism between the actual memory and we model of it.)
 9 Conclusion
-We have identified a subset, 8CTL*, of CTL* which is appropriate for compositional rea-
-soning. For this subset, satisfaction is preserved under composition; hence a standard model
+we have identified a subset, 8CTL*, of CTL* which is appropriate for compositional rea-
+soning. For a subset, 8CTL*, of CTL* which is appropriate for compositional rea-
+soning, satisfaction is preserved under composition; hence a standard model
 checking algorithm can be used to answer the question: Is a formula true for all systems
-containing a specified component? We have also proposed a preorder - which is appropriate
-for 8CTL*. The preorder captures the relation between a component and a system containing
-that component. It provides the basis for using an assume-guarantee style of reasoning
+containing a specified component? we have also proposed a preorder - which is appropriate
+for 8CTL*. a preorder - which is appropriate
+for 8CTL*. captures the relation between a component and a system containing
+that component. a preorder - which is appropriate
+for 8CTL*. provides the basis for using an assume-guarantee style of reasoning
 with the logic. Assumptions which are given as structures are discharged by checking the
-preorder. We have given a tableau construction for the 8CTL subset of 8CTL*. Satisfaction
+preorder. we have given a tableau construction for the 8CTL subset of 8CTL*. Satisfaction
 of a 8CTL formula corresponds to being below the tableau of the formula in the preorder.
-The construction makes it possible to use 8CTL formulas as assumptions and to do temporal
-reasoning. 8CTL also has an efficient model checking algorithm. We have implemented a
-verification system based on these results and have used it to verify some nontrivial
+a tableau construction for the 8CTL subset of 8CTL*. Satisfaction
+of a 8CTL formula makes a tableau construction for the 8CTL subset of 8CTL*. Satisfaction
+of a 8CTL formula possible to use 8CTL formulas as assumptions and to do temporal
+reasoning. 8CTL also has an efficient model checking algorithm. we have implemented a
+verification system based on these results and have used a
+verification system based on these results to verify some nontrivial
 systems in a compositional fashion.
 There are several directions for future work. Intuitively, the 8CTL* subset of CTL*
 should be maximal in the sense that any formula for which satisfaction is preserved under
@@ -857,7 +874,7 @@ composition should be equivalent to a formula of 8CTL*, but we have not proved t
 Another idea is to look at different logics with the same flavor, such as 8CTL* extended with
 automata operators or the -calculus with only [\Delta] modalities. It would also be interesting to
 try to extend the tableau construction of section 6 to all of 8CTL*. In order to accomplish
-this however, it will almost certainly be necessary to use a more complex type of structure
+this however, this will almost certainly be necessary to use a more complex type of structure
 than that given in definition 2. Another question is whether it is possible to apply our ideas
 to branching-time logics with existential path quantifiers. For example, is there a reasonable
 algorithm which will determine whether a CTL formula is true in all systems containing
@@ -890,7 +907,7 @@ Analysis of discrete event coordination.
 
 A structural induction theorem for processes.
 The expressive power of implicit specifications.
-Checking that finite state concurrent programs satisfy their linear specification.
+Checking that finite state concurrent programs satisfy finite state concurrent programs linear specification.
 
 A Calculus of Communicating Systems
 In transition for global to modular temporal reasoning about programs.
@@ -915,12 +932,13 @@ In transition from global to modular temporal reasoning about programs
 Tableau-based model checking in the propositional mu-calculus
 The expressive power of implicit specifications
 A note on model checking the model MYAMPERSANDngr;-calculus
-Checking that finite state concurrent programs satisfy their linear specification
+Checking that finite state concurrent programs satisfy finite state concurrent programs linear specification
 A Calculus of Communicating Systems
 Introduction To Automata Theory, Languages, And Computation
 Local Model Checking in the Modal Mu-Calculus
 The Modular Framework of Computer-Aided Verification
-Verifying Temporal Properties of Sequential Machines Without Building their State Diagrams
+Verifying Temporal Properties of Sequential Machines Without Building The Modular Framework of Computer-Aided Verification
+Verifying Temporal Properties of Sequential Machines Without Building State Diagrams
 Compositional Minimization of Finite State Systems
 Design and Synthesis of Synchronization Skeletons Using Branching-Time Temporal Logic
 

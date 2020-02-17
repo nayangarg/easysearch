@@ -1,35 +1,38 @@
 --T
 Asynchronous Problems on SIMD Parallel Computers.
 --A
-AbstractOne of the essential problems in parallel computing is: Can SIMD machines handle asynchronous problems? This is a difficult, unsolved problem because of the mismatch between asynchronous problems and SIMD architectures. We propose a solution to let SIMD machines handle general asynchronous problems. Our approach is to implement a runtime support system which can run MIMD-like software on SIMD hardware. The runtime support system, named P kernel, is thread-based. There are two major advantages of the thread-based model. First, for application problems with irregular and/or unpredictable features, automatic scheduling can move some threads from overloaded processors to underloaded processors. Second, and more importantly, the granularity of threads can be controlled to reduce system overhead. The P kernel is also able to handle bookkeeping and message management, as well as to make these low-level tasks transparent to users. Substantial performance has been obtained on Maspar MP-1.
+AbstractOne of the essential problems in parallel computing is: Can SIMD machines handle asynchronous problems? This is a difficult, unsolved problem because of the mismatch between asynchronous problems and SIMD architectures. We propose a solution to let SIMD machines handle general asynchronous problems. We approach is to implement a runtime support system which can run MIMD-like software on SIMD hardware. The runtime support system, named P kernel, is thread-based. There are two major advantages of the thread-based model. First, for application problems with irregular and/or unpredictable features, automatic scheduling can move some threads from overloaded processors to underloaded processors. Second, and more importantly, the granularity of threads can be controlled to reduce system overhead. The P kernel is also able to handle bookkeeping and message management, as well as to make these low-level tasks transparent to users. Substantial performance has been obtained on Maspar MP-1.
 --B
 Introduction
 1.1. Can SIMD Machines Handle Asynchronous Problems?
 The current parallel supercomputers have been developed as two major architectures: the
 SIMD (Single Instruction Multiple Data) architecture and the MIMD (Multiple Instruction Multiple
-architecture. The SIMD architecture consists of a central control unit and many
+architecture. (Multiple Instruction Multiple
+architecture consists of a central control unit and many
 processing units. Only one instruction can be executed at a time and every processor executes
 the same instruction. Advantages of a SIMD machine include its simple architecture, which makes
-the machine potentially inexpensive, and its synchronous control structure, which makes programming
+a SIMD machine potentially inexpensive, and a SIMD machine synchronous control structure, which makes programming
 easy [4, 34] and communication overhead low [26]. The designers of SIMD architectures have
 been motivated by the fact that an important, though limited, class of problems fit the SIMD
-architecture extremely well [35]. The MIMD architecture is based on the duplication of control
+architecture extremely well [35]. (Multiple Instruction Multiple
+architecture is based on the duplication of control
 units for each individual processor. Different processors can execute different instructions at the
 same time [15]. It is more flexible for different problem structures and can be applied to general
-applications. However, the complex control structure of MIMD architecture makes the machine
-expensive and the system overhead large.
+applications. However, the complex control structure of MIMD architecture makes a SIMD machineexpensive and the system overhead large.
 Application problems can be classified into three categories: synchronous, loosely synchronous,
 and asynchronous. Table I shows a few application problems in each of the three categories [13].
-ffl The synchronous problems have a uniform problem structure. In each time step, every
+ffl a few application problems in each of the three categories [13].
+ffl have a uniform problem structure. In each time step, every
 processor executes the same operation over different data, resulting in a naturally balanced
 load.
 ffl The loosely synchronous problems can be structured iteratively with two phases: the computation
 phase and the synchronization phase. In the synchronization phase, processors
 exchange information and synchronize with each other. The computation load can also
-be redistributed in this phase. In the computation phase, different processors can operate
+be redistributed in the synchronization phase. In the synchronization phase, different processors can operate
 independently.
-ffl The asynchronous problems have no synchronous structure. Processors may communicate
-with each other at any time. The computation structure can be very irregular and the load
+ffl a few application problems in each of the three categories [13].
+ffl have no synchronous structure. Processors may communicate
+with each other at any time. no synchronous structure can be very irregular and the load
 imbalanced.
 
 Table
@@ -39,22 +42,27 @@ Synchronous Loosely synchronous Asynchronous
 Matrix algebra Molecular Dynamics N-queen problem
 Finite difference Irregular finite elements Region growing
 QCD Unstructured mesh Event-driven simulation
-The synchronous problems can be naturally implemented on a SIMD machine and the loosely
+a few application problems in each of the three categories [13].
+ffl can be naturally implemented on a SIMD machine and the loosely
 synchronous problems on an MIMD machine. Implementation of the loosely synchronous problems
 on SIMD machines is not easy; computation load must be balanced and the load balance activity
 is essentially irregular. As an example, the simple O(n 2 ) algorithm for N-body simulation is
 synchronous and easy to implement on a SIMD machine [12]. But the Bernut-Hut algorithm
 (O(n log n)) for N-body simulation is loosely synchronous and difficult to implement on a SIMD
 machine [3].
-Solving the asynchronous problems is more difficult. First, a direct implementation on MIMD
+Solving a few application problems in each of the three categories [13].
+ffl is more difficult. First, a direct implementation on MIMD
 machines is nontrivial. The user must handle the synchronization and load balance issues at
 the same time, which could be extremely difficult for some application problems. In general, a
 runtime support system, such as LINDA [2, 5], reactive kernel [27, 33], or chare kernel [30], is
 necessary for solving asynchronous problems. Implementation of the asynchronous problems on
-SIMD machines is even more difficult because it needs a runtime support system, and the support
-system itself is asynchronous. In particular, the support system must arrange the code in such
+SIMD machines is even more difficult because 
+SIMD machines needs a runtime support system, and the support
+system itself is asynchronous. In particular, the support
+system itself must arrange the code in such
 a way that all processors execute the same instruction at the same time. Taking the N-queen
-problem as an example, since it is not known prior to execution time how many processes will be
+problem as an example, since the N-queen
+problem is not known prior to execution time how many processes will be
 generated and how large each computation is, a runtime system is necessary to establish balanced
 computation for efficient execution. We summarize the above discussion in Table II.
 Various application problems require different programming methodologies. Two essential
@@ -67,7 +75,7 @@ MIMD easy natural need runtime support
 SIMD natural difficult difficult, need runtime support
 programming methodologies are array-based and thread-based. The problem domain of most
 synchronous applications can be naturally mapped onto an array, resulting in the array-based
-programming methodology. Some other problems do not lend themselves to efficient programming
+programming methodology. Some other problems do not lend Some other problems to efficient programming
 in an array-based methodology because of mismatch between the model and the problem structure.
 The solution to asynchronous problems cannot be easily organized into aggregate operations on a
 data domain that is uniformly structured. It naturally demands the thread-based programming
@@ -81,19 +89,19 @@ The major difficulties in executing asynchronous applications on SIMD machines a
 ffl the gap between the synchronous machines and asynchronous applications; and
 ffl the gap between the array processors and thread-based programming.
 One solution, called the application-oriented approach, lets the user fill the gap between application
-problems and architectures. With this approach, the user must study each problem and look
-for a specific method to solve it [7, 36, 37, 39]. An alternative to the application-oriented approach
+problems and architectures. With the application-oriented approach, the user must study each problem and look
+for a specific method to solve the user [7, 36, 37, 39]. An alternative to the application-oriented approach
 is the system-oriented approach, which provides a system support to run MIMD-like software on
 SIMD hardware. The system-oriented approach is superior to the application-oriented approach
 for three reasons:
-ffl the system is usually more knowledgeable about the architecture details, as well as its
+ffl the system is usually more knowledgeable about the architecture details, as well as the system
 dynamic states;
-ffl it is more efficient to develop a sophisticated solution in system, instead of writing similar
+ffl the system is more efficient to develop a sophisticated solution in system, instead of writing similar
 code repeatedly in the user programs; and
 ffl it is a general approach, and enhances the portability and readability of application programs
 
 The system-oriented approach can be carried out in two levels: instruction-level and thread-
-level. Both of them share the same underlying idea: if one were to treat a program as data, and
+level. Both of Both of them share the same underlying idea: if one were to treat a program as data, and
 a SIMD machine could interpret the data, just like a machine-language instruction interpreted
 by the machine's instruction cycle, then an MIMD-like program could efficiently execute on the
 SIMD machine [17]. The instruction-level approach implements this idea directly. That is, the
@@ -107,7 +115,7 @@ to balance load between processors and unlikely to produce good performance for 
 applications.
 We propose a thread-based model for a runtime system which can support loosely synchronous
 and asynchronous problems on SIMD machines. The thread-level implementation offers great
-flexibility. Compared to the instruction-level approach, it has at least two advantages:
+flexibility. Compared to the instruction-level approach, The thread-level implementation has at least two advantages:
 ffl The execution order of threads can be exchanged to avoid processor suspension. The load
 can be balanced for application problems with irregular and dynamic features.
 ffl System overhead will not be overwhelming, since granularity can be controlled with the
@@ -131,55 +139,62 @@ different problems. An iteration advance method was employed to rearrange the it
 SIMD execution, which was called SIMLAD (SIMD model with local indirect addressing) in [36],
 and loop flattening in [37]. Recent studies have been conducted on the simulation of logic circuits
 on a SIMD machine [6, 20]. The major difference between these works and our approach is that
-we handle general asynchronous and loosely synchronous problems instead of studying individual
+our handle general asynchronous and loosely synchronous problems instead of studying individual
 problems.
 The instruction-level approach has been studied by a number of researchers [8, 9, 22, 25, 41,
-40]. As mentioned above, the major restriction of this approach is that the entire instruction set
+40]. As mentioned above, the major restriction of The instruction-level approach is that the entire instruction set
 must be cycled through to execute one instruction step for every processor. A common method
 to reduce the average number of instructions emanated in each execution cycle is to perform
-global or's to determine whether the instruction is needed by any processor [9, 41]. It might
+global or's to determine whether the instruction is needed by any processor [9, 41]. the instruction might
 be necessary to insert barrier synchronizations at some points to limit the degree of divergence
 for certain applications. Having a barrier at the end of each WHERE statement (as well as each
 FORALL statement) is a good idea [8]. Other work includes an adaptive algorithm which changes
 the order of instructions emanated to maximize the expected number of active processors [25].
 Besides this issue, load balancing and processor suspension are also unsolved problems. The
 applications implemented in these systems are non-communicating [41] or have a barrier at the
-end of the program [9]. Collins has discussed the communication issue and proposed a scheme to
+end of the program [9]. Collins has discussed this issue and proposed a scheme to
 delay execution of communication instructions [8]. A similar technique is used in [9] for expensive
 operations (including communication). However, it is not clear whether the method will work.
-Many applications have dependences and their loads are imbalanced, inevitably leading to high
+Many applications have dependences and Many applications loads are imbalanced, inevitably leading to high
 communication overhead and processor suspension. In summary, this instruction-level approach
 has large interpreter overhead. A technique that literally transforms pure MIMD code into pure
 SIMD code to eliminate this overhead has been proposed in [10].
 Perhaps the works that are closest to our approach are Graphinators [17], early work on
 combinators [21, 16], and the work on the interpretation of Prolog and FLAT GHC [19, 23, 24].
-The Graphinators implementation is an MIMD simulator on SIMD machines. It was achieved by
+The Graphinators implementation is an MIMD simulator on SIMD machines. The Graphinators implementation was achieved by
 having each SIMD processor repeatedly cycle through the entire set of possible "instructions."
-Our work is distinguished from their work in terms of granularity control. The Graphinator
-model suffered because of its fine granularity. The authors mentioned that "each communication
-requires roughly a millisecond, unacceptably long for our fine-grained application" [17]. In the P
+Our work is distinguished from Our work work in terms of granularity control. The Graphinator
+model suffered because of The Graphinator
+model fine granularity. The authors mentioned that "each communication
+requires roughly a millisecond, unacceptably long for Our fine-grained application" [17]. In the P
 kernel, the user can control the grainsize of the process and the grainsize can be well beyond one
 millisecond. Thus, the P kernel implementation can obtain acceptable performance. Besides, our
-model is general, instead of dedicating it merely to the functional language, as in the Graphinator
+model is general, instead of dedicating our
+model merely to the functional language, as in the Graphinator
 model.
-Our model is similar to the Large-Grain Data Flow (LGDF) model [18]. It is a model of
-computation that combines sequential programming with dataflow-like program activation. The
-LGDF model was implemented on shared memory machines. It can be implemented on MIMD
-distributed memory machines as well [42, 30, 11, 14]. Now we show that the model can be
+our
+model is similar to the Large-Grain Data Flow (LGDF) model [18]. It is a model of
+computation that combines sequential programming with dataflow-like program activation. a model of
+computation that combines sequential programming with dataflow-like program activation was implemented on shared memory machines. a model of
+computation that combines sequential programming with dataflow-like program activation can be implemented on MIMD
+distributed memory machines as well [42, 30, 11, 14]. Now Our show that a model of
+computation that combines sequential programming with dataflow-like program activation can be
 implemented on a SIMD distributed memory machine, too.
 2. The P Kernel Approach - Computation Model and Language
 The computation model for the P kernel, which originated from the Chare Kernel [30], is a
 message-driven, nonpreemptive, thread-based model. Here, a parallel computation will be viewed
 as a collection of processes, each of which in turn consists of a set of threads, called atomic
 computations. Processes communicate with each other via messages. Each atomic computation
-is then the result of processing a message. During its execution, it can create new processes or
+is then the result of processing a message. During Each atomic computation
+ execution, Each atomic computation
+ can create new processes or
 generate new messages [1]. A message can trigger an atomic computation, whereas an atomic
 computation cannot wait for messages. All atomic computations of the same process share one
 common data area. Thus, a process P k consists of a set of atomic computations A k i
 and one
 common data area
-Once a process has been scheduled to a processor, all of its atomic computations are executed on
-the same processor. There is no presumed sequence to indicate which atomic computation will
+Once a process has been scheduled to a processor, all of a process atomic computations are executed on
+a processor. There is no presumed sequence to indicate which atomic computation will
 be carried out first. Instead, it depends on the order of arrival of messages. Figure 1 shows the
 general organization of processes, atomic computations, and common data areas. In general, the
 number of processes is much larger than the number of processors, so that the processes can be
@@ -202,7 +217,8 @@ entry Label2: (message msg2) !Code2?
 Here, bold-face letters denote the keywords of the language. The process body, which is enclosed
 in braces, consists of declarations of private variables that constitute the common data area
 of the process, followed by a group of atomic computation definitions. Each atomic computation
-definition starts with a keyword entry and its label, followed by a declaration of the corresponding
+definition starts with a keyword entry and Each atomic computation
+definition label, followed by a declaration of the corresponding
 message and arbitrary user code. One of the process definitions must be the main process.
 The first entry point in the main process is the place the user program starts.
 The overall structure of the P kernel language differs from that of the traditional programming
@@ -211,34 +227,37 @@ units of indivisible computation - atomic computations, and (c) communication me
 sages. With these fundamental structures available, computation can be carried out in parallel
 with the assistance of primitive functions provided by the P kernel, such as OsCreateProc(), Os-
 etc. The user can write a program in the P kernel language, deal with the creation of
-processes, and send messages between them. For details of the computation model and language,
+processes, and send messages between messages. For details of the computation model and language,
 refer to [29].
 In the following, we will illustrate how to write a program in the P kernel language using
 the N-queen problem as an example. The algorithm used here attempts to place queens on
 the board one row at a time if the particular position is valid. Once a queen is placed on
-the board, the other positions in its row, column, and diagonals, will be marked invalid for
-any further queen placement. The program is sketched in Figure 2. The atomic computation
+the board, the other positions in a queen row, column, and diagonals, will be marked invalid for
+any further queen placement. a program in the P kernel language using
+the N-queen problem as an example is sketched in Figure 2. The atomic computation
 QueenInit in the Main process creates N processes of type SubQueen, each with an empty
 board and one candidate queen in a column of the first row. There are two types of atomic
 computations in process SubQueen: ParallelQueen and ResponseQueen. A common data area
 consists of solutionCount and responseCount. Each atomic computation ParallelQueen receives
 a message that represents the current placement of queens and a position for the next queen
-to be placed. Following the invalidation processing, it creates new SubQueen or SeqQueen
+to be placed. Following the invalidation processing, the invalidation processing creates new SubQueen or SeqQueen
 processes by placing one queen in every valid position in the next row. The atomic computation
 ResponseQueen in processes SubQueen and Main counts the total number of successful queen
 configurations. It can be triggered any number of times until there is no more response expected
-from its child process. The atomic computation SequentialQueen is invoked when the rest of
+from It child process. The atomic computation
+ResponseQueen in processes SubQueen and Main SequentialQueen is invoked when the rest of
 rows are to be manipulated sequentially. This is how granularity can be controlled. In this
 example, there are two process definitions besides that of process Main. Atomic computations
 that share the same common data area should be in a single process, such as ParallelQueen and
-ResponseQueen. The atomic computation SequentialQueen does not share a common data area
+ResponseQueen. The atomic computation
+ResponseQueen in processes SubQueen and Main SequentialQueen does not share a common data area
 with other atomic computations, and therefore, is in a separate process to preserve good data
 encapsulation and to save memory space. In general, only the atomic computations that are
 logically coherent and share the same common data area should be in the same process.
 3. Design and Implementation
-The main loop of the P kernel system is shown in Figure 3. It starts with a system phase,
+The main loop of the P kernel system is shown in Figure 3. The main loop of the P kernel system starts with a system phase,
 which includes placing processes, transferring data messages, and selecting atomic computations
-to execute. It is followed by a user program phase to execute the selected atomic computation. The
+to execute. The main loop of the P kernel system is followed by a user program phase to execute the selected atomic computation. The
 iteration will continue until all the computations are completed. The P kernel software consists
 of three major components: computation selection, communication, and memory management.
 3.1. Computation selection
@@ -252,7 +271,7 @@ definitions, represented by a During the lifetime of execution, the total
 number of atomic computations executed is far more than K. These atomic computations are
 dynamically distributed among processors. At iteration t, a computation selection function F is
 applied to select an atomic computation type a k , where K. In the following
-user program phase at the same iteration, a processor will be active if it has at least one atomic
+user program phase at the same iteration, a processor will be active if a processor has at least one atomic
 computation of the selected type a k . Let the function num(i; p; t) record the number of atomic
 computation with type a i at processor p in iteration t. Let the function act(i; t) count the number
 Process Main
@@ -289,7 +308,8 @@ Start
 Figure
 
 3: Flow chart of the P kernel system.
-of active processors at iteration t if the atomic computation type a i is selected,
+of active processors at iteration t if The atomic computation
+ResponseQueen in processes SubQueen and Main type a i is selected,
 where N is the number of processors.
 We present three computation selection algorithms here. The first one, F cyc , is a simple
 algorithm.
@@ -298,7 +318,7 @@ types. However, if act(i; t) is equal to zero, the type i will be skipped.
 it is not always necessary to carry out K reductions to
 compute act(i; t), since as long as the first nonzero act(i; t) is found, the value of function F cyc is
 determined.
-This algorithm is similar to the method used in the instruction-level approach in which processors
+Algorithm is similar to the method used in the instruction-level approach in which processors
 repeatedly cycle through the entire set of possible instructions. The global reduction is
 essentially similar to the "global-or" method, which is used to reduce the number of instructions
 that are emanated for each execution iteration. However, in the instruction-level approach, each
@@ -314,22 +334,23 @@ Algorithm II: Auction algorithm. For each atomic computation i, calculate act(i;
 iteration t. Then, the atomic computation with the maximum value of act(i; t) is chosen to execute
 next:
 F auc
-The cyclic algorithm is nonadaptive in the sense that the selection is made almost independent
+An auction algorithm is nonadaptive in the sense that the selection is made almost independent
 of the distribution of atomic computations. In this way, it could be the case that a few processors
 are executing one atomic computation type while many processors are waiting for execution of the
-other atomic computation types. The auction algorithm is runtime adaptive. It will maximize
+other atomic computation types. An auction algorithm is runtime adaptive. An auction algorithm will maximize
 utilization in most cases. An adaptive algorithm is more sophisticated in general. However,
-experimental results show that in most cases, the cyclic algorithm performs better than the
+experimental results show that in most cases, An auction algorithm performs better than the
 auction algorithm. It has been observed that when an auction algorithm is applied, at the near
-end of execution, the parallelism becomes smaller and smaller, and the program takes a long time
+end of execution, the parallelism becomes smaller and smaller, and a program in the P kernel language using
+the N-queen problem as an example takes a long time
 to finish. This low parallelism phenomenon degrades performance seriously, which is characterized
 as the tailing effect.
 We propose an improved adaptive algorithm to overcome the tailing effect. To retain the
-advantage of the auction algorithm, we intend to maximize the processor utilization as long as
+advantage of An auction algorithm, we intend to maximize the processor utilization as long as
 there is a large pool of atomic computations available. On the other hand, when the available
 parallelism falls to a certain degree, we try to exploit large parallelism by assigning priorities
 to different atomic computation types. An atomic computation whose execution increases the
-parallelism gets a higher priority, and vice versa. The priority can either be assigned by the
+parallelism gets a higher priority, and vice versa. a higher priority can either be assigned by the
 programmer or be automatically generated with dependency analysis.
 Algorithm III: Priority auction algorithm. For simplicity, we assume that the atomic
 computations a 0 ; a presorted according to their priorities, a 0 with highest
@@ -337,10 +358,10 @@ priority and aK \Gamma1 with the lowest. Use as a gauge of available parallelism
 constant and N is the number of processors.
 F pri
 When max 0i!K act(i; t) is larger than m, indicating that the degree of available parallelism
-is high, the auction algorithm will be applied. Otherwise, among the atomic computation types
+is high, An auction algorithm will be applied. Otherwise, among the atomic computation types
 with the one with the highest priority will be executed next. The constant c is set
-to be 0:5. If more than half of processors are active, the auction algorithm is used to maximize
-the processor utilization. Otherwise, the priority is considered in favor of parallelism increase and
+to be 0:5. If more than half of processors are active, An auction algorithm is used to maximize
+the processor utilization. Otherwise, a higher priority is considered in favor of parallelism increase and
 tailing effect prevention.
 
 Table
@@ -348,7 +369,7 @@ Table
 III: Execution Time of the 12-queen Problem
 Cyclic Auction Priority Auction
 10.4 Seconds 11.1 Seconds 10.1 Seconds
-This algorithm can constantly provide better performance than that provided by the cyclic
+An auction algorithm can constantly provide better performance than that provided by the cyclic
 algorithm. Table III shows the performance for different computation selection algorithms with
 the 12-queen problem on the 1K-processor MP-1.
 3.2. Communication
@@ -361,22 +382,24 @@ be sent out at the end of the computation phase. Because of the SIMD characteris
 message can be transferred each time. Thus, the message transfer step must be repeated at least
 The real situation is even more complicated. During each time of the message transfer, a collision
 may occur when two or more messages from different processors have the same destination
-processor. Therefore, we need to prevent the message loss due to the collision. Let dest(p) be the
+processor. Therefore, we need to prevent the message loss due to a collision
+. Let dest(p) be the
 destination of a message from processor p and src(q) be the source from which processor q is going
 to receive a message. There is a collision if two processors p 1 and p 2 are sending messages to the
-same processor q, so that dest(p 1 q. The processor q can receive only one of them,
-say from successfully deliver its message
+same processor q, so that dest(p 1 q. which processor q can receive only one of two processors p 1 and p 2 are sending messages to the
+same processor q,
+say from successfully deliver which processor q message
 to the destination. In general, we perform a parallel assignment operation for all processors
 If any collision happens, the send-with-overwrite semantics are applied. When this collision prevention
 scheme is applied, the processors p i with must wait for the next time to
 compete again. After the first transfer of data messages, there may still be some unsent messages.
 Some processor p has more than one message to send (d 0 (p) ? 1), and not every processor is able
-to send out its message during the first transfer due to collisions. Hence,
+to send out Some processor p message during the first transfer due to collisions. Hence,
 d
 d
 As long as D k ? 0, we need to continue on with D k , D k+1 , . , Dm , where The message
 transfer process can be illustrated in Figure 4. Many optimizations could be applied to reduce the
-number of time steps to send messages. One of them is to let
+number of time steps to send messages. One of Many optimizations is to let
 and dest(p 1
 dest(p)
 dest(p)
@@ -390,7 +413,7 @@ messages, resulting in a low utilization in the SIMD system. To avoid such a cas
 require all messages to be transferred. Instead, we attempt to send out only a majority of data
 messages. The residual messages are buffered and will be sent again during the next iteration.
 Because of the atomic execution model, the processors that fail to send messages will not be
-stalled. Instead, a processor can continue execution as long as there are some messages in its
+stalled. Instead, a processor can continue execution as long as there are some messages in a processor
 queue.
 We use \Theta k to measure the percentage of data messages that is left after k times of data
 transfers,
@@ -415,11 +438,11 @@ Figure
 5: Data message transfer procedure
 Process placement. The handling of process messages is almost the same as that of data
 messages, except that we need to assign a destination processor ID to each process message. The
-assignment is called process placement. The Random Placement algorithm has been implemented
+assignment is called process placement. An auction algorithm has been implemented
 in the P kernel.
 Random Placement algorithm. It is a simple, moderate performance algorithm:
 where N is the number of processors. Once dest(p) has been assigned, we can follow the same
-procedure as in the transfer of data messages. However, the two kinds of messages are different
+procedure as in the transfer of data messages. However, The two kinds of messages are different
 from each other in that the dest(p) of a data message is fixed, whereas that of a process message
 can be varied. In taking advantage of this, we are able to reschedule the process message if
 the destination processor could not accept the newly generated process because of some resource
@@ -436,7 +459,8 @@ scheduled process messages are buffered similar to the residual data messages, a
 the next communication phase.
 A load balancing strategy called Runtime Incremental Parallel Scheduling has been implemented
 for the MIMD version of the P kernel [31]. In this scheduling strategy, the system
-scheduling activity alternates with the underlying computation work. Its implementation on a
+scheduling activity alternates with the underlying computation work. the system
+ implementation on a
 SIMD machine is expected to deliver a better performance than random placement.
 3.3. Memory Management
 Most SIMD machines are massively parallel processors. In such a system, any one of the
@@ -451,28 +475,28 @@ identify the state of memory space usage. The function j(p) is used to measure t
 of memory space at processor p,
 the allocated memory space at processor p
 the total memory space at processor p
-A processor p is said to be in its normal state when 0  j(p) ! m1, in its nearly-full state when
-its full state when m2  j(p) ! 1, and in its emergency state when running
+A processor p is said to be in The function j(p) normal state when 0  j(p) ! m1, in The function j(p) nearly-full state when
+The function j(p) full state when m2  j(p) ! 1, and in The function j(p) emergency state when running
 out of memory, i.e.
 The nearly-full state. We need to limit the new resource consumption since the available
 memory space is getting tight. It is accomplished by preventing newly generated process messages
 from being scheduled. Thus, when a process message is scheduled to processor p with m1  j(p),
 the rescheduling has to be performed to find out another destination processor.
-The full state. In addition to the action taken in the nearly-full state, a more restricted
+its emergency state. In addition to the action taken in the nearly-full state, a more restricted
 scheme is applied such that any data messages addressed to the processor p with m2  j(p)
-are deferred. They are buffered at the original processor and wait for change of the destination
-processor's state. Although these data messages are eventually sent to their destination processor,
-the delay in sending can help the processor relax its memory tightness. Note that these deferred
+are deferred. They are buffered at the processor and wait for change of the destination
+processor's state. Although these data messages are eventually sent to these data messages destination processor,
+the delay in sending can help the processor relax the processor memory tightness. Note that these deferred
 data messages will be buffered separately and not be counted when calculating \Theta k .
-The emergency state. If processor p runs out of memory, several actions can be taken
-before we declare its failure. One is to clear up all residual data messages and process messages,
+its emergency state. If processor p runs out of memory, several actions can be taken
+before we declare processor p failure. One is to clear up all residual data messages and process messages,
 if there are any. Another is to redistribute the unprocessed process messages that have been
-previously placed in this processor. If any memory space can be released at this time, we will
-rescue the processor from its emergency state, and let the system continue on.
+previously placed in the processor. If any memory space can be released at this time, we will
+rescue the processor from the processor , and let the system continue on.
 4. Performance
 The P kernel is currently written in MPL, running on a 16K-processor Maspar MP-1 with 32K
-bytes memory per processor. MPL is a C-based data parallel programming language. We have
-tested the P kernel system using two sample programs: the N-queen problem and the GROMOS
+bytes memory per processor. MPL is a C-based data parallel programming language. we have
+tested the system using two sample programs: the N-queen problem and the GROMOS
 Molecular Dynamics program [38, 37]. GROMOS is a loosely synchronous problem. The test
 data is the bovine superoxide dismutase molecule (SOD), which has 6968 atoms [28]. The cutoff
 radius is predefined to 8  A, 12  A, and 16  A.
@@ -514,8 +538,7 @@ N-queen GROMOS
 12-queen 13-queen 14-queen 8  A 12  A 16  A
 93.4% 92.2% 90.3% 98.0% 98.6% 98.5%
 where T (t) is the execution time of tth iteration and
-. The utilization efficiency
-depends on the computation selection strategy and the load balancing scheme. Table V shows the
+. The utilization efficiencydepends on the computation selection strategy and the load balancing scheme. Table V shows the
 utilization efficiencies for different problem sizes with the priority auction algorithm and random
 placement load balancing.
 
@@ -545,8 +568,7 @@ active (t)
 Table
 
 VI shows the fullness efficiencies for different problem sizes. The N-queen is an extremely
-irregular problem and has a substantial grainsize variation and a low fullness efficiency. The
-GROMOS program is loosely synchronous and the grainsize variation is small.
+irregular problem and has a substantial grainsize variation and a low fullness efficiency. the program is loosely synchronous and the grainsize variation is small.
 
 Table
 
@@ -565,14 +587,14 @@ algorithms. The algorithms discussed in this paper deliver satisfactory performa
 long as the number of processes is much larger than the number of processors. The most difficult
 task is to reduce the grainsize variation which determines the fullness efficiency. The grainsize
 variation depends on the characteristics of the application problem. However, it is still possible
-to reduce the grainsize variation. The first method is to select a proper algorithm. The second
-method is to select a good program partition. For a given application, there may be different
-algorithms to solve it and different partitioning patterns. Some of them may have small grainsize
+to reduce the grainsize variation. The first method is to select a proper algorithm. The first method is to select a good program partition. For a given application, there may be different
+algorithms to solve The first method and different partitioning patterns. Some of different
+algorithms to solve it and different partitioning patterns may have small grainsize
 variation and some may not. A carefully selected algorithm and partitioning pattern can result
 in a higher fullness efficiency.
 The overall efficiencies of the N-queen problem and the GROMOS program on the 1K-
-processor MP-1 are shown in Table VII. Compared to the N-queen problem, GROMOS has
-a much higher efficiency mainly because of its small grainsize variation.
+processor MP-1 are shown in Table VII. Compared to the N-queen problem, 37]. GROMOS has
+a much higher efficiency mainly because of 37]. GROMOS small grainsize variation.
 
 Table
 
@@ -591,13 +613,13 @@ Table
 
 VIII: The N-queen Execution Times and Speedups (MP-1)
 Number of 12-queen 13-queen 14-queen
-processors Time (sec.) Speedup Time (sec.) Speedup Time (sec.) Speedup
+processors Time (sec.) Speedup Time (sec.) Speedup Time (sec.) (sec.) Speedup
 
 Table
 
 IX: The GROMOS Execution Times and Speedups (MP-1)
 Number of 8  A 12  A 16  A
-processors Time (sec.) Speedup Time (sec.) Speedup Time (sec.) Speedup
+processors Time (sec.) Speedup Time (sec.) (sec.) Speedup Time (sec.) (sec.) Speedup
 1K 13.3 761 34.3 867 68.6 887
 8K 2.53 4001 6.90 4209 10.7 5688
 5. Concluding Remarks
@@ -605,13 +627,13 @@ The motivation of this research is twofold: to prove whether a SIMD machine can 
 asynchronous application problems, serving as a general-purpose machine, and to study the feasibility
 of providing a truly portable parallel programming environment between SIMD and MIMD
 machines.
-The first version of the P kernel was written in CM Fortran, running on a 4K-processor TMC
+The first version of The P kernel was written in CM Fortran, running on a 4K-processor TMC
 CM-2 in 1991. The performance was reported in [32]. Fortran is not the best language for system
 programs. We used the multiple dimension array with indirect addressing to implement queues.
 Hence, not only was the indirect addressing extremely slow, but accessing different addresses in
-CM-2 costed much more [9]. In 1993, the P kernel was rewritten in MPL and ported to Maspar
-MP-1. The MPL version reduces the system overhead and improves the performance substantially.
-Experimental results have shown that the P kernel is able to balance load fairly well on SIMD
+CM-2 costed much more [9]. In 1993, The P kernel was rewritten in MPL and ported to Maspar
+MP-1. The first version of the P kernel reduces the system overhead and improves the performance substantially.
+Experimental results have shown that The P kernel is able to balance load fairly well on SIMD
 machines for nonuniform applications. System overhead can be reduced to a minimum with
 granularity control.
 
@@ -619,9 +641,9 @@ Acknowledgments
 
 We are very grateful to Reinhard Hanxleden for providing the GROMOS program, and Terry
 Clark for providing the SOD data. We also thank Alan Karp, Guy Steele, Hank Dietz, and Jerry
-Roth for their comments. We would like to thank the anonymous reviewers for their constructive
+Roth for their comments. We would like to thank the anonymous reviewers for the anonymous reviewers constructive
 comments.
-This research was partially supported by NSF grants CCR-9109114 and CCR-8809615. The
+this research was partially supported by NSF grants CCR-9109114 and CCR-8809615. The
 performance data was gathered on the MP-1 at NPAC, Syracuse University.
 
 
@@ -656,7 +678,7 @@ MIMD execution by SIMD computers.
 Array processor supercomputers.
 The reactive kernel.
 Molecular dynamics simulation of superoxide interacting with superoxide dismutase.
-Chare Kernel and its Implementation on Multicomputers.
+Chare Kernel and Chare Kernel Implementation on Multicomputers.
 Chare Kernel - a runtime support system for parallel computations
 Runtime Incremental Parallel Scheduling (RIPS) on distributed memory computers.
 Solving dynamic and irregular problems on SIMD architectures with runtime support.

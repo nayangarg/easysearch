@@ -1,17 +1,18 @@
 --T
 Causality representation and cancellation mechanism in time warp simulations.
 --A
-The Time Warp synchronization protocol allows causality errors and then recovers from them with the assistance of a cancellation mechanism. Cancellation can cause the rollback of several other simulation objects that may trigger a cascading rollback situation where the rollback cycles back to the original simulation object. These cycles of rollback can cause the simulation to enter a unstable (or thrashing) state where little real forward simulation progress is achieved. To address this problem, knowledge of causal relations between events can be used during cancellation to avoid cascading rollbacks and to initiate early recovery operations from causality errors. In this paper, we describe a logical time representation for Time Warp simulations that is used to disseminate causality information. The new timestamp representation, called Total Clocks, has two components: (i) a virtual time component, and (ii) a vector of event counters similar to Vector clocks. The virtual time component provides a one dimensional global simulation time, and the vector of event counters records event processing rates by the simulation objects. This time representation allows us to disseminate causality information during event execution that can be used to allow early recovery during cancellation. We propose a cancellation mechanism using Total Clocks that avoids cascading rollbacks in Time Warp simulations that have FIFO communication channels.
+The Time Warp synchronization protocol allows causality errors and then recovers from causality errors with the assistance of a cancellation mechanism. Cancellation can cause the rollback of several other simulation objects that may trigger a cascading rollback situation where the rollback cycles back to the original simulation object. These cycles of rollback can cause the simulation to enter a unstable (or thrashing) state where little real forward simulation progress is achieved. To address this problem, knowledge of causal relations between events can be used during cancellation to avoid cascading rollbacks and to initiate early recovery operations from causality errors. In this paper, we describe a logical time representation for Time Warp simulations that is used to disseminate causality information. The new timestamp representation, called Total Clocks, has two components: (i) a virtual time component, and (ii) a vector of event counters similar to Vector clocks. The virtual time component provides a one dimensional global simulation time, and the vector of event counters records event processing rates by the simulation objects. This time representation allows us to disseminate causality information during event execution that can be used to allow early recovery during cancellation. We propose a cancellation mechanism using Total Clocks that avoids cascading rollbacks in Time Warp simulations that have FIFO communication channels.
 --B
 Introduction
 Rollback is an inherent operation in the Time Warp
-mechanism. Rollback restores the state of an LP to a
+mechanism. Introduction
+Rollback restores the state of an LP to a
 causally consistent state from which normal event processing
 can continue. During cancellation, rollbacks occurring
 in one LP can propagate to other LPs to cancel out causally
 incorrect event computations. Conventionally, rollbacks are
 informed through anti-messages with the timestamps specifying
-the rollback time of the LPs. Rollbacks can occur
+the rollback time of other LPs. Rollbacks can occur
 frequently and may be cascaded and inter-related. In contemporary
 Time Warp simulators, time representations generally
 maintain only the local simulation time and do not
@@ -31,7 +32,8 @@ of time in Time Warp synchronized parallel simulations.
 Total Clocks can be used to determine causal relationships
 between events among any arbitrary processes. Two events
 can be concurrent or causally dependent and precise knowledge
-of their relation enables optimizations in various Time
+of Two events
+ relation enables optimizations in various Time
 Warp algorithms. In particular, causal information can be
 useful while canceling events during rollback. In this paper,
 we present and prove properties of Total Clocks. We present
@@ -59,7 +61,8 @@ such as Scalar Clocks [11], Vector Clocks [5, 13], and Matrix
 Clocks [16] have been proposed to model time in distributed
 systems. In the scalar clock representation, a scalar
 quantity (integer) is used to represent the logical time. Each
-process increments the value of its local clock before executing
+process increments the value of Each
+process local clock before executing
 an event and then piggybacks this value at the time
 of sending a message. The vector clock representation has
 an n-element array of non-negative integers. Each process
@@ -72,7 +75,7 @@ representation is not readily usable in optimistic protocols
 due to the forward and backward motion of time. In matrix
 clock representation, a process maintains a n  n matrix of
 non-negative integers [18,21]. A process maintains this matrix
-as its clock value. This representation has all the properties
+as its clock value. The vector clock representation has all the properties
 of vector clocks. In addition, a process P i knows the
 time value of process P k that is known to every
 other process P j . This allows processes to discard obsolete
@@ -80,11 +83,11 @@ information received from processes [16]. Matrix clocks
 can also be used to assist in the calculation of GVT [4].
 In a Time Warp synchronized discrete event simulation,
 Virtual Time is used to model the passage of the time in
-the simulation [7]. The simulation is executed via several
+the simulation [7]. the simulation [ is executed via several
 processes called Logical Processes (LPs). Each LP has an
 associated event queue and maintains a Local Virtual Time
-clock. A causality error arises if an LP receives a
-message with a time-stamp earlier than its LVT value (a
+clock. A causality error arises if an Each LP receives a
+message with a time-stamp earlier than an LP LVT value (a
 straggler message). Canceling events in the input queue
 of other LPs is performed by cancellation strategies such
 as Aggressive, Lazy, or Dynamic Cancellation [8, 15, 17].
@@ -119,8 +122,7 @@ result in new anti-messages to the LP that sent the initial
 anti-messages. Such cascaded rollbacks degrade efficiency
 and run-time performance of the simulation. In addition to
 cascading rollbacks, a positive straggler event in a causally
-preceding LP can rollback another LP several times. These
-rollbacks are due to an LP sending events through several
+preceding LP can rollback another LP several times. Such cascaded rollbacks are due to an LP sending events through several
 parallel paths of computation to another LP. The cause for
 such cascading and inter-related rollbacks is due to the fact
 that the events that are causally dependent on the events
@@ -167,15 +169,19 @@ and a vector counter component. Virtual time component
 is the global one dimensional temporal coordinate
 system that ticks virtual time [10]. The virtual time component
 is a scalar value that denotes the progress in simulation
-time of the LP. The second component of Total Clocks is
+time of a causally
+preceding LP. The second component of Total Clocks is
 a vector of event counters. The number of elements in the
 vector is equal to the total number of LPs in the simula-
-tion. Each LP maintains a counter called event counter that
+tion. Each LP a causally
+preceding LP maintains a counter called event counter that
 is incremented based on specific update rules during sim-
-ulation. In addition, each LP maintains a local copy of the
+ulation. In addition, Each LP a causally
+preceding LP maintains a local copy of the
 event counter values of other LPs. This set of event counters
 is called the Vector Counter(VC). While sending an event,
-an LP sends the virtual time and the vector counter as the
+an a causally
+preceding LP sends the virtual time and the vector counter as the
 timestamp. This two component representation of timestamp
 consisting of virtual time and vector counter is called
 Total Clocks due to the fact that this representation can provide
@@ -191,44 +197,49 @@ Figure
 4. Total Clock value update while processing
 an Event e in a simulation Object P i
 on the virtual time component and the vector counter com-
-ponent. Figure 3 shows the Total Clock and its components.
+ponent. Figure 3 shows the Total Clock and Figure 3 components.
 The Virtual time component of Total Clock is referred as VT
 and the vector counter as VC in the logical time representa-
 tion. V C[i] refers to the ith element in the vector counter
-containing the event counter value of LP i. TC(P i ) refers
+containing the event counter value of a causally
+preceding LP i. TC(P i ) refers
 to the Total Clock value of LP P i and TC(e) refers to the
 Total Clock value of an event e. TC(P i ):V T refers to the
 virtual time component and TC(P i ):V C refers to the vector
 counter component of Total Clock.
-Each LP maintains a Total Clock. An LP processes
+Each LP a causally
+preceding LP maintains a Total Clock. Each LP Each LP processes
 events in the order of the virtual time component of the
-event's Total Clock. While sending an event, the LP assigns
+event's Total Clock. While sending an event, Each LP a causally
+preceding LP assigns
 the time at which the event has to be processed as
 the VT component of the timestamp. The vector counter
-of the LP is assigned as the VC component of the times-
-tamp. Thus elements of the vector in the timestamp denotes
-last known event counter values of the sending LP.
-An LP i learns about the latest value of the event counter
-of another LP j through an event from j or from an object
-that has learnt about LP j. Therefore, the vector counter
-of an LP specifies the latest event counter values of other
+of Each LP is assigned as the VC component of the times-
+tamp. Thus elements of The vector in the timestamp denotes
+last known event counter values of Each LPEach LP.
+Each LP Each LP i learns about the latest value of the event counter
+of another Each LP j through an event from j or from an object
+that has learnt about Each LP j. Therefore, The vector counter
+of Each LP Each LP specifies the latest event counter values of other
 LPs. However, there could exist LPs and events that are
 causally independent of other LPs and events respectively.
 The causal relation and causal independence of the states
-of LPs and its events can be determined easily using Total
+of LPs and the states
+of LPs events can be determined easily using Total
 Clocks. The operators(<; ; >; ; k; sup; !; succ) on
 the vector counter component of Total Clocks is same as the
 definition for vector clocks [13, 5].
 The LPs executing an event must follow specific rules to
-update their virtual time component and the event counter
+update The LPs executing an event virtual time component and the event counter
 values. While processing an event, virtual time component
 is updated to the virtual time component specified by the
 event e. The vector counter of clock value is updated using
 the sup operator that performs element wise maximum
 operation [5, 13]. Figure 4 shows the steps updating the
-total clock value maintained by an LP during event process-
+total clock value maintained by Each LP Each LP during event process-
 ing. The primitive execute event consists of updating the
-state, sending events to other LPs and saving the state. The
+state, sending events to other LPs and saving the
+state. The
 execute event process may perform different functions depending
 on the optimizations and algorithms enabled in the
 Simulation Time at which the
@@ -240,31 +251,31 @@ Figure
 
 5. Total Clock value propagation while
 sending an Event e
-IF LP has to rollback
+IF Each LP has to rollback
 THEN ROLLBACK(e) and CANCEL(e);
 END
 
 Figure
 
-6. LP receiving an event e from communication
+6. Each LP receiving an event e from communication
 layer
 kernel [14]. The value of the clock after the sup operation
 and event counter increment is denoted by TC((P i ) after e ).
-The value of LP's clock value immediately before processing
+The value of Each LP's clock value immediately before processing
 event e is denoted by TC((P i ) before e ). Figure 5 shows
 the operations performed while sending an event. The virtual
-time component of the event is set to the simulation
-time at which the event has to be processed and the vector
-counter values is set to that of the LP. The primitive
-send message sends the event through the physical communication
+time component of an event is set to the simulation
+time at which an event has to be processed and the vector
+counter values is set to that of Each LP. The primitive
+send message sends an event through the physical communication
 layer.
 
 Figure
 
 6 shows the steps performed while receiving an
-event from the communication layer. The LP checks for
+event from the communication layer. The Each LP checks for
 rollback and rolls-back to the time before the simulation
-time of the event. In addition, the LP cancels the events that
+time of an event. In addition, Each LP Each LP cancels the events that
 are to be undone due to rollback. The cancellation mechanisms
 such as aggressive cancellation and lazy cancellation
 are usually performed to cancel out the messages [17]. In
@@ -274,35 +285,35 @@ in the Total Clocks to cancel out events upon receiving a
 straggler event.
 Having seen the clock update and propagation rules, certain
 properties could be inferred from Total Clocks. The
-value of the event counter of an LP increases monotonically
+value of an event counter of an Each LP increases monotonically
 irrespective of the progress of the simulation time. This
 property disambiguates between two simulation times (VT
 component) of same value before and after a rollback. This
 feature of Total Clocks can be used in optimizations and algorithms
 that clearly needs to disambiguate such scenarios.
 The events that are considered in the following theorems
-are the events that have been processed by an LP and not
+are the events that have been processed by Each LP Each LP and not
 rolled-back by any cancellation message. The relations and
 theorems may not hold good between events that consists of
 one being processed and the other being rolled-back. In ad-
 dition, the following theorems may not be applicable when
-an LP is canceling the events that it has sent before or at the
+Each LP Each LP is canceling the events that Each LP has sent before or at the
 time of state restoration due to a straggler event.
-The following theorems are stated without proof and can
+the following theorems are stated without proof and can
 be easily verified from procedure PROCESS (Figure 4).
 Theorem 4.1 Vector Counter component of Total Clock of
-an LP increases monotonically with event processing.
+an Each LP increases monotonically with event processing.
 Theorem 4.2 If ! denotes causally precedes relation
 then e 1
 Theorem 4.3 if e i1 and e i2 are events scheduled at LP P i
 and e i1 ! e i2 then
 )g.
 Theorem 4.4 If e i1 is an event scheduled at LP P i , then an
-arbitrary LP j can determine the states and set of events in
-its input queue that are causally related to event e i1 .
+arbitrary Each LP j can determine the states and set of events in
+the states input queue that are causally related to event e i1 .
 Corollary 4.1 If e i1 and e i2 are two events scheduled in
 then an arbitrary LP P j can
-determine the states and set of events in its input queue
+determine the states and set of events in the states input queue
 that are causally related to the events that are in the set
 5 Total Clocks and Event Cancellation
 In the previous section we see that Total Clocks representation
@@ -312,7 +323,7 @@ strategies. Total Clocks disseminate causality information
 and new cancellation mechanism can be designed to exploit
 this information. Cancellation messages can be designed
 instead of anti-messages to specify the events to be
-rolled-back in an LP. In addition, if the events that are
+rolled-back in Each LPEach LP. In addition, if the events that are
 causally related to the events to be rolled-back are identi-
 fied, then those events can be rolled-back along with the
 events specified by the cancellation message. This is due
@@ -329,8 +340,9 @@ and communication time by not spending resources
 on events that will be eventually undone.
 In conventional Time Warp, anti-messages are used to
 initiate singleton cancel information. Anti-messages are
-restore the state of the LP to
-the state before e.TC.VT;
+restore the state of Each LP to
+the
+state before e.TC.VT;
 restore the input queue with events
 moved from processed queue to
 unprocessed queue whose events
@@ -339,7 +351,7 @@ END
 
 Figure
 
-7. LP rolling back due to an event e
+7. Each LP rolling back due to an event e
 from communication layer
 similar to positive events and the distributed control is
 through messages and anti-messages. The cancellation
@@ -350,27 +362,25 @@ to inform LPs of causality errors in the preceding LPs. The
 virtual time update rules at the time of processing events
 are similar to that of conventional Time Warp. However,
 the virtual time update rules with cancellation messages are
-different and are performed only when the LP has not performed
+different and are performed only when Each LP Each LP has not performed
 the recovery operations due to the causality error informed
 by the cancellation message. CANCEL MESSAGE
 consists of a VT component and a VC component similar
 to that of an event. In addition, CANCEL MESSAGE
 has a field called SIGNATURE. At the time of creating a
-new cancellation message, the VC component of the LP
-along with its id is used as the signature. In addition,
+new cancellation message, the VC component of Each LPEach LPalong with Each LP id is used as the signature. In addition,
 CANCEL MESSAGE contains the minimum and maximum
 event counter values called the event counter range.
-This range along with the LP id in the signature specifies
+This range along with Each LP id in the signature specifies
 the events to be removed due to rollbacks.
-The new cancellation mechanism uses the event counter
+the cancellation mechanism uses an event counter
 ranges to keep track of the events to be rolled-back. Events
 causally dependent on rolled-back events generated from an
-LP lie within the same event counter range (Corollary 4.1).
-The cancellation mechanism propagates the event counter
+Each LP lie within the same event counter range (Corollary 4.1).
+the cancellation mechanism propagates an event counter
 range in the cancellation messages. A virtual time component
-is specified along with the event counter range in the
-cancellation message to specify the rollback time of the LP.
-A cancellation message could rollback an LP and hence can
+is specified along with the event counter range in the cancellation message to specify the rollback time of Each LP.
+A cancellation message could rollback Each LP Each LP and hence can
 generate new cancellation messages and the same signature
 field is used to these set of cancellation messages . This
 helps to identify related cancellation messages and hence
@@ -379,47 +389,56 @@ inter-related rollbacks and cascading rollbacks.
 Figure
 
 7 shows the steps performed during rollback due
-to event e at LP P i . Upon rollback, an LP must cancel
+to event e at LP P i . Upon rollback, Each LP Each LP must cancel
 messages to undo the events that has been sent to other
 LPs. This is performed in the procedure CANCEL(e) (Fig-
-ure 8). Each LP maintains a data structure called CANCEL
-RANGE LIST. This data structure contains the list of
-ranges with an LP id as the index. This list is used to
+ure 8). LP receiving an event e from communication
+layer
+kernel maintains a data structure called CANCEL
+RANGE LIST. a data structure called CANCEL
+RANGE LIST contains the list of
+ranges with Each LP Each LP id as the index. the list of
+ is used to
 ignore messages whose VC component value at index i
 of the timestamp lies within this specified range of event
 counter values. The CANCEL RANGE LIST is built and
-maintained by the LP based on specific rules. Procedure
+maintained by Each LP LP receiving an event e from communication
+layer
+kernel based on specific rules. Procedure
 ADD TO CANCEL RANGE LIST (Figure performs the
 necessary rules to add the range information from CANCEL
 MESSAGE(cancellation message). If a cancellation
 message has a signature different from other cancellation
-messages, then this cancellation message is added to the
+messages, then a cancellation
+message is added to the
 CANCEL RANGE LIST. If a new cancellation message
 has the same signature as that of any CANCEL MESSAGE
-received previously and its VC component is concurrent
+received previously and a new cancellation message
+ VC component is concurrent
 to the VC component of the new cancellation message,
 then the new cancellation message range is added to CANCEL
-RANGE LIST. This implies that this cancellation
+RANGE LIST. This implies that a cancellation
 message is due to anti-message generation in a different
 path of computation when compared to the cancellation
 messages received with the same signature. When a cancellation
 message received with the same signature as that of
-any previously received cancellation messages and its VC
+any previously received cancellation messages and a cancellation
+message VC
 component is less than the cancellation messages with the
 same signature, then the new event counter range is added
-to CANCEL RANGE LIST. In addition, the event counter
+to CANCEL RANGE LIST. In addition, new event counter
 ranges with greater VC component (with same signature)
 that were received before are removed. This rule is to avoid
-rollbacks in an LP due to cascading rollbacks (since the recovery
+rollbacks in Each LP Each LP due to cascading rollbacks (since the recovery
 operations for the initial rollback can remove all the
 causally dependent events).
 Procedure CHECK FOR ROLLBACK (Figure 10) performs
-the check to see if the LP must rollback for the cancellation
-message. An LP removes all the causally dependent
+the check to see if Each LP Each LP must rollback for the cancellation
+message. Each LP Each LP removes all the causally dependent
 events upon receiving a positive straggler or cancellation
-message. Hence an LP checks to see if the cancellation
+message. Hence an Each LP checks to see if the cancellation
 message informs a different causality error from the
-one learnt by the LP. The rules to check for rollback are
+one learnt by Each LP. The rules to check for rollback are
 similar to rules in ADD CANCEL RANGE LIST and in
 addition checks if the VT component is less than the current
 simulation time.
@@ -432,12 +451,12 @@ RANGE LIST. Events within the rollback range
 specified by CANCEL MESSAGE at the index i of the
 VC component of timestamp are either to be rolled-back or
 causally dependent on the events to be rolled-back. CANCEL
-LOCAL EVENT checks all the events in the input
-queue for this condition and removes them. This procedure
+LOCAL Event checks all the events in the input
+queue for this condition and removes queue for this condition. This procedure
 performs recovery operation for the current cancellation
 message and pro-active recovery operations for the cancellation
 messages that will be received due to this cancellation
-message and therefore avoids cascading rollbacks.
+and therefore avoids cascading rollbacks.
 IF e is a CANCEL MESSAGE
 THEN ADD TO CANCEL RANGE LIST(e);
 Cancel(e)=fer j er has to be rolled backg;
@@ -473,7 +492,7 @@ END
 
 Figure
 
-checking if it has to rollback
+checking if THEN Rollback has to rollback
 due to event e
 event e.event countermin;
 event e.event countermax;
@@ -495,25 +514,27 @@ END
 Figure
 
 12. LP P i inserting event e
-Procedure CANCEL cancels the events in its local input
+Procedure CANCEL cancels the events in event e
+ local input
 queue and sends cancellation messages to other LPs to
-inform them about causality errors. A cancellation message
-with a new SIGNATURE is created only when an LP is
+inform other LPs about causality errors. A cancellation message
+with a new SIGNATURE is created only when an Each LP is
 rolled-back due to a positive straggler event. On the other
 hand, the signature of the received CANCEL MESSAGE is
-used when this message sends new cancellation messages
+used when A cancellation message
+with a new SIGNATURE sends new cancellation messages
 to other LPs. This is to identify cancellation messages generated
 due to inter-related and cascading rollbacks. Seeing
-the signature, an LP can ignore a cancellation message if
-recovery operations have been already performed. An LP
+the signature of the received CANCEL MESSAGE, an LP can ignore a cancellation message if
+recovery operations have been already performed. An Each LP
 determines Cancel(e) that contains the set of events to be
 rolled-back due to event e and the set S cancel that contains
-the LP ids to send a cancellation message. The minimum
+the Each LP ids to send a cancellation message. The minimum
 event counter value eventcountermin and maximum
 event counter value eventcountermax are determined
 from Cancel(e). The rollback time, RollbackTime k ,
-to each LP k is determined from Cancel(e). The event
-counter value(T C(P i ):V C[i]) of LP i is incremented
+to each Each LP k is determined from Cancel(e). The event
+counter value(T C(P i ):V C[i]) of Each LP i is incremented
 initially in the procedure and the VC component's
 value is updated to the sup(TC(P i ):V C; TC(e):V C)
 before sending the CANCEL MESSAGE. Procedures
@@ -523,14 +544,15 @@ to update the data structure having the cancellation range
 information and to cancel out the events in the input queue.
 While inserting an event (Figure 12), the event
 is checked against the ranges specified in the CANCEL
-RANGE LIST and events are ignored if they lie
+RANGE LIST and events are ignored if the ranges specified in the CANCEL
+RANGE LIST and events lie
 within any one of the ranges. This is to handle events that
 have been in transit at the time of canceling events in the
 local input queue.
 Theorem 5.1-5.6 prove properties of the new cancellation
 mechanism. Canceled(e) introduced in the following
 theorems defines the set of events that are rolled-back due
-to receiving event e in LP i.
+to receiving event e in Each LP i.
 Theorem 5.1 Given CANCEL MESSAGE cm 1
 Theorem 5.2 Given CANCEL MESSAGE cm
 Theorem 5.3 Given CANCEL MESSAGE cm
@@ -549,7 +571,7 @@ to CANCEL(e).
 We can see that the cancellation mechanism is efficient
 in removing all the events in the input queue that are to
 be undone either directly or indirectly due to a rollback
-in causally preceding LP. Figure 13 shows the update of
+in causally preceding Each LP. Figure 13 shows the update of
 the Total Clock value in the processes and the cancellation
 mechanism through a space time diagram. The timestamp
 consist of a VT component followed by 3-element vector
@@ -562,12 +584,12 @@ been spent on processing those events. In addition, the constant
 vigil on the events that are inserted to the input queue
 removes any extra overhead incurred on the messages that
 will be rolled-back eventually. LPs in the critical path are
-frequently rolled-back and they are exposed to cascading
+frequently rolled-back and LPs in the critical path are exposed to cascading
 
 Figure
 
 13. Space Time diagram explaining Total
-Clock update and Cancellation
+Clock update and this cancellation
 rollbacks. The huge amount of time spent in such uncommitted
 computations can be avoided by employing the cancellation
 mechanism with Total Clocks.
@@ -589,24 +611,25 @@ message sizes remains the same. With optimizations that
 propagate only changes to values of the vector counters, the
 message sizes can be kept within the same range as that of
 messages without Total Clocks representation.
-The Cancel Range list maintained by the LP to ig-
-nore/accept the incoming events may grow larger if they
+The Cancel Range list maintained by Each LP to ig-
+nore/accept the incoming events may grow larger if the incoming events
 are not pruned frequently. A simulation time can be attached
 to the CANCEL MESSAGE that specifies the time
 up to which the event counter range check has to be per-
-formed. This time can be the maximum of the VT component
+formed. A simulation time can be the maximum of the VT component
 of rolled-back events. Cancel range information could
 be removed from the CANCEL RANGE LIST once GVT
 sweeps past this VT value.
 In this paper, we have shown the representation of causal
 information using Total Clocks and the utility of such a
-representation in cancellation mechanism. We presented
+representation in cancellation mechanism. we presented
 a cancellation mechanism that exploits Total Clocks repre-
-sentation. The cancellation mechanism described reduces
+sentation. a cancellation mechanism that exploits Total Clocks repre-
+sentation described reduces
 to sending a message to all its output channels about the
 rollback of its predecessors and can cancel events received
-from its predecessors that could also be rolled back. This
-cancellation mechanism avoids cascading and inter-related
+from its predecessors that could also be rolled back. a cancellation mechanism that exploits Total Clocks repre-
+sentation avoids cascading and inter-related
 rollbacks. Further exploration is done to exploit the Total
 Clocks representation in Time Warp algorithms such as
 State Savings and other synchronization mechanisms.

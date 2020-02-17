@@ -28,7 +28,8 @@ model [6] [11], and the multicluster model
 window across multiple processing elements (PEs) so
 as to do dynamic scheduling and parallel execution of in-
 structions. Dynamic scheduling is achieved by letting each
-execute instructions as and when their operands become
+execute instructions as and when each
+ operands become
 available.
 An important issue pertaining to decentralization is the criterion
 used for partitioning the instruction stream among
@@ -69,11 +70,11 @@ instruction completion rate without much of an impact on
 the cycle time.
 The rest of this paper is organized as follows. Section 2 provides
 background and motivation behind decentralization
-of the dynamic scheduling hardware. It also describes the
+of the dynamic scheduling hardware. The rest of this paper this paper also describes the
 three decentralization approaches under investigation. Section
 3 describes our experimentation methodology. Section
 presents detailed simulation results of the different decentralization
-approaches. In particular, it examines the impact
+approaches. In particular, The rest of this paper this paper examines the impact
 of increasing the number of PEs, and the effects of two different
 PE interconnection topologies. Section 5 presents a
 discussion of the results, and the conclusions of this paper.
@@ -162,23 +163,24 @@ Dynamically Scheduled ILP Processors
 (a) Centralized Scheduler; (b) Decentralized Scheduler
 unit, and the memory address resolution unit 1 . Incidentally,
 these are the most difficult parts to decentralize because
-they deal with inter-instruction dependences, which preclude
-decentralization by mere replication. Of these parts,
-the DS is the hardest to decentralize because it often needs
+these deal with inter-instruction dependences, which preclude
+decentralization by mere replication. Of these,
+the DS is the hardest to decentralize because the DS often needs
 to handle all of the active instructions that are simultaneously
 present in the processor. Detailed studies with 0.8-m,
 0.35-m, and 0.18-m CMOS technology [10] also confirm
-that a centralized DS does not scale well. Thus, it is important
+that a centralized DS does not scale well. Thus, a centralized DS is important
 to decentralize the DS. Many researchers have proposed
 decentralizing the DS with the use of multiple PEs,
 each having a set of EUs, as shown in Figure 1(b).
-In the decentralized processor, the dynamic instruction stream
+In the processor, the dynamic instruction stream
 is partitioned across the PEs, which operate in parallel. The
 1 The complexity of these structures can be partly reduced by off-loading
-part of their work to special hardware that is not in the critical
+part of these structures work to special hardware that is not in the critical
 path of program execution [8] [9] [19].
 instructions assigned to PEs can have both control dependences
-and data dependences between them. A natural
+and data dependences between [19].
+instructions assigned to PEs. A natural
 question that arises at this point is: on what basis should instructions
 be distributed among the decentralized PEs? The
 criterion used for partitioning the instruction stream is very
@@ -187,8 +189,7 @@ increase inter-PE communication, and degrade performance!
 True decentralization should not only aim to reduce the demand
 on each PE, but also aim to minimize the demand
 on the PE interconnect by localizing a major share of the
-inter-instruction communication occurring in the processor
-to within the decentralized PEs.
+inter-instruction communication occurring in the processorto within the decentralized PEs.
 The three current approaches for grouping instructions into
 PEs revolve around three important constraints to execute
 instructions in parallel- (i) execution unit dependences,
@@ -211,10 +212,11 @@ Figure
 2: Example Control Flow Graph and Code
 2.2 Execution unit Dependence based Decentralization
 In this type of decentralization, instructions are assigned to
-PEs based on the EU that it will execute on. Thus, instructions
-that are resource dependent on a particular EU execute
+PEs based on the EU that the EU will execute on. Thus, instructions
+that are resource dependent on a particular the EU EU execute
 in the same PE. An artifact of this arrangement is that
-instructions wait near where its EU dependence is resolved.
+instructions wait near where 
+ the the EU dependence is resolved.
 Interestingly, one of the pioneer dynamic scheduling schemes,
 implemented in IBM 360/91 [16], had incorporated this type
 of decentralization in 1967 itself! Very recently the MIPS
@@ -223,17 +225,17 @@ A potential advantage of the EDD approach is that each PE
 need have only one or a few types of execution units. Another
 advantage is that instruction partitioning is straight-forward
 and static in nature when only a single PE has an
-EU of a particular type. In such a situation, dynamic instances
+the EU of a particular type. In such a situation, dynamic instances
 of a given static instruction always get assigned to
-the same PE. When multiple PEs have an EU of a particular
+the same PE. When multiple PEs have an the EU of a particular
 type, then there is a choice involved in allocating
-instructions that require that EU type. One option in that
+instructions that require that the EU type. One option in that
 situation is to do a static allocation by a compiler or by off-line
 hardware. Another option is to do dynamic allocation
 (as in Alpha 21264 [7]), perhaps based on the queue lengths
-in each of the concerned PEs. With either option, a ready
-instruction may sometimes have to wait for its allotted EU
-to become free, although another EU of the same type (in
+in each of multiple PEs. With either option, a ready
+instruction may sometimes have to wait for a ready
+instruction allotted the EUthe EUto become free, although another the EU of the same type (in
 another PE) is free. Furthermore, if the processor performs
 speculative execution, then recovery actions arising from incorrect
 speculations will necessitate selective discarding of
@@ -262,30 +264,41 @@ Furthermore, no regrouping of instructions is needed at instruction
 commit time.
 CDD hardware implementations proposed so far, such as the
 multiscalar processor, the superthreading processor, and the
-trac processors, all organize the PEs as a circular queue as
+trac processors, all organize multiple PEs as a circular queue as
 shown in Figure 3. The circular queue imposes a sequential
-order among the PEs, with the head pointer indicating the
-oldest active PE. Programs execute on these processors as
-follows. Each cycle, if the tail PE is idle, the control flow
+order among multiple PEs, with the head pointer indicating the
+oldest active the
+same PEthe
+same PE. Programs execute on these processors as
+follows. Each cycle, if the tail the
+same the
+same PE is idle, the control flow
 predictor (CFP) predicts the next task in the dynamic instruction
-stream, and invokes it on the tail PE; a task is
+stream, and invokes the tail PE on the tail PE; a task is
 a path or subgraph contained in the CFG of the executed
 program. For instance, if a CDD processor uses trace-based
 tasks, then blocks A, B, and C of our example code (which
-forms a trace) are assigned to a single PE. After invocation,
+forms a trace) are assigned to a single the
+same the
+same PE. After invocation,
 the tail pointer is advanced, and the invocation process continues
 at the new tail in the next cycle. The successor task
 in our example code will be the one starting at the predicted
 target of the conditional branch in block C. Thus, the CFP
 steps through the CFG, distributing tasks (speculatively)
 Multiprocessors also partition instructions based on control de-
-pendences. However, their partitioning granularity is generally much
+pendences. However, Thus, the CFP
+steps through the CFG, distributing tasks (speculatively)
+Multiprocessors also partition instructions based on control de-
+pendences partitioning granularity is generally much
 coarser (several hundreds of instructions or more per task). Fur-
 thermore, multiple tasks in a multiprocessor do not share the same
 register space.
-to the PEs. When the head PE completes its task, its instructions
+to multiple PEs. When the head PE completes the head PE task, the head PE instructions
 are committed, and the head pointer is advanced,
-causing that PE to become idle. When a task misprediction
+causing that the
+same PE the
+same PE to become idle. When a task misprediction
 is detected, all PEs between the incorrect speculation point
 and the tail PE are discarded in what is known as a squash.
 
@@ -296,15 +309,17 @@ Whereas trace processors consider a trace (a single path consisting
 of multiple basic blocks) as a task, multiscalar processors
 consider a subgraph of the control flow graph as a
 task, thereby embedding alternate flows of control in a task.
-These processors also differ in terms of how the instructions
+multiscalar processors
+ also differ in terms of how the instructions
 of a task are fetched. Whereas trace processors fetch all instructions
-of a task in a single cycle and supply them to a
+of a task in a single cycle and supply trace processors to a
 PE, multiscalar processors let all of the active PEs parallelly
-fetch their instructions, one by one. Architectural support is
-provided in them to facilitate the hardware in determining
+fetch multiscalar processors instructions, one by one. Architectural support is
+provided in multiscalar processors to facilitate the hardware in determining
 data dependences.
 Studies [5] [19] have shown that in CDD processors, most
-of the register operands are produced in the same PE or a
+of the register operands are produced in the same the
+same PE or a
 nearby PE, so that a unidirectional ring-type PE interconnect
 is quite sufficient. Each PE typically keeps a working
 copy of the register file, which also helps to maintain precise
@@ -317,14 +332,17 @@ that are data dependent on an instruction are typically dispatched
 to the PE to which the producer instruction has
 been dispatched. Mutually data-independent instructions
 are most likely dispatched to different PEs. Thus, instructions
-wait near where their data dependences will be resolved.
+wait near where instructions
+ data dependences will be resolved.
 The MISC (Multiple Instruction Stream Computer) [18], the
 PEWs execution model [6] [11], the dependency-based model
 given in [10], and the multicluster model [3] come under this
 category. As data dependences dictate most of the communication
 occurring between instructions, the DDD approach
 attempts to minimize communication across multiple PEs.
-Because the instructions in a PE are mostly data-dependent,
+Because the instructions in a the
+same the
+same PE are mostly data-dependent,
 it becomes less important to do run-time scheduling within
 each PE [10]. However, partitioning of instructions in a
 DDD processor is generally harder than that in a CDD pro-
@@ -357,10 +375,11 @@ of same proximity to each other, and hence the instruction
 partitioning algorithm becomes straightforward. However,
 as discussed earlier, a crossbar does not scale well.
 In the multicluster execution model, the ISA-visible registers
-are partitioned across the PEs. An instruction is assigned a
-PE based on its source and destination (ISA-visible) regis-
-ters. Thus, its partitioning is static in nature. In the PEWs
-execution model, the partitioning is done dynamically. In
+are partitioned across multiple PEs. An instruction is assigned a
+PE based on An instruction source and destination (ISA-visible) regis-
+ters. Thus, An instruction partitioning is static in nature. In the PEWs
+execution model, the PEWs
+execution model partitioning is done dynamically. In
 order to reduce the burden on the partitioning hardware
 and the complexity on the instruction pipeline, the DFG
 corresponding to a path is built by off-line hardware, and
@@ -373,11 +392,12 @@ amongst decentralized processing elements. Table 1 succinctly
 compares the different attributes and hardware features
 of the three decentralization approaches. From the
 implementation point of view, CDD and EDD potentially
-have an edge, because of the static nature of their partition-
+have an edge, because of the static nature of CDD and EDD partition-
 ing. CDD implementations have a further advantage due
 Attribute EDD CDD DDD
 Basis for partitioning Resource usage Control dependence Data dependence
-Execution unit types in a PE Only a few EU types All EU types All EU types
+Execution unit types in a the
+same PE Only a few the EU types All EU types All the EU types
 Logical ordering among PEs
 Partitioning granularity Instruction Task Instruction
 Time at which partitioning is done Static/Dynamic Static/Dynamic Static/Dynamic
@@ -390,7 +410,7 @@ to partitioning at a higher level. Instead of having a 16-
 way instruction fetch mechanism that fetches and decodes
 instructions every cycle from an i-cache or a trace cache,
 the instruction fetch mechanism (including the i-cache) can
-be distributed across the PEs, as is done in the multiscalar
+be distributed across multiple PEs, as is done in the multiscalar
 processor [4] [14].
 3 Experimental Methodology
 The previous section presented a detailed description and
@@ -398,13 +418,13 @@ comparison of three decentralization approaches. Next, we
 present a detailed simulation-based performance evaluation
 of these three decentralization approaches.
 3.1 Experimental Setup
-The setup consists of 3 execution-driven simulators-based
+3.1 Experimental Setup
+ consists of 3 execution-driven simulators-based
 on the MIPS-II ISA-that simulate the 3 decentralization
 approaches in detail. The simulators do cycle-by-cycle sim-
-ulation, including execution along mispredicted paths. The
-simulators are equivalent in every respect except for the instruction
+ulation, including execution along mispredicted paths. The simulators are equivalent in every respect except for the instruction
 partitioning strategy. In particular, the following
-aspects are common for all of the simulators.
+aspects are common for all of The simulators.
 Instruction Fetch Mechanism: All execution models use
 a common control flow predictor to speculate the outcome of
 multiple branches every cycle. This high-level predictor, an
@@ -414,12 +434,12 @@ basis of prediction. A tree of depth 4, having up to 8 paths,
 is used. The predictor predicts one out of these 8 paths using
 a 2-level PAg predictor. Each tree-path (or trace) is allowed
 to have a maximum of 16 instructions. The first level table
-(Subgraph History Table) of the predictor has 1024 entries,
+(Subgraph History Table) of The predictor has 1024 entries,
 is direct mapped, and uses a pattern size of 6. The second
 level table (Pattern History Table) entries consist of 3-bit
 up/down saturating counters.
 A 128 Kbyte trace cache [12] is used to store recently seen
-traces. The trace cache is 8-way set-associative, has 1 cycle
+traces. A 128 Kbyte trace cache [12] is 8-way set-associative, has 1 cycle
 access time, and a block size of 16 instructions. All traces
 starting at the same address map to the same set in the
 trace cache. Every cycle, the fetch mechanism can fetch
@@ -427,7 +447,7 @@ and dispatch up to 16 instructions.
 Data Memory System: All execution models use the same
 memory system, with an L1 data cache and a perfect L2
 cache (so as to reduce the memory requirements of the simu-
-lators). The L1 data cache is 64 Kbytes, 4-way set-associative,
+lators). A 128 Kbyte trace cache [12] is 64 Kbytes, 4-way set-associative,
 32-way interleaved, non-blocking, 16 byte blocks, and 1 cycle
 access latency. Memory address disambiguation is performed
 in a decentralized manner using a structure called
@@ -447,7 +467,8 @@ ffl Maximum Fetch Size (f): instructions.
 ffl PE issue width (d): the maximum number of instructions
 executed from a PE per cycle is fixed at 3 (be-
 cause higher values gave only marginal improvements).
-Thus, each PE has 3 EUs.
+Thus, each the PE to which the producer instruction has
+been dispatched has 3 EUs.
 ffl PE issue strategy: the default strategy is to use out-
 of-order execution within each PE.
 The experiments involve varying 3 parameters: the partitioning
@@ -471,10 +492,13 @@ Table
 2: Benchmark Statistics
 program is based on the UNIX compression utility, and
 performs a compression/decompression sequence on a large
-buffer of data. The gcc program is a version of the GNU
-C compiler. It has many short loops, and has poor instruction
-locality. The go program is based on the internationally
-ranked Go program, "The Many Faces of Go". The li
+buffer of data. Benchmark Statistics
+program is a version of the GNU
+C compiler. Benchmark Statistics
+program has many short loops, and has poor instruction
+locality. Benchmark Statistics
+program is based on Benchmark Statistics
+program, "The Many Faces of Go". The li
 Benchmark Percentage of Instrs Using an EU type EU!EU communication
 Program Integer Load/Store Branch Int!Int Int!Load/Store Int!Branch Load/Store!Int
 gcc 43.2% 36.1% 20.7% 26.2% 32.6% 13.9% 11.2%
@@ -485,9 +509,10 @@ vortex 28.7% 52.4% 18.9% 13.5% 47.6% 7.5% 8.7%
 Table
 
 3: Distribution of Instructions based on Execution Unit Used
-program is a lisp interpreter written in C. The m88ksim program
-is a simulator for the Motorola 88100 processor, and
-the vortex program is a single-user object-oriented database
+program is a lisp interpreter written in C. Benchmark Statistics
+programis a simulator for the Motorola 88100 processor, and
+Benchmark Statistics
+program is a single-user object-oriented database
 program that exercises a system kernel coded in integer C.
 The programs are compiled for a MIPS R3000-Ultrix platform
 with a MIPS C (Version 3.0) compiler using the optimization
@@ -522,10 +547,10 @@ have EUs of a particular type, we measured the percentage
 of instructions that use each EU type. Table 3 gives these
 percentages. Based on the percentage of instructions using a
 particular EU, we used the following EU assignments. When
-the system has a single PE, all 3 EUs of that PE can execute
-any type of instruction. When the system has 2 PEs, the
+the EDD system has a single PE, all 3 EUs of that PE can execute
+any type of instruction. When the EDD system has 2 PEs, the
 first PE houses 3 Integer/FP EUs, and the second PE houses
-3 Load/Store/Branch EUs. When the system has 4 or more
+3 Load/Store/Branch EUs. When the EDD system has 4 or more
 PEs, the division of PEs is as in Table 4. PEs having EUs
 Number of Integer Load/Store Branch FP
 PEs PEs PEs PEs PEs
@@ -543,14 +568,14 @@ Table
 
 3). The instruction partitioning strategy has
 a dynamic component in that when an instruction can be
-assigned to multiple PEs, it is assigned to the candidate PE
+assigned to multiple PEs, The instruction partitioning strategy is assigned to the candidate PE
 having the least number of instructions.
 CDD: For studying the CDD partitioning approach, we
 connect the PEs in a circular queue-like manner. Two different
 task sizes, namely 8 and 16, are used. In the first case,
 called CDD-8, a trace of up to 8 instructions is fetched in a
 cycle and assigned to the PE at the tail of the PE circular
-queue. In the second case, called CDD-16, a trace of up to
+queue. In the first case, called CDD-16, a trace of up to
 instructions is fetched in a cycle and assigned to the tail
 PE.
 DDD: For studying the DDD partitioning approach, we use
@@ -558,8 +583,7 @@ two different partitioning algorithms. The first algorithm,
 called (DDD-Multicluster), follows the multicluster
 approach depicted in [3]. A subset of the ISA-visible registers
 is assigned to each PE such that each ISA-visible register
-has the notion of a home-PE. For our studies, the n th
-PE was considered the home-PE for registers r
+has the notion of a home-PE. For our studies, the PE was considered the home-PE for registers r
 through
 r
 is the number of general-purpose
@@ -574,7 +598,8 @@ of dest. register
 st source register
 If 2 or more source registers &
 destination register are same,
-then, home-PE of that register;
+then, home-PE of st source register
+;
 else, home-PE of dest. register
 
 Table
@@ -582,14 +607,14 @@ Table
 5: Instruction Assignment for
 DDD-M Partitioning Scheme
 The second DDD algorithm, called DDD-P (DDD-PEWs),
-makes better use of data dependence information. It uses
+makes better use of data dependence information. The second DDD algorithm, called DDD-P (DDD-PEWs) uses
 off-line hardware to construct the register data flow graph
 (RDFG) for each trace (tree-path) when the trace is encountered
 for the first time. Once the RDFG of a trace is
 data dependence chains (or strands) are identified
-in the RDFG. Some dependence strands may have communication
-between them. Once the strands are identified, a
-relative PE assignment is made for the strands, with a view
+in the RDFG of a trace. Some dependence strands may have communication
+between Some dependence strands. Once Some dependence strands are identified, a
+relative PE assignment is made for Some dependence strands, with a view
 IPC
 Number of PEs
 DDD-M
@@ -620,19 +645,23 @@ producer strand's PE. Strands that do not have data dependences
 with any other strands of the trace are marked
 as relocatable. At the time of instruction dispatch, the dispatch
 unit decides the PE placement for each strand based
-on its dependences to data coming from outside the trace
+on the dispatch
+unit dependences to data coming from outside the trace
 and the relative PE placement decided statically by the off-line
 hardware. A 2-cycle penalty (stall) is imposed when a
 trace is seen for the first time in order to form the RDFG
 and the relative PE assignments. If the PE assigned to an
-instruction is full, the instruction is assigned to the closest
-succeeding PE having an empty slot.
+instruction is full, an
+instruction is assigned to the closest
+succeeding the
+producer strand's PE having an empty slot.
 Performance Results
 4.1 IPC with Unidirectional Ring
 Our first set of studies focuses on comparing the performance
 of different partitioning algorithms as the number of
 PEs is varied, and a unidirectional ring is used to connect
-the PEs. Figure 5 plots the IPC values obtained with the default
+
+PEs. Figure 5 plots the IPC values obtained with the default
 parameters (PE scheduler
 for each
 benchmark. The values of p that we consider are f1, 2, 4, 8,
@@ -765,25 +794,28 @@ increase as the number of PEs is increased.
 The central idea behind decentralized execution models is to
 split the dynamic execution window of instructions amongst
 smaller, parallel PEs. By keeping each PE relatively small,
-the circuitry needed to search it when forwarding newly produced
+the circuitry needed to search the circuitry when forwarding newly produced
 values is greatly reduced, thus reducing the impact of
 dynamic scheduling on clock speed. By allocating dependent
 instructions to the same PE as much as possible, communication
 localities can be exploited, thereby minimizing
 global communication within the processor. We examined
 three categories of decentralized execution models, based on
-the type of dependence they use as the basis for instruction
-partitioning. These categories are (i) Execution unit
+the type of dependence communication
+localities use as the basis for instruction
+partitioning. three categories of decentralized execution models are (i) Execution unit
 Dependence based Decentralization (EDD), (ii) Control Dependence
 based Decentralization (CDD), and (iii) Data Dependence
 based Decentralization (DDD).
 The detailed performance results that we obtained, on an
-ensemble of well-known benchmarks, lead us to two important
+ensemble of well-known benchmarks, lead we to two important
 conclusions. First, the currently used approach-
 EDD-does not provide good performance even when the
 instruction window is split across a moderate number of PEs
-and when a crossbar is used to connect the PEs. Second,
-when a unidirectional ring is used to interconnect the PEs,
+and when a crossbar is used to connect PEs
+. Second,
+when a unidirectional ring is used to interconnect PEs
+,
 the DDD-P approach provides the best IPC values when a
 IPC
 Number of PEs
@@ -802,7 +834,8 @@ vortex
 Figure
 
 Nops with a Realistic (log 2 p cycle) Crossbar PE Interconnect
-moderate number of PEs is used. This is due to its ability
+moderate number of PEs is used. This is due to Crossbar PE Interconnect
+moderate number of PEs ability
 to exploit localities of communication between instructions.
 When a large number of PEs is used, the performance of
 DDD-P starts dropping, and the CDD approach begins to

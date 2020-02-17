@@ -1,18 +1,18 @@
 --T
 Neural methods for dynamic branch prediction.
 --A
-This article presents a new and highly accurate method for branch prediction. The key idea is to use one of the simplest possible neural methods, the perceptron, as an alternative to the commonly used two-bit counters. The source of our predictor's accuracy is its ability to use long history lengths, because the hardware resources for our method scale linearly, rather than exponentially, with the history length. We describe two versions of perceptron predictors, and we evaluate these predictors with respect to five well-known predictors. We show that for a 4 KB hardware budget, a simple version of our method that uses a global history achieves a misprediction rate of 4.6&percnt; on the SPEC 2000 integer benchmarks, an improvement of 26&percnt; over gshare. We also introduce a global/local version of our predictor that is 14&percnt; more accurate than the McFarling-style hybrid predictor of the Alpha 21264. We show that for hardware budgets of up to 256 KB, this global/local perceptron predictor is more accurate than Evers' multicomponent predictor, so we conclude that ours is the most accurate dynamic predictor currently available. To explore the feasibility of our ideas, we provide a circuit-level design of the perceptron predictor and describe techniques that allow our complex predictor to operate quickly. Finally, we show how the relatively complex perceptron predictor can be used in modern CPUs by having it override a simpler, quicker Smith predictor, providing IPC improvements of 15.8&percnt; over gshare and 5.7&percnt; over the McFarling hybrid predictor.
+This article presents a new and highly accurate method for branch prediction. The key idea is to use one of the simplest possible neural methods, the perceptron, as an alternative to the commonly used two-bit counters. The source of our predictor's accuracy is The source of our predictor's accuracy ability to use long history lengths, because the hardware resources for our method scale linearly, rather than exponentially, with the history length. We describe two versions of perceptron predictors, and We evaluate these predictors with respect to five well-known predictors. We show that for a 4 KB hardware budget, a simple version of We method that uses a global history achieves a misprediction rate of 4.6&percnt; on the SPEC 2000 integer benchmarks, an improvement of 26&percnt; over gshare. We also introduce a global/local version of We predictor that is 14&percnt; more accurate than the McFarling-style hybrid predictor of the Alpha 21264. We show that for hardware budgets of up to 256 KB, this global/local perceptron predictor is more accurate than Evers' multicomponent predictor, so We conclude that We is the most accurate dynamic predictor currently available. To explore the feasibility of We ideas, We provide a circuit-level design of the perceptron predictor and describe techniques that allow We complex predictor to operate quickly. Finally, We show how the relatively complex perceptron predictor can be used in modern CPUs by having it override a simpler, quicker Smith predictor, providing IPC improvements of 15.8&percnt; over gshare and 5.7&percnt; over the McFarling hybrid predictor.
 --B
 Figure
 
 1: Perceptron Model. The input values , are propagated through the weighted connections by
-taking their respective products with the weights . These products are summed, along with the bias
+taking their respective products with the weights . their respective products are summed, along with the bias
 weight , to produce the output value .
 4.1 How Perceptrons Work
 The perceptron was introduced in 1962 [24] as a way to study brain function. We consider the simplest
 of many types of perceptrons [2], a single-layer perceptron consisting of one articial neuron connecting
 several input units by weighted edges to one output unit. A perceptron learns a target Boolean function
-of inputs. In our case, the are the bits of a global branch history shift register, and the
+of inputs. In We case, the are the bits of a global branch history shift register, and the
 target function predicts whether a particular branch will be taken. Intuitively, a perceptron keeps track
 of positive and negative correlations between branch outcomes in the global history and the branch being
 predicted.
@@ -28,13 +28,14 @@ taken. A negative output is interpreted as predict not taken. A non-negative out
 taken.
 4.2 Training Perceptrons
 Once the perceptron output has been computed, the following algorithm is used to train the perceptron.
-Let be -1 if the branch was not taken, or 1 if it was taken, and let be the threshold, a parameter to the
+Let be -1 if the branch was not taken, or 1 if the branch was taken, and let be the threshold, a parameter to the
 training algorithm used to decide when enough training has been done.
 if sign or then
 for := 0 to do
 end for
-Since and are always either -1 or 1, this algorithm increments the th weight when the branch
-outcome agrees with , and decrements the weight when it disagrees. Intuitively, when there is mostly
+Since and are always either -1 or 1, the following algorithm increments the th weight when the branch
+outcome agrees with , and decrements the weight when the branch
+outcome disagrees. Intuitively, when there is mostly
 agreement, i.e., positive correlation, the weight becomes large. When there is mostly disagreement, i.e.,
 negative correlation, the weight becomes negative with large magnitude. In both cases, the weight has
 a large inuence on the prediction. When there is weak correlation, the weight remains close to 0 and
@@ -51,9 +52,9 @@ decided by the above equation, only linearly separable functions can be learned 
 For instance, a perceptron can learn the logical AND of two inputs, but not the exclusive-OR, since there
 is no line separating true instances of the exclusive-OR function from false ones on the Boolean plane.
 As we will show later, many of the functions describing the behavior of branches in programs are
-linearly separable. Also, since we allow the perceptron to learn over time, it can adapt to the non-linearity
+linearly separable. Also, since we allow the perceptron to learn over time, the perceptron can adapt to the non-linearity
 introduced by phase transitions in program behavior. A perceptron can still give good predictions when
-learning a linearly inseparable function, but it will not achieve 100% accuracy. By contrast, two-level
+learning a linearly inseparable function, but A perceptron will not achieve 100% accuracy. By contrast, two-level
 PHT schemes like gshare can learn any Boolean function if given enough training time.
 4.4 Branch Prediction with Perceptrons
 We can use a perceptron to learn correlations between particular branch outcomes in the global history
@@ -66,19 +67,19 @@ The processor keeps a table of perceptrons in fast SRAM, similar to the table of
 in other branch prediction schemes. The number of perceptrons, , is dictated by the hardware budget
 and number of weights, which itself is determined by the amount of branch history we keep. Special
 circuitry computes the value of and performs the training. We discuss this circuitry in Section 5. When
-the processor encounters a branch in the fetch stage, the following steps are conceptually taken:
+The processor encounters a branch in the fetch stage, the following steps are conceptually taken:
 1. The branch address is hashed to produce an index into the table of perceptrons.
-2. The th perceptron is fetched from the table into a vector register, , of weights.
+2. The th perceptron is fetched from the table of perceptrons into a vector register, , of weights.
 3. The value of is computed as the dot product of and the global history register.
-4. The branch is predicted not taken when is negative, or taken otherwise.
-5. Once the actual outcome of the branch becomes known, the training algorithm uses this outcome
+4. the current branch is predicted not taken when is negative, or taken otherwise.
+5. Once the actual outcome of the current branch becomes known, the training algorithm uses this outcome
 and the value of to update the weights in .
 6. is written back to the th entry in the table.
 It may appear that prediction is slow because many computations and SRAM transactions take place
 in steps 1 through 5. However, Section 5 shows that a number of arithmetic and microarchitectural tricks
 enable a prediction in a single cycle, even for long history lengths.
 5 Implementation
-This section explores the design space for perceptron predictors and discusses details of a circuit-level
+Section 5 explores the design space for perceptron predictors and discusses details of a circuit-level
 implementation.
 5.1 Design Space
 Given a xed hardware budget, three parameters need to be tuned to achieve the best performance: the
@@ -86,26 +87,26 @@ history length, the number of bits used to represent the weights, and the thresh
 History length. Long history lengths can yield more accurate predictions [9] but also reduce the number
 of table entries, thereby increasing aliasing. In our experiments, the best history lengths ranged from 4 to
 66, depending on the hardware budget. The perceptron predictor can use more than one kind of history.
-We have used both purely global history as well as a combination of global and per-branch history.
+our have used both purely global history as well as a combination of global and per-branch history.
 Representation of weights. The weights for the perceptron predictor are signed integers. Although
 many neural networks have oating-point weights, we found that integers are sufcient for our percep-
-trons, and they simplify the design. We nd that using 8 bit weights provides the best trade-off between
+trons, and many neural networks simplify the design. We nd that using 8 bit weights provides the best trade-off between
 accuracy and hardware budget.
 Threshold. The threshold is a parameter to the perceptron training algorithm that is used to decide
 whether the predictor needs more training.
 5.2 Circuit-Level Implementation
-Here, we discuss general techniques that will allow us to implement a quick perceptron predictor. We then
+Here, we discuss general techniques that will allow we to implement a quick perceptron predictor. we then
 give more detailed results of a transistor-level simulation.
 Computing the Perceptron Output. The critical path for making a branch prediction includes the computation
-of the perceptron output. Thus, the circuit that evaluates the perceptron should be as fast as
+of the Perceptron Output. Thus, the circuit that evaluates the perceptron should be as fast as
 possible. Several properties of the problem allow us to make a fast prediction. Since -1 and 1 are the
 only possible input values to the perceptron, multiplication is not needed to compute the dot product.
 Instead, we simply add when the input bit is 1 and subtract (add the two's-complement) when the input
 bit is -1. In practice, we have found that adding the one's-complement, which is a good estimate for the
-two's-complement, works just as well and lets us avoid the delay of a small carry-propagate adder. This
+two's-complement, works just as well and lets we avoid the delay of a small carry-propagate adder. This
 computation is similar to that performed by multiplication circuits, which must nd the sum of partial
 products that are each a function of an integer and a single bit. Furthermore, only the sign bit of the result
-is needed to make a prediction, so the other bits of the output can be computed more slowly without having
+is needed to make a prediction, so the other bits of the Perceptron Output can be computed more slowly without having
 to wait for a prediction. In this paper, we report only results that simulate this complementation idea.
 Training. The training algorithm of Section 4.2 can be implemented efciently in hardware. Since there
 are no dependences between loop iterations, all iterations can execute in parallel. Since in our case both
@@ -117,12 +118,12 @@ else
 Circuit-Level Simulation. Using a custom logic design program and the HSPICE and CACTI 2.0 simulators
 we designed and simulated a hardware implementation of the elements of the critical path for the
 perceptron predictor for several table sizes and history lengths. We used CACTI, a cache modeling tool,
-to estimate the amount of time taken to read the table of perceptrons, and we used HSPICE to measure the
-latency of our perceptron output circuit.
+to estimate the amount of time taken to read the table of perceptrons, and We used HSPICE to measure the
+latency of We perceptron output circuit.
 The perceptron output circuit accepts input signals from the weights array and from the history register.
-As weights are read, they are bitwise exclusive-ORed with the corresponding bits of the history register. If
+As weights are read, weights are read are bitwise exclusive-ORed with the corresponding bits of the history register. If
 the th history bit is set, then this operation has the effect of taking the one's-complement of the th weight;
-otherwise, the weight is passed unchanged. After the weights are processed, their sum is found using a
+otherwise, the weight is passed unchanged. After the weights are processed, the weights are processed sum is found using a
 Wallace-tree of 3-to-2 carry-save adders [5], which reduces the problem of nding the sum of numbers to
 the problem of nding the sum of numbers. The nal two numbers are summed with a carry-lookahead
 adder. The Wallace-tree has depth , and the carry-lookahead adder has depth , so the
@@ -149,19 +150,23 @@ Length (bytes) Delay (ps) Delay (ps) Delay (ps) @ 833 MHz @ 1.76 GHz
 
 Table
 
-1: Perceptron Predictor Delay. This table shows the simulated delay of the perceptron predictor at several
+1: Perceptron Predictor Delay. Table
+
+1: Perceptron Predictor Delay shows the simulated delay of the perceptron predictor at several
 table sizes and history length congurations. The delay of computing the output and fetching the perceptron from
-the table are shown separately, as well as in total.
-Compensating for Delay. Ideally, a branch predictor operates in a single processor clock cycle. Jime.nez
+Table
+
+1: Perceptron Predictor Delay are shown separately, as well as in total.
+Compensating for Delay (ps). Ideally, a branch predictor operates in a single processor clock cycle. Jime.nez
 et al. study a number of techniques for reducing the impact of delay on branch predictors [16]. For
 example, a cascading perceptron predictor would use a simple predictor to anticipate the address of the
-next branch to be fetched, and it would use a perceptron to begin predicting the anticipated address. If the
+next branch to be fetched, and a cascading perceptron predictor would use a perceptron to begin predicting the anticipated address. If the
 branch were to arrive before the perceptron predictor were nished, or if the anticipated branch address
 were found to be incorrect, a small gshare table would be consulted for a quick prediction. The study
 shows that a similar predictor, using two gshare tables, is able to use the larger table 47% of the time.
 An overriding perceptron predictor would use a quick gshare predictor to get an immediate prediction,
 starting a perceptron prediction at the same time. The gshare prediction is acted upon by the fetch engine.
-Once the perceptron prediction completes, both predictions are compared. If they differ, the actions taken
+Once the perceptron prediction completes, both predictions are compared. If both predictions differ, the actions taken
 by the fetch engine are rolled back and restarted with the new prediction, incurring a small penalty. The
 Alpha 21264 uses this kind of branch predictor, with a slower hybrid branch predictor overriding a less
 accurate but faster line predictor [18]. When a line prediction is overridden, the Alpha predictor incurs
@@ -178,9 +183,9 @@ predictors. We then evaluate performance using IPC as the metric, comparing an o
 predictor against an overriding McFarling-style predictor at two different clock rates. Finally, we present
 analysis to explain why the perceptron predictor performs well.
 6.1 Methodology
-Here we describe our experimental methodology. We discuss the other predictors simulated, the benchmarks
+Here we describe we experimental methodology. we discuss the other predictors simulated, the benchmarks
 used, the tuning of the predictors, and other issues.
-Predictors simulated. We compare our new predictor against gshare [22], and bi-mode [20], and a
+Predictors simulated. we compare we new predictor against gshare [22], and bi-mode [20], and a
 combination gshare and PAg McFarling-style hybrid predictor [22] similar to that of the Alpha 21264,
 with all tables scaled exponentially for increasing hardware budgets. For the perceptron predictor, we
 simulate both a purely global predictor, as well as a predictor that uses both global and local history.
@@ -191,7 +196,7 @@ the predictor, reecting the design of the Alpha 21264 hybrid predictor. For gsha
 predictors, we also simulate the agree mechanism [28], which predicts whether a branch outcome will
 agree with a bias bit set in the branch instruction. The agree mechanism turns destructive aliasing into
 constructive aliasing, increasing accuracy at small hardware budgets.
-Our methodology differs from our previous work on the perceptron predictor [17], which used traces
+Our methodology differs from Our previous work on the perceptron predictor [17], which used traces
 from x86 executables of SPEC2000 and only explored global versions of the perceptron predictor. We nd
 that the perceptron predictor achieves a larger improvement over other predictors for the Alpha instruction
 set than for the x86 instruction set. We believe that this difference stems from the Alpha's RISC instruction
@@ -199,17 +204,17 @@ set, which requires more dynamic branches to accomplish the same work, and which
 histories for accurate prediction. Because the perceptron predictor can make use of longer histories than
 other predictors, it performs better for RISC instruction sets.
 Gathering traces. We use SimpleScalar/Alpha [3] to gather traces. Each time the simulator executes a
-conditional branch, it records the branch address and outcome in a trace le. Branches in libraries are not
-proled. The traces are fed to a program that simulates the different branch prediction techniques.
+conditional branch, the simulator records the branch address and outcome in a trace le. Branches in libraries are not
+proled. Gathering traces are fed to a program that simulates the different branch prediction techniques.
 Benchmarks simulated. We use the 12 SPEC 2000 integer benchmarks. We allow each benchmark to
 execute 300 million branches, which causes each benchmark to execute at least one billion instructions.
 We skip past the rst 50 million branches in the trace to measure only the steady state prediction accuracy,
-without effects from the benchmarks' initializations. For tuning the predictors, we use the SPEC train
-inputs. For reporting misprediction rates, we test the predictors on the ref inputs.
+without effects from the benchmarks' initializations. For tuning the predictors, We use the SPEC train
+inputs. For reporting misprediction rates, We test the predictors on the ref inputs.
 Tuning the predictors. We tune each predictor for history length using traces gathered from the each
 of the 12 benchmarks and the train inputs. We exhaustively test every possible history length at each
 hardware budget for each predictor, keeping the history length yielding the lowest harmonic mean mis-prediction
-rate. For the global/local perceptron predictor, we exhaustively test each pair of history lengths
+rate. For the global/local perceptron predictor, We exhaustively test each pair of history lengths
 such that the sum of global and local history length is at most 50. For the agree mechanism, we set bias
 bits in the branch instructions using branch biases learned from the train inputs.
 For the global perceptron predictor, we nd, for each history length, the best value of the threshold by
@@ -220,7 +225,7 @@ Table
 
 2 shows the results of the history length tuning. We nd an interesting relationship between
 history length and threshold: the best threshold for a given history length is always exactly
-. This is because adding another weight to a perceptron increases its average output by some
+. This is because adding another weight to a perceptron increases a perceptron average output by some
 constant, so the threshold must be increased by a constant, yielding a linear relationship between history
 length and threshold. Through experimentation, we determine that using 8 bits for the perceptron weights
 yields the best results.
@@ -239,7 +244,9 @@ in bytes length of entries length of entries history of entries
 
 Table
 
-2: Best History Lengths. This table shows the best amount of global history to keep for gshare and two
+2: Best History Lengths. Table
+
+2 shows the best amount of global history to keep for gshare and two
 versions of the perceptron predictor, as well as the number of table entries for each predictor.Percent Mispredicted
 gshare
 gshare with agree
@@ -343,15 +350,16 @@ As Moore's Law continues to provide more and more transistors in the same area, 
 much larger hardware budgets for branch predictors. Evers' thesis [10] explores the design space for multi-component
 hybrid predictors using large hardware budgets, from KB to 368 KB. To our knowledge,
 the multi-component predictors presented in Evers' thesis are the most accurate fully dynamic branch
-predictors known in previous work. This predictor uses a McFarling-style chooser to choose between two
+predictors known in previous work. A global/local hybrid predictor with the same conguration as the Alpha 21264
+predictor using 3712 bytes uses a McFarling-style chooser to choose between two
 other McFarling-style hybrid predictors. The rst hybrid component joins a gshare with a short history
-to a gshare with a long history. The other hybrid component consists of a PAs hybridized with a loop
+to a gshare with a long history. The rst hybrid component consists of a PAs hybridized with a loop
 predictor, which is capable of recognizing regular looping behavior even for loops with long trip counts.
-We simulate Evers' multi-component predictors using the same conguration parameters given in his
+We simulate Evers' multi-component predictors using the same conguration parameters given in Evers'
 thesis. At the same set of hardware budgets, we simulate a global/local version of the perceptron predictor.
 The tuning of this large perceptron predictor is not as exhaustive as for the smaller hardware budgets, due
-to the huge design space. We tune for the best global history length on the SPEC train inputs, and then
-for the best fraction of global versus local history at a single hardware budget, extrapolating this fraction to
+to the huge design space. our tune for the best global history length on the SPEC train inputs, and then
+for the best fraction of global versus local history at a single hardware budget, extrapolating the best fraction of global versus local history at a single hardware budget to
 the entire set of hardware budgets. As with our previous global/local perceptron experiments, we allocate
 35% of the hardware budgets to storing the table of local histories. The conguration of the perceptron
 predictor is given in Table 3.
@@ -372,14 +380,14 @@ to one another as the hardware budget is increased. Both predictors are capable 
 misprediction rates at the 368 KB hardware budget, with the perceptron at 0.85% and the multi-component
 predictor at 0.93%.
 We claim that these results are evidence that the perceptron predictor is the most accurate fully dynamic
-branch predictor known. We must point out that we have not exhaustively tuned either the multi-component
+branch predictor known. We must point out that We have not exhaustively tuned either the multi-component
 or the perceptron predictors because of the huge computational challenge. Nevertheless, there
 is a clear separation between the misprediction rates of the multi-component and perceptron predictors,
 and between the perceptron and all other predictors we have examined at lower hardware budgets; thus,
-we are condent that our claim can be veried by independent researchers.
+we are condent that we claim can be veried by independent researchers.
 6.4 IPC
-We have seen that the perceptron predictor is highly accurate but has a multi-cycle delay associated with it.
-If the delay is too large, overall performance may suffer as the processor stalls waiting for predictions. We
+we have seen that the perceptron predictor is highly accurate but has a multi-cycle delay associated with the perceptron predictor.
+If a multi-cycle delay associated with it is too large, overall performance may suffer as the processor stalls waiting for predictions. We
 Percent Mispredicted
 Multi-Component Hybrid
 Global/Local Perceptron0
@@ -391,27 +399,30 @@ Figure
 now evaluate the perceptron predictor in terms of overall processor performance, measured in IPC, and
 taking into account predictor access delay. In particular, we compare an overriding perceptron predictor
 against the overriding hybrid predictor of the Alpha 21264, and we consider two processor congurations.
-One conguration uses a moderate clock rate that matches the latest Alpha processor, while the other
+One conguration uses a moderate clock rate that matches the latest the Alpha 21264 processor, while the other
 approximates the more aggressive clock rate and deeper pipeline of the Intel Pentium 4.
 This remainder of this section describes congurations of the overriding perceptron predictor for these
 two clock rates and reports on simulated IPC for the SPEC 2000 benchmark.
 6.4.1 Moderate Clock Rate Simulations
-Currently, the fastest Alpha processor in 180 nm technology is clocked at a rate of 833 MHz. At this clock
-rate, both the perceptron predictor and Alpha hybrid predictor deliver a prediction in two clock cycles.
+Currently, the fastest the Alpha 21264 processor in 180 nm technology is clocked at a rate of 833 MHz. At this clock
+rate, both the perceptron predictor and the Alpha 21264 hybrid predictor deliver a prediction in two clock cycles.
 Using SimpleScalar/Alpha, we simulate a two-level overriding predictors at 833 MHz. The rst level
 is a 256-entry Smith predictor [27], i.e., a simple one-level table of two-bit saturating counters indexed
-by branch address. This predictor roughly simulates the line predictor of the overriding Alpha predictor.
+by branch address. A global/local hybrid predictor with the same conguration as the Alpha 21264
+predictor using 3712 bytes roughly simulates the line predictor of the overriding Alpha predictor.
 Our Smith predictor achieves a harmonic mean accuracy of 85.2%, which is the same accuracy quoted
 for the Alpha line predictor [18]. For the second level predictor, we simulate both the perceptron predictor
 and the Alpha hybrid predictor. The perceptron predictor consists of 133 perceptrons, each with 24
 weights. Although the 25 weight perceptron predictor was the best choice at this hardware budget in our
 simulations, the 24 weight version has much the same accuracy but is 10% faster. We have observed that
-the ideal ratio of per-branch history bits to total history bits is roughly 20%, so we use 19 bits of global
+the ideal ratio of per-branch history bits to total history bits is roughly 20%, so We use 19 bits of global
 history and 4 bits of per-branch history from a table of 1024 histories. The total state required for this predictor
 is 3704 bytes, approximately the same as the Alpha hybrid predictor, which uses 3712 bytes. Both
-the Alpha hybrid predictor and the perceptron predictor incur a single-cycle penalty when they override
+the Alpha hybrid predictor and the perceptron predictor incur a single-cycle penalty when Both
+ override
 the Smith predictor. We also simulate a 2048-entry non-overriding gshare predictor for reference. This
-gshare uses less state since it operates in a single cycle; note that this is the amount of state allocated to
+gshare uses less state since This
+gshare operates in a single cycle; note that this is the amount of state allocated to
 the branch predictor in the HP-PA/RISC 8500 [21], which uses a clock rate similar to that of the Alpha.
 We again simulate the 12 SPEC int 2000 benchmarks, this time allowing each benchmark to execute 2
 billion instructions. We simulate the 7-cycle misprediction penalty of the Alpha 21264.
@@ -429,7 +440,8 @@ but the prediction is wrong, so a full misprediction penalty is incurred.
 Figure
 
 5 shows the instructions per cycle (IPC) for each of the predictors. Even though there is a
-penalty when the overriding Alpha and perceptron predictors override the Smith predictor, their increased
+penalty when the overriding the Alpha 21264 and perceptron predictors override the Smith predictor, Even though there is a
+penalty when the overriding Alpha and perceptron predictors override the Smith predictor increased
 accuracies more than compensate for this effect, achieving higher IPCs than a single-cycle gshare. The
 perceptron predictor yields a harmonic mean IPC of 1.65, which is higher than the overriding predictor at
 1.59, which itself is higher than gshare at 1.53.
@@ -445,19 +457,20 @@ read the table of perceptrons and three to propagate signals to compute the perc
 the perceptron predictor will allow us to get one prediction each cycle, so that branches that come close
 together don't have to wait until the predictor is nished predicting the previous branch. The Wallace-tree
 for this perceptron has 7 levels. With a small cost in latch delay, we can pipeline the Wallace-tree in four
-stages: one to read the perceptron from the table, another for the rst three levels of the tree, another for
+stages: one to read this perceptron from the table, another for the rst three levels of The Wallace-tree
+for this perceptron, another for
 the second three levels, and a fourth for the nal level and the carry-lookahead adder at the root of the
 tree. The new perceptron predictor operates as follows:
-1. When a branch is encountered, it is immediately predicted with a small Smith predictor. Execution
+1. When a branch is encountered, a branch is immediately predicted with a small Smith predictor. Execution
 continues along the predicted path.
 2. Simultaneously, the local history table and perceptron tables are accessed using the branch address
 as an index.
-3. The circuit that computes the perceptron output takes its input from the global and local history
+3. The circuit that computes the perceptron output takes the perceptron output input from the global and local history
 registers and the perceptron weights.
-4. Four cycles after the initial prediction, the perceptron prediction is available. If it differs from the
+4. Four cycles after the initial prediction, the perceptron prediction is available. If the perceptron prediction differs from the
 initial prediction, instructions executed since that prediction are squashed and execution continues
 along the other path.
-5. When the branch executes, the corresponding perceptron is quickly trained and stored back to the
+5. When a branch executes, the corresponding perceptron is quickly trained and stored back to the
 table of perceptrons.
 
 Figure
@@ -466,8 +479,10 @@ Figure
 Pentium 4. The misprediction penalty is 20, which simulates the long pipeline of the Pentium 4. The
 Alpha overriding hybrid predictor is conservatively scaled to take 3 clock cycles, while the overriding
 perceptron predictor takes 4 clock cycles. The 2048-entry gshare predictor is unmodied. Even though
-the perceptron predictor takes longer to make a prediction, it still yields the highest IPC in all benchmarks
-because of its superior accuracy. The perceptron predictor yields an IPC of 1.48, which is 5.7% higher
+the perceptron predictor takes longer to make a prediction, 
+ still yields the highest IPC in all benchmarks
+because of the highest IPC in all benchmarks
+ superior accuracy. The perceptron predictor yields an IPC of 1.48, which is 5.7% higher
 than that of the hybrid predictor at 1.40.1-cycle gshare
 Alpha-like 2-cycle overriding predictor
 Perceptron 2-cycle overriding predictor
@@ -516,7 +531,7 @@ training time depends on the amount of history considered; a longer history may 
 set of two-bit counters that must be initialized when the predictor is rst learning the branch. This effect
 has a negative impact on prediction rates, and at a certain point, longer histories begin to hurt performance
 for these schemes [23]. As we will see in the next section, the perceptron prediction does not have this
-weakness, as it always does better with a longer history length.
+weakness, as the perceptron prediction always does better with a longer history length.
 1-cycle gshare
 Alpha-like 3-cycle overriding predictor
 Perceptron 4-cycle overriding predictor
@@ -563,8 +578,10 @@ at a 64K hardware budget, where the perceptron predictor normally outperforms gs
 only allowing the perceptron predictor to use as many history bits as gshare (18 bits), we nd that gshare
 performs better, with a misprediction rate of 1.86% compared with 1.96% for the perceptron predictor.
 The inferior performance of this crippled predictor has two likely causes: there is more destructive aliasing
-with perceptrons because they are larger, and thus fewer, than gshare's two-bit counters, and perceptrons
-are capable of learning only linearly separable functions of their input, while gshare can potentially learn
+with perceptrons because more destructive aliasing
+with perceptrons are larger, and thus fewer, than gshare's two-bit counters, and perceptrons
+are capable of learning only linearly separable functions of more destructive aliasing
+with perceptrons input, while gshare can potentially learn
 any Boolean function.
 
 Figure
@@ -575,13 +592,13 @@ longer history lengths than usual. As we allow each predictor to consider longer
 becomes more accurate until gshare becomes worse and then runs out of bits (since gshare requires resources
 exponential in the number of history bits), while the perceptron predictor continues to improve.
 With this unrealistically huge hardware budget, gshare performs best with a history length of 23, where it
-achieves a misprediction rate of 1.55%. The perceptron predictor is best at a history length of 66, where it
+achieves a misprediction rate of 1.55%. The perceptron predictor is best at a history length of 66, where The perceptron predictor
 achieves a misprediction rate of 1.09%.
 6.7 Impact of Linearly Inseparable Branches
 In Section 4.3 we pointed out a fundamental limitation of perceptrons that perform ofine training: they
-cannot learn linearly inseparable functions. We now explore the impact of this limitation on branch prediction
+cannot learn linearly inseparable functions. We now explore the impact of a fundamental limitation of perceptrons that perform ofine training on branch prediction
 
-To relate linear separability to branch prediction, we dene the notion of linearly separable branches.
+To relate linear separability to branch prediction, We dene the notion of linearly separable branches.
 Percent Mispredictedgshare
 bi-mode
 Number of times a branch has been executed
@@ -593,13 +610,14 @@ been executed. The -axis is the average, over all branches in the program, of 1 
 otherwise. Over time, this statistic tracks how quickly each predictor learns. The perceptron predictor achieves
 greater accuracy earlier than the other two methods.
 Let be the most recent bits of global branch history. For a static branch , there exists a Boolean
-function that best predicts 's behavior. It is this function, , that all branch predictors strive to
+function that best predicts 's behavior. It is a Boolean
+function that best predicts 's behavior, , that all branch predictors strive to
 learn. If is linearly separable, we say that branch is a linearly separable branch; otherwise, is a
 linearly inseparable branch.
 Theoretically, ofine perceptrons cannot predict linearly inseparable branches with complete accuracy,
 while PHT-based predictors have no such limitation when given enough training time. Does gshare predict
 linearly inseparable functions better than the perceptron predictor? To answer this question, we compute
-for each static branch in our benchmark suite and test whether the functions are linearly
+for each static branch in we benchmark suite and test whether the functions are linearly
 separable.
 
 Figure
@@ -608,17 +626,17 @@ Figure
 of dynamically executed branches that is linearly inseparable. For each benchmark, the bar on the left
 shows the misprediction rate of gshare, while the bar on the right shows the misprediction rate of a global
 perceptron predictor. Each bar also shows, using shading, the portion of mispredictions due to linearly
-inseparable branches and linearly separable branches. We observe two interesting features of this chart.
+inseparable branches and linearly separable branches. We observe two interesting features of This chart.
 First, most mispredicted branches are linearly inseparable, so linear inseparability correlates highly with
 unpredictability in general. Second, while it is difcult to determine whether the perceptron predictor
 performs worse than gshare on linearly inseparable branches, we do see that the perceptron predictor
 outperforms gshare in all cases except for 186.crafty, the benchmark with the highest fraction of
 linearly inseparable branches.
 Some branches require longer histories than others for accurate prediction, and the perceptron predictor
-often has an advantage for these branches. Figure 10 shows the relationship between this advantage and the
+often has an advantage for Some branches. Figure 10 shows the relationship between this advantage and the
 required history length, with one curve for linearly separable branches and one for inseparable branches.
 The axis represents the advantage of our predictor, computed by subtracting the misprediction rate of the
-perceptron predictor from that of gshare. We sorted all static branches according to their "best" history
+perceptron predictor from that of gshare. We sorted all static branches according to all static branches "best" history
 Global Perceptron
 gshare
 Percent Mispredicted0
@@ -629,14 +647,14 @@ Figure
 8: History Length vs. Performance. This graph shows how accuracy for gshare and the perceptronpredictor
 improves as history length is increased. The perceptron predictor is able to consider much longer histories with the
 same hardware budget.
-length, which is represented on the axis. Each data point represents the average misprediction rate of
+length, which is represented on The axis. Each data point represents the average misprediction rate of
 static branches (without regard to execution frequency) that have a given best history length. We use the
-perceptron predictor in our methodology for nding these best lengths: Using a perceptron trained for
+perceptron predictor in We methodology for nding these best lengths: Using a perceptron trained for
 each branch, we nd the most distant of the three weights with the greatest magnitude. This methodology
 is motivated by the work of Evers et al., who show that most branches can be predicted by looking at
 three previous branches [9]. As the best history length increases, the advantage of the perceptron predictor
-generally increases as well. We also see that our predictor is more accurate for linearly separable branches.
-For linearly inseparable branches, our predictor performs generally better when the branches require long
+generally increases as well. We also see that We predictor is more accurate for linearly separable branches.
+For linearly inseparable branches, our predictor performs generally better when linearly inseparable branches require long
 histories, while gshare sometimes performs better when branches require short histories.
 Linearly inseparable branches requiring longer histories, as well as all linearly separable branches, are
 always predicted better with the perceptron predictor. Linearly inseparable branches requiring fewer bits
@@ -645,14 +663,14 @@ of the perceptron predictor, even on the linearly inseparable branches.
 We found this history length by nding the most distant of the three weights with the greatest magnitude
 in a perceptron trained for each branch, an application of the perceptron predictor for analyzing branch
 behavior.
-6.8 Additional Advantages of the Perceptron Predictor
-Assigning condence to decisions. Our predictor can provide a condence-level in its predictions that
+6.8 Additional Advantages of the perceptron predictor
+Assigning condence to decisions. Our predictor can provide a condence-level in Our predictor predictions that
 can be useful in guiding hardware speculation. The output, , of the perceptron predictor is not a Boolean
 value, but a number that we interpret as taken if . The value of provides important information
 about the branch since the distance of from 0 is proportional to the certainty that the branch will be taken
 [15]. This condence can be used, for example, to allow a microarchitecture to speculatively execute both
 branch paths when condence is low, and to execute only the predicted path when condence is high.
-Some branch prediction schemes explicitly compute a condence in their predictions [14], but in our
+Some branch prediction schemes explicitly compute a condence in Some branch prediction schemes predictions [14], but in our
 predictor this information comes for free. We have observed experimentally that the probability that a
 Mispredictions
 Mispredictions
@@ -684,7 +702,7 @@ Benchmark
 Figure
 
 9: Linear Separability vs. Accuracy at a 4KB budget. For each benchmark, the leftmost bar shows the
-number of linearly separable dynamic branches in the benchmark, the middle bar shows the misprediction rate of
+number of linearly separable dynamic branches in the benchmark, the leftmost bar shows the misprediction rate of
 gshare at a 4KB hardware budget, and the right bar shows the misprediction rate of the perceptron predictor at the
 same hardware budget.
 branch will be taken can be accurately estimated as a linear function of the output of the perceptron
@@ -699,7 +717,7 @@ prediction schemes. For example, the methodology that we use in Section 6.7 coul
 to provide path length information to the variable length path predictor [29].
 Conclusions
 In this paper we have introduced a new branch predictor that uses neural learning techniquesthe perceptron
-in particularas the basic prediction mechanism. Perceptrons are attractive because they can use
+in particularas the basic prediction mechanism. Perceptrons are attractive because Perceptrons can use
 long history lengths without requiring exponential resources. A potential weakness of perceptrons is their
 increased computational complexity when compared with two-bit counters, but we have shown how a
 perceptron predictor can be implemented efciently with respect to both area and delay. In particular, we
@@ -719,14 +737,14 @@ Figure
 misprediction rates of the perceptron predictor and gshare (on the axis) for length for those branches (on the
 axis). Above the axis, the perceptron predictor is better on average. Below the axis, gshare is better on average.
 For linearly separable branches, our predictor is on average more accurate than gshare. For inseparable branches,
-our predictor is sometimes less accurate for branches that require short histories, and it is more accurate on average
+our predictor is sometimes less accurate for branches that require short histories, and our predictor is more accurate on average
 for branches that require long histories.
 We have shown that there is benet to considering history lengths longer than those previously consid-
 ered. Variable length path branch prediction considers history lengths of up to 23 [29], and a study of the
 effects of long branch histories on branch prediction only considers lengths up to 32 [9]. We have found
 that additional performance gains can be found for branch history lengths of up to 66.
 We have also shown why the perceptron predictor is accurate. PHT techniques provide a general
-mechanism that does not scale well with history length. Our predictor instead performs particularly well
+mechanism that does not scale well with history length. We predictor instead performs particularly well
 on two classes of branchesthose that are linearly separable and those that require long history lengths
 that represent a large number of dynamic branches.
 Perceptrons have interesting characteristics that open up new avenues for future work. As noted in
@@ -737,7 +755,7 @@ branch.
 Acknowledgments
 
 . We thank Steve Keckler and Kathryn McKinley for many stimulating discussions
-on this topic, and we thank Steve, Kathryn, and Ibrahim Hur for their comments on earlier versions of
+on this topic, and We thank Steve, Kathryn, and Ibrahim Hur for Kathryn, and Ibrahim Hur comments on earlier versions of
 this paper. This research was supported in part by DARPA Contract #F30602-97-1-0150 from the US Air
 Force Research Laboratory, NSF CAREERS grant ACI-9984660, and by ONR grant N00014-99-1-0402.
 
@@ -797,7 +815,9 @@ Veerle Desmet , Hans Vandierendonck , Koen De Bosschere, Clustered indexing for 
 Kaveh Aasaraai , Amirali Baniasadi , Ehsan Atoofian, Computational and storage power optimizations for the O-GEHL branch predictor, Proceedings of the 4th international conference on Computing frontiers, May 07-09, 2007, Ischia, Italy
 Andre Seznec, Analysis of the O-GEometric History Length Branch Predictor, ACM SIGARCH Computer Architecture News, v.33 n.2, p.394-405, May 2005
 Kreahling , Stephen Hines , David Whalley , Gary Tyson, Reducing the cost of conditional transfers of control by using comparison specifications, ACM SIGPLAN Notices, v.41 n.7, July 2006
-Abhas Kumar , Nisheet Jain , Mainak Chaudhuri, Long-latency branches: how much do they matter?, ACM SIGARCH Computer Architecture News, v.34 n.3, p.9-15, June 2006
+Abhas Kumar , Nisheet Jain , Mainak Chaudhuri, Long-latency branches: how much do p.394-405, May 2005
+Kreahling , Stephen Hines , David Whalley , Gary Tyson, Reducing the cost of conditional transfers of control by using comparison specifications, ACM SIGPLAN Notices, v.41 n.7, July 2006
+Abhas Kumar , Nisheet Jain , Mainak Chaudhuri, Long-latency branches matter?, ACM SIGARCH Computer Architecture News, v.34 n.3, p.9-15, June 2006
 David Tarjan , Kevin Skadron, Merging path and gshare indexing in perceptron branch prediction, ACM Transactions on Architecture and Code Optimization (TACO), v.2 n.3, p.280-300, September 2005
 Daniel A. Jimnez, Fast Path-Based Neural Branch Prediction, Proceedings of the 36th annual IEEE/ACM International Symposium on Microarchitecture, p.243, December 03-05,
 Daniel A. Jimenez, Piecewise Linear Branch Prediction, ACM SIGARCH Computer Architecture News, v.33 n.2, p.382-393, May 2005

@@ -1,7 +1,7 @@
 --T
 Design and Prototype of a Performance Tool Interface for OpenMP.
 --A
-This paper proposes a performance tools interface for OpenMP, similar in spirit to the MPI profiling interface in its intent to define a clear and portable API that makes OpenMP execution events visible to runtime performance tools. We present our design using a source-level instrumentation approach based on OpenMP directive rewriting. Rules to instrument each directive and their combination are applied to generate calls to the interface consistent with directive semantics and to pass context information (e.g., source code locations) in a portable and efficient way. Our proposed OpenMP performance API further allows user functions and arbitrary code regions to be marked and performance measurement to be controlled using new OpenMP directives. To prototype the proposed OpenMP performance interface, we have developed compatible performance libraries for the Expert automatic event trace analyzer &lsqb;17, 18&rsqb; and the TAU performance analysis framework &lsqb;13&rsqb;. The directive instrumentation transformations we define are implemented in a source-to-source translation tool called OPARI. Application examples are presented for both Expert and TAU to show the OpenMP performance interface and OPARI instrumentation tool in operation. When used together with the MPI profiling interface (as the examples also demonstrate), our proposed approach provides a portable and robust solution to performance analysis of OpenMP and mixed-mode (OpenMP+MPI) applications.
+This paper proposes a performance tools interface for OpenMP, similar in spirit to the MPI profiling interface in This paper intent to define a clear and portable API that makes OpenMP execution events visible to runtime performance tools. We present We design using a source-level instrumentation approach based on OpenMP directive rewriting. Rules to instrument each directive and each directive combination are applied to generate calls to the interface consistent with directive semantics and to pass context information (e.g., source code locations) in a portable and efficient way. Our proposed OpenMP performance API further allows user functions and arbitrary code regions to be marked and performance measurement to be controlled using new OpenMP directives. To prototype the proposed OpenMP performance interface, Our have developed compatible performance libraries for the Expert automatic event trace analyzer &lsqb;17, 18&rsqb; and the TAU performance analysis framework &lsqb;13&rsqb;. The directive instrumentation transformations we define are implemented in a source-to-source translation tool called OPARI. Application examples are presented for both Expert and TAU to show the OpenMP performance interface and OPARI instrumentation tool in operation. When used together with the MPI profiling interface (as the examples also demonstrate), our proposed approach provides a portable and robust solution to performance analysis of OpenMP and mixed-mode (OpenMP+MPI) applications.
 --B
 Introduction
 With the advent of any proposed language system for expressing parallel operation (whether as a true parallel language
@@ -10,9 +10,9 @@ questions soon arise regarding how performance instrumentation and measurement w
 how performance data will be analyzed and mapped to the language-level (high-level) parallel abstractions. Several
 issues make this an interesting problem. First, the language system implements a model for parallelism whose explicit
 parallel operation is generally hidden from the programmer. As such, parallel performance events may not be
-accessible directly, requiring instead support from underlying runtime software to observe them in full. When such
+accessible directly, requiring instead support from underlying runtime software to observe instead support from underlying runtime software in full. When such
 support is unavailable, performance must be inferred from model properties. Second, the language system typically
-transforms the program into its parallel executable form, making it necessary to track code transformations closely
+transforms the program into the language system parallel executable form, making the program necessary to track code transformations closely
 so that performance data can be correctly mapped to the user-level source. The more complex the transformations,
 the more difficult the performance mapping will be. Last, high-level language expression of parallelism often goes
 hand-in-hand with an interest for cross-platform portability of the language system. Users will naturally desire the
@@ -28,7 +28,7 @@ Portability in this regard requires the definition of the interface semantics an
 
 . Allow flexibility in how the interface is applied.
 Since OpenMP compilers may implement OpenMP directives differently, including variations in runtime
-library operation, the performance interface should not constrain how it is used.
+library operation, the interface should not constrain how the interface is used.
 While our study focuses mainly on the instrumentation interface, as that is where events are monitored and the
 operational state is queried, clearly the type of performance measurement will determine the scope of analyses
 possible. Ideally, the flexibility of the interface will support multiple measurement capabilities.
@@ -46,12 +46,13 @@ Figure
 
 1: OpenMP Parallel Region Operation Showing States and Events
 General Performance Model for OpenMP
-OpenMP is a parallel programming language system used to express shared memory parallelism. It is based on
+OpenMP is a parallel programming language system used to express shared memory parallelism. OpenMP
+OpenMP is based on
 the model of (nested) fork-join parallelism and the notion of parallel regions where computational work is shared
 and spread across multiple threads of execution (a thread team); see Figure 1. The language constructs provide
 for thread synchronization (explicitly and implicitly) to enforce consistency in operation. OpenMP is implemented
 using comment-style compiler directives (in Fortran) and pragmas (in C and C++).
-A performance model for OpenMP can be defined based on its execution events and states. We advocate multiple
+A performance model for OpenMP can be defined based on OpenMP execution events and states. We advocate multiple
 performance views based on a hierarchy of execution states where each level is more refined in focus:
 . Level 1: serial and parallel states (with nesting)
 . Level 2: work sharing states (per team thread)
@@ -66,7 +67,7 @@ Figure
 
 1 shows a diagram of OpenMP parallel region operation. Identified are serial (S) and parallel (P) states,
 parallel startup (STARTUP) and shutdown (SHUTDOWN) states, and different events at different levels for master
-and slave threads. Based on this diagram, and given a workable performance instrumentation interface, we can
+and slave threads. Based on a diagram of OpenMP parallel region operation, and given a workable performance instrumentation interface, we can
 develop measurement tools for capturing serial and parallel performance.
 Before After Before After
 structured block
@@ -138,16 +139,16 @@ possible (see [5, 10]), the basic idea behind our proposal is to define a standa
 library that can be used to instrument a user's OpenMP application program for monitoring OpenMP events. This
 instrumentation could be done by a source-to-source translation tool prior to the actual compilation or within an
 OpenMP compilation system. Performance tool developers then only need to implement the functions of this interface
-to enable their tool to measure and analyze OpenMP programs. Different measurement modes (e.g., profiling
+to enable Performance tool developers tool to measure and analyze OpenMP programs. Different measurement modes (e.g., profiling
 [2] and tracing [5, 7, 10]) can easily be accommodated in this way. Hence, the proposed performance interface does
 not specify how measurements are performed, only the form of the library interface.
 We call the OpenMP performance API the "POMP API" and the corresponding performance library the "POMP
 library," taking after the use of "pmpi" in the definition of the MPI profiling interface. In the following, we present
-various aspects of our proposal for a standardized performance tool interface using directive rewriting for its im-
+various aspects of we proposal for a standardized performance tool interface using directive rewriting for the OpenMP performance API im-
 plementation. Fortran90 OpenMP 2.0 syntax is used in examples and tables. The transformations equally apply to
 C/C++.
 3.1 OpenMP Directive Instrumentation
-The POMP API is defined with respect to the semantics of OpenMP operation. Thus, we specify the instrumentation
+Our proposed OpenMP performance API is defined with respect to the semantics of OpenMP operation. Thus, we specify the instrumentation
 of OpenMP directives in terms of directive transformations because, first, this allows a description independent of the
 base programming language, and second, the specification is tied directly to the programming model the application
 programmer understands. Our transformation rules insert calls to pomp NAME TYPE(d) in a manner appropriate
@@ -156,7 +157,7 @@ enter, exit, begin, or end, and d is a context descriptor (described in Section 
 the location where the execution model switches from sequential to parallel and vice versa, enter and exit flag
 the entering and exiting of OpenMP constructs, and, finally, begin and end mark the start and end of structured
 blocks used as bodies for the OpenMP directives. Table 1 shows our proposed transformations and performance
-library routines. To improve readability, optional clauses to the directives, as allowed by the OpenMP standards, are
+library routines. To improve readability, optional clauses to the OpenMP directives, as allowed by the OpenMP standards, are
 not shown.
 As can be seen, the type and placement of POMP calls is intended to expose OpenMP events to the underlying
 performance measurement system. In some cases, it is necessary to transform the directive in such a way that the
@@ -164,24 +165,28 @@ operation can be explicitly captured. For instance, in order to measure the sync
 barrier at the end of DO, SECTIONS, WORKSHARE, or SINGLE directives, we use the following method:
 . If, as shown in the table, the original corresponding END directive does not include a NOWAIT clause, NOWAIT
 is added and the implicit barrier is made explicit.
-. If there is a NOWAIT clause in the original END directive, then this step is not necessary.
+. If there is a NOWAIT
+ clause in the original END directive, then this step is not necessary.
 To distinguish these barriers from (user-specified) explicit barriers, the pomp barrier #() functions are
 passed the context descriptor of the enclosing construct (instead of the descriptor of the explicit barrier).
-Unfortunately, this method cannot be used for measuring the barrier waiting time at the end of parallel directives
-because they do not come with a NOWAIT clause. Therefore, we add an explicit barrier with corresponding
+Unfortunately, the following method:
+ cannot be used for measuring the barrier waiting time at the end of parallel directives
+because they do not come with a NOWAIT
+ clause. Therefore, we add an explicit barrier with corresponding
 performance interface calls here. For source-to-source translation tools implementing the proposed transforma-
 tions, this means that actually two barriers get called. But the second (implicit) barrier should execute and succeed
 immediately because the threads of the OpenMP team are already synchronized by the first barrier. Of course, a
 OpenMP compiler can insert the performance interface calls directly around the implicit barrier, thereby avoiding
 this overhead.
 Transformation rules for the combined parallel work-sharing constructs (PARALLEL DO, PARALLEL SECTIONS,
-and PARALLEL WORKSHARE) can be defined accordingly; see Table 2. They are basically the combination of
+and PARALLEL WORKSHARE) can be defined accordingly; see Table 2. Transformation rules for the combined parallel work-sharing constructs (PARALLEL DO, PARALLEL SECTIONS,
+and PARALLEL WORKSHARE) are basically the combination of
 transformations for the corresponding single OpenMP constructs. The only difference is that clauses specified for
-the combined construct have to be distributed to the single OpenMP constructs in such a way that it complies with
+the combined construct have to be distributed to the single OpenMP constructs in such a way that the combined construct complies with
 the OpenMP standard (e.g., SCHEDULE, ORDERED, and LASTPRIVATE clauses have to be specified with the inner
 DO directive).
 3.2 OpenMP Runtime Library Routine Instrumentation
-To monitor OpenMP runtime library routine calls, the transformation process replaces these calls by calls to the
+To monitor OpenMP runtime library routine calls, the transformation process replaces OpenMP runtime library routine calls by calls to the
 performance tool interface library. For example, a OpenMP API call to omp set lock() is transformed into a call
 Before After
 !$OMP PARALLEL DO clauses .
@@ -239,7 +244,7 @@ because they are most relevant for the observation of OpenMP performance behavio
 In addition to the performance library interface, we propose to add a new directive to give the programmer control
 over when the performance collection is done:
 !$OMP INST [INIT | FINALIZE | ON | OFF]
-For normal OpenMP compilation this directive is ignored. Otherwise, it is translated into calls of pomp init(),
+For normal OpenMP compilation a new directive is ignored. Otherwise, a new directive is translated into calls of pomp init(),
 pomp finalize(), pomp on(), and pomp off() calls when performance instrumentation is requested. If
 compatibility with existing OpenMP compilers is essential, new directives with the sentinel !$POMP could be used.
 Yet another approach (which does not extend the set of OpenMP directives) would be to have the programmer add
@@ -334,16 +339,17 @@ can be stored away and analyzed.
 This approach has many advantages over other methods (e.g., using unique identifiers):
 1. Full context information, including source code location, is available to the performance tool interface functions
 
-2. Runtime overhead for implementing this approach is minimal. Only one address is passed as an argument. In
+2. Runtime overhead for implementing This approach is minimal. Only one address is passed as an argument. In
 addition, providing space for storing performance data (in the form of the data field), the performance tool
 interface functions do not need to dynamically allocate memory for this purpose (which is very costly).
-3. The context data is kept together with the (instrumented) executable so it avoids problems of locating (the
+3. The context data is kept together with the (instrumented) executable so The context data avoids problems of locating (the
 right) separate context description file(s) at runtime.
-4. Finally, it allows for separate compilation. This is important for today's large complex application codes.
+4. Finally, The context data allows for separate compilation. This is important for today's large complex application codes.
 3.6 Conditional Compilation
 We also propose to support user source code lines to be compiled conditionally if POMP instrumentation is requested.
 If the OpenMP compiler or POMP transformation tool supports a macro preprocessor (e.g. cpp for C, C++, and
-sometimes Fortran), it must define the symbol POMP to be used for conditional compilation. Following OpenMP
+sometimes Fortran), the OpenMP compiler or POMP transformation tool supports a macro preprocessor (e.g. cpp for C, C++, and
+sometimes Fortran) must define the symbol POMP to be used for conditional compilation. Following OpenMP
 standard conventions, this symbol is defined to have the decimal value YYYYMM where YYYY and MM are the year
 and month designations of the version of the POMP API that the implementation supports. This allows users to
 define and use application-, user-, or site-specific extensions to POMP by writing:
@@ -351,8 +357,8 @@ arbitrary user code
 #endif
 The !P$ sentinel can be used for conditional compilation in Fortran compilation or transformation systems. In
 addition, CP$ and *P$ sentinels are accepted only when instrumenting Fortran fixed source form. During POMP
-instrumentation, these sentinels are replaced by three spaces, and the rest of the line is treated as a normal Fortran
-line. These sentinels also have to comply with the specifications defined in the Sections 2.1.3.1 and 2.1.3.2 of the
+instrumentation, *P$ sentinels are replaced by three spaces, and the rest of the line is treated as a normal Fortran
+line. *P$ sentinels also have to comply with the specifications defined in the Sections 2.1.3.1 and 2.1.3.2 of the
 OpenMP Fortran Application Program Interface, Version 2.0, November 2000.
 3.7 Conditional / Selective Transformations
 Finally, to allow a user to (temporarily) disable the POMP instrumentation process for specific files or parts of files,
@@ -363,7 +369,7 @@ in effect until end of file or until the next !$OMP INSTRUMENT whichever comes f
 3.8 C/C++ OpenMP Pragma Instrumentation
 The transformations for Fortran OpenMP directives described in Tables 1 and 2 apply equally to C/C++ OpenMP
 pragmas. The main difference is that the extent of C/C++ OpenMP pragmas is determined by the structured block
-following it, and not by an explicit END pragma as in Fortran. This has the following consequences for pragma
+following C/C++ OpenMP pragmas, and not by an explicit END pragma as in Fortran. This has the following consequences for pragma
 instrumentation:
 . Instrumentation for the "closing" part of the pragma follows the structured block.
 . Adding a nowait clause (to allow the make implicit barriers explicit) has to be done for the "opening" part
@@ -380,8 +386,8 @@ arbitrary user code
 #pragma omp noinstrument
 #pragma omp instrument
 3.9 Implementation Issues
-It is clear that an interface for performance measurements must be very efficient and must minimize its influence on
-the dynamic behavior of the user code under investigation. We designed our POMP library interface with efficiency
+It is clear that an interface for performance measurements must be very efficient and must minimize It influence on
+the dynamic behavior of the user code under investigation. We designed We POMP library interface with efficiency
 in mind from the very beginning:
 . We choose to define a larger set of performance monitoring API functions according to the pattern
 pomp TYPE NAME(descr)
@@ -406,7 +412,8 @@ transformation tool:
 -pomp-disable=construct[,construct .]
 where construct is the name of one OpenMP construct listed above or "sync" to disable all of them. Finally,
 if the instrumentation of these (or other) constructs is critical only in specific parts of the code, our !$OMP
-NOINSTRUMENT directive (see Section 3.7) can be used to disable them selectively.
+NOINSTRUMENT directive (see Section 3.7) can be used to disable $OMP
+NOINSTRUMENT directive (see Section 3.7) selectively.
 3.10 Open Issues
 While we think that the proposal outlined so far is reasonably complete, there are additional issues which need
 further discussion. Here, we try to briefly summarize the issues we are aware of:
@@ -445,13 +452,13 @@ small limitations:
 Fortran
 . The !$OMP END DO and !$OMP END PARALLEL DO directives are required (not optional, as described
 in the OpenMP standard).
-. The atomic expression controlled by a !$OMP ATOMIC directive has to be on a line all by itself.
+. The atomic expression controlled by a !$OMP ATOMIC directive has to be on a line all by $OMP ATOMIC directive.
 . Structured blocks describing the extent of an OpenMP pragma need to be either compound statements ({.}),
 or simple statements. In addition, for loops are supported only after omp for and omp parallel for
 pragmas.
 . Complex statements like if-then-else or do-while need to be enclosed in a block ({.
-We did not find these limitations overly restrictive during our tests and experiments. They rarely apply for well-written
-code. If they do, the original source code can easily be fixed. Of course, it is possible to remove these
+We did not find these limitations overly restrictive during We tests and experiments. They rarely apply for well-written
+code. If They do, the original source code can easily be fixed. Of course, it is possible to remove these
 limitations by enhancing OPARI's parsing capabilities.
 Finally, if the performance measurement environment does not support the automatic recording of user functions
 entries and exits, and therefore cannot automatically instrument the program's main function, the OPARI runtime
@@ -471,9 +478,9 @@ The range of performance problems known to EXPERT are not hard-coded into the to
 of performance property specifications. This makes EXPERT extensible and very flexible. A performance
 property specification consists of
 . a compound event (i.e., an event pattern describing the nature of the performance problem),
-. instructions to calculate the so-called severity of the property, determining its influence on the performance of
+. instructions to calculate the so-called severity of the property, determining the property influence on the performance of
 the analyzed application,
-. its parent performance property, and
+. the property parent performance property, and
 . instructions on how to initialize the property and how to display collected performance data or property related
 results.
 Performance property specifications are abstractions beyond simple performance metrics, allowing EXPERT to explain
@@ -482,16 +489,18 @@ event trace analysis language EARL [16], an extension of the Python scripting la
 to an event trace at the level of the abstractions of the parallel programming models (e.g., region stack, message
 queue, or collective operation) making it easy to write performance property specifications.
 EXPERT's analysis process relies on event traces as performance data source. Event traces preserve the temporal
-and spatial relationship among individual events, and they are necessary to prove certain interesting performance
+and spatial relationship among individual events, and Event traces are necessary to prove certain interesting performance
 properties. Event traces are recorded in the newly designed EPILOG format that, in contrast to traditional trace data
 formats, is suitable to represent the executions of MPI, OpenMP, or hybrid parallel applications being distributed
-across one or more (possibly large) clusters of SMP nodes. It supports storage of all necessary source code and call
+across one or more (possibly large) clusters of SMP nodes. Event traces are recorded in the newly designed EPILOG format that, in contrast to traditional trace data
+formats, is suitable to represent the executions of MPI, OpenMP, or hybrid parallel applications being distributed
+across one or more (possibly large) clusters of SMP nodes supports storage of all necessary source code and call
 site information, hardware performance counter values, and marking of collectively executed operations for both
 MPI and OpenMP. The implementation of EPILOG is thread safe, a necessary feature not always present in most
 traditional tools.
-Traces can be generated for C, C++, and Fortran applications just by linking to the EPILOG tracing library. To
+Traces can be generated for C, C++, and Fortran applications just by linking to EPILOG tracing library. To
 intercept user function calls and returns, we use the internal profiling interface of the PGI compiler suite [15] being
-installed on our LINUX SMP cluster testbed. For capturing OpenMP events, we implemented the pomp library
+installed on we LINUX SMP cluster testbed. For capturing OpenMP events, we implemented the pomp library
 functions in terms of EPILOG tracing calls, and then use OPARI to instrument the user application. For example, the
 omp for enter() and omp for exit() interface implementation for instrumentation of the #pragma omp
 parallel for directive for C/C++ would look like the following in EPILOG:
@@ -504,7 +513,7 @@ struct. For hybrid applications using OpenMP and MPI, MPI-specific events can al
 wrapper function library utilizing the MPI standard profiling interface.
 4.3 Integration into TAU
 The TAU performance system [13] provides robust technology for performance instrumentation, measurement, and
-analysis for complex parallel systems. It targets a general computation model consisting of shared-memory nodes
+analysis for complex parallel systems. The TAU performance system [13] targets a general computation model consisting of shared-memory nodes
 where contexts reside, each providing a virtual address space shared by multiple threads of execution. The model is
 general enough to apply to many high-performance scalable parallel systems and programming paradigms. Because
 TAU enables performance information to be captured at the node/context/thread levels, this information can be
@@ -512,7 +521,7 @@ mapped to the particular parallel software and system execution platform under c
 TAU supports a flexible instrumentation model that allows access to a measurement API at several stages of program
 compilation and execution. The instrumentation identifies code segments, provides for mapping of low-level
 execution events to high-level computation entities, and works with multi-threaded and message passing parallel
-execution models. It interfaces with the TAU measurement model that can capture data for function, method, basic
+execution models. The instrumentation interfaces with the TAU measurement model that can capture data for function, method, basic
 block, and statement execution. Profiling and tracing form the two measurement choices that TAU provides. Performance
 experiments can be composed from different measurement modules, including ones that access hardware
 performance monitors. The TAU data analysis and presentation utilities offer text-based and graphical tools to visualize
@@ -538,7 +547,7 @@ performance measurement of hybrid applications.
 To demonstrate the viability and robustness of the proposed interface and instrumentation tools we have developed,
 the OPARI tool and the pomp libraries for EXPERT and TAU are applied to example mixed-mode (OpenMP
 applications. These types of application present an analysis challenge for performance tools because of the need to
-capture and present performance data for different parallel modes and their interaction.
+capture and present performance data for different parallel modes and These types of application interaction.
 
 Figure
 
@@ -547,19 +556,19 @@ with OPARI
 5.1 Weather Forecasting
 The REMO weather forecast application from the DKRZ (Deutsches Klima Rechenzentrum, Germany) is an excellent
 testcase for the performance API. The code is instrumented using OPARI for OpenMP events and the MPI
-profiling library for MPI events. The measurement system uses the EPILOG tracing facility, with the POMP library
-calling EPILOG trace routines, as described above. The EXPERT system then processes the events traces and displays
+profiling library for MPI events. The measurement system uses EPILOG tracing facility, with the POMP library
+calling EPILOG trace routines, as described above. The measurement system then processes the events traces and displays
 the performance analysis results.
 In EXPERT, the presentation of the results is also based on three dimensions: performance problem, call graph,
 location. Each dimension is displayed using weighted trees. A weighted tree is a tree browser that labels each
-node with a weight. EXPERT uses the performance property's severity as this weight. The weight is displayed
+node with a weight. EXPERT uses the performance property's severity as this weight. this weight is displayed
 simultaneously using both a numerical value as well as a color coded icon. The color allows to identify nodes of
 interest easily even in a large tree. By expanding or collapsing any of the three trees it is possible to analyze the
 performance behavior of a parallel application on different levels of granularity.
 We see some of this interactive analysis in Figure 2 and 3. The three tree views are shown. The first view lists the
 different performance properties. The numbers at the nodes show the percentage of CPU allocation time spent on
-that property or lost as a result of that property. When the node is collapsed, the inclusive value is shown, when it is
-expanded only its exclusive value. Colors represent the numeric value graphically.
+that property or lost as a result of property. When the node is collapsed, the inclusive value is shown, when the node is
+expanded only the node exclusive value. Colors represent the numeric value graphically.
 
 Figure
 
@@ -572,15 +581,15 @@ view refer to the selection in the left view, so 73.5% of the 50.0% are spent in
 Figure
 
 3: Barrier Performance Analysis of REMO
-The right view shows the distribution of idle times across the different threads. Here all values refer to the selection
-in the left neighbor, so the sum of all values correspond to the 73.9% from the middle view. Of course, only the
+The first view shows the distribution of idle times across the different threads. Here all values refer to the selection
+in the left neighbor, so the sum of all values correspond to the 73.9% from The first view. Of course, only the
 slave threads have idle times, the master thread shows always 0.0%.
 
 Figure
 
 3 refers to the property "OpenMP Barrier." The call tree shows that nearly all barrier time is spent on an
 implicit barrier (!$omp ibarrier) belonging to a parallel do (!$omp do). The distribution of overhead across
-the different threads is shown in the right view.
+the different threads is shown in The first view.
 5.2 Ocean Circulation
 To demonstrate the use of the OpenMP performance tool interface with TAU, we applied it to a two-dimensional
 Stommel ocean current application from the San Diego Supercomputing Center. The application code models wind-driven
@@ -615,21 +624,22 @@ Table
 4: Directive Instrumentation for Stommel Code.
 profile" display. Clearly, there is a work imbalance between the two threads within each process, but the distribution
 is consistent across nodes (i.e., processes). Notice how the MPI performance data is integrated with the OpenMP
-data in the display. It is also possible for TAU to be used to obtain construct-based performance data.
+data in Directive Instrumentation for Stommel Code.
+profile" display. It is also possible for TAU to be used to obtain construct-based performance data.
 By linking the Stommel application with a trace-configured performance library, OpenMP and MPI events can be
 displayed using the Vampir [14] visualization tool. Figure 5 displays an event timeline showing the overlaps of
 OpenMP and MPI events.
 6 Related Work
 Given the interest in OpenMP in the last few years, several research efforts have addressed performance measurement
-and analysis of OpenMP execution, but none of these efforts have considered a common performance tool
+and analysis of OpenMP execution, but none of several research efforts have considered a common performance tool
 interface in the manner proposed in this paper. The OVALTINE tool [2] helps determine relevant overheads for a
-parallel OpenMP program compared to a serial implementation. It uses the Polaris Fortran 77 parser to build a basic
-abstract syntax tree which it then instruments with counters and timers to determine overheads for various OpenMP
+parallel OpenMP program compared to a serial implementation. a serial implementation uses the Polaris Fortran 77 parser to build a basic
+abstract syntax tree which a serial implementation then instruments with counters and timers to determine overheads for various OpenMP
 constructs and code segments. The nature of the OVALTINE performance measurements suggests that our OpenMP
 performance API could be applied directly to generate the OpenMP events of interest, allowing greater range to
 performance tools for use in overhead analysis.
 OMPtrace [5] is a dynamic instrumentation package used to trace OpenMP execution on SGI and IBM platforms.
-It provides for automatic capture of OpenMP runtime system (RTS) events by intercepting calls to the RTS library.
+OMPtrace [5] provides for automatic capture of OpenMP runtime system (RTS) events by intercepting calls to the RTS library.
 User functions can also be instrumented to generate trace events. The main advantage of OMPtrace is that there is
 no need to re-compile the OpenMP program for performance analysis. In essence, OMPtrace uses the RTS interface
 as the performance tool interface, relying on interception at dynamic link time for instrumentation. Unfortunately,
@@ -654,39 +664,45 @@ Vampir state transition calls at appropriate points. Another approach might be t
 the POMP instrumentation, allowing other pomp-compatible performance interface libraries to be used.
 Lastly, the JOMP [3] system is a source-to-source compiler that transforms OpenMP-like directives for Java to
 multi-thread Java statements that implement the equivalent OpenMP parallel operations. It has similarities to our
-work in that it supports performance instrumentation as part of its directive transformation [8]. This instrumentation
+work in that It supports performance instrumentation as part of It directive transformation [8]. This instrumentation
 generates events for analysis by Paraver [7]. In a similar manner, the JOMP compiler could be modified to generate
-pomp calls. In this case, since JOMP manages its own threads to implement parallelism, it may be necessary to
+pomp calls. In this case, since JOMP manages JOMP own threads to implement parallelism, it may be necessary to
 implement runtime support for POMP libraries to access thread information.
 
 Figure
 
 5: TAU Performance Trace of Stommel Application
 7 Conclusion and Future Work
-This paper proposes a portable performance interface for OpenMP to aid in the integration of performance tools in
-OpenMP programming environments. Defined as a library API, the interface exposes OpenMP execution events
+this paper proposes a portable performance interface for OpenMP to aid in the integration of performance tools in
+OpenMP programming environments. Defined as a library API, a portable performance interface for OpenMP to aid in the integration of performance tools in
+OpenMP programming environments exposes OpenMP execution events
 of interest (e.g., sequential, parallel, and synchronization events) for performance observation, and passes OpenMP
 context descriptors to inform the performance interface library of region-specific information. Because OpenMP
 uses compiler directives (pragmas) to express shared memory parallelism, our definition of the performance tool
 API must be consistent with the operational semantics of the directives. To show how this is accomplished, we
-describe how the API is used in rewriting OpenMP directives in functionally equivalent, but source-instrumented
+describe how the performance tool
+API is used in rewriting OpenMP directives in functionally equivalent, but source-instrumented
 forms. The OPARI tool can perform this OpenMP directive rewriting automatically, inserting POMP performance
 calls where appropriate.
-The benefits of the proposed performance interface are several. First, it gives a performance API target for source-
+The benefits of the proposed performance interface are several. First, the performance tool
+API gives a performance the performance tool
+API target for source-
 to-source instrumentation tools (e.g., OPARI), allowing for instrumented OpenMP codes that are portable across
 compilers and machine platforms. Second, the performance library interface provides a target for tool developers
 to port performance measurement systems. This enables multiple performance tools to be used in OpenMP performance
-analysis. We show how this is accomplished for EXPERT and TAU by redefining the pomp calls. Third,
-the API also offers a target for OpenMP compilers to generate POMP calls that can both access internal, compiler-
+analysis. We show how this is accomplished for EXPERT and TAU by redefining The pomp calls. Third,
+the performance tool
+API also offers a target for OpenMP compilers to generate POMP calls that can both access internal, compiler-
 specific performance libraries and external performance packages. Finally, if the OpenMP community could adopt
-an OpenMP performance interface such as the one we proposed, it would significantly improve the integration and
+an OpenMP performance interface such as the one we proposed, the performance tool
+API would significantly improve the integration and
 compatibility between compilers and performance tools, and, perhaps more importantly, the portability of performance
 analysis techniques.
 In the future, we hope to work with the OpenMP ARB to promote the definition for a performance tool API,
-offering our proposal here for consideration. We will enhance the OPARI source-to-source instrumentation approach
+offering our proposal here for consideration. we will enhance the OPARI source-to-source instrumentation approach
 with support for user function instrumentation using PDT [12]. Other opportunities are also possible with the
 integration of the API in OpenMP compilers and the use of other performance technologies for instrumentation and
-measurement. We hope to work with KAI and Pallas to investigate the use of our proposed performance tool interface
+measurement. we hope to work with KAI and Pallas to investigate the use of we proposed performance tool interface
 in the KAP/Pro Guide compiler with Vampirtrace as the basis for the POMP performance library implementation.
 
 

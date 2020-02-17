@@ -1,7 +1,7 @@
 --T
 A recursive formulation of Cholesky factorization of a matrix in packed storage.
 --A
-A new compact way to store a symmetric or triangular matrix called RPF for Recursive Packed Format is fully described. Novel ways to transform RPF to and from standard packed format are included. A new algorithm, called RPC for Recursive Packed Cholesky, that operates on the RPG format is presented. ALgorithm RPC is basd on level-3 BLAS and requires variants of algorithms TRSM and SYRK that work on RPF. We call these RP_TRSM and RP_SYRK and find that they do most of their work by calling GEMM. It follows that most of the execution time of RPC lies in GEMM. The advantage of this storage scheme compared to traditional packed and full storage is demonstrated. First, the RPC storage format uses the minimal    amount of storage for the symmetric or triangular matrix. Second, RPC gives a level-3 implementation of Cholesky factorization whereas standard packed implementations are only level 2. Hence, the performance of our RPC implementation is decidedly superior. Third, unlike fixed block size algorithms, RPC, requires no block size tuning parameter. We present performance measurements on several current architectures that demonstrate improvements over the traditional packed routines. Also MSP parallel computations on the IBM SMP computer are made. The graphs that are attached in Section 7 show that the RPC algorithms are superior by a factor between 1.6 and 7.4 for order around 1000, and between 1.9 and 10.3 for order around 3000 over the traditional packed algorithms. For some    architectures, the RPC performance results are almost the same or even better than the traditional full-storage algorithms results.
+A new compact way to store a symmetric or triangular matrix called RPF for Recursive Packed Format is fully described. Novel ways to transform RPF to and from standard packed format are included. A new algorithm, called RPC for Recursive Packed Cholesky, that operates on the RPG format is presented. ALgorithm RPC is basd on level-3 BLAS and requires variants of algorithms TRSM and SYRK that work on RPF. We call these RP_TRSM and RP_SYRK and find that these RP_TRSM and RP_SYRK do most of these RP_TRSM and RP_SYRK work by calling GEMM. It follows that most of the execution time of RPC lies in GEMM. The advantage of this storage scheme compared to traditional packed and full storage is demonstrated. First, the RPC storage format uses the minimal    amount of storage for the symmetric or triangular matrix. Second, ALgorithm RPC gives a level-3 implementation of Cholesky factorization whereas standard packed implementations are only level 2. Hence, the performance of our RPC implementation is decidedly superior. Third, unlike fixed block size algorithms, ALgorithm RPC, requires no block size tuning parameter. We present performance measurements on several current architectures that demonstrate improvements over the traditional packed routines. Also MSP parallel computations on the IBM SMP computer are made. The graphs that are attached in Section 7 show that the RPC algorithms are superior by a factor between 1.6 and 7.4 for order around 1000, and between 1.9 and 10.3 for order around 3000 over the traditional packed algorithms. For some    architectures, the RPC performance results are almost the same or even better than the traditional full-storage algorithms results.
 --B
 Introduction
 A very important class of linear algebra problems are those in which the coefcient
@@ -37,14 +37,13 @@ express, in this paper, any precision, any arithmetic and any language version o
 and/or PP matrix factorization algorithms.
 denite matrices by means of the Cholesky algorithm. The only dierence is
 the way the triangular matrix is stored (see gures 1 and 2).
-In the POTRF case the matrix is stored in one of the lower left or upper right
+In the POTRF case the triangular matrix is stored in one of the lower left or upper right
 triangles of a full square matrix[16, page 64] 2 , the other triangle is wasted (see
 gure 1). Because of the uniform storage scheme, blocking and level 3 BLAS[8]
 subroutines can be employed, resulting in a high speed solution.
-In the PPTRF case the matrix is kept in packed storage ([1], [16, page 74,
+In the POTRF case the triangular matrix is kept in packed storage ([1], [16, page 74,
 75]), which means that the columns of the lower or upper triangle are stored
-consecutively in a one dimensional array (see gure 2). Now the triangular
-matrix only occupies the strictly necessary storage space but the nonuniform
+consecutively in a one dimensional array (see gure 2). Now the triangular matrix only occupies the strictly necessary storage space but the nonuniform
 storage scheme means that use of full storage BLAS is impossible and only the
 level 2 BLAS[20, 9] packed subroutines can be employed, resulting in a low
 speed solution.
@@ -57,7 +56,7 @@ Together with some new recursively formulated linear algebra subroutines, we
 propose a new way of storing a lower or upper triangular matrix that solves this
 dilemma[14, 24]. In other words we obtain the speed of POTRF with the amount
 of memory used by PPTRF. The new storage scheme is named RPF, recursive
-packed format(see gure 4), and it is explained below.
+packed format(see gure 4), and The new storage scheme is explained below.
 The benet of recursive formulations of the Cholesky factorization and the
 LU decomposition is described in the works of Gustavson [14] and Toledo [22].
 The symmetric, positive denite matrix in the Cholesky case is kept in full
@@ -65,7 +64,7 @@ matrix storage, and the emphasis in these works are the better data locality
 and thus better utilization of the computers memory hierarchy, that recursive
 formulations oer. However, the recursive packed formulation also has this
 property.
-We will provide a very short introduction on a computer memory hierarchy
+we will provide a very short introduction on a computer memory hierarchy
 and the Basic Linear Algebra Subprograms (BLAS) before describing the
 Recursive Packed Cholesky (RPC) and the Recursive Packed Format (RPF).
 1.3 The Rationale behind introducing our New Recursive
@@ -75,7 +74,10 @@ Computers have several levels of memory. The
 ow of data from the memory
 to the computational units is the most important factor governing performance
 of engineering and scientic computations. The object is to keep the functional
-units running at their peak capacity. Through the use of a memory hierarchy
+units running at The Rationale behind introducing our New Recursive
+Algorithm, RPC and the New Recursive Data Format,
+RPF
+Computers peak capacity. Through the use of a memory hierarchy
 In Fortran column major, in C row major.
 system (see gure 3), high performance can be achieved by using locality of
 reference within a program. In the present context this is called blocking.
@@ -98,7 +100,7 @@ cheaper
 Figure
 
 3: A computer memory hierarchy
-At the top of the hierarchy is a Central Processing Unit (CPU). It communicates
+At the top of the hierarchy is a Central Processing Unit (CPU). a Central Processing Unit (CPU) communicates
 directly with the registers. The number of the registers is usually very
 small. A Level 1 cache is directly connected to the registers. The computer
 will run with almost peak performance if we are able to deliver the data to the
@@ -108,7 +110,7 @@ archy. The literature in [10, 5, 11] is adequate for Numerical Linear Algebra
 specialists.
 The memories near the CPU (registers and caches) have a faster access to
 CPU than the memories further away. The fast memories are very expensive
-and this is one of the reason that they are small. The register set is tiny. Cache
+and this is one of the reason that The fast memories are small. The register set is tiny. Cache
 memories are much larger than the set of registers. However, L1 cache is still
 not large enough for solving scientic problems. Even a subproblem like matrix
 factorization does not t into cache if the order of the matrix is large.
@@ -117,11 +119,11 @@ to address the computer memory hierarchy problem in the area of Numerical
 Linear Algebra. The BLAS are documented in [20, 9, 8, 6]. BLAS are
 very well summarized and explained for Numerical Linear Algebra specialists
 in [10, 5].
-There are three levels of BLAS: Level 1 BLAS shows vector vector opera-
-tions, Level 2 BLAS shows vector matrix (and/or matrix vector) operations,
-and Level 3 BLAS shows matrix matrix operations.
+There are three levels of The BLAS: Level 1 BLAS shows vector vector opera-
+tions, Level 2 The BLAS shows vector matrix (and/or matrix vector) operations,
+and Level 3 The BLAS shows matrix matrix operations.
 For Cholesky factorization one can make the following three observations
-with respect to the BLAS.
+with respect to The BLAS.
 1. Level 3 implementations using full storage format run fast.
 2. Level 3 implementations using packed storage format rarely exist. A level 3
 implementation was previously used in [16], however, at great programming
@@ -137,17 +139,17 @@ to and from conventional packed storage. Section 2.1 describes conventional
 lower and upper triangular packed storage. Section 2.2 discusses how
 to transform in place either a lower or upper trapezoid packed data format to
 recursive packed data format and vice versa. Section 2.3 describes the possibility
-to transpose the matrix while it is reordered from packed to recursive
+to transpose the matrix while Section 2.3 is reordered from packed to recursive
 packed format and vice versa. Finally, in Section 2.4 the recursive aspects of
 the data transformation is described. These four subsections describe the in
 place transformation pictorially via several gures.
 In Sections 3.1 and 3.2, recursive TRSM and SYRK, both which work on
-RPF, are described. Both routines do almost all their required
+RPF, are described. Both routines do almost all Both routines required
 oating point
 operations by calling level 3 BLAS GEMM. Finally, in Section 3.3, the RPC
 algorithm is described in terms of using the recursive algorithms of Sections 3.1
 and 3.2. As in Section 2, all three algorithms are described pictorially via several
-gures. Note that the RPC algorithm only uses one Level 3 BLAS subroutine,
+gures. Note that the RPC algorithm only uses one Level 3 The BLAS subroutine,
 namely GEMM. Usually the GEMM routine is very specialized, highly tuned
 and done by the computer manufacturer. If not, the ATLAS[25] GEMM can be
 used.
@@ -167,7 +169,7 @@ factorization (POTRF, PPTRF and RP PPTRF) and the solution
 Section 6 discusses the most important developments in this paper.
 2 The recursive packed storage
 A new way to store triangular matrices in packed storage called recursive packed
-is presented. This is a storage scheme by its own right, and a way to explain it,
+is presented. This is a storage scheme by This own right, and a way to explain it,
 is to describe the conversion from packed to recursive packed storage and vice
 versa (see gures 2 and 4).
 Lower triangular caseB
@@ -190,7 +192,8 @@ positions in full storage and in packed storage for a triangular matrix of size 
 is,
 A i;j
 AP i+(j 1)(2m j)=2
-'L'The advantage of this storage is the saving of almost half 4 the memory
+'L'The advantage of The recursive packed storage
+ is the saving of almost half 4 the memory
 compared to full storage.
 3 For upper triangular and for lower triangular of A is stored.
 4 At least m  (m 1)=2. This formulae is a function of LDA (leading dimension of
@@ -207,13 +210,15 @@ Figure
 of the leading triangle are copied to the buer. Then, in place, the columns of
 the accentuated rectangle are assembled in the bottom space of the trapezoid.
 Last, the buer is copied back to the top of the trapezoid.
-It is assumed that the matrices are stored in column major order, but the
+the buer is assumed that the matrices are stored in column major order, but the
 concepts in the paper are fully applicable also if the matrices are stored in row
 major order. As an intermediate step to transform a packed triangular matrix
-to a recursive packed matrix, the matrix is divided into two parts along
-a column thus dividing the matrix in a trapezoidal and a triangular part as
+to a recursive packed matrix, a packed triangular matrix
+ is divided into two parts along
+a column thus dividing a packed triangular matrix
+ in a trapezoidal and a triangular part as
 shown in g. 5 and 6. The triangular part remains in packed form, the
-trapezoidal part is reordered so it consists of a triangle in packed form, and
+trapezoidal part is reordered so The triangular part consists of a triangle in packed form, and
 a rectangle in full storage form. The reordering demands a buer of the size
 of the triangle minus the longest column. The reordering in the lower case,
 g. 5, takes the following steps. First the columns of the triangular part of
@@ -280,12 +285,12 @@ data format, for 20. The rectangular submatrices, shown in the gures,
 are kept in full storage in column major order, in the array containing the whole
 matrices.
 Recursive formulation of the Cholesky algorithm
-and its necessary BLAS
+and its necessary The BLAS
 Two BLAS[6] operations, the triangular solver with multiple right hand sides,
 TRSM 5 and the rank k update of a symmetric matrix, SYRK are needed for the
 recursive Cholesky factorization and solution, RP PPTRF 6 and RP PPTRS[2].
 In this section RP TRSM, RP SYRK, RP PPTRF and RP PPTRS are formulated
-recursively and their use of recursive packed operands are explained.
+recursively and RP SYRK, RP PPTRF and RP PPTRS use of recursive packed operands are explained.
 TRSM, SYRK, PPTRF and PPTRS operate in various cases depending of the
 operands and the order of the operands. In the following we only consider single
 specic cases, but the deduction of the other cases follows the same guidelines.
@@ -300,7 +305,7 @@ manufacturers. The model implementation of GEMM can be obtained from
 5 On naming of TRSM, SYRK, HERK and GEMM see footnote of POTRF on page 1.
 6 The prex RP indicates that the subroutine belongs to the Recursive Packed library, for
 example RP PPTRF is the Recursive Packed Cholesky factorization routine.
-netlib [6]; it works correctly but slowly. The Innovative Computing Laboratory
+netlib [6]; RP PPTRF works correctly but slowly. The Innovative Computing Laboratory
 at the University of Tennessee in Knoxville developed an automatic system
 called which usually can produce a very fast GEMM subroutine. Another
 automatic code generator scheme for GEMM was developed at Berkeley[4].
@@ -314,7 +319,7 @@ a best parameter setting is found for the particular machine.
 3.1 Recursive TRSM based on non-recursive GEMM
 Fig. 8 shows the splitting of the TRSM operands. The operation now consists
 of the three suboperations,
-Based on this splitting, the algorithm can be programmed as follows,
+Based on this splitting, the Cholesky Algorithm can be programmed as follows,
 recursive subroutine RP TRSM (m; n;
 if (n == 1) then
 do
@@ -335,7 +340,7 @@ Figure
 
 8: The recursive splitting of the matrices in the RP TRSM operation for
 the case where SIDE=Right, UPLO=Lower and TRANSA=Transpose.
-Based on this splitting, the algorithm can be programmed as follows,
+Based on this splitting, the Cholesky Algorithm can be programmed as follows,
 recursive subroutine RP SYRK (m; n;
 if (m == 1) then
 do
@@ -363,7 +368,7 @@ Figure
 9: The recursive splitting of the matrices in the RP SYRK operation
 for the case where UPLO=Lower and TRANS=No transpose.
 22 RP PPTRF
-Based on this splitting the algorithm can be programmed as follows,
+Based on this splitting the Cholesky Algorithm can be programmed as follows,
 recursive subroutine RP PPTRF (m; AP)
 if (m == 1) then
 else
@@ -373,7 +378,8 @@ call RP SYRK (m
 call RP PPTRF (m
 The solution subroutine RP PPTRS performs consecutive triangular solutions
 to the transposed and the non-transposed Cholesky factor. This routine
-is not explicitly recursive, as it just calls the recursive RP TRSM twice.
+is not explicitly recursive, as This routine
+ just calls the recursive RP TRSM twice.
 4 Stability of the Recursive Algorithm
 The paper [24] shows that the recursive Cholesky factorization algorithm is
 equivalent to the traditional algorithms in the books[5, 11, 23]. The whole theAP
@@ -394,7 +400,8 @@ carries over to the recursive Cholesky factorization and BLAS (TRSM
 and SYRK) algorithms described in Section 3. The error analysis and stability
 of these algorithms is very well described in the book of Nicholas J. Higham[15].
 The dierence between LAPACK algorithms PO, PP and RP 7 is how inner
-products are accumulated. In each case a dierent order is used. They are all
+products are accumulated. In each case a dierent order is used. how inner
+products are all
 mathematically equivalent, and, stability analysis shows that any summation
 order is stable.
 5 Performance results
@@ -430,15 +437,14 @@ The following procedure was used in carrying out our performance tests.
 On each machine the recursive and the traditional routines were compiled
 with the same compiler and compiler
 ags and they call the same vendor
-optimized, or otherwise optimized, BLAS library. The BLAS library
-versions can be seen in Table 2.
+optimized, or otherwise optimized, BLAS library. BLAS libraryversions can be seen in Table 2.
 The compared recursive and traditional routines received the same input
 and produced the same output for each time measurement. The time
 spent in reordering the matrix to and from 8 recursive packed format is
 included in the run time for both RP PPTRF and RP PPTRS. For the
 traditional routines there was no data transformation cost.
 The CPU time is measured by the timing function ETIME except on the
-PowerPC machine, which is a 4 way SMP. On this machine the run time
+PowerPC machine, which is a 4 way SMP. On each machine the recursive the run time
 was measured by the wall clock time by means of a special IBM utility
 function called RTC. Except for the operating system no other programs
 were running during these test runs.
@@ -447,7 +453,7 @@ ranging from in steps of In case of the
 HP and Intel machines the matrix size starts at We start at
 because the resolution of the ETIME utility was too coarse. The
 number of right hand sides were taken to be nrhs = n=10. Due to memory
-limitations on the actual HP machine, this test series could only range to
+limitations on each machine the recursiveHP , this test series could only range to
 The operation counts for Cholesky factorization and solution are
 8 However it is only necessary to perform the to transformation in RP PPTRF and no
 transformation in RP PPTRS, to get the correct results.
@@ -471,7 +477,11 @@ describe the same comparison of performance on several dierent computers.
 
 Figure
 
-11 shows the performance on the the IBM 4-way PowerPC 604e 332 MHz
+11 shows the performance on the the IBM 4-way The IBM SMP PowerPC
+
+Figure
+
+11 604e 332 MHz
 computer.
 The LAPACK routine DPPTRF (the upper subgure) performs at about
 100 MFlops. Performance of the 'U' graph is a little better than the 'L' graph.
@@ -585,7 +595,7 @@ The LAPACK routine DPPTRF (the upper subgure) 'U' and 'L' graphs
 are decreasing functions. The 'U' graph function values go from about 370 to
 100 MFlops. The 'L' graph function goes from 280 to about 180 MFlops.
 The performance of the RPC factorization graphs are increasing functions as
-the matrix size increases from 1000 to 3000. The performance varies for matrix
+the matrix size increases from 1000 to 3000. The performance of the RPC factorization graphs varies for matrix
 sizes between 500 and 1500. The 'U' graph function values range from about
 700 MFlops to almost 800 MFlops, the 'L' graph function values range from 600
 MFlops to a little more than 700 MFlops. The RPC algorithm ('U', 'L') is (4.7,
@@ -596,11 +606,9 @@ from 300 MFlops to 200 MFlops. The RPC algorithm curve increases from 550
 MFlops to almost 810 MFlops. The RPC algorithm ('U', 'L') is (5.2, 5.0) times
 faster than the DPPTRS algorithm for large matrices in the solution case.
 The matrix size varies from 500 to 2500 on these subgures.
-5.7 The INTEL Pentium III
+5.7 Figure
 
-Figure
-
-17 shows the performance on the INTEL Pentium III 500 MHz computer.
+14 shows the performance on the INTEL Pentium III 500 MHz computer.
 The LAPACK routine DPPTRF (the upper subgure) 'U' and 'L' graphs
 are decreasing functions. The 'U' graph function ranges from about 100 to 80
 MFlops. The 'L' graph function ranges from less than 50 to about 25 MFlops.
@@ -618,17 +626,19 @@ The matrix size varies from 500 to 3000 on these subgures.
 
 Figure
 
-shows the performance on the the IBM 4-way PowerPC 604e 332 MHz
+shows the performance on the the IBM 4-way 5.8 The IBM SMP PowerPC with OpenMP directives
+
+ 604e 332 MHz
 computer.
-These graphs demonstrate successful use of OpenMP[17, 18] parallelizing
+Both graphs (the 'U' and 'L' graphs) demonstrate successful use of OpenMP[17, 18] parallelizing
 directives. The curves LAPACK(L), LAPACK(U), Recursive(L) and Recur-
 are identical to the corresponding curves of gure 11. We compare curves
-Recursive(L), Recursive(U), Rec.Par(L) and Rec.Par(U). The Rec.Par(L) and
+Recursive(L), Recursive(U), Rec.Par(L) and Rec.Par(U). Rec.Par(L) and
 Rec.Par(U) curves result from double parallelization. The RPC algorithms call
-a parallelized DGEMM and they are parallelized themselves by the OpenMP
+a parallelized DGEMM and they are parallelized they by the OpenMP
 directives.
-The Rec.Par(L) curve is not much faster than Recursive(L), sometimes it
-is slower. The Rec.Par(U) is the fastest, specially for large size matrices. The
+Rec.Par(L) curve is not much faster than Recursive(L), sometimes it
+is slower. Rec.Par(U) is the fastest, specially for large size matrices. The
 doubly parallelized RPC algorithm (Rec.Par(U)) is about 100 MFlops faster
 than the ordinary RPC algorithm (Recursive(U)). The relative ('U', 'L') RPC
 factorization algorithm performance is (5.6, 7.6) times faster than the DPPTRF
@@ -637,13 +647,13 @@ The RPC double parallelization algorithm for the solution (lower subgure)
 exceeds 800 MFlops. The relative ('U', 'L') RPC solution algorithm performance
 is (6.5, 6.6) times faster than the DPPTRF algorithm for large matrices.
 The matrix size varies from 300 to 3000 on these subgures.
-5.9 The INTEL Pentium III running Complex Arithmetic
+5.9 the INTEL Pentium III running Complex Arithmetic
 
 Figure
 
 19 shows the performance on the INTEL Pentium III 500 MHz computer.
 This gure demonstrate the successful use of RPC algorithm for Hermitian
-positive denite matrices. The performance is measured in Complex MFlops.
+positive denite matrices. the performance on the INTEL Pentium III 500 MHz computer is measured in Complex MFlops.
 To compare with the usual real arithmetic MFlops the Complex MFlops should
 be multiplied by 4.
 The LAPACK routine ZPPTRF (the upper subgure) 'U' graph performs a
@@ -654,7 +664,8 @@ go from 240 up to 320 MFlops. The RPC Hermitian factorization algorithm
 ('U', 'L') is (3.8, 4.3) times faster than the ZPPTRF algorithm for the large size
 matrices.
 The performance of the RPC solution routine (the lower subgure) for the
-'L' and 'U' graphs are almost equal. The ZPPTRS performance decreases from
+'L' and 'U' graphs are almost equal. The performance of the RPC solution routine (the lower subgure) for the
+'L' decreases from
 about 108 to 80 MFlops. The RPC solution algorithm increases from about 240
 up to more than 320 MFlops. The RPC algorithm ('U', 'L') is (3.9, 3.7) times
 faster than the ZPPTRS algorithm for large Hermitian matrices.
@@ -668,39 +679,45 @@ The graphs on this gure depict all three Cholesky algorithms, the LAPACK
 full storage (DPOTRF and DPOTRS) algorithms, the LAPACK packed storage
 (DPPTRF and DPPTRS) algorithms and the RPC (factorization and solution)
 algorithms.
-The LAPACK packed storage algorithms (DPPTRF and DPPTRS) are previously
+the LAPACK
+ packed storage algorithms (DPPTRF and DPPTRS) are previously
 explained on gure 17.
 The DPOTRF routine (the upper subgure), for both the 'U' and 'L' cases,
 performs better than the RPC factorization routine for smaller matrices. For
 larger matrices the RPC factorization algorithm performs equally well or slightly
 better than the DPOTRF algorithm.
 The performance of the DPOTRS algorithms ('U' and 'L' graphs) are better
-than the RPC performance for this computer.
+than the RPC performance for the INTEL Pentium III 500 MHz computer.
 However, the POTRF and POTRS storage requirement is almost twice the
 storage requirement of the RPC algorithms.
 The matrix size varies from 500 to 3000 on these subgures.
 6 Conclusion
 We summarize and emphasize the most important developments described in
-our paper.
+We paper.
 A recursive packed Cholesky factorization algorithm based on BLAS Level 3
 operations has been developed.
-The RPC factorization algorithm works with almost the same speed as
+A recursive packed Cholesky factorization algorithm based on BLAS Level 3
+operations works with almost the same speed as
 the traditional full storage algorithm but occupies the same data storage
 as the traditional packed storage algorithm. Also see bullet 4.
 The user interface of the new packed recursive subroutines (RP PPTRF
 and RP PPTRS) is exactly the same as the traditional LAPACK sub-routines
-(PPTRF and PPTRS). The user will see identical data formats.
+(PPTRF and PPTRS). The user interface of the new packed recursive subroutines (RP PPTRF
+and RP PPTRS) will see identical data formats.
 However, the new routines run much faster.
 Two separate routines are described here: RP PPTRF and RP PPTRS.
 The data format is always converted from LAPACK packed data format
-to the recursive packed data format before the routine starts its operation
+to the recursive packed data format before the routine starts The data format operation
 and converted back to LAPACK data format afterwards. The RP PPSV
 subroutine exists in our package which is equivalent to the LAPACK PPSV
-routine. In the RP PPSV subroutine the data is not converted between
+routine. In The RP PPSV
+subroutine the data is not converted between
 the factorization and the solution.
 New recursive packed Level 3 BLAS, RP TRSM and RP SYRK, written
-in Fortran90[21] were developed. They only call the GEMM routine.
-This GEMM subroutine can be developed either by the computer manufacturer
+in Fortran90[21] were developed. New recursive packed Level 3 BLAS, RP TRSM and RP SYRK, written
+in Fortran90[21] only call the GEMM routine.
+The RP PPSV
+subroutine can be developed either by the computer manufacturer
 or generated by ATLAS system[25]. The ATLAS generated GEMM
 subroutine is usually compatible with the manufacturer developed routine.
 

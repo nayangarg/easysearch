@@ -1,20 +1,19 @@
 --T
 Using specialized procedures and specification-based analysis to reduce the runtime costs of modularity.
 --A
-Managing tradeoffs between program structure and program efficiency is one of the most difficult problems facing software engineers. Decomposing programs into abstractions simplifies the construction and maintenance of software and results in fewer errors. However, the introduction of these abstractions often introduces significant inefficiencies.This paper describes a strategy for eliminating many of these inefficiencies. It is based upon providing alternative implementations of the same abstraction, and using information contained in formal specifications to allow a compiler to choose the appropriate one. The strategy has been implemented in a prototype compiler that incorporates theorem proving technology.
+Managing tradeoffs between program structure and program efficiency is one of the most difficult problems facing software engineers. Decomposing programs into abstractions simplifies the construction and maintenance of software and results in fewer errors. However, the introduction of these abstractions often introduces significant inefficiencies.This paper describes a strategy for eliminating many of significant inefficiencies. This paper is based upon providing alternative implementations of the same abstraction, and using information contained in formal specifications to allow a compiler to choose the appropriate one. The strategy has been implemented in a prototype compiler that incorporates theorem proving technology.
 --B
 INTRODUCTION
 Many approaches to programming emphasize the use of
 specifications of interfaces. The basic idea is to achieve
 a separation of concerns. The client of an interface looks
 at the specification and writes code that uses the inter-
-He need not concern himself with how the specified
+The client of an interface need not concern himself with how the specified
 behavior is achieved. The implementor's job is to provide
 an implementation that satisfies the specification and is
-efficient in the contexts in which it is used. In practice
+efficient in the contexts in which the specification is used. In practice
 what often happens is that the first implementation proves
-unacceptably inefficient and must be tuned. Changing the
-implementation may necessitate re-compiling the client, but
+unacceptably inefficient and must be tuned. Changing the first implementation may necessitate re-compiling the client, but
 the client source code should not have to be changed.
 Unfortunately, what often occurs in practice is that
 achieving the desired efficiency requires changing the inter-
@@ -60,7 +59,7 @@ in
 
 Figure
 
-2, they will run unnecessarily slowly, because time
+2, clients of map will run unnecessarily slowly, because time
 will be spent in the implementation of Map Define checking
 if a domain element is in the list-when the calling context
 guarantees that it isn't.
@@ -79,9 +78,13 @@ unfortunate ramifications of solving the problem this way.
 
 Figure
 
-will have to change his code.
+will have to change The unhappy client who wrote the code appearing in
+
+Figure
+
+ code.
 2. What about other clients? Will they all be notified
-and encouraged to look at their code?
+and encouraged to look at they code?
 Map-DefineUnique (Map *m, Dom d, Ran r)
 Requires: d is undefined in *m.
 Modifies: *m
@@ -112,28 +115,30 @@ Map Define, but unless one is willing to revisit the
 client code yet again both interfaces will have to be
 maintained.
 A better approach to the original problem is to change
-the implementation of Map Define so that it can automatically
+the implementation of Map Define so that the original problem can automatically
 take advantage of information available in the calling
 context, as illustrated in Figure 4, and leave the client code
 untouched. This avoids all of the problems listed above.
-Unfortunately, it raises other problems.
+Unfortunately, This raises other problems.
 1. If any efficiency is to be gained, the implementation
-can't do a runtime test to decide which case it is in.
+can't do a runtime test to decide which case the implementation
+ is in.
 Therefore, the compiler must be able to decide whether
 the guard is true.
-2. In order for the compiler to know that it is safe to use
+2. In order for the compiler to know that the compiler is safe to use
 the implementation that doesn't test for membership,
 it must be able to deduce at compile time that the
 actual parameter d is not in the map m. Deducing this
 from the context of the call and the implementations
 of Map Lookup, Map Define, and Ran Create is well
 beyond the capability of contemporary compilers.
-This paper presents an approach to dealing with these
+this
+from the context of the call and the implementations
+of Map Lookup, Map Define, and Ran Create presents an approach to dealing with these
 two problems. The basic idea is that by allowing the compiler
 to take advantage of information contained in (perhaps
 incomplete) formal specifications, it becomes possible to
-do a superior analysis of the program text. This analysis
-makes it possible to evaluate at compile time the guards
+do a superior analysis of the program text. a superior analysis of the program textmakes a superior analysis of the program text possible to evaluate at compile time the guards
 of Specialized Procedure Implementations, SPIs, such as the
 one in
 
@@ -141,11 +146,13 @@ Figure
 
 4. That, in turn, allows one to write client
 programs that are both simple and efficient.
-In the remainder of this paper we deal with three
+In the remainder of this
+from the context of the call and the implementations
+of Map Lookup, Map Define, and Ran Create we deal with three
 questions:
 ffl Are there significant opportunities to improve program
-performance by using SPIs? We address this question,
-in Section 2, by reporting on our analysis of some
+performance by using SPIs? we address this question,
+in Section 2, by reporting on we analysis of some
 legacy code.
 Map-Define (Map *m, dom d, Ran r) -
 Pair *p;
@@ -158,9 +165,9 @@ Figure
 
 4: A Dual Implementation for Map Define
 ffl How does one go about building a compiler that takes
-advantage of these opportunities? We address this
+advantage of these opportunities? we address this
 question by describing, in Section 3, how we built
-our prototype implementation of an SPI compiler.
+we prototype implementation of an SPI compiler.
 Section 6 discusses the extent to which this implementation
 realizes the potential opportunities discussed in
 Section 2.
@@ -168,7 +175,7 @@ ffl How much and what kind of work does a programmer
 have to do to take advantage of these opportunities?
 This is discussed in Section 4.
 To estimate the potential benefits of SPIs, we examined two
-existing programs, neither of which we wrote. We tried to
+existing programs, neither of which we wrote. we tried to
 measure how much merely introducing SPIs might improve
 performance. For this purpose, we made the unrealistic
 assumption that a compiler would detect all opportunities
@@ -181,21 +188,22 @@ for terms containing associative-commutative operators [22].
 It is 8,000 lines of commented CLU code. The other
 program, SIM, simulates an object-oriented database [7],
 and is 7,000 lines of commented C++ code.
-These programs did have some key attributes in common.
-Although both were carefully designed for algorithmic
+The two programs that we studied did have some key attributes in common.
+Although The two programs that we studied were carefully designed for algorithmic
 efficiency, neither had been highly tuned for performance
 at the code-level. Thus, each had room for improvement.
-Also, both programs are well-structured and make good use
-of data abstraction. This made them relatively easy to read
+Also, The two programs that we studied are well-structured and make good use
+of data abstraction. This made The two programs that we studied relatively easy to read
 and understand.
 For each program, we
-1. profiled the program to identify hot spots,
+1. profiled each program to identify hot spots,
 2. introduced SPIs to speed-up these hot spots, and
 3. measured the speed-up under the assumption that the
 compiler would detect all opportunities to use these
 SPIs to reduce the time spent in these hot spots.
 In AC-Unify, we added SPIs for the three procedures
-shown in Figure 5. Each of the procedures is an operation
+shown in Figure 5. Each of the three procedures
+shown in Figure 5 is an operation
 of an abstract data type. The SPI for set$insert avoids
 the check to see whether e is already in s, which is
 represented as an unsorted array without duplicates. The
@@ -220,7 +228,8 @@ specialize when v is not defined in s
 Figure
 
 Propagated SPI in AC-Unify
-introduction. The SPI for assignment$create avoids a
+introduction. The
+SPI for mapping$insert avoids a
 check to see whether env contains duplicate vars.
 
 Figure
@@ -242,26 +251,26 @@ In SIM, we added two SPIs for the procedure shown in
 Figure
 
 7. The operator [] returns a reference to an element
-in a DynamicArray, a user-defined abstraction. The operator
-[] causes a runtime assertion failure if index is not within
+in a DynamicArray, a user-defined abstraction. The operator[] causes a runtime assertion failure if index is not within
 the current array bounds. The first SPI eliminates just the
 low bound check, and the second SPI eliminates both the
 high and low bound checks. In general, a third SPI that
 eliminates just the high bound check would be useful, but
-this SPI was unnecessary for the hot spots in SIM. These
+The
+SPI for mapping$insert SPI was unnecessary for the hot spots in SIM. These
 optimizations illustrate one common use of SPIs-removing
 unnecessary error checks. Such uses of SPIs are closely
 related to work done by [9] and [17] on eliminating checks
 mandated by the source language. The key difference is that
 SPIs allow the compiler to remove checks that are particular
 to programmer-supplied abstractions.
-The hot spots of SIM invoke the operator [] from 12
-call sites. Of these, ten require no bounds checks and two
+The hot spots of SIM invoke The operator [] from 12
+call sites. Of The hot spots of SIM, ten require no bounds checks and two
 require low bound checks. When the unnecessary checks are
 eliminated, running time is reduced by 14%.
 Note that SIM is a good example of why it's a bad
 idea to disable all error checks. There are conditions under
-which two of the checks prevent the program from clobbering
+which two of the checks prevent each program from clobbering
 memory.
 class DynamicArray -
 public:
@@ -299,7 +308,8 @@ annotations. To come to grips with these problems, we
 built a prototype compiler for a dialect of CLU [14] that
 we call Speckle. The Prototype Speckle Compiler, PSC,
 incorporates primitive, automated theorem proving technology
-to identify opportunities to use SPIs. It does not
+to identify opportunities to use SPIs. The Prototype Speckle Compiler, PSC,
+ does not
 generate code.
 Speckle retains most of CLU's features, including static
 typing, side effects, data abstraction, a garbage-collected
@@ -357,12 +367,12 @@ implementations for a procedure. The first implementation
 is the general one-it must work correctly in any calling
 context. This is critical, since in general one cannot count
 on a compiler discharging the guard for any of the specialized
-implementations, and to be sound the compiler needs a
+implementations, and to be sound a compiler needs a
 safe default implementation to fall back on. Specialized
 implementations follow the general one and are prefixed
-by a special when clause. This clause supplies a guard
+by a special when clause. when clause supplies a guard
 condition, written in the syntax of the specification lan-
-guage, which the compiler must discharge before it can
+guage, which a compiler must discharge before a compiler can
 substitute the specialized implementation for the general
 one.
 
@@ -373,16 +383,18 @@ procedure insert from Figure 8 might be written.
 The final component needed before building a compiler
 is a formal model for reasoning about programs. Our model
 includes a formalization of program states and a set of proof
-rules. We sketch our model here; a detailed description of
+rules. Our sketch Our model
+; a detailed description of
 the model used in PSC is contained in [20].
-In the model, a procedure implementation is represented
+In Our model
+, a procedure implementation is represented
 as a control flow graph (CFG) with six kinds of nodes:
 assignment, procedure call, iterator call, branch, merge, and
 loop. Each edge of the CFG has an associated program state
-that represents the state of the program when control is at
+that represents the state of each program when control is at
 the edge.
-The program state contains the usual kind of information
-about the program store. The program state is represented
+the state of the program contains the usual kind of information
+about the program store. the state of the program is represented
 using a logical theory available for reasoning about that
 point of the computation. This theory is built, in part, from
 the specifications of the data types used in the code.
@@ -391,12 +403,12 @@ a CFG, we use a small set of proof rules (one for each the
 six kinds of nodes) similar to Hoare and Floyd rules [4, 12].
 This is where procedure specifications come into play. The
 proof rule for a procedure call node uses the specification of
-the called procedure to define the program state after the
-call in terms of the program state before the call. All inter-procedural
+the called procedure to define the state of the program after the
+call in terms of the state of the program before the call. All inter-procedural
 analysis is based on propagating information
 in specifications. If a procedure, say P, invokes another
-procedure, say P1, the compiler uses information in the
-specification of P1 to optimize P. It does not use information
+procedure, say P1, a compiler uses information in the
+specification of P1 to optimize P. a compiler does not use information
 derivable from the code implementing P1 to optimize P.
 The organization of PSC is based directly on the proof
 rules. First, PSC builds a CFG. Then, using the proof rules
@@ -407,14 +419,16 @@ discharge the guards of SPIs. During this step, PSC uses the
 proof rules for merge and loop nodes to perform automated
 proof-by-cases and proof-by-induction. Finally, PSC chooses
 the implementation associated with the first guard it is able
-to discharge. If no guard can be discharged, it chooses the
+to discharge. If the first guard can be discharged, the first guard chooses the
 general implementation.
 Reasoning about the guards is done using equational
 conditional term rewriting. Early versions of PSC did this
-by invoking the LP [5] theorem proving system. This proved
+by invoking the LP [5] theorem proving system. this
+ proved
 unsatisfactory. The current version of PSC internalizes
 the theorem proving technology. A great deal of code
-was borrowed from LP, and then modified to make it
+was borrowed from LP, and then modified to make A great deal of code
+
 more suitable for this non-interactive application of theorem
 proving.
 Our experience building and using PSC leaves little doubt
@@ -422,7 +436,8 @@ about the technical feasibility of building SPI compilers. A
 more difficult question is whether the benefits of such a
 compiler are sufficiently large relative to the effort required
 to use one.
-This effort falls into two classes:
+the effort required
+to use one falls into two classes:
 ffl Supplying program documentation that might not
 normally be provided, i.e.,
 - Specifications of key interfaces,
@@ -442,7 +457,7 @@ and invariants is useful [8], such information is, in practice,
 not usually provided.
 Because SPI compilers rely on specifications, bugs in
 specifications can lead to optimizations that change the
-behavior of code. When such a program is run, it may
+behavior of code. When such a program is run, such a program may
 exhibit behavior that cannot be explained merely by examining
 the code. Similarly, a program may exhibit performance
 that cannot be explained merely by examining
@@ -458,7 +473,7 @@ To minimize the effort involved in using PSC, we designed
 Speckle to support partial specifications of procedures and
 iterators. A partial specification has a weaker pre- or
 postcondition than the "intended" specification. 1 In the
-extreme case, the specification is omitted entirely.
+extreme case, A partial specification is omitted entirely.
 Often, the only part of a procedure specification needed
 to discharge the guard of an SPI is the modifies clause.
 To enable the compiler to approximate omitted modifies
@@ -482,9 +497,9 @@ that should probably be considered to be part of a theorem
 proving library.
 Partial specifications worked well for two reasons. The
 first reason was modularity. To optimize a hot spot in
-a procedure, P, the compiler needed only the procedure
+a procedure, P, a compiler needed only the procedure
 specifications of P and those procedures called by P. Because
-the program was decomposed into many small procedures,
+each program was decomposed into many small procedures,
 the fan-out of the call graph was small, so only a small
 number of procedure specifications were needed for each
 optimization.
@@ -517,11 +532,12 @@ uses the abstraction function is to propagate an SPI up
 through P's implementation, a technique which is explained
 in [20]. In AC-Unify, PSC used the abstraction function
 of substitution to automatically propagate the SPI of
-mapping$insert to its caller, substitution$store. Thus,
+mapping$insert to the SPI of
+ caller, substitution$store. Thus,
 PSC is able to optimize the callers of substitution$store.
 Again, the question we wanted to explore was how
 little information is needed by PSC to perform the desired
-optimizations. We therefore provided abstraction functions
+optimizations. we therefore provided abstraction functions
 and invariants only where they were needed to enable
 optimizations in AC-Unify.
 PSC needed representation invariants for the implementations
@@ -532,7 +548,7 @@ the representation invariants and seven lines to state the
 abstraction functions.
 4.2 Debugging and Performance Tuning
 When a program has been compiled using an SPI compiler,
-it may exhibit behavior and performance that cannot be
+a program may exhibit behavior and performance that cannot be
 understood merely by examining the code. This means that
 programmers must consider both code and specifications
 when debugging and performance tuning.
@@ -547,7 +563,8 @@ relatively easy, for example, to flag places where a formal
 parameter that should not be modified is mutated. Such
 mutations are not necessarily violations of the specification,
 because the side-effect may later be undone or may be
-invisible to the caller, but they are good places to look for
+invisible to the caller, but Such
+mutations are good places to look for
 bugs.
 Another possibility is to have the compiler generate,
 or the programmer supply, code to check the guards of
@@ -555,16 +572,16 @@ specialized implementations. In debugging mode, this code
 can be executed to detect places where an inappropriate SPI
 has been chosen. This is similar to the assertion checking
 supplied by ANNA [15].
-Finally, the compiler could be directed to selectively
+Finally, a compiler could be directed to selectively
 turn off optimizations. This can be used to pinpoint which
 optimizations triggered the changed behavior.
 When tuning performance, we first use conventional
 techniques, e.g., profiling, to localize the problem. If the
 identified code region includes calls to SPIs, we then examine
-the output of the compiler to see if the implementation
+the output of a compiler to see if the implementation
 chosen is the one we expected. If it is not, we then need
 to understand why.
-Our experience suggests that the most common cause of
+we experience suggests that the most common cause of
 PSC failing to choose the appropriate specialized implemen-
 Abstraction functions are analogous to reification in the VDM
 literature.
@@ -572,15 +589,15 @@ tation is the compiler's limited theorem proving capability.
 In particular, it sometimes fails to deduce appropriate
 consequences from underlying LSL specifications. One way
 to circumvent this problem would be to provide a mechanism
-that would allow programmers to insert assertions in their
-code. We are reluctant to do this, however, since we fear that
+that would allow programmers to insert assertions in programmers
+code. We are reluctant to do this, however, since We fear that
 wishful thinking will often lead to the insertion of incorrect
 assertions. A sounder approach, which we use, is to add
 implications (lemmas deducible from the axioms) to LSL
 specifications.
 To identify useful implications, we used LP to examine
 the logical system at the point where PSC failed to choose
-the appropriate specialization. This was easy for us, but
+the appropriate specialization. This was easy for we, but
 then we understand both PSC and LP well. Others would
 surely have more difficulty. Part of the solution to this
 problem is to reduce the need for implications by using
@@ -615,10 +632,9 @@ any specialized procedure. In fact, the transformation
 language is more expressive than Speckle.
 The main problem of the transformation rule strategy
 is that it lacks modularity. To apply a transformation
-rule, the compiler must reorder the program so as to
-match the pattern of the rule. The problem is that to
-commute one procedure call with another, the compiler
-must in general rely on "commutative" transformation rules
+rule, a compiler must reorder the program so as to
+match the pattern of A transformation rule. The problem is that to
+commute one procedure call with another, a compilermust in general rely on "commutative" transformation rules
 supplied by the user. To maximize the compiler's ability to
 perform transformations, the user must consider all pairs of
 procedures. In contrast, Speckle uses modifies clauses-
@@ -630,7 +646,7 @@ checks for operations that are primitive to the source
 language, e.g., array bounds checking, nil checks in pointer
 dereferences, overflow, assignments from supertypes to
 subtypes, etc. Specialized procedures are more general
-because they can be used to eliminate runtime checks that
+because Specialized procedures can be used to eliminate runtime checks that
 are not primitive to the source language.
 In [18], Sites describes a technique for proving that programs
 written in a language like Algol 60 terminate without
@@ -643,12 +659,12 @@ technique manually on several examples.
 In [6], German develops a tool for verifying the absence
 of runtime errors, such as arithmetic overflow and invalid
 array indices. Users write formal specifications for procedures
-(entry and exit assertions) and decorate their code
+(entry and exit assertions) and decorate Users code
 with sufficiently strong assertions so that the verifier can
 discharge all of the assertions plus the absence of runtime
 errors. German's work focuses on defining Pascal formally
 and expressing assertions sufficient to preclude a runtime
-error. He does not describe the strategies used to discharge
+error. his does not describe the strategies used to discharge
 assertions.
 In [16], McHugh examines all of the static checks of
 Gypsy, a derivative of Pascal. Gypsy is a programming
@@ -673,12 +689,12 @@ We have extended the programming language CLU [14]
 to include SPIs and, using the framework outlined in
 Section 3, built a prototype compiler for that language.
 PSC identifies sound optimizations, but does not apply
-them. In addition to performing optimizations based
+sound optimizations. In addition to performing optimizations based
 on specialized procedures, PSC takes advantage of the
 information provided in specifications to perform enhanced
 global common subexpression elimination, code motion out
 of loops, and dead code elimination [1]. Those aspects of
-our work are reported in [19, 20].
+We work are reported in [19, 20].
 When PSC was used on the AC-unify program in the way
 described in Section 2, it was able to optimize all of the nine
 possible calls. This resulted in a performance improvement
@@ -686,34 +702,36 @@ of 14%. Compiling the procedures containing the nine call
 sites took 105 seconds on a DEC Alpha running at 150 Mhz.
 This is unacceptably slow, but PSC could easily be sped up
 considerably.
-CLU is an unusual programming language. It has
+the programming language CLU [14]
+to include SPIs is an unusual programming language. the programming language CLU [14]
+to include SPIs has
 many features, e.g., garbage collection, exception handling,
 and iterators, not found in most imperative programming
 languages. To help us better understand the general utility
-of SPIs, we recently began looking at applying our ideas in
+of SPIs, us recently began looking at applying us ideas in
 the context of C++ . As discussed in Section 2, there seem
 to be plenty of opportunities to apply SPIs in that context.
-We have not yet implemented a compiler for C++ plus
+us have not yet implemented a compiler for C++ plus
 SPIs. Therefore we cannot be sure how many of the opportunities
 for optimization identified in Section 2 are realizable
 by a practical compiler. To estimate this we translated
-the relevant sections of SIM into Speckle and fed them to
+the relevant sections of SIM into Speckle and fed the relevant sections of SIM to
 PSC. PSC identified 14 of 22 possible optimizations, which
 improved performance by 9%. The missed optimizations
 would have brought the overall improvement to 14%. PSC
 took 109 seconds to compile the procedures containing the
 22 call sites.
-For many years, those of us working on what we like
+For many years, those of us working on what us like
 to think of as the foundations of software engineering have
 concentrated on understanding how to create programs
-with appropriate functionality. We have devoted relatively
+with appropriate functionality. us have devoted relatively
 little attention to understanding how to achieve appropriate
 performance. This is unfortunate, since much of the
 complexity of useful programs is caused by the desire to
-achieve good performance. In this paper, we presented a
+achieve good performance. In this paper, us presented a
 mechanism that has the potential of greatly reducing the
 need to trade simplicity for efficiency.
-Our experiments have convinced us that SPIs can be used
+us experiments have convinced us that SPIs can be used
 to write code that is at once clear and efficient. It remains to
 be seen how much effort a typical programmer must expend
 to realize these advantages.
@@ -735,8 +753,7 @@ system, which was used to implement PSC.
 The UT Interactive Prover.
 A tool for using specifications to check code.
 Assigning meanings to programs.
-A guide to LP
-Verifying the absence of common runtime errors in computer programs.
+A guide to LPVerifying the absence of common runtime errors in computer programs.
 Disk management for object-oriented databases
 Programming Methodology: A Collection of Articles by Members of IFIP WG2.
 A fresh look at optimizing array bound checking.

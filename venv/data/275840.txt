@@ -1,13 +1,12 @@
 --T
 Efficient Sparse LU Factorization with Partial Pivoting on Distributed Memory Architectures.
 --A
-AbstractA sparse LU factorization based on Gaussian elimination with partial pivoting (GEPP) is important to many scientific applications, but it is still an open problem to develop a high performance GEPP code on distributed memory machines. The main difficulty is that partial pivoting operations dynamically change computation and nonzero fill-in structures during the elimination process. This paper presents an approach called S* for parallelizing this problem on distributed memory machines. The S* approach adopts static symbolic factorization to avoid run-time control overhead, incorporates 2D L/U supernode partitioning and amalgamation strategies to improve caching performance, and exploits irregular task parallelism embedded in sparse LU using asynchronous computation scheduling. The paper discusses and compares the algorithms using 1D and 2D data mapping schemes, and presents experimental studies on Cray-T3D and T3E. The performance results for a set of nonsymmetric benchmark matrices are very encouraging, and S* has achieved up to 6.878 GFLOPS on 128 T3E nodes. To the best of our knowledge, this is the highest performance ever achieved for this challenging problem and the previous record was 2.583 GFLOPS on shared memory machines [8].
+AbstractA sparse LU factorization based on Gaussian elimination with partial pivoting (GEPP) is important to many scientific applications, but it is still an open problem to develop a high performance GEPP code on distributed memory machines. The main difficulty is that partial pivoting operations dynamically change computation and nonzero fill-in structures during the elimination process. This paper presents an approach called S* for parallelizing this problem on distributed memory machines. an approach called S* for parallelizing this problem on distributed memory machines adopts static symbolic factorization to avoid run-time control overhead, incorporates 2D L/U supernode partitioning and amalgamation strategies to improve caching performance, and exploits irregular task parallelism embedded in sparse LU using asynchronous computation scheduling. The paper discusses and compares the algorithms using 1D and 2D data mapping schemes, and presents experimental studies on Cray-T3D and T3E. The performance results for a set of nonsymmetric benchmark matrices are very encouraging, and S* has achieved up to 6.878 GFLOPS on 128 T3E nodes. To the best of our knowledge, this is the highest performance ever achieved for this challenging problem and the previous record was 2.583 GFLOPS on shared memory machines [8].
 --B
 Currently with the Computer Science Department, University of Illinois at Urbana-Champaign.
 pivoting operations interchange rows based on the numerical values of matrix elements during the
 elimination process, it is impossible to predict the precise structures of L and U factors without
-actually performing the numerical factorization. The adaptive and irregular nature of sparse LU
-data structures makes an efficient implementation of this algorithm very hard even on a modern
+actually performing the numerical factorization. The adaptive and irregular nature of sparse LUdata structures makes an efficient implementation of this algorithm very hard even on a modern
 sequential machine with memory hierarchies.
 There are several approaches that can be used for solving nonsymmetric systems. One approach
 is the unsymmetric-pattern multi-frontal method [5, 25] that uses elimination graphs to model
@@ -23,21 +22,23 @@ for up to 6 processors on a Sequent machine and further work is needed to assess
 of the sequential code.
 As far as we know, there are no published results for parallel sparse LU on popular commercial
 distributed memory machines such as Cray-T3D/T3E, Intel Paragon, IBM SP/2, TMC CM-5 and
-Meiko CS-2. One difficulty in the parallelization of sparse LU on these machines is how to utilize a
+Meiko CS-2. One difficulty in the parallelization of sparse LU on no published results for parallel sparse LU on popular commercial
+distributed memory machines such as Cray-T3D/T3E, Intel Paragon, IBM SP/2, TMC CM-5 and
+Meiko is how to utilize a
 sophisticated uniprocessor architecture. The design of a sequential algorithm must take advantage
 of caching, which makes some previously proposed techniques less effective. On the other hand,
 a parallel implementation must utilize the fast communication mechanisms available on these ma-
 chines. It is easy to get speedups by comparing a parallel code to a sequential code which does
 not fully exploit the uniprocessor capability, but it is not as easy to parallelize a highly optimized
 sequential code. One such sequential code is SuperLU [7] which uses a supernode approach to
-conduct sequential sparse LU with partial pivoting. The supernode partitioning makes it possible
+conduct sequential sparse LU with partial pivoting. The supernode partitioning makes The supernode partitioning possible
 to perform most of the numerical updates using BLAS-2 level dense matrix-vector multiplications,
 and therefore to better exploit memory hierarchies. SuperLU performs symbolic factorization and
 generates supernodes on the fly as the factorization proceeds. UMFPACK is another competitive
 sequential code for this problem and neither SuperLU nor UMFPACK is always better than the
 other [3, 4, 7]. MA41 is a code for sparse matrices with symmetric patterns. All of them are regarded
 as of high quality and deliver excellent megaflop performance. In this paper we focus on the
-performance analysis and comparison with SuperLU code since the structure of our code is closer
+performance analysis and comparison with SuperLU code since the structure of we code is closer
 to that of SuperLU.
 In this paper, we present an approach called S   that considers the following key strategies together
 in parallelizing the sparse LU algorithm:
@@ -58,7 +59,7 @@ without knowing the actual numerical values, then we develop a 2-D L/U supernode
 technique to identify dense structures in both L and U factors, and maximize the use of BLAS-3
 level subroutines for these dense structures. We also incorporate a supernode amalgamation [1, 10]
 technique to increase the granularity of the computation.
-In exploiting irregular parallelism in the re-designed sparse LU algorithm, we have experimented
+In exploiting irregular parallelism in the re-designed sparse LU algorithm, We have experimented
 with two mapping methods, one of which uses 1-D data mapping and the other uses 2-D data
 mapping. One advantage of using 1-D data mapping is that the corresponding LU algorithm can be
 easily modeled by directed acyclic task graphs (DAGs). Graph scheduling techniques and efficient
@@ -70,8 +71,8 @@ Graph scheduling can do an excellent job in exploiting irregular parallelism but
 memory space per node to achieve the best performance. Also the 1-D data mapping can only expose
 limited parallelism. Due to these restrictions, we have also examined a 2-D data mapping method
 and an asynchronous execution scheme which exploits parallelism under memory constraints. We
-have implemented our sparse LU algorithms and conducted experiments with a set of nonsymmetric
-benchmark matrices on Cray-T3D and T3E. Our experiments show that our approach is quite
+have implemented We sparse LU algorithms and conducted experiments with a set of nonsymmetric
+benchmark matrices on Cray-T3D and T3E. We experiments show that We approach is quite
 effective in delivering good performance in terms of high megaflop numbers. In particular, the 1-D
 code outperforms the current 2-D code when processors have sufficient memory. But the 2-D code
 has more potential to solve larger problems and produces higher megaflop numbers.
@@ -99,31 +100,31 @@ The elimination steps are controlled by loop index k. For elements manipulated a
 for row indexing and j for column indexing. This convention will be used through the rest of this
 paper. During each step of the elimination process, a row interchange may be needed to maintain
 numerical stability. The result of LU factorization process can be expressed by:
-L is a unit lower triangular matrix, U is a upper triangular matrix, and P is a permutation matrix
+L is a unit lower triangular matrix, L is a upper triangular matrix, and P is a permutation matrix
 which contains the row interchange information. The solution of a linear system
-be solved by two triangular solvers: y. The triangular solvers are much less
+be solved by two triangular solvers: y. two triangular solvers are much less
 time consuming than the Gaussian elimination process.
 Caching behavior plays an important role in achieving good performance for scientific computations.
 To better exploit memory hierarchy in modern architectures, supernode partitioning is an important
 technique to exploit the regularity of sparse matrix computations and utilize BLAS routines to
-speed up the computation. It has been successfully applied to Cholesky factorization [26, 30,
+speed up the computation. the computation has been successfully applied to Cholesky factorization [26, 30,
 31]. The difficulty for the nonsymmetric factorization is that supernode structure depends on
 pivoting choices during the factorization thus cannot be determined in advance. SuperLU performs
-symbolic factorization and identifies supernodes on the fly. It also maximizes the use of BLAS-
+symbolic factorization and identifies supernodes on the fly. SuperLU also maximizes the use of BLAS-
 level operations to improve the caching performance of sparse LU. However, it is challenging to
 parallelize SuperLU on distributed memory machines. Using the precise pivoting information at each
 elimination step can certainly optimize data space usage, reduce communication and improve load
 balance, but such benefits could be offset by high run-time control and communication overhead.
 The strategy of static data structure prediction in [20] is valuable in avoiding dynamic symbolic
 factorization, identifying the maximum data dependence patterns and minimizing dynamic control
-overhead. We will use this static strategy in our S   approach. But the overestimation does introduce
+overhead. We will use The strategy of static data structure prediction in [20] in We S   approach. But the overestimation does introduce
 extra fill-ins and lead to a substantial amount of unnecessary operations in the numerical
 factorization. We observe that in SuperLU [7] the DGEMV routine (the BLAS-2 level dense matrix
 vector multiplication) accounts for 78% to 98% of the floating point operations (excluding the symbolic
 factorization part). It is also a fact that BLAS-3 routine DGEMM (matrix-matrix multiplication)
 is usually much faster than BLAS-1 and BLAS-2 routines [6]. On Cray-T3D with a matrix of size
 \Theta 25, DGEMM can achieve 103 MFLOPS while DGEMV only reaches 85 MFLOPS. Thus the key idea
-of our approach is that if we could find a way to maximize the use of DGEMM after using static symbolic
+of our approach is that if our could find a way to maximize the use of DGEMM after using static symbolic
 factorization, even with overestimated nonzeros and extra numerical operations, the overall
 code performance could still be competitive to SuperLU which mainly uses DGEMV.
 3 Storage prediction and dense structure identification
@@ -134,7 +135,7 @@ space for the fill-ins generated in the numerical factorization phase is to over
 sparse matrix A with a zero-free diagonal, a simple solution is to use the Cholesky factor L c of
 A T A. It has been shown that the structure of L c can be used as an upper bound for the structures
 of L and U factors regardless of the choice of the pivot row at each step [20]. But it turns out
-that this bound is not very tight. It often substantially overestimates the structures of the L and
+that this bound is not very tight. this bound often substantially overestimates the structures of the L and
 U factors (refer to Table 1). Instead we consider another method from [20]. The basic idea is
 to statically consider all possible pivoting choices at each step. The space is allocated for all the
 possible nonzeros that would be introduced by any pivoting sequence that could occur during the
@@ -149,7 +150,7 @@ Notice that the structures of each row or the whole matrix cover the structures 
 factors. In addition, during the process of symbolic factorization we assume that no exact numerical
 cancelation occurs. Thus, we have
 ij is structurally nonzerog:
-We also define the set of candidate pivot rows at step k as follows:
+we also define the set of candidate pivot rows at step k as follows:
 ik is structurally nonzerog:
 We assume that a kk is always a nonzero. For any nonsingular matrix which does not have a zero-free
 diagonal, it is always possible to permute the rows of the matrix so that the permuted matrix has a
@@ -173,14 +174,14 @@ structure remains unchanged at steps 4 and 5.
 This symbolic factorization is applied after an ordering is performed on the matrix A to reduce
 fill-ins. The ordering we are currently using is the multiple minimum degree ordering for A T A. We
 also permute the rows of the matrix using a transversal obtained from Duff's algorithm [11] to make
-A have a zero-free diagonal. The transversal can often help reduce fill-ins [12].
+A have a zero-free diagonal. a transversal obtained from Duff's algorithm [11] can often help reduce fill-ins [12].
 We have tested the storage impact of overestimation for a number of nonsymmetric testing matrices
 from various sources. The results are listed in Table 1. The fourth column in the table is original
 number of nonzeros, and the fifth column measures the symmetry of the structure of the original
 matrix. The bigger the symmetry number is, the more nonsymmetric the original matrix is. A unit
 symmetry number indicates a matrix is symmetric, but all matrices have nonsymmetric numerical
 values. We have compared the number of nonzeros obtained by the static approach and the number
-of nonzeros obtained by SuperLU, as well as that of the Cholesky factor of A T A, for these matrices.
+of nonzeros obtained by SuperLU, as well as that of the Cholesky factor of A T A, for all matrices.
 The results in Table 1 show that the overestimation usually leads to less than 50% extra nonzeros
 than SuperLU scheme does. Extra nonzeros do imply additional computational cost. For example,
 one has to either check if a symbolic nonzero is an actual nonzero during a numerical factorization,
@@ -194,8 +195,8 @@ It should be noted that there are some cases that static symbolic factorization 
 overestimation. For example, memplus matrix [7] is such a case. The static scheme produces 119
 times as many nonzeros as SuperLU does. In fact, for this case, the ordering for SuperLU is applied
 based on A T + A instead of A T A. Otherwise the overestimation ratio is 2.34 if using A T A for
-SuperLU also. For another matrix wang3 [7], the static scheme produces 4 times as many nonzeros
-as SuperLU does. But our code can still produce 1 GFLOPS for it on 128 nodes of T3E. This paper
+SuperLU also. For another matrix wang3 [7], The static scheme produces 4 times as many nonzeros
+as SuperLU does. But our code can still produce 1 GFLOPS for our code on 128 nodes of T3E. This paper
 focuses on the development of a high performance parallel code when overestimation ratios are not
 too high. Future work is to study ordering strategies that minimize overestimation ratios.
 factor entries/jAj S   =SuperLU
@@ -204,7 +205,13 @@ Matrix
 
 Table
 
-1: Testing matrices and their statistics.
+1: Testing matrices and SuperLU
+Matrix
+9 e40r0100 17281 553562 1.000 14.76 17.32 26.48 1.17 3.11
+
+Table
+
+1 statistics.
 3.2 2-D L/U supernode partitioning and dense structure identification
 Supernode partitioning is a commonly used technique to improve the caching performance of sparse
 code [2]. For a symmetric sparse matrix, a supernode is defined as a group of consecutive columns
@@ -245,11 +252,12 @@ by subcolumn k in the submatrix block U ij , it means the subcolumn in this subm
 the global column index k where 1). Similarly we use a ij to indicate an
 individual nonzero element based on global indices. A compound structure in L or U is a
 submatrix, a subcolumn, or a subrow.
-ffl A compound structure is nonzero if it contains at least one nonzero element or fill-in. We
+ffl A compound structure is nonzero if A compound structure contains at least one nonzero element or fill-in. We
 use A ij 6= 0 to indicate that block A ij is nonzero. Notice that an algorithm only needs to
 operate on nonzero compound structures. A compound structure is structurally dense if all of
-its elements are nonzeros or fill-ins. In the following we will not differentiate between nonzero
-and fill-in entries. They are all considered as nonzero elements.
+A compound structure elements are nonzeros or fill-ins. In the following we will not differentiate between nonzero
+and fill-in entries. nonzero
+and fill-in entries are all considered as nonzero elements.
 Theorem 1 Given a sparse matrix A with a zero-free diagonal, after the above static symbolic
 factorization and 2-D L/U supernode partitioning are performed on A, each nonzero submatrix in
 the U factor of A contains only structurally dense subcolumns.
@@ -261,7 +269,7 @@ Notice at each step k, the final structures of row i (i 2 P k ) are updated by t
 procedure as
 R
 For the structure of a row i where k - i - k +s, we are only interested in nonzero patterns of the U
-part (excluding the part belonging to L kk ). We call this partial structure as UR i . Thus for
+part (excluding the part belonging to L kk ). we call this partial structure as UR i . Thus for
 UR
 It can be seen that after the k-th step updating, UR k
 Knowing that the structure
@@ -274,7 +282,7 @@ Similarly we can show that UR k+s
 k .
 The above theorem shows that the L/U partitioning can generate a rich set of structurally dense
 subcolumns or even structurally dense submatrices in a U factor. We also further incorporate
-this result with supernode amalgamation in Section 3.3 and our experiments indicate that more
+this result with supernode amalgamation in Section 3.3 and We experiments indicate that more
 than 64% of numerical updates is performed by the BLAS-3 routine DGEMM in S   , which shows
 the effectiveness of the L/U partitioning method. Figure 4 demonstrates the result of a supernode
 partitioning on a 7 \Theta 7 sample sparse matrix. One can see that all the submatrices in the upper
@@ -304,23 +312,29 @@ Proof: That is straightforward using Corollary 1.
 For most tested sparse matrices, the average size of a supernode after L/U partitioning is very small,
 about 1:5 to 2 columns. This results in very fine grained tasks. Amalgamating small supernodes
 can lead to great performance improvement for both parallel and sequential sparse codes because
-it can improve caching performance and reduce interprocessor communication overhead.
+
+ can improve caching performance and reduce interprocessor communication overhead.
 There could be many ways to amalgamate supernodes [7, 30]. The basic idea is to relax the
 restriction that all the columns in a supernode must have exactly the same nonzero structure below
 diagonal. The amalgamation is usually guided by a supernode elimination tree. A parent could
-be merged with its children if the merging does not introduce too many extra zero entries into
-a supernode. Row and column permutations are needed if the parent is not consecutive with its
+be merged with A parent children if the merging does not introduce too many extra zero entries into
+a supernode. Row and column permutations are needed if A parent is not consecutive with A parent
 children. However, a column permutation introduced by the above amalgamation method could
 undermine the correctness of the static symbolic factorization. We have used a simpler approach
-that does not require any permutation. This approach only amalgamates consecutive supernodes
-if their nonzero structures only differ by a small number of entries and it can be performed in a
+that does not require any permutation. a simpler approach
+that does not require any permutation only amalgamates consecutive supernodes
+if consecutive supernodes
+ nonzero structures only differ by a small number of entries and a simpler approach
+that does not require any permutation can be performed in a
 very efficient manner which only has a time complexity of O(n) [27]. We can control the maximum
-allowed differences by an amalgamation factor r. Our experiments show that when r is in the range
+allowed differences by an amalgamation factor r. We experiments show that when r is in the range
 of gives the best performance for the tested matrices and leads to improvement
-on the execution times of the sequential code. The reason is that by getting bigger supernodes, we
-are getting larger dense structures, although there may be a few zero entries in them, and we are
+on the execution times of the sequential code. The reason is that by getting bigger supernodes, We
+are getting larger dense structures, although there may be a few zero entries in we
+, and We are
 taking more advantage of BLAS-3 kernels. Notice that after applying the supernode amalgamation,
-the dense structures identified in the Theorem 1 are not strictly dense any more. We call them
+the dense structures identified in the Theorem 1 are not strictly dense any more. We call applying the supernode amalgamation,
+the dense structures identified in the Theorem 1 are not strictly dense any more
 almost-dense structures and can still use the result of Theorem 1 with a minor revision. That is
 summarized in the following corollary. All the results presented in Section 6 are obtained using this
 amalgamation strategy.
@@ -339,7 +353,8 @@ Update(k; j), which is to apply the pivoting sequence derived from F actor(k) to
 block, and modify the j-th column block using the k-th column block, where
 Instead of performing the row interchange to the right part of the matrix right after each pivoting
 search, a technique called "delayed-pivoting" is used [6]. In this technique, the pivoting sequence
-is held until the factorization of the k-th column block is completed. Then the pivoting sequence is
+is held until the factorization of the k-th column block is completed. Then the pivoting sequence
+ is
 applied to the rest of the matrix, i.e., interchange rows. Delayed-pivoting is important, especially to
 the parallel algorithm, because it is equivalent to aggregating multiple small messages into a larger
 one. Here the owner of the k-th column block sends the column block packed together with the
@@ -349,7 +364,7 @@ in
 
 Figure
 
-6. The code of F actor(k) is summarized in Figure 7. It uses BLAS-1 and BLAS-
+6. The code of F actor(k) is summarized in Figure 7. The code uses BLAS-1 and BLAS-
 subroutines. The computational cost of the numerical factorization is mainly dominated by
 tasks. The function of task Update(k; j) is presented in Figure 8. The lines (05) and
 are using dense matrix multiplications.
@@ -394,9 +409,8 @@ Figure
 8: A description of task Update(k; j).
 ffl There is a dependence from Update(k; k 0 ) to F actor(k 0 ), where
 exists no task Update(t; k 0 ) such that
-We add one more property, that while not necessary, simplifies implementation. This property
-essentially does not allow exploiting commutativity among Update() tasks. However, according to
-our experience with Cholesky factorization [16], the performance loss due to this property is not
+We add one more property, that while not necessary, simplifies implementation. one more property, that while not necessary, simplifies implementationessentially does not allow exploiting commutativity among Update() tasks. However, according to
+our experience with Cholesky factorization [16], the performance loss due to one more property, that while not necessary, simplifies implementation is not
 substantial, about 6% in average when graph scheduling is used.
 ffl There is a dependence from Update(k; j) to Update(k there exists no
 task Update(t; j) such that
@@ -436,7 +450,8 @@ degree may need more buffer space.
 Our 2-D algorithm uses a simple standard mapping function. In this scheme, p available processors
 are viewed as a two dimensional grid: c . A nonzero submatrix block A ij (could be
 an L block or a U block) is assigned to processor P i mod pr ; j mod pc . The 2-D data mapping
-is considered more scalable than 1-D data mapping because it enables parallelization of a single
+is considered more scalable than 1-D data mapping because The 2-D data mapping
+ enables parallelization of a single
 F actor(k) or Update(k; j) task on p r processors. We will discuss how 2-D parallelism is exploited
 using asynchronous schedule execution.
 5 Parallelism exploitation
@@ -450,7 +465,7 @@ cost is too expensive for sparse problems with mixed granularities. We use task 
 to guide scheduling and have investigated two types of scheduling schemes.
 ffl Compute-ahead scheduling (CA). This is to use block-cyclic mapping of tasks with a
 compute-ahead execution strategy, which is demonstrated in Figure 10. This idea has been
-used to speed up parallel dense factorizations [23]. It executes the numerical factorization layer
+used to speed up parallel dense factorizations [23]. This idea executes the numerical factorization layer
 by layer based on the current submatrix index. The parallelism is exploited for concurrent
 updating. In order to overlap computation with communication, the F actor(k
 executed as soon as F actor(k) and Update(k; k so that the pivoting
@@ -482,7 +497,7 @@ does not have a constraint in ordering F actor() tasks. We demonstrate this poin
 task graph in Figure 9. For this example, the Gantt charts of the CA schedule and the schedule
 derived by our graph scheduling algorithm are listed in Figure 11. It is assumed that each task
 has a computation weight 2 and each edge has communication weight 1. It is easy to see that
-our scheduling approach produces a better result than the CA schedule. If we look at the CA
+We scheduling approach produces a better result than the CA schedule. If we look at the CA
 schedule carefully, we can see that the reason is that CA can look ahead only one step so that the
 execution of task F actor(3) is placed after Update(1; 5). On the other hand, the graph scheduling
 algorithm detects that F actor(3) can be executed before Update(1; 5) which leads to better overlap
@@ -497,10 +512,10 @@ However the implementation of the CA algorithm is much easier since the efficien
 a sparse task graph schedule requires a sophisticated run-time system to support asynchronous
 communication protocols. We have used the RAPID run-time system [16] for the parallelization of
 sparse LU using graph scheduling. The key optimization is to use Remote Memory Access(RMA) to
-communicate a data object between two processors. It does not incur any copying/buffering during a
+communicate a data object between two processors. The key optimization does not incur any copying/buffering during a
 data transfer since low communication overhead is critical for sparse code with mixed granularities.
 RMA is available in modern multi-processor architectures such as Cray-T3D [34], T3E [32] and
-Meiko CS-2 [15]. Since the RMA directly writes data to a remote address, it is possible that the
+Meiko CS-2 [15]. Since RMA directly writes data to a remote address, it is possible that the
 content at the remote address is still being used by other tasks and then the execution at the remote
 processor could be incorrect. Thus for a general computation, a permission to write the remote
 address needs to be obtained before issuing a remote write. However in the RAPID system, this
@@ -526,15 +541,16 @@ is the space complexity for a sequential algorithm. For sparse LU, each processo
 may need a space for holding the entire matrix. The RAPID system [16] also needs extra memory
 space to hold dependence structures.
 Based on the above observation, our goal for the 2-D code is to reduce memory space requirement
-while exploiting a reasonable amount of parallelism so that it can solve large problem instances in
+while exploiting a reasonable amount of parallelism so that the 2-D code can solve large problem instances in
 an efficient way. In this section, we present an asynchronous 2-D algorithm which can substantially
-overlap multi-stages of updating but its memory requirement is much smaller than that of 1-D methods
+overlap multi-stages of updating but an asynchronous 2-D algorithm which can substantially
+overlap multi-stages of updating memory requirement is much smaller than that of 1-D methods
 
 Figures
 
 12 shows the main control of the algorithm in an SPMD coding style. Figure 13 shows
 the SPMD code for F actor(k) which is executed by processors of column k mod p c . Recall that
-the algorithm uses 2-D block-cyclic data mapping and the coordinates for the processor that owns
+Our 2-D algorithm uses 2-D block-cyclic data mapping and the coordinates for the processor that owns
 are (i mod Also we divide the function of Update() (in Figure 8) into
 two parts: ScaleSwap() which does scaling and delayed row interchange for submatrix A k:N; k+1:N
 as shown in Figure 14; Update 2D() which does submatrix updating as shown in Figure 15. In all
@@ -548,7 +564,7 @@ Find out local maximum element of column m;
 to processor P k mod pr ; k mod pc ;
 (06) if this processor owns L kk
 (07)* Collect all local maxima and find the pivot row t;
-(08)* Broadcast the subrow t within column block k along this processor column
+(08)* Broadcast the subrow within column block k along this processor column
 and interchange subrow t and subrow m if necessary.
 Scale local entries of column m;
 Update local subcolumns from column
@@ -565,7 +581,7 @@ from Update 2D(k; can also be overlapped.
 The idea of compute-ahead scheduling is also incorporated, i.e., F actor(k + 1) is executed as soon
 as Update finishes.
 Some detailed explanation for pivoting, scaling and swapping is given below. In line (5) of Figure
-13, the whole subrow is communicated when each processor reports its local maximum to
+13, the whole subrow is communicated when each processor reports the whole subrow local maximum to
 the processor that owns the L kk block. Let m be the current global column
 number on which the pivoting is conducted, then without further synchronization, processor
 locally swap subrow m with subrow t which contains the selected pivoting
@@ -573,7 +589,8 @@ element. This shortens the waiting time to conduct further updating with a littl
 volume. However in line (08), processor P k mod pr ; k mod pc must send the original subrow m to
 the owner of subrow t for swapping, and the selected subrow t to other processors as well for updat-
 ing. In F actor() tasks, synchronizations take place at lines (05), (07) and (08) when each processor
-reports its local maximum to P k mod pr ; k mod pc , and P k mod pr ; k mod pc broadcasts the subrow
+reports each processor
+ local maximum to P k mod pr ; k mod pc , and P k mod pr ; k mod pc broadcasts the subrow
 containing global maximum along the processor column. For task ScaleSwap(), the main role is to
 scale U k; k+1:N and perform delayed row interchanges for remaining submatrices A k+1:N; k+1:N .
 We examine the degree of parallelism exploited in this algorithm by determining number of updating
@@ -581,9 +598,9 @@ stages that can be overlapped. Using this information we can also determine the 
 needed per processor to execute this algorithm correctly. We define the stage overlapping degree
 then receive the pivot sequence from P my rno; k mod pc ;
 (04) if This processor own a part of row m or the pivot row t for column m
-(05)* Interchange nonzero parts of row t and row m owned by this processor;
+(05)* Interchange nonzero parts of row t and row m owned by This processor;
 (08)* if my cno 6= k mod p c then receive L kk from P my rno; k mod pc ;
-Scale nonzero blocks in U k; k:N owned by this processor;
+Scale nonzero blocks in U k; k:N owned by This processor;
 (10)* Multicast the scaling results along this processor column;
 (11)* if my cno 6= k mod p c then receive L k:N; k from P my rno; k mod pc ;
 (12)* if my rno 6= k mod p r then receive U k; k:N from P k mod pr ; my cno ;
@@ -605,16 +622,18 @@ the reachable upper bound of overlapping degree is p c among all processors; and
 bound of overlapping degree within a processor column is min(p r \Gamma
 Proof: We will use the following facts in proving the theorem:
 ffl Fact 1. F actor(k) is executed at processors with column number k mod p c . Processors on
-this column are synchronized. When a processor completes F actor(k), this processor can still
+this column are synchronized. When a processor completes F actor(k), a processor can still
 do Update shown in Figure 13, but all Update tasks belonging to
-this processor where t ? 1 must have been completed on this processor.
+this processor where t ? 1 must have been completed on a processor.
 ffl Fact 2. ScaleSwap(k) is executed at processors with row number k mod p r . When a processor
-completes ScaleSwap(k), all Update tasks belonging to this processor where t ? 0
-must have been completed on this processor.
+completes ScaleSwap(k), all Update tasks belonging to a processor where t ? 0
+must have been completed on a processor
+.
 Part 1. First we show that Update 2D() tasks can be overlapped to a degree of p c among all
 processors.
 When trivial based on Fact 1. When p c ? 1, we can imagine a scenario in which all
-processors in column 0 have just finished task F actor(k), and some of them are still working on
+processors in column 0 have just finished task F actor(k), and some of all
+processors in column 0 are still working on
 Update processors in column 1 could go ahead and execute Update 2D(k;  )
 tasks. After processors in column 1 finish Update 2D(k; k+1) task, they will execute F actor(k+1).
 Then after finishing Update 2D(k;  ) tasks, processors in column 2 could execute Update 2D(k
@@ -646,7 +665,7 @@ and F actor(s 1). In that case when P pc \Gamma1;0 is to start Update 2D(s+
 pr \Gamma1;0 could be still working on Update 2D(s \Gamma because of the compute ahead scheduling.
 Hence the overlapping degree is p c .
 Now we need to show that the upper bound of overlapping degree within a processor column is
-We have already shown in the proof of Part 1 that the overall overlapping degree
+we have already shown in the proof of Part 1 that the overall overlapping degree
 is less than p c , so is the overlapping degree within a processor column. To prove it is also less
 than 1, we can use the similar proof as that for part 1, except using ScaleSwap(k) to replace
 F actor(k), and using Fact 2 instead of Fact 1.
@@ -660,10 +679,13 @@ Pbuffer.
 2. Multicasting along a processor row (line (12), (13) and (14) in Figure 13). The communicated
 data includes L kk , local nonzero blocks in L k+1:N; k , and pivoting sequences. We call the buffer
 for this purpose Cbuffer.
-3. Row interchange within a processor column (line (05) in Figure 14). We call this buffer Ibuffer.
-4. Multicasting along a processor column (line (10) in Figure 14). The data includes local nonzero
-blocks of a row panel. We call the buffer Rbuffer.
-Here we assume that p r - because based on our experimental results, setting p r -
+3. Row interchange within a processor column (line (05) in Figure 14). We call the buffer
+.
+4. Multicasting along a processor column (line (10) in Figure 14). The communicated
+data includes local nonzero
+blocks of a row panel. We call the buffer
+.
+Here We assume that p r - because based on We experimental results, setting p r -
 always leads to better performance. Thus the overlapping degree of Update 2D() tasks within a
 processor row is at most p c , and the overlapping degree within a processor column is at most p r \Gamma 1.
 Then we need p c separate Cbuffer's for overlapping among different columns and
@@ -673,7 +695,7 @@ given matrix is s after fill-in and the maximum block size is BSIZE, each Cbuffe
 maxfspace for local nonzero blocks of L k:N;k
 Similarly each Rbuffer is of size:
 local nonzero blocks of U
-We ignore the buffer size for Pbuffer and Ibuffer because they are very small (the size of Pbuffer is
+We ignore the buffer size for Pbuffer and Ibuffer because Pbuffer and Ibuffer are very small (the size of Pbuffer is
 only about BSIZE \Delta BSIZE and the size of Ibuffer is about s \Delta n=p c ). Thus the total buffer space
 needed for the asynchronous execution is: C
 Notice that the sequential space complexity In practice, we set p c =p 2. Therefore the
@@ -684,31 +706,31 @@ for a large matrix. For all the benchmark matrices we have tested, the buffer sp
 total memory requirement per processor is S 1 =p +O(1) considering n AE p and n AE BSIZE. This
 leads us to conclude that the 2-D asynchronous algorithm is very space scalable.
 6 Experimental studies
-Our experiments were originally conducted on a Cray-T3D distributed memory machine at San
-Supercomputing Center. Each node of the T3D includes a DEC Alpha EV4(21064) processor
+Our experiments were originally conducted on Cray at San
+Supercomputing Center. Each node of Cray-T3D includes a DEC Alpha EV4(21064) processor
 with 64 Mbytes of memory. The size of the internal cache is 8 Kbytes per processor. The BLAS-3
 matrix-matrix multiplication routine DGEMM can achieve 103 MFLOPS, and the BLAS-2 matrix-vector
 multiplication routine DGEMV can reach 85 MFLOPS. These numbers are obtained assuming
-all the data is in cache and using cache read-ahead optimization on T3D, and the matrix block
-size is chosen as 25. The communication network of the T3D is a 3-D torus. Cray provides a
+all the data is in cache and using cache read-ahead optimization on Cray-T3D, and the matrix block
+size is chosen as 25. The communication network of Cray-T3D is a 3-D torus. Cray provides a
 shared memory access library called shmem which can achieve 126 Mbytes/s bandwidth and 2:7-s
 communication overhead using shmem put() primitive [34]. We have used shmem put() for the
 communications in all the implementations.
 We have also conducted experiments on a newly acquired Cray-T3E at San Diego Supercomputing
-Center. Each T3E node has a clock rate of 300 MHZ, an 8Kbytes internal cache, 96Kbytes second
+San
+Supercomputing Center. Each T3E node has a clock rate of 300 MHZ, an 8Kbytes internal cache, 96Kbytes second
 level cache, and 128 Mbytes main memory. The peak bandwidth between nodes is reported as
 500 Mbytes/s and the peak round trip communication latency is about 0.5 to 2 -s [33]. We
 have observed that when block size is 25, DGEMM achieves 388 MFLOPS while DGEMV reaches 255
-MFLOPS. We have used block size 25 in our experiments since if the block size is too large, the
-available parallelism will be reduced. In this section we mainly report results on T3E. In some
-occasions that the absolute performance is concerned, we also list the results on T3D to see how
-our approach scales when the underline architecture is upgraded. All the results are obtained on
-T3E unless explicitly stated.
+MFLOPS. We have used block size 25 in We experiments since if the block size is too large, the
+available parallelism will be reduced. In this section We mainly report results on T3E. In some
+occasions that the absolute performance is concerned, We also list the results on Cray-T3D to see how
+We approach scales when the underline architecture is upgraded. All the results are obtained ona newly acquired Cray-T3E unless explicitly stated.
 In calculating the MFLOPS achieved by our parallel algorithms, we do not include extra floating
 point operations introduced by the overestimation. We use the following formula:
 Achieved
 Operation count obtained from SuperLU
-Parallel time of our algorithm on T3D or T3E :
+Parallel time of We algorithm on Cray-T3D or T3E :
 The operation count for a matrix is reported by running SuperLU code on a SUN workstation with
 large memory since SuperLU code cannot run for some large matrices on a single T3D or T3E node
 due to memory constraint. We also compare the S   sequential code with SuperLU to make sure
@@ -720,8 +742,8 @@ affects the time complexity of numerical factorization. We compare the performan
 sequential code with SuperLU code performance in Table 2 1 for those matrices from Table 1 that
 1 The times for S   in this table do not include symbolic preprocessing cost while the times for SuperLU include
 symbolic factorization because SuperLU does it on the fly. Our implementation for static symbolic preprocessing is
-can be executed on a single T3D or T3E node. We also introduce two other matrices to show how
-well the method works for larger matrices and denser matrices. One of the two matrices is b33 5600
+can be executed on a single T3D or T3E node. Our also introduce two other matrices to show how
+well the method works for larger matrices and denser matrices. One of two other matrices is b33 5600
 which is truncated from BCSSTK33 because of the current sequential implementation is not able to
 handle the entire matrix due to memory constraint, and the other one is dense1000.
 Matrix S   Approach SuperLU Exec. Time Ratio
@@ -739,9 +761,10 @@ to insufficient memory.
 Though the static symbolic factorization introduces a lot of extra computation as shown in Table 1,
 the performance of S   after 2-D L/U partitioning is consistently competitive to that of highly optimized
 SuperLU. The absolute single node performance that has been achieved by the S   approach
-on both T3D and T3E is consistently in the range of 5 \Gamma 10% of the highest DGEMM performance for
+on both Cray-T3D and a newly acquired Cray-T3E is consistently in the range of 5 \Gamma 10% of the highest DGEMM performance for
 those matrices of small or medium sizes. Considering the fact that sparse codes usually suffer poor
-cache reuse, this performance is reasonable. In addition, the amount of computation for the testing
+cache reuse, The absolute single node performance that has been achieved by the S   approach
+on both T3D and T3E is reasonable. In addition, the amount of computation for the testing
 matrices in Table 2 is small, ranging from to 107 million double precision floating operations.
 Since the characteristic of the S   approach is to explore more dense structures and utilize BLAS-3
 kernels, better performance is expected on larger or denser matrices. This is verified on a matrix
@@ -751,27 +774,29 @@ megaflops performance per node for sparse Choleksy reported in [24] on 16 T3D no
 40 MFLOPS, which is also a good indication that S   single-node performance is satisfactory.
 We present a quantitative analysis to explain why S   can be competitive to SuperLU. Assume the
 speed of BLAS-2 kernel is ! 2 second=f lop and the speed of BLAS-3 kernel is ! 3 second=f lop. The
-total amount of numerical updates is C f lops for SuperLU and C 0 f lops for the S   . Apparently
+total amount of numerical updates is C f lops for SuperLU and C 0 f lops for S   . Apparently
 simplicity, we ignore the computation from the scaling part within each column because
-it contributes very little to the total execution time. Hence we have:
+
+ contributes very little to the total execution time. Hence we have:
 very efficient. For example, the preprocessing time is only about 2.76 seconds on a single node of T3E for the largest
 matrix we tested (vavasis3).
 where T symbolic is the time spent on dynamic symbolic factorization in the SuperLU approach, ae
 is the percentage of the numerical updates that are performed by DGEMM in S   . Let j be the
 ratio of symbolic factorization time to numerical factorization time in SuperLU, then we simplify
 Equation (1) to the following:
-We estimate that j - 0:82 for the tested matrices based on the results in [7]. In [17], we have
+we estimate that j - 0:82 for the tested matrices based on the results in [7]. In [17], we have
 also measured ae as approximately ae - 0:67. The ratios of the number of floating point operations
-performed in S   and SuperLU for the tested matrices are available in Table 1. In average, the value
+performed in S and SuperLU for the tested matrices are available in Table 1. In average, the value
 of C 0
-is 3:98. We plug in these typical parameters in Equation 2 and 3, and we have:
+is 3:98. we plug in these typical parameters in Equation 2 and 3, and we have:
 For lop. Then we can get T S
 - 1:93. For T3E,
 lop. And we get T S
-- 1:68. These estimations are close
+- 1:68. T3E,
+lop are close
 to the ratios obtained in Table 2. The discrepancy is caused by the fact that the submatrix sizes
 of supernodes are non-uniform, which leads to different caching performance. If submatrices are
-of uniform sizes, we expect our prediction is more accurate. For instance, in the dense case, C 0
+of uniform sizes, we expect we prediction is more accurate. For instance, in the dense case, C 0
 is
 exactly 1. The ratio T S
 is calculated as 0:48 for T3D and 0:42 for T3E, which are almost the
@@ -786,8 +811,8 @@ of 1-D codes, the effectiveness of scheduling and supernode amalgamation.
 Performance: We list the MFLOPS numbers of the 1-D RAPID code obtained on various
 number of processors for several testing matrices in Table 3 entry implies the data is not
 available due memory constraint, same below). We know that the megaflops of DGEMM on T3E is
-about 3.7 times as large as that on T3D, and the RAPID code after using a upgraded machine is
-speeded up about 3 times in average, which is satisfactory. For the same machine, the performance
+about 3.7 times as large as that on Cray-T3D, and the RAPID code after using a upgraded machine is
+speeded up about 3 times in average, which is satisfactory. For a upgraded machine, the performance
 of the RAPID code increases when the number of processors increases and speedups compared to
 the pure S   sequential code (if applicable) can reach up to 17.7 on 64 T3D nodes and 24.1 on 64 T3E
 nodes. From 32 to 64 nodes, the performance gain is small except for matrices goodwin, e40r0100
@@ -795,7 +820,7 @@ and b33 5600, which are much larger problems than the rest. The reason is that t
 matrices do not have enough amount of computation and parallelism to saturate a large number of
 processors when the elimination process proceeds toward the end. It is our belief that better and
 more scalable performance can be obtained on larger matrices. But currently the available memory
-on each node of T3D or T3E limits the problem size that can be solved with the current version of
+on each node of Cray-T3D or T3E limits the problem size that can be solved with the current version of
 the RAPID code.
 Matrix P=2 P=4 P=8 P=16 P=32 P=64
 sherman5 14.7 44.4 25.8 79.0 40.8 133.1 53.8 168.6 64.9 210.7 68.4 229.9
@@ -819,15 +844,15 @@ parallelism to exploit.
 Effectiveness of supernode amalgamation: We have examined how effective our supernode
 amalgamation strategy is using the 1-D RAPID code. Let PT a and PT be the parallel time with and
 without supernode amalgamation respectively. The parallel time improvement ratios
-on T3E for several testing matrices are listed in Table 4 and similar results on T3D are in [17].
-Apparently the supernode amalgamation has brought significant improvement due to the increase
+on T3E for several testing matrices are listed in Table 4 and similar results on Cray-T3D are in [17].
+Apparently supernode amalgamation has brought significant improvement due to the increase
 of supernode size which implies an increase of the task granularities. This is important to obtaining
 good parallel performance [22].
-Comparison of the RAPID Code with the 1-D CA Code
+Comparison of the RAPID code with the 1-D CA Code
 #proc
 *: sherman5
 +: sherman3
--0.10.10.30.50.7Comparison of the RAPID Code with the 1-D CA Code
+-0.10.10.30.50.7Comparison of the RAPID code with the 1-D CA Code
 #proc
 *: jpwh991
 x: goodwin
@@ -845,15 +870,15 @@ Table
 4: Parallel time improvement obtained by supernode amalgamation.
 6.3 2-D code performance
 As mentioned before, our 2-D code exploits more parallelism but maintains a lower space complexity,
-and has much more potential to solve large problems. We show the absolute performance obtained
-for some large matrices on T3D in Table 5. Since some matrices cannot fit for a small number
-of processors, we only list results on 16 or more processors. The maximum absolute performance
-achieved on 64 nodes of T3D is 1.48 GFLOPS, which is translated to 23.1 MFLOPS per node. For
+and has much more potential to solve large problems. our show the absolute performance obtained
+for some large matrices on Cray-T3D in Table 5. Since some matrices cannot fit for a small number
+of processors, our only list results on 16 or more processors. The maximum absolute performance
+achieved on 64 nodes of Cray-T3D is 1.48 GFLOPS, which is translated to 23.1 MFLOPS per node. For
 nodes, the per-node performance is 32.8 MFLOPS.
 
 Table
 
-6 shows the performance numbers on T3E for the 2-D code. We have achieved up to 6.878
+6 shows the performance numbers on T3E for the 2-D code. our have achieved up to 6.878
 GFLOPS on 128 nodes. For 64 nodes, megaflops on T3E are from 3.1 to 3.4 times as large as that
 on T3D. Again considering that DGEMM megaflops on T3E is about 3.7 times as large as that on
 T3D, our code performance after using a upgraded machine is good.
@@ -879,7 +904,7 @@ af23560 22.3 285.4 12.9 492.9 8.12 784.3 5.7 1123.2 4.2 1512.7
 Table
 
 Performance results of 2-D asynchronous algorithm on T3E. All times are in seconds.
-better performance because it uses sophisticated graph scheduling technique to guide the mapping
+better performance because All times uses sophisticated graph scheduling technique to guide the mapping
 of column blocks and ordering of tasks, which results in better overlapping of communication with
 computation. The performance difference is larger for the matrices listed in the left of Figure 17
 compared to the right of Figure 17. We partially explain the reason by analyzing load balance
@@ -887,21 +912,24 @@ factors of the 1-D RAPID code and the 2-D code in Figure 18. The load balance fa
 as work total =(P \Delta work max ) [31]. Here we only count the work from the updating part because it is
 the major part of the computation. The 2-D code has better load balance, which can make up for
 the impact of lacking of efficient task scheduling. This is verified by Figure 17 and Figure 18. One
-can see that when the load balance factor of the 2-D code is close to that of the RAPID code (e.g.,
+can see that when the load balance factor of The 2-D code is close to that of the RAPID code (e.g.,
 lnsp3937), the performance of the RAPID code is much better than the 2-D code; when the load
 balance factor of the 2-D code is significantly better than that of the RAPID code (e.g., jpwh991
 and orserg1), the performance differences are smaller.
 Synchronous versus asynchronous 2-D code. Using a global barrier in the 2-D code at each
-elimination step can simplify the implementation, but it cannot overlap computations among different
+elimination step can simplify the implementation, but a global barrier in the 2-D code at each
+elimination step cannot overlap computations among different
 updating stages. We have compared parallel time reductions between the asynchronous code
-and the synchronous code for some testing matrices in Table 7. It shows that asynchronous design
-improves performance significantly, especially on large number of processors on T3E. It demonstrates
+and the synchronous code for some testing matrices in Table 7. a global barrier in the 2-D code at each
+elimination step shows that asynchronous design
+improves performance significantly, especially on large number of processors on T3E. a global barrier in the 2-D code at each
+elimination step demonstrates
 the importance of exploiting parallelism using asynchronous execution. The experiment
-0.20.4Comparison of the RAPID Code with the 2-D Code
+0.20.4Comparison of the RAPID code with the 2-D Code
 #proc
 *: sherman5
 +: sherman3
-Comparison of the RAPID Code with the 2-D Code
+Comparison of the RAPID code with the 2-D Code
 #proc
 *: jpwh991
 x: goodwin
@@ -925,7 +953,7 @@ x jpwh991
 Figure
 
 18: Comparison of load balance factors of 1-D RAPID code and 2-D code.
-data on T3D is in [14].
+data on Cray-T3D is in [14].
 7 Concluding remarks
 In this paper we present an approach for parallelizing sparse LU factorization with partial pivoting
 on distributed memory machines. The major contribution of this paper is that we integrate several
@@ -956,7 +984,8 @@ which are related to this work and need to be further studied, for example, alte
 sparse LU based on Schur complements [13] and static estimation and parallelism exploitation for
 sparse QR [29, 35].
 It should be noted that the static symbolic factorization could fail to be practical if the input matrix
-has a nearly dense row because it will lead to an almost complete fill-in of the whole matrix. It
+has a nearly dense row because the input matrix
+ will lead to an almost complete fill-in of the whole matrix. It
 might be possible to use different matrix reordering to avoid that. Fortunately, this is not the case in
 most of matrices we have tested. Therefore our approach is applicable to a wide range of problems
 using a simple ordering strategy. It is interesting in the future to study ordering strategies that
@@ -969,10 +998,10 @@ This work is supported by NSF RIA CCR-9409695, NSF CDA-9529418, the UC MICRO gra
 a matching from SUN, NSF CAREER CCR-9702640, and ARPA DABT-63-93-C-0064 through the
 Rutgers HPCD project.
 We would like to thank Kai Shen for the efficient implementation of the static symbolic factorization
-algorithm, Xiaoye Li and Jim Demmel for helpful discussions and providing us their testing
+algorithm, Xiaoye Li and Jim Demmel for helpful discussions and providing We Xiaoye Li and Jim Demmel testing
 matrices and SuperLU code, Cleve Ashcraft, Tim Davis, Apostolos Gerasoulis, Esmond Ng, Ed
 Rothberg, Rob Schreiber, Horst Simon, Chunguang Sun, Kathy Yelick and anonymous referees for
-their valuable comments.
+Xiaoye Li and Jim Demmel valuable comments.
 
 
 

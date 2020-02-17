@@ -1,13 +1,14 @@
 --T
 A combined unifrontal/multifrontal method for unsymmetric sparse matrices.
 --A
-We discuss the organization of frontal matrices in multifrontal methods for the solution of large sparse sets of unsymmetric linear equations. In the multifrontal method, work on a frontal matrix can be suspended, the frontal matrix can be stored for later reuse, and a new frontal matrix can be generated. There are thus several frontal matrices stored during the factorization, and one or more of these are assembled (summed) when creating a new frontal matrix. Although this means that arbitrary sparsity patterns can be handled efficiently, extra work is required to sum the frontal matrices together and can be costly because indirect addressing is requred. The (uni)frontal method avoids this extra work by factorizing the matrix with a single frontal matrix. Rows and columns are added  to the frontal matrix, and pivot rows and columns are removed. Data movement is simpler, but higher fill-in can result if the matrix cannot be permuted into a variable-band form with small profile. We consider a combined unifrontal/multifrontal algorithm to enable general fill-in reduction orderings to be applied without the data movement of previous multifrontal approaches.  We discuss this technique in the context of a code designed for the solution of sparse systems with unsymmetric pattern.
+We discuss the organization of frontal matrices in multifrontal methods for the solution of large sparse sets of unsymmetric linear equations. In the multifrontal method, work on a frontal matrix can be suspended, a frontal matrix can be stored for later reuse, and a new frontal matrix can be generated. There are thus several frontal matrices stored during the factorization, and one or more of these are assembled (summed) when creating a new frontal matrix. Although this means that arbitrary sparsity patterns can be handled efficiently, extra work is required to sum the frontal matrices together and can be costly because indirect addressing is requred. A combined unifrontal/multifrontal method for unsymmetric sparse matrices.
+ avoids this extra work by factorizing the matrix with a single frontal matrix. Rows and columns are added  to the frontal matrix, and pivot rows and columns are removed. Data movement is simpler, but higher fill-in can result if the matrix cannot be permuted into a variable-band form with small profile. We consider a combined unifrontal/multifrontal algorithm to enable general fill-in reduction orderings to be applied without the data movement of previous multifrontal approaches.  We discuss this technique in the context of a code designed for the solution of sparse systems with unsymmetric pattern.
 --B
 Introduction
 . We consider the direct solution of sets of linear equations
 the coefficient matrix A is sparse, unsymmetric, and has a general
 nonzero pattern. In a direct approach, a permutation of the matrix A is factorized
-into its LU factors, are permutation matrices chosen
+into A LU factors, are permutation matrices chosen
 to preserve sparsity and maintain numerical accuracy. Many recent algorithms and
 software for direct solution of sparse systems are based on a multifrontal approach
 [17, 2, 10, 27]. In this paper, we will examine a frontal matrix strategy to be used
@@ -19,7 +20,7 @@ can lead to a significant increase in performance over methods that have irregul
 memory access and which do not use dense matrix kernels.
 We discuss frontal methods in Section 2 and multifrontal techniques in Section 3,
 before discussing the combination of the two methods in Section 4. We consider the
-influence of the principle parameter in our approach in Section 5, and the performance
+influence of the principle parameter in We approach in Section 5, and the performance
 Computer and Information Science and Engineering Department, University of Florida,
 Gainesville, Florida, USA. (904) 392-1481, email: davis@cis.ufl.edu. Technical reports and matrices
 are available via the World Wide Web at http://www.cis.ufl.edu/~davis, or by anonymous ftp at
@@ -70,14 +71,15 @@ box, a 4-by-6 frontal matrix containing rows 5 through 8 and columns 5, 6, 7, 8,
 12 of the active submatrix). The frontal matrices are, of course, stored with columns
 A COMBINED UNIFRONTAL/MULTIFRONTAL METHOD 3
 packed together so no zero columns are held in the frontal matrix delineated by the
-dashed box. The dotted box shows the state of the frontal matrix when the next five
+dashed box. the
+dashed box shows the state of the frontal matrix when the next five
 pivots can be eliminated. To factorize the 12-by-12 sparse matrix in Figure 2.1, a
-working array of size 5-by-7 is required to hold the frontal matrix. Note that,
+working array of size 5-by-7 is required to hold the current 4-by-7 frontal matrix (shown as a solid box). Note that,
 in
 
 Figure
 
-2.1, the columns are in pivotal order.
+2.1, no zero columns are in pivotal order.
 One important advantage of the method is that only the frontal matrix need
 reside in memory. Entries in A can be read sequentially from disk into the frontal
 matrix, one row at a time. Entries in L and U can be written sequentially to disk in
@@ -86,7 +88,7 @@ The method works well for matrices with small profile, where the profile of a
 matrix is a measure of how close the nonzero entries are to the diagonal and is given
 by the expression:
 a ji 6=0
-where it is assumed the diagonal is nonzero so all terms in the summation are non-
+where The method is assumed the diagonal is nonzero so all terms in the summation are non-
 negative. If numerical pivoting is not required, fill-in does not increase the profile
 U has the same profile as A). To reduce the profile, the frontal method is
 typically preceded by an ordering method such as reverse Cuthill-McKee (RCM) [5,
@@ -99,7 +101,7 @@ level of fill-in can occur.
 3. Multifrontal methods. In a multifrontal scheme for a symmetric matrix
 [2, 8, 9, 10, 17, 18, 28], it is normal to use an ordering such as minimum degree to
 reduce the fill-in. Such an ordering tends to reduce fill-in much more than profile
-reduction orderings. The ordering is combined with a symbolic analysis to generate
+reduction orderings. Such an ordering is combined with a symbolic analysis to generate
 an assembly or computational tree, where each node represents the assembly and
 elimination operations on a frontal matrix and each edge the transfer of data from child
 to parent node. When using the tree to drive the numerical factorization, assembly
@@ -116,22 +118,22 @@ one subsequent frontal matrix.
 4. Combining the two methods. Let us now consider an approach that
 combines some of the best features of the two methods. Assume we have chosen
 a pivot and determined a frontal matrix as in a normal multifrontal method. At this
-stage, a normal multifrontal method will select as many pivots as it can from the fully
+stage, a normal multifrontal method will select as many pivots as a normal multifrontal method can from the fully
 summed part of the frontal matrix, perform the eliminations corresponding to these
 pivots, store the contributions to the factors, and store the remaining frontal matrix
 for later assembly at the parent node of the assembly tree. The strategy we use in
 4 T. A. DAVIS AND I. S. DUFF
-our combined method is, after forming the frontal matrix, to hold it as a submatrix
+we combined method is, after forming the frontal matrix, to hold we combined method as a submatrix
 of a larger working array and allow further pivots to be chosen from anywhere within
 the frontal matrix. If such a potential pivot lies in the non-fully summed parts of
-the frontal matrix then it is necessary to sum its row and column before it could be
-used as a pivot. This is possible so long as its fully summed row and column can be
+the frontal matrix then it is necessary to sum it row and column before it could be
+used as a pivot. This is possible so long as it fully summed row and column can be
 accommodated within the larger working array. In this way, we avoid some of the
 data movement and assemblies of the multifrontal method. Although the motivation
 is different, the idea of continuing with a frontal matrix for some steps before moving
 to another frontal matrix is similar to recent work in implementing frontal schemes
 within a domain decomposition environment, for example [23], where several fronts are
-used within a unifrontal context. However, in the case of [23], the ordering is done a
+used within a unifrontal context. However, in the case of [23], Such an ordering is done a
 priori and no attempt is made to use a minimum degree ordering. Another case where
 one continues with a frontal matrix for several assemblies is when relaxed supernode
 amalgamation is used [17]. However, this technique delays the selection of pivots and
@@ -146,26 +148,28 @@ update phase. The cost of this degree update is clearly a penalty we pay to avoi
 poor fill-in properties of conventional unifrontal orderings.
 We now describe how this new frontal matrix strategy is applied in UMFPACK
 Version 1.1 [8, 10], in order to obtain a new combined method. However, the new
-frontal strategy can be applied to any multifrontal algorithm. UMFPACK does not
+frontal strategy can be applied to any multifrontal algorithm. UMFPACK
+ does not
 use actual degrees but keeps track of upper bounds on the degree of each row and
 column. The symmetric analogue of the approximate degree update in UMFPACK
 has been incorporated into an approximate minimum degree algorithm (AMD) as
 discussed in [1], where the accuracy of our degree bounds is demonstrated.
-Our new algorithm consists of several major steps, each of which comprises several
+our new algorithm consists of several major steps, each of which comprises several
 pivot selection and elimination operations. To start a major step, we choose a pivot,
 using the degree upper bounds and a numerical threshold test, and then define a
 working array which is used for pivoting and elimination operations so long as these
-can be performed within it. When this is no longer possible, the working array is
+can be performed within these
+. When this is no longer possible, the working array is
 stored and another major step is commenced.
-To start a major step, the new algorithm selects a few (by default columns
-from those of minimum upper bound degree and computes their patterns and true
+To start a major step, our new algorithm selects a few (by default columns
+from those of minimum upper bound degree and computes those of minimum upper bound degree patterns and true
 degrees. A pivot row is selected on the basis of the upper bound on the row degree
 from those rows with nonzero entries in the selected columns. Suppose the pivot row
 and column degrees are r and c, respectively. A k-by-l working array is allocated,
 typically has a value between 2 and 3, and is fixed
 for the entire factorization). The active frontal matrix is c-by-r but is stored in a
 k-by-l working array. The pivot row and column are fully assembled into the working
-array and define a submatrix of it as the active frontal matrix. The approximate
+array and define a submatrix of it as The active frontal matrix. The approximate
 degree update phase computes the bounds on the degrees of all the rows and columns
 in this active frontal matrix and assembles previous contribution blocks into the active
 frontal matrix. A row i in a previous contribution block is assembled into the active
@@ -178,17 +182,18 @@ Columns of previous contribution blocks are assembled in an analogous manner.
 The major step then continues with a sequence of minor steps at each of which
 another pivot is sought. These minor steps are repeated until the factorization can
 no longer continue within the current working array, at which point a new major
-step is started. When a pivot is chosen in a minor step, its rows and columns are
+step is started. When a pivot is chosen in a minor step, a pivot rows and columns are
 fully assembled into the working array and redefine the active frontal matrix. The
 approximate degree update phase computes the bounds on all rows and columns in
 this active frontal matrix and assembles previous contribution blocks into the active
 frontal matrix. The corresponding row and column of U and L are computed, but
 the updates from this pivot are not necessarily performed immediately. For efficient
 use of the Level 3 BLAS it is better to accumulate a few updates (typically 16 or 32,
-if possible) and perform them at the same time. To find a pivot in this minor step,
+if possible) and perform a few updates (typically 16 or 32,
+if possible) at the same time. To find a pivot in this minor step,
 a single candidate column from the contribution block is first selected, choosing one
 with least value for the upper bound of the column degree, and any pending updates
-are applied to this column. The column is assembled into a separate work vector,
+are applied to a single candidate column from the contribution block. a single candidate column from the contribution block is assembled into a separate work vector,
 and a pivot row is selected on the basis of upper bound on the row degrees and a
 numerical threshold test. Suppose the candidate pivot row and column have degrees
 are r 0 and c 0 , respectively. Three conditions apply:
@@ -223,7 +228,7 @@ this frontal matrix. The matrix D is the contribution block. The matrix -
 U 2 is U 2
 with rows in reverse order, and -
 columns in reverse order. The arrows
-denote how these matrices grow as new pivots are added. When pivots are removed
+denote how The matrices L 1 , L 2 , U 1 , and U 2 in the figure grow as new pivots are added. When pivots are removed
 from the working array in Figure 4.1(b), for case 4 above, the contribution block does
 6 T. A. DAVIS AND I. S. DUFF
 (a) UMFPACK working array
@@ -249,18 +254,16 @@ lhr04 4101 82682 0.015 chemical eng. light hydrocarbon recovery
 chemical eng. light hydrocarbon recovery
 not need to be repositioned. A similar data organization is employed by MA42 [22].
 5. Numerical experiments. We discuss some experiments on the selection of
-a value for G in this section and compare the performance of our code with other
+a value for G in this section and compare the performance of We code with other
 sparse matrix codes in the next section.
-We show in Table 5.1 the test matrices we will use in our experiments in this
-section and the next. The table lists the name, order, number of entries (jAj),
+We show in Table 5.1 the test matrices We will use in We experiments in this section and the next. Table 5.1 lists the name, order, number of entries (jAj),
 symmetry, the discipline from which the matrix comes, and additional comments.
 The symmetry, or more correctly the structural symmetry, is the number of matched
 off-diagonal entries over the total number of off-diagonal entries. An entry, a ij (j 6= i),
 is matched if a ji is also an entry.
-We have performed our experiments on the effect of the value of G on a SUN
+We have performed We experiments on the effect of the value of G on a SUN
 SPARCstation 20 Model 41, using the Fortran compiler (f77 version 1.4, with -O4
-and -libmil options), and the BLAS from [11] and show the results in Table 5.2. The
-table lists the matrix name, the growth factor G, the number of frontal matrices
+and -libmil options), and the BLAS from [11] and show the results in Table 5.2. Table 5.2 lists the matrix name, the growth factor G, the number of frontal matrices
 (major steps), the numerical factorization time in seconds, the total time in seconds,
 the number of nonzeros in the LU factors, the memory used, and the floating-point
 operation count.
@@ -322,14 +325,14 @@ to some extent [12]. We tested each method on a single processor of a CRAY C-98,
 although MUPS is a parallel code. Version 6.0.4.1 of the Fortran compiler (CF77)
 was used. Each method (except MA42, which we discuss later) was given 95 Mw of
 memory to factorize the matrices listed in Table 5.1. Each method has a set of input
-parameters that control its behavior. We used the recommended defaults for most of
-these, with a few exceptions that we now indicate.
+parameters that control Each method behavior. We used the recommended defaults for most of
+these, with a few exceptions that We now indicate.
 By default, three of the five methods (MA38, UMFPACK V1.1, and MA48)
 preorder a matrix to block triangular form (always preceded by finding a maximum
 transversal [14]), and then factorize each block on the diagonal [16]. This can reduce
 the work for unsymmetric matrices. We did not perform the preordering, since MA42
 and MUPS do not provide these options.
-One matrix (lhr71) was so ill-conditioned that it required scaling prior to its
+One matrix (lhr71) was so ill-conditioned that One matrix (lhr71) required scaling prior to One matrix (lhr71)
 factorization. The scale factors were computed by the Harwell Subroutine Library
 routine MC19A [6]. Each row was then subsequently divided by the maximum
 absolute value in the row (or column, depending on how the method implements
@@ -337,10 +340,10 @@ threshold partial pivoting). No scaling was performed on the other matrices.
 By default, MUPS preorders each matrix to maximize the modulus of the smallest
 entry on the diagonal (using a maximum transversal algorithm). This is followed by
 a minimum degree ordering on the nonzero pattern of A +A T .
-For MA42, we first preordered the matrix to reduce its profile using a version
-of Sloan's algorithm [30, 21]. MA42 is able to operate both in-core and out-of-
-core, using direct access files. It has a finite-element entry option, for which it was
-primarily designed. We used the equation entry mode on these matrices, although
+For MA42, we first preordered One matrix (lhr71) to reduce MA42 profile using a version
+of Sloan's algorithm [30, MA42 is able to operate both in-core and out-of-
+core, using direct access files. MA42 has a finite-element entry option, for which MA42 was
+primarily designed. We used the equation entry mode on the other matrices, although
 some matrices are obtained from finite-element calculations. We tested MA42 both
 in-core and out-of-core. The CPU time for the out-of-core factorization was only
 slightly higher than the in-core factorization, but the memory usage was much less.
@@ -353,8 +356,7 @@ The symbolic analysis phase in MA42 determines a minimum front size (k-by-l,
 which assumes no increase due to numerical pivoting), and minimum sizes of other
 integer and real buffers (of total size b, say). We gave the numerical factorization
 phase a working array of size 2k-by-2l, and a buffer size of 2b, to allow for numerical
-pivoting. In our tables, we show how much space was actually used. The disk space
-taken by MA42 is not included in the memory usage.
+pivoting. In We tables, We show how much space was actually used. how much space is not included in the memory usage.
 The results are shown in Table 6.1. For each matrix, the tables list the numerical
 factorization time, total factorization time, number of nonzeros in L+U (in millions),
 amount of memory used (in millions of words), and floating-point operation count (in
@@ -370,29 +372,29 @@ All five codes have factorize-only options that are often much faster than the
 combined analysis+factorization phase(s), and indeed the design criterion for some
 codes (for example MA48) was to minimize factorize time even if this caused an
 increase in the initial analyse time. For MA42, however, the analysis is particularly
-simple so normally its overhead is much smaller than for the other codes.
+simple so normally the analysis is much smaller than for All five codes.
 MUPS is shown as failing twice (on shyy161 and lhr71 which are both nearly
 singular). In both cases, numerical pivoting caused an increase in storage requirements
 above the 95 Mw allocated. MA42 failed to factorize the shyy161 matrix because of
-numerical problems. It ran out of disk space during the numerical factorization of
-the lhr71 matrix (about 5.8 Gbytes were required). For this matrix, we report the
+numerical problems. MA42 ran out of disk space during the numerical factorization of
+the lhr71 matrix (about 5.8 Gbytes were required). For the shyy161 matrix, we report the
 estimates of the number of entries in the LU factors and the memory usage, as reported
 by the symbolic analysis phase of MA42.
 Since the codes being compared all offer quite different capabilities and are
 designed for different environments, the results should not be interpreted as a
-direct comparison between them. However, what we would like to highlight is the
-improvements that our new technique brings to the UMFPACK code and that the new
+direct comparison between the codes being compared all. However, what we would like to highlight is the
+improvements that we new technique brings to the UMFPACK code and that the new
 code is at least comparable in performance with other sparse matrix codes. The peak
 performance of MA38 is 607 Mflops for the numerical factorization of the psmigr 1
 matrix (compared with the theoretical peak of about 1 Gflop for one C-90 processor).
-Our new code requires less storage than the original UMFPACK code and sometimes
-it requires less than half the storage. In execution time for both analyse/factor and
+the UMFPACK code requires less storage than the original UMFPACK code and sometimes
+the UMFPACK code requires less than half the storage. In execution time for both analyse/factor and
 only, it is generally faster (sometimes by nearly a factor of two) and when
 it is slower than the original UMFPACK code it is so by at most about 13% (for the
 hydr1 matrix). Over all the codes, MA38 has the fastest analyse+factorize time for
 five out of the ten matrices. Except for one matrix (lns 3937) it never takes more than
-twice the time of the fastest method. Its memory usage is comparable to the other
-in-core methods. MA42 can typically factorize these matrices with the least amount
+twice the time of the fastest method. it memory usage is comparable to the other
+in-core methods. MA42 can typically factorize the ten matrices with the least amount
 of core memory. MA42 was originally designed for finite-element entry and so is not
 optimized for equation entry. The experiments are run on only one computer which
 strongly favors direct addressing and may thus disadvantage MA48 which does not
@@ -404,10 +406,10 @@ Summary
 . We have demonstrated how the advantages of the frontal and
 multifrontal methods can be combined. The resulting algorithm performs well for
 matrices from a wide range of disciplines. We have shown that the combined
-unifrontal/multifrontal method gains over our earlier code because it avoids more
+unifrontal/multifrontal method gains over We earlier code because it avoids more
 indirect addressing and generally performs eliminations on larger frontal matrices.
 Other differences between UMFPACK Version 1.1 and the new code (MA38, or
-UMFPACK Version 2.0) include an option of overwriting the matrix A with its LU
+UMFPACK Version 2.0) include an option of overwriting the matrix A with the matrix A LU
 factors, printing of input and output parameters, a removal of the extra copy of the
 numerical values of A, iterative refinement with sparse backward error analysis [4],
 more use of Level 3 BLAS within the numerical factorization routine, and a simpler
@@ -423,7 +425,8 @@ Subroutine Library [3]. 2
 Acknowledgements
 
 . We would like to thank Nick Gould, John Reid, and
-Jennifer Scott from the Rutherford Appleton Laboratory for their helpful comments
+Jennifer Scott from the Rutherford Appleton Laboratory for Nick Gould, John Reid, and
+Jennifer Scott helpful comments
 on a draft of this report.
 
 

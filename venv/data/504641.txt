@@ -1,7 +1,7 @@
 --T
 performance over end-to-end rate control and stochastic available capacity.
 --A
-Motivated by TCP over end-to-end ABR, we study the performance of adaptive window congestion control, when it operates over an explicit feedback rate-control mechanism, in a situation in which the bandwidth available to the elastic traffic is stochastically time varying. It is assumed that the sender and receiver of the adaptive window protocol are colocated with the rate-control endpoints. The objective of the study is to understand if the interaction of the rate-control loop and the window-control loop is beneficial for end-to-end throughput, and how the parameters of the problem (propagation delay, bottleneck buffers, and rate of variation of the available bottleneck bandwidth) affect the performance.The available bottleneck bandwidth is modeled as a two-state Markov chain. We develop an analysis that explicitly models the bottleneck buffers, the delayed explicit rate feedback, and TCP's adaptive window mechanism. The analysis, however, applies only when the variations in the available bandwidth occur over periods larger than the round-trip delay. For fast variations of the bottleneck bandwidth, we provide results from a simulation on a TCP testbed that uses Linux TCP code, and a simulation/emulation of the network model inside the Linux kernel.We find that, over end-to-end ABR, the performance of TCP improves significantly if the network bottleneck bandwidth variations are slow as compared to the round-trip propagation delay. Further, we find that TCP over ABR is relatively insensitive to bottleneck buffer size. These results are for a short-term average link capacity feedback at the ABR level (INSTCAP). We use the testbed to study EFFCAP feedback, which is motivated by the notion of the effective capacity of the bottleneck link. We find that EFFCAP feedback is adaptive to the rate of bandwidth variations at the bottleneck link, and thus yields good performance (as compared to INSTCAP) over a wide range of the rate of bottleneck bandwidth variation. Finally, we study if TCP over ABR, with EFFCAP feedback, provides throughput fairness even if the connections have different round-trip propagation delays.
+Motivated by TCP over end-to-end ABR, we study the performance of adaptive window congestion control, when TCP operates over an explicit feedback rate-control mechanism, in a situation in which the bandwidth available to the elastic traffic is stochastically time varying. TCP is assumed that the sender and receiver of the adaptive window protocol are colocated with the rate-control endpoints. The objective of the study is to understand if the interaction of the rate-control loop and the window-control loop is beneficial for end-to-end throughput, and how the parameters of the problem (propagation delay, bottleneck buffers, and rate of variation of the available bottleneck bandwidth) affect the performance.The available bottleneck bandwidth is modeled as a two-state Markov chain. We develop an analysis that explicitly models the bottleneck buffers, the delayed explicit rate feedback, and TCP's adaptive window mechanism. an analysis that explicitly models the bottleneck buffers, the delayed explicit rate feedback, and TCP's adaptive window mechanism, however, applies only when the variations in the available bandwidth occur over periods larger than the round-trip delay. For fast variations of the bottleneck bandwidth, we provide results from a simulation on a TCP testbed that uses Linux TCP code, and a simulation/emulation of the network model inside the Linux kernel.We find that, over end-to-end ABR, the performance of TCP improves significantly if the network bottleneck bandwidth variations are slow as compared to the round-trip propagation delay. Further, we find that TCP over ABR is relatively insensitive to bottleneck buffer size. These results are for a short-term average link capacity feedback at the ABR level (INSTCAP). We use the testbed to study EFFCAP feedback, which is motivated by the notion of the effective capacity of the bottleneck link. We find that EFFCAP feedback is adaptive to the rate of bandwidth variations at the bottleneck link, and thus yields good performance (as compared to INSTCAP) over a wide range of the rate of bottleneck bandwidth variation. Finally, we study if TCP over ABR, with EFFCAP feedback, provides throughput fairness even if the connections have different round-trip propagation delays.
 --B
 Introduction
 bottleneck link
@@ -16,15 +16,15 @@ ABR
 Figure
 
 1: The network under study has a large round trip delay and a single congested
-link in the path of the connection. The ABR connection originates at the host and ends
+link in the path of the connection. the connection originates at the host and ends
 at the destination node. We call this scenario "end-to-end" ABR.
 The Available Bit Rate (ABR) service in Asynchronous Transfer Mode (ATM)
 networks is primarily meant for transporting best-effort data traffic. Connections that
 use the ABR service (so called ABR sessions) share the network bandwidth left over after
 serving CBR and VBR traffic. This available bandwidth varies with the requirements of
 the ongoing CBR/VBR sessions, hence the switches carrying ABR sessions implement
-a rate-based feedback control for congestion avoidance. This control causes the ABR
-sources to reduce or increase their cell transmission rates depending on the availability
+a rate-based feedback control for congestion avoidance. a rate-based feedback control for congestion avoidance causes ABRsources to reduce or increase the ABR
+sources cell transmission rates depending on the availability
 of bandwidth in the network. As the ABR service does not guarantee end-to-end reliable
 transport of data to the applications above it, an additional protocol is needed between
 the application and the ATM layer to ensure reliable communication. In most deploy-
@@ -50,7 +50,7 @@ The edge switch/router regulates the flow of TCP acknowledgements back to the TC
 senders.
 ments of ATM networks, the Internet's Transport Control Protocol (TCP) is used to
 ensure end-to-end reliability for data applications.
-TCP, however, has its own adaptive window based congestion control mechanism
+TCP, however, has TCP own adaptive window based congestion control mechanism
 that serves to slow down sources during network congestion. Hence, it is very important
 to know whether the adaptive window control at the TCP level, and the rate-based
 control at the ABR level interact beneficially from the point of view of application level
@@ -69,16 +69,17 @@ without delay. As a result, no loss will take place in the network. The TCP wind
 grow, and once the TCP window size exceeds the window required to fill the round trip
 pipe, the packets will be buffered in the source buffer. Hence, we can see that congestion
 is effectively pushed to the network edge. As the source buffer would be much larger than
-the maximum window size, the TCP window will remain fixed at the maximum window
+the maximum window size, The TCP window will remain fixed at the maximum window
 size and congestion control will become a purely rate based one. If ABR service was not
-used, however, TCP would increase its window, overshoot the required window size, and
+used, however, TCP would increase ABR service window, overshoot the required window size, and
 then due to packet loss, would again reduce the window size. Hence, it is clear that, for
 zero delay in the control loop, end-to-end ABR will definitely improve the throughput of
 TCP.
 When variations in the bottleneck bandwidth do occur, however, and there is
 delay in the ABR control loop, it is not clear whether there will be any improvement.
 In this paper, we study TCP over end-to-end ABR, and consider a TCP connection in a
-network with large round-trip delay; the connection has a single bottleneck link with time
+network with large round-trip delay; a TCP connection in a
+network with large round-trip delay has a single bottleneck link with time
 varying capacity. Current trends seem to indicate that at least in the near future, ATM
 will remain only a WAN transport technology. Hence ATM services will only extend
 to the network edge, whereas TCP will continue to be used as the end-to-end protocol,
@@ -97,8 +98,8 @@ framework, our results would apply to the edge-to-edge TCP over ABR connection.
 Many simulation studies have been carried out to study the interaction between
 the TCP and ATM/ABR control loops. In [7], the authors study the effect of running
 large unidirectional file transfer applications on TCP over ABR. An important result
-from their study is that cell loss ratio (CLR) is not a good indicator of TCP perfor-
-mance. They also show that when maximum throughput is achieved, the TCP sources
+from the authors study is that cell loss ratio (CLR) is not a good indicator of TCP perfor-
+mance. the authors also show that when maximum throughput is achieved, the TCP sources
 are rate limited by ABR rather than window limited by TCP. Reference [8] reports a
 study of the buffering requirements for zero cell loss for TCP over ABR. It is shown that
 the buffer capacity required at the switch is proportional to the maximum round trip
@@ -111,41 +112,45 @@ In [3], the authors study the effect of ATM/ABR control on the throughput and
 fairness of running large unidirectional file transfer applications on TCP-Tahoe and TCP-Reno
 (see [15]) with a single bottleneck link with a static service rate. The authors in
 [12] study the performance of TCP over ATM with multiple connections, but with a
-static bottleneck link. The paper reports a simulation study of the relative performances
+static bottleneck link. this paper reports a simulation study of the relative performances
 of the ATM ABR and UBR service categories in transporting TCP/IP flows through an
-edge-to-edge ATM (i.e., the host nodes are not ATM endpoints) network. Their summary
+edge-to-edge ATM (i.e., the host nodes are not ATM endpoints) network. the host nodes summary
 conclusion is that there does not seem to be strong evidence that for TCP/IP workloads
-the greater complexity of ABR pays off in better TCP throughputs. Their results are,
-however, for edge-to-edge ABR; they do not comment on end-to-end (i.e., the hosts have
+the greater complexity of ABR pays off in better TCP throughputs. the host nodes results are,
+however, for edge-to-edge ABR; the host nodes do not comment on end-to-end (i.e., the hosts have
 an ATM NIC) ATM which is what we study in this paper.
 All the studies above are primarily simulation studies, and analytical work on
 TCP over ABR does not seem to exist in the literature. In this paper, we make the
 following contributions:
-(i) We develop an analytical model for a TCP connection over explicit rate ABR
+(i) we develop an analytical model for a TCP connection over explicit rate ABR
 when there is a single bottleneck link with time varying available capacity. In the
 analytical model we assume that the explicit rate feedback is based on the short
 term average available capacity; we think of this as instantaneous capacity feedback,
 and we call the approach INSTCAP feedback.
-(ii) We use a test-bed to validate the analytical results. This test-bed implements
+(ii) we use a test-bed to validate the analytical results. This test-bed implements
 a hybrid simulation comprising actual Linux TCP code, and a network emula-
 tion/simulation implemented in the IP loopback code in the Linux kernel.
 (iii) We then develop an explicit rate feedback that is based on a longer term history
-of the bottleneck rate process. The computation is motivated from (though it
+of the bottleneck rate process. The computation is motivated from (though The computation
 is not the same as) the well known concept of effective capacity (derived from
 large deviations analysis of the bottleneck queue process). We call this EFFCAP
-feedback. EFFCAP is more effective in preventing loss at the bottleneck buffers.
-Since the resulting model is hard to analyse, the results for EFFCAP feedback are
+feedback. this EFFCAP
+ is more effective in preventing loss at the bottleneck buffers.
+Since the resulting model is hard to analyse, the results for this EFFCAP
+ feedback are
 all obtained from the hybrid simulator mentioned above. Our results show that
 different types of bottleneck bandwidth feedbacks are needed for slowly varying
 bottleneck bandwidth, rapidly varying bottleneck bandwidth and the intermediate
 regime. EFFCAP feedback adapts itself to the rate of bandwidth variation. We then
 develop guidelines for choosing two parameters that arise in the on-line calculations
-of EFFCAP.
+of this EFFCAP
+.
 (iv) Finally, we study the performance of two TCP connections that pass through the
 same bottleneck link, but have different round trip propagation delays. Our objective
 here is to determine whether TCP over ABR is fairer than TCP alone, and
-under what circumstances. In this study we only use EFFCAP feedback.
-The paper is organized as follows. In Section 2, we describe the network model
+under what circumstances. In this study Our only use this EFFCAP
+ feedback.
+The paper is organized as follows. In Section 2, we describe The Network Model
 under study. In Section 3 we develop the analysis of TCP over ABR with INSTCAP
 Segmentation
 Buffer
@@ -161,12 +166,14 @@ Figure
 and extends into the host's main memory. The rate feedback from the bottleneck link is
 delayed by one round trip delay.
 feedback, and of TCP alone. In Section 4, we develop the EFFCAP algorithm; TCP
-over ABR with EFFCAP feedback is only amenable to simulation. In Section 5, we
+over ABR with this EFFCAP
+ feedback is only amenable to simulation. In Section 5, we
 present analysis results for INSTCAP feedback, and simulation results for INSTCAP
 and EFFCAP. The performance of INSTCAP and EFFCAP feedbacks are compared. In
-Section 6, we study the choice of two parameters that arise in EFFCAP feedback. In
-Section 7 we provide simulation results for two TCP connections over ABR with EFFCAP
-feedback. Finally, in Section 8, we summarise the observations from our work.
+Section 6, we study the choice of two parameters that arise in this EFFCAP
+ feedback. In
+Section 7 we provide simulation results for two TCP connections over ABR with this EFFCAP
+feedback. Finally, in Section 8, we summarise the observations from we work.
 2 The Network Model
 Consider a system consisting of a TCP connection between a source and destination node
 connected by a network with a large propagation delay as shown in Figure 1. The TCP
@@ -175,28 +182,28 @@ recovery. We assume that only one link (called the bottleneck link) causes signi
 queueing delays in this connection, the delays due to the other links being fixed (i.e.,
 only fixed propagation delays are introduced due to the other links). A more detailed
 model of this is shown in Figure 3. The TCP packets are converted into ATM cells and
-are forwarded to the ABR segmentation buffer. This buffer is in the network interface
+are forwarded to the ABR segmentation buffer. the ABR segmentation buffer is in the network interface
 card (NIC) and extends into the main memory of the computer. Hence, we can look upon
 this as an infinite buffer. The segmentation buffer server (also called the ABR source)
 gets rate feedback from the network. The ABR source service rate adapts to this rate
 feedback.
 The bottleneck link buffer represents either an ABR output buffer in an ATM
-switch (in case of TCP over ABR), or a router buffer (in case of TCP alone). The
-network carries other traffic (CBR/VBR) which causes the bottleneck link capacity (as
+switch (in case of TCP over ABR), or a router buffer (in case of TCP alone). the network carries other traffic (CBR/VBR) which causes the bottleneck link capacity (as
 seen by the connection of interest) to vary with time. The bottleneck link buffer is finite
 which can result in packet loss due to buffer overflow when rate mismatch between the
-source rate and the link service rate occurs. In our model, we will assume that a portion
+source rate and the link service rate occurs. In our model, our will assume that a portion
 of the link capacity is reserved for best-effort traffic, and hence is always available to the
 TCP connection. In the ATM/ABR case such a reservation would be made by using the
 Minimum Cell Rate (MCR) feature of ABR, and would be implemented by an appropriate
 link scheduling mechanism. Thus when guaranteed service traffic is backlogged at this
 link, then the TCP connection gets only the bandwidth reserved for best-effort traffic,
-otherwise it gets the full bandwidth. Hence a two state model suffices for the available
+otherwise the TCP connection gets the full bandwidth. Hence a two state model suffices for the available
 link rate.
-In the first part of our study, we assume that the ABR feedback is an instantaneous
-rate feedback scheme; i.e., the bottleneck link periodically feeds back its short term
+In the first part of our study, our assume that the ABR feedback is an instantaneous
+rate feedback scheme; i.e., the bottleneck link periodically feeds back the ABR feedback is an instantaneous
+rate feedback scheme short term
 to the ABR source. This feedback reaches after one round trip
-propagation delay. The ABR source adapts to this value and transmits the cells at this
+propagation delay. the ABR source adapts to this value and transmits the cells at this
 rate.
 3 TCP/ABR with Instantaneous Capacity Feedback
 At time t, the cells in the ATM segmentation buffer at the source are transmitted at a time
@@ -207,29 +214,31 @@ service rate R \Gamma1
 t packets=sec which is a function of an independent Markov chain. In our
 analysis, we assume that there is a 2 state Markov chain modulating the channel. In each
 state, the bottleneck link capacity is deterministic. If the buffer is full when a cell arrives
-to it, the cell is dropped. In addition, we assume that all cells corresponding to that TCP
-packet are dropped. This assumption allows us to work with full TCP packets only; it
-is akin to the Partial Packet Discard proposed in [13]. If the packet is not lost, it gets
+to it, a cell is dropped. In addition, we assume that all cells corresponding to that TCP
+packet are dropped. This assumption allows us to work with full TCP packets only; This assumption
+is akin to the Partial Packet Discard proposed in [13]. If the packet is not lost, the packet gets
 serviced at rate R \Gamma1
 (assumed constant over the service time of the packet), and reaches
 the destination after some deterministic delay. The destination ATM layer reassembles
-the packet and delivers it to the TCP receiver. The TCP receiver responds with an ACK
+the packet and delivers the packet to the TCP receiver. the TCP receiver responds with an ACK
 TCP/ABR Transmitter Bottleneck Link Propagation Delay
 
 Figure
 
 4: Queueing model of TCP over end-to-end ABR
 (acknowledgement) which, after some delay (propagation processing delay) reaches the
-source. The TCP source responds by increasing the window size.
+source. the
+source responds by increasing the window size.
 The TCP window evolution can be modeled in several ways (see [11], [10]). In
 this study, we model the TCP window adjustments in the congestion avoidance phase
 (for the original TCP algorithm as proposed in [4] by Van Jacobson) probabilistically
 as follows: every time a non-duplicate ACK (an acknowledgement that requests for a
-packet that has not been acknowledged earlier) arrives at the source, the window size W t
+packet that has not been acknowledged earlier) arrives at the
+source, the window size W t
 increases by one with probability 1
 On the other hand, if a packet is lost at the bottleneck link buffer, the ACK
 packets for any subsequently received packets continue to carry the sequence number of
-the lost packet. Eventually, the source window becomes empty, timeout begins and at the
+a packet. Eventually, the source window becomes empty, timeout begins and at the
 expiry of the timeout, the threshold window W th
 t is set to half the maximum congestion
 window achieved after the loss, and the next slow start begins.
@@ -240,21 +249,23 @@ Figure
 4 is a closed queueing network representation of the TCP over ABR session. We
 model the TCP connection during the data transfer phase; hence the data packets are
 assumed to be of fixed length. The buffer of the segmentation queue at the source host
-is assumed to be infinite in size. There are as many packets in this buffer as the number
-of untransmitted packets in the window. The service time at this buffer models the time
+is assumed to be infinite in size. There are as many packets in The buffer of the segmentation queue at the source host
+ as the number
+of untransmitted packets in the window. The service time at The buffer of the segmentation queue at the source host
+ models the time
 taken to transmit an entire TCP packet worth of ATM cells. Owing to the feedback
 rate control, the service rate follows the rate of the bottleneck link. We assume that
-the rate does not change during the transmission of the cells from a single TCP packet.
+the service rate does not change during the transmission of the cells from a single TCP packet.
 The service time (or equivalently, the service rate) follows the bottleneck link service rate
 with a delay of \Delta units of time, \Delta being the round trip (fixed) propagation delay.
-The bottleneck link is modeled as a finite buffer queue with deterministic packet
+the bottleneck link is modeled as a finite buffer queue with deterministic packet
 service time with the service time (or rate) Markov modulated by an independent Markov
 chain on two states 0 and 1; the service rate is higher in state 0. The round trip propagation
 delay \Delta is modeled by an infinite server queue with service time \Delta. Notice that
 various propagation delays in the network (the source-bottleneck link delay, bottleneck
 link-destination delay and the destination-source return path delay) have been lumped
 into a single delay element (See Figure 4). This can be justified from the fact that even
-if the source adapts itself to the change in link capacity earlier than one round trip time,
+if the source adapts the source to the change in link capacity earlier than one round trip time,
 the effect of that change will be seen only after a round trip time at the bottleneck link.
 With "packets" being read as "full TCP packets", let
 A t be the number of packets in the segmentation buffer at the host at time t
@@ -268,7 +279,7 @@ round trip propagation delay, i.e., S g. Since the instantaneous
 rate of the bottleneck link is fed back, we call this the instantaneous rate
 feedback scheme. (Note that, in practice, the instantaneous rate is really the average
 rate over a small window; that is how instantaneous rate feedback is modelled
-in our simulations to be discussed later; we will call this feedback INSTCAP.)
+in our simulations to be discussed later; our will call how instantaneous rate feedback INSTCAP.)
 3.2 Analysis of the Queueing Model
 Consider the vector process
 Slow start phase
@@ -279,7 +290,8 @@ round trip propagation delay
 Figure
 
 5: The embedded process
-This process is hard to analyze directly. Instead, we study an embedded process, which
+The embedded process
+ is hard to analyze directly. Instead, we study an embedded process, which
 with suitable approximations, turns out to be analytically tractable.
 consider the embedded process
 f ~
@@ -287,7 +299,7 @@ with ~
 use the obvious notation ~
 In the following analysis, we will make the following assumptions :
 (i) We assume that the rate modulating Markov chain is embedded at the epochs
-(ii) The source adapts immediately to the explicit rate feedback that it receives. This
+(ii) The source adapts immediately to the explicit rate feedback that The source receives. This
 is true for the actual ABR source behaviour (as specified by the ATM Forum [1]) if
 the rate decreases. In the actual ABR source behaviour, an increase in the explicit
 rate results in an exponential growth of the source rate and not a sudden jump.
@@ -303,14 +315,16 @@ alone only if Bmax \Delta
 Observe that packets in the propagation delay queue (see Figure 4) at t k will have
 departed from the queue by t k+1 . This follows as the service time is deterministic, equal
 to \Delta, and t \Delta. Further, any new packet arriving to the propagation delay
-queue during still be present in that queue at t k+1 . On the other hand,
+queue during still be present in that queue at T . On the other hand,
 if loss occurs due to buffer overflow at the bottleneck link in (t k ; t k+1 ), we proceed as
 follows. Figure 5 shows a packet loss epoch in the interval This is the first
 loss since the last time that TCP went through a timeout and recovery. At this loss
 epoch, there are packets in the bottleneck buffer, and some ACKs "in flight" back to the
 transmitter. These ACKs and packets form an unbroken sequence, and hence will all
-contribute to the window increase algorithm at the transmitter (we assume that there is
-no ACK loss in the reverse path). The transmitter will continue transmitting until the
+contribute to the window increase algorithm at the
+transmitter (we assume that there is
+no ACK loss in the reverse path). the
+transmitter will continue transmitting until the
 window is exhausted and then will start a coarse timer. We assume that this timeout will
 occur in the interval (t k+2 ; t k+3 ) (see Figure 5), and that recovery starts at the embedded
 epoch t k+3 . Thus, when the first loss (after recovery) occurs in an interval then, in our
@@ -323,7 +337,8 @@ assuming that
 (This leads to a conservative estimate of TCP throughput. See the discussion following
 Figure 8 below.)
 we can find the probability that a loss occurs during (t k ; t k+1 ), and the distribution of
-the TCP window at the time that timeout starts. Suppose this window is w, then the
+the TCP window at the time that timeout starts. Suppose the distribution of
+the TCP window at the time that timeout starts is w, then the
 congestion avoidance threshold in the next recovery cycle will be m := d we. It will
 take approximately dlog 2 me round trip times (each of length \Delta) to reach the congestion
 avoidance threshold. Assuming that no loss occurs during the slow start phase (this
@@ -343,7 +358,7 @@ loss occurs during (T k ;
 and
 for k  0 (7)
 Recalling the evolution of fT
-We now proceed to analyze the evolution of fX k ; k  0g.
+we now proceed to analyze the evolution of fX k ; k  0g.
 The bottleneck link modulating process, as mentioned earlier, is a two state
 Markov chain embedded at taking values in fr g. Let p 01 be the
 transition probabilities of the Markov chain. Notice that S
@@ -371,7 +386,7 @@ a+b+d ). Then ,
 d)). We can similarly get recursive relations for B k+1 and
 Consider an example for explaining the evolution of X k to X k+1 . Let X
 (a; b; d; 2; 1), i.e., the source service rate is twice that of the bottleneck link server, and
-loss can take place. Further, d  \Delta packets are in flight. These d packets arrive at the
+loss can take place. Further, d  \Delta packets are in flight. \Delta packets arrive at the
 source queue, increase the window size by N k , and hence, min(a+d+N k ; \Delta) packets are
 transmitted into the bottleneck buffer (at most \Delta packets can be transmitted at rate 1
 during an interval of length \Delta). If
@@ -395,17 +410,17 @@ and
 From the above discussion, it is clear that given X k , the distribution of X k+1 can
 be computed without any knowledge of its past history. Hence, fX k ; k  0g is a Markov
 chain. Further, given T k and X k , the distribution of T k+1 can be computed without any
-knowledge of its past history. Hence, the process f(X k ; T k ); k  0g is a Markov Renewal
+knowledge of T k+1 past history. Hence, the process f(X k ; T k ); k  0g is a Markov Renewal
 Process (MRP) (See [17]). It is this MRP that is our model for TCP/ABR.
 3.3 Computation of Throughput
 Given the Markov Renewal Process f(X we associate with the kth cycle
 that accounts for the successful transmission of packets. Let (x)
 denote the stationary probability distribution of the Markov chain fX k ; k  0g. Denote
 by fl TCP=ABR , the throughput of TCP over ABR. Then, by the Markov renewal-reward
-theorem ([17]), we have
+theorem ([17]), our have
 denotes the expectation w.r.t. the stationary distribution (x).
 The distribution (x) is obtained from the transition probabilities in Section 3.2.
-We have
+our have
 x
 is the expected reward in a cycle that begins with
 B(x) and D(x) the values of A, B and D in the state x. Then, in an interval (T k
@@ -419,8 +434,7 @@ for the reward in the interval starting from T k until T k+1 when slow-start end
 that at T k the congestion window is A(x) D(x). The first component of the
 reward is D(x); all the B(x) buffered packets will result in ACKs, causing the left edge
 of the TCP window to advance. Since the link rate is half the source rate, loss will
-occur when 2(B packets enter the link buffer from the ABR source; these
-packets succeed and cause the left edge of the window to further advance. Further, we
+occur when 2(B packets enter the link buffer from the ABR source; 2(B packets succeed and cause the left edge of the window to further advance. Further, we
 assume that the window grows by 1 in this process; hence, following the lost packet,
 at most A(x) packets can be sent. Thus we bound the reward
 before timeout occurs by D(x)
@@ -428,8 +442,8 @@ loss and timeout, the ensuing slow-start phase successfully
 transfers some packets (as described earlier). Hence, an upper bound on the "reward"
 when loss occurs is A(x)
 the summation index w being over all window sizes. Actually, this is an optimistic reward
-as some of the packets will be transmitted again in the next cycle even though they have
-successfully reached receiver. We could also have a conservative accounting, where we
+as some of the packets will be transmitted again in the next cycle even though some of the packets have
+successfully reached receiver. We could also have a conservative accounting, where We
 assume that if loss occurs, all the packets transmitted in that cycle are retransmitted in
 future cycles. In the numerical results, we shall compare the throughputs with these two
 bounds. It follows that
@@ -441,8 +455,10 @@ the analysis in Section 3.2, it follows that
 Hence,
 x
 3.4 TCP without ATM/ABR
-Without the ABR rate control, the source host would transmit at the full rate of its
-link; we assume that this link is much faster than the bottleneck link and model it as
+Without the ABR rate control, the source host would transmit at the full rate of the source host
+link; we assume that its
+link is much faster than the bottleneck link and model its
+link as
 Constant Rate
 Arrival Process
 
@@ -452,8 +468,7 @@ server queue with time varying service capacity, being fed by a constant
 rate source.
 infinitely fast. The system model is then very similar to the previous case, the only
 difference being that we have eliminated the segmentation buffer. The assumptions we
-make in this analysis, however, lead to an optimistic estimate of the throughput. The
-analysis is analogous to that provided above.
+make in this analysis, however, lead to an optimistic estimate of the throughput. this analysis is analogous to that provided above.
 4 TCP/ABR with Effective Capacity Feedback
 We now develop another kind of rate feedback. To motivate this approach, consider a
 finite buffer single server queue with a stationary ergodic service process (see Figure 6).
@@ -483,20 +498,20 @@ For the desired QoS we need
 side of Equation 25 as \Gamma eff . Then, \Gamma eff can be called the effective capacity of the server.
 which is what we intuitively
 expect. For all other values of ffl, \Gamma eff 2 (C min ; EC).
-Let us apply this effective capacity approach to our problem. Let the ABR source
+Let us apply this effective capacity approach to us problem. Let the ABR source
 (see
 
 Figure
 
 adapt to the effective bandwidth of the bottleneck link server. In our anal-
-ysis, we have assumed a Markov modulated bottleneck link capacity, changes occurring
+ysis, our have assumed a Markov modulated bottleneck link capacity, changes occurring
 at most once every \Delta units of time, \Delta being the round trip propagation delay. Hence,
 we have a discrete time model with fl being the number of packet arrivals to the bottle-neck
 link in \Delta units of time and C i being the number of packets served in that interval.
 We will compute the effective capacity of the bottleneck link server using Equation 25.
-However, before we can do this, we still need to determine the desired QOS, i.e, ffl or
+However, before We can do this, We still need to determine the desired QOS, i.e, ffl or
 equivalently, ffi.
-To find ffi, we conduct the following experiment. We let the ABR source transmit
+To find ffi, We conduct the following experiment. We let the ABR source transmit
 at some constant rate, say ; For a given Markov modulating process, we
 find that  which maximizes TCP throughput. We will assume that this is the effective
 capacity of the bottleneck link. Now, using Equation 25, we can find the smallest ffi that
@@ -525,7 +540,7 @@ of the rate feedback. We shall approximate the expression for effective bandwidt
 Equation 25 by replacing n !1 by a large finite M .
 log Ee \Gammaffi
 What we now have is an effective capacity computation performed over Ms units of time.
-We will assume that the process is ergodic and stationary. Hence, we approximate the
+we will assume that the process is ergodic and stationary. Hence, we approximate the
 expectation by the average of N sets of samples, each set taken over Ms units of time.
 Note that since the process is stationary and ergodic, the N intervals need not be disjoint
 for the following argument to work. Then, denoting C ij as the ith link capacity value
@@ -538,29 +553,31 @@ e \Gammaffi
 As motivated above, we now take ffi to be large. This yields
 log e
 \Gammaffi(min
-We notice that this essentially means that we average capacities over N sliding blocks,
+we notice that this essentially means that we average capacities over N sliding blocks,
 each block representing Ms units of time, and feed back the minimum of these values (see
 
 Figure
 
 7).
 The formula that has been obtained (Equation 31) has a particularly simple form.
-The above derivation should be viewed more as a motivation for this formula. The
-formula, however, has independent intuitive appeal; see below. In the derivation it was
+The above derivation should be viewed more as a motivation for The formula that has been obtained (Equation 31). The formula that has been obtained (Equation 31), however, has independent intuitive appeal; see below. In The above derivation it was
 required that M and N should be large. We can, however, study the effect of the choice
 of M and N (large or small) on the performance of effective capacity feedback. This
 is done in Section 6, where we also provide guidelines for selecting values of M and N
 under various situations.
-The formula in Equation 31 is intuitively satisfying; we will call it EFFCAP
+The formula that has been obtained (Equation 31) is intuitively satisfying; we will call The formula that has been obtained (Equation 31) EFFCAP
 feedback. Consider the case when the network changes are very slow. Then, all N values
 of the average capacity will be the same, and each one will be equal to the capacity
 of the bottleneck link. Hence, the rate that is fed back to the ABR source will be
 the instantaneous free capacity of the bottleneck link; i.e., in this situation EFFCAP
-is the same as INSTCAP. When the network variations are very fast, EFFCAP will
+is the same as INSTCAP. When the network variations are very fast, EFFCAP
+ will
 be the mean capacity of the bottleneck link which is what should be done to get the
-best throughput. Hence, EFFCAP behaves like INSTCAP for slow network changes and
+best throughput. Hence, EFFCAP
+ behaves like INSTCAP for slow network changes and
 adapts to the mean bottleneck link capacity for fast changes. For intermediate rates of
-changes, EFFCAP is (necessarily) conservative and feeds back the minimum link rate.
+changes, EFFCAP
+ is (necessarily) conservative and feeds back the minimum link rate.
 There is another benefit we could get by using EFFCAP. As EFFCAP assumes
 a large value of ffi, this means the the cell loss probability ffl is very small. This implies
 that the TCP throughput will essentially be the ABR throughput. Thus EFFCAP when
@@ -568,7 +585,7 @@ used along with the Minimum Cell Rate feature of the ABR service can guarantee a
 minimum throughput to TCP connections. Some of our simulation results to be presented
 demonstrate this.
 5 Numerical and Simulation Results
-In this section, we first compare our analytical results for the throughput of TCP, without
+In this section, we first compare we analytical results for the throughput of TCP, without
 ABR and with ABR with INSTCAP feedback, with simulation results from a hybrid TCP
 simulator involving actual TCP code, and a model for the network implemented in the
 loopback driver of a Linux Pentium machine. We show that the performance of TCP
@@ -591,7 +608,7 @@ results, the uppermost two curves are the optimistic analysis, and the middle tw
 are the conservative analysis.
 5.1 Instantaneous Rate Feedback Scheme
 We recall from the previous section that the bottleneck link is Markov modulated. In
-our analysis, we have assumed that the modulating chain has two states which we call
+We analysis, We have assumed that the modulating chain has two states which we call
 the high state and the low state. In the low state, with some link capacity being used by
 higher priority traffic, the link capacity is some fraction of the link capacity in the high
 state (where the full link rate is available). In the set of results that we present in this
@@ -603,8 +620,7 @@ by /, i.e., / :=
 per state is 400msec. Note that our analysis only applies to / ? 1. A large value of /
 means that the network changes are slow compared to the round trip propagation delay
 (rtd) , whereas / !! 1 means that the network transients occur several times per round
-trip time. In the Linux kernel implementation of our network simulator, the Markov
-chain can make transitions at most once every 30msec. Hence we take this also to be the
+trip time. In the Linux kernel implementation of our network simulator, the modulating chain can make transitions at most once every 30msec. Hence we take this also to be the
 measurement interval, and the explicit rate feedback interval (i.e.,
 We denote one packet transmission time at the bottleneck link in the high rate
 state as one time unit. Thus, in all the results presented here, the packet transmission
@@ -613,7 +629,7 @@ We plot the bottleneck link efficiency vs. mean time that it spends in each stat
 (i.e. We define efficiency as the throughput as a fraction of the mean capacity of
 the bottleneck link. We include the TCP/IP headers in the throughput, but account for
 ATM headers as overhead. We use the words throughput and efficiency interchangeably.
-With the modulating Markov chain spending the same time in each state, the mean
+With the modulating chain spending the same time in each state, the mean
 capacity of the link is 0.75.
 
 Figure
@@ -622,7 +638,8 @@ Figure
 Here, we compare an optimistic analysis, a conservative one (see Section 3.3), and the
 test-bed (i.e., simulation) results for different buffer sizes. In our analysis, the processes
 are embedded at multiples of one round trip propagation delay, and the feedback from
-the bottleneck link is sent once every rtd. This feedback reaches the ABR source after
+the bottleneck link is sent once every rtd. the feedback from
+the bottleneck link reaches the ABR source after
 one round trip propagation delay. In the simulations, however, feedback is sent to the
 ABR source every 30msec. This reaches the ABR source after one round trip propagation
 delay.
@@ -632,7 +649,7 @@ Figure
 
 8, we can see that, except for very small /, the analysis and the simulations
 match to within a few percent. Both the analyses are less than the observed
-throughputs by about 10-20% for small /. This can be explained if we note that in our
+throughputs by about 10-20% for small /. This can be explained if we note that in we
 model, we assume that packets arrive (leave) back to back to (from) the ABR source.
 When a rate change occurs at the bottleneck link, as the packets arrive back to back, and
 the source sends at twice the rate of the bottleneck link (in our example); for every two
@@ -640,8 +657,7 @@ packets arriving to the bottleneck link, one gets queued. However, in reality, t
 need not arrive back to back and hence, the queue buildup is slower. This means that
 the probability that packet loss occurs at the bottleneck link buffer is actually lower than
 in our analytical model. This effect becomes more and more significant as the rate of
-bottleneck link variations increase. However, we observe from the simulations that this
-effect is not significant for most values of /.
+bottleneck link variations increase. However, we observe from the simulations that This effect is not significant for most values of /.
 
 Figure
 
@@ -659,7 +675,7 @@ Figure
 9: Analysis and Simulation results; throughput of TCP without ABR : The round
 propagation delay is 40 time units. The bottleneck link buffers are either 10 or 12
 packets. We observe that TCP is sensitive to bottleneck link buffer size changes.
-(i) We assumed in our analysis that no loss occurs in the slow-start phase. It has been
+(i) We assumed in We analysis that no loss occurs in the slow-start phase. no loss occurs in the slow-start phase has been
 shown in [11] that if the bottleneck link buffer is less than 1of the bandwidth-delay
 product (which corresponds to about 13 packets or 6500 byte buffer), loss will occur
 in the slow-start phase.
@@ -674,7 +690,7 @@ even when no transients occur.
 It is useful to observe that since the times in the above curves are normalized
 to the packet transmission time (in the high rate state), results for several different
 ranges of parameters can be read off these curves. To give an example, if the link has
-a capacity of 155Mbps during its high rate state, and TCP packets have a size of 500
+a capacity of 155Mbps during the link high rate state, and TCP packets have a size of 500
 bytes each, then one time unit is 25:8sec. The round trip propagation delay (\Delta) is
 means that changes in link bandwidth occur
 Efficiency
@@ -706,10 +722,10 @@ The window size increases till the maximum window size advertised by the receive
 reached. No loss occurs in the network as the ABR source sends at just the right rate to
 the bottleneck link. Hence, we end up with the TCP window size fixed at the maximum
 window size and the pipe is always full.
-The assumptions in our analysis render it inapplicable for very small /. Figure 10
+The assumptions in our analysis render The assumptions in our analysis inapplicable for very small /. Figure 10
 compares the simulation results for TCP with ABR (INSTCAP feedback) and without
 ABR for various buffer sizes. These results are for / starting with going
-3 Note however that \Delta is an absolute parameter in these curves, since it governs the round trip "pipe".
+3 Note however that \Delta is an absolute parameter in these curves, since \Delta governs the round trip "pipe".
 Thus, although / is normalized to \Delta, the curves do not yield values for fixed / and varying \Delta.
 down to We note that even though the throughput improvement due to ABR
 is not great for small /, the performance of TCP does not significantly worsen due to
@@ -736,8 +752,9 @@ Figure
 
 11: Simulation results; Comparison of the EFFCAP and INSTCAP feedback
 schemes for TCP over ABR for various bottleneck link buffers (8-12 packets). As before,
-the rtd is 40 time units. Here, Figure 7). In this figure, we
-compare their performances for relatively large /.
+The rtd is 40 time units. Here, Figure 7). In Figure 7), we
+compare we
+ performances for relatively large /.
 In
 
 Figure
@@ -759,13 +776,14 @@ Figure
 
 12: Simulation results; Comparison of the EFFCAP and INSTCAP feedback
 schemes for TCP over ABR for various bottleneck link buffers (8-12 packets). As before,
-the rtd is 40 time units. Here, Figure 7). In this figure, we
-compare their performances for small values of /.
-In this figure, the EFFCAP scheme uses i.e, we average over one round trip
-propagation delay 4 worth of samples. We also maintain a window of 8 rtd worth of
+The rtd is 40 time units. Here, Figure 7). In Figure 7), we
+compare we
+ performances for small values of /.
+In Figure 7), the EFFCAP scheme uses i.e, we average over one round trip
+propagation delay 4 worth of samples. we also maintain a window of 8 rtd worth of
 averages, i.e, we maintain averages over which the bottleneck link
-returns the minimum to the ABR source. The source adapts to this rate. In the case of
-the INSTCAP scheme, in the simulation, the rate is fed back every 30msec.
+returns the minimum to the ABR source. the ABR source adapts to this rate. In the case of
+the INSTCAP scheme, in the simulation, this rate is fed back every 30msec.
 We can see from Figure 11 that for large /, the throughput with EFFCAP is worse
 than that with the INSTCAP scheme by about 3-4%. This is because of the conservative
 nature of the EFFCAP algorithm (it takes the minimum of the available capacity over
@@ -802,7 +820,8 @@ of 10 packets, the other parameters remaining the same as in other simulations.
 if ABR is employed for link level data transport. These plots clearly brings out the
 merits of the effective capacity scheme. We can see that for all values of /, the EFFCAP
 scheme performs considerably better than TCP alone. For large /, we have a throughput
-improvement of about 30% while for small /, the improvement is of the order of 10-15%.
+improvement of about 30% while for small /, a throughput
+improvement of about 30% is of the order of 10-15%.
 Further, while being adaptive to /, EFFCAP succeeds in keeping the TCP throughput
 better than the minimum link rate, which INSTCAP fails to do (for small /). Thus an
 MCR in the ABR connection may be used to guarantee a minimum TCP throughput.
@@ -946,11 +965,11 @@ of N is based on / and \Delta. For very large / (/ ? 20) N should be small (alon
 M ); the limiting case being 1. For very small / (/ ! 0:2) N does not matter
 much. In the intermediate range, a large N is better.
 6.2.2 Study of M
-In this section we study the performance of M , the averaging parameter. We have already
-seen from Figure 11 that for / ? 60, a small value of M should be selected. We now
+In this section we study the performance of M , the averaging parameter. we have already
+seen from Figure 11 that for / ? 60, a small value of M should be selected. we now
 study the lower ranges of /.
 5 Actually TCP window depends directly on the bandwidth delay product. In all the numerical results
-however the link speed is fixed, hence the window depends simply on \Delta.
+however the link speed is fixed, hence 5 Actually TCP window depends simply on \Delta.
 Efficiency
 Window Size (measurement intervals)
 RTT 50ms
@@ -990,7 +1009,7 @@ results are shown in Figure Figure 19 100ms). The values
 of \Delta are 50ms, 100ms and 200ms. Thus the range of /(=
 under consideration is 0.5
 to 20. We have already found that M needs to be small for / ? In the
-range under consideration, however, we observe that the throughput is not very sensitive
+range under consideration, however, We observe that the throughput is not very sensitive
 to M .
 In
 
@@ -1026,7 +1045,7 @@ Throughput fairness is a major issue for multiple sessions sharing a bottleneck 
 is seen that TCP alone is unfair towards sessions that have larger round trip times.
 It may be expected however, that TCP sessions over ABR will get a fair share of the
 available capacity. In [14], the fairness of the INSTCAP feedback was investigated and
-it was shown that for slow variations of the available capacity, TCP sessions over ABR
+the fairness of the INSTCAP feedback was shown that for slow variations of the available capacity, TCP sessions over ABR
 employing the INSTCAP feedback achieve fairness. In this section we study the fairness
 of TCP sessions over ABR with the EFFCAP feedback scheme
 In the simulations, we use 240ms as the round-trip time for Session 1 and 360ms
@@ -1036,7 +1055,8 @@ earlier (subscripts denote the session number). In the following graphs / is  (m
 per state of the Markov chain) divided by larger 360ms. Simulations are
 carried out by calculating the EFFCAP by two different ways as explained below.
 Case 1: Effective Capacity with
-In this case, we calculate the EFFCAP for each session independently. This is done by
+In Case 1: Effective Capacity with
+, we calculate the EFFCAP for each session independently. This is done by
 selecting M i proportional to \Delta i , that is (with a 30ms update interval) we select
 for Session 1 and 2. We take
 132 (see section 6). EFFCAP i is computed with M i and N i ; session i is fedback 1of
@@ -1092,7 +1112,7 @@ Figures
 
 22 and 23 show the comparison of TCP alone with TCP over ABR with
 EFFCAP feedback for a longer range of /. These curves include results from Figures 20
-and 21. We see that for / ? 20, EFFCAP gives fairness to the sessions whereas TCP
+and 21. We see that for / ? 20, the EFFCAP gives fairness to the sessions whereas TCP
 is grossly unfair to the session with larger \Delta. There is a slight decrease in the overall
 efficiency with TCP over ABR; but note that with TCP over ABR the link actually
 carries 10% more bytes (the ATM overhead) than with TCP alone! We also see from
@@ -1104,7 +1124,7 @@ case of INSTCAP in [14].
 Conclusions
 In this paper, we first developed an analytical model for a wide-area TCP connection
 over end-to-end ABR with INSTCAP feedback, running over a single bottleneck link with
-time-varying capacity. We have compared our analytical results for the performance of
+time-varying capacity. We have compared We analytical results for the performance of
 TCP without ABR, and with ABR (INSTCAP rate feedback) with results from a hybrid
 Efficiency
 Mean time per state (larger rtd)
@@ -1126,11 +1146,11 @@ the connection. For slow variations of the link capacity the improvement is sign
 (25% to 30%), whereas if the rate variations are comparable to the round trip delay then
 the TCP throughput with ABR can be slightly worse than with TCP alone.
 We have also proposed EFFCAP, an effective capacity based algorithm for rate
-feedback. We have simulated TCP over ABR with EFFCAP feedback and shown that,
-unlike INSTCAP feedback, EFFCAP succeeds in keeping the TCP throughput higher
+feedback. We have simulated TCP over ABR with the EFFCAP feedback and shown that,
+unlike INSTCAP feedback, the EFFCAP succeeds in keeping the TCP throughput higher
 than the minimum bandwidth of the bottleneck link; see Figure 12. The EFFCAP
 computation involves two parameters M and N .
-The throughput variation with /, of a TCP session over ABR employing EFFCAP
+The throughput variation with /, of a TCP session over ABR employing the EFFCAP
 feedback, can be broadly divided into three regions. The selection of parameters M and
 thus, depends on the range of / as well as on the round-trip propagation delay.
 When / is very large (? 60) M and N need to be small. Ideally
@@ -1153,13 +1173,12 @@ becomes very small, the choice of M and N does not matter much. When / is in the
 intermediate range (0:5 ! / ! 20), the throughput decreases due to frequent losses,
 hence M and N need to be selected carefully. In this region a large value of N improves
 the throughput whereas the performance is insensitive towards M . In general, a small
-value of M performs better for a given value of N . The throughput drop in this region
-can be compensated by choosing a large buffer, thereby, reducing the losses.
+value of M performs better for a given value of N . The throughput drop in this regioncan be compensated by choosing a large buffer, thereby, reducing the losses.
 In summary, as a broad guideline, for the buffer sizes that we studied, using
 provides good throughput performance for TCP
 over ABR over a wide range of / and \Delta values.
-In the case of multiple sessions, EFFCAP feedback provides fairness over a wider
-range of / then INSTCAP. EFFCAP feedback based on the average round-trip times
+In the case of multiple sessions, the EFFCAP feedback provides fairness over a wider
+range of / then INSTCAP. the EFFCAP feedback based on the average round-trip times
 of the sessions is seen to provide fairness even when the capacity variations are in the
 intermediate range. This is an advantage over INSTCAP which is fair only when the
 rate variations are slow compared to \Delta [14].
@@ -1188,7 +1207,7 @@ Stochastic Modeling and the Theory of Queues Prentice Hall
 --TR
 The performance of TCP/IP for networks with high bandwidth-delay products and random loss
 Comparative performance analysis of versions of TCP in a local network with a lossy link
-Analysis of source policy and its effects on TCP in rate-controlled ATM networks
+Analysis of source policy and source policy effects on TCP in rate-controlled ATM networks
 TCP over wireless with link level error control
 The ERICA switch algorithm for ABR traffic management in ATM networks
 Modeling TCP Reno performance

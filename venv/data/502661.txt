@@ -10,55 +10,66 @@ continuous connectivity. To allow sharing, a dedicated
 update server maintains the primary copy (global database)
 of all data held by mobile clients while each client maintains
 its own replica of some subset of the global database
-schema. The update server maintains the primary copy of
+schema. a dedicated
+update server maintains the primary copy of
 the global database by receiving updates from the clients
-and distributing them on demand to the clients based on
-knowledge of their subscriptions. (See Figure 1.) Typically,
-the server generates update les for clients on an individual
-basis: the server scans through a set of updates, and for
+and distributing the clients
+ on demand to the clients based on
+knowledge of the clients
+ subscriptions. (See Figure 1.) Typically,
+a dedicated
+update server generates update les for clients on an individual
+basis: a dedicated
+update server scans through a set of updates, and for
 each client and update, decides if the client should receive
 the update. In this way, each client receives a customized
 update le containing only the relevant data. This technique
-is simple and straightforward but requires the server to do
+is simple and straightforward but requires a dedicated
+update server to do
 work in direct proportion to the number of clients, limiting
 the scalability of the system and resulting in greater time to
 maintain local replicas.
 In this paper, we build on previous work that proposed organizing
 updates into groups shared by clients [5]. Using this
-approach, the server manages update processing for a limited
+approach, a dedicated
+update server manages update processing for a limited
 and controllable number of groups, irrespective of the
 number of clients. Instead of receiving updates customized
-for its specic needs, each client accesses the updates for
-the groups containing data it needs. The group-based approach
+for Instead of receiving updates specic needs, each client accesses the updates for
+the groups containing data Instead of receiving updates needs. The group-based approach
 results in better server scalability because the work
-of the server is decoupled from the actual number of clients
+of a dedicated
+update server is decoupled from the actual number of clients
 maintained [5, 11]. For example, a salesperson may enter
 her o-ce in the morning before visiting customers and load
-sales data from the server onto her laptop. Throughout the
+sales data from a dedicated
+update server onto her laptop. Throughout the
 day, the salesperson updates her local copy of the sales data
-regardless of the connectivity with the server. When conditions
-permit it, a reliable connection can be established with
+regardless of the connectivity with a dedicated
+update server. When conditions
+permit conditions
+, a reliable connection can be established with
 the server to synchronize local data using updates generated
 for the proper groups. Connectivity options include conventional
 wireless modems, high speed wireless LANs (e.g.,
 or docking the mobile device wired base station.
-Furthermore, her coworkers may concurrently update their
+Furthermore, her coworkers may concurrently update her coworkers
 replicated data.
 In short, we develop a detailed cost model for group design
 and oer a remedy to a scalability problem natural to
 ISDBs that share data. We then present extensive experimental
 results demonstrating the improved e-ciency using
-our design techniques. We begin in Section 2 by placing our
+We design techniques. We begin in Section 2 by placing We
 work in the context of related work. We dene the architecture
 and an I/O-based cost model for evaluating a spe-
 cic data grouping in Section 3. In Section 4, we propose a
 heuristic set of operators for modifying data groupings and
 a greedy algorithm to apply these operators. We also outline
 how to handle changes in the system conguration. In
-Section 5, we compare our approach to intuitive grouping
+Section 5, we compare we approach to intuitive grouping
 alternatives, and demonstrate that our grouping algorithm
 provides signicantly greater scalability in client population
-size. Finally, we summarize our observations and describe
+size. Finally, We summarize We observations and describe
 future work in Section 6. Note that for the sake of brevity,
 we do not include the proofs of theorems in this paper, and
 present only a subset of our experimental results. For more
@@ -76,7 +87,7 @@ intensive and is therefore impractical when clients can be
 unreachable for long periods of time{e.g., if a mobile client
 powers down in order to save energy.
 In response, researchers have proposed replicating data
-among multiple clients and allowing them to operate on
+among multiple clients and allowing researchers to operate on
 the replicas independently [1]. This allows quicker response
 time, reduces the possibility of deadlock, reduces the need
 for energy-consuming communication with the server, and
@@ -91,9 +102,10 @@ performance problems because the amount of work the
 server must do increases with the number of clients served.
 The architecture and goal of the CODA intermittently
 connected le system is similar to those of ISDBs. Researchers
-of CODA predicted (but did not experience) the
+of the CODA predicted (but did not experience) the
 possibility of a reintegration storm, which occurs when multiple
-clients simultaneously try to synchronize their local
+clients simultaneously try to synchronize multiple
+clients local
 caches with the server [9]. This results in unmanageably
 long reintegration times for each client. A similar project
 called DBMate supports intermittently connected database
@@ -108,10 +120,11 @@ sumptions. The utility of view design is measured by how
 closely the resultant views cover the expected queries; the
 main cost is the disk space consumed in storing the views
 [4]. In group design for ISDBs, the utility of groups is measured
-by how quickly they are generated, and the cost is
+by how quickly the utility of groups are generated, and the cost is
 roughly how much extra data must be transmitted to the
 clients. Furthermore, since views are assumed to contain
-subsets of relational data and groups contain updates, they
+subsets of relational data and groups contain updates, the
+clients
 can be manipulated in dierent ways. For these reasons,
 algorithms for view design are inapplicable to group design.
 3. MODEL
@@ -120,52 +133,55 @@ update server, le server, network, and clients. The database
 server stores the global database. The update server generates
 sets of updates for the replicas stored on the clients.
 These updates are made available to clients through a set of
-le servers. Clients intermittently connect to the le server
-via a network. The client is composed of a client update
-agent, and a local DBMS. When the client downloads up-
+le servers. Clients intermittently connect to The update servervia a network. The client is composed of a client update
+agent, and a local DBMS. When The client downloads up-
 dates, the client update agent processes them by applying
 them to the replicas contained on the local DBMS. Data
 ow from client to server is not discussed in this paper, but
 the interested reader may refer to [10] for more details.
-The global database is divided into publications or frag-
-ments, which are horizontal partitions of the database. Each
-client subscribes to a subset of fragments based on its data
-needs. The server maintains multiple, possibly overlapping
+The database
+ is divided into publications or frag-
+ments, which are horizontal partitions of The database
+. Each
+client subscribes to a subset of fragments based on Each
+client data
+needs. The update server maintains multiple, possibly overlapping
 datagroups of fragments, designed based on client subscrip-
-tions. The DBMS records updates from clients in a log,
-which is modied so that it also stores the scope [3]{the
+tions. the local DBMS records updates from clients in a log,
+which is modied so that the local DBMS also stores the scope [3]{the
 which the update aects{of each update.
 An update session is dened as the process during which
-the update server scans the log for outstanding updates,
+The update server scans the log for outstanding updates,
 and for each datagroup, generates an update le (called the
 update log) containing the updates that are in that data-
 group's scope. The resultant update logs are then placed
 on a le server for use by the clients. The frequency of up-date
 sessions is application dependent and controlled by the
 system administrator. A client downloads the update log(s)
-that correspond to its local subscription. The client's up-date
+that correspond to A client local subscription. The client's up-date
 server then processes and applies the contents of the
-update log(s) to its local fragment replicas. In the basic approach
+update log(s) to the
+update log(s) local fragment replicas. In the basic approach
 to update processing practiced by industry, which we
 call client-centric, one datagroup is dened for each client
-to exactly match its local subscription. In the proposed
+to exactly match one datagroup local subscription. In the proposed
 data-centric approach [5], datagroups are created according
 to how data are shared and the number of datagroups is
 generally independent of the number of clients.
 We consider the following two steps critical in synchronizing
-a client: generating update les at the server and transmitting
-them to the clients. We do not emphasize client-side
+a client: generating update les at The update server and transmitting
+The update server to the clients. We do not emphasize client-side
 processing because the availability of powerful mobile computing
 platforms (e.g., Pentium-class laptops) means that
 client-side processing is not a performance bottleneck, especially
 when the client is able to \install" updates while
 being disconnected.
 These two critical steps are tightly coupled. If an up-date
-server can generate update logs more quickly, then they
+server can generate update logs more quickly, then These two critical steps
 are available for download sooner, and if update logs take
 more time to generate, a client must wait longer to down-load
-them. It is therefore reasonable to increase the cost of
-one of these steps if the decrease in the other is greater.
+These two critical steps. It is therefore reasonable to increase the cost of
+one of These two critical steps if the decrease in the other is greater.
 Problem Statement: We are given a global database,
 divided into a set of fragments, g. The proportion
 of updates applied to F i during an update session
@@ -192,7 +208,8 @@ Our goal is to generate a set of datagroups G and a mapping
 that minimizes the total cost function (see Equation
 below). With client-centric grouping,
 jCj. The data-centric grouping
-approach determines its grouping based on the aggregated
+approach determines The data-centric grouping
+approach grouping based on the aggregated
 interests of the entire client population and the capabilities
 of the system architecture. Figure 2 gives a simple example
 of data-centric redesign in the case where the interests of
@@ -206,7 +223,7 @@ Our cost model assumes that I/O time is the dominant
 cost factor and is therefore a good approximation of the over-all
 update processing cost of a particular grouping scheme.
 Three server and network activities make up the total cost:
-update mapping (mapping of updates to their respective
+update mapping (mapping of updates to Three server and network activities respective
 datagroups 1 ), update log storage (storage of all update logs
 An update operation is one of three data manipulating
 onto disk), and update log propagation (loading and transmission
@@ -245,7 +262,7 @@ Update Mapping Cost
 Update storage (to disk I/O) cost measures the time
 required to store all the update logs onto disk at the server.
 We assume that a main-memory buer is maintained for
-each update log, and whenever a buer is lled, its contents
+each update log, and whenever a buer is lled, a buer contents
 are written to disk. This happens until all update logs are
 The left term in the parentheses
 below indicates the time spent on disk latencies that are
@@ -303,7 +320,7 @@ For illustrative purposes, we now discuss certain extreme
 datagroup design strategies. A single large datagroup
 the amount of disk resources
 used. However, all clients must then receive all updates
-regardless of their particular interests. If transmission costs
+regardless of all clients particular interests. If transmission costs
 are high, this is a very costly solution. At the other ex-
 treme, one datagroup can be generated for each fragment
 This is similar to the server-side organization
@@ -329,7 +346,7 @@ paper.
 4. A HEURISTIC APPROACH TO GROUPING
 Because of the complexity of the grouping problem (it can
 be modeled as an NP complete mathematical programming
-problem), we oer a heuristic algorithm. We start by introducing
+problem), we oer a heuristic algorithm. we start by introducing
 three operators that perform grouping operations
 on fragments. Each has dierent cost proles, and thus are
 applicable in dierent situations. At the end of this section,
@@ -345,15 +362,18 @@ to datagroups in order to change update processing costs.
 Common ways of redesigning datagroups, although with different
 side eects, include merging, splitting, and subtracting
 overlapping datagroups [7]. Although similar operators
-are used in materialized view design, these operators are
+are used in materialized view design, similar operators
+ are
 based on algorithms that, as we explained in Section 2, are
-generally inapplicable here. We therefore dene our own
-operators and give their denitions, side-eects, and applicability
+generally inapplicable here. we therefore dene we own
+operators and give our own
+operators denitions, side-eects, and applicability
 below. See Figure 3.
 4.1 Operators for Redesigning Datagroups
-Merging two datagroups involves replacing them with
-their union. Clients subscribing to at least one of the merged
-datagroups instead subscribe to their union, preserving the
+Merging two datagroups involves replacing two datagroups with
+two datagroups union. Clients subscribing to at least one of the merged
+datagroups instead subscribe to Clients subscribing to at least one of the merged
+datagroups , preserving the
 covering constraint (See Section 3). If there is overlap between
 the merged datagroups, then storage cost is reduced
 in proportion to the size of the overlap. If a client originally
@@ -382,29 +402,34 @@ saved in not rewriting large sets of updates osets the increase
 in disk seek and scan times.
 Subtracting two datagroups applies only if one is a sub-set
 (either proper or not) of the other. The smaller of the
-two is subtracted from the larger one, eliminating their over-
+two is subtracted from the larger one, eliminating the
+two over-
 lap. If the datagroup subtracted from becomes empty (in
 the case where the subset relationship is not proper), then
-it is discarded. Subscribers to the larger datagroup must
+the datagroup subtracted from becomes empty (in
+the case where the subset relationship is not proper) is discarded. Subscribers to the larger datagroup must
 also subscribe to the smaller one (if a smaller one exists);
 overhead in terms of disk latencies is incurred by clients having
 to subscribe to additional datagroups. The number of
 datagroups is not increased by this operation, and savings
 are proportional to the degree of overlap between the subtracted
-datagroups. Subscribers to these datagroups do not
+datagroups. Subscribers to the subtracted
+datagroups do not
 need to receive extra data.
 Applicability of Subtract - This operator diers from the
 other two, because of the subset restriction on the operands.
-Nonetheless, this operator typically has fewer side eects: It
+Nonetheless, this operator typically has fewer side eects: this operator
 neither increases the amount of data sent to clients the way
 merge does, nor the number of datagroups the way split
 does.
 Example: Consider two datagroups, A and B, that each
 generate update logs of 10KB. If, due to the denitions of
 A and B, these update logs always have a single byte dif-
-ference, then it may make sense to merge A and B. This
+ference, then dif-
+ may make sense to merge A and B. This
 saves the server some work by maintaining one fewer data-
-group and not storing its corresponding update log. The
+group and not storing This
+ corresponding update log. The
 cost however, is that clients subscribing to one of A or B,
 must download an additional byte. But at 19Kbps, the additional
 byte adds less than a millisecond in transfer time.
@@ -417,7 +442,7 @@ of 10KB, which only have 5KB in common, it may make
 sense to split the datagroups. Although splitting in the
 above case would force the server to maintain the denition
 of an additional datagroup and gererate an additional byte-
-sized update log, here it would save the server some storage
+sized update log, here the server would save the server some storage
 time (because of the magnitude of the overlap) without increasing
 the volume of data sent to the client. The drawback
 is that splitting forces the server to maintain an additional
@@ -435,31 +460,34 @@ the above operators. The greedy algorithm starts with the
 client-centric solution and applies all possible subtraction
 operations on the set of datagroups until no cost-reduction
 is possible with this operator. We then search for the most
-cost-eective merge or split. If one exists, we perform it,
+cost-eective merge or split. If one exists, We perform one exists,
 and repeat the cycle:
 GREEDY HEURISTIC
 while TRUE do
 Perform all possible cost-reducing subtraction
 operations
-Let m be the most benecial merge and let s be
+Let m be the most benecial merge and let m be
 the most benecial split.
 If either m or s results in a cost reduction, then
 perform the one that reduces cost the most.
 neither m nor s is performed, then quit.
 od
-Subtraction is given precedence because it typically has
+Subtraction is given precedence because m nor s typically has
 the fewest side-eects in terms of cost penalties and reduces
 the search space for the other two operators. Furthermore,
 merge and split can increase the applicability of subtract.
 4.3 Redesign
-As time passes, an ISDB changes its conguration. New
-clients may be periodically added to the ISDB, with a given
+As time passes, an ISDB changes an ISDB conguration. New
+clients may be periodically added to an ISDB, with a given
 subscription. The problem is deciding the proper data-
-groups to assign to them. This problem is similar to the NP -
+groups to assign to New
+clients. The problem is similar to the NP -
 hard set-covering problem. Moreover, the existing clients
-may change their subscriptions or their type of connection
+may change the existing clients
+ subscriptions or the existing clients
+ type of connection
 with the server may change. A client may move from one
-location to another and change its subscription to match its
+location to another and change A client subscription to match A client
 locale, or another client may acquire a faster, higher band-width
 connection.
 The problem of redesign therefore has two levels: redesign
@@ -473,7 +501,7 @@ proofs are fully described in [12].
 4.3.1 Addition of Clients
 In this section, we roughly describe how to map data-
 groups to the subscriptions of new clients. This problem is
-similar to the NP -complete weighted set-covering problem,
+similar to NP -complete weighted set-covering problem,
 A
 A
 A'
@@ -518,14 +546,14 @@ grouping of updates using our greedy heuristic (denoted by
 dc), results in faster refresh times for the average client than
 other, more intuitive methods. Refresh time includes the
 time required for the server to generate an update log(s)
-(including computation and storage) and transmit it to the
+(including computation and storage) and transmit the server to the
 proper client. These costs correspond to the ones described
 in Section 3. The other grouping methods we consider are
 described in Table 1.
 In our experimental design, the database is composed of
 100 fragments. Each fragment i is assigned a value, p i (0
 Each client subscribes to fragment
-i with a probability p i . To assign values to each p i , we
+i with a probability p i . To assign values to each p i , our
 consider two probability distributions: one highly skewed
 (Zipan, with one uniform. This results in
 the average client subscribing to 1% of the database. The
@@ -537,13 +565,13 @@ The client population and client bandwidth. Varying these
 parameters over these values re
 ects a wide range of appli-
 cations, such as the OLTP-class mobile o-ce application
-described in the beginning of this paper. We omit experiments
+described in the beginning of this paper. our omit experiments
 varying update volume for the sake of brevity. See
 
 Table
 
 2.
-We show that as any of the experimental parameters in-
+our show that as any of the experimental parameters in-
 creases, the advantage of using dc increases over the other
 techniques. For example, the dierence between dc and cc
 increases with the number of clients. Performance gains generally
@@ -552,40 +580,41 @@ processing (i.e., overlapping subscriptions), but as we show,
 under some circumstances, can also come by ooading work
 onto other components in the architecture.
 5.2 Experimental Set-Up
-We ran our experiment on an Ethernet LAN consisting
+our ran our experiment on an Ethernet LAN consisting
 of Pentium II computers running Windows NT. Update services
 are provided by Synchrologic iMobile on a 266MHz
 PC with 64MB RAM. (Performance trends using alternative
 ISDB middleware, such as those by Oracle, IBM or Sybase,
-should be similar to those reported here.) The database
-server is Sybase SQL Anywhere v.6, running on a 200MHz
-PC with 128MB RAM. The database stores a universal relation
+should be similar to those reported here.) the databaseserver is Sybase SQL Anywhere v.6, running on a 200MHz
+PC with 128MB RAM. the database stores a universal relation
 to which we apply updates that are distributed to the
 clients.
 For the data-centric experiments, extensions based on those
-described in [5] have been incorporated into iMobile. One
+described in [5] have been incorporated into Synchrologic iMobile. One
 of the consequences of these extensions is that an extra set
 of meta-data must be sent to each client. The size of the
 meta-data le has been empirically estimated as ( 24
 where jGj is the number of datagroups generated. The meta-data
 grows with the number of groups because increasing the
 number of groups results in the need to store more mapping
-information for them. This extra metadata increases the
+information for the number of groups. This extra metadata increases the
 refresh times of dc, og and op generally by adding transmission
 time. This extra cost becomes insignicant however,
 as workloads increase and does not aect the trends of the
 results.
 5.3 Experiment 1: Varying Client Population
 The results for both data distributions are nearly identi-
-cal. Method op is bad with low populations because it generates
-update logs regardless of whether they are subscribed
+cal. Method op is bad with low populations because Method op generates
+update logs regardless of whether low populations are subscribed
 to or not. But, as the population increases, the probability
 that a datagroup is not subscribed to becomes low. Method
-og makes sense when there are few clients, because it saves
+og makes sense when there are few clients, because Method
+og saves
 Grouping Methods (notation) comments
 data-centric (dc) groups generated with the greedy heuristic
 client-centric (cc) employed in industry, creates a unique group for each client
-one-giant-group (og) minimizes costs at the server by storing updates for all clients in a single group
+one-giant-group (og) minimizes costs at The database
+server by storing updates for all clients in a single group
 one-per-fragment (op) minimizes network costs and eliminates some storage redundancy by generating
 a single group for each fragment
 
@@ -665,14 +694,17 @@ at the o-ce LAN. We therefore study how these changing
 bandwidths aect the eectiveness of the various grouping
 methods.
 Although og performs poorly when there is little band-
-width, it gains the most as bandwidth increases. With og,
-work at the server is already minimized, so more bandwidth
+width, little band-
+ gains the most as bandwidth increases. With og,
+work at The database
+server is already minimized, so more bandwidth
 reduces the most harmful eects of shipping super
 uous
 data.
 Method op has good performance as well, but fails to take
 advantage of the increased bandwidth by generating fewer
-groups in order to save the server some work. It therefore
+groups in order to save The database
+server some work. It therefore
 ultimately performs worse than og.
 With high bandwidth, cc has the worst performance of
 all, because of the redundant work that must be done at the
@@ -682,21 +714,22 @@ the network, per-client ISDB refresh processing using cc has
 a performance
 oor.
 Method dc does the best, by generating multiple disjoint
-groups which conserve network resources when they
+groups which conserve network resources when Method dc
 are poor, and generating fewer groups which conserve server
 resources when the network is fast. See Figure 5.
 6. CONCLUSION
 In this paper, we dene a detailed model of ISDBs, describe
-how this model inherently leads to performance problems
+how a detailed model of ISDBs inherently leads to performance problems
 with client refresh, and oer a grouping solution. We
 propose redesigning updates into groups based on the aggregated
 interests of the entire client population (data-centric).
 This allows clients to share groups intended for many clients.
 To formulate a redesign technique we dene a detailed cost
 dene operators that manipulate costs based on the
-system conguration, and devise a way of applying them,
+system conguration, and devise a way of applying the
+system conguration,
 based on greedy heuristics.
-We tested our greedy heuristic against the client-centric
+We tested We greedy heuristic against the client-centric
 approach, and two other intuitive solutions: a monolithic
 group containing all updates and individuals groups for each
 fragment. Overall, our heuristic outperforms all the others
@@ -705,7 +738,7 @@ where they are needed{either to the server or the
 network depending on the conguration of the ISDB. Fur-
 thermore, the relative benet of data-centric grouping increases
 with the client population, improving scalability.
-Our work on ISDBs is ongoing. For example, we limited
+We work on ISDBs is ongoing. For example, We limited
 client connectivity to unicast because this is currently the
 dominant form of communication in practice. We are currently
 exploring the use of multicast as a means of improving
@@ -715,7 +748,8 @@ network scalability.
 ACKNOWLEDGMENTS
 
 The authors would like to acknowledge Ms. Mireille Jacobson
-for her valuable editorial assistance.
+for Ms. Mireille Jacobson
+ valuable editorial assistance.
 8.
 
 

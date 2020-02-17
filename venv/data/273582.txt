@@ -1,7 +1,7 @@
 --T
 Robust Solutions to Least-Squares Problems with Uncertain Data.
 --A
-We consider least-squares problems where the coefficient matrices A,b are unknown but bounded. We minimize the worst-case residual error using (convex) second-order cone programming, yielding an algorithm with complexity similar to one singular value decomposition of A. The method can be interpreted as a Tikhonov regularization procedure, with the advantage that it provides an exact bound on the robustness of solution and a rigorous way to compute the regularization parameter. When the perturbation has a known (e.g., Toeplitz) structure, the same problem can be solved in polynomial-time using semidefinite programming (SDP). We also consider the case when A,b are rational functions of an unknown-but-bounded perturbation vector. We show how to minimize (via SDP) upper bounds on the optimal worst-case residual. We provide numerical examples, including one from robust identification and one from robust interpolation.
+We consider least-squares problems where the coefficient matrices A,b are unknown but bounded. We minimize the worst-case residual error using (convex) second-order cone programming, yielding an algorithm with complexity similar to one singular value decomposition of A. The method can be interpreted as a Tikhonov regularization procedure, with the advantage that The method provides an exact bound on the robustness of solution and a rigorous way to compute the regularization parameter. When the perturbation has a known (e.g., Toeplitz) structure, the same problem can be solved in polynomial-time using semidefinite programming (SDP). We also consider the case when A,b are rational functions of an unknown-but-bounded perturbation vector. We show how to minimize (via SDP) upper bounds on the optimal worst-case residual. We provide numerical examples, including one from robust identification and one from robust interpolation.
 --B
 Introduction
 . Consider the problem of finding a solution x to an overdetermined
@@ -11,7 +11,7 @@ in a consistent linear model of the form \Deltab) that is closest to the origina
 one (in Euclidean norm sense). The Total Least Squares (TLS) solution described by
 Golub and Van Loan [17] finds the smallest error subject to the consistency
 equation \Deltab. The resulting closest consistent linear model
-\Deltab) is even more accurate than the LS one, since modifications of A are
+\Deltab) is even more accurate than the (LS) one, since modifications of A are
 allowed.
 Accuracy is the primary aim of LS and TLS, so it is not surprising that both
 solutions may exhibit very sensitive behavior to perturbations in the data matrices
@@ -25,15 +25,16 @@ crease sensitivity, and make LS and TLS applicable. Most regularization schemes 
 LS, including Tikhonov regularization [43], amount to solve a weighted LS problem for
 an augmented system. As pointed out in [18], the choice of weights (or regularization
 parameter) is usually not obvious, and application-dependent. Several criteria for optimizing
-the regularization parameter(s) have been proposed (see e.g. [23, 11, 15]). These
-criteria are chosen according to some additional a priori information, of deterministic
+the regularization parameter(s) have been proposed (see e.g. [23, 11, 15]). Several criteria for optimizing
+the regularization parameter(s) are chosen according to some additional a priori information, of deterministic
 or stochastic nature. The extensive surveys [31, 8, 21] discuss these problems and some
 applications.
 In contrast with the extensive work on sensitivity and regularization, relatively
 little has been done on the subject of deterministic robustness of LS problems, in which
 the perturbations are deterministic, and unknown-but-bounded (not necessarily small).
 Some work has been done on a qualitative analysis of the problem, where entries of
-are unspecified but by their sign [26, 39]. In many papers mentioning least-squares
+are unspecified but by entries of
+ sign [26, 39]. In many papers mentioning least-squares
 and robustness, the latter notion is understood in some stochastic sense, see
 e.g. [20, 47, 37]. A notable exception concerns the field of identification, where subject
 has been explored using a framework used in control system analysis [40, 9], or using
@@ -46,20 +47,20 @@ we define the worst-case residual as
 (1)
 We say that x is a Robust Least Squares (RLS) solution if x minimizes the worst-case
 residual r(A; b; ae; x). The RLS solution trades accuracy for robustness, at the expense
-of introducing bias. In our paper, we assume that the perturbation bound ae is known,
-but in x3.5, we also show that TLS can be used as a preliminary step to obtain a value
+of introducing bias. In We , We assume that the perturbation bound ae is known,
+but in x3.5, We also show that TLS can be used as a preliminary step to obtain a value
 of ae that is consistent with data matrices A; b.
 In many applications, the perturbation matrices \DeltaA, \Deltab have a known structure.
 For instance, \DeltaA might have a Toeplitz structure inherited from A. In this case, the
 worst-case residual (1) might be a very conservative estimate. We are led to consider
 the following Structured RLS (SRLS) problem. Given A
 (2)
-For ae - 0, and x we define the structured worst-case residual as
+For ae - 0, and x We define the structured worst-case residual as
 kffik-ae
 We say that x is a Structured Robust Least Squares (SRLS) solution if x minimizes the
 worst-case residual r S (A; b; ae; x).
 ROBUST LEAST SQUARES 3
-Our main contribution is to show that we can compute the exact value of the optimal
+We main contribution is to show that we can compute the exact value of the optimal
 worst-case residuals using convex, second-order cone or semidefinite programming
 (SOCP or SDP). The consequence is that the RLS and SRLS problems can be solved
 in polynomial-time, and great practical efficiency, using e.g. recent interior-point methods
@@ -73,22 +74,24 @@ matrices A; b. RLS can thus be interpreted as a (Tikhonov) regularization techni
 ill-conditioned LS problems: the additonal a priori information is ae (the perturbation
 level), and the regularization parameter is optimal for robustness. Similar regularity
 results hold for the SRLS problem.
-We also consider a generalisation of the SRLS problem, referred to as the linear-
+us also consider a generalisation of the SRLS problem, referred to as the linear-
 fractional SRLS problem in the sequel, in which the matrix functions A(ffi), b(ffi) in (2)
-depend rationally on the parameter vector ffi. (We describe a robust interpolation problem
+depend rationally on the parameter vector ffi. (us describe a robust interpolation problem
 that falls in this class in x7.6.) Using the framework of [9], we show that the problem
 is NP-complete in this case, but that we may compute, and optimize, upper bounds on
-the worst-case residual using SDP. In parallel with RLS, we interpret our solution as
+the worst-case residual using SDP. In parallel with RLS, we interpret we solution as
 one of a weighted LS problem for an augmented system, the weights being computed
 via SDP.
 The paper's outline is as follows. Next section is devoted to some technical lemmas.
-Section 3 is devoted to the RLS problem. In section 4, we consider the SRLS problem.
+Section 3 is devoted to the RLS problem. In section 4, we consider the RLS problem.
 Section 5 studies the linear-fractional SRLS problem. Regularity results are given in
 Section 6. Section 7 shows numerical examples.
 2. Preliminary results.
-2.1. Semidefinite and second-order cone programs. We briefly recall some
+2.1. Semidefinite and second-order cone programs. we briefly recall some
 important results on semidefinite programs (SDPs) and second-order cone programs
-(SOCPs). These results can be found in e.g. [4, 33, 46].
+(SOCPs). some
+important results on semidefinite programs (SDPs) and second-order cone programs
+(SOCPs) can be found in e.g. [4, 33, 46].
 A linear matrix inequality is a constraint on a vector x of the form
 where the symmetric matrices F
 are given. The minimization
@@ -105,7 +108,7 @@ where Z is a symmetric N \Theta N matrix and c i is the i-th coordinate of vecto
 both problems are strictly feasible (that is, when there exists x; Z which satisfy the
 constraints strictly), the existence of optimal points is guaranteed [33, thm.4.2.1], and
 both problems have equal optimal objectives. In this case, the optimal primal-dual
-pairs (x; Z) are those pairs (x; Z) such that x is feasible for the primal problem, Z is
+pairs (x; Z) are those pairs (x; Z) such that x is feasible for the primal problem, Z) is
 feasible for the dual one, and
 A second-order cone programming problem is one of the form
 subject to kC
@@ -114,20 +117,19 @@ problem (7) is
 subject to
 are the dual variables. Optimality conditions
 similar to those for SDPs can be obtained for SOCPs. SOCPs can be expressed as
-SDPs, therefore they can be solved in polynomial-time using interior-point methods for
+SDPs, therefore SOCPs can be solved in polynomial-time using interior-point methods for
 SDPs. However the SDP formulation is not the most efficient numerically, as special
 interior-point methods can be devised for SOCPs [33, 28, 1].
 complexity results on interior-point methods for SOCPs and SDPs are given
 by Nesterov and Nemirovsky [33, p.224,236]. In practice, it is observed that the number
 of iterations is almost constant, independent of problem size [46]. For the SOCP, each
-iteration has complexity O((n for the SDP, we refer the reader
+iteration has complexity O((n for SDP, we refer the reader
 to [33].
 2.2. S-procedure. The following lemma can be found e.g. in [4, p.24]. It is
 widely used, e.g. in control theory, and in connection with trust region methods in
 optimization [41].
 Lemma 2.1 (S-procedure). Let F be quadratic functions of the variable
-. The following condition on F
-ROBUST LEAST SQUARES 5
+. The following condition on FROBUST LEAST SQUARES 5
 holds if
 there exist
 0:
@@ -139,22 +141,22 @@ for every \Delta, k\Deltak - 1, if and only if kT 4 k ! 1, and there exists a sc
 0:
 Proof. If T 2 or T 3 equal zero, the result is obvious. Now assume
 which in turn implies kT 4 k ! 1. Thus, for a given - , (10) holds if
-and only if kT 4 k ! 1 and for every (u; p), we have
+and only if kT 4 k ! 1 and for every (u; p), We have
 4 p. Since T 2 6= 0, the constraint q T q - p T p is qualified, that is,
 satisfied strictly for some
 Using
 the S-procedure, we obtain that there exists - 2 R such that (10) holds if and only if
 1, and for every (u; p) such that q T q - p T p, we have u
-our proof by noting that for every pair (p; q),
+we proof by noting that for every pair (p; q),
 only if p T p - q T q.
 Next lemma is a "structured" version of the above, which can be traced back to [13].
 Lemma 2.3. Let T
 real matrices of appropriate size. Let D
 be a subspace of R N \ThetaN , and denote by S (resp. G) the set of symmetric (resp. skew-
-symmetric) matrices that commute with every element of D. We have
+symmetric) matrices that commute with every element of D. we have
 and (9) for every \Delta 2 D, k\Deltak - 1, if there exist S 2 S, G 2 G such that
 If the condition is necessary and sufficient.
-Proof. The proof follows the scheme of that of lemma 2.2, except that p T p - q T q
+Proof. Proof follows the scheme of that of lemma 2.2, except that p T p - q T q
 is replaced with p T G. Note that
 0, the above result is a simple application of lemma 2.2 to the scaled matrices
 6 L. EL GHAOUI AND H. LEBRET
@@ -207,7 +209,7 @@ where (-) are the (unique) optimal points for problem (15).
 Proof. Using the results of x2.1, we obtain that the problem dual to (15) is
 subject to A T z
 Since both primal and dual problems are strictly feasible, there exist optimal points
-for both of them. If - at the optimum, then
+for bothboth primal and dual problems. If - at the optimum, then
 In this case, the optimal x is the (unique) minimum-norm solution to
 Now assume - . Again, both primal and dual problems are strictly feasible,
 therefore the primal and dual optimal objectives are equal:
@@ -228,7 +230,7 @@ Remark 3.2. It is possible to solve the problem when only A is perturbed
 In this case, the worst-case residual is kAx kxk, and the optimal x is determined
 by (17), where bk. (See the example in x7.2).
 3.3. Reduction to a one-dimensional search. When the SVD of A is available,
-we can use it to reduce the problem to a one-dimensional convex differentiable problem.
+we can use the SVD of A to reduce the problem to a one-dimensional convex differentiable problem.
 The following analysis will also be useful in x6.
 Introduce the SVD of A and a related decomposition for b:
 Assume that - at the optimum of problem (15). From (18), we have
@@ -247,7 +249,7 @@ by solving the one-dimensional convex differentiable problem (19), or by computi
 unique real root inside [' min 1] (if any) of the equation' 2
 r
 The above theorem yields an alternative method for computing the RLS solution.
-This method is similar to the one given in [5]. A related approach was used for quadratically
+an alternative method for computing the RLS solution is similar to the one given in [5]. A related approach was used for quadratically
 constrained LS problems in [19].
 The above solution, which requires one SVD of A, has cost O(nm 2 +m 3 ). The SOCP
 method is only a few times more costly (see the end of x3.1), with the advantage that
@@ -257,14 +259,14 @@ does not extend to the structured case considered in x4.
 3.4. Robustness of LS solution. It is instructive to know when the RLS and
 LS solutions coincide, in which case we can say the LS solution is robust. This happens
 if and only if the optimal ' in problem (19) is equal to 1. The latter implies b
-(that is, b 2 Range(A)). In this case, f is differentiable at its minimum over
+(that is, b 2 Range(A)). In this case, F is differentiable at its minimum over
 [' min 1] is at only if
 df
 d'
 We obtain a necessary and sufficient condition for the optimal ' to be equal to 1. This
 condition is
 If (21) holds, then the RLS and LS solutions coincide. Otherwise, the optimal ' ! 1, and
-x is given by (17). We may write the latter condition in the case when the norm-bound
+x is given by (17). We may write the latter condition in this case when the norm-bound
 of the perturbation ae is different from 1 as: ae ? ae min , where
 ae min
 Thus, ae min can be interpreted as the perturbation level that the LS solution allows. We
@@ -284,7 +286,7 @@ data matrices (A; b) are the "nominal" values of the model, which are subject to
 perturbation, bounded in norm by ae. Now, if we think of (A; b) as "mea-
 sured" data, the assumption that (A; b) correspond to a nominal model may not be
 judicious. Also, in some applications, the norm-bound ae on the perturbation may be
-hard to estimate. The Total Least-Squares (TLS) solution, when it exists, can be used
+hard to estimate. The Total Least-Squares (TLS) solution, when The Total Least-Squares (TLS) solution exists, can be used
 in conjunction with RLS to address this issue.
 Assume that the TLS problem has a solution. Let \DeltaA TLS , \Deltab TLS , x TLS be minimizers
 of the TLS problem
@@ -323,9 +325,9 @@ computation of the smallest singular value and associated singular subspace [17]
 problem, which is to compute
 kffik-ae
 where A; b are defined in (2). As before, we assume with no loss of generality that
-by r S (A; b; x). Throughout the section, we use the
+by r S (A; b; x). Throughout this section, we use the
 following
-4.1. Computing the worst-case residual. We first examine the problem of
+4.1. Computing the worst-case residual. we first examine the problem of
 computing the worst-case residual r S (A; b; x) for a given x
 With the above notation, we have
 F
@@ -341,7 +343,7 @@ two scalar variables. A bit more analysis shows how to reduce the problem to a o
 dimensional, convex differentiable problem, and obtain the corresponding worst-case
 perturbation.
 Theorem 4.1. For every x fixed, the squared worst-case residual (for
-can be computed by solving the SDP in two variables
+can be computed by solving a SDP in two variables
 subject to (29);
 or, alternatively, by minimizing a one-dimensional convex differentiable function:
 where
@@ -358,19 +360,23 @@ ROBUST LEAST SQUARES 13
 where M(x) is defined in (26).
 Remark 4.1. Straightforward manipulations show that the result are coherent with
 the unstructured case.
-Although the above SDP is not directly amenable to the more efficient SOCP
+Although the SDP
+ the SDP
+ is not directly amenable to the more efficient SOCP
 formulation, we may devise special interior-point methods for solving the problem.
-These special-purpose methods will probably have much greater efficiency than general-purpose
-SDP solvers. This study is left for the future.
-Remark 4.2. The discussion of x3.5 extends to the case when the perturbations are
+special interior-point methods for solving the problem will probably have much greater efficiency than general-purpose
+the SDP
+ solvers. This study is left for the future.
+Remark 4.1. The discussion of x3.5 extends to the case when the perturbations are
 structured. TLS problems with (affine) structure constraints on perturbation matrices
 are discussed in [7]. While the structured version of the TLS problem becomes very hard
 to solve, the SRLS problem retains polynomial-time complexity.
 5. Linear-Fractional SRLS. In this section, we examine a generalization of the
-SRLS problem. Our framework encompasses the case when the functions A(ffi), b(ffi)
-are rational. We show that the computation of the worst-case residual is NP-complete,
-but that upper bounds can be computed (and optimized) using SDP. First, we need
-to motivate the problem, and develop a formalism for posing it. This formalism was
+SRLS problem. we framework encompasses the case when the functions A(ffi), b(ffi)
+are rational. we show that the computation of the worst-case residual is NP-complete,
+but that upper bounds can be computed (and optimized) using the SDP
+. First, we need
+to motivate the problem, and develop a formalism for posing the problem. a formalism for posing it was
 introduced by Doyle and coauthors [9] in the context of robust identification.
 5.1. Motivations. In some structured robust least-squares problems such as (3),
 it may not be convenient to measure the perturbation size with Euclidean norm. Indeed,
@@ -390,7 +396,7 @@ such a problem, the perturbation is not structured, except via the matrices L; R
 Finally, we may be interested in SRLS problems in which the matrix functions
 A(ffi), b(ffi) in (3) are rational functions of the parameter vector ffi. One example is given
 in x7.6.
-It turns out that the above three extensions can be addressed using the same
+One example turns out that the above three extensions can be addressed using the same
 formalism, which we detail now.
 5.2. Problem definition. Let D be a subspace of R N \ThetaN , A 2 R n\Thetam
 R n\ThetaN , RA 2 R N \Thetam , R b 2 R N , D 2 R N \ThetaN . For every \Delta 2 D such that det(I \GammaD\Delta) 6= 0,
@@ -402,19 +408,19 @@ For a given x we define the worst-case residual by
 r D (A; b; ae; x) \Delta
 \Delta2D; k\Deltak-ae
 We say that x is a Structured Robust Least Squares (SRLS) solution if x minimizes the
-worst-case residual above. As before, we assume no loss of generality, and
+worst-case residual above. As before, We assume no loss of generality, and
 denote r D (A; b; 1; x) by r D (A; b; x).
 The above formulation encompasses the three situations referred to in x5.1. First,
 the maximum-norm SRLS problem (33) is readily transformed into problem (35), as
 follows. Let n\ThetaN be such that [A i b i
 R T
 Problem (33) can be formulated as the minimization of (35), with D defined as above.
-Also, we recover the case when the perturbed matrices write as in (34), when we
-allow \Delta to be any full matrix (that is, In particular, we recover the
+Also, We recover the case when the perturbed matrices write as in (34), when We
+allow \Delta to be any full matrix (that is, In particular, We recover the
 unstructured RLS problem of x3, as follows. Assume n ? m. We have
 \Deltab \Theta
 refers to dummy elements that are added to
-the perturbation matrix in order to make it a square, n \Theta n matrix.) In this case, the
+the perturbation matrix in order to make it a square, n \Theta n matrix.) In the case, the
 perturbation set D is R n\Thetan .
 Finally, the case when A(ffi) and b(ffi) are rational functions of a vector ffi (well-
 defined over the unit ball fffi j kffik 1 - 1g) can be converted (in polynomial time) into
@@ -426,7 +432,7 @@ First, checking whether the worst-case residual is finite is NP-complete [6]. Th
 linear-fractional dependence (that is, D 6= 0) is a first cause of increased complexity.
 The SRLS problem above remains hard even when matrices A(ffi), b(ffi) depend
 affinely on the perturbation elements 0). Consider for instance the SRLS problem,
-with and in which D is defined as in (36). In this case, the problem of computing
+with and in which D is defined as in (36). In the case, the problem of computing
 the worst-case residual can be formulated as
 kffik 1-1
 F
@@ -443,7 +449,8 @@ subset D, determine whether r D (A; b; x) -
 is NP-complete.
 Proof. See appendix B.
 5.4. An upper bound on the worst-case residual. Although our problem is
-NP-complete, we can minimize upper bounds in polynomial-time, using SDP. Introduce
+NP-complete, our can minimize upper bounds in polynomial-time, using the SDP
+. Introduce
 the following linear subspaces:
 R. The inequality - ? r D (A; b; x) holds if and only if, for every \Delta 2 D,
 0:
@@ -463,7 +470,8 @@ is also exact.
 Proof. See appendix C.
 L. EL GHAOUI AND H. LEBRET
 5.5. Optimizing the worst-case residual. Since x appears linearly in the constraint
-(38), we may optimize the worst-case residual's upper bound using SDP. We may
+(38), we may optimize the worst-case residual's upper bound using the SDP
+. we may
 reduce the number of variables appearing in the previous problem, using the elimination
 lemma 2.4. Inequality in (38) can be written as in (11), with
 \GammaR b
@@ -489,7 +497,8 @@ A
 Theorem 5.3. When ae = 1, an upper bound on the optimal worst-case residual
 can be obtained by solving the SDP
 - subject to S 2 G; (38);
-or, alternatively, the SDP
+or, alternatively, the the SDP
+
 - subject to (41):
 The upper bound is always exact when D = R N \ThetaN . If \Theta ? 0 at the optimum, the
 upper bound is also exact. The optimal x is then unique, and given by (42) when RA is
@@ -507,20 +516,22 @@ ROBUST LEAST SQUARES 17
 Remark 5.2. Our results are coherent with the unstructured case: replace L by I,
 R by [I 0] T , variable S by -I, and set G = 0. The parameter - of theorem 3.2 can be
 interpreted as the Schur complement of -I \Gamma LSL T in the matrix \Theta.
-Remark 5.3. We emphasize that the above results are exact (non conservative)
+appendix C.
+Remark 5.1. We emphasize that the above results are exact (non conservative)
 when the perturbation structure is full. In particular, we recover (and generalize) the
 results of [5] in the case when only some columns of A are affected by otherwise unstructured
 perturbations.
-Remark 5.4. When is possible to use the approximation method of [16] to
+appendix C.
+Remark 5.1. When is possible to use the approximation method of [16] to
 obtain solutions (based on the SDP relaxations given in theorem 5.3) that have expected
 value within 14% of the true value.
 6. Link with regularization. The standard LS solution x LS is very sensitive to
-errors in A; b when A is ill-conditioned. In fact, the LS solution might not be a continuous
+errors in A; b when A is ill-conditioned. In fact, The standard LS solution might not be a continuous
 function of A; b when A is near-deficient. This has motivated many researchers
 for ways to regularize the LS problem, which is to make the solution x unique and
 continuous in the data matrices (A; b). In this section, we briefly examine the links of
-our RLS and SRLS solution with regularization methods for standard LS.
-Beforehand, we note that since all our problems are formulated as SDPs, we could
+we RLS and SRLS solution with regularization methods for standard LS.
+Beforehand, we note that since all we problems are formulated as SDPs, we could
 invoke the quite complete sensitivity analysis results obtained by Bonnans, Cominetti
 and Shapiro [3]. The application of these general results to our SDPs is considered
 in [35].
@@ -552,21 +563,23 @@ R n\Thetam \Theta K \Gamma! [1 dK
 is Lipschitzian, with Lipschitz constant 1
 Theorem 6.1 shows that any level of robustness (that is, any norm-bound on perturbations
 ae ? regularization. We describe in x7 some numerical examples
-that illustrate our results.
-Remark 6.1. In the RLS method, the Tikhonov regularization parameter - is
+that illustrate We results.
+appendix C.
+Remark 5.1 6.1. In the RLS method, the Tikhonov regularization parameter - is
 chosen by solving a second-order cone problem, in such a way that - is optimal for
 robustness. The cost of the RLS solution is equal to the cost of solving a small number
 of least-squares problems of the same size as the classical Tikhonov regularization
 problem (45).
-Remark 6.2. The equation that determines - in the RLS method is
+Remark 6.1. The equation that determines - in the RLS method is
 ae
 This choice has resemblance with Miller's choice [30], where - is determined recursively
 by the equations
 This formula arises in RLS when there is no perturbation in b (see remark 3.2). Thus,
-Miller's solution corresponds to a RLS problem in which the perturbation affects only
+Miller's solution corresponds to a RLS problem in which no perturbation in b (see remark 3.2) affects only
 the columns of A. We note that this solution is not necessarily regular (continuous).
 Total least-squares (TLS) deserves a special mention here. When the TLS problem
-has a solution, it is given by x oe is the smallest singular
+has a solution, the TLS problem
+ is given by x oe is the smallest singular
 value of [A b]. This corresponds to (46). The negative value of - implies
 that the TLS is a "deregularized" LS, a fact noted in [17]. In view of our link between
 regularization and robustness, the above is consistent with the fact that RLS trades off
@@ -578,7 +591,8 @@ for unstructured RLS problems. We only discuss continuity of the optimal worst-c
 ROBUST LEAST SQUARES 19
 residual with respect to problems, the coefficient matrices A
 are fixed).
-In view of Theorem 4.2, continuity holds if the feasible set of the SDP (32) is
+In view of Theorem 4.2, continuity holds if the feasible set of the SDP
+ (32) is
 bounded. Obviously, the objective - is bounded above by
 Thus the variable - is also bounded, as (32) implies 0 -. With - bounded
 above, we see that (32) implies that x is bounded if
@@ -600,7 +614,8 @@ by computing the optimal value -(ffl) of the SDP
 min
 - subject to S 2 G; (41):
 The corresponding upper bound is a continuous function of [A b]. As ffl ! 0, the
-corresponding optimal value -(ffl) has a limit, equal to the optimal value of SDP (44).
+corresponding optimal value -(ffl) has a limit, equal to the optimal value of the SDP
+ (44).
 As noted in remark 5.1, the linear-fractional SRLS can be interpreted as a weighted
 LS, and so can the above regularization method. Thus, the above method belongs to
 the class of Tikhonov (or weighted LS) regularization methods referred to in 6.1, the
@@ -626,9 +641,9 @@ For each value of n, the vertical bar indicates the minimum and maximum values o
 trials of A; b, with In the right figure, we show these numbers for values of m ranging from
 11 to 100. For each value of n, the vertical bar indicates the minimum and maximum values obtained
 with 20 trials of A; b, with 1000. For both plots, the plain curve is the mean value.
-7.1. Complexity estimates of RLS. We first did "large-scale" experiments for
+7.1. Complexity estimates of RLS. we first did "large-scale" experiments for
 the RLS problem of x3. As mentioned in x2.1, the number of iterations is almost independent
-of the size of the problem for SOCPs. We have solved problem (15) for
+of the size of the problem for SOCPs. we have solved problem (15) for
 uniformly generated random matrices A and vectors b with various sizes of n; m. Figure
 1 shows the average number of iterarions as well as the minimum and maximum
 number of iterations for various values of n; m. The experiments confirm the fact the
@@ -640,7 +655,7 @@ signs and the corresponding linear fits for LS problems (solid line), TLS proble
 solution with perturations [A+\DeltaA; b+\Deltab] whereas the right plot considers perturbation
 in A only, [A In both plots, the worst-case points for the RLS solution are
 indicated by 0 2. As ae increases, the slope of the RLS solution
-decreases, and goes to zero when ae ! 1. The plot confirms remark 3.3: the TLS
+decreases, and goes to zero when ae ! 1. The left plot confirms remark 3.3: the TLS
 solution is the most accurate and the least robust, and LS is intermediate.
 In the case when we have perturbations in A only (right plot), we obtain an instance
 of a linear-fractional SRLS (with a full perturbation matrix), as mentioned in x5.1. (It
@@ -691,12 +706,14 @@ ae min 0.06 0.34 0.78 1.12 1.28 1.35
 the six values of " A . When the condition number of A grows, the robustness of the LS
 solution (measured by ae min ) decreases.
 The right plot of Fig. 4 gives the worst-case residual vs. the robustness parameter
-ae for the six values of " A . The plot illustrates that for ae ? ae min , the LS solution (in
+ae for the six values of " A . The right plot of Fig illustrates that for ae ? ae min , the LS solution (in
 our case, A differs from the RLS one. Indeed, for each curve, the residual remains
 equal to zero as long as ae - ae min . For example, the curve labeled '1' (corresponding to
 quits the x-axis for ae - ae
 The left plot of Fig. 4 corresponds to the RLS problem with
-of " A . This plot shows the various functions f(') as defined in (20). For each value of
+of " A . ae - ae
+The left plot of Fig. 4 corresponds to the RLS problem with
+of " A shows the various functions f(') as defined in (20). For each value of
 " A , the optimal ' (hence the RLS solution) is obtained by minimizing the function f .
 The three smallest values of " A induce functions f (as defined in (20)) that are minimal
 1. For the three others, the optimal ' is 1. This means that ae min is smaller
@@ -727,7 +744,7 @@ We first assume that the sum of the input and output energies is bounded, that i
 We adress the following
 min
 kffik-ae
-As an example, we consider the following nominal values for
+As an example, We consider the following nominal values for
 In Fig. 5, we have shown the optimal worst-case residual and that corresponding to
 the LS solution, as given by solving problems (30) and (32), respectively. Since the LS
 L. EL GHAOUI AND H. LEBRET
@@ -742,13 +759,13 @@ fixed.
 We now assume that the perturbation bounds on y; u are not correlated. For
 instance, we consider problem (48), with the bound kffik - ae replaced with
 Physically, the above bounds mean that the output energy and peak input are bounded.
-This problem can be formulated as minimizing the worst-case residual (35), with
+problem (48) can be formulated as minimizing the worst-case residual (35), with
 [A
 and \Delta has the following structure:
 Here, the symbols \Theta denote dummy elements of \Delta that were added in order to work with
 a square perturbation matrix. The above structure corresponds to the set D in (36),
 with
-In Fig.6, we show the worst-case residual vs. ae, the uncertainty size. We show the
+In Fig.6, we show the worst-case residual vs. ae, the uncertainty size. we show the
 curves corresponding to the values predicted by solving the SDP (43), with x variable
 ROBUST LEAST SQUARES 25
 upper bound (LS solution)
@@ -790,7 +807,7 @@ and, for each i,
 In Fig. 7, we have shown the result
 a 1 =6 423
 The LS solution is very accurate (zero nominal residual: every point is interpolated ex-
-actly), but has a (predicted) worst-case residual of 1:7977. The RLS solution trades off
+actly), but has a (predicted) worst-case residual of 1:7977. The LS solution trades off
 this accuracy (only one point interpolated, and nominal residual of 0:8233) for robustness
 (with a worst-case residual less than 1:1573). As ae ! 1, the RLS interpolation
 polynomial becomes more and more horizontal. (This is consistent with the fact that
@@ -799,19 +816,19 @@ the solid line
 ROBUST LEAST SQUARES 27
 Fig. 7. Interpolation polynomials: LS and RLS solutions for 0:2. The LS solution interpolates the
 points exactly, while the RLS one guarantees a worst-case residual error less than 1:1573. For
-the RLS solution is the zero polynomial.
+The LS solution is the zero polynomial.
 8. Conclusions. This paper shows that several robust least-squares (RLS) problems
 with unknown-but-bounded data matrices are amenable to (convex) second-order
 cone or semidefinite programming (SOCP or SDP). The implication is that these RLS
 problems can be solved in polynomial-time, and efficiently in practice.
-When the perturbation enters linearly in the data matrices, and its size is measured
+When the perturbation enters linearly in the data matrices, and the perturbation size is measured
 by Euclidean norm, or in a linear-fractional problem with full perturbation matrix \Delta,
 the method yields the exact value of the optimal worst-case residual. In the other
 cases we have examined (such as arbitrary rational dependence of data matrices on the
 perturbation parameters), computing the worst-case residual is NP-complete. We have
 shown how to compute, and optimize, using SDP, an upper bound on the worst-case
 residual, that takes into account structure information.
-In the unstructured case, we have shown that both the worst-case residual and
+In the unstructured case, We have shown that both the worst-case residual and
 the (unique) RLS solution are continuous. The unstructured RLS can be interpreted
 as a regularization method for ill-conditioned problems. A striking fact is that the
 cost of the RLS solution is equal to a small number of least-squares problems arising
@@ -819,12 +836,12 @@ in classical Tikhonov regularization approaches. This method provides a rigorous
 to compute the optimal parameter from the data and associated perturbation bounds.
 Similar (weighted) least-squares interpretations and continuity results were given for
 the structured case.
-In our examples, we have demonstrated the use of a SOCP code [27], and a general-purpose
+In our examples, our have demonstrated the use of a SOCP code [27], and a general-purpose
 semidefinite programming code, SP [45]. Future work could be devoted to
 writing special code that exploits the structure of these problems, in order to further
 increase the efficiency of the method. For instance, it seems that, in many problems,
 the perturbation matrices are sparse, and/or have special (e.g., Toeplitz) structure.
-The method can be used for several related problems.
+This method can be used for several related problems.
 Constrained RLS. We may consider problems where additional (convex) constraints
 are added on the vector x. (Such constraints arise naturally in e.g.,
 image processing). For instance, we may consider problem (1) with an addi-
@@ -839,17 +856,17 @@ ffl Matrix RLS. We may of course, derive similar results when the constant term
 b is a matrix. The worst-case error can be evaluated in a variety of norms.
 ffl Error-in-Variables RLS. We may consider problems where the solution x is
 also subject to uncertainty (due to implementation and/or quantization errors).
-That is, we may consider a worst-case residual of the form
+That is, We may consider a worst-case residual of the form
 are given. We may compute (and optimize) upper bounds
 on the above quantity using SDP. This subject is examined in [25].
 
 Acknowledgments
 
-. The authors wish to thank the anonymous reviewers for their
+. The authors wish to thank the anonymous reviewers for The authors
 precious comments, which led to many improvements over the first version of this paper.
 We are particularly indebted to the reviewer who pointed out the SOCP formulation
 for the unstructured problem. We also thank G. Golub and R. Tempo for providing
-us with some related references, and A. Sayed for sending us the preliminary draft [5].
+We with some related references, and A. Sayed for sending We the preliminary draft [5].
 The paper has also benefited from many fruitful discussions with S. Boyd, F. Oustry,
 B. Rottembourg and L. Vandenberghe.
 A. Proof of Theorem 4.1. Introduce the eigendecomposition of F and a related
@@ -885,7 +902,7 @@ In both cases seen above (- equals - worst-case perturbation is
 any vector ffi such that
 (We have just shown that the above equations always have a solution ffi when - is
 optimal.) This ends our proof.
-B. Proof of Lemma 5.1. We use the following result, due to Nemirovsky [32].
+B. Proof of Lemma 5.1. our use the following result, due to Nemirovsky [32].
 Lemma B.1. Let \Gamma(p; a) be a scalar function of positive integer p and p-dimensional
 vector a, such that, first, \Gamma is well-defined and takes rational values from (0; kak \Gamma2 )
 for all positive integers p and all p-dimensional vectors a with kak - 0:1, and second,
@@ -901,7 +918,7 @@ kffik 1-1
 where d(a) is the smallest common denominator of the entries of a.
 To prove our result, it suffices to show that for some appropriate function \Gamma satisfying
 to the conditions of lemma B.1, we can reduce, for any given p; a, problem
-to ours, in polynomial time. Set
+to we, in polynomial time. Set
 2a T a
 (a T a
 This function satisfies all requirements of lemma B.1, so problem P \Gamma (p; a) is NP-hard.
@@ -913,8 +930,7 @@ r D (A; b;
 kffik 1-1
 kffik 1-1
 Our proof is now complete.
-C. Proof of Theorem 5.3. In this section, we only prove theorem 5.3. The proof
-of theorem 5.2 follows the same lines. We start from problem (43), the dual of which is
+C. Proof of Theorem 5.3. In this section, Our only prove theorem 5.3. C. Proof of Theorem 5.3 follows the same lines. Our start from problem (43), the dual of which is
 the maximization of 2(b T w +R T
 b u) subject to
 and the linear constraints
@@ -935,13 +951,13 @@ Using (57) and (59), we obtain
 \Theta
 From (55), it is easy to derive the expression (42) for the optimal x in the case when
 \Theta ? 0 at the optimum, and RA is full-rank.
-We now show that the upper bound is exact at the optimum in this case. If we use
+we now show that the upper bound is exact at the optimum in the case. If we use
 condition (54), and the expression for Z; V deduced from (53), we obtain
 This implies that there exists I, such that
 \Theta ? 0, a straightforward application of lemma 2.3 shows that det(I \Gamma D\Delta) 6= 0, so we
 obtain
 (from (61)) and
-(from (53)), we have 1=2. We can now compute
+(from (53)), we have 1=2. we can now compute
 (from (55) and (60)).
 L. EL GHAOUI AND H. LEBRET
 Therefore,

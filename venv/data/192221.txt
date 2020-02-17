@@ -1,14 +1,14 @@
 --T
 The ASTOOT approach to testing object-oriented programs.
 --A
-This article describes a new approach to the unit testing of object-oriented programs, a set of tools based on this approach, and two case studies. In this approach, each test case consists of a tuple of sequences of messages, along with tags indicating whether these sequences should put objects of the class under test into equivalent states and/or return objects that are in equivalent states. Tests are executed by sending the sequences to objects of the class under test, then invoking a user-supplied equivalence-checking mechanism. This approach allows for substantial automation of many aspects of testing, including test case generation, test driver generation, test execution, and test checking. Experimental prototypes of tools for test generation and test execution are described.  The test generation tool requires the availability of an algebraic specification of the abstract data type being tested, but the test execution tool can be used when no formal specification is available. Using the test execution tools, case studies involving execution of tens of thousands of test cases, with various sequence lengths, parameters, and combinations of operations were performed. The relationships among likelihood of detecting an error and sequence length, range of parameters, and relative frequency of various operations were investigated for priority queue and sorted-list implementations having subtle errors. In each case, long sequences tended to be more likely to detect the error, provided that the range of parameters was sufficiently large and likelihood of detecting an  error tended to increase up to a threshold value as the parameter range increased.
+This article describes a new approach to the unit testing of object-oriented programs, a set of tools based on this approach, and two case studies. In this approach, each test case consists of a tuple of sequences of messages, along with tags indicating whether these sequences should put objects of the class under test into equivalent states and/or return objects that are in equivalent states. Tests are executed by sending the sequences to objects of the class under test, then invoking a user-supplied equivalence-checking mechanism. this approach allows for substantial automation of many aspects of testing, including test case generation, test driver generation, test execution, and test checking. Experimental prototypes of tools for test generation and test execution are described.  The test generation tool requires the availability of an algebraic specification of the abstract data type being tested, but the test execution tool can be used when no formal specification is available. Using the test execution tools, case studies involving execution of tens of thousands of test cases, with various sequence lengths, parameters, and combinations of operations were performed. The relationships among likelihood of detecting an error and sequence length, range of parameters, and relative frequency of various operations were investigated for priority queue and sorted-list implementations having subtle errors. In each case, long sequences tended to be more likely to detect the error, provided that the range of parameters was sufficiently large and likelihood of detecting an  error tended to increase up to a threshold value as the parameter range increased.
 --B
 Introduction
 Object-oriented programming, based on the concepts of data abstraction, inheritance, and
 dynamic binding, is becoming an increasingly popular software development methodology.
 Much research has been done on developing object-oriented analysis and design techniques,
 developing object-oriented programming languages, and exploring how the methodology
-This research was supported in part by NSF grants CCR-8810287 and CCR-9003006 and by the New
+Much research was supported in part by NSF grants CCR-8810287 and CCR-9003006 and by the New
 York State Science and Technology Foundation and was performed while the first author was at Polytechnic
 University. Authors' address: Department of Computer Science, Polytechnic University, 6 Metrotech Center,
 Brooklyn, NY 11201. e-mail: phyllis@morph.poly.edu.
@@ -22,7 +22,8 @@ case consists of a pair of sequences of messages, along with a tag indicating wh
 sequences should result in objects that are in the same "abstract state". A test case is
 executed by sending each sequence of messages to an object of the class under test, invoking
 a user-supplied equivalence checking routine to check whether the objects are in the same
-abstract state, then comparing the result of this check to the tag. This testing scheme has
+abstract state, then comparing the result of this check to a tag indicating whether these
+sequences should result in objects that are in the same "abstract state". This testing scheme has
 several nice properties:
 ffl Expected results of tests are included in test cases in a concise format (one Boolean)
 which is independent of the class being tested. This facilitates automatic checking of
@@ -39,7 +40,8 @@ can automatically generate a test driver, which in turn automatically executes t
 checks their results. In addition, when an algebraic specification for C is available, ASTOOT
 can partially automate test generation. Thus the system allows for substantial automation
 of the entire testing process.
-The current version of ASTOOT is targeted to testing programs written in Eiffel 1 .
+The current version of ASTOOT
+ is targeted to testing programs written in Eiffel 1 .
 Throughout this paper we assume that the classes being tested are written in Eiffel. How-
 ever, the underlying ideas and tools can be adapted relatively easily to other object-oriented
 languages.
@@ -48,14 +50,14 @@ object-oriented programming, and algebraic specification of abstract data types.
 describes the ideas underlying ASTOOT - correctness of a class that implements an abstract
 data type, test case format, and test result checking. The tools are described in Section 4.
 Section 5 describes two case studies performed in order to gain more insight into how to
-generate good test cases. We compare our approach to related work in Section 6 and note
+generate good test cases. We compare We approach to related work in Section 6 and note
 directions for future work in Section 7.
 1 Eiffel is a trademark of the Nonprofit International Consortium for Eiffel (NICE).
 Background
 2.1 Background on Software Testing
 Testing is one of the most time-consuming parts of the software development process. Increased
-automation of the testing process could lead to significant saving of time, thus
-allowing for more thorough testing. Three aspects of the testing process which could potentially
+automation of the software development process could lead to significant saving of time, thus
+allowing for more thorough testing. Three aspects of the software development process which could potentially
 be at least partially automated are test data generation, test execution, test checking.
 Our approach to testing object-oriented programs involves all three of these areas.
 Perhaps the most obvious opportunity for partially automating testing is the generation
@@ -63,7 +65,7 @@ of test cases. In order to automate test generation it is necessary to analyze s
 object, such as source code or a formal specification. Most research on automated test generation
 has involved program-based or white-box techniques, i.e., techniques based on analysis
 of the source code of the program being tested. However, white-box testing suffers from
-certain limitations, such as its inability to generate test cases intended to exercise aspects
+certain limitations, such as white-box testing inability to generate test cases intended to exercise aspects
 of the specification that have inadvertently been omitted from the program. Black-box or
 specification-based techniques, based on analysis of the program's specification, overcome
 some of these limitations, but cannot be automated unless some kind of formal specification
@@ -73,11 +75,12 @@ which is automatable when a formal algebraic specification is available and whic
 can be applied manually, otherwise.
 Another area for potential automation is in the construction of test drivers. Many testing
 methods can be applied to individual subprograms. When the program unit being tested
-is a whole program, the inputs and outputs are usually sets of files. When the unit being
+is a whole program, the inputs and outputs are usually sets of files. When the program unit being
 tested is a procedure or function the inputs and outputs may include values of parameters
 and of global variables, as well as values read from and written to files. In order to test a
 procedure, it is necessary to build a driver program which initializes global variables and
-actual parameters to the appropriate values, calls the procedure, then outputs final values
+actual parameters to the appropriate values, calls a
+procedure, then outputs final values
 of relevant globals and parameters. It can be quite cumbersome to initialize the inputs and
 check the values of the outputs. It is particularly unwieldy if, as is often the case in object-oriented
 programming, the parameters have complicated types. The model described below
@@ -92,7 +95,7 @@ test execution system.
 Object-oriented languages support abstract data types, inheritance, and dynamic binding. An
 abstract data type is an entity that encapsulates data and the operations for manipulating
 that data. In object-oriented programming, the programmer writes class definitions, which
-are implementations of abstract data types. An object is an instance of a class; it can
+are implementations of abstract data types. An object is an instance of a class; An object can
 be created dynamically by the instantiation operation, often called "new" or "create". A
 language supports inheritance if classes are organized into a directed acyclic graph in which
 definitions are shared, reflecting common behavior of objects of related classes.
@@ -101,9 +104,8 @@ of that class and a body which implements those operations. The state of an obje
 in instance variables (sometimes called attributes), which are static variables, local to the
 object. A class's operations are sometimes called methods.
 In object-oriented programs, computation is performed by "sending messages" to objects.
-A message invokes one of the object's methods, perhaps with some arguments. The invoked
-method may then modify the state of its object and/or send messages to other objects.
-When a method completes execution, it returns control (and in some cases returns a result)
+A message invokes one of the object's methods, perhaps with some arguments. Our testing method may then modify the state of Our testing method object and/or send messages to other objects.
+When a method completes execution, a method returns control (and in some cases returns a result)
 to the sender of the message.
 The inheritance mechanism of object-oriented languages facilitates the development of
 new classes which share some aspects of the behavior of old ones. A descendent (subclass) C d
@@ -119,26 +121,30 @@ an object of class SQUARE to a variable of class POLYGON, then sending the perim
 message will invoke SQUARE's perimeter method. This allows construction of polymorphic
 data types.
 Some examples of object-oriented languages include Smalltalk, C++, and Eiffel [13, 29,
-27]. While Ada and Modula-2 are not, strictly speaking, object-oriented languages, they do
+27]. While Ada and Modula-2 are not, strictly speaking, object-oriented languages, Ada and Modula-2 are not, strictly speaking, object-oriented languages do
 provide support for data abstraction; thus, some of the ideas discussed here are relevant to
-them. See [27] for an overview of the object-oriented approach.
+some of the ideas discussed here. See [27] for an overview of the object-oriented approach.
 2.3 Algebraic Specification of Abstract Data Types
 Before we can talk about how to test a class C, we must have some concept of what it means
 for C to be correct. Thus, we must have some means, formal or informal, of specifying
 the entity that C is intended to implement and of stating the conditions under which the
-implementation conforms to the specification. In the case where C is intended to implement
+implementation conforms to 2.3 Algebraic Specification of Abstract Data Types
+. In the case where C is intended to implement
 an abstract data type, algebraic specifications provide a formal means of doing this.
 An algebraic specification has a syntactic part and a semantic part. The syntactic part
-consists of function names, and their signatures (the types they take as input and produce as
+consists of function names, and The syntactic part
+ signatures (the types The syntactic part
+ take as input and produce as
 output). In an algebraic specification of type T , functions which return values of types other
-than T are called observers, because they provide the only ways for us to query the contents
+than T are called observers, because The syntactic part
+ provide the only ways for us to query the contents
 of T . Functions which return values of type T are called constructors or transformers 2 . The
 2 Transformers are called extensions in [16].
 distinction between constructors and transformers is clarified below.
-The semantic part of the specification consists of a list of axioms describing the relation
+The semantic part of An algebraic specification consists of a list of axioms describing the relation
 between the functions. Some specification techniques allow for a list of preconditions
 describing the domains of the functions, while others allow functions to return error values
-indicating that a function has been applied to an element outside of its domain.
+indicating that a function has been applied to an element outside of a function domain.
 rewriting [24] has been used to define a formal semantics for algebraic specifications
 [28, 12]. Two sequences S 1 and S 2 of operations of ADT T are equivalent if we can use
 the axioms as rewrite rules to transform S 1 to S 2
@@ -147,7 +153,7 @@ a heterogeneous word algebra, in which the elements are equivalence classes of s
 operations.
 For a specification S to be useful, it must be consistent and sufficiently complete [16]. A
 consistent specification must not contain contradictory axioms, i.e., no contradiction should
-be derivable from any operation sequences of the specification. Let W be the set containing
+be derivable from any operation sequences of A specification. Let W be the set containing
 all the operation sequences consisting of constructors or transformers of S. S is sufficiently
 complete, if for every sequence w in W , the result of applying each observer of S to w
 is defined. Discussion of how to construct useful algebraic specifications can be found in
@@ -157,7 +163,8 @@ have designed a specification language, LOBAS, whose syntax is similar to OO pro
 language syntax [6]. The syntactic part of a LOBAS specification includes an export section
 which lists operations available to the users of the ADT. In LOBAS, the designer of a
 specification has to classify the operations into three categories - constructors, transformers,
-and observers. This classification process helps the designer in producing a sufficiently
+and observers. This classification process helps the designer of a
+specification in producing a sufficiently
 complete specification and facilitates the test generation scheme described in Section 4.2,
 below. An additional advantage of this notation is pointed out in Section 3.1.
 Algebraic specifications of a priority queue in LOBAS and in functional notation are
@@ -234,13 +241,15 @@ else false
 Figure
 
 1: Specifications of Priority Queue
-LOBAS are their ability to specify functions (observers) with side effects, and their ability
+LOBAS are Specifications of Priority Queue
+LOBAS ability to specify functions (observers) with side effects, and Specifications of Priority Queue
+LOBAS ability
 to handle operation sequences with intermingled procedures and functions. However, the
 axioms of LOBAS (and other algebraic languages) facilitate automatic test case generation,
 as discussed in Section 4.2, below.
 3 Self-checking test cases
 In this section we describe the main concepts that underlie ASTOOT. These include a notion
-of correctness for classes, a model of test cases and their execution, and a test checking
+of correctness for classes, a model of test cases and These execution, and a test checking
 mechanism.
 In one of the early papers on specification of data abstractions [25], Liskov and Zilles
 pointed out that it is possible to specify a data abstraction by specifying the intended input-output
@@ -249,7 +258,7 @@ and may lead to overspecification of the underlying representation of the data. 
 they and others [11, 14, 17] proposed algebraic specifications of abstract data types (ADTs),
 which define the intended behavior of an ADT by giving axioms describing the interaction
 of operations.
-Similarly, it is possible to test a class by testing each of its methods individually, treating
+Similarly, it is possible to test a class by testing each of a class methods individually, treating
 each as a function mapping some input space to some output space, selecting elements of that
 input space, and examining the outputs to see if they are correct. However, doing so shifts
 the focus of testing away from the essence of the data abstraction - the interaction between
@@ -257,15 +266,17 @@ operations. Furthermore, testing each method individually necessitates the const
 complicated drivers and output checking mechanisms. For example, a test case for the add
 operation in a priority queue would consist of priority queue and an item and the output
 would be another priority queue. Thus the driver would have to initialize the input priority
-queue, and checking the output would entail examining the output priority queue to see if it
+queue, and checking the output
+ would entail examining the output priority queue to see if the output
+
 is the correct result. In contrast, our approach to testing classes focuses on the interaction
 of operations.
-In this section, we restrict attention to classes intended to implement ADTs. We require
+In this section, our restrict attention to classes intended to implement ADTs. our require
 that,
-1. operations have no side effects on their parameters,
+1. operations have no side effects on operations parameters,
 2. functions (observers) have no side effects,
 3. functions (observers) can only appear as the last operation of a sequence, and
-4. when a sequence is passed as a parameter to an operation it must not contain any
+4. when a sequence is passed as a parameter to an operation a sequence must not contain any
 functions (observers).
 The main reason for placing restrictions 1 and 2 is that we cannot specify these kinds of side
 effects by using either LOBAS or purely algebraic languages. The reason behind restriction 3
@@ -281,7 +292,7 @@ Consider a class C, intended to implement abstract data type T . Each function i
 to a method of C, and inputting a value of type T to a function corresponds to
 sending a message to an object of class C. In Eiffel, constructors and transformers are
 typically coded as procedures; rather than explicitly returning an object of class C, such a
-procedure "returns" a value by modifying the state of the object to which it has been ap-
+procedure "returns" a value by modifying the state of the object to which the state of the object has been ap-
 plied. An observer can be coded as a function which explicitly returns an object of another
 class. We will refer to the object which a function or procedure message is sent as the target
 object and to the object returned as the returned object. For procedures, the target object
@@ -296,19 +307,20 @@ whose elements are 5 and 3, and the returned value is 5.
 We will say that objects O 1 and O 2 of class C are observationally equivalent if and only
 if
 ffl C is a built-in class and O 1 and O 2 have identical values, or
-ffl C is a user-defined class and for any sequence S of operations of C ending in a function
+ffl ffl C is a user-defined class and for any sequence S of operations of C ending in a function
 returning an object of class C 0 , O 1 :S is observationally equivalent to O 2 :S as objects
 of class C 0 .
 Thus, O 1 is observationally equivalent to O 2 if and only if it is impossible to distinguish O 1
 from O 2 using the operations of C and related classes. Two observationally equivalent objects
-are in the same "abstract state", even though the details of their representations may be
+are in the same "abstract state", even though the details of Two observationally equivalent objects
+ representations may be
 different. For example, consider a circular array implementation of a first-in-first-out (FIFO)
 queue. Two arrays containing the same elements in the same order would be observationally
 equivalent (as queues), even though the elements could occupy different portions of the
 underlying arrays.
-We now define the notion of correctness that underlies our approach.
+We now define the notion of correctness that underlies We approach.
 A class C is a correct implementation of ADT T , if there is a signature-preserving
-mapping from operations of T to those of C such that
+mapping from operations of ADT T to those of C such that
 ffl for any pair (S 1 of sequences of operations of T , S 1 is equivalent to S 2
 if and only if the corresponding sequences of messages give rise to observationally
 equivalent returned objects.
@@ -322,11 +334,12 @@ Other notions of correctness, some corresponding to other specification methodol
 have also been investigated [3, 11, 18, 8]. Our definition, based on observational equivalence,
 is similar to that corresponding to trace specifications [3], but is based on the more limited
 algebraic specification methodology. It is a pragmatic and intuitively appealing one, which
-lends itself to a convenient testing strategy.
+lends It to a convenient testing strategy.
 3.2 Test Case Format
 This definition of correctness gives rise in a natural way to a framework for testing. If we
 had an infinite amount of time and a way to check whether two objects were observationally
-equivalent, we could exhaustively test class C as follows:
+equivalent, we
+ could exhaustively test class C as follows:
 ffl Consider the set U consisting of all 3-tuples (S 1 are sequences
 of messages, and tag is "equivalent" if S 1 is equivalent to S 2 according to the
 specification, and is "not-equivalent", otherwise.
@@ -334,7 +347,8 @@ ffl For each element of U , send message sequences S 1 and S 2 to objects O 1 an
 respectively, then check whether the returned object of O 1 is observationally equivalent
 to the returned object of O 2 .
 ffl If all the observational equivalence checks agree with the tags, then the implementation
-is correct; otherwise it is incorrect.
+is correct; otherwise the implementation
+ is incorrect.
 Unfortunately, we have neither an infinite amount of time for testing, nor a fool-proof
 way of checking observational equivalence. Nonetheless, this scheme suggests an approach
 to testing. We demand that C and each class that is returned by a function of C include a
@@ -372,7 +386,7 @@ and 3, then delete, it should not be the same as if we create an empty priority 
 add 5 to it. Test case 4 says that a priority queue obtained by adding 5 then adding 3
 should be observationally equivalent to one obtained by adding 3 then adding 5. Unlike the
 previous three test cases, this test case captures an aspect of the informal specification that
-is not expressed in the formal specification, and thus it cannot be derived from the formal
+is not expressed in the formal specification, and thus this test case cannot be derived from the formal
 specification by using term rewriting 4 . This indicates that, even when a formal specification
 that partially describes the intended semantics of an ADT is available, manual generation
 of additional test cases may be useful.
@@ -381,24 +395,28 @@ test cases. More general test case formats which are useful for testing classes 
 effects and dynamic binding are introduced in [6].
 3.3 The EQN Method
 We now discuss the EQN operation. Ideally, the EQN operation in class C should check
-whether two objects O 1 and O 2 of class C are observationally equivalent, that is, it should
+whether two objects O 1 and O 2 of class C are observationally equivalent, that is, the EQN operation in class C should
 check whether any sequence of messages ending in an observer yields the same result when
 sent to O 1 as when sent to O 2 . Since it is clearly impossible to send every such message
 sequence to the objects, in practice EQN will approximate a check for observational equivalence
 
-4 If an axiom such as A.add(x).add(y) -? A.add(y).add(x)were added to the specification, this aspect
-of the informal specification would be captured. However, the resulting specification would no longer satisfy
+4 If an axiom such as A.add(x).add(y) -? A.add(y).add(x)were added to the
+specification, this aspect
+of the
+specification would be captured. However, the
+specification would no longer satisfy
 the finite termination condition.
 It is often quite easy to produce a recursive version of EQN from the specification of the
 which C is intended to implement. For example, axiom 7 of Figure 1 specifies such
 an EQN function based on the priority queue specification. Note that this is actually only
-an approximation of true observational equivalence because it neglects the possible effects
+an approximation of true observational equivalence because this neglects the possible effects
 of "building up" the priority queues, then removing elements. Thus, it might say that two
-objects are equivalent when they are not 5 . Also, since EQN calls largest, and delete, an
-error in one of these operations may propagate to EQN, causing it to mask out the error.
+objects are equivalent when two
+objects are not 5 . Also, since EQN calls largest, and delete, an
+error in one of these operations may propagate to EQN, causing EQN to mask out the error.
 On the other hand, the error propagation can also help in error detection, as demonstrated
 in Section 5.1, below.
-Another approach to developing the EQN function is to write it at the "implementation
+Another approach to developing the EQN function is to write the EQN function at the "implementation
 level". In this approach, EQN is based on detailed knowledge of how data is represented and
 manipulated in the class body. For example, knowing that a FIFO queue is represented as
 a linked list, one can traverse the two lists comparing the elements. In general, if sufficient
@@ -410,7 +428,7 @@ operation may be extremely difficult and error-prone, even when the other method
 relatively simple.
 It is also sometimes possible to use a very coarse approximation of observational equivalence
 as the EQN function. For example, we might consider two FIFO queues to be equivalent
-if they have the same number of elements, or if they have the same front element. This
+if two FIFO queues have the same number of elements, or if two FIFO queues have the same front element. This
 version of EQN may consider two inequivalent objects to be equivalent. Naturally, using
 a coarser approximation of observational equivalence will lead to less accuracy in the test
 results.
@@ -421,25 +439,27 @@ check for observational equivalence.
 4 The Tools
 ASTOOT is a set of tools based on the approach described in Section 3. The current
 prototype, which handles test cases in the restricted format, has three components: the
-driver generator, the compiler, and the simplifier. The driver generator takes as input the
+driver generator, the compiler, and the simplifier. The Driver Generator takes as input the
 interface specifications of the class under test (CUT) and of some related classes and outputs
 a test driver. This test driver, when executed, reads test cases, checks their syntax, executes
-them, and checks the results. The compiler and simplifier together form an interactive tool
+their, and checks the results. The compiler and simplifier together form an interactive tool
 for semiautomatically generating test cases from an algebraic specification. Note that when
-no algebraic specification is available, the drivers produced by the driver generator can be
+no algebraic specification is available, the drivers produced by The Driver Generator can be
 5 For example consider an implementation which completely empties the priority queue whenever the
-total number of adds performed reaches a particular number N ? 2. The recursive EQN would consider O1.
+total number of adds performed reaches a particular number N ? 2. EQN would consider O1.
 create.add(1).add(2).delete equivalent to O2.create.add(1), but in fact, performing an additional
 adds followed by deletes on each object would leave O1 empty and leave O2 non-empty.
 used to execute test cases which have been derived by a person reasoning about an informal
-specification. The structure of ASTOOT is illustrated in Figure 2 and a screen dump of an
+specification. The structure of The Tools
+ASTOOT is illustrated in Figure 2 and a screen dump of an
+The Tools
 ASTOOT session is shown Figure 4.
 4.1 The Driver Generator
 Our approach to testing leads to relatively simple test drivers, which operate by reading
 in test cases of the form (S 1 one at a time, checking that the sequences are syntactically
 valid, sending sequences S 1 and S 2 to objects O 1 and O 2 of CUT, comparing the
 returned objects of S 1 and S 2 with EQN, and checking whether the value returned by EQN
-agrees with Tag. On the other hand, drivers are complicated enough that writing them
+agrees with Tag. On the other hand, drivers are complicated enough that writing drivers
 manually is a tedious and error-prone task. In particular, checking the syntactic validity of
 the operation sequences involves complicated parsing and type checking. For example, our
 driver for the priority queue class has over 400 lines of code (not counting inherited classes),
@@ -450,7 +470,7 @@ driver-generator can be viewed as a special-purpose parser generator, which, bas
 syntax described in the class interfaces, generates test drivers that parse test cases, as well
 as executing and checking them.
 The driver generator, DG, operates in three phases. The first phase is to collect information
-about interfaces of the CUT, its ancestors, and all the classes which are parameter
+about interfaces of the CUT, The first phase ancestors, and all the classes which are parameter
 types or return types of CUT's operations. DG first checks whether each of these classes has
 an exported EQN operation. 6 (If, like Eiffel, the implementation language has the facility of
 selective export then we can let EQN be exported only to the test driver, so the integrity of
@@ -463,14 +483,17 @@ ASTOOT's test generation component has two parts, the compiler and the simplifie
 both of which are based on an internal representation called an ADT tree. The compiler
 reads in a specification written in LOBAS and does some syntactic and semantic checking
 on the specification 7 , then translates each axiom into a pair of ADT trees.
-An ADT tree is a tree in which nodes represent operations along with their arguments.
+An ADT tree is a tree in which nodes represent operations along with nodes arguments.
 Each path from the root to a leaf of an ADT tree represents a possible state of the ADT. The
-branching of ADT tree arises from axioms having IF THEN ELSE expressions on the right-
-6 For ASTOOT to access functions that are hidden in the implementation, the CUT should export these
-functions to the test driver generated by ASTOOT. In Eiffel this can be achieved by "selective export" to
+branching of An ADT tree arises from axioms having IF THEN ELSE expressions on the right-
+6 For The Tools
+ASTOOT to access functions that are hidden in the implementation, the CUT should export these
+functions to the test driver generated by The Tools
+ASTOOT. In Eiffel 2.1 this can be achieved by "selective export" to
 the test driver; in C++ this can be achieved by making the test driver a friend class of the CUT.
 7 Because the simplifier and the driver generator operate under the assumption that create is the instantiation
-operation, the compiler makes sure there is a constructor named create in the specification. Also,
+operation, The compiler
+ makes sure there is a constructor named create in the specification. Also,
 the simplifier will insist that the first operation of a sequence is the create operation.
 SIMPLIFIER
 OE
@@ -494,21 +517,24 @@ CASES
 
 Figure
 
-2: Components of ASTOOT
+2: Components of The Tools
+ASTOOT
 
 Figure
 
-3: Screen Dump of an ASTOOT session. The upper left window shows the execution of
+3: Screen Dump of an The Tools
+ASTOOT session. The upper left window shows the execution of
 the test generator in batch mode on a priority queue specification. The file pq.seq contains an
-initial sequence, supplied by the user. The test generator generates five test cases based on this
-initial sequence and writes them, along with the corresponding constraints on the free variables,
+initial sequence, supplied by the user. the test generator in batch mode on a priority queue specification generates five test cases based on this
+initial sequence and writes five test cases based on this
+initial sequence, along with the corresponding constraints on the free variables,
 to the file pq.sim. The constraint on each test case is obtained by conjoining the condition
 for that test case with the negations of the conditions on previous test cases. The upper right
 window shows the four test cases the user has developed by instantiating the free variables with
 values that satisfy the constraints. (The first of the generated test cases has an unsatisfiable
-constraint, so it is eliminated by the user). The driver generator is then invoked on an incorrect
-implementation of the priority queue (described in Section 5.1 below). It invokes Eiffel to compile
-the class under test, generates a test driver for the class, compiles it, then executes the given
+constraint, so the generated test cases is eliminated by the user). the test generator in batch mode on a priority queue specification is then invoked on an incorrect
+implementation of the priority queue (described in Section 5.1 below). the test generator in batch mode on a priority queue specification invokes Eiffel 2.1 to compile
+the class under test, generates a test driver for the class, compiles the test generator in batch mode on a priority queue specification, then executes the given
 test cases. The first two test cases detect a bug, while the second two do not. The lower left
 window shows a small portion of the test driver which was automatically generated by the driver
 generator.
@@ -523,21 +549,22 @@ A.largest
 Figure
 
 4: Axiom 6 of Priority Queue in ADT tree form
-hand side. Each edge of the ADT tree has a boolean expression, called the edge condition,
-attached to it. The path condition of a path from the root to a leaf is the conjunction of all the
+hand side. Each edge of An ADT tree has a boolean expression, called the edge condition,
+attached to Each edge of the ADT tree. The path condition of a path from the root to a leaf is the conjunction of all the
 edge conditions on that path; it indicates the conditions under which the operation sequence
 on that path is equivalent to the original sequence. The path conditions in a given tree are
 mutually exclusive. Figure 4 illustrates the ADT tree pair of Axiom 6 in Figure 1. For clarity,
 the edge conditions are shown in rectangles in the figure; in the implementation, parameters
-of operations and the operands in the boolean expressions are, themselves, represented by
+of operations and the operands in the boolean expressions are, parameters
+of operations and the operands in the boolean expressions, represented by
 ADT trees.
-The simplifier inputs an operation sequence, supplied by the user, translates it into an
+The simplifier inputs an operation sequence, supplied by the user, translates The simplifier into an
 ADT tree, and applies the transformations to obtain equivalent operation sequences. The
 process of simplification is as follows:
 1. Search through the axioms to find an axiom with a left-hand side that matches some
-partial path of the ADT tree (ignoring the edge conditions);
+partial path of An ADT tree (ignoring the edge conditions);
 2. If an axiom is found, bind all the variables in the axiom to the proper arguments in
-the partial path of the ADT tree, and simplify the arguments; then replace the partial
+the partial path of An ADT tree, and simplify the arguments; then replace the partial
 branch with the right-hand side of the axiom;
 3. Repeat steps 1 and 2 until there is no matching axiom.
 In the worst case, the ADT tree arising from a sequence of ' operations may have m '
@@ -573,59 +600,62 @@ the form:
 with the path condition "y ? x", and
 (create.add(x).add(y).delete, create.add(y), equivalent)
 with the path condition "y - x".
-Note that the simplifier also suggests test cases with not-equivalent tags. For instance,
+Note that The simplifier also suggests test cases with not-equivalent tags. For instance,
 we can exchange the path conditions and the test cases from above to get the following test
 cases:
 (create.add(x).add(y).delete, create.add(x), not-equivalent)
 with the constraint "y - x", and
 (create.add(x).add(y).delete, create.add(y), not-equivalent)
 with the constraint "y ? x".
-For an ADT tree with n paths, the simplifier will generate n test cases that have equivalent
-tags. In principle, the simplifier could also generate n(n \Gamma 1) test cases that have
+For an ADT tree with n paths, The simplifier will generate n test cases that have equivalent
+tags. In principle, The simplifier could also generate n(n \Gamma 1) test cases that have
 not-equivalent tags, where n is O(m ' ), ' is the length of the original sequence, and m
 is the maximum number of branches in any axiom. Because there are too many such cases
-in an ADT tree, the current version of the simplifier leaves selection of such test cases to the
+in an ADT tree, the current version of The simplifier leaves selection of such test cases to the
 user.
-Note that the test cases generated by the simplifier contain symbolic values. To make
-them acceptable to the test driver, the user has to resolve the path conditions (constraints)
+Note that the test cases generated by The simplifier contain symbolic values. To make
+them acceptable to the test driver, the
+user has to resolve the path conditions (constraints)
 and instantiate the symbolic values with the corresponding actual values. In principle,
 this could sometimes be done automatically by a constraint solving system. In the current
-prototype, constraint solving is left to the user.
+prototype, constraint solving is left to the
+user.
 Two important questions remain: how should one select original sequences to input to
-the simplifier, and how should one select paths through the resulting ADT trees, in order to
+The simplifier, and how should one select paths through the resulting ADT trees, in order to
 increase the likelihood of exposing errors?
 5 Case Studies
 To gain insight into what kind of original sequences the person using the test generation tools
-should select and what kind of paths through the ADT tree should be generated in interactive
+should select and what kind of paths through An ADT tree should be generated in interactive
 mode, we performed two case studies, involving generating many tests for a buggy priority
-queue implementation and for a buggy sorted-list implementation. We choose the priority
+queue implementation and for a buggy sorted-list implementation. we choose the priority
 queue ADT because we knew it to be sufficiently complicated to exhibit many interesting
-phenomena. We purposely introduced the bug, but believe that it is one which could easily
+phenomena. we purposely introduced the bug, but believe that the bug is one which could easily
 occur in practice. The sorted-list was based on a 2-3 tree, implemented for a graduate
-algorithms class. The bug was a slight variation on one which had actually occurred during
+algorithms class. the bug was a slight variation on one which had actually occurred during
 program development.
-We wished to gain insight into the following questions:
+we wished to gain insight into the following questions:
 How does the length of the original sequence affect the likelihood that a test case will
 detect an error?
 How does the selection of parameters for operations in the original sequence affect the
 likelihood that a test case will detect an error?
 How does the ratio of add's to delete's in the original sequence affect the likelihood
 that a test case will detect an error?
-We addressed these questions by randomly generating and executing several thousand test
+we addressed these questions by randomly generating and executing several thousand test
 cases with various original sequence lengths, various ranges in which parameters could lie,
 and various frequencies of occurrence of different operations. For each original sequence
 we generated the corresponding simplified sequence, then executed the test case (original
 sequence, simplified sequence, equivalent). Note that it would have been extremely difficult
-to execute and check so many test cases, had it not been for ASTOOT's ``self-checking'' test
+to execute and check so many test cases, had it not been for The Tools
+ASTOOT's ``self-checking'' test
 case concept.
 5.1 Testing A Buggy Implementation of Priority Queue
 In this case study, the CUT was a priority queue, implemented using a heap with a bug in
 the delete operation 8 . Specifically, the Downheap (or sift) operation performed by delete
 has an off-by-one error which causes it to sometimes fail to swap with the bottom row. The
 erroneous delete code is shown in the appendix.
-8 Recall that a heap is a complete binary tree in which each node is greater than or equal to its children;
+8 Recall that a heap is a complete binary tree in which each node is greater than or equal to each node children;
 in the heap implementation of a priority queue, the delete operation is performed by removing the root,
-replacing it by the right-most leaf, then "sifting" that element down to its proper position.
+replacing the delete operation by the right-most leaf, then "sifting" that element down to the delete operation proper position.
 k(a) Original (b) Correct (c) Incorrect
 @
 @
@@ -643,16 +673,14 @@ Figure
 add(2).add(1), (b) is the heap resulting from applying a correct delete to (a). (c) is the
 resulting heap when the incorrect delete is applied to (a); note that 1 has failed to swap
 with 2 in the bottom row.
-As discussed in Section 3.3, since EQN calls delete, the bug in delete is propagated to
-EQN. Even though the original sequence in test case (create.add(5).add(4).add(3).
+As discussed in Section 3.3, since EQN calls delete, the bug in delete is propagated toEQN. Even though the original sequence in test case (create.add(5).add(4).add(3).
 produces
 an incorrect heap (Figure 6(c)), EQN reports that the original sequence and the simplified
 sequence are equivalent due to the bug in delete. Thus, in this case, the error is
 masked by the propagation of the bug from delete to EQN.
 On the other hand, consider the test case (create.add(4).add(3).add(2).add(1).
 delete,create.add(3).add(2).add(1),equivalent), The original sequence produces a
-heap with 3 in the root, 1 in the root's left child, and 2 in the root's right child. The
-simplified sequence produces a heap with 3 in the root, 2 in the root's left child, and 1 in the
+heap with 3 in the root, 1 in the root's left child, and 2 in the root's right child. The original sequence produces a heap with 3 in the root, 2 in the root's left child, and 1 in the
 root's right child. These two heaps are both correct and should be observationally equivalent.
 However in checking executing EQN to check observational equivalence, we call the erroneous
 delete routine. After the first call to delete the original heap has 2 in the root and 1 in
@@ -674,7 +702,7 @@ magnitude larger than the number of test cases one would typically use in practi
 an implementation of this size. In order to generate this huge number of test cases efficiently
 and to do a broad range of testing with the three variables, '; p, and r of a test set R, we
 used a C program to randomly generate test cases with actual values of those three variables,
-rather than using the ASTOOT test generator. This C program consists of three modules.
+rather than using the ASTOOT test generator. a C program consists of three modules.
 The first module generates original sequences one at a time according to the three parameter
 of R, which are
 ' - the number of operations (excluding create) in an original sequence,
@@ -683,7 +711,7 @@ r - the ratio of add's to delete's appearing in the original sequences.
 Operations of an original sequence are read in by the second module one at a time and
 applied to a priority queue that is implemented by a list. The third module inspects the
 contents of the list, generates a simplified sequence, and outputs an appropriate test case.
-Note that the simplified sequences are the same as if they were generated the test case
+Note that the simplified sequences are the same as if the simplified sequences were generated the test case
 generator of ASTOOT and instantiated with real values that satisfy the constraints.
 For each test set we generated 1000 test cases. The average number of add's in simplified
 sequences is approximately 8
@@ -694,20 +722,24 @@ Inspection of these graphs shows:
 short ones. However, if the parameter range is too small, longer original sequences
 may do worse than shorter ones. In fact, the results of test sets R (100;10;3) , R (100;10;6) ,
 and R (100;10;9) are the worst in respectively, despite the fact
-that they have long original sequences.
+that R (100;10;6) ,
+and R (100;10;9) have long original sequences.
 (p): As the parameter range p increases, test cases tend to get better. However, in each
 case there appears to be a threshold above which the error detection probability levels
 off.
 Likelihood of exposing an error depends somewhat on r.
-In this buggy implementation, failure only occurred when it was necessary to swap with
+In this buggy implementation, failure only occurred when failure was necessary to swap with
 the right-most element in the bottom row of the heap. Apparently, the long sequences were
 potentially more likely to cause the object to enter such a state, either during application
 of the original or simplified sequences, or through propogation of the error to the EQN
 operation. However, simply using a long sequence, without regard to the parameters chosen
 could lead to objects that never got into these "interesting" states. If the range of parameter
-values is too small, there will be many duplicates in the heap, so when an item is deleted, it
-is less likely that the sifted item will be strictly smaller than all of the elements it is compared
-to; thus it is less likely that it was supposed to swap with the bottom row.
+values is too small, there will be many duplicates in the heap, so when an item is deleted, an item
+is less likely that the sifted item will be strictly smaller than all of the elements it
+ is compared
+to; thus it
+ is less likely that it
+ was supposed to swap with the bottom row.
 Number of Operations (')
 Range of Parameters (p)
 C a s e s103050ffl
@@ -753,11 +785,10 @@ Figure
 The second case study used an abstract data type, sorted list of integer, with six operations,
 create, add, delete, find, nb elements, and eqn. The interfaces, preconditions, and
 informal specification of the sorted-list are shown in Figure 8. The EQN operation compared
-the lengths of the lists, then compared them element-by-element. Note that we did not use
+the lengths of the lists, then compared the lists element-by-element. Note that we did not use
 any formal specification for this sorted list. The test cases were generated by using a C
 program similar to the one in the case study of priority queue.
-The sorted list was implemented using a 2-3 tree (a special case of B-tree). The implementation
-has approximately 1000 lines of Eiffel 2.1 code, and the buggy version was
+The sorted list was implemented using a 2-3 tree (a special case of B-tree). this buggy implementationhas approximately 1000 lines of Eiffel 2.1 code, and the buggy version was
 produced by deleting one particular line from the correct version of implementation. The
 absence of this statement affects the state of the 2-3 tree only when the following situation
 occurs:
@@ -786,7 +817,7 @@ Results of Sorted List Case Study
 The results, shown in Figure 10 exhibit similar phenomena to those discussed for the priority
 queue example. Since the number of elements in a sorted-list is at most equal to the range of
 parameter values, only long sequences of operations with a large range of parameter values
-will produce 2-3 trees with a large number of leaves. The error in this program is such that
+will produce 2-3 trees with a large number of leaves. The error in a C program is such that
 failure only occurs when a deletion is performed on a 2-3 tree in a particular kind of state.
 Apparently, 2-3 trees with a large number of leaves are more likely to enter such a state.
 Number of Operations (')
@@ -818,8 +849,7 @@ parameters is large enough to take advantage of the length. In addition, differe
 add's to delete's in the original sequence gave different results.
 We certainly do not want to over-generalize from these two small examples. However
 it seems safe to say that the potential that the relative values of the parameters would be
-important was apparent from the specification. In both of these cases, the specification
-involved comparison of items, using the less than operator. It is thus very reasonable to
+important was apparent from the specification. In both of these cases, the specificationinvolved comparison of items, using the less than operator. It is thus very reasonable to
 expect that different orderings of the parameters added would lead to different states, some
 of which might be more likely than others to expose the error. On the other hand, had we
 been testing a stack or queue ADT, we would not expect that the particular parameters would
@@ -828,10 +858,10 @@ to be important, but would not necessarily expect the relative order of paramete
 important (unless of course the set was implemented using an ADT based on comparison,
 such as a 2-3 tree.)
 Another phenomenon we noticed was that different ratios of adds to deletes led to
-different probabilities of error detection. When the ratio is one, it is unlikely that the
+different probabilities of error detection. When the ratio is one, the ratio is unlikely that the
 objects will grow very large in the course of testing. In our examples, small objects were
 apparently not usually complicated enough to excite the failure.
-We offer the following tentative guidelines as to how to generate test cases:
+our offer the following tentative guidelines as to how to generate test cases:
 ffl Use (at least some) long original sequences, with a variety of relative frequencies of
 different constructors and transformers.
 ffl If the specification has conditional axioms (with comparison operators) choose a variety
@@ -841,7 +871,7 @@ from each original sequence.
 While these guidelines might seem obvious, previous research has suggested limiting the
 complexity of sequences 9 [5, 10] and ignoring the semantics of the specification [23, 22].
 6 Related Work
-We now compare our approach to related work on testing data abstractions. Previous systems
+We now compare We approach to related work on testing data abstractions. Previous systems
 generally fall into one of two categories - test execution tools and test generation tools. In
 contrast, our approach gives rise to both test generation and test execution tools.
 9 Gaudel's group suggests using relatively simple sequences but including a ``regularity hypothesis'' asserting
@@ -852,15 +882,14 @@ hold for the ADT's examined for small n. Similar observations lead Gaudel et al.
 6.1 Test Execution Tools
 One of the first systems to address the question of testing data abstractions was DAISTS
 (Data Abstraction Implementation Specification and Test uses the
-axioms of an algebraic specification to provide an oracle for testing implementations of the
-ADT. A test case is a tuple of arguments to the left-hand side of an axiom. DAISTS executes
+axioms of an algebraic specification to provide an oracle for testing implementations of the ADTthe ADT. A test case is a tuple of arguments to the left-hand side of an axiom. DAISTS executes
 a test case by giving it as input to the left-hand side and right-hand side of an axiom, then
 checks the output by invoking a user-supplied equality function (similar to our EQN).
 Our test execution tool can be considered to be a generalization of DAISTS. For example,
 recall that Axiom 6 of the priority queue specification shown in Figure 1 says,
 A.largest then A
 else A.delete.add(x)
-Executing the DAISTS test case this axiom is equivalent
+Executing the DAISTS test case Axiom 6 of the priority queue specification shown in Figure 1 is equivalent
 to our test case (create.add(1).add(2).add(3).delete,create.add(1).add(2),
 equivalent), in which the second sequence is obtained by using axiom 6 to rewrite the first
 sequence.
@@ -888,20 +917,22 @@ and expval are generated by a Prolog oracle written by the user.
 Protest, which is a program written in Prolog, executes test cases by calling the operations
 in the implementation under test through an interface supplied by the user. For each
 operation, the interface defines a Prolog predicate which calls the corresponding C function
-in the implementation. The user also needs to write functions that can be called to construct
+in the implementation. the user also needs to write functions that can be called to construct
 objects of user-defined classes to be passed as parameters to the operations in the implemen-
 tation. Like ASTOOT and DAISTS, Protest uses functions supplied by the user to check the
 equivalence between objects of corresponding ADTs. But, unlike ASTOOT and DAISTS,
 which use the specification under test to generate expected outputs, Protest/2 uses Prolog
-oracle to produce expected outputs. This oracle is another program that needs to be tested
-on its own.
+oracle to produce expected outputs. Prolog
+oracle is another program that needs to be tested
+on Prolog
+oracle own.
 Another distinction between this approach and ours is that by using the EQN function
 to check outputs, in effect, we combine many Protest test cases into a single test case. On
 the other hand, Protest's handling of exceptions is certainly an important idea, which we
 would like to try to incorporate into future versions of ASTOOT.
 Antoy and Hamlet [2] have proposed a system that compares a class implementation to
 a more abstract representation which is based on term re-writing and is derived directly
-from the specification. The user supplies an explicit representation function mapping the
+from the specification. the user supplies an explicit representation function mapping the
 concrete representation to the abstract representation. The code is instrumented to check
 that diagrams corresponding to each method commute, i.e., that applying the representation
 function then the abstract analog of the method gives rise to an abstract state that is
@@ -914,7 +945,7 @@ highly non-trivial task of writing a correct representation function.
 Two previous approaches to generating test cases from algebraic specifications have been
 reported. Gaudel's research group [4, 5, 10] has developed a general theory of testing based
 on testing contexts, which are triples consisting of a set of hypotheses about the program,
-a set of test data, and an oracle. This approach has the nice property that if it can be
+a set of test data, and an oracle. This approach has the nice property that if This approach can be
 established that the hypotheses hold and if the test set exposes no errors, then the program
 is guaranteed to be correct. (But of course, establishing that the hypotheses is a non-trivial
 task, involving analysis of the program text). Our approach provides test data and oracles;
@@ -924,7 +955,7 @@ conditions under which one sequence pair can be used to represent a class of seq
 and conditions under which one instantiation of parameters can be used to represent a class
 of instantiations.
 Gaudel's group has also built a tool for testing data abstractions based on the theory of
-testing contexts. The tool inputs a specification written in a dialect of Prolog, and, based
+testing contexts. a tool for testing data abstractions inputs a specification written in a dialect of Prolog, and, based
 on some definition of the complexity of sequences, uses a Prolog interpreter to generate
 sequences of operations of given complexities, sometimes subject to additional constraints.
 This approach might provide a useful means to generate interesting original sequences for
@@ -939,7 +970,7 @@ sequence, or, equivalently, to choose values of parameters that exhibit differen
 to one another. This phenomenon was demonstrated in our case study of priority queue,
 where failure only occurred when it was necessary to swap with the bottom row of the heap.
 7 Conclusion
-We have described a new approach to testing classes which places emphasis on the fact that
+our have described a new approach to testing classes which places emphasis on the fact that
 classes are implementations of data abstractions, a set of tools based on this approach, and
 two case studies. In this approach, each test case consists of a tuple of sequences of messages,
 along with tags indicating whether these sequences should put objects of the class-under-test
@@ -947,7 +978,7 @@ into equivalent states and/or return objects which are in equivalent states. A t
 restricted format consists of a single pair of sequences with a tag indicating whether the two
 objects resulting from application of these sequences should be observationally equivalent.
 Tests are executed by sending the sequences to objects of the class-under-test, then invoking
-a user-supplied equivalence checking mechanism. This approach allows for substantial automation
+a user-supplied equivalence checking mechanism. this approach allows for substantial automation
 of many aspects of testing, including test case generation, test driver generation,
 test execution, and test checking.
 ASTOOT is a set of tools based on this approach. ASTOOT consists of a tool which
@@ -957,8 +988,8 @@ drivers generated by ASTOOT's driver generator automatically execute and check t
 which have been supplied either by the test generator or by manual generation. Consequently
 ASTOOT allows for substantial automation of the entire testing process.
 We performed two case studies, one using a buggy implementation of a priority queue,
-and the other using a buggy 2-3 tree implementation of a sorted list. These case studies
-provided some insight into the effects of such factors as the length of the original sequence,
+and the other using a buggy 2-3 tree implementation of a sorted list. two case studies, one using a buggy implementation of a priority queue,
+and the other using a buggy 2-3 tree implementation of a sorted listprovided some insight into the effects of such factors as the length of the original sequence,
 the relative frequencies of different operations in the original sequence, and the range of
 parameters to operations.
 The approach and tools described in this paper assume that the specification and implementation
@@ -988,7 +1019,7 @@ programming as side-effects, inheritance, and dynamic binding, then building
 tools based on them.
 ffl Explore the impact of inheritance on testing.
 While we have focused so far on unit-testing, there are also many interesting questions pertaining
-to how to system-test object-oriented software. We hope to address these questions
+to how to system-test object-oriented software. we hope to address these questions
 in the future, and ultimately, to use the results to expand and improve ASTOOT.
 
 Acknowledgments
@@ -1031,7 +1062,7 @@ Abstract data type specification in the AFFIRM system.
 
 On testing non-testable programs
 --TR
-Smalltalk-80: the language and its implementation
+Smalltalk-80: the language and Smalltalk-80 implementation
 A Formal Method for the Abstract Specification of Software
 Theory of modules
 Trace Specifications

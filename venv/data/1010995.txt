@@ -1,14 +1,14 @@
 --T
 Development of a verified Erlang program for resource locking.
 --A
-In this paper, we describe a tool to verify Erlang programs and show, by means of an industrial case study, how this tool is used. The tool includes a number of components, including a translation component, a state space generation component and a model checking component. To verify properties of the code, the tool first translates the Erlang code into a process algebraic specification. The outcome of the translation is made more efficient by taking advantage of the fact that software written in Erlang builds upon software design patterns such as clientserver behaviours. A labelled transition system is constructed from the specification by use of the CRL toolset. The resulting labelled transition system is model checked against a set of properties formulated in the -calculus using the Caesar/Aldbaran toolset.As a case study we focus on a simplified resource manager modelled on a real implementation in the control software of the AXD 301 ATM switch. Some of the key properties we verified for the program are mutual exclusion and non-starvation. Since the toolset supports only the regular alternation-free -calculus, some ingenuity is needed for checking the liveness property non-starvation. The case study has been refined step by step to provide more functionality, with each step motivated by a corresponding formal verification using model checking .
+In this paper, we describe a tool to verify Erlang programs and show, by means of an industrial case study, how this tool is used. this tool includes a number of components, including a translation component, a state space generation component and a model checking component. To verify properties of the code, this tool first translates the Erlang code into a process algebraic specification. The outcome of the translation is made more efficient by taking advantage of the fact that software written in Erlang builds upon software design patterns such as clientserver behaviours. A labelled transition system is constructed from a process algebraic specification by use of the CRL toolset. A labelled transition system is model checked against a set of properties formulated in the -calculus using the Caesar/Aldbaran toolset.As a case study we focus on a simplified resource manager modelled on a real implementation in the control software of the AXD 301 ATM switch. Some of the key properties we verified for the program are mutual exclusion and non-starvation. Since the toolset supports only the regular alternation-free -calculus, some ingenuity is needed for checking the liveness property non-starvation. a case study has been refined step by step to provide more functionality, with each step motivated by a corresponding formal verification using model checking .
 --B
 Introduction
 Within Ericsson the functional programming language Erlang [1] is used for the
 development of concurrent/distributed safety critical software. Faced with the task
 of creating support for the development of formally veried Erlang programs, as a
 subtask we have built a tool to enable the use of model checking for such programs.
-The tool is aimed to be accessible for Erlang programmers without forcing them
+a tool to enable the use of model checking for such programs is aimed to be accessible for Erlang programmers without forcing Erlang programmers
 to learn an extra language (specic for the model checking tool that is used).
 Using model checking for the formal verication of software is by now a well
 known eld of research. Basically there are two branches, either one uses a spec-
@@ -22,7 +22,7 @@ can be seen as a very accurate debugging method.
 For the rst approach, one of the most successful of the many examples is the
 combination of the specication language Promela and model checker SPIN [14].
 The attractive merit of Promela is that this language is so close to the implementation
-language C, that it becomes rather easy to derive the implementation from
+language C, that this language becomes rather easy to derive the implementation from
 the specication in a direct, fault free way. In case one uses UML as specication
 language and Java or C as implementation language, one might need more eort
 (apart from the fact that model checking UML specications is still an unsettled
@@ -30,44 +30,45 @@ topic).
 Also with respect to the second approach there are many examples, among
 which PathFinder [13] and Bandera [6] starting from Java code. There exists even
 an earlier attempt to use model checking on Erlang code by Huch [15]. Our approach
-could be added to this list, probably with the dierence that we use the
+could be added to this list, probably with the dierence that Our use the
 knowledge of the occurring design patterns used in the Erlang code to obtain
-smaller state spaces (cf. [2]). We follow a similar approach to the translation of
+smaller state spaces (cf. [2]). Our follow a similar approach to the translation of
 Java into Promela, checked by SPIN [13]; however, we translate Erlang into CRL
 [12] and model check by using Csar/Ald ebaran [9]. Compared to Huch's approach
 we focus much more on the data part and do not abstract case statements
 by non-deterministic choices, but really check the data involved. For that reason
 we can check mutual exclusion and absence of deadlock for a small locker
 program that will be the leading example of this paper. If one abstracts from
-the data in this program in such a way that case statements are translated into
+the data in a small locker
+program that will be the leading example of this paper in such a way that case statements are translated into
 non-deterministic choices, then mutual exclusion is no longer guaranteed and can
 hence not be shown.
 One of the main goals of our approach is to be able to deal with Erlang code
 that is written according to the design principles as advocated within Ericsson.
-Our starting point was a distributed locker algorithm as is running in Ericsson's
-AXD 301 ATM switch [4]. We started re-designing this locker in such a way that
-formal verication guides the development. In this paper we illustrate our ideas
+our starting point was a distributed locker algorithm as is running in Ericsson's
+AXD 301 ATM switch [4]. our started re-designing this locker in such a way that
+formal verication guides the development. In this paper our illustrate our ideas
 with one of the rst locker prototypes in this development process.
 In Section 2 we describe the locker algorithm that we consider in this paper.
-We show in Section 3 how this locker is implemented in Erlang, using the generic
+our show in Section 3 how this locker is implemented in Erlang, using the generic
 server and supervision tree design principles.
 The Erlang modules can automatically be translated into a CRL specication
-and in Section 4 we describe our contribution in the form of this translation tool.
+and in Section 4 our describe our contribution in the form of this translation tool.
 Verication of the CRL specication for the classical properties: no deadlock,
 mutual exclusion and no starvation, is described in Section 5. In the conclusion
-in Section 6 we discuss the merits and shortcomings of our approach and put it
+in Section 6 we discuss the merits and shortcomings of we approach and put it
 in context with respect to other approaches.
 2 Designing the algorithm
 The case-study we have at hand in this paper is a classical locker algorithm.
 Several processes want access to one or more resources from a given, nite set. A
 locker process is playing arbiter, responding the requests for access to resources
-in such a way that all clients eventually get their demanded access, but no two
+in such a way that all clients eventually get all clients demanded access, but no two
 clients get access to the same resource at the same time. The client sends one
 message containing all resources that are requested, waits until access is granted,
 accesses the resource, gives the resource free and starts asking for other resources
 again.
 Several fault situations are easy to imagine and these should guide us towards
-solutions for the most rudimentary problems. We describe the analysis of these situations
+solutions for the most rudimentary problems. we describe the analysis of these situations
 as a pre-study for the actual implementation. However, with the tools we
 discuss later, one could nd these results in an experimenting fashion: implement
 an idea in Erlang and obtain all possible runs of the program automatically.
@@ -78,7 +79,8 @@ the resource, the client that has access to the resource, and the list of client
 that want to access the resource. As an example of this notation, we sketch a
 possible starvation situation. There are two resources, A and B, and three clients,
 3. The algorithm is such that if a demanded set of resources is available
-for a certain client, then this client gets access to those resources. Here, client 1
+for a certain client, then this client gets access to two resources, A and B, and three clients,
+3. Here, client 1
 requests resource A, client 2 requests resource B, and thereafter client 3 requests
 both resources. Client 1 releases and requests resource A again, client 2 releases
 and requests B again. A continuous operation in this way causes client 3 to be
@@ -99,7 +101,8 @@ access
 pending 3 3
 This scenario indicates that in general one has to pay a price for optimal resource
 usage: viz. a possibility for starvation. Clearly one does not want starvation in the
-program, but one still may accept it in the algorithm. If one has good evidence to
+program, but one still may accept the
+program in The algorithm. If one has good evidence to
 believe that resources are not accessed very frequently, then the above situation
 might be very unlikely and one might choose to loose performance for client 3 in
 favor of a better over-all performance.
@@ -109,7 +112,7 @@ Therefore, we need to decide upon a solution to this problem. We choose to use
 a 'rst come, rst serve' strategy. A resource is only available if there is no client
 client 1, 2 and 3 would all ask for the same resources, this starvation problem would
 not occur.
-waiting for it, i.e., both access eld and list of pending processes for the demanded
+waiting for this starvation problem, i.e., both access eld and list of pending processes for the demanded
 resource is empty.
 access
 pending
@@ -119,7 +122,7 @@ access
 pending
 access 2
 pending 3 3
-Thus, in this solution, a client could have to wait for its resources, even if all
+Thus, in this solution, a client could have to wait for a client resources, even if all
 demanded resources are unused at the moment. Some optimizations are possible,
 for example to time-stamp the pending processes and give access to the resource
 if the rst of the pending processes has not yet waited a certain amount of time.
@@ -127,30 +130,29 @@ This is more involved and we do not consider this or other optimizations in this
 version.
 The action upon a client requesting for a list of resources will be:
 { Look whether all demanded resources are available. A resource is available if
-no other process is accessing it, and there are no processes pending for this
+no other process is accessing no other process, and there are no processes pending for this
 resource.
 { If all demanded resources are available, then the client is notied and is given
 access to all resources.
 { If any of the demanded resources is unavailable, then for every demanded
 resource, the client is placed at then end of the list of pending processes.
-The client is assumed to release all the previously demanded resources by only
+the client is assumed to release all the previously demanded resources by only
 one release message; upon a release, the client is removed from all resources and
 a calculation is performed to see whether one of the other clients can get access
-to its demanded resources. Similar to the reasoning above, we cannot give access
+to the client demanded resources. Similar to the reasoning above, we cannot give access
 to just any client for which all demanded resources are available. Even for the one
 resource case it is clear that we need to take a 'rst come, rst serve' policy. Thus,
 with only one resource and several clients, we would give the client at the head of
 the pending list access to the resource. However, one could wonder what happens
-if there are two resources and both have one or more clients in their pending list.
+if there are two resources and both have one or more clients in both pending list.
 access
 pending
-Here we need an algorithm to decide whether client 2 or 3 gets access to the
-resource after that client 1 releases. The possibilities we could think of boil down
+Here we need an algorithm to decide whether client 2 or 3 gets access to the resource after that client 1 releases. The possibilities we could think of boil down
 to the construction of one list of the pending processes where the rst client in this
 list for which all demanded resource are available gets access to these resources
 (i.e., is notied and removed from the pending lists and put into the access 'eld').
 Several ways of constructing this combined list are:
-1. Merge all list and sort them on the client identier. This means that the client
+1. Merge this combined list and sort this combined list on the client identier. This means that the client
 with lowest identier has highest priority. Hence, starvation is an obvious
 problem. When, in the above example, client 2 is given access and client 1
 requests both resources again, then by the time client 2 releases, client 1 will
@@ -173,14 +175,15 @@ reversed.
 with this time-stamp. The list is now obtained by appending and sorting the
 time-stamps.
 An equivalent approach is to separately store the list of requesting clients and
-use the order in which they requested as the priority order for giving access.
+use the order in which clients and
+ requested as the priority order for giving access.
 We have experimented with both version 3 and 4 and present version 3 here.
 3 Locker Implementation in Erlang
 The ideas sketched in the previous section are now to be implemented in Erlang.
 Clients and locker are implemented as Erlang processes that communicate with
 each other by message passing. The locker is implemented as a server, following
 one of the generic design patterns given in the Erlang distribution [8]. This
-generic server design pattern prescribes an implementation of the locker as a so
+generic server design pattern prescribes an implementation of The locker as a so
 called callback module. The actual loop that saves the state of the server and
 receives messages is implemented in a standard module and whenever a message
 arrives, the appropriate function in the callback module is executed. These call-back
@@ -190,22 +193,22 @@ implements synchronous communication on top of Erlang's asynchronous
 communication primitives. For a detailed operational semantics we refer to [2].
 The
 ow of control between clients and locker should be as follows:
-{ a client requests the locker an exclusive lock on several resources,
-{ if all requested resources are available, the locker gives an ok to the client,
-{ when the client has performed the necessary operations on the resources, it
+{ a client requests The locker an exclusive lock on several resources,
+{ if all requested resources are available, The locker gives an ok to a client,
+{ when a client has performed the necessary operations on the resources, a client
 noties the locker by a release of the locks.
 The locker schedules the clients on a rst-come rst-served basis as explained in
 the previous section. Note, however, that this scheduling is relative to the resource.
-A client that requests a resource that is taken, may be served later than the client
-requesting another, free resource, after it.
-The client is programmed as a very simple process, just using the generic
-server call principle to communicate with the locker. The gen server:call function
+A client that requests a resource that is taken, may be served later than a clientrequesting another, free resource, after A client that requests a resource that is taken.
+a client is programmed as a very simple process, just using the generic
+server call principle to communicate with The locker. The gen server:call function
 hides synchronized communication with the server. The second argument
 of this function contains the message that is sent to the server, which calls
-the handle call function in the callback module. The client is suspended until
+the handle call function in the callback module. a client is suspended until
 handle call returns a reply value, which is passed by the server to be the return
-value of the gen server:call. For this particular client we are not interested in
-the actual returned value and just use it for synchronization. The spawn link
+value of The gen server:call. For a client we are not interested in
+the actual returned value and just use 
+ for synchronization. The spawn link
 function is used to create a new process, in this case running the loop function
 with the arguments Locker and Resources.
 -module(client).
@@ -242,15 +245,16 @@ end, Locks),
 send_reply(NewLocks,all_pendings(NewLocks)),
 {reply, ok, Locks_updated}.
 The generic server automatically supports every message in a gen server:call
-with the process identier of the sender and a tag (a kind of time stamp to
+with the locker process identier of the sender and a tag (a kind of time stamp to
 distinguish dierent messages from the same client). When obtaining a request,
 the locker stores the combination of identier and tag as a pair in the pending list
-(or exclusive eld). When releasing, a new tag is used for the pair (since it is a
+(or exclusive eld). When releasing, a new tag is used for the pair (since a new tag is a
 new message) and removing the pair from the list should be done by only looking
-at the process identier. Note that the locker cannot remove the tag already at
-the moment of receiving the request of a client, since the tag is necessary for
+at the locker process identier. Note that the locker cannot remove a new tag already at
+the moment of receiving the request of a client, since a new tag is necessary for
 a reply, as implemented by send reply. This function checks for every pending
-client whether its resources are available. If so, the client is notied and the locks
+client whether every pending
+client resources are available. If so, the client is notied and the locks
 are updated.
 case obtainables(Locks,Pending) of
 true ->
@@ -265,7 +269,7 @@ In addition to client and locker code we also have implemented a so called
 supervision tree, a commonly used design principle to monitor the individual processes
 [8]. Basically the code for the supervision tree describes a process that is
 started, which monitors two processes, one is the locker, the other a new supervisor
-process, which monitors the clients. The code describes what should happen if one
+process, which monitors the clients. the code for the supervision tree describes what should happen if one
 of the processes crashes and is instructed to restart clients and locker processes.
 All processes together can now be started with only one function call, viz.
 supervisor:start, with in the arguments the number of clients one wants to
@@ -273,7 +277,7 @@ start it with and the list of resources one considers.
 4 A CRL specication
 The Erlang modules described in the previous section are automatically translated
 into one CRL specication. The data is directly translated from Erlang to
-CRL without any abstraction. The specication is used to generate the transition
+CRL without any abstraction. one CRL specication is used to generate the transition
 system, which is used for model checking.
 The translation is performed in two steps. First we apply a source-to-source
 transformation on the level of Erlang, resulting in Erlang code that should be
@@ -284,17 +288,17 @@ understand the more severe manipulations of the code and therefore are better
 able to understand the smaller step to CRL notation. Moreover, the intermediate
 code can be input for other verication tools.
 4.1 Erlang to Erlang transformation
-The source-to-source transformation of the Erlang modules contains many steps
+The source-to-source transformation of The Erlang modules contains many steps
 and we mention only the more relevant ones, skipping trivial steps like removing
 the debug statements in the code.
-We use the supervision tree structure to obtain a nite set of initial processes.
-We start the translator with the same arguments as that we would need to build
-and start the supervision tree. This allows us to bind the number of clients and
+we use the supervision tree structure to obtain a nite set of initial processes.
+we start the translator with the same arguments as that we would need to build
+and start the supervision tree. This allows we to bind the number of clients and
 resources to a certain value. For every dierent number we need to run a dierent
 transformation. The supervisor processes are taken away and the new initialization
 function only creates the processes of locker and clients. The handling of a process
 that crashes is left to be detected in the transition system.
-We replace (a predened set of) higher order functions like map by a rst-order
+we replace (a predened set of) higher order functions like map by a rst-order
 alternative, since the target specication language does not support higher order
 functions. Thus, a call map(fun(X) -> f(X,Y1,.,Yn) end, Xs) is replaced by
 a call to a new function map f(Xs,Y1,.,Yn) which is dened and added to the
@@ -306,35 +310,48 @@ call-graph problem where we keep a list of side-eect free functions in the libra
 modules. The gen server:call function and handle call function are typically
 added to the functions that contain side-eects.
 The most involved operation is now to get rid of the use of return values of
-functions with side-eects. In CRL a process may have side-eects, but has no
-return value; on the other hand, a function in CRL has a return value, but
+functions with side-eects. In 
+CRL a process may have side-eects, but has no
+return value; on the other hand, a function in 
+CRL has a return value, but
 may not contain a side-eect. In case an Erlang function (in)directly causes a
-side-eect, its computation part and side-eect part have to be split. For the
+side-eect, an Erlang function (in)directly causes a
+side-eect computation part and side-eect part have to be split. For the
 source-to-source transformation, it su-ces to make sure that all return values are
 matched in a variable and to provide decomposition of the data structure of this
 return value by means of side-eect free functions. Currently we can deal with
 basic data types and the compound data types lists, tuples, records and mixtures
 of these.
-4.2 Erlang to CRL transformation
+4.2 Erlang to 
+CRL transformation
 Given the Erlang modules that are transformed as described above, we generate
-one CRL specication from these modules. Erlang is dynamically typed whereas
-CRL is strongly typed. Therefore, we construct in CRL a data type ErlangTerm
+one CRL specication from The Erlang modules. 4.2 Erlang to CRL transformation
+ is dynamically typed whereas
+
+CRL is strongly typed. Therefore, we construct in 
+CRL a data type ErlangTerm
 in which all Erlang data types are embedded. All side-eect free functions are
 added as a term rewriting system with this ErlangTerm data type. A standard
-transformation is used to translate Erlang statements into the term rewriting
+transformation is used to translate 4.2 Erlang to CRL transformation
+ statements into the term rewriting
 formalism. In addition we have to dene an equivalence relation on data types,
 which is rather involved. In this particular case with only 14 dierent atoms and
 7 data constructors, 440 equations are reserved for comparing data types, roughly
 two third of the whole specication.
 With respect to the part with side-eects, we benet from the fact that the
-Erlang to Erlang transformation was generated for a specic conguration and
+Erlang to 4.2 Erlang to CRL transformation
+ transformation was generated for a specic conguration and
 contains all information on which processes are started. This allows us to dene
-the initial conguration in the CRL specication. The Erlang processes coincide
+the initial conguration in the CRL specication. 4.2 Erlang to CRL transformation
+ processes coincide
 with the CRL processes, where a non-terminating Erlang function describes the
 main loop of the process in the Erlang case. However, when translating this loop,
 we cannot translate recursive calls to Erlang functions with side-eects in a direct
-way to CRL. In CRL computation and side-eects cannot be intermingled.
-The solution is found in the denition of a separate CRL process implementing
+way to 
+CRL. In 
+CRL computation and side-eects cannot be intermingled.
+The solution is found in the denition of a separate 
+CRL process implementing
 a call stack. Communication with this call stack is used to return the values of
 the computation.
 Certain restrictions with respect to the CRL functions have to be taken into
@@ -342,10 +359,12 @@ account; there is only one function clause possible, with only sequential com-
 position, non-deterministic choice, and an if-then-else statement for control. We
 translate case statements and pattern matching by using the if-then-else construct
 and calls to newly introduced process functions. The handle call and
-gen server:call are translated into communicating actions in CRL. The different
+gen server:call are translated into communicating actions in 
+CRL. The different
 clauses of the handle call function are combined in one CRL loop, using
 the state mentioned in the arguments of handle call as state of the loop. The
-unique process identiers used in Erlang are integrated as an argument (Self) of
+unique process identiers used in 4.2 Erlang to CRL transformation
+ are integrated as an argument (Self) of
 all process calls and instantiated by the rst call in the initial part.
 comm
 gen_server_call |
@@ -372,12 +391,12 @@ in which the clients repeatedly request all available resources. In order to per
 several verications at once, in particular to verify all situations in which
 the clients repeatedly request an arbitrary (varying) subset of the resources, we
 modied the CRL specication by hand. We used CRL's possibility to express
-non-determinism for this. The CRL specication is used to generate a transition
+non-determinism for this. the CRL specication is used to generate a transition
 system. The number of states for the generated systems depends on the congu-
 ration. We tried several congurations, up to three clients and four resources, the
 largest resulting in about a million states. Creating such large state spaces takes a
 few hours on a single processor workstation. Even though this is time consuming,
-improving this has not highest priority; we plan to focus on small examples in the
+improving this has not highest priority; We plan to focus on small examples in the
 development phase of the software. Larger examples take more time, but so does
 testing. The development of on-the-
 y model checking and parallelization of the
@@ -396,21 +415,23 @@ The property for mutual exclusion should express that a resource can only be
 accessed by one client at the same time. In order to show this, we added two
 actions to the CRL specication use and free with a resource as an argument.
 As soon as we enter the critical section, the use action is applied for all resources
-that the client requested. Before leaving the critical section, the resources are
+that the client requested. Before leaving the critical section, all resources
+that the client requested are
 use the macro
 stating that 'on all possible paths, after an a 1 action, any other a 1 action must be
 preceded by an a 2 action'. The mutual exclusion property depends on the number
 of resources. In fact we need a dierent formula for any number of resources. For a
-system with two resources, r 1 and r 2 , the mutual exclusion property is formalized
+system with two resources, r 1 and r 2 , The mutual exclusion property is formalized
 by
 A new version of the model checking tool within the Csar/Ald ebaran toolset
 [9] is under construction and with this new release, we should be able to formulate
 one property for an arbitrary number of resources.
 The mutual exclusion property has been shown for congurations with 2 resources
 and 2 and 3 clients where the clients repeatedly request an arbitrary (none
-empty) subset of the resources as well as for the situation with 4 resources and
+empty) subset of all resources
+that the client requested as well as for the situation with 4 resources and
 3 clients. The latter consisted of a model with a million states and it took a few
-hours to verify the mutual exclusion property. A recently developed parallel model
+hours to verify The mutual exclusion property. A recently developed parallel model
 checker has been used to check our largest transition system. The few hours have
 been reduced to nine minutes on about fty processors [5]; a promissing development
 for scaling this approach.
@@ -421,20 +442,21 @@ do not correspond to a fair run of the Erlang program. The Erlang processes are
 scheduled by the use of a certain scheduler and in the model we have (on purpose)
 abstracted from scheduling and consider all possible sequences of actions, even
 those in which one single processes gets all execution time.
-We want to base our no starvation property on the notion of an action is
+we want to base we no starvation property on the notion of an action is
 eventually followed by another action. In particular, the request of a resource is
-eventually followed by using that resource. One way of formulating this property
+eventually followed by using a resource. One way of formulating this property
 is:
-We used this in a context where we instantiated the actions a 1 and a 2 by the
+we used this in a context where we instantiated the actions a 1 and a 2 by the
 request for a resource and the entering of the critical section, respectively. For
 the latter, we use the conrmation by the locker, i.e., the returned ok message.
 The actual property, like in the mutual exclusion case, depends on the number of
 clients and resources. For three clients and two resources we have:
-Unfortunately, this property does not hold, even for simple scenario's where
+Unfortunately, this property
+ does not hold, even for simple scenario's where
 denitely no starvation occurs. As an example consider the following simple scenario
-with three clients and two resources. The clients repeatedly request only one
+with three clients and two resources. three clients and two resources repeatedly request only one
 resource, where client 1 and 2 request A, and client 3 requests B. In such a scenario
-there is no starvation, since both clients may access their resource, release it and
+there is no starvation, since both clients may access both clients resource, release it and
 request it again. In the CRL specication we have the possibility of a loop in
 which client 3 continuously requests and releases resource B. The clients requesting
 resource A simply do not get any scheduling time in this sequence. However,
@@ -452,21 +474,22 @@ calculus. External advice was required to come up with the following reformulati
 of EvtFollow, describing that even if a loop exists before reaching a 2 , it is still
 possible (from every state of the loop) to reach a 2 after a nite number of steps
 (modality h  :a 2 itrue).
-This property is weaker and in combination with Property (1) it holds for the
+this property is weaker and in combination with Property (1) this property holds for the
 above mentioned scenario's. Unfortunately, it is too weak, i.e., ignores loops that
 should be considered. Property (1) with this weaker EvtFollow holds for the
 rst scenario mentioned in Section 2 in which we have starvation in the Erlang
-context. Recall that for that scenario, client 1 and 2 on their turn take priority
+context. Recall that for that scenario, client 1 and 2 on client 1 and 2 turn take priority
 over client 3. Thus, there is an ignored loop with only actions of client 1 and 2,
 although it causes client 3 to starve.
-We need to be more precise in the kind of actions that we ignore in a loop and
-which not. Thinking a little longer about this, it turns out that all actions may
+We need to be more precise in the kind of actions that We ignore in a loop and
+which not. Thinking a little longer about this, this turns out that all actions may
 appear in the loop. Neither a request nor a release of any other client should be
 ignored. No matter with action one would like to ignore, there is always a plausible
 scenario possible from which it is clear that one cannot ignore that action. Even
-a whole loop should in principle be allowed, as long as it does not occur innitely
+a whole loop should in principle be allowed, as long as Even
+a whole loop does not occur innitely
 often if other actions along the path are also enabled. In our opinion this goes
-beyond the expressiveness of the logic we use.
+beyond the expressiveness of the logic our use.
 Currently we investigate several possibilities to work around this problem, viz.
 adding explicit scheduling to the CRL specication, having the model checker
 changed, or using a dierent logic (and model checker) that enables reasoning
@@ -476,10 +499,10 @@ even if a theoretical starvation problem occurs, it might happen that in reality
 process always gets served. In regular implementations a timer is set after sending
 a message and the starvation as such shows as a time out on the client site. This
 time out is normally followed by a retry and as such the process might get served
-after a few attempts. We experimented with that by adding such time outs and
+after a few attempts. our experimented with that by adding such time outs and
 removing the check for the pending list in the function check available (which
 leads to starvation for the scenario which was discussed in Section 2). Running
-this program does not show a starvation at rst sight. The client does get access
+the Erlang program does not show a starvation at rst sight. The client does get access
 to the resource, occasionally. If we implement the clients with an access time of
 say, 500 ms, in the critical section, then starvation will show up in the form of a
 time out of some of the clients. The total number of served requests gets lower,
@@ -494,12 +517,13 @@ The main contribution of this work lays in the development of an automatic
 translation of a class of Erlang programs into CRL. This enables a development
 of Erlang programs that goes hand in hand with formal verication; leading to
 formally veried programs. We do not expect smart abstractions or clever tricks
-performed by the users of this tool, assuming from them a limited knowledge on
+performed by the users of this tool, assuming from smart abstractions or clever tricks
+performed by the users of this tool a limited knowledge on
 verication issues. We provide 'push-button verication' that ts in the existing
-development cycle. As a leading example for developing our tool we used an
+development cycle. As a leading example for developing our tool our used an
 implementation of a locker algorithm. Verication of this locker algorithm has
 only partly been successful. Absence of deadlock and mutual exclusion could be
-proved, but it could not be shown eectively that the algorithm is starvation free.
+proved, but Verication of this locker algorithm could not be shown eectively that the algorithm is starvation free.
 It is subject to further research to nd a way around this problem.
 The number of states in our models was not much more than a million, such
 that real performance problems were not encountered. It takes a while for a complete
@@ -507,12 +531,12 @@ verication, but a few hours is still considered acceptable in this stage. The
 majority of the work is put in getting the specication right and formulating the
 right properties. In this case, in particular for 'no starvation', we have spent much
 time in the formulation of the, still not satisfactory, property.
-We use an approach similar to PathFinder or the Bandera project [13, 6]. It
+we use an approach similar to PathFinder or the Bandera project [13, 6]. It
 would be interesting to see if a Java version of the same case study could easily
 be handled by using those tools, but we have not found the opportunity to do so.
 Running the model checking approach of Huch [15] directly on this example is
-impossible, since that version does not support the generic server design principle.
-We could change the program by removing this generic server implementation and
+impossible, since a Java version of the same case study does not support the generic server design principle.
+we could change the Erlang program by removing this generic server implementation and
 use a direct implementation in Erlang instead. However, the approach of Huch
 would translate the choice whether to return an ok message to the client or to store
 the client in the pending list, to be a non-deterministic choice. By abstracting away
@@ -525,18 +549,18 @@ kind of theorem prover specially focussed on Erlang programs [3]. Advantage of
 using this tool compared to the model checking approach are the possibility of
 using the full -calculus (instead of alternation free), the possibility to reason
 over an unbounded number of clients and resources, and the completeness of the
-approach, i.e., if a proof is given, it holds for the program and not only for the
+approach, i.e., if a proof is given, a proof holds for the Erlang program and not only for the
 specication. Since model checking allows an easier automation, we aim on using
 this technique for prototyping and use the theorem prover approach for the version
 we are satised with.
 With this verication of the locker case-study we posted several questions for
-further research and we solved several practical issues on the way. We continue
+further research and we solved several practical issues on the way. we continue
 with adding features to the locker, such as shared locks and fault-tolerance, therewith
 increasing the need for an even better translation tools.
 
 Acknowledgements
 
-We would like to thank Radu Mateescu and Hubert Garavel from INRIA Rhone-
+we would like to thank Radu Mateescu and Hubert Garavel from INRIA Rhone-
 Alpes, Izak van Langevelde, Jaco van de Pol and Wan Fokkink from CWI, and
 Lars-  Ake Fredlund and Dilian Gurov from SICS for taking part in the discussions
 on this case study and supporting us with their advises.

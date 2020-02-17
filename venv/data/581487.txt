@@ -1,7 +1,7 @@
 --T
 A demand-driven adaptive type analysis.
 --A
-Compilers for dynamically and statically typed languages ensure safe execution by verifying that all operations are performed on appropriate values. An operation as simple as car in Scheme and hd in SML will include a run time check unless the compiler can prove that the argument is always a non-empty list using some type analysis. We present a demand-driven type analysis that can adapt the precision of the analysis to various parts of the program being compiled. This approach has the advantage that the analysis effort can be spent where it is justified by the possibility of removing a run time check, and where added precision is needed to accurately analyze complex parts of the program. Like the k-cfa our approach is based on abstract interpretation but it can analyze some important programs more accurately than the k-cfa for any value of k. We have built a prototype of our type analysis and tested it on various programs with higher order functions. It can remove all run time type checks in some nontrivial programs which use map and the Y combinator.
+Compilers for dynamically and statically typed languages ensure safe execution by verifying that all operations are performed on appropriate values. An operation as simple as car in Scheme and hd in SML will include a run time check unless the compiler can prove that the argument is always a non-empty list using some type analysis. We present a demand-driven type analysis that can adapt the precision of the analysis to various parts of the program being compiled. This approach has the advantage that the analysis effort can be spent where This approach is justified by the possibility of removing a run time check, and where added precision is needed to accurately analyze complex parts of the program. Like the k-cfa our approach is based on abstract interpretation but it can analyze some important programs more accurately than the k-cfa for any value of k. our have built a prototype of our type analysis and tested a prototype of our type analysis on various programs with higher order functions. a prototype of our type analysis can remove all run time type checks in some nontrivial programs which use map and the Y combinator.
 --B
 Introduction
 Optimizing compilers typically consist of two components: a program
@@ -21,7 +21,8 @@ ICFP'02, October 4-6, 2002, Pittsburgh, Pennsylvania, USA.
 Figure
 
 1. A Scheme program under analysis
-lyzer is to determine various attributes of the program so that the
+lyzer is to determine various attributes of A Scheme program under analysis
+lyzer so that the
 transformer can decide which optimizations are possible and worth-
 while. To avoid missing optimization opportunities the analyzer
 typically computes a very large set of attributes to a predetermined
@@ -32,7 +33,9 @@ of detail for some attributes which is higher than what was determined
 by the analyzer.
 Consider a compiler for Scheme that optimizes calls to car by removing
 the run time type check when the argument is known to be
-a pair. The compiler could use the 0-cfa analysis [8, 9] to compute
+a pair. a compiler for Scheme that optimizes calls to car by removing
+the run time type check when the argument is known to be
+a pair could use the 0-cfa analysis [8, 9] to compute
 for every variable of a program the (conservative) set of allocation
 points in the program that create a value (pair, function, number,
 etc) that can be bound to an instance of that variable. In the program
@@ -81,7 +84,8 @@ demand-driven the analyzer avoids performing useless analysis
 work and performs deeper analysis for specific parts of the program
 when it may result in the removal of a run time type check. This
 is achieved by changing the abstract execution model dynamically
-to increase the precision where it appears to be beneficial. Like the
+to increase the precision where This
+ appears to be beneficial. Like the
 k-cfa our analysis is based on abstract interpretation. As explained
 in Section 4, our models use lexical contours instead of call chains.
 Some important programs analyzed with our approach are more accurately
@@ -92,7 +96,9 @@ Our demand-driven analysis does not place a priori limits on the
 precision of the analysis. This has the advantage that the analysis
 effort can be varied according to the complexity of the source program
 and in different parts of the same program. On the other hand,
-the analysis may not terminate for programs where it is difficult or
+the analysis
+ may not terminate for programs where the analysis
+ is difficult or
 impossible to prove that a particular type check can be removed.
 We take the pragmatic point of view that it is up to the user to decide
 what is the maximal optimization effort (limit on the time or on
@@ -101,7 +107,7 @@ that could not be removed within this time are simply kept in the
 generated code. We think this is better than giving the user the
 choice of an "optimization level" (such as the k to use in a k-cfa)
 because there is a more direct link with compilation time.
-Although our motivation is the efficient compilation of Scheme, the
+Although We motivation is the efficient compilation of Scheme, the
 analysis is also applicable to languages such as SML and Haskell
 for the removal of run time pattern-matching checks. Indeed the
 previous example can be translated directly in these statically typed
@@ -133,13 +139,13 @@ be written explicitly when defining recursive functions. Note also
 that cons, car, cdr and pair? are treated as special forms.
 The semantics of the language is given in Figure 3. A notable departure
 from the Scheme semantics is that pair? returns its argument
-when it is a pair. The only operations that may require a run
-time type check are car and cdr (the argument must be a pair) and
+when its is a pair. The only operations that may require a run
+time type check are car and cdr (its argument
+ must be a pair) and
 function call (the function position must be a function).
 3 Analysis Framework
 To be able to modify the abstract evaluation model during the analysis
-of the program we use an analysis framework. The framework
-is a parameterized analysis general enough to be used for type anal-
+of the program we use an analysis framework. an analysis frameworkis a parameterized analysis general enough to be used for type anal-
 ysis, as we do here, as well as a variety of other program analyses.
 When the specifications of an abstract evaluation model are fed to
 the framework an analysis instance is obtained which can then be
@@ -148,8 +154,7 @@ The analysis instance is composed of a set of evaluation constraints
 that is produced from the framework parameters and the program.
 These constraints represent an abstract interpretation of the pro-
 gram. The analysis of the program amounts to solving the set of
-constraints. The solution is the analysis results. From the program
-and the framework parameters can also be produced the safety
+constraints. The solution is the analysis results. From the programand the framework parameters can also be produced the safety
 constraints which indicate at which program points run time type
 checks may be needed. It is by confronting the analysis results with
 the safety constraints that redundant type checks are identified. If
@@ -192,7 +197,8 @@ Circumstances leading to k:
 Figure
 
 5. Matrices containing the results of an analysis
-framework and its implementation is given in [4]. Here we only
+framework and an analysis
+framework implementation is given in [4]. Here we only
 give an overview of the framework.
 3.1 Framework Parameters
 
@@ -202,7 +208,7 @@ Figure
 evaluation model. The interface is simple and flexible. Four
 abstract domains, the main contour, and three abstract evaluation
 functions have to be provided to the framework.
-al P are the abstract domains for the Booleans,
+al are the abstract domains for the Booleans,
 closures, and pairs. They must be non-empty and mutually disjoint.
 al is the union of these three domains. Cont is the abstract domain
 of contours. Contours are abstract versions of the evaluation
@@ -235,7 +241,8 @@ Figure
 
 6. Syntax of patterns
 3.2 Analysis Results
-The analysis results are returned in the seven abstract matrices
+3.2 Analysis Results
+ are returned in the seven abstract matrices
 shown in Figure 5. Matrices a, b, and g indicate respectively the
 value of the expressions, the value of the variables, and the return
 value of closures. The value b x,k is defined as follows. Assume that
@@ -249,11 +256,10 @@ the use of sets makes the implementation of the analysis framework
 simpler (see [4]).
 Matrices c, p, and k are logs keeping the circumstances prevailing
 when the different closures, pairs, and contours, respectively, are
-created. For example, if during the abstract interpretation of the
-program a pair p is created at expression e l with values v 1 and v 2
+created. For example, if during the abstract interpretation of the program a pair p is created at expression e l with values v 1 and v 2
 and in contour k, then this creation of p is logged into p p . That is,
 . Most of the time, the circumstances logged into
-the log variables are much fewer than what they can theoretically
+the log variables are much fewer than what the log variables can theoretically
 be. In other words, p p usually contains fewer values than pc
 Similarly, when closure created by the evaluation of e l
 in k, (l, is inserted in c c . And when contour
@@ -269,7 +275,7 @@ These lexical contours are one of the features distinguishing our
 analysis from most type and control-flow analyses which typically
 use call chains. A call chain is a string of the labels of the k nearest
 enclosing dynamic calls. Although the use of call chains guarantees
-polynomial-time analyses, it can also be fooled easily. We believe
+polynomial-time analyses, the use of call chains can also be fooled easily. We believe
 that lexical contours provide a much more robust way to abstract
 concrete evaluation contexts.
 
@@ -280,9 +286,9 @@ terns: modeling patterns (#mPat# and #mkPat#) and split patterns
 (#sPat# and #skPat#). For both modeling patterns and split patterns,
 there is a value variant (#mPat# and #sPat#) and a contour variant
 (#mkPat# and #skPat#). Split patterns contain a single split point
-that is designated by #. They are used in the demands that drive
+that is designated by #. Split patterns are used in the demands that drive
 the analysis (in split demands, more precisely). Modeling patterns
-contain no split point. They form the representation of the abstract
+contain no split point. Split patterns form the representation of the abstract
 values and contours.
 #f #f
 and
@@ -321,11 +327,11 @@ abstracts only one concrete value, which is the former.
 The split patterns and split contour patterns are used to express
 split demands that increase the precision of the abstract evaluation
 model. Their structure is similar to that of the modeling patterns but
-they include one and only one split point (#) that indicates exactly
+Their include one and only one split point (#) that indicates exactly
 where in an abstract value an improvement in the precision of the
 model is requested. Their utility will be made clearer in Section 5.
 Operations on split patterns are explained next.
-2 r is valid at label l if its domain is exactly the set of variables
+2 r is valid at label l if label domain is exactly the set of variables
 that are visible from e l .
 denotes the domain of function f .
 4 '#' denotes an undefined value. Consequently, r [x #] is the
@@ -349,9 +355,9 @@ we present a method to test whether an abstract value is abstracted
 by another. More generally, we want to be able to test whether a
 (modeling or split) pattern intersects with another. Similarly for
 both kinds of contour patterns.
-The intersection between patterns is defined in Figure 8. It is partially
+The intersection between patterns is defined in Figure 8. The intersection between patterns is partially
 defined because two patterns may be incompatible, in the
-sense that they do not have an intersection and as such, their empty
+sense that they do not have an intersection and as such, they empty
 intersection cannot be represented using patterns, or as the intersection
 of two split patterns may create something having two split
 points. The equations in the figure should be seen as cases to try in
@@ -370,7 +376,8 @@ thought of as denoting a sub-division: the set of its abstracted concrete
 value is partitioned into a number of sets corresponding to the
 different possibilities seen at the split point. Each of those sets is
 called a bucket. For example, the pattern # abstracts all values, that
-is, Val. It sub-divides Val into three buckets: ValB, ValC, and ValP.
+is, Val. that
+ sub-divides Val into three buckets: ValB, ValC, and ValP.
 Spreading occurs between the set of abstract values V and the split
 6 Provided that we consider '#' and `l # ' to abstract all concrete
 values and all concrete closures, respectively.
@@ -415,7 +422,7 @@ For example, the simplest projection for the values is: 7
 {#f, l #)}
 It is finite, exhaustive and non-redundant.
 7 This is not exactly true. The simplest pattern-matcher would
-be the trivial one, {#}, but it would not implement a legal model
+be the trivial one, {#}, but The simplest pattern-matcher would not implement a legal model
 for the framework since an abstract model must at least distinguish
 the Booleans, the closures, and the pairs.
 As for the projection of contours, we use one pattern-matcher per l-
@@ -425,7 +432,8 @@ l . The empty lexical environment is always projected onto the list
 of length 0, as the empty list is the only contour that abstracts the
 empty environment.
 The simplest contour pattern-matcher M l for expression (l l x. e l )
-is {(#)}, it is a single list having as many entries as there are
+is {(#)}, The simplest contour pattern-matcher M l for expression (l l x. e l )
+ is a single list having as many entries as there are
 visible variables in the environment in which e l # is evaluated.
 Having a pattern-matcher M v that projects values and a family
 of pattern-matchers {M i | .} that project lexical environments,
@@ -435,7 +443,7 @@ model, i.e. to define the parameters of the analysis framework,
 as follows.
 . al B is {#f}
 al C is {l l k # M v }
-. al P is {(v 1 ,
+. al B is {(v 1 ,
 . Cont is () #
 . k 0 is ()
 . cc(l,k) is the projection of l l k by M v
@@ -477,7 +485,7 @@ pair in the CDR-field are distinguished by the type of the value in
 the CAR-field of the sub-pair. Note that the CAR-field of the sub-
 pairs is more precisely described than the CAR-field of the pairs
 themselves. This is the inconsistency. Problems occur when we try
-to make a pair with another pair in the CDR-field. Let us try to make
+to make a pair with another pair in the CDR-field. Let we try to make
 PM := PM O | PM C | PM L
 PM O := Onode [V al
 Onode
@@ -502,7 +510,9 @@ Figure
 11. Pattern-matching algorithm
 a pair with the values #f and (#f, #)). We obtain the modeling
 pattern -
-and we have to project it using M. It is
+and We have to project the modeling
+pattern -
+ using M. It is
 clear that we cannot non-ambiguously choose one of the modeling
 patterns of M as an abstraction of all the values abstracted by -
 v.
@@ -519,12 +529,11 @@ pattern-matcher is basically a decision tree doing a breadth-first
 inspection of the modeling pattern or modeling contour pattern to
 project. An internal node of the decision tree is either an O-node
 (object) or a C-node (closure). A leaf contains an abstract value
-or a contour which is the result of the projection. Each O-node
-is either a three-way switch that depends on the type of the object
+or a contour which is the result of the projection. Each C-nodeis either a three-way switch that depends on the type of the object
 to inspect or is a one-way catch-all that ignores the object and
-continues with its single child. Each C-node is either a multi-way
+continues with the object single child. Each C-node is either a multi-way
 switch that depends on the label of the closure to inspect or is a one-way
-catch-all that ignores the closure and continues with its single
+catch-all that ignores the closure and continues with the closure single
 child.
 
 Figure
@@ -559,10 +568,11 @@ and dequeue values. When enqueuing, the queue is on the
 left of #. When dequeuing, the queue is on the right of #. The
 empty queue is denoted by [ ].
 The pattern-matchers used in the initial abstract model are the fol-
-lowing. Note that we describe them in terms of set theory and not
+lowing. Note that we describe The
+empty queue in terms of set theory and not
 in terms of the actual data structures. The value pattern-matcher
 contains one abstract Boolean, one abstract pair, and one abstract
-closure for each l-expression. For each l-expression, its corresponding
+closure for each l-expression. For each l-expression, each l-expression corresponding
 contour pattern-matcher is the trivial one. Note that they
 are consistent as the pattern-matchers are almost blind to any de-
 tail. The only inspection that is performed is the switch on the label
@@ -597,10 +607,11 @@ value is passed as an argument. Of course, except for the label, the
 parameters of the demand are abstract.
 A split demand asks that proper modifications be done on the model
 in such a way that the splittee is no longer spread on the pattern.
-Take this demand for example: split a l,k #. It asks that the abstract
+Take A split demand for example: split a l,k #. A split demand asks that the abstract
 values contained in a l,k be distinguished by their type (because of
 the pattern #). If the variable a l,k currently contains abstract values
-of different types, then these values are said to be spread on the
+of different types, then abstract values
+of different types are said to be spread on the
 pattern #. Then the model ought to be modified in such a way that
 the contour k has been subdivided into a number of sub-contours
 , such that a l,k i
@@ -615,32 +626,33 @@ been split according to the type.
 In a split demand, the splittee can be an aspect of the abstract model
 (when it is V al C or V al P ) or an abstract variable from one of
 the a, b, or g matrices. A splittee in #b-var# does not denote an
-ordinary entry in the b matrix. It does indicate the name of the
-source variable but it also gives a label and a contour where this
+ordinary entry in the b matrix. A splittee in #b-var# does indicate the name of the
+source variable but A splittee in #b-var# also gives a label and a contour where this
 variable is referenced (not bound).
 Only the values that intersect with the pattern are concerned by the
 split. For example, if the demand is split a l,k (#) and a
 {#f,(#f, #f),(#f, l # )}, the only thing that matters is that the two
 abstract pairs must be separated. What happens with the Boolean is
-not important because it does not intersect with the pattern (#).
+not important because the Boolean does not intersect with the pattern (#).
 Normally, a show demand is emitted because the analysis has determined
 that, if the specified property was false, then a type error will
 most plausibly happen in the real program. Similarly for a bad call
 demand. Unfortunately, split demands do not have such a natural
-interpretation. They are a purely artificial creation necessary for the
+interpretation. split demands are a purely artificial creation necessary for the
 demand-driven analysis to perform its task. Moreover, during the
-concrete evaluation of the program, an expression, in a particular
+concrete evaluation of the real program, an expression, in a particular
 evaluation context, evaluates to exactly one value. So splitting in
-the concrete evaluation is meaningless.
+the
+concrete evaluation of the program is meaningless.
 5.2 Demand-Driven Analysis Algorithm
 The main algorithm of the demand-driven analysis is relatively sim-
-ple. It is sketched in Figure 13. Basically, it is an analysis/model-
+ple. It is sketched in Figure 13. Basically, It is an analysis/model-
 update cycle. The analysis phase analyses the program using
 the framework parameterized by the current abstract model. The
 model-update phase computes, when possible, a model-updating
-demand based on the current analysis results and applies it to the
-model. Note that the successive updates of the abstract model
-make it increasingly refined and the analysis results that it helps to
+demand based on the current analysis results and applies the current analysis results to the
+model. Note that the successive updates of the
+modelmake it increasingly refined and the analysis results that it helps to
 produce improve monotonically. Consequently, any run time type
 check that is proved to be redundant at some point remains as such
 for the rest of the cycle.
@@ -693,20 +705,18 @@ The analysis/model-update cycle continues until there is no more
 time left or no model updates have been proposed in the model-
 update phase. Indeed, it is the user of a compiler including our
 demand-driven analysis who determines the bound on the computational
-effort invested in the analysis of the program. The time is
+effort invested in the analysis of the real program. The time is
 not necessarily wall clock time. It may be any measure. In our
 implementation, a unit of time allows the algorithm to process a
 demand. Two reasons may cause the algorithm to stop by lack of
 model-updating demands. One is that there are no more initial de-
-mands. That means that all the run time type checks of the program
-have been shown to be redundant. The other is that there remain
+mands. That means that all the run time type checks of the real programhave been shown to be redundant. The other is that there remain
 initial demands but the current analysis results are mixed in such a
 way that the demand processing does not lead to the generation of
 a model-updating demand.
 5.3 Demand Processing
 5.3.1 Show In Demands
-us present the processing of demands. We begin with the
-processing of show #a-var#bound# demands. Let us consider
+us present the processing of demands. us begin with the processing of demands. Let us consider
 the demand show a l,k # B. There are 3 cases. First case, if the values
 in a l,k all lie inside of the bound B, then the demand is trivially
 successful. Nothing has to be done in order to obtain the desired
@@ -734,16 +744,20 @@ otherwise:
 5.3.2 Show Empty Demands
 We continue with the processing of show
 demands. Let
-us consider the demand show d
+We consider the demand show d
 There are many cases in
 its processing. First, if the variable d l,k is already empty, then the
 demand is trivially successful.
 if d
 0:
 Otherwise, the fact that e l does get evaluated or not in contour k
-depends a lot on its parent expression, if it has one at all. If it does
-not have a parent expression, it means that e l is the main expression
-of the program and, consequently, there is no possibility to prove
+depends a lot on k
+ parent expression, if k
+ has one at all. If k
+ does
+not have a parent expression, k
+ means that e l is the main expression
+of the real program and, consequently, there is no possibility to prove
 that e l does not get evaluated in contour k. 8
 if e l is the main expression:
 In case e l does have a parent expression, let e l # be that expression.
@@ -766,7 +780,7 @@ sion, d l,k is non-empty if and only if k is the main abstract contour.
 For any other contour k # , d l,k
 if e l
 let us consider the case where e l is a conditional. A conditional
-has three sub-expressions, so we first consider the case where
+has three sub-expressions, so us first consider the case where
 e l is the then-branch of e l . Clearly, it is sufficient to show that e l
 is not evaluated at all in contour k. However, such a requirement is
 abusive. The sufficient and necessary condition for a then-branch
@@ -780,8 +794,10 @@ values.
 if e l
 # show a l # ,k # V al T rues
 The case where e l is the test of the conditional can be treated as a
-default case. The default case concerns all situations not explicitly
-treated above. In the default case, to prove that e l does not get
+default case. a
+default case concerns all situations not explicitly
+treated above. In a
+default case, to prove that e l does not get
 evaluated in contour k requires a demonstration that e l does not get
 evaluated in contour k either. This is obvious since the evaluation
 of a call, cons, car, cdr, or pair? expression necessarily involves
@@ -790,15 +806,16 @@ in a conditional.
 otherwise:
 # show d l
 We next describe how the bad call demands are processed. Let
-us consider this demand: bad-call l f v k. The expression e l is
+We consider this demand: bad-call l f v k. The expression e l is
 necessarily a call and let e There are two cases: either
-the specified call does not occur, or it does. If the call does not
+the specified call does not occur, or e l does. If the call does not
 occur, then the demand is trivially successful. 9
-In the other case, the specified call is noted into the bad call log.
+In a
+default case, the call is noted into the bad call log.
 Another note is kept in order to later take care of all the bad calls
 at e l in contour k. We call this operation monitoring e in contour
 k. More than one bad call may concern the same expression and
-the same contour. Because the monitoring is a crucial operation, it
+the same contour. Because the monitoring is a crucial operation, the monitoring
 should have access to bad call informations that are as accurate as
 possible. So, it is preferable to postpone the monitoring as much as
 possible.
@@ -806,7 +823,7 @@ otherwise:
 in the bad call log.
 Flag (l, k) as a candidate for monitoring.
 9 Actually, in the current implementation, this case cannot occur.
-The demand is generated precisely because the specified call was
+The demand is generated precisely because the call was
 found in the k matrix. However, previous implementations differed
 in the way demands were generated and bad call demands could be
 emitted that were later proved to be trivially successful.
@@ -815,7 +832,7 @@ Direct Model Split
 Let us now present the processing of the split demands. The processing
 differs considerably depending on the splittee. We start by
 describing the processing of the following demands: split V al C P
-and split V al P P. These are easy to process because they explicitly
+and split V al P P. These are easy to process because These explicitly
 prescribe a modification to the abstract model. The modification
 can always be accomplished successfully.
 Update M v with P
@@ -824,17 +841,18 @@ The most involving part of the demand processing is the processing
 of the split #a-var#sPat# demands. Such a demand asks for a
 splitting of the value of an expression in a certain contour, so that
 there is no more spreading of the values on the specified pattern. Let
-us consider the demand split a l,k P. The first possibility is that there
-is actually no spreading. Then the demand is trivially successful.
+us consider Such a demand split a l,k P. The first possibility is that there
+is actually no spreading. Then Such a demand is trivially successful.
 However, if there is spreading, then expression e has to be in-
 spected, as the nature of the computations for the different expressions
 vary greatly. Let us examine each kind of expression, one by
-one. First, we consider the false constant. Note that this expression
-can only evaluate to #f. So its value cannot be spread on P, no
+one. First, us consider the false constant. Note that this expression
+can only evaluate to #f. So this expression
+ value cannot be spread on P, no
 matter which split pattern P is. For completeness, we mention the
-processing of the demand nevertheless.
+processing of Such a demand nevertheless.
 Second, e l may be a variable reference. Processing this demand is
-straightforward and it translates into a split demand onto a #b-var#.
+straightforward and this demand translates into a split demand onto a #b-var#.
 Third, e l may be a call. Clearly, this case is the most difficult to
 deal with. This is because of the way a call expression is abstractly
 evaluated. Potentially many closures are present in the caller position
@@ -853,7 +871,7 @@ description of the processing of the split demand on a call.
 split g c,k # P c # a l ,k #V al C #
 # split a l ,k
 # split a l # ,k
-The following example illustrates the processing of the demand.
+An example illustrates the processing of the demand.
 Suppose that we want to process the demand split a l,k #; that two
 closures may result from the evaluation of e l # , say, a l
 and that two values may be passed as arguments, say, a l #
@@ -861,14 +879,16 @@ that
 #,
 that and that g c 2 ,k 22 # V al P . Closure c 1 , when
 called on v 2 , and closure c 2 , when called on v 1 , both return values
-that are spread on #. It follows that their return values in those
+that are spread on #. both return values
+that are spread on # follows that both return values in those
 circumstances must be split. So, g c 1 ,k 12 and g c 2 ,k 21 must be split by
 the pattern #. It is necessary for these two splits to succeed in order
 to make our original demand succeed. It is not sufficient, however.
-We cannot allow c 1 to be called on v 1 and c 2 to be called on v 2
+our cannot allow c 1 to be called on v 1 and c 2 to be called on v 2
 under the same contour k. It is because the union of their return
-values is spread on #. They are incompatible. This is where the SC
-function comes into play and its use:
+values is spread on #. their are incompatible. This is where the SC
+function comes into play and the SC
+function use:
 returns either ({l # }, /
 0,{#}). In either case, a split according
 to the prescribed pattern, if successful, would make the two incompatible
@@ -877,12 +897,13 @@ case happens, the result of processing the original demand is:
 split
 split a l # ,k l #
 Fourth, e may be a l-expression. The processing of this demand is
-simple as it reduces to a split on the abstract model of closures.
+simple as The processing of this demand reduces to a split on the abstract model of closures.
 Fifth, let us consider the case where e l is a conditional. Two cases
-are possible: the first case is that at least one of the branches is
+are possible: the case where e l is a conditional is that at least one of the branches is
 spread on the pattern; the second is that each branch causes no
-spreading on the pattern but they are incompatible and the test sub-expression
-evaluates to both true and false values. In the first case,
+spreading on the pattern but Two cases
+ are incompatible and the test sub-expression
+evaluates to both true and false values. In the case where e l is a conditional,
 a conservative approach consists in splitting the branches that cause
 the spreading.
 # split a l (n) ,k P l (n)
@@ -895,7 +916,7 @@ one of the two branches.
 Sixth, our expression e l may be a pair construction. The fact that
 the value of e l is spread on the pattern implies first that the pattern
 has the form (P # , second that the value of one of the two
-sub-expressions of e l is spread on its corresponding sub-pattern (P #
+sub-expressions of e l is spread on e l corresponding sub-pattern (P #
 or P # ). In either case, the demand is processed by splitting the
 appropriate sub-expression by the appropriate sub-pattern.
 (cons l e l e l #
@@ -903,10 +924,10 @@ appropriate sub-expression by the appropriate sub-pattern.
 (cons l e l e l #
 # split a l # ,k P #
 Seventh, e l may be a car-expression. In order to split the value
-of e l on P, the sub-expression has to be split on (P, #). However,
+of e l on P, the sub-expression has to be split on al P. However,
 there is the possibility that the abstract model of the pairs is not
 precise enough to abstract the pairs up the level of details required
-by (P, #). If not, the model of the pairs has to be split first. If it is,
+by al P. If not, the model of the pairs has to be split first. If it is,
 the split on the sub-expression can proceed as planned.
 al P is precise enough for (P, #):
 # split a l # ,k (P, #)
@@ -918,11 +939,11 @@ al P is precise enough for (#, P):
 Ninth, e l must be a pair?-expression. Processing the demand simply
 consists in doing the same split on the sub-expression. To
 see why, it is important to recall that, if this case is currently being
-considered, it is because a l,k # P. If #, the type of the
+considered, this case is because a l,k # P. If #, the type of the
 sub-expression must be found in order to find the type of the ex-
 pression. If the same split is required on the sub-expression
-since all the pairs of the pair?-expression come from its
-sub-expression. P cannot be l # or l l # k # , for l # Lab, k #mkPat#,
+since all the pairs of the pair?-expression come from the pair?-expression
+sub-expression. al P cannot be l # or l l # k # , for l # Lab, k #mkPat#,
 because e l can only evaluate to Booleans and pairs.
 # split a l # ,k P
 b-variables
@@ -944,7 +965,7 @@ computed by either inspecting the abstract variable b x,k if x is the
 innermost variable or by translating it into a reference to x from the
 label l # of the l-expression immediately surrounding e l and contour
 # in which l-expression e l got evaluated, creating a closure that
-later got invoked, leading to the evaluation of its body in contour
+later got invoked, leading to the evaluation of it body in contour
 k. For the details on variable references in the analysis framework,
 see [4]. Nonetheless, because of the way we implement the abstract
 model, a reference to a variable x from a label l, and in a contour k
@@ -956,15 +977,16 @@ between abstract values also prescribes multiple splits on
 the abstract model. For example, if contour k results from the call
 of closure l l k # on a value v at label l # , and in contour k # , that is,
 cannot be more precise than
-about the program variable bounds it shares with contour k # . In
+about the program variable bounds 
+ shares with contour k # . In
 turn, if closure l l # k # results from the evaluation of e l in contour k # ,
 that is, l l k cannot be more precise
-than k # about the program variable bounds it shares with contour
-# . It follows that a split on a program variable, which can be seen
-as a refining of its bound in the local contour, requires the refining
+than k # about the program variable bounds the program variable shares with contour
+# . the program variable follows that a split on a program variable, which can be seen
+as a refining of the program variable bound in the local contour, requires the refining
 of a chain of contours and closure environments until a point is
 reached where the contour to refine does not share the variable with
-the closure leading to its creation.
+the closure leading to the program variable creation.
 Now, if we come back to the processing of split b x,k,l P, the first
 thing that must be verified is whether a reference to x from e l in
 contour k produces values that are spread on pattern P. We denote
@@ -985,7 +1007,7 @@ The last kind of demands is the split demand with a #g-var# as a
 splittee. The processing of such a demand is straightforward since
 Once again, this case cannot occur in the current implementation
 
-the return value of a closure is the result of the evaluation of its
+the return value of a closure is the result of the evaluation of a closure
 body. Let us consider this particular demand: split g c,k P. In case
 the return value is not spread on the pattern, the demand in trivially
 successful.
@@ -1013,8 +1035,8 @@ at all.
 # show d
 But in the general case, there are marked pairs and non-marked
 pairs occurring at the call site. It is tempting to emit a demand D
-asking a proof that the call does not get evaluated at all. It would
-be simple but it would not be a good idea. The non-marked pairs
+asking a proof that the call does not get evaluated at all. the call would
+be simple but the call would not be a good idea. The non-marked pairs
 may abstract actual computations in the concrete evaluation of the
 program and, consequently, there would be no hope of ever making
 D successful. 11 What has to be done is to separate, using splits, the
@@ -1029,7 +1051,8 @@ SC is used for two different tasks: splitting closure-argument pairs
 (see [4]). That is, the computations made in the abstract
 interpretation abstract at least all the computations made in the concrete
 interpretation. So, it is impossible to prove that an abstract
-invocation does not occur if it has a concrete counterpart occurring
+invocation does not occur if an abstract
+invocation has a concrete counterpart occurring
 in the concrete interpretation.
 according to the bucket in which the return values fall relatively to
 a split pattern splitting closure-argument pairs depending on the
@@ -1039,7 +1062,7 @@ into equivalence classes that are given either by the split pattern
 bucket or by the badness of the call. In order to separate two pairs
 belonging to different classes, it is sufficient
 to provide a split that separates v 1 from w 1 or a split that separates
-v 2 from w 2 . So, what SC has to do is to prescribe a set of splits
+v 2 from w 2 . So, SC SC has to do is to prescribe a set of splits
 to perform only on the first component of the pairs and another
 set of splits to perform only on the second component such that
 any two pairs from different classes would be separated. This is
@@ -1049,7 +1072,7 @@ second components. This way, any pair would be separated from
 all the others. Doing so would be overly aggressive, however, as
 there are usually much smaller sets of splits that are sufficient to
 separate the pairs.
-Our implementation of SC proceeds this way. It first computes the
+Our implementation of SC proceeds this way. Our implementation of SC first computes the
 equivalence classes. Next, each pair is converted into a genuine
 abstract pair (a modeling pattern). Then, by doing a breadth-first
 traversal of all the pairs simultaneously, splitting strategies are elaborated
@@ -1057,13 +1080,13 @@ and compared. At the end, the strategy requiring the smallest
 number of splits is obtained. Being as little aggressive as possible
 is important because each of the proposed splits will have to be applied
 on one of the two sub-expressions of a call expression. And
-these sub-expressions may be themselves expressions that are hard
+these sub-expressions may be these sub-expressions expressions that are hard
 to split (such as calls).
 6 Experimental Results
 6.1 Current Implementation
 Our current implementation of the demand-driven analysis is merely
 a prototype written in Scheme to experiment with the analysis
-approach. No effort has been put into making it fast or space-
+approach. No effort has been put into making No effort fast or space-
 efficient. For instance, abstract values are implemented with lists
 and symbols and closely resemble the syntax we gave for the modeling
 patterns. Each re-analysis phase uses these data without converting
@@ -1113,16 +1136,21 @@ Figure
 14. Source of the map-hard benchmark
 refining of the model, leading to massive space use. So we decided
 to make a selection of one of the demands according to a certain
-criterion. The first criterion was to measure how much the abstract
+criterion. a certain
+criterion was to measure how much the abstract
 model increases in size if a particular demand is selected. While
-it helped in controlling the increase in size of the model, it was
+
+ helped in controlling the increase in size of the model, 
+ was
 not choosing very wisely as for obtaining very informative analysis
 results. That is, the new results were expressed with finer values
 but the knowledge about the program data flow was not always in-
-creased. Moreover, it did not necessarily help in controlling the
+creased. Moreover, 
+ did not necessarily help in controlling the
 increase in size of the analysis results. The second criterion, which
 we use now, measures how much the abstract model plus the analysis
-results increase in size. This criterion really makes a difference,
+results increase in size. The second criterion, which
+we use now really makes a difference,
 although the demand selection step involves re-analyzing the program
 for all candidate demands.
 6.2 Benchmarks
@@ -1131,8 +1159,8 @@ the benchmarks involve numeric computations using naturals. Two
 important remarks must be made. First, our mini-language does
 not include letrec-expressions. This means that recursive functions
 must be created using the Y combinator. Note that we wrote
-our benchmarks in an extended language with let- and letrec-
-expressions, and used a translator to reduce them into the base lan-
+we benchmarks in an extended language with let- and letrec-
+expressions, and used a translator to reduce a translator into the base lan-
 guage. We included two kinds of letrec translations: one in which
 Y is defined once globally and all recursive functions are created
 using it; one in which a private Y combinator is generated for each
@@ -1140,17 +1168,17 @@ letrec-expression. The first kind of translation really makes the
 programs more intricate as all recursive functions are closures created
 by Y. The second kind of translation loosely corresponds to
 making the analysis able to handle letrec-expressions as a special
-form. We made tests using both translation modes. Our second re-mark
-concerns numbers. Our mini-language does not include inte-
+form. We made tests using both translation modes. We second re-mark
+concerns numbers. our mini-language does not include inte-
 gers. Another translation step replaces integers and simple numeric
 operators by lists of Booleans and functions, respectively. Thus, integers
 are represented in unary as Peano numbers and operations on
 the numbers proceed accordingly. This adds another level of difficulty
 on top of the letrec-expression translation. For an example
 of translation, see Appendix A.
-Our benchmarks are the following. Cdr-safe contains the definition
-of a function which checks its argument to verify that it is a pair
-before doing the access. It can be analyzed perfectly well by a 1-cfa,
+We benchmarks are the following. Cdr-safe contains the definition
+of a function which checks its argument to verify that its is a pair
+before doing the access. its can be analyzed perfectly well by a 1-cfa,
 but not by a 0-cfa. Loop is an infinite loop. 2-1 computes the value
 of (- 2 1). Map-easy uses the 'map' function on a short list of
 pairs using two different operators. Map-hard repetitively uses the
@@ -1179,17 +1207,17 @@ mark. The machine running the benchmarks is a PC with a 1.2 GHz
 Athlon CPU, 1 GByte RAM, and running RH Linux kernel 2.4.2.
 Gambit-C 4.0 was used to compile the demand-driven analysis.
 The column labeled "Y" indicates whether the Y combinator is
-Global or Private. The next column indicates the size of the translated
+Global or Private. The column indicates the size of the translated
 benchmark in terms of the number of basic expressions. The
 columns labeled "total", "pre", "during", and "post" indicate the
 number of run time type checks still required in the program at
 those moments, respectively: before any analysis is done, after
 the analysis with the initial model is done, during, and after the
 demand-driven analysis. Finally, the computation effort invested in
-the analysis is measured both in terms of work units and CPU time.
-The measure in column "total" is a purely syntactic one, it basically
-counts the number of call-, car-, and cdr-expressions in the
-program. The measure in "pre" is useful as a comparison between
+the
+demand-driven analysis is measured both in terms of work units and CPU time.
+The measure in column "total" is a purely syntactic one, The measure in column "total basically
+counts the number of call-, car-, and cdr-expressions in the program. The measure in "pre" is useful as a comparison between
 the 0-cfa and our analysis. Indeed, the initial abstract model used in
 our approach is quite similar to that implicitly used in the 0-cfa. An
 entry like 2@23 in column "during" indicates that 2 run time type
@@ -1213,7 +1241,7 @@ of the type checks seems to grow very rapidly as we come
 close to the 100% mark. This statement is supported by the numbers
 presented in [2] where a linear-time analysis, the sub-0-cfa, obtains
 analysis results that are almost as useful to the optimizer than those
-from the 0-cfa, despite its patent negligence in the manipulation of
+from the 0-cfa, despite the 0-cfa patent negligence in the manipulation of
 the abstract values.
 Note how translating with a private Y per letrec helps both the
 0-cfa and the demand-driven analysis. In fact, except for the
@@ -1241,13 +1269,12 @@ work
 Moreover, it is not closely related to the size of the program. It
 is more influenced by the style of the code. In order to evaluate
 the performance of the analysis on similar programs, we conducted
-experiments on a family of such programs. We modified the ack
+experiments on a family of such programs. we modified the ack
 benchmark by unrolling the recursion a certain number of times.
 Translation with private Y is used. Figure 16 shows the results for
 a range of unrolling levels. For each unrolling level i, the total
 number of type checks in the resulting program is 43
-optimization is done, 3 checks are still required after the program
-is analyzed with the initial model, and all the checks are eliminated
+optimization is done, 3 checks are still required after the programis analyzed with the initial model, and all the checks are eliminated
 when the demand-driven analysis finishes. We observe a somewhat
 quadratic increase in the analysis times. This is certainly better than
 the exponential behavior expected for a type analysis using lexical-
@@ -1259,15 +1286,15 @@ the analysis, the abstract model can be updated in response to the
 specifics of the program while considering the needs of the opti-
 mizer. This adaptivity is obtained by the processing of demands
 that express, directly or indirectly, the needs of the optimizer. That
-is, the model updates are demand-driven by the optimizer. More-
+is, the abstract model updates are demand-driven by the optimizer. More-
 over, the processing rules for the demands make our approach more
 robust to differences in coding style.
-The approach includes a flexible analysis framework that generates
+our approach includes a flexible analysis framework that generates
 analyses when provided with modeling parameters. We proposed
 a modeling of the data that is based on patterns and described a
 method to automatically compute useful modifications on the abstract
 model. We gave a set of demands and processing rules for
-them to compute useful model updates. Finally, we demonstrated
+them to compute useful model updates. Finally, We demonstrated
 the power of the approach with some experiments, showing that it
 analyzes precisely (and in relatively short time) a program that is
 known to be impossible to analyze with the k-cfa. A complete presentation
@@ -1281,9 +1308,9 @@ of static analysis (see [2, 7, 8, 9]). The k-cfa family of analyses
 (see [8, 9]) can, to some extent, be considered as flexible. The
 configurable analysis presented in [2] by Ashley and Dybvig can
 produce an extended family of analyses, but at compiler implementation
-time. Our analysis framework (see [4]) allows for more subtlety
+time. our analysis framework (see [4]) allows for more subtlety
 and can be modified during the analysis.
-We can think of many ways to continue research on this subject: extended
+our can think of many ways to continue research on this subject: extended
 experiments on our approach in comparison to many other
 analyses; the speed and memory consumption of the analysis; incremental
 re-analysis (that is, if analysis results R 1 were obtained
@@ -1294,10 +1321,12 @@ be considered to handle a larger part of Scheme and extending our
 demand-driven approach to other analyses. There are also more
 theoretical questions. We know that analyzing with the analysis
 framework and adequate modeling parameters is always at least as
-powerful as the k-cfa (or many other analyses). However, it requires
+powerful as the k-cfa (or many other analyses). However, analyzing with the analysis
+framework and adequate modeling parameters is always at least as
+powerful as the k-cfa (or many other analyses) requires
 the parameters to be given by an oracle. What we do not know is
-whether our current demand-driven approach is always at least as
-powerful as the k-cfa family. We think it is not, but do not yet have
+whether we current demand-driven approach is always at least as
+powerful as the k-cfa family. we think it is not, but do not yet have
 a proof.
 (l 2 m. (l 3 n. (if 4
 (if
@@ -1323,15 +1352,15 @@ Other researchers have worked on demand-driven analysis but in a
 substantially different way (see the work of Duesterwald et al. [5],
 Agrawal [1], and Heintze and Tardieu [6]). These approaches do
 not have an abstract execution model that changes to suit the pro-
-gram. Their goal is to adapt well-known analysis algorithms into
+gram. These approaches goal is to adapt well-known analysis algorithms into
 variants with which one can perform what amounts to a lazy evaluation
 of the analysis results.
 
 Acknowledgments
 
-The authors thank the anonymous referees for their careful review
+The authors thank the anonymous referees for The authors careful review
 and the numerous constructive comments.
-This work was supported in part by a grant from the Natural Sciences
+the work of Duesterwald et al was supported in part by a grant from the Natural Sciences
 and Engineering Research Council of Canada.
 9
 

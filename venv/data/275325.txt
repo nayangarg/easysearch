@@ -1,7 +1,7 @@
 --T
 Compiler blockability of dense matrix factorizations.
 --A
-The goal of the LAPACK project is to provide efficient and portable software for dense numerical linear algebra computations. By recasting many of the fundamental dense matrix computations in terms of calls to an efficient implementation of the BLAS (Basic Linear Algebra Subprograms), the LAPACK project has, in large part, achieved its goal. Unfortunately, the efficient implementation of the BLAS results often in machine-specific code that is not portable across multiple architectures without a significant loss in performance or a significant effort to reoptimize them. This article examines wheter most of the hand optimizations performed on matrix factorization codes are unnecessary because they can (and should) be performed by the compiler. We believe that it is better for the programmer to express algorithms in a machine-independent form and allow the compiler to handle the machine-dependent details. This gives the algorithms portability across architectures and removes the error-prone, expensive and tedious process of hand optimization. Although there currently exist no production compilers that can perform all the loop transformations discussed in this article, a description of current research in compiler technology is provided that will prove beneficial to the numerical linear algebra community. We show that the Cholesky and optimized automaticlaly by a compiler to be as efficient as the same hand-optimized version found in LAPACK. We also show that the QR factorization may be optimized by the compiler to perform comparably with the hand-optimized LAPACK version on modest matrix sizes. Our approach allows us to conclude that with the advent of the compiler optimizations dicussed in this article, matrix factorizations may be efficiently implemented in a BLAS-less form
+The goal of the LAPACK project is to provide efficient and portable software for dense numerical linear algebra computations. By recasting many of the fundamental dense matrix computations in terms of calls to an efficient implementation of the BLAS (Basic Linear Algebra Subprograms), the LAPACK project has, in large part, achieved the LAPACK project goal. Unfortunately, the efficient implementation of the BLAS results often in machine-specific code that is not portable across multiple architectures without a significant loss in performance or a significant effort to reoptimize them. This article examines wheter most of the hand optimizations performed on matrix factorization codes are unnecessary because them can (and should) be performed by the compiler. We believe that it is better for the programmer to express algorithms in a machine-independent form and allow the compiler to handle the machine-dependent details. This gives the algorithms portability across architectures and removes the error-prone, expensive and tedious process of hand optimization. Although there currently exist no production compilers that can perform all the loop transformations discussed in This article, a description of current research in compiler technology is provided that will prove beneficial to the numerical linear algebra community. We show that the Cholesky and optimized automaticlaly by a compiler to be as efficient as the same hand-optimized version found in LAPACK. We also show that the QR factorization may be optimized by the compiler to perform comparably with the hand-optimized LAPACK version on modest matrix sizes. We approach allows We to conclude that with the advent of the compiler optimizations dicussed in this article, matrix factorizations may be efficiently implemented in a BLAS-less form
 --B
 Introduction
 The processing power of microprocessors and supercomputers has increased dramatically and continues
@@ -21,9 +21,10 @@ slower. The bottom of the hierarchy for our purposes is main memory. Typically, 
 of cache memory fall between registers and main memory. The cache memory is faster than main
 memory, but is often a fraction of the size. The cache memory serves as a buffer for the most
 recently accessed data of a program (the working set). The cache becomes ineffective when the
-working set of a program is larger than its size.
+working set of a program is larger than the
+working set of a program size.
 The three factorizations considered in this paper, the LU, Cholesky, and QR, are among the
-most frequently used by numerical linear algebra and its applications. The first two are used for
+most frequently used by numerical linear algebra and Cholesky applications. The first two are used for
 solving linear systems of equations while the last is typically used in linear least squares problems.
 For square matrices of order n, all three factorizations involve on the order of n 3 floating point
 operations for data that needs n 2 memory locations. With the advent of vector and parallel
@@ -35,7 +36,8 @@ The motivation of the LAPACK [2] project was to recast the algorithms in the EIS
 and LINPACK [14] software libraries with block ones. A block form of an algorithm restructures
 the algorithm in terms of matrix operations that attempt to minimize the amount of data moved
 within the memory hierarchy while keeping the arithmetic units of the machine occupied. LAPACK
-blocks many dense matrix algorithms by restructuring them to use the level 2 and 3 BLAS [11,
+blocks many dense matrix algorithms by restructuring LAPACK
+ to use the level 2 and 3 BLAS [11,
 12]. The motivation for the Basic Linear Algebra Subprograms, BLAS [29], was to provide a set of
 commonly used vector operations so that the programmer could invoke the subprograms instead of
 writing the code directly. The level 2 and 3 BLAS followed with matrix-vector and matrix-matrix
@@ -44,37 +46,37 @@ performance computers. The higher level BLAS better utilize the underlying memor
 with the level 1 BLAS, responsibility for optimizing the higher level BLAS was left to the machine
 vendor or another interested party.
 This study investigates whether a compiler has the ability to block matrix factorizations. Although
-the compiler transformation techniques may be applied directly to the BLAS, it is interesting
+the compiler transformation techniques may be applied directly to BLAS, it is interesting
 to draw a comparison with applying them directly to the factorizations. The benefit is the possibility
 of a BLAS-less linear algebra package that is nearly as efficient as LAPACK. For example, in [30],
 it was demonstrated that on some computers, the best LU factorization was an inlined approach
 even when a highly optimized set of BLAS were available.
 We deem an algorithm blockable if a compiler can automatically derive the most efficient block
 algorithm (for our study, the one found in LAPACK) from its corresponding machine-independent
-point algorithm. In particular, we show that LU and Cholesky factorizations are blockable algo-
+point algorithm. In particular, our show that LU and Cholesky factorizations are blockable algo-
 rithms. Unfortunately, QR factorization with Householder transformations is not blockable. How-
-ever, we show an alternative block algorithm for QR that can be derived using the same compiler
+ever, our show an alternative block algorithm for QR that can be derived using the same compiler
 methods as those used for LU and Cholesky factorizations.
 This study has yielded two major results. The first, which is detailed in another paper [9],
 reveals that the hand loop unrolling performed when optimizing the level 2 and 3 BLAS [11, 12]
-is often unnecessary. While the BLAS are useful, the hand optimization that is required to obtain
+is often unnecessary. While BLAS BLAS are useful, the hand optimization that is required to obtain
 good performance on a particular architecture may be left to the compiler. Experiments show
 that, in most cases, the compiler can automatically unroll loops as effectively as hand optimization.
 The second result, which we discuss in this paper, reveals that it is possible to block matrix
 factorizations automatically. Our results show that the block algorithms derived by the compiler
 are competitive with those of LAPACK [2]. For modest sized matrices (on the order of 200 or less),
 the compiler-derived variants are often superior.
-We begin our presentation with a review of background material related to compiler optimiza-
-tion. Then, we describe a study of the application of compiler analysis to derive the three block
+Our begin Our presentation with a review of background material related to compiler optimiza-
+tion. Then, Our describe a study of the application of compiler analysis to derive the three block
 algorithms in LAPACK considered above from their corresponding point algorithms. We present an
 experiment comparing the performance of hand-optimized LAPACK algorithms with the compiler-
-derived algorithms attained using our techniques. We also briefly discuss other related approaches.
-Finally, we summarize our results and provide and draw some general conclusions.
+derived algorithms attained using We techniques. We also briefly discuss other related approaches.
+Finally, We summarize We and provide and draw some general conclusions.
 Background
 The transformations that we use to create the block versions of matrix factorizations from their
 corresponding point versions are well known in the mathematical software community [15]. This
 section introduces the fundamental tools that the compiler needs to perform the same transformations
-automatically. The compiler optimizes point versions of matrix factorizations through
+automatically. the compiler optimizes point versions of matrix factorizations through
 analysis of array access patterns rather than through linear algebra.
 2.1 Dependence
 As in vectorizing and parallelizing compilers, dependence is a critical compiler tool for performing
@@ -82,13 +84,13 @@ transformations to improve the memory performance of loops. Dependence is necess
 the legality of compiler transformations to create blocked versions of matrix factorizations
 by giving a partial order on the statements within a loop nest.
 A dependence exists between two statements if there exists a control flow path from the first
-statement to the second, and both statements reference the same memory location [26].
-ffl If the first statement writes to the location and the second reads from it, there is a true
+statement to the second, and two statements reference the same memory location [26].
+ffl If the first statement writes to the location and the second reads from the first statement, there is a true
 dependence, also called a flow dependence.
-ffl If the first statement reads from the location and the second writes to it, there is an antide-
+ffl If the first statement reads from the location and the second writes to the first statement, there is an antide-
 pendence.
-ffl If both statements write to the location, there is an output dependence.
-ffl If both statements read from the location, there is an input dependence.
+ffl If two statements write to the location, there is an output dependence.
+ffl If two statements read from the location, there is an input dependence.
 A dependence is carried by a loop if the references at the source and sink (beginning and end) of
 the dependence are on different iterations of the loop and the dependence is not carried by an outer
 loop [1]. In the loop below, there is a true dependence from A(I,J) to A(I-1,J) carried by the
@@ -101,39 +103,39 @@ section analysis consider the following loop.
 If A were declared to be 100 \Theta 100, the section of A accessed in the loop would be that shown in the
 shaded portion of Figure 1.
 Matrix factorization codes require us to enhance basic dependence information because only a
-portion of the matrix is involved in the block update. The compiler uses section analysis to reveal
+portion of the matrix is involved in the block update. the compiler uses section analysis to reveal
 that portion of the matrix that can be block updated. Section 3.1.1 discusses this in detail.10100
 
 Figure
 
 1 Section of A
 3 Automatic Blocking of Dense Matrix Factorizations
-In this section, we show how to derive the block algorithms for the LU and the Cholesky factorizations
+In Section 3.1.1, we show how to derive the block algorithms for the LU and the Cholesky factorizations
 using current compiler technology and section analysis to enhance dependence information.
-We also show that the QR factorization with Householder transformations is not blockable. How-
+we also show that the QR factorization with Householder transformations is not blockable. How-
 ever, we present a performance-competitive version of the QR factorization that is derivable by the
 compiler.
 3.1 LU Factorization
 The LU decomposition factors a non-singular matrix A into the product of two matrices, L and U ,
 such that A = LU [20]. L is a unit lower triangular matrix and U is an upper triangular matrix.
-This factorization can be obtained by multiplying the matrix A by a series of elementary lower
+the QR factorization with Householder transformations is not blockable can be obtained by multiplying the matrix A by a series of elementary lower
 and A. The pivot matrices are used to make the LU factorization a numerically stable
 process.
-We first examine the blockability of LU factorization. Since pivoting creates its own difficulties,
-we first show how to block LU factorization without pivoting. We then show how to handle pivoting.
+we first examine the blockability of LU factorization. Since pivoting creates its own difficulties,
+we first show how to block LU factorization without pivoting. we then show how to handle pivoting.
 3.1.1 No Pivoting
 Consider the following algorithm for LU factorization.
-This point algorithm is referred to as an unblocked right-looking [13] algorithm. It exhibits poor
+This point algorithm is referred to as an unblocked right-looking [13] algorithm. This point exhibits poor
 cache performance on large matrices. To transform the point algorithm to the block algorithm, the
 compiler must perform strip-mine-and-interchange on the K-loop [38, 36]. This transformation is
-used to create the block update of A. To apply this transformation, we first strip the K-loop into
+used to create the block update of A. To apply This transformation, we first strip the K-loop into
 fixed size sections (this size is dependent upon the target architecture's cache characteristics and
 is beyond the scope of this paper [28, 10]) as shown below.
 Here KS is the machine-dependent strip size that is related to the cache size. To complete the
 transformation, the KK-loop must be distributed around the loop that surrounds statement 20 and
 around the loop nest that surrounds statement 10 before being interchanged to the innermost
-position of the loop surrounding statement 10 [37]. This distribution yields:
-Unfortunately, the loop is no longer correct. This loop scales a number of values before it updates
+position of the loop surrounding statement 10 [37]. This point yields:
+Unfortunately, the loop is no longer correct. the loop scales a number of values before it updates
 them. Dependence analysis allows the compiler to detect and avoid this change in semantics by
 recognizing the dependence cycle between A(I,KK) in statement 20 and A(I,J) in statement 10
 carried by the KK-loop.
@@ -158,14 +160,14 @@ Figure
 DO
 DO
 Now the dependence cycle exists between statements 20 and 30, and statement 10 is no longer in
-the cycle. Strip-mine-and-interchange can be continued by distributing the KK-loop around the two
+the dependence cycle. Strip-mine-and-interchange can be continued by distributing the KK-loop around the two
 new loops as shown below.
 DO
 DO
 DO
 To finish strip-mine-and-interchange, we need to move the KK-loop to the innermost position in the
 nest surrounding statement 10. However, the lower bound of the I-loop contains a reference to KK.
-This creates a triangular iteration space as shown in Figure 3. To interchange the KK and I loops,
+This creates a triangular iteration space as shown in Figure 3. To interchange KK and I loops,
 the intersection of the line I=KK+1 with the iteration space at the point (K,K+1) must be handled.
 Therefore, interchanging the loops requires the KK-loop to iterate over a trapezoidal region with
 an upper bound of I-1 until I-1 ? K+KS-1 (see Wolfe, and Carr and Kennedy for more details on
@@ -187,7 +189,7 @@ the J- and I-loops to further improve performance [8, 9]. For vector architectur
 optimization strategy may be more beneficial [1].
 Many of the transformations that we have used to obtain the block version of LU factorization
 are well known in the compiler community and exist in many commercial compilers (e.g., HP,
-DEC and SGI). One of the contributions of this study to compiler research is to show how the
+DEC and SGI). One of the contributions of This study to compiler research is to show how the
 addition of section analysis allows a compiler to block matrix factorizations. Note that none of the
 aforementioned compilers uses section analysis for this purpose.
 3.1.2 Adding Partial Pivoting
@@ -224,32 +226,32 @@ DO
 Figure
 
 4 LU Decomposition with Partial Pivoting
-To install the above result into the compiler, we examine its implications from a data dependence
+To install the above result into the compiler, we examine the compiler implications from a data dependence
 viewpoint. In the point version, each row interchange is followed by a whole-column update in
-which each row element is updated independently. In the block version, multiple row interchanges
+which each row element is updated independently. In the point version, multiple row interchanges
 may occur before a particular column is updated. The same computations (column updates) are
-performed in both the point and block versions, but these computations may occur in different locations
+performed in both the point and block versions, but The same computations (column updates) may occur in different locations
 (rows) of the array. The key concept for the compiler to understand is that row interchanges
 and whole-column updates are commutative operations. Data dependence alone is not sufficient to
-understand this. A data dependence relation maps values to memory locations. It reveals the sequence
+understand this. A data dependence relation maps values to memory locations. A data dependence relation maps values to memory locations reveals the sequence
 of values that pass through a particular location. In the block version of LU decomposition,
 the sequence of values that pass through a location is different from the point version, although
 the final values are identical. Unless the compiler understands that row interchanges and column
 updates commute, LU decomposition with partial pivoting is not blockable.
 Fortunately, a compiler can be equipped to understand that operations on whole columns are
-commutable with row permutations. To upgrade the compiler, one would have to install pattern
+commutable with row permutations. To upgrade a compiler, one would have to install pattern
 matching to recognize both the row permutations and whole-column updates to prove that the
 recurrence involving statements 10 and 25 of the index-set split code could be ignored. Forms
 of pattern matching are already done in commercially available compilers. Vectorizing compilers
 pattern match for specialized computations such as searching vectors for particular conditions
 [31]. Other preprocessors pattern match to recognize matrix multiplication and, in turn, output
 a predetermined solution that is optimal for a particular machine. So, it is reasonable to believe
-that pivoting can be recognized and implemented in commercial compilers if its importance is
+that pivoting can be recognized and implemented in commercial compilers if it importance is
 emphasized.
 3.2 Cholesky Factorization
 When the matrix A is symmetric and positive definite, the LU factorization may be written as
 and D is the diagonal matrix consisting of the main diagonal of U . The decomposition
-of A into the product of a triangular matrix and its transpose is called the Cholesky
+of A into the product of a triangular matrix and a triangular matrix transpose is called the Cholesky
 factorization. Thus we need only work with the lower triangular half of A and essentially the same
 dependence analysis that applies to the LU factorization without pivoting may be used. Note that
 with respect to floating point computation, the Cholesky factorization only differs from LU in two
@@ -264,7 +266,7 @@ K+KS-1 to allow the KK-loop to be distributed, achieving the LAPACK block algori
 In this section, we examine the blockability of the QR factorization. First, we show that the
 algorithm from LAPACK is not blockable. Then, we give an alternate algorithm that is blockable.
 3.3.1 LAPACK Version
-The LAPACK point algorithm for computing the QR factorization consists of forming the sequence
+LAPACK point algorithm for computing the QR factorization consists of forming the sequence
 1. The initial matrix A rows and n columns, where for
 this study we assume m - n. The elementary reflectors
 update A k in order that the
@@ -287,11 +289,10 @@ mation. To illustrate, consider a block of two elementary reflectors
 The computation of the matrix
 is not part of the original algorithm. Hence, the LAPACK version of block QR factorization is a
 different algorithm from the point version, rather than just a reshaping of the point algorithm for
-better performance. The compiler can reshape algorithms, but, it cannot derive new algorithms
-with data dependence information. In this case, the compiler would need to understand linear
+better performance. The compiler can reshape algorithms, but, The compiler cannot derive new algorithms
+with data dependence information. In this case, The compiler would need to understand linear
 algebra to derive the block algorithm.
-In the next section, a compiler-derivable block algorithm for QR factorization is presented. This
-algorithm gives comparable performance to the LAPACK version on small matrices while retaining
+In the next section, a compiler-derivable block algorithm for QR factorization is presented. a compiler-derivable block algorithm for QR factorization gives comparable performance to the LAPACK version on small matrices while retaining
 machine independence.
 3.3.2 Compiler-Derivable QR Factorization
 Consider the application of j matrices V k to A k ,
@@ -299,7 +300,7 @@ The compiler derivable algorithm, henceforth called cd-QR, only forms columns k 
 of A k+j and then updates the remainder of matrix with the j elementary reflectors. The final
 update of the trailing columns is "rich" in floating point operations that the compiler
 organizes to best suit the underlying hardware. Code optimization techniques such as strip-mine-
-and-interchange and unroll-and-jam are left to the compiler. The derived algorithm depends upon
+and-interchange and unroll-and-jam are left to The compiler. a compiler-derivable block algorithm for QR factorization depends upon
 the compiler for efficiency in contrast to the LAPACK algorithm that depends on hand optimization
 of the BLAS.
 Cd-QR can be obtained from the point algorithm for QR decomposition using array section
@@ -341,7 +342,7 @@ by A(J,I) (the black region) is a subset of the section accessed by A(K,J) (both
 gray regions) and the index-set of J can be split at the point to create a new loop
 that executes over the iteration space where the memory locations accessed by A(K,J) are disjoint
 from those accessed by A(J,I). The new loop that iterates over the disjoint region can be further
-optimized by the compiler depending upon the target architecture.
+optimized by The compiler depending upon the target architecture.
 3.3.3 A Comparison of the Two QR Factorizations
 The algorithm cd-QR does not exhibit as much cache reuse as the LAPACK version on large matrices.
 The reason is that the LAPACK algorithm is able to take advantage of the level 3 BLAS routine
@@ -353,7 +354,7 @@ multiply kernel.
 In summary, Table 1 lists the analyses and transformations that must be used by a compiler
 to block matrix factorizations. Items 1 and 2 are discussed in Section 2. Items 3 through 7 are
 discussed in Section 3.1. Item 8 is discussed in the compiler literature [28, 10]. Item 9 is discussed
-in Section 3.1.2. Many commercial compilers (e.g. IBM[34], HP, DEC, and SGI) contain items 1, 3,
+in Section 3.1. Many commercial compilers (e.g. IBM[34], HP, DEC, and SGI) contain items 1, 3,
 4, 5, 6, 7 and 8. However, it should be noted that items 2 and 9 are not likely to be found in any
 of today's commercial compilers.
 
@@ -366,18 +367,21 @@ Array Section Analysis (Section 2.1 [5, 21])
 4 Unroll-and-Jam (Section 3.1 [9])
 We measured the performance of each block factorization algorithm on four different architectures:
 the IBM POWER2 model 590, the HP model 712/80, the DEC Alpha 21164 and the SGI model Indigo2
-with a MIPS R4400. Table 2 summarizes the characteristics of each machine. These architectures
-were chosen because they are representative of the typical high-performance workstation.
+with a MIPS R4400. Table 2 summarizes the characteristics of each machine. four different architectures:
+the IBM POWER2 model 590, the HP model 712/80, the DEC Alpha 21164 and the SGI model Indigo2
+with a MIPS R4400were chosen because four different architectures:
+the IBM POWER2 model 590, the HP model 712/80, the DEC Alpha 21164 and the SGI model Indigo2
+with a MIPS R4400 are representative of the typical high-performance workstation.
 
 Table
 
 Machine Characteristics
 Machine Clock Speed Peak Mflops Cache Size Associativity Line Size
 DEC Alpha 250MHz 500 8KB 1
-On all the machines, we used the vendor's optimized BLAS. For example, on the IBM POWER2
-and SGI Indigo2, we linked with the libraries -lessl (Engineering and Scientific Subroutine Library
+On all the machines, We used the vendor's optimized BLAS. For example, on the IBM POWER2
+and SGI Indigo2, We linked with the libraries -lessl (Engineering and Scientific Subroutine Library
 [22]) and -lblas, respectively.
-Our compiler-optimized versions were obtained by hand using the algorithms in the literature.
+We compiler-optimized versions were obtained by hand using the algorithms in the literature.
 The reason that this process could not be fully automated is because of a current deficiency in the
 dependence analyzer of our tool [4, 6]. Table 3 lists the FORTRAN compiler and the flags used to
 compile our factorizations.
@@ -422,13 +426,13 @@ Size LABlk LAMf CBlk CMf Speedup LABk LAMf CBlk CMf Speedup
 100x100
 200x200
 300x300
-DEC Alpha SGI Indigo2
+DEC SGI Indigo2
 Size LABlk LAMf CBlk CMf Speedup LABk LAMf CBlk CMf Speedup
 100x100
 200x200
 300x300
 500x500
-1 Although the compiler can effectively choose blocking factors automatically, we do not have an implementation of
+1 Although The compiler can effectively choose blocking factors automatically, we do not have an implementation of
 the available algorithms [28, 10].
 The IBM POWER2 results show that as the size of the matrix increases to 100, the compiler
 derived algorithm's edge over LAPACK diminishes. And for the remaining matrix sizes, the compiler
@@ -438,13 +442,13 @@ the ESSL library for the block matrix factorizations.
 For the HP 712, Table 4 indicates an unexpected trend. The compiler-derived version performs
 better on all matrix sizes except 50x50, with dramatic improvements as the matrix size increases.
 This indicates that the hand-optimized DGEMM does not efficiently use the cache. We have optimized
-for cache performance in our compiler derived algorithm. This is evident when the size of the
+for cache performance in We compiler derived algorithm. This is evident when the size of the
 matrices exceeds the size of the cache.
 The significant performance degradation for the 50x50 case is interesting. For a matrix this
 small, cache performance is not a factor. We believe the performance difference comes from the
 way code is generated. For superscalar architectures like the HP, a code generation scheme called
 software pipelining is used to generate highly parallel code [27, 33]. However, software pipelining
-requires a lot of registers to be successful. In our code, we performed unroll-and-jam to improve
+requires a lot of registers to be successful. In our code, our performed unroll-and-jam to improve
 cache performance. However, unroll-and-jam can significantly increase register pressure and cause
 software pipelining to fail [7]. On our version of LU decomposition, the HP compiler diagnostics
 reveal that software pipelining failed on the main computational loop due to high register pressure.
@@ -457,27 +461,28 @@ software pipelining. This is an important area of future research.
 For the DEC Alpha, Table 4 shows that our algorithm performs as well as or better than the
 LAPACK version on matrices of order 100 or less. After size 100x100, the second-level cache on the
 Alpha, which is 96K, begins to overflow. Our compiler-derived version is not blocked for multiple
-levels of cache, while the LAPACK version is blocked for 2 levels of cache [25]. Thus, the compiler-
-derived algorithm suffers many more cache misses in the level-2 cache than the LAPACK version. It
+levels of cache, while Our compiler-derived version is blocked for 2 levels of cache [25]. Thus, the compiler-
+derived algorithm suffers many more cache misses in the level-2 cache than Our compiler-derived version. It
 is possible for the compiler to perform the extra blocking for multiple levels of cache, but we know
 of no compiler that currently does this. Additionally, the BLAS algorithm utilized the following
 architectural features that we do not [25]:
 ffl The use of temporary arrays to eliminate conflicts in the level-1 direct-mapped cache and the
 translation lookaside buffer [28, 10].
-ffl The use of the memory-prefetch feature on the Alpha to hide latency between cache and
+ffl The use of the memory-prefetch feature on the DEC Alpha to hide latency between cache and
 memory.
-Although each of these optimizations could be done in the DEC product compiler, they are not. Each
-optimization would give additional performance to our algorithm. Using a temporary buffer may
+Although each of these optimizations could be done in the DEC product compiler, each of these optimizations are not. Each
+optimization would give additional performance to the BLAS algorithm. Using a temporary buffer may
 provide a small improvement, but prefetching can provide a significant performance improvement
 because the latency to main memory is on the order of 50 cycles. Prefetches cannot be issued in
-the source code, so we were unable to try this optimization.
-The results on the SGI are roughly similar to those for the DEC Alpha. It is difficult for us to
-determine exactly why our performance is lower on smaller matrices because we have no diagnostic
-tools. It could again be software pipelining or some architectural feature of which we are not aware.
-We do note that the code generated by the SGI compiler is worse than expected. Additionally, the
+the source code, so we were unable to try Each
+optimization.
+The results on DEC Alpha SGI are roughly similar to those for the DEC Alpha. It is difficult for us to
+determine exactly why us performance is lower on smaller matrices because we have no diagnostic
+tools. It could again be software pipelining or some architectural feature of which us are not aware.
+us do note that the code generated by the DEC Alpha SGI compiler is worse than expected. Additionally, the
 2-level cache comes into play on the larger matrices.
 Comparing the results on the IBM POWER2 and the multi-level cache hierarchy systems (DEC
-and SGI), shows that our compiler-derived versions are very effective for a single-level cache. It is
+and DEC Alpha SGI), shows that our compiler-derived versions are very effective for a single-level cache. It is
 evident that more work needs to be done in optimizing the update portion of the factorizations to
 obtain the same relative performance as a single-level cache system on a multi-level cache system.
 4.2 Cholesky Factorization
@@ -486,17 +491,16 @@ Table
 
 5 shows the performance of the compiler-derived version of Cholesky factorization versus the
 version.
-The IBM POWER2 results show that as the size of the matrix increases to 200, the compiler
+The results on the SGI show that as the size of the matrix increases to 200, the compiler
 derived algorithm's edge over the LAPACK diminishes. And for the remaining matrix sizes, the
 compiler derived algorithm stays within 8% of the LAPACK one. As was the case for the LU
-factorization, the compiler version performs very well. Only for the large matrix sizes does the
+factorization, Our compiler-derived version performs very well. Only for the large matrix sizes does the
 highly tuned BLAS used by the LAPACK factorization cause LAPACK to be faster. Table 5 shows
 a slightly irregular pattern for the block size used by the compiler derived algorithm. We remark
 that for matrix sizes 50 through 200, the MFLOP rate for the two block sizes 8 and 16 were nearly
 equivalent.
-On the HP, we observe the same pattern as we did for LU factorization. When cache performance
-is critical, we outperform the LAPACK version. When cache performance is not critical, the LAPACK
-version gives better results, except when the matrix is small. Our algorithm performed much better
+On the HP, we observe the same pattern as We did for LU factorization. When cache performance
+is critical, we outperform Our compiler-derived version. When cache performance is not critical, Our compiler-derived version gives better results, except when the matrix is small. we algorithm performed much better
 on the 25x25 matrix most likely due to the high overhead associated with software pipelining on
 short loops. Since Cholesky factorization has fewer operations than LU factorization in the update
 portion of the code, we would expect a high overhead associated with small matrices. Also, the
@@ -505,16 +509,15 @@ due to the smaller update portion of the factorization.
 
 Table
 
-5 Cholesky Performance on IBM, HP, DEC and SGI
-Size LABlk LAMf CBlk CMf Speedup LABlk LAMf CBlk CMf Speedup
+5 Cholesky Performance on IBM, HP, DEC and DEC Alpha SGISize LABlk LAMf CBlk CMf Speedup LABlk LAMf CBlk CMf Speedup
 50x50
 100x100
 200x200
 300x300
-On the DEC, we outperform the LAPACK version up until the 500x500 matrix. This is the same
+On DEC, we outperform Our compiler-derived version up until the 500x500 matrix. This is the same
 pattern as seen in LU factorization except that it takes longer to appear. This is due to the smaller
 size of the update portion of the factorization.
-The results on the SGI show that the compiler derived version performs better than the LAPACK
+The results on DEC Alpha SGI DEC Alpha SGI show that Our compiler-derived version performs better than the LAPACK
 for matrix sizes up to 100. As the matrix size increases to 500 from 150, the compiler derived
 algorithm's performance decreases by 15% compared to that of the LAPACK factorization. We
 believe that this has to do with the 2-level cache hierarchy.
@@ -530,12 +533,11 @@ Table
 6 shows the performance of the compiler-derived version of QR factorization versus the LAPACK
 version. Since the compiler-derived algorithm for block QR factorization has worse cache
 performance than the LAPACK algorithm, but O(n 2 ) less computation, we expect worse performance
-when the cache performance becomes critical. In plain words, the LAPACK algorithm uses
+when the cache performance becomes critical. In plain words, the compiler-derived algorithm for block QR factorization uses
 the level 3 BLAS matrix multiply kernel DGEMM but the compiler derived algorithm can only utilize
 operations similar to the level 2 BLAS.
 On the HP, we see the same pattern as before. However, since the cache performance of our
-algorithm is not as good as the LAPACK version, we see a much smaller improvement when our
-algorithm has superior performance. Again, we also see that when the matrix sizes stay within the
+algorithm is not as good as the LAPACK version, we see a much smaller improvement when wehas superior performance. Again, we also see that when the matrix sizes stay within the
 limits of the cache, LAPACK outperforms our algorithm.
 
 Table
@@ -550,27 +552,26 @@ performance of cd-QR. An interesting trend revealed by Table 6 is that the IBM P
 slightly irregular block size pattern as the matrix size increases. We remark that only for matrix
 sizes less than or equal to 75, is there interesting behavior. For the first two matrix sizes, the
 optimal block size is larger than the dimension of the matrix. This implies that no blocking was
-performed; the level 3 BLAS was not used by the LAPACK algorithm. For the matrix size 75,
-the rate achieved by the LAPACK algorithm with block size 8 was within 4-6 % of the unblocked
+performed; the level 3 BLAS was not used by the compiler-derived algorithm for block QR factorization. For the matrix size 75,
+the rate achieved by the compiler-derived algorithm for block QR factorization with block size 8 was within 4-6 % of the unblocked
 factorization.
 5 Related Work
-We briefly review and summarize other investigations parallel to ours. It is evident that there is an
+We briefly review and summarize other investigations parallel to We. It is evident that there is an
 active amount of work to remove the substantial hand coding associated with efficient dense linear
 algebra computations.
 5.1 Blocking with a GEMM based Approach
 Since LAPACK depends upon a set of highly tuned BLAS for efficiency, there remains the practical
-question of how they should be optimized. As discussed in the introduction, an efficient set of BLAS
-requires a non-trivial effort in software engineering. See [23] for a discussion on software efforts to
+question of how they should be optimized. As discussed in the introduction, an efficient set of BLASrequires a non-trivial effort in software engineering. See [23] for a discussion on software efforts to
 provide optimal implementations of the level 3 BLAS.
 An approach that is both efficient and practical is the GEMM-based one proposed by K-agstr-om,
-Ling and Van Loan [23] in a recent study. Their approach advocates optimizing the general matrix
+Ling and Van Loan [23] in a recent study. Ling and Van Loan approach advocates optimizing the general matrix
 multiply and add kernel GEMM and then rewriting the remainder of the level 3 BLAS in terms of
-calls to this kernel. The benefit of their approach is that only this kernel needs to be optimized-
-whether by hand or the compiler. Their thorough analysis highlights the many issues that must
-be considered when attempting to construct a set of highly tuned BLAS. Moreover, they provide
-high quality implementations of the BLAS for general use as well as a performance evaluation
+calls to this kernel. The benefit of Ling and Van Loan approach is that only this kernel needs to be optimized-
+whether by hand or the compiler. Ling and Van Loan thorough analysis highlights the many issues that must
+be considered when attempting to construct a set of highly tuned BLAS. Moreover, Ling and Van Loan provide
+high quality implementations of BLAS for general use as well as a performance evaluation
 benchmark [24].
-We emphasize that our study examines only whether the necessary optimizations may be left
+We emphasize that We study examines only whether the necessary optimizations may be left
 to the compiler, and, also whether they should be applied directly to the matrix factorizations
 themselves. What is beyond the ability of the compiler is that of recasting the level 3 BLAS in
 terms of calls to GEMM.
@@ -578,7 +579,8 @@ terms of calls to GEMM.
 Another recent approach is the methodology expressed for developing a Portable High-Performance
 matrix-vector libaries in ANSI C (PHiPAC) [3]. The project is motivated by many of the reasons
 as outlined in our introduction. There is a major difference in approaches which does not make
-it a parallel study. As in the GEMM based approach, they seek to support the BLAS and aim
+a major difference in approaches which does not make
+ a parallel study. As in the GEMM based approach, they seek to support BLAS BLAS and aim
 to be more efficient than the vendor supplied BLAS. However, unlike our study or the GEMM
 one, PHiPAC assumes that ANSI C is the programming language. Because of various C semantics
 PHiPAC instead seeks to provide parameterized generators that produce the optimized code. See
@@ -586,40 +588,45 @@ the report [3] for a discussion on the inhibitors in C that prevent an optimizin
 generating efficient code.
 5.3 Auto-blocking Matrix Multiplication
 Frens and Wise present an alternative algorithm for matrix-matrix multiply that is based upon a
-quadtree representation of matrices [17]. Their solution is recursive and suffers from the lack of
-interprocedural optimization in most commercial compilers. Their results show that when paging
-becomes a problem on SGI multiprocessor systems, the quadtree algorithm has superior performance
+quadtree representation of matrices [17]. matrix-matrix multiply that is based upon a
+quadtree representation of matrices solution is recursive and suffers from the lack of
+interprocedural optimization in most commercial compilers. matrix-matrix multiply that is based upon a
+quadtree representation of matrices results show that when paging
+becomes a problem on DEC Alpha SGI multiprocessor systems, the quadtree algorithm has superior performance
 to the BLAS 3. On smaller problems, the quadtree algorithm has inferior performance. In relation
-to our work, we could not expect the compiler to replace the BLAS 3 with the quadtree approach
-when appropriate as it is a change in algorithm rather than a reshaping. In addition, the specialized
+to our work, our could not expect the compiler to replace the BLAS 3 with the quadtree approach
+when appropriate as the compiler is a change in algorithm rather than a reshaping. In addition, the specialized
 storage layout used by Frens and Wise calls into question the effect on an entire program.
 6
 
 Summary
 
 We have set out to determine whether a compiler can automatically restructure matrix factorizations
-well enough to avoid the need for hand optimization. To that end, we have examined a
+well enough to avoid the need for hand optimization. To that end, We have examined a
 collection of implementations from LAPACK. For each of these programs, we determined whether a
 plausible compiler technology could succeed in obtaining the block version from the point algorithm.
 The results of this study are encouraging: we have demonstrated that there exist implementable
 compiler methods that can automatically block matrix factorization codes to achieve algorithms
-that are competitive with those of LAPACK. Our results show that for modest-sized matrices on
-advanced microprocessors, the compiler-derived variants are often superior. These matrix sizes are
+that are competitive with those of LAPACK. The results of this study show that for modest-sized matrices on
+advanced microprocessors, the compiler-derived variants are often superior. modest-sized matrices on
+advanced microprocessors, the compiler-derived variants are often superior are
 typical on workstations.
 Given that future machine designs are certain to have increasingly complex memory hierarchies,
 compilers will need to adopt increasingly sophisticated memory-management strategies so that
 programmers can remain free to concentrate on program logic. Given the potential for performance
 attainable with automatic techniques, we believe that it is possible for the user to express machine-independent
-point matrix factorization algorithms without the BLAS and still get good performance
+point matrix factorization algorithms without BLAS BLAS and still get good performance
 if compilers adopt our enhancements to already existing methods.
 
 Acknowledgments
 
 Ken Kennedy and Richard Hanson provided the original motivation for this work. Ken Kennedy,
-Keith Cooper and Danny Sorensen provided financial support for this research when it was begun
+Keith Cooper and Danny Sorensen provided financial support for this research when this research was begun
 at Rice University.
-We also wish to thank Tomas Lofgren and John Pieper of DEC for their help with obtaining
-the DXML libraries and diagnosing the compiler's performance, respectively. We also thank Per
+Ken Kennedy,
+Keith Cooper and Danny Sorensen also wish to thank Tomas Lofgren and John Pieper of DEC for Tomas Lofgren and John Pieper of DEC help with obtaining
+the DXML libraries and diagnosing the compiler's performance, respectively. Ken Kennedy,
+Keith Cooper and Danny Sorensen also thank Per
 Ling of the University of Ume-a, Ken Stanley of the University of California Berkeley for their help
 with the benchmarks and discussions.
 

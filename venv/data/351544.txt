@@ -1,19 +1,22 @@
 --T
 Observability of 3D Motion.
 --A
-This paper examines the inherent difficulties in observing 3D rigid motion from image sequences. It does so without considering a particular estimator. Instead, it presents a statistical analysis of all the possible computational models which can be used for estimating 3D motion from an image sequence. These computational models are classified according to the mathematical constraints that they employ and the characteristics of the imaging sensor (restricted field of view and full field of view). Regarding the mathematical constraints, there exist two principles relating a sequence of images taken by a moving camera. One is the epipolar constraint, applied to motion fields, and the other the positive depth constraint, applied to normal flow fields. 3D motion estimation amounts to optimizing these constraints over the image. A statistical modeling of these constraints leads to functions which are studied with regard to their topographic structure, specifically as regards the errors in the 3D motion parameters at the places representing the minima of the functions. For conventional video cameras possessing a restricted field of view, the analysis shows that for algorithms in both classes which estimate all motion parameters simultaneously, the obtained solution has an error such that the projections of the translational and rotational errors on the image plane are perpendicular to each other. Furthermore, the estimated projection of the translation on the image lies on a line through the origin and the projection of the real translation. The situation is different for a camera with a full (360 degree) field of view (achieved by a panoramic sensor or by a system of conventional cameras). In this case, at the locations of the minima of the above two functions, either the translational or the rotational error becomes zero, while in the case of a restricted field of view both errors are non-zero. Although some ambiguities still remain in the full field of view case, the implication is that visual navigation tasks, such as visual servoing, involving 3D motion estimation are easier to solve by employing panoramic vision. Also, the analysis makes it possible to compare properties of algorithms that first estimate the translation and on the basis of the translational result estimate the rotation, algorithms that do the opposite, and algorithms that estimate all motion parameters simultaneously, thus providing a sound framework for the observability of 3D motion. Finally, the introduced framework points to new avenues for studying the stability of image-based servoing schemes.
+This paper examines the inherent difficulties in observing 3D rigid motion from image sequences. This paper does so without considering a particular estimator. Instead, This paper presents a statistical analysis of all the possible computational models which can be used for estimating 3D motion from an image sequence. all the possible computational models which can be used for estimating 3D motion from an image sequence are classified according to the mathematical constraints that all the possible computational models which can be used for estimating 3D motion from an image sequence employ and the characteristics of the imaging sensor (restricted field of view and full field of view). Regarding the mathematical constraints, there exist two principles relating a sequence of images taken by a moving camera. One is the epipolar constraint, applied to motion fields, and the other the positive depth constraint, applied to normal flow fields. 3D motion estimation amounts to optimizing these constraints over the image. A statistical modeling of these constraints leads to functions which are studied with regard to these constraints topographic structure, specifically as regards the errors in the 3D motion parameters at the places representing the minima of the functions. For conventional video cameras possessing a restricted field of view, the analysis shows that for algorithms in both classes which estimate all motion parameters simultaneously, the obtained solution has an error such that the projections of the translational and rotational errors on the image plane are perpendicular to each other. Furthermore, the estimated projection of the translation on the image lies on a line through the origin and the projection of the real translation. The situation is different for a camera with a full (360 degree) field of view (achieved by a panoramic sensor or by a system of conventional cameras). In this case, at the locations of the minima of the above two functions, either the translational or the rotational error becomes zero, while in the case of a restricted field of view both errors are non-zero. Although some ambiguities still remain in the full field of view case, the implication is that visual navigation tasks, such as visual servoing, involving 3D motion estimation are easier to solve by employing panoramic vision. Also, the analysis makes the analysis possible to compare properties of algorithms that first estimate the translation and on the basis of the translational result estimate the rotation, algorithms that do the opposite, and algorithms that estimate all motion parameters simultaneously, thus providing a sound framework for the observability of 3D motion. Finally, the introduced framework points to new avenues for studying the stability of image-based servoing schemes.
 --B
 Introduction
 Visual Servoing and Motion Estimation
 A broad definition of visual servoing amounts to the control of motion on the basis of image analysis. Thus,
 a driver adjusting the turning of the wheel by monitoring some features in the scene, a system attempting to
 insert a peg through a hole, a controller at some control panel perceiving a number of screens and adjusting a
-number of levers, a navigating system trying to find its home, all perform visual servoing tasks. Such systems
-must respond "appropriately" to changes in their environment; thus, on a high level, they can be described as
+number of levers, a navigating system trying to find a system attempting to
+ home, all perform visual servoing tasks. Such systems
+must respond "appropriately" to changes in Such systems
+ environment; thus, on a high level, Such systems
+ can be described as
 evolving or dynamical systems, which can be represented as a function from states and control signals to new
 states; both the states and the control variables may be functions of time. One approach to controlling such a
 system is to design an observer or state estimator to obtain an estimate of the state; for example, this estimator
-might implement a partial visual recovery process. This estimate is used by a controller or state regulator to
+might implement a partial visual recovery process. an estimate of the state is used by a controller or state regulator to
 compute a control signal to drive the dynamical system. Ideally, observation and control are separable in the sense
 that if we have an optimal controller and an optimal observer then the control system that results from coupling
 the two is guaranteed to be optimal [13]. Different agents, i.e., dynamical systems, have different capabilities and
@@ -36,19 +39,19 @@ image, i.e., to move the manipulator's joints in such a way that the scene ends 
 technical terms, the controller had to act in such a way that specific coordinate systems (hand, eye, scene, etc.)
 were put in a particular relationship with each other. Furthermore, this relationship could be realized by using
 directly available image measurements as feedback for the control loop. This approach is known as image-based
-robot servoing [16, 18, 21], and in recent years it has given very interesting research results [14, 23, 24, 28]. Most
+robot servoing [16, 18, 21], and in recent years This approach has given very interesting research results [14, 23, 24, 28]. Most
 of these results deal with the computation of the image Jacobian (i.e., the differential relationship between the
 camera frame and the scene frame), along with the camera's intrinsic and extrinsic parameters.
 Regardless of the philosophical approach one adopts in visual servoing (scene-based or image-based), the
 essential aspects of the problem amount to the recovery of the relationship between different coordinate systems
 (such as the ones between camera, gripper, robot, scene, object, etc. This could be the relationship itself or a
 representation of the change of the relationship. Since a servoing system is in general moving (or observing moving
-parts), a fundamental problem is the recovery of 3D motion from an image sequence. Whether this recovery is
-explicit or implicit, without it the relationships between different coordinate frames cannot be maintained, and
+parts), a fundamental problem is the recovery of 3D motion from an image sequence. Whether the recovery of 3D motion from an image sequence is
+explicit or implicit, without the recovery of 3D motion from an image sequence the relationships between different coordinate frames cannot be maintained, and
 servoing tasks cannot be achieved. Thus, it is important to understand how accurately 3D motion can be observed,
 in order to understand how successfully servoing can be accomplished. Experience has shown that in practice
 3D motion is very difficult to accurately observe, involving many ambiguities and sensitivities. Are there any
-regularities in which the ambiguity in 3D motion expresses itself? In trying to estimate 3D motion, do the
+regularities in which the ambiguity in 3D motion expresses 3D motion? In trying to estimate 3D motion, do the
 introduced errors satisfy any constraints? As 3D rigid motion consists of the sum of a translation and a rotation,
 are there differences in the inherent ambiguities governing the recovery of the different components of 3D motion?
 In addition, we need to study this question independently of specific optimization algorithms. This is the problem
@@ -59,12 +62,13 @@ independent, in order for the results to be of general use. Equivalently, our ap
 possible computational models that can be used to estimate 3D motion from image sequences. To do so, we need
 to classify all possible approaches to 3D motion on the basis of the input used and the mathematical constraints
 that are employed.
-As a system moves in some environment, every point in the scene has a velocity with regard to the system.
-The projection of these velocity vectors on the system's eye constitutes the so-called motion field. An estimate
+As a system moves in some environment, every point in the scene has a velocity with regard to a system.
+The projection of these velocity vectors on a system's eye constitutes the so-called motion field. An estimate
 of the motion field, called optical flow, starts by first estimating the spatiotemporal derivatives of the image
-intensity function. These derivatives comprise the so-called normal flow which is the component of the flow along
+intensity function. the spatiotemporal derivatives of the image
+intensity function comprise the so-called normal flow which is the component of the flow along
 the local image gradient, i.e., normal to the local edge. A system could start 3D motion estimation using normal
-flow as input or it could first attempt to estimate the optical flow, though that is a very difficult problem, and
+flow as input or A system could first attempt to estimate the optical flow, though that is a very difficult problem, and
 subsequently 3D motion. This means that an analysis of the difficulty of 3D motion estimation must consider
 both inputs, optic flow fields and normal flow fields, and algorithms in the literature use one or the other input.
 Regarding the mathematical constraints through which 3D motion is encoded in the input image motion,
@@ -74,7 +78,7 @@ epipolar constraint ensures that corresponding points in the sequence are the pr
 scene. The positive depth constraint requires that the depth of every scene point be positive, since the scene is
 in front of the camera. Since knowledge of normal flow does not imply knowledge of corresponding points in the
 sequence, the epipolar constraint cannot be used when normal flow is available.
-The epipolar constraint has attracted most work. It can only be used when optic flow is available. Since many
+the epipolar constraint has attracted most work. the epipolar constraint can only be used when optic flow is available. Since many
 measurements are present, one develops a function that represents deviation from the epipolar constraint all over
 the image. A variety of approaches can be found in the literature using different metrics in representing epipolar
 deviation and using different techniques to seek the optimization of the resulting functions. Furthermore, there
@@ -89,23 +93,25 @@ the literature implementing this principle.
 Looking at nature we observe that there exists a great variety of eye designs in organisms with vision. An
 important characteristic is the field of view. There exist systems whose vision has a restricted field of view. This
 is achieved by the corneal eyes of land vertebrates. Human eyes and common video cameras fall in that category
-and they are geometrically modeled through central projection on a plane. We refer to these eyes as planar or
+and Human eyes and common video cameras are geometrically modeled through central projection on a plane. We refer to these eyes as planar or
 camera-type eyes. There exist also systems whose vision has a full 360 degree field of view. This is achieved by
 the compound eyes of insects or by placing camera-type eyes on opposite sides of the head, as in birds and fish.
 Panoramic vision is adequately modeled geometrically by projecting on a sphere using the sphere's center as the
 center of projection. In studying the observability of 3D motion, we investigate both restricted field of view and
 panoramic vision. It turns out that they have different properties regarding 3D motion estimation.
-In our approach we employ a statistical model to represent the constraints to derive functions representing
+In our approach our employ a statistical model to represent the constraints to derive functions representing
 deviation from epipolar geometry or the amount of negative depth, for both a camera-type eye and a spherical eye.
 All possible, meaningful algorithms for 3D motion estimation can be understood from the minimization of these
-functions. Thus, we perform a topographic analysis of these functions and study their global and local minima.
+functions. Thus, we perform a topographic analysis of these
+functions and study these
+functions global and local minima.
 Specifically, we are interested in the relationships between the errors in 3D motion at the points representing
 the minima of these surfaces. The idea behind this is that in practical situations any estimation procedure is
 hampered by errors and usually local minima of the functions to be minimized are found as solutions.
 3 Problem Statement
 3.1 Prerequisites
 We use the standard conventions for expressing image motion measurements for a monocular observer moving
-rigidly in a static environment. We describe the motion of the observer by its translational velocity
+rigidly in a static environment. We describe the motion of the observer by the observer translational velocity
 and its rotational velocity with respect to a coordinate system OXY Z fixed to the nodal point of
 the camera. Each scene point P with coordinates has a velocity -
 R relative to the
@@ -141,7 +147,7 @@ translational velocity t and rotational velocity !. Scene points R project onto 
 R of a scene point is observed in the image as image velocity -
 r.
 with representing the depth. If the image is formed on a sphere of radius f (Figure 1b) having the
-center of projection as its origin, the image r of any point R is
+center of projection as the image origin, the image r of any point R is
 jRj , with R being the norm of R (the range),
 and the image motion is
 R u tr (t)
@@ -176,7 +182,8 @@ The classic approach to 3D motion estimation is to minimize the deviation from t
 constraint is obtained by eliminating depth (or range) from equation (1) (or (2)). For both planar and spherical
 eyes it is
 r +! \Theta r) = 0: (5)
-Equating image motion with optic flow, this constraint allows for the derivation of 3D rigid motion on the basis
+Equating image motion with optic flow, This
+constraint allows for the derivation of 3D rigid motion on the basis
 of optic flow measurements. One is interested in the estimates of translation - t and rotation -
 which best satisfy
 the epipolar constraint at every point r according to some criterion of deviation. The Euclidean norm is usually
@@ -186,7 +193,7 @@ image
 \Theta r)dr: (6)
 On the other hand, if normal flow is given, the vector equations (1) and (2) cannot be used directly. The only
 constraint is scalar equation (4), along with the inequality Z ? 0 which states that since the surface in view is in
-front of the eye its depth must be positive. Substituting (1) or (2) into (4) and solving for the estimated depth
+front of the eye the eye depth must be positive. Substituting (1) or (2) into (4) and solving for the estimated depth
 Z or range -
 R, we obtain for a given estimate - t; -
 ! at each point r:
@@ -208,11 +215,11 @@ the actual and estimated motion parameters t, !, - t and -
 and the errors t
 !) and the depth Z (or range R) of the viewed scene. To conduct any analysis,
 a model for the scene is needed. We are interested in the statistically expected values of the motion estimates
-resulting from all possible scenes. Thus, as our probabilistic model we assume that the depth values of the scene
+resulting from all possible scenes. Thus, as We probabilistic model we assume that the depth values of the scene
 are uniformly distributed between two arbitrary values Z min (or R min ) and Zmax (or Rmax
 For the minimization of negative depth values, we further assume that the directions in which flow measurements
 Because t \Theta r introduces the sine of the angle between t and r, the minimization prefers vectors t close to the center of gravity of
-the points r. This bias has been recognized [40] and alternatives have been proposed that reduce this bias, but without eliminating
+the points r. This bias has been recognized [40] and alternatives have been proposed that reduce This bias, but without eliminating
 the confusion between rotation and translation.
 are made are uniformly distributed in every direction for every depth. Parameterizing n by /, the angle between
 n and the x axis, we thus obtain the following two functions:
@@ -256,7 +263,7 @@ An illustration is given in Figure 2. The two measures considered in the two dif
 related to each other. In the case of negative depth we consider the angle ff, whereas in the case of the epipolar
 constraint we consider the squared distance a 2 , which amounts to (sin ffku tr ( - t)k
 The major difference in using the two measures arises for angles ff ? 90 ffi . The measure for negative depth
-is monotonic in ff, but the measure for the deviation from the epipolar constraint is not, because it does not
+is monotonic in ff, but the measure for the deviation from the epipolar constraint is not, because the measure for the deviation from the epipolar constraint does not
 differentiate between depth estimates of positive and negative value.
 The fact that the computed depth has to be positive has not been considered in past approaches employing
 minimization of the epipolar constraint. As this fact provides an additional constraint which could be utilized in
@@ -272,7 +279,7 @@ Figure
 values from projections of motion fields. (b) a 2 in the epipolar constraint.
 the future, maybe in conjunction with the epipolar constraint, we are interested in the influence of this constraint
 on 3D motion estimation as well. Thus, in addition to minimization of the functions (9) and (10) discussed
-above, we study the minimization of a third function. This function amounts to the number of values giving
+above, we study the minimization of a third function. a third function amounts to the number of values giving
 rise to negative depth when full flow measurements (optical flow) are assumed and the analysis is presented in
 
 
@@ -292,17 +299,17 @@ with the first and second moments being
 and all stochastic variables being independent of each other, independent of image position, and independent of
 the depth.
 3.5 Overview of the paper, summary of results and related work
-Our approach expresses functions (9) and (10) in terms of t, !, t ffl and ! ffl and finds the conditions that t ffl
+we approach expresses functions (9) and (10) in terms of t, !, t ffl and ! ffl and finds the conditions that t ffl
 ffl satisfy at local minima which represent solutions of the different estimation algorithms. Procedures for
 estimating 3D motion can be classified into those estimating either the translation or rotation as a first step and the
 remaining component (that is, the rotation or translation) as a second step, and those estimating all components
-simultaneously. Procedures of the former kind result when systems utilize inertial sensors which provide them
+simultaneously. Procedures of the former kind result when systems utilize inertial sensors which provide the former kind result
 with estimates of one of the components of the motion, or when two-step motion estimation algorithms are used.
 Thus, three cases need to be studied: the case were no prior information about 3D motion is available and
 the cases where an estimate of translation or rotation is available with some error. Imagine that somehow the
 rotation has been estimated, with an error ! ffl . Then our functions become two-dimensional in the variables t ffl and
 represent the space of translational error parameters corresponding to a fixed rotational error. Similarly, given
-a translational error t ffl , the functions become three-dimensional in the variables ! ffl and represent the space of
+a translational error t ffl , our functions become three-dimensional in the variables ! ffl and represent the space of
 rotational errors corresponding to a fixed translational error. To study the general case, one needs to consider the
 lowest valleys of the functions in 2D subspaces which pass through 0. In the image processing literature, such local
 are often referred to as ravine lines or courses. Each of the three cases is studied for four optimizations:
@@ -310,7 +317,8 @@ epipolar minimization for the sphere and the plane (full field of view and restr
 minimization of negative depth for the sphere and the plane. Thus, there are twelve (four times three) cases, but
 since the effects of rotation on the image are independent of depth, it makes no sense to perform minimization of
 negative depth assuming an estimate of translation is available. Thus, we are left with ten different cases which
-are studied below. These ten cases represent all the possible, meaningful motion estimation procedures.
+are studied below. ten different cases which
+are studied below represent all the possible, meaningful motion estimation procedures.
 The analysis shows that:
 1. In the case of a camera-type eye (restricted field of view) for algorithms in both classes which estimate all
 motion parameters simultaneously (i.e., there is no prior information), the obtained solution will have an
@@ -324,9 +332,9 @@ origin of the image and the real translation
 as the "line constraint." Similar results are achieved for the case where translation is estimated first and on
 that basis rotation is subsequently found, while the case where rotation is first estimated and subsequently
 translation provides different results. The work is performed both in the absence of error in the image
-measurements-in which case it becomes a geometric analysis of the inherent confusion between rotation
+measurements-in which case The work becomes a geometric analysis of the inherent confusion between rotation
 and translation-and in the case where the image measurements are corrupted by noise that satisfies the
-model from Section 3.4. In this case, we derive the expected values of the local and global minima. As will
+model from Section 3.4. In the general case, we derive the expected values of the local and global minima. As will
 be shown, the noise does not alter the local minima, and the global minima fall within the valleys of the
 function without noise. Thus, the noise does not alter the functions' overall structure.
 2. In the case of panoramic vision, for algorithms in both classes which estimate all motion parameters si-
@@ -334,7 +342,7 @@ multaneously, the obtained solution will have no error in the translation and th
 will be perpendicular to the translation. In addition, for the case of epipolar minimization from optic flow,
 given a translational error t ffl , the obtained solution will have no error in the rotation (! while for the
 case of negative depth minimization from normal flow, given a rotational error the obtained solution will
-have no error in the translation. In other cases ambiguities remain. In the spherical eye case the analysis is
+have no error in the translation. In other cases ambiguities remain. In the general case the analysis is
 simply performed for noiseless flow.
 A large number of error analyses have been carried out [2, 11, 12, 15, 29, 39, 41, 42] in the past for a
 camera-type eye, while there is no published research of this kind for the full field of view case. None of the
@@ -347,13 +355,13 @@ are in accordance with our findings. In particular, the following two results al
 along the y axis can be easily confounded with rotation around the x axis, for small fields of view and
 insufficient depth variation. This fact has long been known from experimental observation, and has been
 proved for planar scene structures and unbiased estimators [10]. The orthogonality constraint found
-here confirms these findings, and imposes even more restrictive constraints. It shows, in addition, that
+here confirms these findings, and imposes even more restrictive constraints. The orthogonality constraint shows, in addition, that
 the x-translation and y-rotation, and y-translation and x-rotation, are not decoupled. Furthermore,
 we have found that rotation around the Z axis can be most easily distinguished from the other motion
 components.
 (b) Maybank [32, 33] and Jepson and Heeger [29] established before the line constraint, but under much
 more restrictive assumptions. In particular, they showed that for a small field of view, a translation
-far away from the image center and an irregular surface, the function in (9) has its minima along a
+far away from the image center and an irregular surface, the function in (9) has the function in (9) minima along a
 line in the space of translation directions which passes through the true translation and the viewing
 direction. Under fixation the viewing direction becomes the image center.
 4 Epipolar Minimization: Camera-type Eye
@@ -381,10 +389,11 @@ among the errors in 3D motion at the minima of (14) is obtained from the first-o
 It follows that ff ffl =fi
 (b) Assuming that rotation has been estimated with an error (ff among the errors is
 obtained from @E1
-In this case, the relationship is very elaborate and the translational error depends
+In the general case, the relationship
+among the errors in 3D motion at the minima of (14) is very elaborate and the translational error depends
 on all the other parameters-that is, the rotational error, the actual translation, the image size and the depth
 interval. See Appendix A.
-(c) In the general case, we need to study the subspaces in which E 1 changes least at its absolute minimum;
+(c) In the general case, we need to study the subspaces in which E 1 changes least at E 1 absolute minimum;
 that is, we are interested in the direction of the smallest second derivative at 0, the point where the motion errors
 are zero. To find this direction, we compute the Hessian at 0, that is the matrix of the second derivatives of
 respect to the five motion error parameters, and compute the eigenvector corresponding to the smallest
@@ -392,7 +401,7 @@ eigenvalue. The scaled components of this vector amount to
 As can be seen, for points defined by this direction, the translational and rotational errors are characterized by
 the "orthogonality constraint" ff ffl =fi
 and by the "line constraint" x 0 =y
-Next we consider noise in the flow measurements. We model the noise (N x ; N y ) as defined in Section 3.4 and
+Next we consider noise in the flow measurements. we model the noise (N x ; N y ) as defined in Section 3.4 and
 derive E(E ep ), the expected value of E ep , which amounts to
 Z=Zmin
 Z
@@ -425,10 +434,10 @@ by the constraint by the orthogonality constraint, and by the line constraint.
 5 Minimization of Negative Depth Volume: Camera-type Eye
 In the following analysis we study the function describing the negative depth values geometrically, by means of the
 negative depth volumes, that is, the points corresponding to negative depth distortion as defined in Section 3.3.
-This allows us to incrementally derive properties of the function without considering it with respect to all its
+This allows us to incrementally derive properties of the function without considering the function with respect to all the function
 parameters at once. For simplicity, we assume that the FOE and the estimated FOE are inside the image, and
 we do not consider the exact effects resulting from volumes of negative depth in different directions being outside
-the field of view. We first concentrate on the noiseless case. If, as before, we ignore terms quadratic in the image
+the field of view. we first concentrate on the noiseless case. If, as before, we ignore terms quadratic in the image
 coordinates, the 0 distortion surface (from equation (11)) becomes
 and the \Gamma1 distortion surface takes the form
 The flow directions (n x alternatively be written as (cos /; sin /), with / 2 [0; -] denoting the angle
@@ -465,7 +474,7 @@ depends only on the depth interval, and thus is independent of the direction, /.
 depth volume is minimized if (20) holds for every direction. Since fi ffl
 sin /y 0 ffl , we obtain x0 ffl
 If the \Gamma1 distortion surface becomes
-This surface can be most easily understood by slicing it with planes parallel to the x 0 y 0 plane. At every depth
+the \Gamma1 distortion surface can be most easily understood by slicing it with planes parallel to the x 0 y 0 plane. At every depth
 value Z, we obtain a line of slope \Gamma1
 which intersects the x 0 axis at x Figure 4a). For any
 given Z the slopes of the lines in different directions are the same. An illustration of the volume of negative depth
@@ -499,7 +508,11 @@ assuming Z 6= 0, causes the area of negative depth values to change by A c , whe
 and y 0
 1 and y 0
 2 denote the y 0 coordinates of the intersection point of the \Gamma1 distortion contour at depth Z with
-the 0 distortion contours x I and x d. These coordinates are
+the 0 distortion contours x I and x d. A c , where A
+and y 0
+1 and y 0
+2 denote the y 0 coordinates of the intersection point of the \Gamma1 distortion contour at depth Z with
+the 0 distortion contours x I and x are
 and y 0
 Therefore
 Z
@@ -512,7 +525,7 @@ Substituting for Z I = Zmin+Zmax
 \Gammasgn(d).
 We are interested in the d which minimizes V c . By solving
 @d
-we obtain
+We obtain
 Thus
 depends only on the depth interval, the total negative depth volume is obtained if the volume in
 every direction is minimized. Therefore, for any rotational error (ff independent of fl ffl , we have the
@@ -524,7 +537,8 @@ coordinates of the intersections y 0
 2 do not lie inside the image. The value of A c can be at most the length
 of the image times d. Since the slope of the \Gamma1 distortion contour for a given Z is the same for all directions, this
 will have very little effect on the relationship between the directions of the translational and rotational motion
-errors. It has an effect, however, on the relative values of the motion errors. Only if the intersections are inside
+errors. this
+ has an effect, however, on the relative values of the motion errors. Only if the intersections are inside
 the image can (22) be used to describe the value of x 0
 as a function of fi 0
 ffl and the interval of depth values of the
@@ -566,10 +580,11 @@ y0 (see
 Figure
 
 6).
-It remains to be shown that noise in the flow measurements does not alter the qualitative characteristics of
+This
+ remains to be shown that noise in the flow measurements does not alter the qualitative characteristics of
 the negative depth volume and thus the results obtained.
-First we analyze the orthogonality constraint. The analysis is carried out without considering the size of the
-aperture; as will be shown, this analysis leads to the orthogonality constraint.
+First we analyze the orthogonality constraint. an analysis of the noiseless case is carried out without considering the size of the
+aperture; as will be shown, an analysis of the noiseless case leads to the orthogonality constraint.
 First, let Ignoring the image size, we are interested in E(V ), the expected value of the integral of the
 cross sections A/ , which amounts to
 Z=Zmin
@@ -609,21 +624,21 @@ ffl Z min and x
 ffl Zmax .
 We are interested in the angle - between the translational and rotational error which minimizes the negative
 depth volume. If we align the translational error with the x axis, that is, y
-0, and if we express the rotational
-error as sin -), we obtain
+0, and if We express the rotational
+error as sin -), We obtain
 Z=Zmin
 \Delta0
 Solving for @E(V )
 ) to be perpendicular to (ff ffl ; fi ffl ), if
 minimizations considered.
-Next, we allow fl ffl to be different from zero. For the case of a fixed translational error, again, the volume
+Next, We allow fl ffl to be different from zero. For the case of a fixed translational error, again, the volume
 increases as fl ffl increases, and thus the smallest negative depth volume occurs for For the case of a
 fixed rotational error we have to extend the previous analysis (studying the change of volume when changing the
 estimated translation) to noisy motion fields: The \Gamma1 distortion surface becomes x
 and the 0 distortion surfaces remain the same. Therefore, VC becomes
 \Gammasgn
 and E(VC ) takes the same form as VC in (21). We thus obtain the orthogonality constraint for
-Finally, we take into account the limited extent of a circular aperture for the case of global minimization.
+Finally, We take into account the limited extent of a circular aperture for the case of global minimization.
 As noise does not change the structure of the iso-distortion surfaces, as shown in Figure 6, in the presence of
 noise, too, the smallest negative depth volume is obtained if the FOE and the estimated FOE lie on a line passing
 through the image center. This proves the orthogonality constraint for the full model as well as the line constraint.
@@ -648,7 +663,7 @@ dAdR
 (a) Assuming that translation - t has been estimated, the ! ffl that minimizes E ep is since the resulting
 function is non-negative quadratic in ! ffl (minimum at zero). The difference between sphere and plane is already
 clear. In the spherical case, as shown here, if an error in the translation is made we do not need to compensate
-for it by making an error in the rotation (! while in the planar case we need to compensate to ensure that
+for the translation by making an error in the rotation (! while in the planar case we need to compensate to ensure that
 the orthogonality constraint is satisfied!
 (b) Assuming that rotation has been estimated with an error ! ffl , what is the translation - t that minimizes
 Since R is uniformly distributed, integrating over R does not alter the form of the error in the optimization.
@@ -660,12 +675,13 @@ dA and
 Z Z
 sphere
 are multiplicative factors depending only on R min and Rmax . For angles between t; - t and - t; ! ffl in
-the range of 0 to -=2, K and L are monotonic functions. K attains its minimum when
+the range of 0 to -=2, K and L are monotonic functions. K and L attains its minimum when
 Fix the distance between t and - t leading to a certain value K, and change the position of - t. L takes its minimum
 as follows from the cosine theorem. Thus E ep achieves its minimum when - t lies on the
 great circle passing through t and ! ffl , with the exact position depending on j! ffl j and the scene in view.
 (c) For the general case where no information about rotation or translation is available, we study the subspaces
-changes the least at its absolute minimum, i.e., we are again interested in the direction of the smallest
+changes the least at the subspaces
+ absolute minimum, i.e., we are again interested in the direction of the smallest
 second derivative at 0. For points defined by this direction we calculate, using Maple, t.
 7 Minimizing Negative Depth Volume on the Sphere
 (a) Assuming that the rotation has been estimated with an error ! ffl , what is the optimal translation - t that
@@ -677,7 +693,7 @@ ks\Thetark defines a direction in the tangent plane. As s moves along half a cir
 ks\Thetark takes on every
 possible orientation (with the exception of the points r lying on the great circle of s). Let us pick ! ffl perpendicular
 to s (s
-We are interested in the points in space with estimated negative range values -
+us are interested in the points in space with estimated negative range values -
 R.
 ks\Thetark and s
 the estimated range -
@@ -719,18 +735,20 @@ area III it is bounded from above by
 . If there exist lower and upper bounds R min and Rmax in
 the scene, we obtain two additional curves C min and Cmax with C
 and we obtain negative depth values in area I only between Cmax
-in area III only between C min and (! ffl \Theta r)(s \Theta r) = 0. We are given ! ffl and t, and we
+in area III only between C min and (! ffl \Theta r)(s \Theta r) = 0. we are given ! ffl and t, and we
 are interested in the - t which minimizes the negative range volume. For any s the corresponding negative range
 volume becomes smallest if - t is on the great circle through t and s, that is, (t \Theta s) \Delta - as will be shown next.
 Let us consider a - t such that (t \Theta s) \Delta - t 6= 0 and let us change - t so that (t \Theta s) \Delta - changes, the area
 of type II becomes an area of type IV and the area of type III becomes an area of type I. The negative depth
-volume is changed as follows: It is decreased by the spaces above area II and area III, and it is increased by
+volume is changed as follows: The negative depth
+volume is decreased by the spaces above area II and area III, and The negative depth
+volume is increased by
 the space above area I (which changed from type III to type I). Clearly, the decrease is larger than the increase,
 which implies that the smallest volume is obtained for s; t; - t lying on a great circle. Since this is true for any s,
 the minimum negative depth volume is attained for t. 2
 (b) Next, assume that no prior knowledge about the 3D motion is available. We want to know for which
 configurations of - t and ! ffl the negative depth values change the least in the neighborhood of the absolute minimum,
-that is, at From the analysis above, it is known that for any ! ffl 6= 0, t. Next, we show that ! ffl
+that is, at From the analysis above, it is known that for any ! ffl 6= 0, t. Next, We show that ! ffl
 is indeed different from zero: Take t 6= - t on the great circle of s and let ! ffl , as before, be perpendicular to s.
 the curves Cmax and C min can be expressed as C
 6 (t;s)
@@ -756,7 +774,7 @@ estimated ranges above r 1 and r 2 add up to Rmax \Gamma R min . Thus the volume
 and s 2 amounts to the area of the sphere times (Rmax \Gamma R min ) (area II of s 1 contributes a hemisphere; area III of
 area I of s 2 together contribute a hemisphere). The total negative range volume can be decomposed into
 A word of caution about the parameterization used for directions
-ks\Thetark is needed. It does not treat all orientations equally
+ks\Thetark is needed. ks\Thetark does not treat all orientations equally
 (as s varies along a great circle with constant speed, s \Theta r accelerates and decelerates). Thus to obtain a uniform distribution,
 normalization is necessary. The normalization factors, however, do not affect the previous proof, due to symmetry.
 three components: a component V 1 originating from the set of s between t and - t, a component V 2 originating
@@ -775,24 +793,27 @@ which for only lies above areas of type I, decreases as t moves along a great ci
 areas between C min and Cmax and between C min and (t \Theta s) \Delta decrease. This proves that in addition to
 Conclusions
 The preceding results constitute a geometric statistical investigation of the observability of 3D motion from
-images. On their basis, a number of striking conclusions can be achieved. First, they clearly demonstrate the
+images. On their basis, a number of striking conclusions can be achieved. First, their clearly demonstrate the
 advantages of panoramic vision in the process of 3D motion estimation. Table 1 lists the eight out of ten cases
 which lead to clearly defined error configurations. It shows that 3D motion can be estimated more accurately
 with spherical eyes. Depending on the estimation procedure used-and systems might use different procedures
 for different tasks-either the translation or the rotation can be estimated very accurately. For planar eyes, this is
 not the case, as for all possible procedures there exists confusion between the translation and rotation. The error
 configurations also allow systems with inertial sensors to use more efficient estimation procedures. If a system
-utilizes a gyrosensor which provides an approximate estimate of its rotation, it can employ a simple algorithm
-based on the positive depth constraint for only translational motion fields to derive its translation and obtain a
+utilizes a gyrosensor which provides an approximate estimate of a system
+ rotation, a system
+ can employ a simple algorithm
+based on the positive depth constraint for only translational motion fields to derive a system
+ translation and obtain a
 very accurate estimate. Such algorithms are much easier to implement than algorithms designed for completely
-unknown rigid motions, as they amount to searches in 2D as opposed to 5D spaces [19]. Similarly, there exist
+unknown rigid motions, as Such algorithms amount to searches in 2D as opposed to 5D spaces [19]. Similarly, there exist
 computational advantages for systems with translational inertial sensors in estimating the remaining unknown
 rotation.
 Since the positive depth constraint turns out to be very powerful and since epipolar minimization does not
 consider depth positivity, an interesting research question that arises for the future is how to couple the epipolar
 constraint with the positive depth constraint. We attempted a first investigation into this problem through a
 study of negative depth on the basis of optic flow for the plane in Appendix B, which gave very interesting results.
-Specifically, we found that estimating all motion parameters simultaneously by minimizing negative depth from
+Specifically, We found that estimating all motion parameters simultaneously by minimizing negative depth from
 optic flow provides a solution with no error in the translation. However, the rotation cannot be decoupled from the
 translation, which makes it clear that for cameras with restricted fields of view the problem of rotation/translation
 confusion cannot be escaped.
@@ -800,14 +821,15 @@ Camera-type eyes are found in nature in systems that walk and perform sophistica
 such systems have a need for very accurate segmentation and shape estimation and thus high resolution in a
 limited field of view. Panoramic vision, either through compound eyes or a pair of camera-type eyes positioned
 on opposite sides of the head is usually found in flying systems which have the obvious need for a larger field of
-view but also rely on accurate 3D motion estimation as they always move in an unconstrained way. When we
+view but also rely on accurate 3D motion estimation as Panoramic vision, either through compound eyes or a pair of camera-type eyes positioned
+on opposite sides of the head always move in an unconstrained way. When we
 face the task of equipping robots with visual sensors, we do not have to necessarily copy nature, and we also do
 not have to necessarily use what is commercially available. Instead, we could construct new, powerful eyes by
 taking advantage of both the panoramic vision of flying systems and the high-resolution vision of primates. An
 eye like the one in Figure 9, assembled from a few video cameras arranged on the surface of a sphere, can easily
-estimate 3D motion since, while it is moving, it is sampling a spherical motion field!
+estimate 3D motion since, while 3D motion is moving, 3D motion is sampling a spherical motion field!
 Such an eye not only has panoramic properties, allowing very accurate determination of the transformations
-relating multiple views, but it has the unexpected benefit of making it easy to estimate image motion with high
+relating multiple views, but Such an eye has the unexpected benefit of making Such an eye easy to estimate image motion with high
 accuracy. Any two cameras with overlapping fields of view also provide high-resolution stereo vision, and this
 collection of stereo systems makes it possible to locate a large number of depth discontinuities. Given scene
 discontinuities, image motion can be estimated very accurately. As a consequence, having accurate 3D motion

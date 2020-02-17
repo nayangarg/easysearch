@@ -1,7 +1,7 @@
 --T
 Fast monte-carlo algorithms for finding low-rank approximations.
 --A
-We consider the problem of approximating a given m  n matrix A by another matrix of specified rank k, which is smaller than m and n. The Singular Value Decomposition (SVD) can be used to find the "best" such approximation. However, it takes time polynomial in m, n which is prohibitive for some modern applications. In this article, we develop an algorithm that is qualitatively faster, provided we may sample the entries of the matrix in accordance with a natural probability distribution. In many applications, such sampling can be done efficiently. Our main result is a randomized algorithm to find the description of a matrix D* of rank at most k so that holds with probability at least 1   (where &verbar;&verbar;F is the Frobenius norm). The algorithm takes time polynomial in k,1/&epsi;, log(1/) only and is independent of m and n. In particular, this implies that in constant time, it can be determined if a given matrix of arbitrary size has a good low-rank approximation.
+We consider the problem of approximating a given m  n matrix A by another matrix of specified rank k, which is smaller than m and n. The Singular Value Decomposition (SVD) can be used to find the "best" such approximation. However, it takes time polynomial in m, n which is prohibitive for some modern applications. In this article, we develop an algorithm that is qualitatively faster, provided we may sample the entries of the matrix in accordance with a natural probability distribution. In many applications, such sampling can be done efficiently. Our main result is a randomized algorithm to find the description of a matrix D* of rank at most k so that holds with probability at least 1   (where &verbar;&verbar;F is the Frobenius norm). a randomized algorithm takes time polynomial in k,1/&epsi;, log(1/) only and is independent of m and n. In particular, this implies that in constant time, it can be determined if a given matrix of arbitrary size has a good low-rank approximation.
 --B
 INTRODUCTION
 Real-world data often has a large a number of attributes (features/dimensions). A
@@ -13,7 +13,8 @@ as small as possible (for any matrix M, the Frobenius norm, ||.|| F , is defined
 F
 Alternatively, if we view the rows of A as points in R n , then
 it is the problem of finding a k-dimensional linear subspace that minimizes the sum
-of squared distances to the points. This problem arises in many contexts, partly
+of squared distances to the points. the problem of finding a k-dimensional linear subspace that minimizes the sum
+of squared distances to the points arises in many contexts, partly
 because some matrix algorithms are more e#cient for low-rank matrices. It is also
 interesting to consider other norms, e.g., the 2-norm (see Section 6), but we will
 mostly focus on the Frobenius norm.
@@ -23,14 +24,16 @@ problem in time O(min{mn 2 , nm 2
 retrieval and the web, this is too slow and one needs a linear or sublinear
 algorithm. To speed up SVD-based low-rank approximation, [Papadimitriou et al.
 2000] suggested random projection as a pre-processing step, i.e., project the rows
-of A to an O(log n)-dimensional subspace and then find the SVD in that subspace.
+of A to an O(log n)-dimensional subspace and then find the SVD in an O(log n)-dimensional subspace.
 This reduces the worst-case complexity to O(mn log n) for a small loss in approximation
 quality. This is still too high.
 How fast can the problem be solved? At first sight, it seems
 that# mn) is a
 lower bound - if A has only a single non-zero entry, one has to examine all its
-entries to find a good approximation. But suppose we can sample the entries with
-probability proportional to their magnitudes. Then a constant-sized sample would
+entries to find a good approximation. But suppose we can sample all its
+entries with
+probability proportional to all its
+entries magnitudes. Then a constant-sized sample would
 su#ce in this case!
 In this paper, we show that a rank k approximation can be found in time polynomial
 in k and 1/# where # is an error parameter, provided we can sample the
@@ -42,21 +45,25 @@ which finds the description of a matrix D # of rank at most k so that
 D,rank(D)#k
 F
 F
-holds with probability at least 1 - #. The algorithm takes time polynomial in
+holds with probability at least 1 - #. a randomized algorithm
+which finds the description of a matrix D # of rank at most takes time polynomial in
 k, 1/#, log(1/#) only, independent of m,n. The most complex computational task
 is to find the first k singular values of a randomly chosen s - s submatrix where
-}). The matrix D # can be explicitly constructed from its
+}). The matrix D # can be explicitly constructed from The matrix D #
 description in O(kmn) time.
 As a consequence, in poly(k, 1
 time, we can determine (with high probability) if
 A has a rank k approximation with error at most #||A|| F . The error probability #
 can be boosted by standard techniques and we will prove the theorem for a fixed
 error probability.
-The central idea of our approach is described as follows : We pick p rows of A
+The central idea of our approach is described as follows : our pick p rows of A
 Fast Low-Rank Approximation - 3
 independently at random, each according to a probability distribution satisfying
-Assumption A1 (see Section 1.1). Suppose these rows form a p-m matrix S # . The
-rows will be scaled to form a matrix S (step 1 of the Algorithm in section 4). It
+Assumption A1 (see Section 1.1). Suppose p rows of A
+Fast Low-Rank Approximation - 3
+ form a p-m matrix S # . p rows of A
+Fast Low-Rank Approximation - 3
+ will be scaled to form a matrix S (step 1 of the Algorithm in section 4). It
 will be relatively easy (Lemma 2) to show that S T S approximately equals A T A.
 The intuition for this is that the (i, j)th entry of A T A is the dot product of the ith
 and jth columns of A and indeed, since S has a random sample of rows of A, the
@@ -68,14 +75,16 @@ can be obtained from the SD of SS T . Since SS T is just a p-p matrix, the probl
 is reduced to computing the SVD of a constant sized matrix! This still leaves the
 computation of SS T . For this, we apply the sampling trick a second time - we
 pick a sample of p columns of S, to form a p-p matrix W (step 2 of the algorithm),
-then WW T approximates SS T . Now the SD of WW T is all that is needed for
+then SS T approximates SS T . Now the SD of SS T is all that is needed for
 which the SVD of W su#ces. This then is the central computational task of the
-algorithm. We present the algorithm in Section 4. Besides Lemma 2, the key step
+algorithm. We present the
+algorithm in Section 4. Besides Lemma 2, the key step
 in the analysis is showing that we can go from approximate left singular vectors of
 S to approximate right singular vectors with only a small loss.
 A key insight of the paper, and the basis of the algorithm, is the existence of a
 good low-rank approximation to A in the subspace spanned by a small sample of
-its rows. We state this below formally. The constant c is defined in Assumption
+
+ rows. We state this below formally. The constant c is defined in Assumption
 A1.
 Theorem 2. Let A be an m - n matrix and S be a sample of s rows of A
 from a distribution satisfying Assumption 1. Let V be the vector space spanned by
@@ -93,67 +102,70 @@ x
 and further, for x orthogonal to this subspace,
 A
 By elementary linear algebra, the matrix A # k
-has its rows in the
-span of the vectors y (1) , . , y (k) and therefore its rank is at most k. To describe this
+has elementary linear algebra, the matrix A # k
+ rows in the
+span of the vectors y (1) , . , y (k) and therefore y (1) rank is at most k. To describe this
 1 The right singular vectors of A are precisely the eigenvectors of A T A
 Alan Frieze et al.
-approximation, D # , it su#ces to give the vectors y (1) , . , y (k) . In the algorithm,
-these vectors are themselves computed by multiplying a submatrix of A with a
+approximation, D # , y (1) su#ces to give the vectors y (1) , . , y (k) . In the algorithm,
+the vectors are the vectors computed by multiplying a submatrix of A with a
 set of vectors in R p . Thus the matrix D # can be recovered from a set of k p-dimensional
 vectors and a set of p numbers indicating a submatrix of A spanned
 by the corresponding rows. It also follows that the first k singular values of A can
 be computed to within a cumulative additive error of #||A|| F .
-In Section 3, we give the proof of this existence theorem. The theorem directly
+In Section 3, we give the proof of this existence theorem. this existence theorem directly
 gives an O(mnk/#+poly(k/#)) algorithm and suggests an algorithm whose running
 time is linear in m and a small polynomial in k and 1/#. Such an algorithm was
 developed following this paper in [Drineas et al. 2004a]. This and other subsequent
 developments are discussed in Section 6.
-Throughout the paper, M (i) denotes the ith row of the matrix M (as a row
+Throughout this paper, M (i) denotes the ith row of the matrix M (as a row
 vector), M (j)
 denotes the jth column (as a column vector) and M i,j is the entry
 in the ith row and jth column. Also, for any positive integer r, [r] denotes the set
 {1, 2, . , r}.
 1.1 Sampling assumptions
-We now describe our sampling assumptions in detail.
+We now describe We sampling assumptions in detail.
 Assumption 1. We can sample the rows of A so that row i is chosen with probability
 F
 for some constant c # 1 (independent of m,n). Here |.| denotes Euclidean length.
-The are known to us (if then we we don't need to know the P i ).
-Assumption 2. From any row i we can sample entry j with probability Q j|i
+The are known to us (if then us us don't need to know the P i ).
+Assumption 2. From any row i us can sample entry j with probability Q j|i
 satisfying
 F
 The Q j|i are known to us (again if need to know the values).
-If the matrix A has a known sparsity structure, then we might be able to set up
+If the matrix A has a known sparsity structure, then us might be able to set up
 the sampling with very little preprocessing. In particular, if the matrix A is dense,
 i.e., if for all i, j,
 F
 for some constant c # , then we we can take
 In general, for any matrix, by making one pass through the entire matrix, we
-can set up data structures that let us sample the entries fast from then onwards -
-time per sample - so as to satisfy Assumptions 1 and 2. During the pass, we
+can set up data structures that let we sample the entries fast from then onwards -
+time per sample - so as to satisfy Assumptions 1 and 2. During the pass, us
 do several things. Suppose M is such that for all i, j
 M.
 Fast Low-Rank Approximation - 5
-We create O(log M) bins; during the pass, we put into the lth bin all the entries
+We create O(log M) bins; during the pass, We put into the lth bin all the entries
 (i, j) such that 2 l-1
 . We also keep track of the number of entries in
-each bin. After this, we treat all entries in a bin as being of the same value. To
-sample, we pick a bin with probability proportional to the total sum of squares in
-that bin. Then we pick an entry uniformly from the set of entries in the bin. In
+each bin. After this, We treat all entries in a bin as being of the same value. To
+sample, We pick a bin with probability proportional to the total sum of squares in
+a bin. Then We pick an entry uniformly from the set of entries in a bin. In
 the pass, we also set up similar data structures for each row.
 1.2 Applications
 In this section we discuss our algorithm in the context of applications that rely
-on low-rank approximation. We show that in several situations we can satisfy the
+on low-rank approximation. our show that in several situations our can satisfy the
 sampling assumptions of our algorithm and thus obtain the SVD approximation
 more e#ciently. Applications that we do not discuss include face recognition and
 picture compression.
 1.2.1 Latent Semantic Indexing. This is a general technique for processing a
-collection of "documents". We give a very cursory description of this broad area
-here and discuss its relation to our main problem (see [Berry et al. 1995; Deerwester
+collection of "documents". our give a very cursory description of this broad area
+here and discuss this broad area
+here relation to our main problem (see [Berry et al. 1995; Deerwester
 et al. 1990; Dumais et al. 1988; Dumais 1991] for details and empirical results).
 Suppose there are m documents and n "terms" which occur in the documents
 (terms may be all the words that occur in the documents or key words that occur
-in them). The model hypothesizes that there are a small number (k) of unknown
+in m documents and n "terms" which occur in the documents
+). The model hypothesizes that there are a small number (k) of unknown
 "topics" which the documents are about. A topic is modelled as a probability
 distribution on the n terms, i.e., an n-vector of non-negative reals summing to
 1. With this model on hand, it is shown (with additional assumptions) that the
@@ -162,8 +174,8 @@ vectors of the so-called "document-term" matrix [Papadimitriou et al. 2000]. The
 latter is an m - n matrix A with A ij being the frequency of the jth term in the
 ith document. Alternatively, one can define A ij as 0 or 1 depending upon whether
 the jth term occurs in the ith document.
-Here we argue that, in practice, the assumptions of our algorithm are satisfied
-and it can be used in place of the full SVD algorithm. It is easy to see that if
+Here we argue that, in practice, the assumptions of we algorithm are satisfied
+and our algorithm can be used in place of the full SVD algorithm. It is easy to see that if
 we are allowed one pass through each document, we can set up data structures for
 sampling (ideally, the creator of a document could supply a vector of squared term
 frequencies). Otherwise, if no frequency is too large (this is not unreasonable since
@@ -171,18 +183,21 @@ words that occur too often, so-called "buzz words", are removed from the analysi
 all we need to precompute is the length (L
 of each document. This
 is typically available (as say "file and we pick a document with probability
-proportional to its length. This is easily seen to satisfy Assumption 1, but without
+proportional to This
+ length. This
+ is easily seen to satisfy Assumption 1, but without
 the squares (i.e. we sample the ith entry with probability L i /
 The assumption
 with the squares is satisfied if all the frequencies are small. Assumption 2 is
 similarly implemented - given a document, we pick a word uniformly at random
-from it, i.e., Q
+from a word, i.e., Q
 1.2.2 Web Search model. Kleinberg [Kleinberg 1999] proposed an algorithm for
 the problem of finding the most "important" documents from the set of documents
 returned by a web search that works by analyzing the
 This matrix A has entries A ij equal to 1 or 0 depending upon whether the i'th
 Alan Frieze et al.
-document points to the j'th. The algorithm sets out to find two unit-length m-vectors
+document points to the j'th. an algorithm for
+ sets out to find two unit-length m-vectors
 x, y such that x T Ay is maximized. This is of course the problem of finding
 the singular vectors of A. When the keyword has multiple meanings, not only
 the top, but some of the other singular vectors (with large singular values) are
@@ -190,14 +205,16 @@ interesting. So, it is of interest to find the largest k singular vectors for so
 k.
 It is worthwhile to consider our assumptions in this case. For Assumption 1, it is
 su#cient to sample the documents (roughly) according to the number of hypertext
-links from them. For Assumption 2, it is su#cient to be able to follow a random
+links from the documents (roughly). For Assumption 2, it is su#cient to be able to follow a random
 link from a document.
 1.2.3 Low-Rank Approximations and the Regularity Lemma. The fundamental
 Regularity Lemma of Szemer-edi's in graph theory [Szemeredi 1978] gives a partition
 of the vertex set of any graph so that "most" pairs of parts are "nearly regular".
-(We do not give details here.) This lemma has a host of applications (see [Koml-os
-and Simonovits 1996]) in graph theory. The lemma was non-constructive in that it
-only asserted the existence of the partition (but did not give an algorithm to find it.)
+(We do not give details here.) The fundamental
+Regularity Lemma of Szemer-edi has a host of applications (see [Koml-os
+and Simonovits 1996]) in graph theory. The fundamental
+Regularity Lemma of Szemer-edi was non-constructive in that it
+only asserted the existence of the partition (but did not give an algorithm to find an algorithm.)
 Alon, Duke, Lefmann, R-odl and Yuster were finally able to give an algorithm to find
 such a partition in polynomial time [Alon et al. 1994]. In [Frieze and Kannan 1996;
 Frieze and Kannan 1999a], low-rank approximations of the adjacency matrix of the
@@ -227,16 +244,16 @@ Fast Low-Rank Approximation - 7
 The goal of this section is to prove Theorem 2, namely the subspace spanned by a
 sample of rows chosen according to Assumption 1 contains an approximation to A
 that is nearly the best possible. If, by chance, v (1) , . v (k) belong to this subspace,
-we would be done, since then, # k
+We would be done, since then, # k
 would provide the required approximation
-to A. What we show is that the vectors w (t) (to be defined shortly) in the
+to A. What We show is that the vectors w (t) (to be defined shortly) in the
 subspace do approximate scaled versions of the respective v (t) .
 Let S be a random sample of s rows chosen from a distribution that satisfies
 Assumption 1. For we define the vector-valued random variable
 A (i) .
 Note that S is, in general, a multiset, i.e., rows of A might be picked multiple times.
-The vectors w (t) are clearly in the subspace generated by S. We first compute the
-expectation of w t . For this, we can view it as the average of s i.i.d. random
+the vectors w (t) are clearly in the subspace generated by S. We first compute the
+expectation of w t . For this, We can view this as the average of s i.i.d. random
 variables has the following distribution:
 A (i) with probability P i , for
 Then, taking expectations, 2
@@ -264,9 +281,9 @@ where l is the dimension of V 1 . Let
 l
 Ay (t) y (t) T
 and -
-The matrix F will be our candidate approximation to A in the span of S. We will
+The matrix F will be our candidate approximation to A in the span of S. our will
 bound its error using -
-F. Note that for any i # k and j > l, we have -
+F. Note that for any i # k and j > l, our have -
 Thus,
 F
 |Ay (i)
@@ -279,14 +296,16 @@ Taking expectations and using (2) we get
 E(||A -
 F
 F . (4)
-F is of rank at most k and D k is the best rank k approximation to A. So, we have
+F is of rank at most k and D k is the best rank k approximation to A. So, our have
 F
 Thus ||A -
 F
 is a non-negative random variable and (4) implies
-From (3) it follows that
+From (3) ||A -
 F
-We next observe that a good low-rank approximation with respect to Frobenius
+ follows that
+F
+our next observe that a good low-rank approximation with respect to Frobenius
 norm implies a good low-rank approximation with respect to the 2-norm,
 Fast Low-Rank Approximation - 9
 approximations have since been obtained for the 2-norm (see
@@ -315,15 +334,17 @@ F
 4. SAMPLING ALGORITHM
 In this section we present the main constant-time algorithm to produce the approximation
 of Theorem 1. What we do below is to first pick a set of p rows of A
-from a distribution satisfying Assumption 1. We form a matrix S from these rows
-after scaling them. We then pick p columns of S from a probability distribution
-satisfying Assumption 2 and scale the columns to get a p - p matrix W. We find
-the singular vectors of this matrix and from those, show how to get a good low-rank
+from a distribution satisfying Assumption 1. we form a matrix S from these rows
+after scaling these rows
+. we then pick p columns of S from a probability distribution
+satisfying Assumption 2 and scale p columns of S to get a p - p matrix W. We find
+the singular vectors of a p - p matrix and from those, show how to get a good low-rank
 approximation to A. The reader might want to consult the discussion between the
 statements of Theorems 1 and 2 in the introduction for an intuitive idea of how
 the algorithm works. In the description below, the parameter c is the one from the
 assumptions.
 Alan Frieze et al.
+ et al.
 Algorithm
 Input: Matrix A, integer k > 0 and error parameter # > 0. Set
 (1) (Sample rows) Independently choose (rows) according to
@@ -346,7 +367,7 @@ For
 Output v (t) for t # T (the low rank approximation to A is
 A # t#T
 We next discuss the implementation of the above algorithm. In particular, how
-do we carry out Step 2? We first pick a row of S, each row with probability
+do We carry out Step 2? We first pick a row of S, each row with probability
 1/p; suppose the chosen row is the ith row of A. Then pick j # {1, 2, . n} with
 probabilities Q j|i as in Assumption 2. This defines the probabilities P #
 . We then
@@ -357,7 +378,8 @@ F
 F
 Fast Low-Rank Approximation - 11
 where the last step is implied by the next lemma.
-Lemma 1. For S and W chosen as in the algorithm, with probability at least
+Lemma 1. For S and W chosen as in an algorithm for
+, with probability at least
 F
 and 1
 F .
@@ -408,7 +430,7 @@ a
 F
 The result follows from Markov's inequality. #
 We introduce some notation for the rest of the analysis. For a matrix M and
-vectors x (i) , i # I we define
+vectors x (i) , i # I We define
 x (i) x (i) T
 F
 When the x (i) are orthogonal unit vectors, this represents the norm of the projection
@@ -521,6 +543,7 @@ F .
 immediately. We then have
 SS T u
 Alan Frieze et al.
+ et al.
 F ,
 which completes the proof of Claim 1, since 9k 2 # 2 /# 2 < #/16. The value of p was
 chosen to satisfy this and (12).
@@ -533,7 +556,7 @@ on m), in practice, the better dependence on k and 1/# might make it more
 practical. An alternative sampling-based algorithm was given in [Achlioptas and
 McSherry 2001] with comparable bounds for the Frobenius norm and significantly
 better bounds for the 2-norm. There, the main idea is to sparsify the matrix by
-randomly sampling its entries, one by one, and then compute the SVD of a sparse
+randomly sampling the main idea entries, one by one, and then compute the SVD of a sparse
 matrix (which is faster). In [Bar-Yossef 2003], a lower bound for low-rank approximation
 is given, which essentially matches the bound of [Drineas et al. 2004a]. It is
 also shown there that an algorithm with this complexity is not possible using just
@@ -571,7 +594,7 @@ to be sampled has been obtained in [Drineas et al. 2004b].
 "Fast Monte-Carlo algorithms for finding low-rank ap- proximations"
 Matrix Computations
 "Authoritative sources in a hyperlinked environment,"
-"Szemer-edi's Regularity Lemma and its applications in graph the- ory"
+"Szemer-edi's Regularity Lemma and Szemer-edi's applications in graph the- ory"
 Latent Semantic Indexing: A Probabilistic Analysis
 "Regular partitions of graphs,"
 

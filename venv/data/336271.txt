@@ -1,15 +1,14 @@
 --T
 Efficient Interprocedural Array Data-Flow Analysis for Automatic Program Parallelization.
 --A
-AbstractSince sequential languages such as Fortran and C are more machine-independent than current parallel languages, it is highly desirable to develop powerful parallelization-tools which can generate parallel codes, automatically or semiautomatically, targeting different parallel architectures. Array data-flow analysis is known to be crucial to the success of automatic parallelization. Such an analysis should be performed interprocedurally and symbolically and it often needs to handle the predicates represented by IF conditions. Unfortunately, such a powerful program analysis can be extremely time-consuming if not carefully designed. How to enhance the efficiency of this analysis to a practical level remains an issue largely untouched to date. This paper presents techniques for efficient interprocedural array data-flow analysis and documents experimental results of its implementation in a research parallelizing compiler. Our techniques are based on guarded array regions and the resulting tool runs faster, by one or two orders of magnitude, than other similarly powerful tools.
+AbstractSince sequential languages such as Fortran and C are more machine-independent than current parallel languages, it is highly desirable to develop powerful parallelization-tools which can generate parallel codes, automatically or semiautomatically, targeting different parallel architectures. Array data-flow analysis is known to be crucial to the success of automatic parallelization. Such an analysis should be performed interprocedurally and symbolically and Such an analysis often needs to handle the predicates represented by IF conditions. Unfortunately, such a powerful program analysis can be extremely time-consuming if not carefully designed. How to enhance the efficiency of this analysis to a practical level remains an issue largely untouched to date. This paper presents techniques for efficient interprocedural array data-flow analysis and documents experimental results of This paper implementation in a research parallelizing compiler. Our techniques are based on guarded array regions and the resulting tool runs faster, by one or two orders of magnitude, than other similarly powerful tools.
 --B
 Introduction
 Program execution speed has always been a fundamental concern for computation-intensive applications.
 To exceed the execution speed provided by the state-of-the-art uniprocessor machines, programs need to
 take advantage of parallel computers. Over the past several decades, much effort has been invested in
 efficient use of parallel architectures. In order to exploit parallelism inherent in computational solutions,
-progress has been made in areas of parallel languages, parallel libraries and parallelizing compilers. This
-paper addresses the issue of automatic parallelization of practical programs, particularly those written in
+progress has been made in areas of parallel languages, parallel libraries and parallelizing compilers. This paper addresses the issue of automatic parallelization of practical programs, particularly those written in
 imperative languages such as Fortran and C.
 Compared to current parallel languages, sequential languages such as Fortran 77 and C are more
 machine-independent. Hence, it is highly desirable to develop powerful automatic parallelization tools
@@ -17,23 +16,26 @@ which can generate parallel codes targeting different parallel architectures. It
 automatic parallelization can go. Nevertheless, much progress has been made recently in the understanding
 of its future directions. One important finding by many is the critical role of array data-flow analysis
 [10, 17, 20, 32, 33, 37, 38, 42]. This aggressive program analysis not only can support array privatization
-[29, 33, 43] which removes spurious data dependences thereby to enable loop parallelization, but it can
+[29, 33, 43] which removes spurious data dependences thereby to enable loop parallelization, but This aggressive program analysis can
 also support compiler techniques for memory performance enhancement and efficient message-passing
 deployment.
 Few existing tools, however, are capable of interprocedural array data-flow analysis. Furthermore,
 no previous studies have paid much attention to the issue of the efficiency of such analysis. Quite
 understandably, rapid prototyping tools, such as SUIF [23] and Polaris [4], do not emphasize compilation
-efficiency and they tend to run slowly. On the other hand, we also believe it to be important to
+efficiency and Quite
+understandably, rapid prototyping tools, such as SUIF [23] and Polaris [4] tend to run slowly. On the other hand, we also believe it to be important to
 demonstrate that aggressive interprocedural analysis can be performed efficiently. Such efficiency is
 important for development of large-sized programs, especially when intensive program modification,
 recompilation and retesting are conducted. Taking an hour or longer to compile a program, for example,
 would be highly undesirable for such programming tasks.
 In this paper, we present techniques used in the Panorama parallelizing compiler [35] to enhance the
-efficiency of interprocedural array data-flow analysis without compromising its capabilities in practice. We
+efficiency of interprocedural array data-flow analysis without compromising this paper capabilities in practice. We
 focus on the kind of array data-flow analysis useful for array privatization and loop parallelization. These
 are important transformations which can benefit program performance on various parallel machines. We
 make the following key contributions in this paper:
-ffl We present a general framework to summarize and to propagate array regions and their access
+ffl We
+ present a general framework to summarize and to propagate array regions and These
+ access
 conditions, which enables array privatization and loop parallelization for Fortran-like programs
 which contain nonrecursive calls, symbolic expressions in array subscripts and loop bounds, and IF
 conditions that may directly affect array privatizability and loop parallelizability.
@@ -49,21 +51,24 @@ runs faster, by one or two orders of magnitude, than other known tools of simila
 We note that in order to achieve program speedup, additional program transformations often need to be
 performed in addition to array data-flow analysis, such as reduction-loop recognition, loop permutation,
 loop fusion, advanced induction variable substitution and so on. Such techniques have been discussed
-elsewhere and some of them have been implemented in both Polaris [16] and more recently in Panorama.
+elsewhere and some of Such techniques have been implemented in both Polaris [16] and more recently in Panorama
+.
 The techniques which are already implemented consume quite insignificant portion of the total analysis
 and transformation time, since array data-flow analysis is the most time-consuming part. Hence we do
-not discuss their details in this paper.
-The rest of the paper is organized as follows. In Section 2, we present background materials for
-interprocedural array data-flow analysis and its use for array privatization and loop parallelization. We
+not discuss The techniques which are already implemented consume quite insignificant portion of the total analysis
+and transformation time, since array data-flow analysis is the most time-consuming part details in this paper.
+The rest of this paper is organized as follows. In Section 2, we present background materials for
+interprocedural array data-flow analysis and 
+interprocedural array data-flow analysis use for array privatization and loop parallelization. We
 point out the main factors in such analysis which can potentially slow down the compiler drastically. In
 Section 3, we present a framework for interprocedural array data-flow analysis based on guarded array
-regions. In Section 4, we discuss several implementation issues. We also briefly discuss how array data-flow
+regions. In Section 4, we discuss several implementation issues. we also briefly discuss how array data-flow
 analysis can be performed on programs with recursive procedures and dynamic arrays. In Section 5, we
-discuss the effectiveness and the efficiency of our analysis. Experimental results are reported to show the
-parallelization capabilities of Panorama and its high time efficiency. We compare related work in Section
+discuss the effectiveness and the efficiency of we analysis. Experimental results are reported to show the
+parallelization capabilities of Panorama and Panorama high time efficiency. We compare related work in Section
 6 and conclude in Section 7.
 Background
-In this section, we briefly review the idea of array privatization and give reasons why an aggressive
+In Section 7, We briefly review the idea of array privatization and give reasons why an aggressive
 interprocedural array data-flow analysis is needed for this important program transformation.
 2.1 Array Privatization
 If a variable is modified in different iterations of a loop, writing conflicts result when the iterations are
@@ -110,8 +115,8 @@ in the case in Figure 1, no array values are written in one iteration but used i
 In order to increase the granularity of parallel tasks and hence the benefit of parallel execution, it
 is important to parallelize loops at outer levels. Unfortunately, such outer-level loops often contain
 procedure calls. A traditional method to deal with such loops is in-lining, which substitutes procedure
-calls with the bodies of the called procedures. Illinois' Polaris [4], for example, uses this method.
-Unfortunately, many important compiler transformations increase their consumed time and storage
+calls with the bodies of the called procedures. Illinois' Polaris [4], for example, uses A traditional method to deal with such loops.
+Unfortunately, many important compiler transformations increase many important compiler transformations consumed time and storage
 quadratically, or at even higher rates, with the number of operations within individual procedures.
 Hence, there is a severe limit on the feasible scope of in-lining. It is widely recognized that, for large-scale
 applications, often a better alternative is to perform interprocedural summary analysis instead of in-lining.
@@ -119,18 +124,19 @@ Interprocedural data dependence analysis has been discussed extensively [21, 24,
 we have seen increased efforts on array data-flow analysis [10, 17, 20, 32, 33, 37, 38, 42]. However, few
 tools are capable of interprocedural array data-flow analysis without in-lining [10, 20, 23].
 2.4 Complications of Array Data-flow Analysis
-In reality, a parallelizing compiler not only needs to analyze the effects of procedure calls, but it may also
+In reality, a parallelizing compiler not only needs to analyze the effects of procedure calls, but a parallelizing compiler may also
 need to analyze relations among symbolic expressions and among branching conditions.
 The examples in Figure 2 illustrate such cases. In these three examples, privatizing the array A will
 make it possible to parallelize the I loops. Figure 2(a) shows a simplified loop from the MDG program
 (routine interf) [3]. It is a difficult example which requires certain kind of inference between IF conditions.
 Although both A and B are privatizable, we will discuss A only, as B is a simple case. Suppose that the
 condition kc:NE:0 is false and, as the result, the last loop K within loop I gets executed and A(6 :
-gets used. We want to determine whether A(6 : may use values written in previous iterations of loop I .
+gets used. we want to determine whether A(6 : may use values written in previous iterations of loop I .
 Condition kc:NE:0 being false implies that, within the same iteration of I , the statement
 not executed. Thus, B(K):GT:cut2 is false for all 9 of the first DO loop K. This fact further
 implies that B(K + 4):GT:cut2 is false for of the second DO loop K, which ensures that
-gets written before its use in the same iteration I . Therefore, A is privatizable in loop I .
+gets written before 
+ use in the same iteration I . Therefore, A is privatizable in loop I .
 
 Figure
 
@@ -163,7 +169,7 @@ Figure
 
 2: More Complex Examples of Privatizable Arrays.
 condition :NOT:p is invariant for DO loop I . As the result, if A(jmax) is not modified in one iteration,
-thus exposing its use, then A(jmax) should not be modified in any iteration. Therefore, A(jmax) never
+thus exposing A(jmax) use, then A(jmax)) should not be modified in any iteration. Therefore, A(jmax)) never
 uses any value written in previous iterations of I . Moreover, it is easy to see that the use of A(jlow : jup)
 is not upward exposed. Hence, A is privatizable and loop I is a parallel loop. In this example, the
 IF condition being loop invariant makes sure that there is no loop-carried flow dependence. Otherwise,
@@ -188,7 +194,7 @@ In traditional frameworks for data-flow analysis, at each meet point of a contro
 information from different control branches is merged under a meet operator. Such merged information
 typically does not distinguish information from different branches. The meet operator can be therefore
 said to be path-insensitive. As illustrated in the last section, path-sensitive array data-flow information
-can be critical to the success of array privatization and hence loop parallelization. In this section,
+can be critical to the success of array privatization and hence loop parallelization. In Section 7,
 we present our path-sensitive analysis that uses conditional summary sets to capture the effect of IF
 conditions on array accesses. We call the conditional summary sets guarded array regions (GAR's).
 3.1 Guarded Array Regions
@@ -203,16 +209,16 @@ Callahan and Kennedy [6]. The regular array region does not contain any inter-di
 This makes set operations simpler. However, a diagonal and a triangular shape of an array cannot be
 represented exactly. For instance, for an array diagonal A(i; i),
 triangular are approximated by the same regular array region:
-Regular array regions can cover the most frequent cases in real programs and they seem to have an
+Regular array regions can cover the most frequent cases in real programs and Regular array regions seem to have an
 advantage in efficiency when dealing with the common cases. The guards in GAR's (defined below) can
-be used to describe the more complex array sections, although their primary use is to describe control
+be used to describe the more complex array sections, although The guards in GAR's (defined below) primary use is to describe control
 conditions under which regular array regions are accessed.
 Definition A guarded array region (GAR) is a tuple [P; R] which contains a regular array region R and
 a guard P , where P is a predicate that specifies the condition under which R is accessed. We use \Delta to
 denote a guard whose predicate cannot be written explicitly, i.e. an unknown guard. If both
-we say that the GAR [P; R]
-=\Omega is unknown. Similarly, if either P is F alse or R is ;, we say that
-In order to preserve as much precision as possible, we try to avoid marking a whole array region as
+We say that the GAR [P; R]
+=\Omega is unknown. Similarly, if either P is F alse or R is ;, We say that
+In order to preserve as much precision as possible, We try to avoid marking a whole array region as
 unknown. If a multi-dimensional array region has only one dimension that is truly unknown, then only
 that dimension is marked as unknown. Also, if only one item in a range tuple (l say u, is
 unknown, then we write the tuple as (l
@@ -220,7 +226,7 @@ Let a program segment, n, be a piece of code with a unique entry point and a uni
 use results of set operations on GAR's to summarize two essential pieces of array reference information
 for n which are listed below.
 ffl UE(n): the set of array elements which are upwardly exposed in n if these elements are used in n
-and they take the values defined outside n.
+and these elements take the values defined outside n.
 ffl MOD(n): the set of array elements written within n.
 In addition, the following sets, which are also represented by GAR's, are used to describe array references
 in a DO loop l with its body denoted by b:
@@ -241,14 +247,14 @@ Take
 
 Figure
 
-2(c) for example. For loop J of subroutine in, UE j is empty and MOD j equals
-[T rue; B(j)]. Therefore MOD !j is [1 !
-The MOD for the loop J is [1 hence the MOD of subroutine in is
+2(c) for example. For loop J of subroutine in, UE j is empty and MOD UE j equals
+[T rue; B(j)]. Therefore MOD !UE j is [1 !
+The MOD for the loop UE j is [1 hence the MOD of subroutine in is
 Similarly, UE j for loop J of subroutine out is [T rue; B(j)],
 and UE for the same loop is [1 Lastly, UE of the subroutine out is [x -
 Our data-flow analysis requires three kinds of operations on GAR's: union, intersection, and difference.
 These operations in turn are based on union, intersection, and difference operations on regular array
-regions as well as logical operations on predicates. Next, we will first discuss the operations on array
+regions as well as logical operations on predicates. Next, we will first discuss These operations on array
 regions, then on GAR's.
 3.2 Operations on Regular Array Regions
 As operands of the region operations must belong to the same array, we will drop the array name from
@@ -267,12 +273,12 @@ Since these regions are symbolic ones, care must be taken to prevent false regio
 operations. For example, knowing R we have R 1
 if and only if both R 1 and R 2 are valid. This can be guaranteed nicely by imposing validity
 predicates into guards as we did in [20]. In doing so, the union of two regular regions should
-be computed without concern for validity of these two regions. Since this introduces additional
+be computed without concern for validity of these regions. Since this introduces additional
 predicate operations that we try to avoid, we will usually keep the union of two regions without
-merging them until they, like constant regions, are known to be valid.
+merging the union of two regions until the union of two regions, like constant regions, are known to be valid.
 For an m-dimensional array, the result of the difference operation is generally 2 m regular regions
 if each range difference results in two new ranges. This representation could be quite complex
-for large m; however, it is useful to describe the general formulas of set difference operations.
+for large m; however, This representation is useful to describe the general formulas of set difference operations.
 first define R 1 (k) and R 2 (k),
 as the last k ranges within R 1 and R 2 respectively. According to this definition, we
 have R 1
@@ -286,19 +292,21 @@ are defined in the following subsection.
 3.3 Operations on GAR's and GARWD's
 Given two GAR's, we have the following:
 The most frequent cases in union operations are of two kinds:
-the union becomes [P 1
+The Union of two GARWD's becomes [P 1
 - If R the result is [P
 If two array regions can not be safely combined due to the unknown symbolic terms, we keep two
-GAR's in a list without merging them.
+GAR's in a list without merging two
+GAR.
 As discussed previously, R 1 may be multiple array regions, making the actual result of T
 potentially complex. However, as we shall explain via an example, difference operations can often
 be canceled by intersection and union operations. Therefore, we do not solve the difference
 unless the result is a single GAR, or until the last moment when the actual result must be solved
 in order to finish data dependence tests or array privatizability tests. When the difference is not
-yet solved by the above formula, it is represented by a GARWD.
+yet solved by the above formula, the difference is represented by a GARWD.
 Definition A GAR with a difference list (GARWD) is a set defined by two components: a source GAR
-and a difference list. The source GAR is an ordinary GAR as defined above, while the difference list is a
-list of GAR's. The GARWD set denotes all the members of the source GAR which are not in any GAR
+and a difference list. Definition A GAR with a difference list (GARWD) is an ordinary GAR as defined above, while the difference list is a
+list of GAR's. GARWD's
+ set denotes all the members of the source GAR which are not in any GAR
 on the difference list. It is written as f source GAR, !difference list? g. 2
 The following examples show how to use the above formulas:
 which is a GARWD. Note that, if we cannot further postpone
@@ -326,7 +334,7 @@ third formula. Similarly, the intersection of gwd and g is:
 2. ;, if (g \Gamma
 3. unknown otherwise.
 where g 4 is also a single GAR.
-The Union of two GARWD's is usually kept in the list, but it can be merged in some cases. Some
+The Union of two GARWD's is usually kept in the list, but The Union of two GARWD's can be merged in some cases. Some
 concrete examples are given below to illustrate the operations on GARWD's:
 ENDDO
 END
@@ -341,28 +349,30 @@ Figure
 
 3 is an example showing the advantage of using GARWD's. The right-hand side is the summary
 result for the body of the outer loop, where the subscript i in UE i and in MOD i indicates that these
-two sets belong to an arbitrary iteration i. UE i is represented by a GARWD. For simplicity, we omit the
+two sets belong to an arbitrary iteration UE i is represented by a GARWD. For simplicity, we omit the
 guards whose values are true in the example. To recognize array A as privatizable, we need to prove that
 no loop-carried data flow exists. The set of all mods within those iterations prior to iteration i, denoted
 by MOD !i , is equal to MOD i . (In theory, MOD which nonetheless does not invalidate
-the analysis.) Since both GAR's in the MOD !i list are in the difference list of the GARWD for UE i , it
+the analysis.) Since both Definition A GAR with a difference list (GARWD)'s in MOD !i list are in the difference list of GARWD's
+ for UE i , it
 is obvious that the intersection of MOD !i and UE i is empty, and that therefore array A is privatizable.
 We implement this by assigning each GAR a unique region number, shown in parentheses in Figure 3,
 which makes intersection a simple integer operation.
-As shown above, our difference operations, which are used during the calculation of UE sets, do not
+As shown above, We difference operations, which are used during the calculation of UE sets, do not
 result in the loss of information. This helps to improve the effectiveness of our analysis. On the other
 hand, intersection operations may result in unknown values, due to the intersections of the sets containing
 unknown symbolic terms. A demand-driven symbolic evaluator is invoked to determine the symbolic
-values or the relationship between symbolic terms. If the intersection result cannot be determined by the
-evaluator, it is marked as unknown.
-In our array data-flow framework based on GAR's, intersection operations are performed only at the
+values or the relationship between symbolic terms. If the intersection result cannot be determined by A demand-driven symbolic evaluator, the intersection result is marked as unknown.
+In We array data-flow framework based on GAR's, intersection operations are performed only at the
 last step when our analyzer tries to conduct dependence tests and array privatization tests, at the point
 where a conservative assumption must be made if an intersection result is marked as unknown. The
 intersection operations, however, are not involved in the propagation of the MOD and UE sets, and
-therefore they do not affect the accuracy of those sets.
+therefore The
+intersection operations do not affect the accuracy of those sets.
 3.4 Computing UE and MOD Sets
 The UE and MOD information is propagated backward from the end to the beginning of a routine or a
-program segment. Through each routine, these two sets are summarized in one pass and the results are
+program segment. Through each routine, these
+two sets are summarized in one pass and the results are
 (a)
 in
 out
@@ -374,7 +384,7 @@ U padd((MOD(S2) U MOD_IN(out)), ~p)
 Figure
 
 5: Computing Summary Sets for Basic Control Flow Components
-saved. The summary algorithm is invoked on demand for a particular routine, so it will not summarize a
+saved. The summary algorithm is invoked on demand for a particular routine, so The summary algorithm will not summarize a
 routine unless necessary. Parameter mapping and array reshaping are done when the propagation crosses
 routine boundaries.
 To facilitate interprocedural propagation of the summary information, we adopt a hierarchical supergraph
@@ -386,19 +396,21 @@ loop body. A procedure call site is represented by a call node, which has an out
 the entry node of the flow subgraph of the called procedure and has an incoming edge from the unique
 exit node of the called procedure. Due to the nested structures of DO loops and routines, a hierarchy for
 control flow is derived among the HSG nodes, with the flow subgraph at the highest level representing the
-main program. The HSG resembles the HSCG used by the PIPS project for parallel task scheduling [25].
+main program. An HSG
+ resembles the HSCG used by the PIPS project for parallel task scheduling [25].
 
 Figures
 
-4 shows an example of the HSG. Note that the flow subgraph of a routine is never duplicated
+4 shows an example of An HSG
+. Note that the flow subgraph of a routine is never duplicated
 for different calls to the same routine, unless multiple versions of the called routine are created by the
-compiler to enhance its potential parallelism. More details about the HSG and its implementation can
+compiler to enhance its potential parallelism. More details about the HSG and HSG implementation can
 be found in reference [20, 18].
 During the propagation of the array data-flow information, we use MOD IN (n) to represent the array
 elements that are modified in nodes which are forwardly reachable from n (at the same or lower HSG
 level as n), and we use UE IN (n) to represent the array elements whose values are imported to n and
-are used in the nodes forwardly reachable from n. Suppose a DO loop l, with its body denoted by b, is
-represented by a loop node N and the flow subgraph of b has the entry node n. We have UE i
+are used in the nodes forwardly reachable from n. Suppose a DO loop l, with a DO loop l body denoted by b, is
+represented by a loop node N and the flow subgraph of b has the entry node n. we have UE i
 (b) equal
 to UE IN (n) and UE (N) equal to the expansion of UE i
 (b) (see below). Similarly, we have MOD i
@@ -450,7 +462,8 @@ Figure
 7: Examples of Symbolic Expressions in Guarded Array Regions
 Implementation Considerations and Extensions
 4.1 Symbolic Analysis
-Symbolic analysis handles expressions which involve unknown symbolic terms. It is widely used in
+Symbolic analysis handles expressions which involve unknown symbolic terms. 4.1 Symbolic Analysis
+Symbolic analysis is widely used in
 symbolic evaluation or abstract interpretation to discover program properties such as values of expressions,
 relationships between symbolic expressions, etc. Symbolic analysis requires the ability to represent and
 manipulate unknown symbolic terms. Among several expression representations, a normal form is often
@@ -460,7 +473,7 @@ analysis are mostly integer polynomials. Operations on integer polynomials, such
 two polynomials, are straightforward. Therefore, we adopt integer polynomials as our representation for
 expressions. Our normal form, which is essentially a sum of products, is given below:
 where each I i is an index variable and t i is a term which is given by equation (2) below:
-where p j is a product, c j is an integer constant (possible integer fraction), x j
+where p j is a product, c L j is an integer constant (possible integer fraction), x j
 k is an integer variable but
 not an index variable, N is the nesting number of the loop containing e, M i is the number of products
 in t i , and L j is the number of variables in p j .
@@ -472,40 +485,41 @@ For subroutine SUB2, the MOD set of statement S2 contains a single GAR: [True, A
 of DO loop I1 contains [N1 ? 1, 1)]. The MOD set of the IF statement contains [N1 ? N6 -
 Lastly, the MOD set of the whole subroutine contains [N2
 All expressions e, t i , and p j in the above are sorted according to a unique integer key assigned to each
-variable. Since both M i and L j control the complexity of a polynomial, they are chosen as our design
+variable. Since both M i and L j control the complexity of a polynomial, M i and L are chosen as our design
 parameters. As an example of using M i and L j to control the complexity of expressions, e will be a linear
 expression (affine) if M i is limited to be 1 and L j to be zero. By controlling the complexity of expression
 representations, we can properly control the time complexity of manipulating symbolic expressions.
 Symbolic operations such as additions, subtractions, multiplications, and divisions by an integer
 constant are provided as library functions. In addition, a simple demand-driven symbolic evaluation
-scheme is implemented. It propagates an expression upwards along a control flow graph until the value
+scheme is implemented. a simple demand-driven symbolic evaluation
+scheme propagates an expression upwards along a control flow graph until the value
 of expression is known or the predefined propagation limit is reached.
 4.2 Range Operations
 In this subsection, we give a detailed discussion of range operations for step values other than 1. To
 describe the range operations, we use the functions of in the following.
-However, these functions should be solved, otherwise the unknown is usually returned as the result.
+However, the functions should be solved, otherwise the unknown is usually returned as the result.
 Given two ranges r 1 and r 2 , r
 1. If s
 Assuming r 2 ' r 1 (otherwise use r
 ffl Union operation. If (l 2 ? cannot be combined into one range.
 Otherwise, assuming that r 1 and r 2 are both
-valid. If it is unknown at this moment whether both are valid, we do not combine them.
+valid. If it is unknown at this moment whether both are valid, we do not combine both.
 2. If s is a known constant value, we do the following:
 If (l divisible by c, then we use the formulas in case 1 to compute the intersection, difference
-and union. Otherwise, r 1 "r . The union r 1 [r 2 usually cannot be combined into
+and union. Otherwise, r 1 "r . union r 1 [r 2 usually cannot be combined into
 one range and must be maintained as a list of ranges. For the special case that jl 1 \Gammal
 and
 3. If s (which may be symbolic expressions),
 then we use the formulas in case 1 to perform the intersection, difference and union.
 4. If s 1 is divisible by s 2 , we check to see if r 2 covers r 1 . If so, we have r
 5. In all other cases, the result of the intersection is marked as unknown. The difference is kept in a
-difference list at the level of the GARWD's, and the union remains a list of the two ranges.
+difference list at the level of the GARWD's, and union remains a list of the two ranges.
 4.3 Extensions to Recursive Calls and Dynamic Arrays
 Programming languages such as Fortran 90 and C permit recursive procedure calls and dynamically
 allocated data structures. In this subsection, we briefly discuss how array data-flow analysis can be
 performed in the presence of recursive calls and dynamic arrays.
 Recursive calls can be treated in array data-flow analysis essentially the same way as in array data
-dependence analysis [30]. A recursive procedure calls itself either directly or indirectly, which forms
+dependence analysis [30]. A recursive procedure calls A recursive procedure either directly or indirectly, which forms
 cycles in the call graph of the whole program. A proper order must be established for the traversal of
 the call graph. First, all maximum strongly-connected components (MSC's) must be identified in the call
 graph. Each MSC is then reduced to a single condensed node and the call graph is reduced to an acyclic
@@ -513,11 +527,13 @@ graph. Array data flow is then analyzed by traversing the reduced graph in a rev
 When a condensed node (i.e. an MSC) is visited, a proper order is established among all members in the
 MSC for an iterative traversal. For each member procedure, the sets of modified and used array regions
 (with guards) that are visible to its callers must be summarized respectively, by iterating over calling
-cycles. If the MSC is a simple cycle, which is a common case in practical programs, the compiler can
+cycles. If the
+MSC is a simple cycle, which is a common case in practical programs, the compiler can
 determine whether the visible array regions of each member procedure grow through recursion or not,
 after analyzing that procedure twice. If a region grows in a certain array dimension during recursive
 calls, then a conservative estimate should be made for that dimension. In the worst case, for example,
 the range of modification or use in that array dimension can be marked as unknown. A more complex
+the
 MSC requires a more complex traversal order [30].
 Dynamically allocated arrays can be summarized essentially the same way as static arrays. The main
 difference is that, during the backward propagation of array regions (with guards) through the control
@@ -532,7 +548,7 @@ has been studied extensively in recent literature [8, 11, 14, 27, 28, 39, 44, 45
 In this section, we first discuss how GAR's are used for array privatization and loop parallelization. We
 then present experimental results to show the effectiveness and efficiency of array data-flow analysis.
 5.1 Array Privatization and Loop Parallelization
-An array A is a privatization candidate in a loop L if its elements are overwritten in different iterations
+An array A is a privatization candidate in a loop L if A elements are overwritten in different iterations
 of L (see [29]). Such a candidacy can be established by examining the summary array MOD i set: If
 the intersection of MOD i
 and MOD!i is nonempty, then A is a candidate. A privatization candidate is
@@ -570,8 +586,8 @@ dependences exist for DO loop I1 because MOD i " MOD !i 6= ;. Note that if an ar
 then no loop-carried output dependences exist between the write references to private copies of the same
 array.
 5.2 Experimental Results
-We have implemented our array data-flow analysis in a prototyping parallelizing compiler, Panorama,
-which is a multiple pass, source-to-source Fortran program analyzer [35]. It roughly consists of the phases
+We have implemented We array data-flow analysis in a prototyping parallelizing compiler, Panorama,
+which is a multiple pass, source-to-source Fortran program analyzer [35]. source-to-source Fortran program analyzer roughly consists of the phases
 of parsing, building a hierarchical supergraph (HSG) and the interprocedural scalar UD/DU chains [1],
 performing conventional data dependence tests, array data-flow analysis and other advanced analyses,
 and parallel code generation.
@@ -580,7 +596,9 @@ Table
 
 1 shows the Fortran loops in the Perfect benchmark suite which should be parallelizable after
 array privatization and after necessary transformations such as induction variable substitution, parallel
-reduction, and event synchronization placement. This table also marks which loops require symbolic
+reduction, and event synchronization placement. Table
+
+1 also marks which loops require symbolic
 analysis, predicate analysis and interprocedural analysis, respectively. (The details of privatizable arrays
 in these loops can be found in [18].)
 Columns 4 and 5 mark those loops that can be parallelized by Polaris (Version 1.5) and by Panorama,
@@ -605,8 +623,7 @@ Program Routine SA PA IA Parallel
 OCEAN
 Total 80% 32% 80% 7
 SA: Symbolic Analysis. PA: Predicate Analysis. IA: Interprocedural Analysis.
-further improved by a number of recently discovered memory-efficiency enhancement techniques. These
-techniques are not implemented in the versions of Polaris and Panorama used for this experiment.
+further improved by a number of recently discovered memory-efficiency enhancement techniques. recently discovered memory-efficiency enhancement techniques are not implemented in the versions of Polaris and Panorama used for this experiment.
 
 Table
 
@@ -649,7 +666,7 @@ and no such timing results are publically available.) Both Panorama and Polaris 
 GNU gcc/g++ compiler with the -O optimization level. The time was measured by gettimeofday() and
 is elapsed wall-clock time. When using a SGI Challenge machine, which has a large memory, the time
 gap between Polaris and Panorama is reduced. This is probably because Polaris is written in C++ with
-a huge executable image. The size of its executable image is about 14MB, while Panorama, written in
+a huge executable image. The size of Polaris executable image is about 14MB, while Panorama, written in
 C, has an executable image of 1.1MB. Even with a memory size as large as 1GB, Panorama is still faster
 than Polaris by one or two orders of magnitude.
 5.3 Summary vs. In-lining
@@ -663,7 +680,7 @@ dependence tests involving call statements, Panorama uses the summarized array r
 while Polaris performs data dependences between every pair of array references in the loop body after
 in-lining. Since the time complexity of data dependence tests is O(n 2 ), where n is the number of
 individual references being tested, in-lining can significantly increase the time for dependence testing.
-In our experiments with Polaris, we limit the number of in-lined executable statements to 50, a default
+In our experiments with Polaris, our limit the number of in-lined executable statements to 50, a default
 
 Table
 
@@ -686,7 +703,7 @@ MB memory.
 Table
 
 4: Elapsed Analysis Time (in seconds)
-Program #Lines excl. SGI Challenge SGI Indy 2
+Program #Lines excl. SGI Challenge SGI Challenge Indy 2
 comments Panorama Polaris Panorama Polaris
 ADM 4296 17.03 435 38.80 2601
 MDG 935 3.02 123 7.90 551
@@ -706,25 +723,26 @@ Figure
 8: Time percentage of array data-flow summary
 value used by Polaris. With this modest number, data dependence tests still account for about 30% of
 the total time.
-We believe that another important reason for Panorama's efficiency is its efficient computation and
+We believe that another important reason for Panorama's efficiency is Panorama's efficiency efficient computation and
 propagation of the summary sets. Two design issues are particularly noteworthy, namely, the handling
-of predicates and the difference set operations. Next, we discuss these issues in more details.
+of predicates and the difference set operations. Next, we discuss Two design issues are particularly noteworthy, namely, the handling
+of predicates and the difference set operations in more details.
 5.4 Efficient Handling of Predicates
-General predicate operations are expensive, so compilers often do not perform them. In fact, the majority
+General predicate operations are expensive, so compilers often do not perform 5.4 Efficient Handling of Predicates
+General predicate operations. In fact, the majority
 of predicate-handling required for our array data-flow analysis involves simple operations such as checking
-to see if two predicates are identical, if they are loop-independent, and if they contain indices and affect
+to see if two predicates are identical, if two predicates are loop-independent, and if two predicates contain indices and affect
 shapes or sizes of array regions. These can be implemented rather efficiently.
 A canonical normal form is used to represent the predicates. Pattern-matching under a normal form
 is easier than under arbitrary forms. Both the conjunctive normal form (CNF) and the disjunctive
 normal form (DNF) have been widely used in program analysis [7, 9]. These cited works show that
 negation operations are expensive with both CNF and DNF. This fact was also confirmed by our previous
 experiments using CNF [20]. Negation operations occur not only due to ELSE branches, but also due
-to GAR and GARWD operations elsewhere. Hence, we design a new normal form such that negation
+to GAR and GARWD operations elsewhere. Hence, our design a new normal form such that negation
 operations can often be avoided.
-We use a hierarchical approach to predicate handling. A predicate is represented by a high level
+our use a hierarchical approach to predicate handling. A predicate is represented by a high level
 predicate tree, PT (V; E; r), where V is the set of nodes, E is the set of edges, and r is the root of
-PT . The internal nodes of V are NAND operators except for the root, which is an AND operator. The
-leaf nodes are divided into regular leaf nodes and negative leaf nodes. A regular leaf node represents
+PT . The internal nodes of V are NAND operators except for the root, which is an AND operator. The internal nodes of V are divided into regular leaf nodes and negative leaf nodes. A regular leaf node represents
 AND
 negative leaf
 operator
@@ -736,13 +754,14 @@ Figure
 a predicate such as an IF condition, while a negative leaf node represents the negation of a predicate.
 Theoretically, this representation is not a normal form because two identical predicates may have different
 predicate trees, which may render pattern-matching unsuccessful. We, however, believe that such cases
-are rare and that they happen only when the program is extremely complicated. Figure 9 shows a PT .
+are rare and that such cases
+ happen only when the program is extremely complicated. Figure 9 shows a PT .
 Each leaf (regular or negative) is a token which represents a basic predicate such as an IF condition or
-a DO condition in the program. At this level, we keep a basic predicate as a unit and do not split it.
+a DO condition in the program. At this level, we keep a basic predicate as a unit and do not split a unit.
 The predicate operations are based only on these tokens and do not check the details within these basic
 predicates. Negation of a predicate tree is simple this way. A NAND operation, shown in Figure 10,
 may either increase or decrease by one level in a predicate tree according to the shape of the predicate
-tree. If there is only one regular leaf node (or one negative leaf node) in the tree, the regular leaf node is
+tree. If there is only one regular leaf node (or one negative leaf node) in a predicate tree, the regular leaf node is
 simply changed to a negative leaf node (or vice versa). AND and OR operations are also easily handled,
 as shown in Figure 10. We use a unique token for each basic predicate so that simple and common cases
 can be easily handled without checking the contents of the predicates. The content of each predicate is
@@ -755,8 +774,8 @@ MOD set (column "Ave # GAR's''), the average length of a UE set (column ``Ave # 
 some data concerning difference and predicate operations. The total number of arrays summarized given
 in the table is the sum of the number of arrays summarized in each loop nest, and an array that appears
 in two disjoint loop nests is counted twice. Since the time for set operations is proportional to the square
-of the length of MOD and UE lists, it is important that these lists are short. It is encouraging to see that
-they are indeed short in the benchmark application programs.
+of the length of MOD and UE lists, it is important that these lists are short. it is encouraging to see that
+these lists are short are indeed short in the benchmark application programs.
 Columns 7 and 8 (marked "High" and "Low") in Table 5 show that over 95% of the total predicate
 operations are the high level ones, where a negation or a binary predicate operation on two basic predicates
 is counted as one operation. These numbers are dependent on the strategy used to handle the predicates.
@@ -797,19 +816,21 @@ Reducing Unnecessary Difference Operations
 We do not solve the difference of T
 using the general formula presented in Section 2 unless the result
 is a single GAR. When the difference cannot be simplified to a single GAR, the difference is represented
-by a GARWD instead of by a union of GAR's, as implied by that formula. This strategy postpones the
-expensive and complex difference operations until they are absolutely necessary, and it avoids propagating
+by a GARWD instead of by a union of GAR's, as implied by that formula. this strategy postpones the
+expensive and complex difference operations until the
+expensive and complex difference operations are absolutely necessary, and this strategy avoids propagating
 a relatively complex list of GAR's. For example, let a GARWD G 1
 be
 and G 2
 be m). We have
 OE, and two difference operations represented in G 1
 are reduced
-(i.e., there is no need to perform them). In Table 5, the total number of difference operations and the
+(i.e., there is no need to perform two difference operations represented in G 1
+). In Table 5, the total number of difference operations and the
 total number of reduced difference operations are illustrated in columns 5 and 6, respectively. Although
 difference operations are reduced by only about 9% on average, the reduction is dramatic for some
-programs: it is by one third for MDG and by half for MG3D.
-Let us use the example in Figure 2(b) to further illustrate the significance of delayed difference
+programs: the reduction is by one third for MDG and by half for MG3D.
+Let We use the example in Figure 2(b) to further illustrate the significance of delayed difference
 operations. A simplified control flow graph of the body of the outer loop is shown in Figure 11. Suppose
 1st DO J NOT p THEN branch 2nd DO J
 
@@ -835,52 +856,60 @@ should not be necessary and which thus increases execution time.
 Therefore, the summary sets of the body of the outer loop (DO I) should be:
 To determine if array A is privatizable, we need to prove that there exists no loop-carried flow
 dependence for A. We first calculate MOD !i , the set of array elements written in iterations prior to
-iteration i, giving us MOD . The intersection of MOD !i and UE i is conducted by two
+iteration i, giving We MOD . The intersection of MOD !i and UE i is conducted by two
 intersections, each of which is formed on one mod component from MOD !i and UE i respectively. The
-first mod, [T appears in the difference list of UE i , and thus the result is obviously empty.
-Similarly, the intersection of [p; (jmax)] and the second mod, [p; (jmax)], is empty because their guards
-are contradictory. Because the intersection of MOD !i and UE i is empty, array A is privatizable. In
-both intersections, we avoid performing the difference operation in UE i , and therefore improve efficiency.
+first mod, [T appears in the difference list of UE , and thus the result is obviously empty.
+Similarly, the intersection of [p; (jmax)] and the second mod, [p; (jmax)], is empty because the second mod, [p; (jmax)] guards
+are contradictory. Because The intersection of MOD !i and UE i is empty, array A is privatizable. In
+both intersections, we avoid performing the difference operation in UE , and therefore improve efficiency.
 6 Related Work
 There exist a number of approaches to array data-flow analysis. As far as we know, no work has
 particularly addressed the efficiency issue or presented efficiency data. One school of thought attempts to
 gather flow information for each array element and to acquire an exact array data-flow analysis. This is
 usually done by solving a system of equalities and inequalities. Feautrier [17] calculates the source function
 to indicate detailed flow information. Maydan et al. [33, 34] simplify Feautrier's method by using a Last-
-Write-Tree(LWT). Duesterwald et al. [12] compute the dependence distance for each reaching definition
+Write-Tree(LWT). Maydan et al. [12] compute the dependence distance for each reaching definition
 within a loop. Pugh and Wonnacott [37] use a set of constraints to describe array data-flow problems
-and solve them basically by the Fourier-Motzkin variable elimination. Maslov [32], as well as Pugh
+and solve array data-flow problems
+ basically by the Fourier-Motzkin variable elimination. Maslov [32], as well as Pugh
 and Wonnacott [37], also extend the previous work in this category by handling certain IF conditions.
 Generally, these approaches are intraprocedural and do not seem easily extended interprocedurally. The
 other group analyzes a set of array elements instead of individual array elements. Early work uses regular
 sections [6, 24], convex regions [40, 41], data access descriptors [2], etc. to summarize MOD/USE sets of
-array accesses. They are not array data-flow analyses. Recently, array data-flow analyses based on these
+array accesses. The
+other group are not array data-flow analyses. Recently, array data-flow analyses based on these
 sets were proposed (Gross and Steenkiste [19], Rosene [38], Li [29], Tu and Padua [43], Creusillet and
-Irigoin [10], and M. Hall et al. [21]). Of these, ours is the only one using conditional regions (GAR's),
-even though some do handle IF conditions using other approaches. Although the second group does
-not provide as many details about reaching-definitions as the first group, it handles complex program
+Irigoin [10], and M. Hall et al. [21]). Of array data-flow analyses based on these
+sets, ours is the only one using conditional regions (GAR's),
+even though some do handle IF conditions using other approaches. Although The
+other group does
+not provide as many details about reaching-definitions as the first group, The
+other group handles complex program
 constructs better and can be easily performed interprocedurally.
 Array data-flow summary, as a part of the second group mentioned above, has been a focus in the
 parallelizing compiler area. The most essential information in array data-flow summary is the upwardly
 exposed use set. These summary approaches can be compared in two aspects: set representation and path
-sensitivity. For set representation, convex regions are highest in precision, but they are also expensive
-because of their complex representation. Bounded regular sections (or regular sections) have the simplest
+sensitivity. For set representation, convex regions are highest in precision, but convex regions are also expensive
+because of convex regions complex representation. Bounded regular sections (or regular sections) have the simplest
 representation, and thus are most inexpensive. Early work tried to use a single regular section or a single
-convex region to summarize one array. Obviously, a single set can potentially lose information, and it
+convex region to summarize one array. Obviously, a single set can potentially lose information, and a single set
 may be ineffective in some cases. Tu and Padua [43], and Creusillet and Irigoin [10] seem to use a single
 regular section and a single convex region, respectively. M. Hall et al. [21] use a list of convex regions to
 summarize all the references of an array. It is unclear if this representation is more precise than a list of
 regular sections, upon which our approach is based.
 Regarding path sensitivity, the commonality of these previous methods is that they do not distinguish
-summary sets of different control flow paths. Therefore, these methods are called path-insensitive, and
-have been shown to be inadequate in real programs. Our approach, as far as we know, is the only
-path-sensitive array data-flow summary approach in the parallelizing compiler area. It distinguishes
+summary sets of different control flow paths. Therefore, these previous methods are called path-insensitive, and
+have been shown to be inadequate in real programs. Our approach, as far as Our know, is the only
+path-sensitive array data-flow summary approach in the parallelizing compiler area. the only
+path-sensitive array data-flow summary approach in the parallelizing compiler area distinguishes
 summary information from different paths by putting IF conditions into guards. Some other approaches
 do handle IF conditions, but not in the context of array data-flow summary.
 7 Conclusion
 In this paper, we have presented an array data-flow analysis which handles interprocedural, symbolic, and
-predicate analyses all together. The analysis is shown via experiments to be quite effective for program
-parallelization. Important design decisions are made such that the analysis can be performed efficiently.
+predicate analyses all together. an array data-flow analysis which handles interprocedural, symbolic, and
+predicate is shown via experiments to be quite effective for program
+parallelization. Important design decisions are made such that an array data-flow analysis which handles interprocedural, symbolic, and
+predicate can be performed efficiently.
 Our hierarchical predicate handling scheme turns out to serve very well. Many predicate operations can
 be performed at high levels, avoiding expensive low-level operations. The new data structure, GARWD
 (i.e. guarded array regions with a difference list), reduces expensive set-difference operations by up to
@@ -888,9 +917,10 @@ be performed at high levels, avoiding expensive low-level operations. The new da
 finding is that the MOD lists and the UE lists can be kept rather short, thus reducing set operation time.
 As far as we know, this is the first time the efficiency issue has been addressed and data presented for
 such a powerful analysis. We believe it is important to continue exploring the efficiency issue, because
-unless interprocedural array data-flow analysis can be performed reasonably fast, its adoption in real
+unless interprocedural array data-flow analysis can be performed reasonably fast, 
+ adoption in real
 programming world would be unlikely. With continued advances of parallelizing compiler techniques,
-we hope that fully or partially automatic parallelization will provide a viable methodology for machine-independent
+We hope that fully or partially automatic parallelization will provide a viable methodology for machine-independent
 parallel programming.
 
 
@@ -908,14 +938,14 @@ Efficient flow-sensitive interprocedural computation of pointer-induced aliases 
 Applications of symbolic evaluation.
 Interprocedural array region analyses.
 Interprocedural may-alias analysis for pointers: Beyond k-limiting
-A practical data-flow framework for array reference analysis and its use in optimizations
+A practical data-flow framework for array reference analysis and array reference analysis use in optimizations
 On the automatic parallelization of the perfect benchmarks.
 
 Experience in the automatic parallelization of four perfect- benchmark programs
 On the automatic parallelization of the Perfect Benchmarks.
 Dataflow analysis of array and scalar references.
 
-Structured data-flow analysis for arrays and its use in an optimizing compiler
+Structured data-flow analysis for arrays and Dataflow use in an optimizing compiler
 Symbolic array dataflow analysis for array privatization and program parallelization.
 Interprocedural analysis for parallelization.
 Symbolic dependence analysis for parallelizing compilers.
@@ -929,9 +959,11 @@ Array privatization for parallel execution of loops.
 Interprocedural analysis for parallel computing.
 Program parallelization with interprocedural analysis.
 Lazy array data-flow dependence analysis
-Array data-flow analysis and its use in array privatization
+Array data-flow analysis and The Structure of Computers and Computations
+ use in array privatization
 Accurate Analysis of Array References.
-An interprocedural parallelizing compiler and its support for memory hierarchy research.
+An interprocedural parallelizing compiler and The Structure of Computers and Computations
+ support for memory hierarchy research.
 A precise interprocedural data-flow algorithm
 An exact method for analysis of value-based array data dependences
 Incremental dependence analysis.

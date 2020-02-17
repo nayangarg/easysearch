@@ -1,7 +1,7 @@
 --T
 Ordering, Anisotropy, and Factored Sparse Approximate Inverses.
 --A
-We consider ordering techniques to improve the performance of factored sparse approximate inverse preconditioners, concentrating on the AINV technique of M. Benzi and M. T\r{u}ma. Several practical existing unweighted orderings are considered along with a new algorithm, minimum inverse penalty (MIP), that we propose. We show how good orderings such as these can improve the speed of preconditioner computation dramatically and also demonstrate a fast and fairly reliable way of testing how good an ordering is in this respect. Our test results also show that these orderings generally improve convergence of Krylov subspace solvers but may have difficulties particularly for anisotropic problems. We then argue that weighted orderings, which take into account the numerical values in the matrix, will be necessary for such systems. After developing a simple heuristic for dealing with anisotropy we propose several practical algorithms to implement it. While these show promise, we conclude a better heuristic is required for robustness.
+We consider ordering techniques to improve the performance of factored sparse approximate inverse preconditioners, concentrating on the AINV technique of M. Benzi and M. T\r{u}ma. Several practical existing unweighted orderings are considered along with a new algorithm, minimum inverse penalty (MIP), that we propose. We show how good orderings such as these can improve the speed of preconditioner computation dramatically and also demonstrate a fast and fairly reliable way of testing how good an ordering is in this respect. Our test results also show that Several practical existing unweighted orderings generally improve convergence of Krylov subspace solvers but may have difficulties particularly for anisotropic problems. We then argue that weighted orderings, which take into account the numerical values in the matrix, will be necessary for such systems. After developing a simple heuristic for dealing with anisotropy we propose several practical algorithms to implement several practical algorithms. While these show promise, we conclude a better heuristic is required for robustness.
 --B
 Introduction
 . Consider solving the system of linear equations:
@@ -19,7 +19,7 @@ factorization appears to allow more information per nonzero to be stored, improv
 convergence [4, 8]. Third, the setup costs for creating preconditioners can often be
 much less [4].
 However, unlike A -1 itself, the inverse LU factors are critically dependent on the
-ordering of the rows and columns-indeed, they will not exist in general for some
+ordering of the rows and columns-indeed, the inverse LU factors will not exist in general for some
 orderings. Even in the case of an SPD matrix, direct methods have shown how important
 ordering can be. Thus any factored approximate inverse scheme must handle
 # Received by the editors March 6, 1998; accepted for publication (in revised form) March 18, 1999;
@@ -35,7 +35,7 @@ ordering with thought. In particular, for an e#ective preconditioner an ordering
 minimizes the size of the "dropped" entries is needed-decreasing the error between
 the approximate inverse factors and the true ones (see [14] for a discussion of this in
 the context of ILU).
-In this paper we focus our attention on the AINV algorithm [3], which, via implicit
+In this paper we focus we attention on the AINV algorithm [3], which, via implicit
 Gaussian elimination with small-element dropping, constructs a factored approximate
 where Z and W are unit upper triangular and D -1 is diagonal. However, the purely
 structural results presented in section 2 apply equally to other factored approximate
@@ -48,7 +48,7 @@ AINV has shown promising results [3]. more recent work by the same authors is
 [5].) We carry this research forward in sections 2 and 3, realizing significant improvements
 in the speed of preconditioner computation and observing some beneficial e#ects
 on convergence but noting that structural information alone is not always enough. We
-then turn our attention to anisotropic problems. For the ILU class of preconditioners
+then turn We attention to anisotropic problems. For the ILU class of preconditioners
 it has been determined that orderings which take the numerical values of the matrix
 into account are useful-even necessary (e.g., [10, 11, 12, 14]). Sections 4-6 try to answer
 the question of whether the same thing holds for factored approximate inverses.
@@ -56,17 +56,17 @@ The appendix contains the details of our test results.
 2. Unweighted orderings. Intuitively, the smaller the size of the dropped portion
 from the true inverse factors, the better the approximate inverse will be. We will
 for now assume that the magnitudes of the inverse factors' nonzeros are distributed
-roughly the same way under di#erent orderings. (Our experience shows this is a fairly
+roughly the same way under di#erent orderings. (We experience shows this is a fairly
 good assumption for typical isotropic problems, but as we shall see later, this breaks
 down for anisotropic matrices in particular.) Then we can consider the simpler problem
 of reducing the number of dropped nonzeros, instead of their size. Of course, for
-sparsity we also want to retain as few nonzeros as possible; thus we really want to
+sparsity We also want to retain as few nonzeros as possible; thus We really want to
 reduce the number of nonzeros in the exact inverse factors-a quantity we call inverse
 factor fill, or I F fill.
 Definition 2.1. Let A be a square matrix with a triangular factorization
-LU . The I F fill of A is defined to be the total number of nonzeros in the inverses of
+LU . I F fill of A is defined to be the total number of nonzeros in the inverses of
 L and U, assuming no cancellation in the forming of those inverses.
-For simplicity we restrict our discussion to the SPD case, first examining I F
+For simplicity we restrict we discussion to the SPD case, first examining I F
 fill and then considering several existing ordering algorithms that may be helpful.
 We finish the section by proposing a new ordering scheme, which we call MIP. The
 application to the unsymmetric case is straightforward.
@@ -93,13 +93,13 @@ ple). Another product of this characterization is a simple way of computing the 
 fill of an SPD matrix, obtained by summing the number of nonzeros in each column
 of the inverse factor and multiplying by two for the other (transposed) factor.
 Theorem 2.3. The I F fill of an SPD matrix is simply twice the sum of the
-depths of all nodes in its elimination tree. In particular, the number of nonzeros in
+depths of all nodes in an SPD matrix elimination tree. In particular, the number of nonzeros in
 column j of the true inverse factor Z is given by the number of nodes in the subtree
 of the elimination tree rooted at j.
 These results suggest orderings that avoid long dipaths in L T (i.e., paths in L T
 with monotonically increasing node indices), as these cause lots of I F fill, quadratic
 in their length. Alternatively, we are trying to get short and bushy elimination trees.
-Another useful characterization of I F fill using notions from [17, 18] allows us
+Another useful characterization of The I F fill using notions from [17, 18] allows us
 to do a cheap "inverse symbolic factorization"-determining the nonzero structure
 of the inverse factors-without using the elimination tree, which is essential for our
 minimum inverse penalty (MIP) ordering algorithm presented later.
@@ -111,7 +111,8 @@ which might do well and propose a new scheme to directly implement the
 heuristic of reducing I F fill.
 Red-black. The simplest ordering we consider is (generalized) red-black, where a
 maximal independent set of ("red") nodes is ordered first and the remaining ("black")
-nodes are ordered next according to their original sequence. In that initial red block,
+nodes are ordered next according to the remaining ("black")
+nodes original sequence. In that initial red block,
 there are no nontrivial dipaths and hence no o#-diagonal entries in Z.
 Minimum degree. Benzi and Tuma have observed that minimum degree is
 generally beneficial for AINV [3]. This is justified by noting that minimum degree
@@ -127,8 +128,7 @@ our experience is that envelope orderings do not manage this. This may seem at
 vertices u and v that were connected by a dipath u # v in G.
 2 The transitive reduction of a directed graph G is a graph G # with the minimum number of arcs
 but still possessing the same transitive closure as G.
-variance with the result in [13] (elaborated in [5] for factored inverses) that for banded
-SPD matrices the rate of decay of the entries in the inverse has an upper bound that
+variance with the result in [13] (elaborated in [5] for factored inverses) that for SPD SPD matrices the rate of decay of the entries in the inverse has an upper bound that
 decreases as the bandwidth decreases. However, decay was measured there in terms of
 distance from the diagonal, which is really suitable only for small bandwidth orderings;
 the results presented in section 5 of [13], measuring decay in terms of the unweighted
@@ -137,11 +137,11 @@ in sections 4-6.
 Nested dissection (ND). On the other hand, by ordering vertex separators last
 ND avoids any long monotonic dipaths and hence a lot of I F fill. Alternatively, in
 trying to balance the elimination tree it reduces the sum of depths.
-Minimum inverse penalty (MIP). Above we noted that we can very cheaply
+Minimum inverse penalty (MIP). Above We noted that we can very cheaply
 compute the number of nonzeros in each column of Z within a symbolic factoriza-
 tion. This allows to propose a new ordering, MIP, an analogue to minimum degree.
 Minimum degree is built around a symbolic Cholesky factorization of the matrix, at
-each step selecting the node(s) of minimum penalty to eliminate. The penalty was
+each step selecting the node(s) of minimum penalty to eliminate. minimum penalty was
 originally taken to be the degree of the node in the partially eliminated graph; later
 algorithms have used other related quantities including the external degree and approximate
 upper bounds. In MIP we follow the same greedy strategy but we compute
@@ -149,26 +149,29 @@ a penalty for node v based on Zdeg v , the number of nonzeros in the column of Z
 were v to be ordered next-the degree in the inverse Cholesky factor instead of the
 well as on Udeg v , the number of uneliminated neighbors of node
 v at the current stage of factorization (not counting supernodes). In our experiments
-we found the function Penalty to be fairly e#ective. Further
+our found the function Penalty to be fairly e#ective. Further
 research into a better penalty function is needed. Also, ideas from minimum degree
 such as multiple elimination, element absorption, etc. might be suitable here.
-3. Testing unweighted orderings. We used the symmetric part of the matrix
+3. Testing unweighted orderings. our used the symmetric part of the matrix
 for all the orderings. Red-black was implemented with the straightforward greedy
-algorithm to select a maximal independent set. Our minimum degree algorithm was
-AMDBAR, a top-notch variant due to Amestoy, Davis, and Du# [1]. We wrote our
+algorithm to select a maximal independent set. our minimum degree algorithm was
+AMDBAR, a top-notch variant due to Amestoy, Davis, and Du# [1]. our wrote our
 own ND algorithm that constructs vertex separators from edge separators given by a
-multilevel bisection algorithm. This algorithm coarsens the graph with degree-1 node
+multilevel bisection algorithm. our
+own ND algorithm that constructs vertex separators from edge separators given by a
+multilevel bisection algorithm coarsens the graph with degree-1 node
 compression and heavy-edge matchings until there are less than 100 nodes, bisects
 the small graph spectrally according to the Fiedler vector [15], and uses a greedy
 boundary-layer sweep to smooth in projecting back to the original. See [21], for
 example, for more details on this point.
 The appendix provides further details about our testing. The tables contain data
-for both the unweighted orderings above and their weighted counterparts presented
+for both the unweighted orderings above and the unweighted orderings weighted counterparts presented
 below-ignore the lower numbers for now. In brief, we selected several matrices from
-the Harwell-Boeing collection and tested them all with each ordering scheme. Table
+the Harwell-Boeing collection and tested several matrices from
+the Harwell-Boeing collection with each ordering scheme. Table
 4 gives the true I F fill for each matrix (or its symmetric part) and ordering. Tables
 5-7 give the preconditioner performance. As the number of nonzeros allowed in the
-preconditioner can have a significant e#ect on results, we standardized all our test
+preconditioner can have a significant e#ect on results, we standardized all we test
 runs: in each box the left number is a report for when the preconditioner had as
 many nonzeros as the matrix and the right number for when the preconditioner had
 twice as many nonzeros.
@@ -198,18 +201,18 @@ this may be useful for applications where the reverse is true.
 The e#ect of ordering on speed of solution is less obvious. The poor behavior of
 PORES2, 3 SHERMAN2, and WATSON5 indicate that AINV probably isn't appropriate
 (although if we had properly treated SHERMAN2 as a block matrix instead
-it might have gone better). Notice in particular that sometimes lowering the drop
+SHERMAN2 might have gone better). Notice in particular that sometimes lowering the drop
 tolerance, increasing the size of the preconditioner and hopefully making it more
 accurate, actually degrades convergence for these indefinite problems. From the remaining
 matrices, we compared the average decrease in number of iterations over the
 given ordering-see Table 1. Particularly given its problems with SAYLR4, WAT-
 SON4, WATT1, and WATT2 red-black cannot be viewed as a good ordering. MIP is
-overall the best, although it had a problem with WATT1, whereas the close contender
+overall the best, although MIP had a problem with WATT1, whereas the close contender
 AMDBAR did fairly well on all but the di#cult three mentioned above. The good I F
 fill reducing orderings all made worthwhile improvements in convergence rates, but it
-is surprising that ND did the least considering its superior I F fill reduction. Clearly
+is surprising that ND did the least considering ND superior I F fill reduction. Clearly
 our intuition that having fewer nonzeros to drop makes a better preconditioner has
-merit, but it does not tell the entire story.
+merit, but a better preconditioner does not tell the entire story.
 3 In [3] somewhat better convergence was achieved for PORES2, presumably due to implementation
 di#erences in the preconditioner or its application.
 872 ROBERT BRIDSON AND WEI-PAI TANG
@@ -220,7 +223,7 @@ of ALE3D, BCSSTK14, NASA1824, ORSREG1, SAYLR4, and WATSON4. More
 importantly, these variations are not correlated with I F fill; some other factor is at
 work. Noticing that each of these matrices are quite anisotropic and recalling the
 problems anisotropy poses for ILU, we are led to investigate weighted orderings.
-We first develop a heuristic for handling anisotropic matrices. The goal in mind
+we first develop a heuristic for handling anisotropic matrices. The goal in mind
 is to order using the di#ering strengths of connections to reduce the magnitude of
 the inverse factor entries. Then even if we end up with more I F fill (and hence drop
 more nonzeros), the magnitude of the discarded portion of the inverse factors may be
@@ -230,12 +233,12 @@ torization, where L is unit lower triangular and D is diagonal. Then -T , and
 since is zero on and below the diagonal hence nilpotent, we have
 Then for
 The nonzero entries in this sum correspond to the monotonically increasing di-
-Our orderings should therefore avoid having
+we orderings should therefore avoid having
 many such dipaths which involve large entries of L, as each one could substantially
 increase the magnitude of Z's entries. Thus we want to move the large entries away
-from the diagonal, so they cannot appear in many monotonic dipaths. In other words,
-after a node has been ordered, we want to order so that its remaining neighbors with
-strong L-connections come as late as possible after it.
+from the diagonal, so the large entries cannot appear in many monotonic dipaths. In other words,
+after a node has been ordered, we want to order so that a node remaining neighbors with
+strong L-connections come as late as possible after a node.
 For the purposes of our ordering heuristic, we want an easy approximation to L
 independent of the eventual ordering chosen-something that can capture the order of
 magnitude of entries in L but doesn't require us to decide the ordering ahead of time.
@@ -244,7 +247,7 @@ can take the absolute value of the lower triangular part of A, symmetrically res
 to have a unit diagonal. (This can be thought of as a scaled Gauss-Seidel approxima-
 tion.) Our general heuristic is then to delay strong connections in this approximating
 matrix M defined by
-An alternative justification of this heuristic, simply in the context of reducing the
+An alternative justification of Our general heuristic, simply in the context of reducing the
 magnitude of entries in L, is presented in [10].
 Now consider a simple demonstration problem to determine whether this heuristic
 could help. The matrix SINGLEANISO comes from a 5-point finite-di#erence
@@ -271,10 +274,12 @@ Weak-first 0.38 25 0.25
 nested dissection and then internally orders each block with nested dissection-this
 brings the strong connections close to the diagonal. The second ("weak-first") block-
 orders the grid rows instead, pushing the strong connections away from the diagonal,
-delaying them until the last. These are illustrated in Figure 2, where each square of
-the grid is shaded according to its place in the ordering.
+delaying the strong connections until the last. These are illustrated in Figure 2, where each square of
+the grid is shaded according to each square of
+the grid place in the ordering.
 Both orderings produce a reasonable I F fill of 103,682, with isomorphic elimination
-trees. However, they give very di#erent performance at the first level of fill-see
+trees. However, isomorphic elimination
+trees give very di#erent performance at the first level of fill-see
 
 Table
 
@@ -312,7 +317,7 @@ We then make the bipartition depending on which side of the median each entry
 lies. Notice that the closer together two entries are in value-i.e., the smaller
 is-the more likely those nodes will be ordered on the same side of the cut. We would
 like weakly connected nodes (where M ij is small) to be in the same part and the
-strong connections to be in the edge cut, so we try minimizing the following weighted
+strong connections to be in the cut, so We try minimizing the following weighted
 quadratic sum:
 (i,j) is an edge
 where M is the scaled matrix mentioned above. This corresponds to finding the
@@ -320,7 +325,7 @@ eigenvector with second smallest eigenvalue of the weighted Laplacian matrix for
 graph defined by
 (i, is an edge if and only if M ij #= 0, weight(i,
 Thus we modify ND simply by changing the Laplacian used in the bipartition
-step to this weighted Laplacian. Fortunately, our multilevel approach with heavy-
+step to this weighted Laplacian. Fortunately, We multilevel approach with heavy-
 edge matchings typically will eliminate the largest o#-diagonal entries, as well as
 substantially decreasing the size of the eigenproblem, making it easy to solve, so our
 WND is very reasonable to compute.
@@ -349,19 +354,17 @@ Algorithm 2 (OutIn).
 . Return the nodes in sorted order, with most distant first and c last.
 Despite our earlier remark that envelope orderings might not be useful, the weight
 information actually lets OutIn perform significantly better than the natural ordering
-by reducing the size of the nonzeros in the factors if not the number of them. However,
+by reducing the size of the nonzeros in the factors if not the number of not. However,
 why not combine OutIn with an I F fill reducing ordering to try to get the best of
 both worlds? We thus test OutIn as a preprocessing stage before applying red-black,
 minimum degree, or MIP. We note that the use of hash tables and other methods to
-accelerate the latter two means that it's not true that the precedence set by OutIn
-will always be followed in breaking ties for minimum penalty.
+accelerate the latter two means that it's not true that the precedence set by OutInwill always be followed in breaking ties for minimum penalty.
 As an aside, we also considered modifying minimum degree and MIP with tie-breaking
 directly based on the weight of a candidate node's connections to previously
 selected nodes. Weighted tie-breaking (with RCM) has proved useful before in the
-context of ILU [11]. However, for the significant extra cost incurred by this tie-
-breaking, this achieved little here-it appears that a more global view of weights is
+context of ILU [11]. However, for the significant extra cost incurred by Weighted tie-breaking (with RCM), this achieved little here-it appears that a more global view of weights is
 required when doing approximate inverses.
-Before proceeding to our large test set, we verify that these orderings are behaving
+Before proceeding to our large test set, our verify that these orderings are behaving
 as expected with another demonstration matrix. ANISO is a similar problem to
 SINGLEANISO but with four abutting regions of anisotropy with di#ering directions
 [12]-see
@@ -374,11 +377,11 @@ Table
 
 3, the results for WND over ND and OutIn/MIP over MIP didn't change, but
 there was a significant improvement in the other orderings.
-6. Testing weighted results. We repeated the tests for our weighted orderings,
+6. Testing weighted results. We repeated the tests for We weighted orderings,
 with results given in Tables 4-7. For unsymmetric matrices, we used |A|
 define M in WND and OutIn, avoiding the issue of directed edges as with unweighted
 orderings. In each box of the tables, the lower numbers correspond to the weighted
-orderings; we have grouped them with the corresponding unweighted orderings for
+orderings; we have grouped the lower numbers with the corresponding unweighted orderings for
 comparison.
 876 ROBERT BRIDSON AND WEI-PAI TANG
 Fig. 4. Schematic showing the domain of ANISO. The arrows indicate the direction of the
@@ -386,7 +389,7 @@ strong connections.
 
 Table
 Performance of weighted orderings versus unweighted orderings for ANISO.
-Ordering I F fill
+Ordering F fill
 Time to compute
 preconditioner
 Number of
@@ -414,14 +417,13 @@ SHERMAN2, and WATSON5. These matrices have very weak diagonals anyhow, so
 our heuristics probably don't apply. OutIn and OutIn/RB are a definite improvement
 on the natural ordering and red-black, apart from on BCSSTK14 and WATSON4. The
 e#ect of OutIn on AMDBAR and MIP is not clear; usually there's little e#ect, and
-on some matrices (e.g., ALE3D and SAYLR4) it has an opposite e#ect on the two.
-WND shows more promise, improving convergence over ND considerably for ALE3D,
-BCSSTK14, ORSIRR1, ORSREG1, and SAYLR4. Its much poorer I F fill reduction
+on some matrices (e.g., ALE3D and SAYLR4) it has an opposite e#ect on WND shows more promise, improving convergence over ND considerably for ALE3D,
+BCSSTK14, ORSIRR1, ORSREG1, and SAYLR4. it much poorer I F fill reduction
 (generally by a factor of 4) gave it problems on a few matrices though.
 ORDERING, ANISOTROPY, AND APPROXIMATE INVERSES 877
 7. Conclusions. It is clear that I F fill reduction is crucial to the speed of preconditioner
 computation, often making an order of magnitude di#erence. We also saw
-that the I F fill of a matrix can be computed very cheaply and gives a good indication
+that I F fill of a matrix can be computed very cheaply and gives a good indication
 of the preconditioner computation time, for unweighted orderings at least.
 Reducing I F fill typically also gives a more e#ective preconditioner, accelerating
 convergence-not only are the number of nonzeros in the true inverse factors de-
@@ -440,25 +442,26 @@ we believe a more sophisticated weighting heuristic is necessary for further pro
 Appendix
 
 . Testing data. Our test platform was a 180MHz Pentium Pro running
-Windows/NT. We used MATLAB 5.1, with the algorithm for AINV written as a
+Windows/NT. Our used MATLAB 5.1, with the algorithm for AINV written as a
 MEX extension in C. Our AINV algorithm was a left-looking, column-by-column ver-
-sion, with o#-diagonal entries dropped when their magnitude is below a user-supplied
-tolerance and with the entries of D shifted to 10 -3 max |A| when their computed
+sion, with o#-diagonal entries dropped when a left-looking, column-by-column ver-
+sion magnitude is below a user-supplied
+tolerance and with the entries of D shifted to 10 -3 max |A| when the entries of D computed
 magnitude We also make crucial use of the elimination tree;
-in making a column conjugate with the previous columns, we only consider its descendants
+in making a column conjugate with the previous columns, we only consider MATLAB 5.1 descendants
 in the elimination tree (the only columns that could possibly contribute
 anything). This accelerates AINV considerably for low I F fill orderings-e.g., SHER-
 MAN3 with AMDBAR ordering and a drop tolerance of 0.1 is accelerated by a factor
 of four! An upcoming paper [7] will explore this more thoroughly.
 To compare the orderings we selected several matrices, mostly from the Harwell-Boeing
 collection. First we found the amount of true I F fill caused by each ordering,
-given in Table 4. We then determined drop-tolerances for AINV to produce preconditioners
+given in Table 4. we then determined drop-tolerances for AINV to produce preconditioners
 with approximately N and 2N nonzeros, where N is the number of nonzeros
 in the given matrix. For each matrix, ordering, and fill level we attempted to solve
 using BiCGStab (CG for SPD matrices), where b was chosen so that the
 correct x is the vector of all 1s. Tables 5, 6, and 7 give the CPU time taken for
 preconditioner computation, the iterations required to reduce the residual norm by
-a factor of 10 -9 , and the CPU time taken by the iterations. We halted after 1800
+a factor of 10 -9 , and the CPU time taken by the iterations. we halted after 1800
 iterations; the daggers in Tables 6 and 7 indicate no convergence at that point.
 In each box of the tables, the upper line corresponds to the unweighted ordering
 and the lower line its weighted counterpart. In Tables 5, 6, and 7 the numbers on the
@@ -471,7 +474,8 @@ in underlined boldface.
 Table
 Comparison of I F fill caused by di#erent orderings. Nonzero counts are given in thousands
 of nonzeros. In each box the upper number corresponds to the unweighted ordering, and the lower
-number corresponds to its weighted counterpart.
+number corresponds to the lower
+number weighted counterpart.
 Given Red-black AMDBAR ND MIP
 Name n NNZ OutIn OutIn/* OutIn/* WND OutIn/*
 1486 1506 419 1526 709
@@ -484,7 +488,7 @@ ORDERING, ANISOTROPY, AND APPROXIMATE INVERSES 879
 
 Table
 Comparison of CPU time for preconditioner computation. In each box the upper numbers
-correspond to the unweighted ordering, and the lower numbers correspond to its weighted counterpart.
+correspond to the unweighted ordering, and the lower numbers correspond to the unweighted ordering weighted counterpart.
 The numbers on the left refer to the low-fill test, and the numbers on the right refer to the high-fill
 test.
 Given Red-black AMDBAR ND MIP
@@ -542,7 +546,8 @@ ORDERING, ANISOTROPY, AND APPROXIMATE INVERSES 881
 
 Table
 Comparison of time taken for iterations. In each box the upper numbers correspond to the
-unweighted ordering, and the lower numbers correspond to its weighted counterpart. The numbers
+unweighted ordering, and the lower numbers correspond to the
+unweighted ordering weighted counterpart. The numbers
 on the left refer to the low-fill test, and the numbers on the right refer to the high-fill test.
 Given Red-black AMDBAR ND MIP
 Name OutIn OutIn/* OutIn/* WND OutIn/*

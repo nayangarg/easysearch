@@ -1,7 +1,7 @@
 --T
 Model exploration with temporal logic query checking.
 --A
-A temporal logic query is a temporal logic formula with placeholders. Given a model, a solution to a query is a set of assignments of propositional formulas to placeholders, such that replacing the placeholders with any of these assignments results in a temporal logic formula that holds in the model. Query checking, first introduced by William Chan \citechan00, is an automated technique for finding solutions to temporal logic queries. It allows discovery of the temporal properties of the system and as such may be a useful tool for model exploration and reverse engineering.This paper describes an implementation of a temporal logic query checker. It then suggests some applications of this tool, ranging from invariant computation to test case generation, and illustrates them using a Cruise Control System.
+A temporal logic query is a temporal logic formula with placeholders. Given a model, a solution to a query is a set of assignments of propositional formulas to placeholders, such that replacing the placeholders with any of these assignments results in a temporal logic formula that holds in a model. Query checking, first introduced by William Chan \citechan00, is an automated technique for finding solutions to temporal logic queries. an automated technique for finding solutions to temporal logic queries allows discovery of the temporal properties of the system and as such may be a useful tool for model exploration and reverse engineering.an automated technique for finding solutions to temporal logic queries describes an implementation of a temporal logic query checker. an automated technique for finding solutions to temporal logic queries then suggests some applications of this tool, ranging from invariant computation to test case generation, and illustrates case generation using a Cruise Control System.
 --B
 INTRODUCTION
 Temporal logic model-checking [7] allows us to decide whether
@@ -11,7 +11,7 @@ state-based model. Typical temporal logic formulas are AG(p #
 "every state in which p holds is always followed by a state
 in which q holds".
 Model checking was originally proposed as a verification tech-
-however, it is also extremely valuable for model understand-
+however, Model checking is also extremely valuable for model understand-
 Permission to make digital or hard copies of all or part of this work for
 personal or classroom use is granted without fee provided that copies are
 not made or distributed for profit or commercial advantage and that copies
@@ -26,14 +26,16 @@ Figure
 
 1: A simple state machine.
 ing [2]. We rarely start the study of a design with a complete specification
-available. Instead, we begin with some key properties,
+available. Instead, We begin with some key properties,
 and attempt to use the model-checker to validate them. When the
-properties do not hold, and they seldom do, what is at fault: the
+properties do not hold, and the
+properties seldom do, what is at fault: the
 properties or the design? Typically, both need to be modified: the
-design if a bug was found, and the properties if they were too strong
+design if a bug was found, and the
+properties if both were too strong
 or incorrectly expressed. Thus, this process is aimed not only at
 building the correct model of the system, but also at discovering
-which properties it should have.
+which properties this process should have.
 Query checking was proposed by Chan [2] to speed up design understanding
 by discovering properties not known a priori. A temporal
 logic query is an expression containing a symbol ?x , referred
@@ -56,11 +58,12 @@ care about the value of r in the invariant computed for the model in
 
 Figure
 
-1. We phrase our question as AG(?x{p, q}), thus explicitly
-restricting the propositions of interest to p and q. The answer we
+1. We phrase We question as AG(?x{p, q}), thus explicitly
+restricting the propositions of interest to p and q. The answer We
 get is p # q. Given a fixed set of n atomic propositions of interest,
 the query checking problem defined above can be solved by taking
-propositional formulas over this set, substituting them for
+propositional formulas over this set, substituting taking
+propositional formulas over this set for
 the placeholder, verifying the resulting temporal logic formula, tab-
 propositional formula is a formula built only from atomic
 propositions and boolean operators.
@@ -68,10 +71,10 @@ ulating the results and then returning the strongest solution(s) [1].
 The number n of propositions of interest provides a way to control
 the complexity of query checking in practice, both in terms of
 computation, and in terms of understanding the resulting answer.
-In his paper [2], Chan proposed a number of applications for
+In Chan paper [2], Chan proposed a number of applications for
 query checking, mostly aimed at giving more feedback to the user
 during model checking, by providing a partial explanation when
-the property holds and diagnostic information when it does not. For
+the property holds and diagnostic information when the property does not. For
 example, instead of checking the invariant AG(a#b), we can evaluate
 the query AG?x{a, b}. Suppose the answer is a # b, that is,
 holds in the model. We can therefore inform the user
@@ -84,9 +87,8 @@ acknowledgment: AG(?x # AF ack).
 In his work, Chan concentrated on valid queries, that is, queries
 that always yield a single strongest solution. All of the queries
 we mentioned so far are valid. Chan showed that in general it is
-expensive to determine whether a CTL query is valid. Instead, he
-identified a syntactic class of CTL queries such that every formula
-in the class is valid. He also implemented a query-checker for this
+expensive to determine whether a CTL query is valid. Instead, Chanidentified a syntactic class of CTL queries such that every formula
+in the class is valid. Chan also implemented a query-checker for this
 class of queries on top of the symbolic CTL model-checker SMV.
 Queries may also have multiple strongest solutions. Suppose
 we are interested in exploring successors of the initial state of the
@@ -94,7 +96,7 @@ model in Figure 1. Forming a query EX?x , i.e., "what holds in
 any of the next states, starting from the initial state s0 ?", we get
 two incomparable solutions: p # q # r and -p # q # r. Thus,
 we know that state s0 has at least two successors, with different
-values of p in them. Furthermore, in all of the successors, q # r
+values of p in at least two successors. Furthermore, in all of the successors, q # r
 holds. Clearly, such queries might be useful for model exploration.
 Checking queries with multiple solutions can be done using the
 method of Bruns and Godefroid [1]. They extend Chan's work by
@@ -109,46 +111,47 @@ ular, queries with two placeholders allow us to ask questions about
 pairs of states, e.g., dependencies between a current and a next state
 in the system.
 This paper describes three major contributions:
-1. We enrich the language of queries to include several place-
+1. us enrich the language of queries to include several place-
 holders. The previous methods only dealt with one place-
-holder, referring to it as "?". In our framework, placeholders
+holder, referring to The previous methods as "?". In us framework, placeholders
 need to be named, e.g. "? x ", "? y ", "? pre ".
-2. We describe the temporal logic query checking tool which
-we built on top of our existing multi-valued model-checker
-# Chek [4, 5]. The implementation not only allows one to
-compute solutions to the placeholders but also gives witnesses
+2. us describe the temporal logic query checking tool which
+us built on top of us existing multi-valued model-checker
+# Chek [4, 5]. no implementation of
+ not only allows one to
+compute solutions to placeholders
+ but also gives witnesses
 paths through the model that explain why solutions are as
 computed.
-3. We outline a few uses of the temporal logic query checking,
+3. us outline a few uses of the temporal logic query checking,
 both in domains not requiring witness computation and in
 those that depend on it.
-The rest of this paper is organized as follows: in Section 2, we
-give the necessary background for this paper, briefly summarizing
+The rest of This paper is organized as follows: in Section 2, we
+give the necessary background for This paper, briefly summarizing
 model-checking, query checking, and multi-valued CTL
 model-checking. Section 3 defines the reduction of the query checking
 problem to multi-valued model-checking. Section 4 describes
 some possible uses of query checking for model exploration. We
 illustrate these on an example of the Cruise Control System [16].
-This section can be read without the material in Sections 2 and 3.
-We conclude in Section 5 with the summary of the paper and the
-directions for future work. Proofs of theorems that appear in this
-paper can be found [11].
+Section 4 can be read without the material in Sections 2 and 3.
+We conclude in Section 5 with the summary of This paper and the
+directions for future work. Proofs of theorems that appear in This paper can be found [11].
 2. BACKGROUND
-In this section, we briefly outline CTL model-checking, describe
+In Section 4, we briefly outline CTL model-checking, describe
 the query checking problem, and give an overview of multi-valued
 model-checking.
 2.1 Model-Checking
 model-checking [6] is an automatic technique for verifying
 properties expressed in a propositional branching-time temporal
-logic called Computation Tree Logic (CTL). The system is represented
+logic called Computation Tree Logic (CTL). the Cruise Control System is represented
 by a Kripke structure, and properties are evaluated on a
-tree of infinite computations produced by unrolling it. A Kripke
+tree of infinite computations produced by unrolling the Cruise Control System. A Kripke
 structure is a tuple (S, s0 , A, R, I) where:
 . S is a finite set of states, and s0 is the initial state;
 . A is a set of propositional variables;
-. R # S - S is the (total) transition relation;
+. S is the (total) transition relation;
 . I : S # 2 A is a labeling function that maps each state onto
-the set of propositional variables which hold in it.
+the set of propositional variables which hold in each state.
 CTL is defined as follows:
 1. Constants true and false are CTL formulas.
 2. Every atomic proposition a # A is a CTL formula.
@@ -159,9 +162,9 @@ temporal operators have two components: A and E quantify over
 paths, while X , F , U and G indicate "next state", "eventually (fu-
 ture)", "until", and "always (globally)", respectively. Hence, AX#
 is true in state s if # is true in the next state on all paths from s.
-E[#U ] is true in state s if there exists a path from s on which #
+E[#U ] is true in S if there exists a path from s on which #
 is true at every step until becomes true.
-The formal semantics of CTL is given in Figure 2. In this figure,
+The formal semantics of CTL is given in Figure 2. In Figure 2,
 we use a function {true, false} to indicate the result
 of checking a formula # in state s. We further define the set of
 successors for a state s:
@@ -169,7 +172,7 @@ The more familiar notation for indicating that a property # holds
 in a state s of a Kripke structure K (K, s |= #) can be defined as
 follows:
 We also say that a formula # holds in a Kripke structure K if #
-holds in K's initial state. In Figure 2, we used conjunction and
+holds in K's initial state. In Figure 2, We used conjunction and
 disjunction in place of the more familiar universal and existential
 #, for # {true, false}
 s
@@ -199,7 +202,7 @@ EF# E[true U #]
 AG# -EF-#
 For example, consider the model in Figure 1, where s0 is the
 initial state and A = {p, q, r}. Properties AG(p# q) and AF q are
-true in this model, whereas AXp is not.
+true in the model, whereas AXp is not.
 2.2 Query Checking Fundamentals
 This exposition follows the presentation in [1].
 A lattice is a partial order (L, #), where every finite subset B #
@@ -214,7 +217,7 @@ false, p, -p}. This set forms a distributive lattice under implication
 
 Figure
 
-3(a)). Since p # true, p is under true in this lattice.
+3(a)). Since p # true, p is under true in a distributive lattice.
 Meets and joins in this lattice correspond to classical # and # op-
 erations, respectively.
 propositional formula is a solution to a query # in state s
@@ -226,10 +229,11 @@ In other words, the set of all solutions to a positive query is a set
 of propositional formulas that is upward closed with respect to the
 implication ordering: if some propositional formula is a solution,
 so is every weaker formula. Alternatively, a query is positive if
-and only if all placeholders in it occur under an even number of
+and only if all placeholders in 
+ occur under an even number of
 negations [2]. Further, for positive queries it makes sense to look
 just for the strongest solutions because all other solutions can be
-inferred from them. These notions are formalized below.
+inferred from all other solutions. These notions are formalized below.
 Given the ordered set (L, #) and a subset B # L, we define
 For example, for the ordered set (PF ({p}), #) shown in Figure
 subset B of L is an upset if
@@ -237,14 +241,14 @@ subset B of L is an upset if
 We write U(L, #) for the set of all upsets of L. The distributive
 lattice formed by elements of U(PF ({p}), #) ordered by set inclusion
 is shown in Figure 3(b). We refer to this as an upset lattice.
-Finally, we note that each upset can be uniquely represented by
+Finally, We note that each upset can be uniquely represented by
 the set of its minimal elements. For example, for
 is sufficient to represent the set {p, -p, true}, and {false} is sufficient
 to represent {p, -p, true, false}. Figure 3(c) shows the lattice
 using minimal elements. In the
-remainder of this paper, when we say that X is a solution to a query,
+remainder of This paper, when we say that X is a solution to a query,
 we mean that X # PF (P ), X is the set of minimal solutions to
-this query, and #X is the set of all of its solutions.
+this query, and #X is the set of all of #X solutions.
 2.3 Multi-Valued Model-Checking
 Multi-Valued CTL model-checking [5] is a generalization of the
 model-checking problem. Let B refer to the classical algebra with
@@ -258,17 +262,18 @@ and -#, but not necessarily the law of non-contradiction
 (#) or excluded middle (#).
 Properties are specified in a multiple-valued extension of CTL
 called has the same syntax as CTL, except that any
-# L is also a # CTL formula. However, its semantics is somewhat
+# L is also a # CTL formula. However, CTL
+calledcalled semantics is somewhat
 different. We modify the labeling function of the Kripke structure
 to be I : S - A # L, so that for each atomic proposition a # A,
 I(s, means that the variable a has value # in state s. Thus,
-The other operations are defined as their CTL counterparts (see
+The other operations are defined as The other operations CTL counterparts (see
 
 Figure
 
 2), where # and # are interpreted as lattice # and #, re-
-spectively. In fact, in the rest of this paper we often write "#" and
-"#" in place of "#" and "#", even if the algebra we use is different
+spectively. In fact, in the rest of This paper We often write "#" and
+"#" in place of "#" and "#", even if the algebra We use is different
 from B .
 The complexity of model-checking a # CTL formula # on a Kripke
 structure over an algebra
@@ -284,14 +289,14 @@ false if it does not: this is the classical model-checking. For more
 information about multi-valued model-checking, please consult [4,
 5].
 3. TEMPORALLOGICQUERY-CHECKER
-In this section, we describe the computation of query-checking
+In Section 4, we describe the computation of query-checking
 solutions in detail. We express the query-checking problem for one
 placeholder in terms of the multiple-valued model-checking frame-work
 described in Section 2. We then discuss how to deal with
 queries containing multiple placeholders, and finally what to do in
 the case of non-positive queries.
 Recall that multi-valued model-checking is an extension of model-checking
-to an arbitrary De Morgan algebra. In our case, the algebra
+to an arbitrary De Morgan algebra. In We case, the algebra
 is given by the upset lattice of propositional formulas (see Figure
 3). In order to reduce query-checking to multi-valued model-
 checking, we need to translate a given query into a # CTL formula
@@ -307,11 +312,11 @@ solution, and the set of all solutions is given by #{p # -q # r}.
 Next, we look at AX?x , which means "what single formula
 holds in all successor states". To solve this query with respect to
 the state s0 , we must first identify all successors of s0 , solve the
-query ?x for each of them, and finally take the intersection of the
+query ?x for each of all successors of s0, and finally take the intersection of the
 results. The solution to ?x in the two successors of s0 : s1 and s2 ,
 is #{-p # q # r} and #{p # q # r}, respectively. The intersection
 of these solutions is #{q # r}; thus, q # r holds in all successors
-of s0 , and any other solution to AX?x is implied by it. Notice
+of s0 , and any other solution to AX?x is implied by AX?x. Notice
 that this computation is
 corresponds to meet in the upset lattice, this precisely matches the
 # CTL semantics of AX from Figure 2. Based on this observation,
@@ -321,7 +326,7 @@ we show how query-checking is reduced to multi-valued model-checking
 The translation is defined top-down. All operators, constants,
 and propositional variables are translated one-to-one: # is
 mapped to the disjunction of the translation of # with the translation
-of #; any variable p is mapped to itself; true is mapped to the
+of #; any variable p is mapped to #; true is mapped to the
 constant symbol #; and so forth. For the model in Figure 1,
 We now show how to translate the placeholder ?x . Consider the
 computation of ?x{p, q} in state s0 of the model in Figure 1. The
@@ -330,15 +335,15 @@ of p and q in s0 . We formalize this using the case-statement:
 case ([[p #
 case ([[p #
 and since all of the cases are disjoint, this yields the (syntactic)
-So, to evaluate ?x{p, q}, we use the fact that [[p # q]](s0
+So, to evaluate ?x{p, q}, We use the fact that [[p # q]](s0
 to get
 To illustrate this idea further, consider a more complex query
 evaluated in state s0 of Figure 1. The set
 of all solutions to the subquery EX?x{p, q} is #{p # q, -p # q},
 and the set of all solutions to ?x is #{p # -q}. To get the set of all
-solutions to our query, we intersect the results to get #{p, p #= q}.
+solutions to our query, our intersect the results to get #{p, p #= q}.
 THEOREM 1. Let T be the above translation from CTL queries
-into # CTL. Then, for any CTL query # and state s in the model,
+into # CTL. Then, for any # CTL query # and state s in the model,
 contains exactly the solutions to # in state s.
 As stated in Section 2.3, multiple-valued model-checking has
 time complexity O(|S| - h - |#|), where h is the height of the
@@ -359,12 +364,12 @@ in practice the running time of the query-checker is much better
 than the worst case (see Section 4.4).
 3.3 More Complex Queries
 More than one placeholder can be required to express some properties
-of interest. In this section, we give an extension of query-
+of interest. In Section 4, we give an extension of query-
 checking which allows for multiple placeholders, where each may
 depend on a different set of propositional variables. Furthermore,
 we describe how to solve non-positive queries.
 3.3.1 Multiple Placeholders
-If a query contains multiple placeholders, it is transformed into
+If a query contains multiple placeholders, a query contains multiple placeholders is transformed into
 a CTL formula by substituting a propositional formula for each
 placeholder. Thus, given a query on n placeholders, with L i being
 the lattice of propositional formulas for the ith placeholder,
@@ -379,33 +384,33 @@ potential solution to this query is an element of To
 solve this query, we first find solutions to each subformula and then
 combine the results. Let B # L1 be the set of all solutions to ?x
 when viewed as a query with just one placeholder. However, since
-we have two placeholders, each solution, including the intermediate
-ones, must be a subset of L. The query ?x does not depend on
-the placeholder ?y ; therefore, any substitution for ?y (i.e., any element
+We have two placeholders, each solution, including the intermediate
+ones, must be a subset of L. a query ?x does not depend on
+just one placeholder ?y ; therefore, any substitution for ?y (i.e., any element
 of L2 ) is acceptable. This results in Similarly,
 the set of all solutions for EX?x is C - L2 , and for AX?y -
 L1 -D, for some C # L1 and D # L2 . Combining these results,
 we get
 Thus, the set of solutions to this query is {(x, y) | x
-For example, let us compute the solution to the query ?x{p, q}#
+For example, let us compute the solution to a query ?x{p, q}#
 EX?y{p, q} in state s0 of the model in Figure 1. We know from
 the example in Section 3.2 with just one placeholder,
 Further, recall that Each solution to ?x{p, q}
 #EX?y{p, q} is an element of the lattice
 In this lattice,
 Putting these together, yields
-Thus, this query has two minimal solutions: (p # -q, p # q), and
+Thus, a query has two minimal solutions: (p # -q, p # q), and
 (p # -q, -p # q).
 3.3.2 Negation
 Every query can be converted to its negation-normal form -
 the representation where negation is applied only to atomic propositions
 and placeholders. A query is positive if and only if all
-of its placeholders are non-negated when the query is put into its
+of A query placeholders are non-negated when the query is put into A query
 negation-normal form. Furthermore, we say that an occurrence of
 a placeholder in a query is negative if it appears negated in the
 negation-normal form of the query, and positive otherwise.
-In this section, we describe how non-positive queries can be
-solved by transforming them into positive form, query-checking,
+In Section 4, we describe how non-positive queries can be
+solved by transforming how non-positive queries into positive form, query-checking,
 and post-processing the solution. Note that the solution-set for
 negated placeholders depend on the maximal solutions 2 , rather than
 the minimal ones. We consider two separate cases: (1) when all
@@ -443,26 +448,27 @@ simultaneous solutions. The height of the powerset lattice of solutions
 1, and so the complexity is O(|S|
 |#|). This result generalizes easily to any number of placehold-
 ers. As with the case of a single placeholder, we find that in practice
-query checking is more feasible than its worst case (see Section
+query checking is more feasible than practice
+ worst case (see Section
 4.4).
 4. APPLICATIONS AND EXPERIENCE
-In this section, we show two different techniques for model exploration
+In Section 4, we show two different techniques for model exploration
 using temporal logic queries. The technique presented
 in Section 4.2 uses only the solutions to the query-checking problem
 and is essentially an extension of the methodology proposed
 by Chan in [2]. The technique presented in Section 4.3 is completely
 new and is based on the fact that in addition to computing
 the solution to a query, our model-checker can also provide a witness
-explaining it. The examples in this section are based on our
+explaining it. The examples in Section 4 are based on our
 own experience in exploring an SCR specification of a Cruise Control
 System [16], described in Section 4.1. Please refer to Table 3
-for the running time of various queries used in this section.
+for the running time of various queries used in Section 4.
 4.1 The Cruise Control System (CCS)
-The Cruise Control System (CCS) is responsible for keeping
+The Cruise Control System (CCS)
+ is responsible for keeping
 an automobile traveling at a certain speed. The driver accelerates
 to the desired speed and then presses a button on the steering
-wheel to activate the cruise control. The
-cruise control then maintains the car's speed, remaining active until
+wheel to activate the cruise control. the cruise control then maintains the car's speed, remaining active until
 one of the following events occurs: (1) the driver presses the
 brake pedal (Brake); (2) the driver presses the gas pedal (Accel);
 (3) the driver turns the cruise control off
@@ -474,32 +480,38 @@ speed by pressing a "resume" button
 The SCR method [12] is used to specify event-driven systems.
 System outputs, called controlled variables, are computed in terms
 of inputs from the environment, called monitored variables, and the
-system state. To represent this state, SCR uses the notion of mode-
+system state. To represent the
+system state, SCR uses the notion of mode-
 classes - sets of states, called modes, that partition the monitored
-environment's state space. The system changes its state as the result
+environment's state space. The Cruise Control System (CCS)
+ changes The Cruise Control System (CCS)
+ state as the result
 of events - changes in the monitored variables. For example,
 an event @T(a) WHEN b, formalized as -a # b # a # , indicates that
 a becomes true in the next state while b is true in the current state.
-We prime variables to refer to their values in the next state.
+We prime variables to refer to variables values in the next state.
 We use the simplified version of CCS [3] which has 10 monitored
 variables and 4 controlled variables. One of these, Throttle, is
-described below. The system also has one modeclass CC, described
+described below. The Cruise Control System (CCS)
+ also has one modeclass CC, described
 in
 
 Table
 
 1. Each row of the mode transition table specifies an event
 that activates a transition from the mode on the left to the mode
-on the right. The system starts in mode Off if Ignition is false,
+on the right. The Cruise Control System (CCS)
+ starts in mode Off if Ignition is false,
 and transitions to mode Inactive when Ignition becomes true.
 
 Table
 
 2 shows the event table for Throttle. Throttle assumes
 the value tAccel, indicating that the throttle is in the accelerating
-position, when (1) the speed becomes too slow while the system
+position, when (1) the speed becomes too slow while The Cruise Control System (CCS)
 is in mode Cruise, as shown in the first row of Table 2; or (2)
-the system returns to the mode Cruise, indicated by @T(Inmode),
+The Cruise Control System (CCS)
+ returns to the mode Cruise, indicated by @T(Inmode),
 and the speed has been determined to be too slow (see the second
 row of the table).
 4.2 Applications of Queries without Witnesses
@@ -538,13 +550,13 @@ AG(?x{CC} #?y{Ignition, Running})
 corresponds to invariants of each individual mode. In our example,
 the solution
 Running
-indicates that Ignition and Running remain true while the system
-is the mode Cruise. Moreover, this query can also help the analyst
+indicates that Ignition and Running remain true while The Cruise Control System (CCS)
+is the mode Cruise. Moreover, a query can also help the analyst
 determine which invariants are shared between modes. From the
 solution
 Ignition
 we see that Ignition not only stays true throughout the mode
-Inactive, but it is also invariant in the modes Cruise and Override.
+Inactive, but Ignition is also invariant in the modes Cruise and Override.
 The mode invariants for CCS that we were able to discover using
 query-checking are equivalent to the invariants discovered by the
 algorithms in [14, 15]. Notice that the strength of the invariants
@@ -562,14 +574,14 @@ Formally, a guard is defined as the weakest propositional formula
 over current (pre-) and next (post-) states such that the invariant
 # holds, where # is the guard, and # and # are the
 pre- and post-conditions, respectively. Notice that since we define
-the guard to be the weakest solution, the guard does not directly
-correspond to an SCR event. Later we show that SCR events can
+a guard to be the weakest solution, a guard does not directly
+correspond to an SCR event. Later We show that SCR events can
 be discovered by combining guards with mode invariants. Since
 guards are defined over pre- and post-states, two placeholders are
-required to express the query used to discover them, making the
+required to express the query used to discover two placeholders, making the
 guard the weakest solution to the query
 AG(#?pre # AX(?post #))
-We now show how this query is used to discover an event that
+We now show how the query used to discover two placeholders used to discover them is used to discover an event that
 causes CCS to switch from the mode Cruise to Inactive. In this
 case, we let
 furthermore, for practical reasons we restrict the ?pre and ?post
@@ -593,7 +605,7 @@ transition table.
 4.3 Applications of Queries with
 Given an existential CTL formula that holds in the model, a
 model-checker can produce a trace through the model showing why
-the formula holds. This trace is called a witness to the formula.
+the formula holds. a trace is called a witness to the formula.
 Similarly, given an existential query, the query-checker can produce
 a set of traces, which we also refer to as a witness, showing
 why each of the minimal solutions satisfies the query.
@@ -628,24 +640,28 @@ Table
 Figure
 
 4: A witness for EX?x{p}, in the model in Figure 1.
-initial state, so they can be represented as a tree. In addition, our
-query-checker labels each branch in the tree with the set of solutions
+initial state, so Figure
+
+4: A witness for EX?x{p}, in the model in Figure 1.
+initial state can be represented as a tree. In addition, our
+query-checker labels each branch in a tree with the set of solutions
 that are illustrated by that branch. In the example in Figure
 4, the left branch is labeled with and the right - with
 -p. The benefit of treating a witness as a tree rather than a set
 of independent traces is that it becomes possible to prefer certain
 over others. For example, we may prefer a witness with
 the longest common prefix, which usually results in minimizing the
-total number of traces comprising the witness. We now show how
+total number of traces comprising the witness. we now show how
 witnesses can be used in several software engineering activities.
 Guided simulation. The easiest way to explore a model is to
-simulate its behavior by providing inputs and observing the system
+simulate a model behavior by providing inputs and observing the system
 behavior through outputs. However, it is almost impossible to use
 simulation to guide the exploration towards a given objective. Any
 wrong choice in the inputs in the beginning of the simulation can
 result in the system evolving into an "uninteresting" behavior. For
 example, let our objective be the exploration of how CCS evolves
-into its different modes. In this case, we have to guess which set
+into its different modes. In this
+case, we have to guess which set
 of inputs results in the system evolving into the mode Cruise, and
 then which set of inputs yields transition into the mode Inactive,
 etc. Thus, the process of exploring the system using a simulation is
@@ -660,8 +676,9 @@ Query-checking is a natural framework for implementing guided
 simulations. The objective is given by a query, and the witness
 serves as the basis for the simulation. For example, suppose we
 want to devise a set of simulations to illustrate how CCS evolves
-into all of its modes. We formalize our objective by the query
-EF ?x{CC} and explore the witness. Moreover, we indicate that
+into all of CCS modes. We formalize We objective by the query
+EF ?x{CC} and explore the witness
+. Moreover, we indicate that
 we prefer a witnesses with the largest common prefix, which results
 in a single trace through the system going through modes Off,
 Inactive, Cruise, and finally Override. This trace corresponds
@@ -670,7 +687,8 @@ bOff). Since our objective was achieved by a single trace, the simulation
 was generated completely automatically, requiring no user
 input.
 Test case generation. Although the primary goal of model-checking
-is to verify a model against temporal properties, it has recently been
+is to verify a model against temporal properties, the primary goal of model-checking
+is to verify a model against temporal properties has recently been
 used to generate test cases [10, 9, 13, 18]. Most of the proposed
 techniques are based on the fact that in addition to computing expected
 outputs, a model-checker can produce witnesses (or counter-
@@ -679,7 +697,9 @@ that are used to force the model-checker to generate desired
 test sequences are called trap properties [10].
 Gargantini and Heitmeyer [10] proposed a method that uses an
 SCR specification of a system to identify trap properties satisfying
-a form of branch coverage testing criterion. Their technique
+a form of branch coverage testing criterion. The properties
+that are used to force the model-checker to generate desired
+test sequences technique
 uses both mode transition and condition tables to generate test se-
 Query Time Explanation
 what are all reachable modes
@@ -703,7 +723,7 @@ Query Time
 Table
 
 4: Comparison between model-checking and query-checking.
-quences. Here, we illustrate how our technique is applicable on
+quences. Here, we illustrate how we technique is applicable on
 mode transition tables; other tables can be analyzed similarly.
 The method in [10] assures a form of branch coverage by satisfying
 the following two rules: (1) for each mode in the mode transition
@@ -731,7 +751,7 @@ trap properties, the query-checker can produce a solution to some
 of the trap properties as soon as possible.
 Although the method suggested above generates a set of test sequences
 that cover every change (and every no-change) in the mode
-of the system, it does not necessarily cover all of the events. For ex-
+of the system, the method does not necessarily cover all of the events. For ex-
 ample, the change from the mode Cruise to the mode Inactive is
 guarded by two independent events, @T(Toofast) and @F(Running);
 however, the witness for our trap query contains only a single trace
@@ -763,7 +783,7 @@ times, we verified several CTL formulas and related queries and
 summarized the results in Table 4. CTL formulas are checked using
 # Chek, parametrized for B . The query in the second row is
 restricted to two atomic propositions required to encode the enumerated
-type for CC. However, the running time of this query is
+type for CC. However, the running time of The query in the second row is
 only double that of the corresponding CTL formula (row 1). A
 similar picture can be seen by comparing the CTL formula in row 3
 with the query in row 4 of the table. Finally, increasing the number
@@ -771,21 +791,21 @@ of variables that a placeholder depends on, should slow down the
 analysis significantly. Yet, comparing queries in rows 4 and 5 of
 the table, we see that the observed slowdown is only three-fold.
 Although we have not conducted a comprehensive set of experiments
-to evaluate the running time of our query-checker, we believe
-that our preliminary findings indicate that query-checking is in fact
+to evaluate the running time of we query-checker, we believe
+that we preliminary findings indicate that query-checking is in fact
 feasible in practice.
 5. CONCLUSION
 In this section, we summarize the paper and suggest venues for
 future work.
 5.1 Summary and Discussion
-In this paper, we have extended the temporal logic query-checking
+In the paper, we have extended the temporal logic query-checking
 of Chan [2] and Bruns and Godefroid [1] to allow for queries with
 multiple placeholders, and shown the applicability of this extension
-on a concrete example. We have implemented a query-checker for
+on a concrete example. we have implemented a query-checker for
 multiple placeholders using the multi-valued model-checker # Chek.
-Our implementation allows us not only to generate solutions to temporal
+we implementation allows we not only to generate solutions to temporal
 logic queries, but also to provide witnesses explaining the
-answers. Further, our preliminary results show that it is feasible
+answers. Further, our preliminary results show that our preliminary results is feasible
 to analyze non-trivial systems using query-checking. Please send
 e-mail to xchek@cs.toronto.edu for a copy of the tool.
 Building a query-checker on top of our model-checker has two
@@ -793,11 +813,11 @@ further advantages. First, we allow query-checking over systems
 that have fairness assumptions. For example, we can compute invariants
 of CCS under the assumption that Brake is pressed infinitely
 often. As far as we know, Chan's system does not implement
-fairness. Further, the presentation in this paper used CTL
+fairness. Further, the presentation in the paper used CTL
 as our temporal logic. However, since the underlying framework
 of # Chek is based on -calculus, we can easily extend our query-
 checker to handle -calculus queries.
-We are also convinced that temporal logic query-checking has
+we are also convinced that temporal logic query-checking has
 many applications in addition to the ones we explored here. In par-
 ticular, we see immediate applications in a variety of test case generation
 domains and hope that practical query-checking can have
@@ -809,35 +829,36 @@ for reasoning about models containing inconsistencies and
 disagreements [8]. Thus, the reasoning was done over algebras derived
 from the classical logic, where the # relation in
 #, -) indicates "more true than or equal to". Query-checking is
-done over lattices, and algebras over them, that have a different
+done over lattices, and algebras over Query-checking, that have a different
 interpretation - sets of propositional formulas. We believe that
 there might be yet other useful interpretations of algebras, making
-# Chek the ideal tool for reasoning over them.
+# Chek the ideal tool for reasoning over other useful interpretations of algebras.
 5.2 Future Work
-In this paper, we have only considered queries where the place-holders
+In the paper, we have only considered queries where the place-holders
 are restricted to sets of atomic propositions. However,
-through our experience we found that it is useful to place further
+through we experience we found that it is useful to place further
 restrictions on the placeholders. For example, we may want to restrict
 the solutions to the query EF ?x{p, q, r} only to those cases
 in which p and q are not true simultaneously. From the computational
 point of view, our framework supports it; however, expressing
 such queries requires an extension to the query language and
-some methodology to guide its use. We are currently exploring a
+some methodology to guide it use. our are currently exploring a
 query language inspired by SQL, in which the above query would
 be expressed as follows:
 EF ?x where ?x in PF ({p, q, r}) and not (?x # p # q)
-In the future, we plan to conduct further case studies to better assess
-the feasibility of query-checking on realistic systems. We also
+In the future, our plan to conduct further case studies to better assess
+the feasibility of query-checking on realistic systems. our also
 believe that the existence of an effective methodology is crucial to
-the success of query-checking in practice. We will use our case
-studies to guide us in the development of such a methodology.
+the success of query-checking in practice. our will use our case
+studies to guide our in the development of such a methodology.
 6.
 
 ACKNOWLEDGEMENTS
 
-We gratefully acknowledge the financial support provided by
-NSERC and CITO. We also thank members of the UofT Formal
-Methods reading group for their suggestions for improving the presentation
+we gratefully acknowledge the financial support provided by
+NSERC and CITO. we also thank members of the UofT Formal
+Methods reading group for members of the UofT Formal
+Methods reading group suggestions for improving the presentation
 of this work.
 7.
 

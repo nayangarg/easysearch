@@ -1,17 +1,17 @@
 --T
 Optimistic distributed simulation based on transitive dependency tracking.
 --A
-In traditional optimistic distributed simulation protocols, a logical process (LP) receiving a straggler rolls back and sends out anti-messages. The receiver of an anti-message may also roll back and send out more anti-messages. So a single straggler may result in a large number of anti-messages and multiple rollbacks of some LPs. In the authors' protocol, an LP receiving a straggler broadcasts its rollback. On receiving this announcement, other LPs may roll back but they do not announce their rollbacks. So each LP rolls back at most once in response to each straggler. Anti-messages are not used. This eliminates the need for output queues and results in simple memory management. It also eliminates the problem of cascading rollbacks and echoing, and results in faster simulation. All this is achieved by a scheme for maintaining transitive dependency information. The cost incurred includes the tagging of each message with extra dependency information and the increased processing time upon receiving a message. They also present the similarities between the two areas of distributed simulation and distributed recovery. They show how the solutions for one area can be applied to the other area.
+In traditional optimistic distributed simulation protocols, a logical process (LP) receiving a straggler rolls back and sends out anti-messages. The receiver of an anti-message may also roll back and send out more anti-messages. So a single straggler may result in a large number of anti-messages and multiple rollbacks of some LPs. In the authors' protocol, an LP receiving a straggler broadcasts an LP receiving a straggler rollback. On receiving this announcement, other LPs may roll back but other LPs do not announce other LPs rollbacks. So an LP receiving a straggler LP rolls back at most once in response to each straggler. Anti-messages are not used. This eliminates the need for output queues and results in simple memory management. This also eliminates the problem of cascading rollbacks and echoing, and results in faster simulation. All this is achieved by a scheme for maintaining transitive dependency information. The cost incurred includes the tagging of each message with extra dependency information and the increased processing time upon receiving a message. The cost incurred also present the similarities between the two areas of distributed simulation and distributed recovery. The cost incurred show how the solutions for one area can be applied to the other area.
 --B
 Introduction
 We modify the time warp algorithm to quickly stop
-the spread of erroneous computation. Our scheme
+the spread of erroneous computation. We scheme
 does not require output queues and anti-messages.
 This results in less memory overhead and simple memory
-management algorithms. It also eliminates the
+management algorithms. This also eliminates the
 problem of cascading rollbacks and echoing [15], resulting
 in faster simulation. We use aggressive cancellation
-Our protocol is an adaptation of a similar protocol
+We protocol is an adaptation of a similar protocol
 for the problem of distributed recovery [4, 21]. We
 supported in part by the NSF Grants CCR-9520540 and
 ECS-9414780, a TRW faculty assistantship award, a General
@@ -30,7 +30,7 @@ back the state s20 and sends an anti-message
 corresponding to message m2. On receiving
 this anti-message, P1 rolls back state s10 and sends
 an anti-message corresponding to m1. It then acts on
-the next message in its message queue, which happens
+the next message in It message queue, which happens
 to be m0. On receiving the anti-message for m1, P0
 rolls back s00 and sends an anti-message for m0. On
 receiving this anti-message, P1 rolls back s11.
@@ -38,7 +38,7 @@ In our scheme, transitive dependency information is
 maintained with all states and messages. After rolling
 back s20 due to a straggler, P2 broadcasts that s20
 has been rolled back. On receiving this announce-
-ment, P1 rolls back s10 as it finds that s10 is transitively
+ment, P1 rolls back s10 as P1 finds that s10 is transitively
 dependent on s20. P1 also finds that m0 is
 transitively dependent on s20 and discards it. Similarly
 P0 rolls back s00 on receiving the broadcast.
@@ -47,14 +47,16 @@ to the previous scheme. Even P0 would likely
 receive the broadcast faster than receiving the anti-message
 for m1 as that can be sent only after P1 has
 rolled back s10. Therefore, simulation should proceed
-faster. As explained later, we use incarnation number
+faster. As explained later, our use incarnation number
 to distinguish between two states with the same
 timestamp, one of which is committed and the other
 is rolled back.
-We only need the LP that receives a straggler to
+our only need the LP that receives a straggler to
 broadcast the timestamp of the straggler. Every other
-LP can determine whether they need to roll back or
-not by comparing their local dependency information
+LP can determine whether Every other
+LP need to roll back or
+not by comparing Every other
+LP local dependency information
 with the broadcast timestamp. Other LPs that roll
 back in response to a rollback announcement do not
 send any announcement or anti-messages. Hence, each
@@ -80,7 +82,9 @@ tem. Since for some applications even O(n)-tagging
 may not be acceptable, we also describe techniques to
 further reduce this overhead. If a subset of LPs interact
 mostly with each other, then, for most of the time,
-the tag size of their messages will be bounded by the
+the tag size of a subset of LPs interact
+mostly with each other, then, for most of the time,
+ messages will be bounded by the
 size of the subset.
 The paper is organized as follows. Section 2 describes
 the basic model of simulation; Section 3 introduces
@@ -99,11 +103,11 @@ of an event. If there are multiple events scheduled
 at the same time, it can execute those events in an
 arbitrary order. In addition to causing a state transi-
 tion, executing an event may also schedule new events
-for other LPs (or the local LP) by sending messages.
-When LP P1 acts on a message from P 2, P1 becomes
+for other LPs (or the local an LP) by sending messages.
+When an LP P1 acts on a message from P 2, LP P1 becomes
 dependent on P 2. This dependency relation is transitive
 
-The arrival of a straggler causes an LP to roll back.
+The arrival of a straggler causes an an LP to roll back.
 A state that is rolled back, or is transitively dependent
 on a rolled back state is called an orphan state. A
 message sent from an orphan state is called an orphan
@@ -126,15 +130,17 @@ in a state transition from s10 to s11, and schedules an
 event for P2 at time 7 by sending message m1. Then
 receives message m2 which schedules an event at
 time 2 and is detected as a straggler. Execution after
-the arrival of this straggler is shown in Figure 2(b).
+the arrival of a straggler is shown in Figure 2(b).
 P1 rolls back, restores s10, takes actions needed for
 maintaining the correctness of the simulation (to be
-described later) and restarts from state r10. Then it
+described later) and restarts from state r10. Then P1 rolls back, restores s10, takes actions needed for
+maintaining the correctness of the simulation (to be
+described later) and restarts from state r10
 broadcasts a rollback announcement (shown by dotted
 arrows), acts on m2, and then acts on m0. Upon
 receiving the rollback announcement from P 1, P2 realizes
-that it is dependent on a rolled back state and
-so it also rolls back, restores state s20, takes actions
+that P2 is dependent on a rolled back state and
+so P2 also rolls back, restores state s20, takes actions
 needed, and restarts from state r20. Finally, the orphan
 message m1 is discarded by P 2.
 3 Dependency Tracking
@@ -168,14 +174,14 @@ despite the rollbacks. For example, in Figure
 ceiver's state after the event scheduled by m is
 executed.
 For example, in Figure 2(a), s10 ! s11 and s00 !
-s21, and in Figure 2(b) s11 6! r10. Saying s happened
+s21, and in Figure 2(b) s11 6! r10. Saying s11 6! r10 happened
 before u is equivalent to saying that u is transitively
 dependent on s.
 For our protocol, "actions needed to maintain the
 correctness of simulation" include broadcasting a roll-back
 announcement and incrementing the incarnation
 number. For other protocols, the actions may be dif-
-ferent. For example, in time warp, these actions include
+ferent. For example, in time warp, the actions include
 the sending of anti-messages. Our definition of
 happen before is independent of such actions. The
 terms "rollback announcements" and "tokens" will be
@@ -196,7 +202,7 @@ contain both a timestamp and an incarnation number
 [19]. The timestamp in the i th entry of the SV of
 corresponds to the virtual time of P i . The timestamp
 in the j th entry corresponds to the virtual time
-of the latest state of P j on which P i depends. The
+of the latest state of P j on P i depends. The
 incarnation number in the i th entry is equal to the
 number of times P i has rolled back. The incarnation
 number in the j th entry is equal to the highest incarnation
@@ -209,17 +215,18 @@ dependency information. Suppose P i schedules an
 event e for P j at time t by sending a message m. P i
 attaches its current SV to m. By "virtual time of m",
 we mean the scheduled time of the event e. If m is
-neither an orphan nor a straggler, it is kept in the in-coming
+neither an orphan nor a straggler, m is
+neither an orphan nor a straggler is kept in the in-coming
 queue by P j . When the event corresponding
-to m is executed, P j updates its SV with m's SV by
+to m is executed, P j updates its current SV with m's SV by
 taking the componentwise lexicographical maximum.
-its virtual time (denoted by the j th
-timestamp in its SV) to the virtual time of m. A formal
+the event corresponding
+to m virtual time (denoted by the j th
+timestamp in its current SV) to the virtual time of m. A formal
 description of the SV protocol is given in Figure
-3. Examples of SV are shown in Figure 2 where the
-SV of each state is shown in the box near it.
+3. Examples of SV are shown in Figure 2 where The SV is shown in the box near The SV.
 The SV has properties similar to a vector clock.
-It can be used to detect the transitive dependencies
+The SV can be used to detect the transitive dependencies
 between states. The following theorem shows the relationship
 between virtual time and SV.
 Theorem 1 The timestamp in the i th entry of P i 's
@@ -237,9 +244,9 @@ Figure
 protocol
 Proof. By Induction. The above claim is true for
 the initial state of P i . While executing a message, the
-virtual time of the P i is correctly set. After a rollback,
+virtual time of P i is correctly set. After a rollback,
 virtual time of the restored state remains unchanged.
-Let s:sv denote the SV of P s:p in state s. We define
+Let s:SV denote the SV of P s:p in state s. We define
 the ordering between two SV's c and d as follows.
 In P i 's SV, the j th timestamp denotes the maximum
 virtual time of P j on which P i depends. This timestamp
@@ -247,32 +254,32 @@ should not be greater than P i 's own virtual time.
 Lemma 1 formalizes the above notion.
 Lemma 1 The timestamp in the i th entry of the SV
 of a state of P i has the highest value among all the
-timestamps in this SV.
-Proof. By induction. The lemma is true for the initial
+timestamps in The SV.
+Proof. By induction. Lemma 1 is true for the initial
 state of P i . Assume that state s of P j sent a message
 m to P i . State u of P i executed m, resulting in
 state w. By induction hypothesis, s:sv[j]:ts and the
-u:sv[i]:ts are the highest timestamps in their SV's. So
+u:sv[i]:ts are the highest timestamps in sv[i]:ts SV's. So
 the maximum of these two timestamps is greater than
 all the timestamps in w:sv after the max operation in
 Execute message. Now m:ts, the virtual time of message
 m, is not less than the virtual time of the state s
 sending the message. It is also not less than the virtual
 time of the state u acting on the message, otherwise,
-it would have caused a rollback. So by theorem 1,
+the message would have caused a rollback. So by theorem 1,
 m:ts is not less than the maximum of s:sv[j]:ts and
 the u:sv[i]:ts. Hence setting the w:sv[i]:ts to m:ts preserves
 the above property. All other routines do not
 change the timestamps.
 The following two lemmas give the relationship between
 the SV and the happen before relation.
-happens before u, then s:sv is less than
-or equal to u:sv.
+happens before u, then s:SV is less than
+or equal to u:SV.
 Proof. By induction. Consider any two states s and u
 such that s happens before u by applying one of the
 three rules in the definition of happen before. In case
 of rule 1, state s is changed to state u by acting on
-a message m. The update of the SV by taking the
+a message m. The update of The SV by taking the
 maximum in the routine Execute message maintains
 the above property. Now consider the next action in
 which u:sv[u:p]:ts is set to m:ts. Since virtual time
@@ -286,13 +293,12 @@ to that of the rule 1. Let state w change to state u by
 acting on the message m sent by state s. By lemma 1,
 in m's SV, s:p th timestamp is not less than the u:p th
 timestamp. Also the virtual time of m is not less than
-the s:p th timestamp in its SV. Hence setting the i th
+the s:p th timestamp in its current SVSV. Hence setting the i th
 timestamp to the virtual time of m, after taking max,
 preserves the above property.
 The following lemma shows that LPs acquire timestamps
-by becoming dependent on other LPs. This
-property is later used to detect orphans. This lemma
-states that if j th timestamp in state w's SV is not minus
+by becoming dependent on other LPs. the above property is later used to detect orphans. This lemma
+states that if j th timestamp in state The SV is not minus
 one (an impossible virtual time) then w must be
 dependent on a state u of P j , where the virtual time
 of u is w:sv[j]:ts .
@@ -301,8 +307,10 @@ above property. In Execute message, let x be the state
 that sends m and let state s change to state w by
 acting on m. By induction hypothesis, x and s satisfy
 the lemma.
-In taking maximum, let the j th entry from x is se-
-lected. If j is x:p then x itself plays the role of u.
+In taking maximum, let j , where the virtual time
+of u is w:sv[j]:ts .
+ th entry from x is se-
+lected. If j is x:p then x j is plays the role of u.
 Else, by induction hypothesis, (x:sv[j]:ts
 Hence either
 w:sv[j]:ts is -1 or by transitivity, u happens before w.
@@ -345,7 +353,8 @@ Figure
 
 4. To keep the presentation and correctness
 proof clear, optimization techniques for reducing
-overhead are not included in this protocol. They are
+overhead are not included in Our protocol for distributed simulation. optimization techniques for reducing
+overhead are
 described in the next section. Besides a simulation
 vector, each LP P i also maintains an incarnation end
 table (iet). The j th component of iet is a set of entries
@@ -354,28 +363,33 @@ straggler that caused the rollback of the k th incarnation
 of P j . All states of the k th incarnation of P j with
 timestamp greater than ts have been rolled back. The
 iet allows an LP to detect orphan messages.
-When P i is ready for the next event, it acts on the
+When P i is ready for the next event, The
+iet acts on the
 message with the lowest virtual time. As explained in
 Section 3, P i updates its SV and the internal state, and
-possibly schedules events for itself and for the other
+possibly schedules events for its and for the other
 LPs by sending messages.
 Upon receiving a message m, P
 an orphan. This is the case when, for some j, P i 's iet
 and the j th entry of m's SV indicate that m is dependent
 on a rolled back state of P j . If P i detects that m
-is a straggler with virtual time t, it broadcasts a token
-containing t and its current incarnation number k. It
+is a straggler with virtual time t, m
+ broadcasts a token
+containing t and m
+ current incarnation number k. m
+
 rolls back all states with virtual time greater than t
-and increments its incarnation number, as shown in
+and increments It
+ incarnation number, as shown in
 Rollback. Thus, the token basically indicates that all
 states of incarnation k with virtual time greater than t
 are orphans. States dependent on any of these orphan
 states are also orphans.
-When an LP receives a token containing virtual
-time t from P j , it rolls back all states with the j th
+When an LP an LP receives a token containing virtual
+time t from P j , an LP rolls back all states with The j th
 timestamp greater than t, discards all orphan messages
-in its input queue, and increments its incarnation
-number. It does not broadcast a token, which
+in an LP input queue, and increments an LP incarnation
+number. an LP does not broadcast a token, which
 is an important property of our protocol. This works
 because transitive dependencies are maintained. Suppose
 state w of P i is dependent on a rolled back state
@@ -384,17 +398,17 @@ be dependent on u. So x can be detected as an orphan
 state when the token from P j arrives at P x:p , without
 the need of an additional token from P i . The argument
 for the detection of orphan messages is similar.
-We require an LP to block its execution after broadcasting
-a token until it receives acknowledgments from
+our require an LP an LP to block an LP execution after broadcasting
+a token until an LP receives acknowledgments from
 all the other LPs. This ensures that a token for a
-lower incarnation of P j reaches all LPs before they
+lower incarnation of P j reaches all LPs before all LPs
 can become dependent on any higher incarnation of
 This greatly simplifies the design because, when
 a dependency entry is overwritten by an entry from
 a higher incarnation in the lexicographical maximum
 operation, it is guaranteed that no future rollback can
 occur due to the overwritten entry (as the corresponding
-token must have arrived). While blocked, an LP
+token must have arrived). While blocked, an an LP
 acknowledges the received broadcasts.
 4.1 Proof of Correctness
 Suppose state u of P j is rolled back due to the arrival
@@ -404,23 +418,23 @@ The following theorem proves that our protocol correctly
 implements the simulation.
 Theorem 2 A state is rolled back due to either a
 straggler or a token. A state is rolled back due to a
-token if and only if it is dependent on a state that has
+token if and only if A state is dependent on a state that has
 been rolled back due to a straggler.
 Proof. The routine Rollback is called from two places:
 Receive message and Receive token. States that are
 rolled back in a call from Receive message are rolled
 back due to a straggler. Suppose P j receives a strag-
 gler. Let u be one of the states of P j that are rolled
-back due to this straggler. In the call from routine Receive
+back due to a straggler. In the call from routine Receive
 token, any state w not satisfying condition (C1)
 is rolled back. Since the virtual time of u is greater
 than the virtual time of the straggler, by Lemma 2,
 any state w dependent on u will not satisfy condition
 (C1). In the future, no state can become dependent
 on u because any message causing such dependency is
-discarded: if it arrives after the token, it is discarded
-by the first test in the routine Receive message; if it
-arrives before the token, it is discarded by the first
+discarded: if no state arrives after the token, no state is discarded
+by the first test in the routine Receive message; if no state
+arrives before the token, no state is discarded by the first
 test in the routine Receive token. So all orphan states
 are rolled back.
 From Lemma 3, for any state w not satisfying condition
@@ -428,7 +442,7 @@ From Lemma 3, for any state w not satisfying condition
 which is rolled back due to the straggler, and u ! w.
 That means no state is unnecessarily rolled back.
 5 Reducing the Overhead
-For systems with a large number of LP's, the overhead
+For systems with a large number of an LP's, the overhead
 of SV and the delay due to the blocking can be
 substantial. In this section, we describe several optimization
 techniques for reducing the overhead and
@@ -441,33 +455,38 @@ token). We next argue that the protocol works
 even if the incarnation number is not incremented.
 This modification then allows an optimization to reduce
 the blocking. We use the example in Figure 2(b)
-to illustrate this modification. Suppose P 2 executes
+to illustrate This modification. Suppose P 2 executes
 an event and makes a state transition from r20 to s22
 with virtual time 7 (not shown in the figure). If P2
-does not increment its incarnation number on rolling
+does not increment P2
+ incarnation number on rolling
 back due to the token from P 1, then s22 will have
-(0; 7) as the 3rd entry of its SV, which is the same as
+(0; 7) as the 3rd entry of s22 SV, which is the same as
 s21's 3rd entry in Figure 2(a). Now suppose the 3rd
-entry of a state w of another LP P3 is (0; 7). How
-does P3 decide whether w is dependent on s21 which
+entry of a state w of another an LP P3 is (0; 7). How
+does another LP P3 decide whether w is dependent on s21 which
 is rolled back or s22 which is not rolled back? The
 answer is that, if w is dependent on s21, then it is
-also dependent on s11. Therefore, its orphan status
-will be identified by its 2nd entry, without relying on
+also dependent on s11. Therefore, w is dependent on s21, then it is
+also dependent on s11 orphan status
+will be identified by w is dependent on s21, then it is
+also dependent on s11 2nd entry, without relying on
 the 3rd entry.
-The above modification ensures that, for every new
-incarnation, a token is broadcast and so every LP will
+This modification ensures that, for every new
+incarnation, a token is broadcast and so every an LP will
 have an iet entry for it. This allows the following optimization
 technique for reducing the blocking. Suppose
 receives a straggler and broadcasts a token. Instead
 of requiring P i to block until it receives all acknowl-
-edgements, we allow P i to continue its execution in
+edgements, we allow P i to continue it execution in
 the new incarnation. One problem that needs to be
 solved is that dependencies on the new incarnation of
 may reach an LP P j (through a chain of messages)
 before the corresponding token does. If P j has a dependency
 entry on any rolled back state of the old
-incarnation then it should be identified as an orphan
+incarnation then P j has a dependency
+entry on any rolled back state of the old
+incarnation should be identified as an orphan
 when the token arrives. Overwriting the old entry
 with the new entry via the lexicographical maximum
 operation results in undetected orphans and hence incorrect
@@ -486,26 +505,27 @@ is the minimum of the virtual times of all LPs and all
 the messages in transit at the given instant. Several
 algorithms have been developed for computing GVT
 [2, 20]. To reduce the size of simulation vectors, any
-entry that has a timestamp less than the GVT can be
+entry that has a timestamp less than GVT can be
 set to NULL, and NULL entries need not be transmitted
 with the message. This does not affect the correctness
 of simulation because: (1) the virtual time of any
-message must be greater than or equal to the GVT,
-and so timestamps less than the GVT are never useful
+message must be greater than or equal to GVT,
+and so timestamps less than GVT are never useful
 for detecting stragglers; (2) the virtual time contained
 in any token must be greater than or equal to
-the GVT, and so timestamps less than the GVT are
+GVT, and so timestamps less than GVT are
 never useful for detecting orphans. Since most of the
 SV entries are initialized to -1 (see Figure 3) which
-must be less than the GVT, this optimization allows a
+must be less than GVT, this optimization allows a
 simulation to start with very small vectors, and is particularly
 effective if there is high locality in message
 activities.
 Following [21], we can also use a K-optimistic pro-
-tocol. In this scheme, an LP is allowed to act on a
+tocol. In this scheme, an LP an LP is allowed to act on a
 message only if that will not result in more than K
-non-NULL entries in its SV. Otherwise it blocks. This
-ensures that an LP can be rolled back by at most K
+non-NULL entries in a
+message SV. Otherwise its SV blocks. This
+ensures that an an LP can be rolled back by at most K
 other LPs. In this sense optimistic protocols are N -
 optimistic and pessimistic protocols are 0-optimistic.
 Another approach to reducing the size of simulation
@@ -515,7 +535,7 @@ is optimistic while inter-cluster messages are sent
 conservatively [18], independent SV's can be used inside
 each cluster, involving only the LPs in the clus-
 ter. If intra-cluster execution is sequential while inter-cluster
-execution is optimistic [1], SV's can be used for
+execution is optimistic [1], independent SV's can be used for
 inter-cluster messages with one entry per cluster. Similarly
 one can devise a scheme where inter-cluster and
 intra-cluster executions are both optimistic but employ
@@ -532,14 +552,14 @@ Recovery
 The problem of failure recovery in distributed systems
 [6] is very similar to the problem of distributed
 simulation. Upon a failure, a process typically restores
-its last checkpoint and starts execution from there.
+a process last checkpoint and starts execution from there.
 However, process states that were lost upon the failure
 may create orphans and cause the system state
 to become inconsistent. A consistent system state is
 one where the send of a message must be recorded if
-its receive is recorded [6]. In pessimistic logging [6],
-every message is logged before the receiver acts on it.
-When a process fails, it restores its last checkpoint
+A consistent system state receive is recorded [6]. In pessimistic logging [6],
+every message is logged before the receiver acts on every message.
+When a process fails, a process restores a process last checkpoint
 and replays the logged messages in the original or-
 der. This ensures that the pre-failure state is recreated
 and no other process needs to be rolled back. But the
@@ -549,9 +569,10 @@ logging [19], messages are stored in a volatile
 memory buffer and logged asynchronously to the stable
 storage. Since the content of volatile memory is
 lost upon a failure, some of the messages are no longer
-available for replay after the failure. Thus, some of the
-process states are lost in the failure. States in other
-processes that are dependent on these lost states then
+available for replay after a failure. Thus, some of the
+process states are lost in a failure. States in other
+processes that are dependent on the
+process states then
 become orphan states. Any optimistic logging protocol
 must roll back all orphan states in order to bring
 the system back to a consistent state.
@@ -577,7 +598,7 @@ optimistic protocol presented in this paper is based on
 the optimistic recovery protocol presented in [4, 21].
 In the simulation scheme by Dickens and Reynolds [5],
 any results of an optimistically processed event are not
-sent to other processes until they become definite [3].
+sent to other processes until an optimistically processed event become definite [3].
 In the recovery scheme by Jalote [11], any messages
 originating from an unstable state interval are not sent
 to other processes until the interval becomes stable [6].
@@ -586,7 +607,7 @@ due to a straggler or a failure, to the local process.
 Distributed Simulation Distributed Recovery
 Logical Process Recovery Unit [19]
 Virtual Time State Interval Index
-Sim. Vector (this paper) Trans. Dep. Vector [19]
+Sim. Vector (this paper) Trans. Dep. Vector (this paper) Trans [19]
 Straggler Failure
 Anti-Message Rollback Announcement
 Fossil Collection [10] Garbage Collection [6]

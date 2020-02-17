@@ -32,7 +32,7 @@ new data not from the training dataset. Application domains include retail targe
 marketing, fraud detection, and design of telecommunication service plans. Several
 classification models like neural networks [17], genetic algorithms [11], and decision
 trees [20] have been proposed. Decision trees are probably the most popular since
-they obtain reasonable accuracy [9] and they are relatively inexpensive to compute.
+Decision trees obtain reasonable accuracy [9] and Decision trees are relatively inexpensive to compute.
 Most current classification algorithms such as C4.5 [20], and SLIQ [18] are based
 on the ID3 classification decision tree algorithm [20].
 In the data mining domain, the data to be processed tends to be very large.
@@ -44,16 +44,16 @@ decision tree classifier that uses the entire data set [24, 5, 6, 7]. In order t
 reasonable accuracy in a reasonable amount of time, parallel algorithms may be
 required.
 Classification decision tree construction algorithms have natural concurrency, as
-once a node is generated, all of its children in the classification tree can be generated
+once a node is generated, all of a node children in the classification tree can be generated
 concurrently. Furthermore, the computation for generating successors of a
 classification tree node can also be decomposed by performing data decomposition
 on the training data. Nevertheless, parallelization of the algorithms for construction
 the classification tree is challenging for the following reasons. First, the shape
-of the tree is highly irregular and is determined only at runtime. Furthermore,
+of the classification tree is highly irregular and is determined only at runtime. Furthermore,
 the amount of work associated with each node also varies, and is data dependent.
 Hence any static allocation scheme is likely to suffer from major load imbalance.
-Second, even though the successors of a node can be processed concurrently, they
-all use the training data associated with the parent node. If this data is dynamically
+Second, even though the successors of a node can be processed concurrently, even though the successors of a node can be processed concurrently
+all use the training data associated with the parent node. If the training data associated with the parent node is dynamically
 partitioned and allocated to different processors that perform computation
 for different nodes, then there is a high cost for data movements. If the data is not
 partitioned appropriately, then performance can be bad due to the loss of locality.
@@ -73,13 +73,13 @@ description of Hunt's method for constructing a decision tree from a set T of tr
 cases with classes denoted fC 1
 g.
 Case 1 T contains cases all belonging to a single class C j . The decision tree for
-T is a leaf identifying class C j .
-Case 2 T contains cases that belong to a mixture of classes. A test is chosen,
+Case 1 T is a leaf identifying class C j .
+Case 1 T contains cases that belong to a mixture of classes. A test is chosen,
 based on a single attribute, that has one or more mutually exclusive outcomes
 On g. Note that in many implementations, n is chosen to be 2 and
-this leads to a binary decision tree. T is partitioned into subsets T
-contains all the cases in T that have outcome O i of the chosen test.
-The decision tree for T consists of a decision node identifying the test, and one
+this leads to a binary decision tree. Case 1 T is partitioned into subsets T
+contains all the cases in Case 1 T that have outcome O i of the chosen test.
+a binary decision tree consists of a decision node identifying the test, and one
 Outlook Temp(F) Humidity(%) Windy? Class
 sunny
 sunny
@@ -94,8 +94,7 @@ rain 71 80 true Don't Play
 rain
 rain
 rain 68 80 false Play
-rain 70 96 false Play
-
+rain 70 96 false sunny 69 70 false Play
 Table
 
 1. A small training data set [Qui93]
@@ -122,8 +121,8 @@ Figure
 1. Demonstration of Hunt's Method
 branch for each possible outcome. The same tree building machinery is applied
 recursively to each subset of training cases.
-Case 3 T contains no cases. The decision tree for T is a leaf, but the class to be
-associated with the leaf must be determined from information other than T .
+Case 3 T contains no cases. The decision tree for Case 3 T is a leaf, but the class to be
+associated with a leaf must be determined from information other than Case 3 T .
 For example, C4.5 chooses this to be the most frequent class at the parent of
 this node.
 Attribute Value Class
@@ -157,7 +156,7 @@ ered, each attribute is evaluated in terms of either entropy [20] or Gini Index 
 The best attribute is selected as a test for the node expansion.
 The C4.5 algorithm generates a classification-decision tree for the given training
 data set by recursively partitioning the data. The decision tree is grown using
-depth-first strategy. The algorithm considers all the possible tests that can split
+depth-first strategy. The C4.5 algorithm considers all the possible tests that can split
 the data set and selects a test that gives the best information gain. For each discrete
 attribute, one test with outcomes as many as the number of distinct values of the
 attribute is considered. For each continuous attribute, binary tests involving every
@@ -169,7 +168,7 @@ the sorted data. This process is repeated for each continuous attribute.
 Recently proposed classification algorithms SLIQ [18] and SPRINT [21] avoid
 costly sorting at each node by pre-sorting continuous attributes once in the begin-
 ning. In SPRINT, each continuous attribute is maintained in a sorted attribute list.
-In this list, each entry contains a value of the attribute and its corresponding record
+In a sorted attribute list, each entry contains a value of the attribute and the attribute corresponding record
 id. Once the best attribute to split a node in a classification tree is determined,
 each attribute list has to be split according to the split decision. A hash table, of
 the same order as the number of training cases, has the mapping between record
@@ -193,37 +192,46 @@ nodes. Another problem is that many processors become idle in the later stage du
 to the load imbalance. The attribute-based decomposition is used to remedy the
 first problem. When the number of expanded nodes is smaller than the available
 number of processors, multiple processors are assigned to a node and attributes
-are distributed among these processors. This approach is related in nature to the
+are distributed among multiple processors. This approach is related in nature to the
 partitioned tree construction approach discussed in this paper. In the partitioned
 tree construction approach, actual data samples are partitioned (horizontal parti-
 tioning) whereas in this approach attributes are partitioned (vertical partitioning).
 In [8], a few general approaches for parallelizing C4.5 are discussed. In the Dynamic
 Task Distribution (DTD) scheme, a master processor allocates a subtree of
-the decision tree to an idle slave processor. This scheme does not require communication
+the decision tree to an idle slave processor. the Dynamic
+Task Distribution (DTD) scheme does not require communication
 among processors, but suffers from the load imbalance. DTD becomes
 similar to the partitioned tree construction approach discussed in this paper once
 the number of available nodes in the decision tree exceeds the number of processors.
-The DP-rec scheme distributes the data set evenly and builds decision tree one node
-at a time. This scheme is identical to the synchronous tree construction approach
-discussed in this paper and suffers from the high communication overhead. The
-DP-att scheme distributes the attributes. This scheme has the advantages of being
-both load-balanced and requiring minimal communications. However, this scheme
-does not scale well with increasing number of processors. The results in [8] show
+the Dynamic
+Task Distribution (DTD) scheme distributes the data set evenly and builds decision tree one node
+at a time. the Dynamic
+Task Distribution (DTD) scheme is identical to the synchronous tree construction approach
+discussed in this paper and suffers from the high communication overhead. the Dynamic
+Task Distribution (DTD) scheme distributes the attributes. the Dynamic
+Task Distribution (DTD) scheme has the advantages of being
+both load-balanced and requiring minimal communications. However, the Dynamic
+Task Distribution (DTD) schemedoes not scale well with increasing number of processors. The results in [8] show
 that the effectiveness of different parallelization schemes varies significantly with
 data sets being used.
 Kufrin proposed an approach called Parallel Decision Trees (PDT) in [15]. This
 approach is similar to the DP-rec scheme [8] and synchronous tree construction
 approach discussed in this paper, as the data sets are partitioned among proces-
-sors. The PDT approach designate one processor as the "host" processor and the
-remaining processors as "worker" processors. The host processor does not have any
+sors. an approach called Parallel Decision Trees (PDT) in [15]. This
+approach is similar to the DP-rec scheme [8] and synchronous tree construction
+approach discussed in this paper designate one processor as the "host" processor and the
+remaining processors as "worker" processors. one processor does not have any
 data sets, but only receives frequency statistics or gain calculations from the worker
-processors. The host processor determines the split based on the collected statistics
-and notify the split decision to the worker processors. The worker processors
-collect the statistics of local data following the instruction from the host processor.
-The PDT approach suffers from the high communication overhead, just like DP-rec
-scheme and synchronous tree construction approach. The PDT approach has an
+processors. one processor determines the split based on the collected statistics
+and notify the split decision to the worker processors. the worker processorscollect the statistics of local data following the instruction from one processor.
+an approach called Parallel Decision Trees (PDT) in [15]. This
+approach is similar to the DP-rec scheme [8] and synchronous tree construction
+approach discussed in this paper PDT suffers from the high communication overhead, just like DP-rec
+scheme and synchronous tree construction approach. an approach called Parallel Decision Trees (PDT) in [15]. This
+approach is similar to the DP-rec scheme [8] and synchronous tree construction
+approach discussed in this paper PDT has an
 additional communication bottleneck, as every worker processor sends the collected
-statistics to the host processor at the roughly same time and the host processor
+statistics to one processor at the roughly same time and the host processor
 sends out the split decision to all working processors at the same time.
 The parallel implementation of SPRINT [21] and ScalParC [13] use methods for
 partitioning work that is identical to the one used in the synchronous tree construction
@@ -232,41 +240,42 @@ attributes only once in the beginning and keeps a separate attribute list with
 record identifiers. The splitting phase of a decision tree node maintains this sorted
 order without requiring to sort the records again. In order to split the attribute
 lists according to the splitting decision, SPRINT creates a hash table that records
-a mapping between a record identifier and the node to which it goes to based on
+a mapping between a record identifier and the node to which SPRINT goes to based on
 the splitting decision. In the parallel implementation of SPRINT, the attribute
 lists are split evenly among processors and the split point for a node in the decision
 tree is found in parallel. However, in order to split the attribute lists, the full size
 hash table is required on all the processors. In order to construct the hash table,
-all-to-all broadcast [16] is performed, that makes this algorithm unscalable with
+all-to-all broadcast [16] is performed, that makes The C4.5 algorithm unscalable with
 respect to runtime and memory requirements. The reason is that each processor
 requires O(N) memory to store the hash table and O(N) communication overhead
 for all-to-all broadcast, where N is the number of records in the data set. The
-recently proposed ScalParC [13] improves upon the SPRINT by employing a distributed
-7hash table to efficiently implement the splitting phase of the SPRINT. In
-ScalParC, the hash table is split among the processors, and an efficient personalized
-communication is used to update the hash table, making it scalable with respect
+recently proposed ScalParC [13] improves upon SPRINT by employing a distributed
+7hash table to efficiently implement the splitting phase of SPRINT. In
+ScalParC, the hash table is split among all the processors, and an efficient personalized
+communication is used to update the hash table, making an efficient personalized
+communication scalable with respect
 to memory and runtime requirements.
 Goil, Aluru, and Ranka proposed the Concatenated Parallelism strategy for efficient
 parallel solution of divide and conquer problems [10]. In this strategy, the
 mix of data parallelism and task parallelism is used as a solution to the parallel
 divide and conquer algorithm. Data parallelism is used until there are enough sub-tasks
 are genearted, and then task parallelism is used, i.e., each processor works
-on independent subtasks. This strategy is similar in principle to the partitioned
-tree construction approach discussed in this paper. The Concatenated Parallelism
-strategy is useful for problems where the workload can be determined based on the
+on independent subtasks. this strategy is similar in principle to the partitioned
+tree construction approach discussed in this paper. this strategy is useful for problems where the workload can be determined based on the
 size of subtasks when the task parallelism is employed. However, in the problem of
 classificatoin decision tree, the workload cannot be determined based on the size of
-data at a particular node of the tree. Hence, one time load balancing used in this
-strategy is not well suited for this particular divide and conquer problem.
+data at a particular node of 
+classificatoin decision tree. Hence, one time load balancing used in this strategy is not well suited for this particular divide and conquer problem.
 3. Parallel Formulations
 In this section, we give two basic parallel formulations for the classification decision
 tree construction and a hybrid scheme that combines good features of both of these
-approaches. We focus our presentation for discrete attributes only. The handling
+approaches. we focus we presentation for discrete attributes only. The handling
 of continuous attributes is discussed in Section 3.4. In all parallel formulations,
 we assume that N training cases are randomly distributed to P processors initially
 such that each processor has N=P cases.
 3.1. Synchronous Tree Construction Approach
-In this approach, all processors construct a decision tree synchronously by sending
+In Synchronous Tree Construction Approach
+, all processors construct a decision tree synchronously by sending
 and receiving class distribution information of local data. Major steps for the
 approach are shown below:
 1. Select a node to expand according to a decision tree expansion strategy (eg.
@@ -278,7 +287,8 @@ at the current node.
 among processors.
 4. Simultaneously compute the entropy gains of each attribute at each processor
 and select the best attribute for child node expansion.
-5. Depending on the branching factor of the tree desired, create child nodes for
+5. Depending on the branching factor of 
+classificatoin decision tree desired, create child nodes for
 the same number of partitions of attribute values, and split training cases accordingly
 
 Class Distribution Information
@@ -293,12 +303,14 @@ Figure
 
 2 shows the overall picture. The root node has already been expanded
 and the current node is the leftmost child of the root (as shown in the top part of
-the figure). All the four processors cooperate to expand this node to have two child
-nodes. Next, the leftmost node of these child nodes is selected as the current node
-(in the bottom of the figure) and all four processors again cooperate to expand the
-node.
-The advantage of this approach is that it does not require any movement of the
-training data items. However, this algorithm suffers from high communication cost
+the figure). All the four processors cooperate to expand The root node to have two child
+nodes. Next, the leftmost node of two child
+nodes is selected as the current node
+(in the bottom of the figure) and All the four processors again cooperate to expand The root node.
+The advantage of Synchronous Tree Construction Approach
+ is that Synchronous Tree Construction Approach
+ does not require any movement of the
+training data items. However, The C4.5 algorithm suffers from high communication cost
 and load imbalance. For each node in the decision tree, after collecting the class
 distribution information, all the processors need to synchronize and exchange the
 distribution information. At the nodes of shallow depth, the communication overhead
@@ -310,7 +322,7 @@ branching factor of the decision tree is k, then the number of data items in a c
 node is on the average 1
 th of the number of data items in the parent. However, the
 size of communication does not decrease as much, as the number of attributes to be
-considered goes down only by one. Hence, as the tree deepens, the communication
+considered goes down only by one. Hence, as the decision tree deepens, the communication
 overhead dominates the overall processing time.
 The other problem is due to load imbalance. Even though each processor started
 out with the same number of the training data items, the number of items belonging
@@ -324,20 +336,21 @@ This load imbalance can be reduced if all the nodes on the frontier are expanded
 simultaneously, i.e. one pass of all the data at each processor is used to compute
 the class distribution information for all nodes on the frontier. Note that this
 improvement also reduces the number of times communications are done and reduces
-the message start-up overhead, but it does not reduce the overall volume of
+the message start-up overhead, but the message start-up overhead does not reduce the overall volume of
 communications.
 In the rest of the paper, we will assume that in the synchronous tree construction
 algorithm, the classification tree is expanded breadth-first manner and all the nodes
 at a level will be processed at the same time.
 3.2. Partitioned Tree Construction Approach
-In this approach, whenever feasible, different processors work on different parts
+In Synchronous Tree Construction Approach
+, whenever feasible, different processors work on different parts
 of the classification tree. In particular, if more than one processors cooperate to
-expand a node, then these processors are partitioned to expand the successors of
-this node. Consider the case in which a group of processors Pn cooperate to expand
-node n. The algorithm consists of following steps:
+expand a node, then whenever feasible, different processors are partitioned to expand the successors of
+The root node. Consider the case in which a group of processors Pn cooperate to expand
+node n. The C4.5 algorithm consists of following steps:
 Processors in Pn cooperate to expand node n using the method described
 in Section 3.1.
-Once the node n is expanded in to successor nodes,
+Once The root node n is expanded in to successor nodes,
 the processor group Pn is also partitioned, and the successor nodes are assigned
 to processors as follows:
 Case 1: If the number of successor nodes is greater than jP n j,
@@ -351,7 +364,7 @@ completely independently at each processor as in the serial algorithm.
 Case 2: Otherwise (if the number of successor nodes is less than jP n j),
 1. Assign a subset of processors to each node such that number of processors
 assigned to a node is proportional to the number of the training
-cases corresponding to the node.
+cases corresponding to a node.
 Data Item
 Data Item
 
@@ -363,7 +376,7 @@ cases that belong to the nodes it is responsible for.
 3. Processor subsets assigned to different nodes develop subtrees inde-
 pendently. Processor subsets that contain only one processor use the
 sequential algorithm to expand the part of the classification tree rooted
-at the node assigned to them. Processor subsets that contain more than
+at the node assigned to Processor subsets that contain only one processor. Processor subsets that contain more than
 one processor proceed by following the above steps recursively.
 At the beginning, all processors work together to expand the root node of the classification
 tree. At the end, the whole classification tree is constructed by combining
@@ -371,22 +384,23 @@ subtrees of each processor.
 
 Figure
 
-3 shows an example. First (at the top of the figure), all four processors
-cooperate to expand the root node just like they do in the synchronous tree construction
+3 shows an example. First (at the top of the figure), all processorscooperate to expand the root node just like all processors do in the synchronous tree construction
 1approach. Next (in the middle of the figure), the set of four processors
 is partitioned in three parts. The leftmost child is assigned to processors 0 and 1,
 while the other nodes are assigned to processors 2 and 3, respectively. Now these
-sets of processors proceed independently to expand these assigned nodes. In par-
-ticular, processors 2 and processor 3 proceed to expand their part of the tree using
+sets of processors proceed independently to expand the other nodes. In par-
+ticular, processors 2 and processor 3 proceed to expand par-
+ticular, processors 2 and processor 3 part of the tree using
 the serial algorithm. The group containing processors 0 and 1 splits the leftmost
-child node into three nodes. These three new nodes are partitioned in two parts
+child node into three nodes. the other nodes are partitioned in two parts
 (shown in the bottom of the figure); the leftmost node is assigned to processor 0,
 while the other two are assigned to processor 1. From now on, processors 0 and 1
-also independently work on their respective subtrees.
-The advantage of this approach is that once a processor becomes solely responsible
-for a node, it can develop a subtree of the classification tree independently without
+also independently work on the other nodes respective subtrees.
+The advantage of Synchronous Tree Construction Approach
+ is that once a processor becomes solely responsible
+for a node, a processor can develop a subtree of the classification tree independently without
 any communication overhead. However, there are a number of disadvantages of
-this approach. The first disadvantage is that it requires data movement after each
+this approach. The first disadvantage is that The first disadvantage requires data movement after each
 node expansion until one processor becomes responsible for an entire subtree. The
 communication cost is particularly expensive in the expansion of the upper part of
 the classification tree. (Note that once the number of nodes in the frontier exceeds
@@ -394,47 +408,50 @@ the number of processors, then the communication cost becomes zero.) The second
 disadvantage is poor load balancing inherent in the algorithm. Assignment of nodes
 to processors is done based on the number of training cases in the successor nodes.
 However, the number of training cases associated with a node does not necessarily
-correspond to the amount of work needed to process the subtree rooted at the node.
+correspond to the amount of work needed to process the subtree rooted at a node.
 For example, if all training cases associated with a node happen to have the same
 class label, then no further expansion is needed.
 3.3. Hybrid Parallel Formulation
 Our hybrid parallel formulation has elements of both schemes. The Synchronous
 Tree Construction Approach in Section 3.1 incurs high communication overhead as
-the frontier gets larger. The Partitioned Tree Construction Approach of Section 3.2
-incurs cost of load balancing after each step. The hybrid scheme keeps continuing
+the frontier gets larger. The Synchronous
+Tree Construction Approach in Section 3.1incurs cost of load balancing after each step. The hybrid scheme keeps continuing
 with the first approach as long as the communication cost incurred by the first
-formulation is not too high. Once this cost becomes high, the processors as well as
+formulation is not too high. Once the communication cost incurred by the first
+formulation becomes high, the processors as well as
 the current frontier of the classification tree are partitioned into two parts.
 Our description assumes that the number of processors is a power of 2, and that
-these processors are connected in a hypercube configuration. The algorithm can
-be appropriately modified if P is not a power of 2. Also this algorithm can be
+the processors as well as
+ are connected in a hypercube configuration. The C4.5 algorithm can
+be appropriately modified if P is not a power of 2. Also The C4.5 algorithm can be
 mapped on to any parallel architecture by simply embedding a virtual hypercube
 in the architecture. More precisely the hybrid formulation works as follows.
 ffl The database of training cases is split equally among P processors. Thus, if
 N is the total number of training cases, each processor has N=P training cases
 locally. At the beginning, all processors are assigned to one partition. The root
-node of the classification tree is allocated to the partition.
+node of the classification tree is allocated to one partition.
 ffl All the nodes at the frontier of the tree that belong to one partition are processed
 together using the synchronous tree construction approach of Section 3.1.
 ffl As the depth of the tree within a partition increases, the volume of statistics
 gathered at each level also increases as discussed in Section 3.1. At some point,
 a level is reached when communication cost become prohibitive. At this point,
-the processors in the partition are divided into two partitions, and the current
-set of frontier nodes are split and allocated to these partitions in such a way
+the processors in one partition are divided into two partitions, and the current
+set of frontier nodes are split and allocated to two partitions in such a way
 that the number of training cases in each partition is roughly equal. This load
 balancing is done as described as follows:
 - On a hypercube, each of the two partitions naturally correspond to a sub-
 cube. First, corresponding processors within the two sub-cubes exchange
-relevant training cases to be transferred to the other sub-cube. After this
-exchange, processors within each sub-cube collectively have all the training
-cases for their partition, but the number of training cases at each processor
+relevant training cases to be transferred to a sub-
+cube. After the two sub-cubes exchange
+, processors within each sub-cube collectively have all the training
+cases for processors within each sub-cube partition, but the number of training cases at each processor
 can vary between 0 to 2\LambdaN
 . Now, a load balancing step is done within each
 sub-cube so that each processor has an equal number of data items.
 ffl Now, further processing within each partition proceeds asynchronously. The
 above steps are now repeated in each one of these partitions for the particular
 subtrees. This process is repeated until a complete classification tree is grown.
-ffl If a group of processors in a partition become idle, then this partition joins up
+ffl If a group of processors in a partition become idle, then a partition joins up
 with any other partition that has work and has the same number of processors.
 This can be done by simply giving half of the training cases located at each
 processor in the donor partition to a processor in the receiving partition.
@@ -445,9 +462,9 @@ Figure
 4. The computation frontier during computation phase
 A key element of the algorithm is the criterion that triggers the partitioning of the
 current set of processors (and the corresponding frontier of the classification tree
-If partitioning is done too frequently, then the hybrid scheme will approximate
+If partitioning is done too frequently, then The hybrid scheme will approximate
 the partitioned tree construction approach, and thus will incur too much data
-movement cost. If the partitioning is done too late, then it will suffer from high
+movement cost. If the partitioning is done too late, then the partitioning will suffer from high
 cost for communicating statistics generated for each node of the frontier, like the
 synchronized tree construction approach. One possibility is to do splitting when the
 accumulated cost of communication becomes equal to the cost of moving records
@@ -460,10 +477,10 @@ Figure
 (Communication MovingCost LoadBalancing
 As an example of the hybrid algorithm, Figure 4 shows a classification tree frontier
 at depth 3. So far, no partitioning has been done and all processors are working
-cooperatively on each node of the frontier. At the next frontier at depth 4, partitioning
+cooperatively on each node of the frontier. At the frontier at depth 4, partitioning
 is triggered, and the nodes and processors are partitioned into two partitions
 as shown in Figure 5.
-A detailed analysis of the hybrid algorithm is presented in Section 4.
+A detailed analysis of the Hybrid Algorithm is presented in Section 4.
 3.4. Handling Continuous Attributes
 Note that handling continuous attributes requires sorting. If each processor contains
 N=P training cases, then one approach for handling continuous attributes is
@@ -480,7 +497,7 @@ A more efficient way of handling continuous attributes without incurring the
 high cost of repeated sorting is to use the pre-sorting technique used in algorithms
 SLIQ [18], SPRINT [21], and ScalParC [13]. These algorithms require only one pre-sorting
 step, but need to construct a hash table at each level of the classification
-tree. In the parallel formulations of these algorithms, the content of this hash
+tree. In the parallel formulations of These algorithms, the content of this hash
 table needs to be available globally, requiring communication among processors.
 definition
 Total number of training samples
@@ -508,23 +525,25 @@ Another approach towards discretization is to discretize at every node in the tr
 There are two examples of this approach. The first example can be found in [3]
 where quantiles [2] are used to discretize continuous attributes. The second example
 of this approach to discretize at each node is SPEC [23] where a clustering
-technique is used. SPEC has been shown to be very efficient in terms of runtime
+technique is used. SPEC [23] where a clustering
+technique is used has been shown to be very efficient in terms of runtime
 and has also been shown to perform essentially identical to several other widely
 used tree classifiers in terms of classification accuracy [23]. Parallelization of the
 discretization at every node of the tree is similar in nature to the parallelization
 of the computation of entropy gain for discrete attributes, because both of these
 methods of discretization require some global communication among all the processors
 that are responsible for a node. In particular, parallel formulations of the
-clustering step in SPEC is essentially identical to the parallel formulations for the
+clustering step in SPEC [23] where a clustering
+technique is used is essentially identical to the parallel formulations for the
 discrete case discussed in the previous subsections [23].
 4. Analysis of the Hybrid Algorithm
 In this section, we provide the analysis of the hybrid algorithm proposed in Section
-3.3. Here we give a detailed analysis for the case when only discrete attributes
+3.3. Here we give a detailed analysis for this case when only discrete attributes
 are present. The analysis for the case with continuous attributes can be found in
 [23]. The detailed study of the communication patterns used in this analysis can
 be found in [16]. Table 4 describes the symbols used in this section.
 4.1. Assumptions
-ffl The processors are connected in a hypercube topology. Complexity measures for
+ffl all processors are connected in a hypercube topology. Complexity measures for
 other topologies can be easily derived by using the communication complexity
 expressions for other topologies given in [16].
 ffl The expression for communication and computation are written for a full binary
@@ -536,7 +555,8 @@ be extracted from a particular training data set and any increase in the trainin
 set size beyond a point does not lead to a larger decision tree.
 4.2. Computation and Communication Cost
 For each leaf of a level, there are A d class histogram tables that need to be com-
-municated. The size of each of these tables is the product of number of classes and
+municated. The size of each of A d class histogram tables that need to be com-
+municated is the product of number of classes and
 the mean number of attribute values. Thus size of class histogram table at each
 processor for each leaf is:
 Class histogram size for each
@@ -584,9 +604,9 @@ This criterion for splitting ensures that the communication cost for this scheme
 be within twice the communication cost for an optimal scheme [14]. The splitting
 is recursive and is applied as many times as required. Once splitting is done, the
 above computations are applied to each partition. When a partition of processors
-starts to idle, then it sends a request to a busy partition about its idle state. This
-request is sent to a partition of processors of roughly the same size as the idle
-partition. During the next round of splitting the idle partition is included as a part
+starts to idle, then a partition of processors
+ sends a request to a busy partition about a request idle state. a request is sent to a partition of processors of roughly the same size as the idle
+partition. During the next round of splitting a busy partition about its idle state is included as a part
 of the busy partition and the computation proceeds as described above.
 4.3. Scalability Analysis
 Isoefficiency metric has been found to be a very useful metric of scalability for a
@@ -626,50 +646,53 @@ To get the isoefficiency function, we equate P times total parallel run time usi
 Equation 9 to serial computation time.
 Therefore, the isoefficiency function is Isoefficiency is '(P log P )
 assuming no network congestion during load balancing phase. When the transportation
-primitive is used for load balancing, the isoefficiency is O(P 3 ).
+primitive is used for load balancing, Isoefficiency is O(P 3 ).
 5. Experimental Results
 We have implemented the three parallel formulations using the MPI programming
-library. We use binary splitting at each decision tree node and grow the tree in
+library. We use binary splitting at each decision tree node and grow each decision tree in
 breadth first manner. For generating large datasets, we have used the widely used
-synthetic dataset proposed in the SLIQ paper [18] for all our experiments. Ten classification
+synthetic dataset proposed in the SLIQ paper [18] for all We experiments. Ten classification
 functions were also proposed in [18] for these datasets. We have used the
-function 2 dataset for our algorithms. In this dataset, there are two class labels and
+function 2 dataset for We algorithms. In the widely used
+synthetic dataset proposed in the SLIQ paper [18] for all our experiments, there are two class labels and
 each record consists of 9 attributes having 3 categoric and 6 continuous attributes.
-The same dataset was also used by the SPRINT algorithm [21] for evaluating its
+the widely used
+synthetic dataset proposed in the SLIQ paper [18] for all our experiments was also used by the SPRINT algorithm [21] for evaluating the widely used
+synthetic dataset proposed in the SLIQ paper [18] for all our experiments
 performance. Experiments were done on an IBM SP2. The results for comparing
 speedup of the three parallel formulations are reported for parallel runs on 1, 2, 4,
 8, and 16 processors. More experiments for the hybrid approach are reported for
 up to 128 processors. Each processor has a clock speed of 66.7 MHz with 256 MB
-real memory. The operating system is AIX version 4 and the processors communicate
-through a high performance switch (hps). In our implementation, we keep
+real memory. The operating system is AIX version 4 and all processors communicate
+through a high performance switch (hps). In our implementation, our keep
 the "attribute lists" on disk and use the memory only for storing program specific
 data structures, the class histograms and the clustering structures.
-First, we present results of our schemes in the context of discrete attributes only.
-We compare the performance of the three parallel formulations on up to 16 processor
-IBM SP2. For these results, we discretized 6 continuous attributes uniformly.
+First, we present results of we schemes in the context of discrete attributes only.
+We compare the performance of the three parallel formulations on up an IBM SP2. For these results, we discretized 6 continuous attributes uniformly.
 Specifically, we discretized the continuous attribute salary to have 13, commission
 to have 14, age to have 6, hvalue to have 11, hyears to have 10, and loan to have
-equal intervals. For measuring the speedups, we worked with different sized
-datasets of 0.8 million training cases and 1.6 million training cases. We increased
-the processors from 1 to 16. The results in Figure 6 show the speedup comparison
+equal intervals. For measuring the speedups, our worked with different sized
+datasets of 0.8 million training cases and 1.6 million training cases. our increased
+all processors from 1 to 16. The results in Figure 6 show the speedup comparison
 of the three parallel algorithms proposed in this paper. The graph on the left shows
 the speedup with 0.8 million examples in the training set and the other graph shows
 the speedup with 1.6 million examples.
-The results show that the synchronous tree construction approach has a good
-speedup for 2 processors, but it has a very poor speedup for 4 or more processors.
+The results in Figure 6 show that the synchronous tree construction approach has a good
+speedup for 2 processors, but The results in Figure 6 has a very poor speedup for 4 or more processors.
 There are two reasons for this. First, the synchronous tree construction approach
 incurs high communication cost, while processing lower levels of the tree. Second,
-a synchronization has to be done among different processors as soon as their communication
-buffer fills up. The communication buffer has the histograms of all the
+a synchronization has to be done among different processors as soon as different processors communication
+buffer fills up. their communication
+buffer has the histograms of all the
 discrete variables for each node. Thus, the contribution of each node is independent
-of its tuples count, the tuple count at a node being proportional to the computation
-to process that node. While processing lower levels of the tree, this synchronization
+of the contribution of each node tuples count, the tuple count at a node being proportional to the computation
+to process a node. While processing lower levels of the tree, this synchronization
 is done many times at each level (after every 100 nodes for our experiments). The
 distribution of tuples for each decision tree node becomes quite different lower down
-in the tree. Therefore, the processors wait for each other during synchronization,
+in the tree. Therefore, all processors wait for each other during synchronization,
 and thus, contribute to poor speedups.
-The partitioned tree construction approach has a better speedup than the synchronous
-tree construction approach. However, its efficiency decreases as the number
+The Partitioned Tree Construction Approach has a better speedup than the synchronous
+tree construction approach. However, The Partitioned Tree Construction Approach efficiency decreases as the number
 of processors increases to 8 and 16. The partitioned tree construction approach
 Processors
 Speedup for 0.8 million examples, partitioned -", hybrid -o-", synchronous -x-"
@@ -686,11 +709,11 @@ determined by the most heavily loaded processor. The partitioned tree constructi
 approach also suffers from the high data movement during each partitioning phase,
 the partitioning phase taking place at higher levels of the tree. As more processors
 are involved, it takes longer to reach the point where all the processors work on
-their local data only. We have observed in our experiments that load imbalance and
+all the processors local data only. We have observed in We experiments that load imbalance and
 higher communication, in that order, are the major cause for the poor performance
-of the partitioned tree construction approach as the number of processors increase.
+of The Partitioned Tree Construction Approach as the number of processors increase.
 The hybrid approach has a superior speedup compared to the partitioned tree
-approach as its speedup keeps increasing with increasing number of processors.
+approach as The hybrid approach speedup keeps increasing with increasing number of processors.
 As discussed in Section 3.3 and analyzed in Section 4, the hybrid controls the
 communication cost and data movement cost by adopting the advantages of the
 two basic parallel formulations. The hybrid strategy also waits long enough for
@@ -699,7 +722,7 @@ processors. Due to the allocation of decision tree nodes to each processor being
 randomized to a large extent, good load balancing is possible. The results confirmed
 that the proposed hybrid approach based on these two basic parallel formulations
 is effective.
-We have also performed experiments to verify our splitting criterion of the hybrid
+We have also performed experiments to verify We splitting criterion of the hybrid
 algorithm is correct. Figure 7 shows the runtime of the hybrid algorithm with
 different ratio of communication cost and the sum of moving cost and load balancing
 cost, i.e.,
@@ -726,12 +749,15 @@ The experiments on 16 processors clearly demonstrated that the hybrid approach
 gives a much better performance and the splitting criterion used in the hybrid approach
 is close to optimal. We then performed experiments of running the hybrid
 approach on more number of processors with different sized datasets to study the
-speedup and scalability. For these experiments, we used the original data set with
+speedup and scalability. For experiments of running the hybrid
+approach on more number of processors with different sized datasets to study the
+speedup and scalability, We used the original data set with
 continuous attributes and used a clustering technique to discretize continuous attributes
 at each decision tree node [23]. Note that the parallel formulation gives
 almost identical performance as the serial algorithm in terms of accuracy and classification
 tree size [23]. The results in Figure 8 show the speedup of the hybrid
-approach. The results confirm that the hybrid approach is indeed very effective.
+approach. The results
+ confirm that the hybrid approach is indeed very effective.
 To study the scaleup behavior, we kept the dataset size at each processor constant
 at 50,000 examples and increased the number of processors. Figure 9 shows
 the runtime on increasing number of processors. This curve is very close to the
@@ -771,45 +797,46 @@ processors. However, as the tree becomes bushy, having a large number of nodes
 at a level, the number of training data items at each node decrease. Frequent
 synchronization is done due to limited communication buffer size, which forces
 communication after processing a fixed number of nodes. These nodes at lower
+depths of the tree, which have few tuples assigned to These nodes at lower
 depths of the tree, which have few tuples assigned to them, may have highly variable
 distribution of tuples over the processors, leading to load imbalance. Hence, this
 approach suffers from high communication overhead and load imbalance for bushy
 trees. The Partitioned Tree Construction Approach works better than Synchronous
-Tree Construction Approach if the tree is bushy. But this approach pays a big
-communication overhead in the higher levels of the tree as it has to shuffle lots
+Tree Construction Approach if the tree is bushy. But The Partitioned Tree Construction Approach pays a big
+communication overhead in the higher levels of the tree as The Partitioned Tree Construction Approach has to shuffle lots
 of training data items to different processors. Once every node is solely assigned
 to a single processor, each processor can construct the partial classification tree
 independently without any communication with other processors. However, the
 load imbalance problem is still present after the shuffling of the training data items,
 since the partitioning of the data was done statically.
-The hybrid approach combines the good features of these two approaches to
-reduce communication overhead and load imbalance. This approach uses the Synchronous
+The Partitioned Tree Construction Approach combines the good features of these two approaches to
+reduce communication overhead and load imbalance. The Partitioned Tree Construction Approach uses the Synchronous
 Tree Construction Approach for the upper parts of the classification tree.
 Since there are few nodes and relatively large number of the training cases associated
 with the nodes in the upper part of the tree, the communication overhead is
 small. As soon as the accumulated communication overhead is greater than the cost
-of partitioning of data and load balancing, this approach shifts to the Partitioned
-Tree Construction Approach incrementally. The partitioning takes place when a
-reasonable number of nodes are present at a level. This partitioning is gradual and
+of partitioning of data and load balancing, this approach shifts to The Partitioned Tree Construction Approach incrementally. The partitioning takes place when a
+reasonable number of nodes are present at a level. The partitioning is gradual and
 performs randomized allocation of classification tree nodes, resulting in a better
 load balance. Any load imbalance at the lower levels of the tree, when a processor
-group has finished processing its assigned subtree, is handled by allowing an idle
+group has finished processing a processor
+group assigned subtree, is handled by allowing an idle
 processor group to join busy processor groups.
 The size and shape of the classification tree varies a lot depending on the application
 domain and training data set. Some classification trees might be shallow and
 the others might be deep. Some classification trees could be skinny others could be
 bushy. Some classification trees might be uniform in depth while other trees might
-be skewed in one part of the tree. The hybrid approach adapts well to all types of
-classification trees. If the decision tree is skinny, the hybrid approach will just stay
-with the Synchronous Tree Construction Approach. On the other hand, it will shift
-to the Partitioned Tree Construction Approach as soon as the tree becomes bushy.
-If the tree has a big variance in depth, the hybrid approach will perform dynamic
+be skewed in one part of the tree. The Partitioned Tree Construction Approach adapts well to all types of
+classification trees. If the tree is skinny, The Partitioned Tree Construction Approach will just stay
+with The Synchronous Tree Construction Approach. On the other hand, The Partitioned Tree Construction Approach will shift
+to The Partitioned Tree Construction Approach as soon as the tree becomes bushy.
+If the tree has a big variance in depth, The Partitioned Tree Construction Approach will perform dynamic
 load balancing with processor groups to reduce processor idling.
 
 Acknowledgments
 
 A significant part of this work was done while Anurag Srivastava and Vineet Singh
-were at IBM TJ Watson Research Center. This work was supported by NSF grant
+were at IBM TJ Watson Research Center. this work was supported by NSF grant
 ASC-9634719, Army Research Office contract DA/DAAH04-95-1-0538, Cray Re-search
 Inc. Fellowship, and IBM partnership award, the content of which does not
 necessarily reflect the policy of the government, and no official endorsement should

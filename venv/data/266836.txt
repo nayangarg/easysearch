@@ -1,11 +1,11 @@
 --T
 Resource-sensitive profile-directed data flow analysis for code optimization.
 --A
-Instruction schedulers employ code motion as a means of instruction reordering to enable scheduling of instructions at points where the resources required for their execution are available. In addition, driven by the profiling data, schedulers take advantage of predication and speculation for aggressive code motion across conditional branches. Optimization algorithms for partial dead code elimination (PDE) and partial redundancy elimination (PRE) employ code sinking and hoisting to enable optimization. However, unlike instruction scheduling, these optimization algorithms are unaware of resource availability and are incapable of exploiting profiling information, speculation, and predication. In this paper we develop data flow algorithms for performing the above optimizations with the following characteristics: (i) opportunities for PRE and PDE enabled by hoisting and sinking are exploited; (ii) hoisting and sinking of a code statement is driven by availability of functional unit resources; (iii) predication and speculation is incorporated to allow aggressive hoisting and sinking; and (iv) path profile information guides predication and speculation to enable optimization.
+Instruction schedulers employ code motion as a means of instruction reordering to enable scheduling of instructions at points where the resources required for instructions execution are available. In addition, driven by the profiling data, schedulers take advantage of predication and speculation for aggressive code motion across conditional branches. Optimization algorithms for partial dead code elimination (PDE) and partial redundancy elimination (PRE) employ code sinking and hoisting to enable optimization. However, unlike instruction scheduling, Optimization algorithms for partial dead code elimination (PDE) and partial redundancy elimination (PRE) are unaware of resource availability and are incapable of exploiting profiling information, speculation, and predication. In this paper we develop data flow algorithms for performing the above optimizations with the following characteristics: (i) opportunities for PRE and PDE enabled by hoisting and sinking are exploited; (ii) hoisting and sinking of a code statement is driven by availability of functional unit resources; (iii) predication and speculation is incorporated to allow aggressive hoisting and sinking; and (iv) path profile information guides predication and speculation to enable optimization.
 --B
 Introduction
 Data flow analysis provides us with facts about
-a program by statically analyzing the program. Algorithms
+a program by statically analyzing a program. Algorithms
 for partial dead code elimination (PDE)
 Copyright 1997 IEEE. Published in the Proceedings of
 Micro-30, December 1-3, 1997 in Research Triangle Park, North
@@ -14,7 +14,7 @@ permission to reprint/republish this material for advertising or
 promotional purposes or for creating new collective works for
 resale or redistribution to servers or lists, or to reuse any copyrighted
 component of this work in other works, must be obtained
-from the IEEE. Contact: Manager, Copyrights and Permissions
+from IEEE. Contact: Manager, Copyrights and Permissions
 908-562-3966.
 y Supported in part by NSF PYI Award CCR-9157371, NSF
 grant CCR-9402226, Intel Corporation, and Hewlett Packard.
@@ -28,22 +28,25 @@ of an expression eliminates evaluations of the expression
 if a prior evaluation of the same expression
 was performed using the same operands. The existing
 algorithms for above optimizations suffer from the following
-drawbacks that limit their usefulness in a realistic
+drawbacks that limit The existing
+algorithms for above optimizations usefulness in a realistic
 compiling environment in which the optimization
 phase precedes the instruction scheduling phase.
-ffl The optimization algorithms are insensitive to resource
+ffl The existing
+algorithms for above optimizations are insensitive to resource
 information. Thus, it is possible that instructions
 that require the same functional unit
 resource for execution are moved next to each
 other. Such code motion is not beneficial since the
 instruction scheduler in separating these instructions
 from each other may undo the optimization.
-ffl The data flow analyses used by the algorithms
-are incapable of exploiting profiling information
+ffl The data flow analyses used by The existing
+algorithms for above optimizationsare incapable of exploiting profiling information
 to drive code sinking and hoisting. Instruction
 schedulers on the other hand use profiling information
 to drive code hoisting and sinking.
-ffl The data flow analyses do not incorporate speculation
+ffl The data flow analyses used by the algorithms
+ do not incorporate speculation
 and predication to enable code hoisting and
 sinking. Instruction schedulers for modern processor
 architectures exploit speculation [18] and
@@ -59,15 +62,15 @@ code motion for PRE and PDE optimizations
 such that code motion is restricted to situations in
 which the resulting code placement points are those at
 which the required functional unit resources are avail-
-able. Moreover we are able to perform code motion
+able. Moreover Our are able to perform code motion
 more freely than existing PDE and PRE algorithms
 [16, 17, 21, 5, 15] through speculative hoisting and
 predication enabled sinking. Finally, path profiling
 [1] information is used to guide speculation and pred-
 ication. In particular, speculation and predication is
-applied only if their overall benefit in form of increased
+applied only if speculation and predication overall benefit in form of increased
 code optimization along frequently executed program
-paths is greater than their cost in terms of introducing
+paths is greater than speculation and predication cost in terms of introducing
 additional instructions along infrequently executed
 program paths.
 (a)8 9614 5
@@ -82,20 +85,24 @@ for code sinking. The flow graph in Figure 1a contains
 statement node 8 which is partially
 dead since the value of x computed by the statement
 is not used along paths 10-8-7-3-1 and 10-8-7-6-4-2-1.
-Through sinking of the statement to node 5, as shown
+Through sinking of the statement
+ to node 5, as shown
 in Figure 1b, we can completely eliminate the deadness
-of the statement. Note that in order to enable sinking
+of the statement
+. Note that in order to enable sinking
 past node 7 it is necessary to predicate the statement.
-Furthermore this sinking should only be performed if
+Furthermore sinking of the statement should only be performed if
 the paths 10-8-7-3-1 and 10-8-7-6-4-2-1 along which
 dead code is eliminated are executed more frequently
 than the path 10-9-7-6-5-2-1 along which an additional
 instruction has been introduced.
 If the functional unit for the multiply operation is
 expected to be busy at node 5 and idle at node 6, then
-resource sensitive sinking will place the statement at
+resource sensitive sinking will place the statement
+ at
 node 6 as shown in Figure 1c. As before, the predication
-of the statement is required to perform sinking
+of the statement
+ is required to perform sinking
 past node 7. However, the sinking past 7 is only performed
 if the frequency with which the path 10-8-7-3-1
 (along which dead code is eliminated) is executed is
@@ -105,8 +112,8 @@ an additional instruction is introduced) are executed.
 The above solution essentially places the statement
 at a point where the required resource is available and
 eliminates as much deadness as possible in the process.
-It also performs predication enabled sinking whenever
-it is useful.
+The above solution also performs predication enabled sinking whenever
+The above solution is useful.
 The example in Figure 2 illustrates our approach
 for code hoisting. The flow graph in Figure 2a contains
 partially redundant evaluation of expression x+y
@@ -145,7 +152,7 @@ an additional instruction is introduced) are executed.
 The above solution places the expression at a point
 where the required resource is available and eliminates
 as much redundancy as possible in the process. It also
-performs speculative code hoisting whenever it is useful
+performs speculative code hoisting whenever It is useful
 
 The remainder of this paper is organized as follows.
 In section 2 we first present extensions to PDE and
@@ -165,7 +172,7 @@ nating(terminating) at a point. This information is
 used by the algorithms for PDE(PRE) to inhibit sink-
 ing(hoisting) along paths where the required resource
 is not free. Therefore, optimization opportunities are
-exploited only if they are permitted by resource usage
+exploited only if optimization opportunities are permitted by resource usage
 characteristics of a program.
 In all the algorithms presented in this paper we
 assume that the program is represented using a flow
@@ -175,7 +182,7 @@ along critical edges to allow code placement
 along the critical edges. The first assumption simplifies
 the discussion of our data flow equations and is not
 essential for our techniques to work. Given this repre-
-sentation, we next describe how to determine whether
+sentation, our next describe how to determine whether
 a resource is locally free at the exit or entry of a node.
 This local information will be propagated through the
 flow graph to determine global resource availability in-
@@ -192,11 +199,12 @@ an instruction may be issued every c cycles is free at
 node n if the instructions issued during the c \Gamma 1 cycles
 prior to n and following n are not issued to FU .
 The above definition guarantees that if an instruction
-is placed at n that uses FU , then its issuing will
+is placed at n that uses FU , then an instruction
+ issuing will
 not be blocked due to unavailability of FU . Notice
 that the above definition can be easily extended to
 consider situations in which more than one copy of
-the resource FU is available in the architecture.
+FU FU is available in the architecture.
 2.1 Code Sinking and PDE
 Partial dead code elimination is performed by sinking
 partially dead assignments. Through sinking of a
@@ -207,7 +215,7 @@ which it is dead, that is, the value computed by s is not
 used. In order to ensure that sinking of s is only performed
 if it can be guaranteed that placement points
 for s after sinking will be ones at which the resource
-required for its execution is available, we first develop
+required for it execution is available, we first develop
 resource anticipatability analysis. The results of this
 analysis guide the sinking in a subsequent phase that
 performs resource sensitive code sinking and PDE.
@@ -221,9 +229,10 @@ at the entry of a node n if for each path p from n's
 entry to the terminating node in the flow graph one
 of the following conditions is true:
 ffl the value of the variable defined by s at n's entry
-is dead along path p, that is, the resource will not
+is dead along path p, that is, A functional unit resource required to
+ will not
 be needed along this path since the assignment
-can be removed from it; or
+can be removed from this path; or
 ffl there is a node b along p in which the required
 resource is locally free and statement s is sinkable
 to b, that is, the required resource will be available
@@ -242,8 +251,9 @@ never used). If the variable is not dead, then the value
 of DEAD s
 (n) is 0.
 (n) is 1 if the resource required by s is free for
-its use when s is moved to n through sinking; otherwise
-it is 0.
+
+ use when s is moved to n through sinking; otherwise
+s is 0.
 (n)) is 1 if the resource
 required by s is anticipatable at n's exit(entry); otherwise
 it is 0.
@@ -251,10 +261,10 @@ In order to compute resource anticipatability we
 perform backward data flow analysis with the and confluence
 operator as shown in the data flow equations
 given below. The resource used by s is anticipatable
-at n's exit if it is anticipatable at the entries of all successors
-of n. The resource is anticipatable at n's entry
-if the resource is free for use by s in n, or the variable
-defined by s is dead at n's entry, or the resource is
+at n's exit if The resource used by s is anticipatable at the entries of all successors
+of n. The resource used by s is anticipatable at n's entry
+if The resource used by s is free for use by s in n, or the variable
+defined by s is dead at n's entry, or The resource used by s is
 anticipatable at n's exit and preserved through n.
 N\GammaRANTs (m)
 (X\GammaRANTs (n) -PRESs(n))
@@ -270,7 +280,8 @@ of delayability analysis followed by identification of insertion
 points for the statement being moved. The
 data flow equations for delayability analysis and the
 computation of insertion points are specified below.
-In this analysis X\GammaDLY s
+In delayability analysis followed by identification of insertion
+points for the statement being moved X\GammaDLY s
 assignment
 s can be delayed up to the exit(entry) of node
 n. BLOCK s
@@ -280,10 +291,12 @@ we can see delayability analysis only allows sinking of
 s to the entry of node n if the required resource is
 anticipatable at n's entry and it allows sinking from
 entry to exit of n if s is not blocked by n. The assignment
-is removed from its original position and inserted
+is removed from The assignment
+ original position and inserted
 at points that are determined as follows. The assignment
 s is inserted at n's entry if it is delayed to n's
-entry but not its exit and s is inserted at n's exit if
+entry but not n's
+ exit and s is inserted at n's exit if
 it is delayed to n's exit but not to the entries of all
 of n's successors. Assignment deletion eliminates the
 inserted assignments that are fully dead.
@@ -296,7 +309,7 @@ by considering the sinking of assignment in node 1. In
 Figure 3a a control flow graph and the results of resource
 anticipatability analysis are shown. The node
 7 is partially shaded to indicate that the resource is
-anticipatable at the node's exit but not its entry. Figure
+anticipatable at the node's exit but not the node's exit entry. Figure
 3b shows the outcome of delayability analysis. Notice
 that the sinking of assignment past node 3 is inhibited
 since the resource is not anticipatable at 3's suc-
@@ -320,11 +333,12 @@ redundant. In order to ensure that hoisting of e is
 only performed if it can be guaranteed that placement
 points for e after hoisting will be ones at which the
 resource required for e's execution is free, we perform
-resource availability analysis. Its results are used to
+resource availability analysis. e's execution results are used to
 guide hoisting in a subsequent phase that performs resource
 sensitive code hoisting and PRE.
 Resource Availability Analysis
-The resource availability data flow analysis determines
+Resource Availability Analysis
+ determines
 the nodes above which the hoisting of statement
 s will not be inhibited by the lack of resources.
 A functional unit resource needed to execute
@@ -394,9 +408,9 @@ it is 0.
 In order to compute resource availability we perform
 forward data flow analysis with the and confluence
 operator. The resource used by expression e is
-available at n's entry if it is available at the exits of
+available at n's entry if The resource used by expression e is available at the exits of
 predecessors of n. The resource is available at n's exit
-if it is available at n's entry and preserved by n, the
+if n. The resource is available at n's entry and preserved by n, the
 expression is computed by n and available at n's exit,
 or resource is locally free at n.
 X\GammaRAVLe (m)
@@ -411,13 +425,13 @@ the earliest points at which expression evaluations are
 actually placed to achieve PRE. These steps are modified
 to incorporate resource availability information.
 The modified equations for down-safety and earliest-
-ness analysis are given below. In these equations
-the expression can
-be hoisted to the entry(exit) of node n; otherwise it is
-An expression is down-safe at a node as long as it
+ness analysis are given below. In The modified equations for down-safety and earliest-
+ness analysisthe expression can
+be hoisted to the entry(exit) of node n; otherwise the expression is
+An expression is down-safe at a node as long as a node
 is anticipatable along all paths leading from the node
 and the required resource is available along all paths
-leading to the node. The earliestness analysis sets
+leading to a node. The earliestness analysis sets
 (n)) to 1 up to and including
 the first down-safe point at which the required resource
 is free or an expression evaluation exists. Along
@@ -447,10 +461,10 @@ The example in Figure 4 illustrates the above al-
 gorithms. In Figure 4a the results of resource availability
 analysis are shown. Since the resource is available
 at node 11, the down-safety analysis will propagate
-it backwards as shown in Figure 4b. Node 6 is
+the resource backwards as shown in Figure 4b. Node 6 is
 not down-safe because resource is not available at that
 node. On the other hand node 8 is down-safe because
-the resource is available at that node. The earliest-
+the resource is available at the other hand node 8. The earliest-
 ness analysis identifies nodes 5, 9, 7, and 8 as the first
 nodes which are down-safe and where either resource
 or expression evaluation exists
@@ -468,7 +482,8 @@ based code sinking can be employed to enable additional
 opportunities for PDE. However, while speculative
 hoisting and predication based sinking result in
 a greater degree of optimization along some program
-paths, they result in introduction of additional instructions
+paths, some program
+paths result in introduction of additional instructions
 along other program paths. In other words
 a greater degree of code optimization is achieved for
 some program paths at the expense of introduction of
@@ -538,8 +553,8 @@ along which a statement is available for sinking (i.e.,
 sinking is not blocked by data dependences) at various
 program points; (b) Optimizability analysis identifies
 paths originating at a node along which a statement
-can be optimized because the value computed by it
-is not live and the sinking required for its removal is
+can be optimized because the value computed by The cost-benefit analysis
+is not live and the sinking required for The cost-benefit analysis removal is
 not inhibited by the lack of a free resource or presence
 of data dependences; and (c) Cost-benefit computation
 identifies the paths through a join point along which
@@ -555,7 +570,7 @@ the entry to the exit of the acyclic flow graph. To facilitate
 the computation of sets of paths, with each node
 n in the flow graph, we associate a bit vector OnP s(n)
 where each bit corresponds to a unique path and is set
-to 1 if the node belongs to that path; otherwise it is
+to 1 if the node belongs to that path; otherwise the node is
 set to 0.
 The steps of the analysis are described next.
 Availability Analysis
@@ -598,8 +613,8 @@ a (n)) is a one bit variable
 associated with n's entry(exit) which is 1 if there is a
 path through n along which a is dead and any sinking
 of a that may be required to remove this deadness is
-feasible (i.e., it is not inhibited by lack of resources
-or presence of data dependences); otherwise its value
+feasible (i.e., this deadness is not inhibited by lack of resources
+or presence of data dependences); otherwise this deadness value
 is 0. Backward data flow analysis with the or confluence
 operation is used to compute these values. In
 order to ensure that the sinking of a is feasible, the
@@ -655,7 +670,8 @@ The benefit of enabling predication of a partially
 dead statement a to allow its movement below a merge
 point n is determined by identifying paths through the
 merge point along which in the unoptimized program
-a is executed while in the optimized program a is not
+a is executed while in the optimized program
+ a is not
 executed. Furthermore the resource anticipatability
 analysis indicates that the sinking of a required to
 achieve the above benefit is not inhibited by lack of
@@ -669,7 +685,8 @@ of a code statement is enabled with respect to
 the merge points only if resources are available and the
 benefit of predication enabled sinking is determined to
 be greater than the cost of predication enabled sink-
-ing. This framework is an extension of the code sinking
+ing. Code Sinking Framework
+ is an extension of the code sinking
 framework presented in section 2.1.
 The data flow equations for enabling predication
 are presented next. Predication enabled sinking is allowed
@@ -705,7 +722,7 @@ are unoptimizable. Although x = a   b is dead along
 the subpath 7-6-4-2-1, the lack of resources inhibits
 sinking necessary to eliminate this deadness. To eliminate
 deadness along this path x = a   b must be sunk
-past node 6 to make it fully dead which is prevented
+past node 6 to make a   b fully dead which is prevented
 by lack of free resource. Based upon the above analysis
 the path that benefit's from sinking past node 7 is
 10-8-7-3-1 while the paths along which cost of an additional
@@ -722,7 +739,8 @@ The resource availability analysis described in section
 2.2 remains unchanged and must be performed
 first. Next cost-benefit analysis that incorporates resource
 availability information and uses path profiles
-is performed. The results of this analysis are used
+is performed. The results of The resource availability analysis described in section
+2.2 are used
 to enable speculation based hoisting at selected split
 points in the next phase. Finally an extension of the
 hoisting framework presented in section 2.2 is used to
@@ -730,7 +748,7 @@ perform resource-sensitive, profile-guided PRE.
 The cost-benefit analysis consists of three steps: (a)
 Anticipatability analysis identifies paths originating at
 a node along which an expression is anticipatable and
-thus can be hoisted, i.e., its hoisting is not blocked by
+thus can be hoisted, i.e., an expression hoisting is not blocked by
 data dependences or lack of resources needed to execute
 the expression; (b) Optimizability analysis identifies
 paths leading to a node along which an expression
@@ -748,13 +766,17 @@ of cost and benefit are obtained.
 Due to space limitations we omit the detailed
 data flow equations of the first two steps of cost-benefit
 analysis which compute sets of paths
-OPS e (n)). However, the principles used in their computation
+OPS e (n)). However, the principles used in the detailed
+data flow equations of the first two steps of cost-benefit
+analysis which compute sets of paths
+OPS e (n)) computation
 analogous to those used in section 3.1.
 The cost of enabling speculation of a partially redundant
 expression e to allow its movement above a
 conditional (split point) n is determined by identifying
 paths through the conditional along which e is
-executed in the optimized program but not executed
+executed in the optimized program
+ but not executed
 in the unoptimized program. Furthermore, the resource
 availability analysis indicates that the required
 resource is available to allow the placement of e along
@@ -800,7 +822,7 @@ timizable. Although x + y is evaluated along the sub-path
 necessary to take advantage of this evaluation in eliminating
 redundancy. To eliminate redundancy along
 this path x+ y must be hoisted above node 6 to make
-it fully redundant which is prevented by lack of free
+x+ y fully redundant which is prevented by lack of free
 resource. Based upon the above analysis the path that
 benefits from hoisting above node 7 is 1-3-7-8-10 while
 the paths along which cost of an additional instruction
@@ -875,7 +897,7 @@ paths. The techniques we have described can
 also be adapted for application to other optimizations
 such as elimination of partially redundant loads and
 partially dead stores from loops [3, 8]. We are extending
-our algorithms to consider register pressure during
+We algorithms to consider register pressure during
 optimization.
 Number of Paths with Non-Zero Execution Frequency
 Number
@@ -945,7 +967,7 @@ Code Optimization as a Side Effect of Instruction Scheduling
 J. Adam Butts , Guri Sohi, Dynamic dead-instruction detection and elimination, ACM SIGOPS Operating Systems Review, v.36 n.5, December 2002
 Sriraman Tallam , Xiangyu Zhang , Rajiv Gupta, Extending Path Profiling across Loop Backedges and Procedure Boundaries, Proceedings of the international symposium on Code generation and optimization: feedback-directed and runtime optimization, p.251, March 20-24, 2004, Palo Alto, California
 Max Hailperin, Cost-optimal code motion, ACM Transactions on Programming Languages and Systems (TOPLAS), v.20 n.6, p.1297-1322, Nov. 1998
-Youtao Zhang , Rajiv Gupta, Timestamped whole program path representation and its applications, ACM SIGPLAN Notices, v.36 n.5, p.180-190, May 2001
+Youtao Zhang , Rajiv Gupta, Timestamped whole program path representation and Timestamped applications, ACM SIGPLAN Notices, v.36 n.5, p.180-190, May 2001
 Raymond Lo , Fred Chow , Robert Kennedy , Shin-Ming Liu , Peng Tu, Register promotion by sparse partial redundancy elimination of loads and stores, ACM SIGPLAN Notices, v.33 n.5, p.26-37, May 1998
 Vikki Tang , Joran Siu , Alexander Vasilevskiy , Marcel Mitran, A framework for reducing instruction scheduling overhead in dynamic compilers, Proceedings of the 2006 conference of the Center for Advanced Studies on Collaborative research, October 16-19, 2006, Toronto, Ontario, Canada
 Mary Lou Soffa, Complete removal of redundant expressions, ACM SIGPLAN Notices, v.33 n.5, p.1-14, May 1998

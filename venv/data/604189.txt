@@ -1,7 +1,7 @@
 --T
 A typed interface for garbage collection.
 --A
-An important consideration for certified code systems is the interaction of the untrusted program with the runtime system, most notably the garbage collector. Most certified code systems that treat the garbage collector as part of the trusted computing base dispense with this issue by using a collector whose interface with the program is simple enough that it does not pose any certification challenges. However, this approach rules out the use of many sophisticated high-performance garbage collectors. We present the language LGC, whose type system is capable of expressing the interface of a modern high-performance garbage collector. We use LGC to describe the interface to one such collector, which involves a substantial amount of programming at the type constructor level of the language.
+An important consideration for certified code systems is the interaction of the untrusted program with the runtime system, most notably the garbage collector. Most certified code systems that treat the garbage collector as part of the trusted computing base dispense with this issue by using a collector whose interface with the program is simple enough that the program does not pose any certification challenges. However, this approach rules out the use of many sophisticated high-performance garbage collectors. We present the language LGC, whose type system is capable of expressing the interface of a modern high-performance garbage collector. We use LGC to describe the interface to one such collector, which involves a substantial amount of programming at the type constructor level of the language.
 --B
 Introduction
 In a certified code system, executable programs shipped
@@ -18,22 +18,24 @@ otherwise, to republish, to post on servers or to redistribute to lists, require
 prior specific permission and/or a fee.
 TLDI'03, January 18, 2003, New Orleans, Louisiana, USA.
 ACM 1-58113-649-8/03/0001. $5.00.
-that provide evidence of their safety. The validity of a cer-
+that provide evidence of New Orleans, Louisiana, USA safety. The validity of a cer-
 tificate, which can be mechanically verified by the client,
 implies that the associated program is safe to execute. Examples
 of certified code frameworks include Typed Assembly
 Language [6] and Proof-Carrying Code [7, 8].
 Most past research on certified code has focused on the
-safety of the untrusted mobile code itself. However, it is also
+safety of the untrusted mobile code itself. However, Most past research on certified code is also
 important to consider the safety implications of the runtime
 system to which that code is linked. There are two options
 for dealing with this issue. One choice is to treat the runtime
-system as part of the untrusted code, and certify its safety.
+system as part of the untrusted code, and certify the runtime
+system safety.
 The other choice is to simply assume the runtime system
-is correct-i.e., treat it as part of the trusted computing
+is correct-i.e., treat the runtime system
+ as part of the trusted computing
 base that includes the certificate verifier. Of course, even if
 the runtime itself is assumed correct, the interaction of the
-program with the runtime must be certified to conform to
+program with the runtime itself must be certified to conform to
 the appropriate interface.
 An important part of the runtime system for many modern
 languages is the garbage collector. Frameworks in which
@@ -44,7 +46,7 @@ and of Monnier et al. [4]. Of the systems that take the
 second approach, many assume the existence of a trusted
 conservative garbage collector; the advantage of this is that
 the application interface of a conservative collector is so simple
-that it can almost be ignored. There are performance
+that a conservative collector can almost be ignored. There are performance
 benefits to be gained by using a more precise collector; how-
 ever, the interface of such a collector is more subtle, and the
 issue of certifying program conformance to this interface can
@@ -55,7 +57,7 @@ The topic of this paper is the specification of the interface
 for a particular, modern garbage collector, namely that
 of Cheng and Blelloch [1, 2], implemented in the TILT/ML
 runtime system. After informally describing the behavior
-of this collector and its interface to a running program, we
+of this collector and this collector interface to a running program, we
 present a language whose type system can express this inter-
 This language, called LGC, is built up from a simple
 stack based language we call LGC - by extension with the
@@ -94,43 +96,46 @@ such as an optimization for callee-save registers, and assume
 that all roots are stored on the stack. We can therefore ignore
 the additional work of finding roots among the registers
 or global variables.
-The garbage collector assumes that the stack is laid out
+The Garbage Collector assumes that the stack is laid out
 as a sequence of frames, each belonging to the particular
 function that created it. Each frame contains a number
 of data slots (including function arguments, local variables,
 and temporaries), as well as a return address. A section
 of a stack is illustrated in Figure 1. As usual, the stack is
-shown growing downwards. In the figure, the function F has
+shown growing downwards. In Figure 1, the function F has
 called the function G; thus, the return address position in
 G's frame will contain a location somewhere inside the code
 of F. In fact, the return address found in G's frame uniquely
 identifies the point in the program from which G was called,
 and therefore also determines the layout of the frame above
 its own.
-The garbage collector uses this property to "parse" the
-stack. When the program is compiled, the compiler emits
+The Garbage Collector uses this property to "parse" the
+stack. When the program from which G was called is compiled, the compiler emits
 type information that is collected by the runtime system into
 a GC table, which is a mapping from return addresses (iden-
 tifying function call sites) to information about the stack
-frame of the function containing the call site. When the
-collector begins looking for roots, the newest frame on the
-stack is that of the collector itself; the return address in this
+frame of the function containing the call site. When The Garbage Collector begins looking for roots, the newest frame on the
+stack is that of The Garbage Collector; the return address in this
 frame can be looked up in the GC table to find a description
-of the next frame, which belongs to the untrusted program.
-The collector then moves through the stack, performing the
+of the next frame, which belongs to the program from which G was called.
+The Garbage Collector then moves through the stack, performing the
 following steps for each frame:
 1. Using the return address from below the frame being
 examined, find the GC table entry that describes this
 frame.
-2. Using this GC table entry, determine the following information
+2. Using the GC table entry that describes this
+frame, determine the following information
 
 . The locations of pointers in the current frame.
 These are roots.
 . The location of the return address within the current
 frame.
 . The size of the current frame.
-3. Using this information, find the start of the next frame
-and look up its GC table entry.
+3. Using the following information
+
+, find the start of the next frame
+and look up the next frame
+ GC table entry.
 These steps are repeated until the base of the stack is
 reached.
 Clearly, a correct GC table is essential for the operation
@@ -138,10 +143,10 @@ of the garbage collector. An incorrect value in the table
 could lead to a variety of errors, from a single root pointer
 being ignored to derailment of the entire stack-parsing pro-
 cess. Put another way, it is crucial that the program structure
-its use of the stack consistently with the frame descriptions
+it use of the stack consistently with the frame descriptions
 in the GC table. In this paper, we will present a language
 in which the stack's layout can be precisely controlled,
-giving us the ability to guarantee that the structure of the
+giving we the ability to guarantee that the structure of the
 stack during collection will be consistent with the collector's
 expectations.
 2 A Language With a GC Interface
@@ -150,8 +155,8 @@ in which the shape of the program stack can be made to
 fit the pattern expected by the garbage collector; we must
 therefore have a language in which stack manipulation is explicit
 and which is expressive enough to describe the stack in
-very precise terms. In this section, we begin to describe our
-language, which we call LGC. We start with a simple core
+very precise terms. In this section, we begin to describe we
+language, which we call LGC. we start with a simple core
 language we call LGC - , which is a simple stack-based language
 that does not have the sophisticated type constructs
 to support garbage collection; we will then discuss the refinements
@@ -176,7 +181,7 @@ X1 through Xn in E.
 Programs An LGC - program consists of a sequence of mutually
 recursive code block definitions, followed by an ex-
 pression. Each block has the form #; sp:#).e, indicating
-that it must be instantiated with some number and kind of
+that Each block must be instantiated with some number and kind of
 type constructor arguments specified by #, and then may be
 invoked whenever the stack has type #; invoking the block
 results in the evaluation of e. Notice that no data other
@@ -198,7 +203,8 @@ Figure
 2: Syntax of LGC -
 all function arguments and results must be passed on the
 stack. The return address in a function call must also be
-passed on the stack, leading to a continuation-passing style
+passed on the
+stack, leading to a continuation-passing style
 for programs. Also, because all the code blocks in a program
 appear at the top level, programs must undergo closure conversion
 before translation into LGC - .
@@ -227,8 +233,7 @@ The syntactic values in our language are variables
 Types and Kinds Our type theory has two kinds, T and
 ST, which classify constructors. Constructors of kind T are
 called types, and describe values; constructors of kind ST are
-called stack types and describe the stack. The constructors
-themselves include constructor variables (#), the base types
+called stack types and describe the stack. Constructors of kind T include constructor variables (#), the base types
 int and bool, code label types (code(# 0), n-ary
 products (#1 - #n ) and sums (#1
 types (#:k.# ), the empty stack type null and non-empty
@@ -236,21 +241,21 @@ stack types of the form
 #. (In STAL one writes these as
 nil and #, respectively, but in LGC we prefer to use this
 ML-like list notation for actual lists of constructors.) The
-metavariable c will be used to range over all constructors;
+metavariable c will be used to range over Constructors of kind T;
 we will also use the names # and # when we intend that the
 constructor being named is a type or a stack type, respec-
-tively. We will extend the kind and constructor levels of the
+tively. we will extend the kind and constructor levels of the
 type system later in the paper in order to more precisely
 describe the shape of the stack.
 Static Semantics The typing rules for this simple language
 are generally the expected ones. Due to space considera-
-tions, we will not present them all here; they are generally
+tions, we will not present them all here; them are generally
 similar to those for the full LGC language, whose rules are
 in
 
 Appendix
 
-A. We will, however, discuss some of the typing
+A. we will, however, discuss some of the typing
 rules before turning to examine how programs in this
 language interact with a garbage collector. One of the simplest
 typing rules for expressions in the language is the one
@@ -260,11 +265,11 @@ code pointer (that is, one that does not expect any more constructor
 arguments) provided the stack type # expected by
 the code pointer is the same as the current stack type. To
 jump to a polymorphic code pointer, one must first instantiate
-it by applying it the appropriate number and kind of
+the code pointer by applying the code pointer the appropriate number and kind of
 type arguments. The rule for doing this is the following:
 Another simple typing rule is the one for binding a value
 to a variable:
-Read algorithmically, this rule can be understood as follows:
+Read algorithmically, The rule for doing this can be understood as follows:
 To check that the expression let in e is valid, first find
 the type # of the value v; then check that e is valid under
 the assumption that x has type # .
@@ -272,20 +277,18 @@ the assumption that x has type # .
 For the goal of certifying interaction with a garbage collec-
 tor, LGC - is unacceptably simplistic. In fact, the syntax
 and typing rules we have discussed so far appear to ignore
-the collector completely. In this section, we begin to identify
+The Garbage Collector completely. In this section, we begin to identify
 the specific shortcomings of the language; once we have done
 this, the remainder of the paper will be devoted to adding
 the necessary refinements to the language, resulting in the
 full LGC type system.
-As we have already explained, if a program in our language
-is to work properly with a garbage collector, the collector
-must be able to find the roots whenever it is invoked.
-In practice, the garbage collector is usually invoked when a
+As we have already explained, if a program in we language
+is to work properly with a garbage collector, The Garbage Collectormust be able to find the roots whenever The Garbage Collector is invoked.
+In practice, The Garbage Collector is usually invoked when a
 program attempts to create a new object in the heap and
 there is insu#cient space available. The expressions in our
 language that perform allocation are tuple formation and
-injection into sum types; this means that the garbage collector
-may need to be able to find the root set during evaluation
+injection into sum types; this means that The Garbage Collectormay need to be able to find the root set during evaluation
 of an expression of the form let
 or let in e. (We will only discuss tuples, since
 the modifications necessary for sums are exactly analogous.)
@@ -294,27 +297,27 @@ be the following:
 #, x:#1 - #n ); sp:# e
 There are two main changes that must be made to this rule.
 First, we must force all the roots to be on the stack where
-they can be found by the collector; and second, we must
-force the stack to have a structure the collector can parse.
+all the roots can be found by The Garbage Collector; and second, we must
+force the stack to have a structure The Garbage Collector can parse.
 The first problem stems from the fact that we have variables
-in our language that are not stack allocated, but we
+in we language that are not stack allocated, but we
 want to assume for the sake of simplicity that the garbage
 collector scans only the stack when looking for roots. A free
 occurrence of a variable y in the expression e above could
-denote a pointer; that pointer could be used in the evaluation
-of e, but if there is no copy of that pointer on the stack,
-the garbage collector may not identify it as live. The solution
-is to force the program to "dump" the contents of all its
+denote a pointer; the code pointer could be used in the evaluation
+of e, but if there is no copy of the code pointer on the stack,
+The Garbage Collector may not identify the code pointer as live. The solution
+is to force the program to "dump" the contents of all the program
 variables to the stack whenever a collection might occur. To
 accomplish this, we require the continuation e to be closed
-except for the result x of the allocation. The rule now looks
+except for the result x of the allocation. this rule now looks
 like this:
 Note that a more realistic abstract machine would have registers
 instead of variables; in order to support GC table certification
 on such a machine we would have to apply the
 techniques we discuss in the remainder of this paper to the
 register file as well as the stack. This seems straightforward,
-but for the sake of simplicity we will limit our discussion in
+but for the sake of simplicity we will limit we discussion in
 this paper to a collector that can only find roots in the stack.
 The second modification that must be made to the allocation
 rule is significantly more di#cult to formulate. In
@@ -325,7 +328,7 @@ structure that the stack must have in order to be scanned by
 the collector, and express that structure in a way that can
 be enforced by the type system. The type system of LGC -
 is not up to this task, so before continuing we must endow
-it with the expressive power to meet our needs.
+this task with the expressive power to meet we needs.
 2.3 Enriching the Constructor Language
 In order to be able to give a typing constraint in the allocation
 rule that precisely describes the required structure of
@@ -353,7 +356,7 @@ To keep the notation for LGC simple, we allow the syntax
 from LGC - to serve as shorthand, defined as follows:
 (The analogous notation is used for sums.) Finally, we have
 a kind 1 whose sole element is the constructor #, and we add
-the types unit and void to the language. The type unit has
+the types unit and void to the language. the types unit has
 the sole element #, while the type void contains no values.
 The introduction forms and elimination forms for arrows,
 sums and products at the constructor level are the usual
@@ -367,21 +370,21 @@ calls.
 For example, if we define the kind
 senting the natural numbers), then we can define the function
 iter as follows:
-The constructor iter is a function taking a function from
+iter is a function taking a function from
 types to types, a type and a natural number, and returning
 the result of iterating the function on the given type the
 specified number of times.
 Clearly, the pr notation is somewhat unwieldy to read
 and write, so we will use an ML-like notation for working in
-the LX constructor language. We will, for many purposes,
+the LX constructor language. we will, for many purposes,
 combine the notions of inductive and sum kind and define
 datakinds, akin to ML's datatypes. For example, we could
 write the definition of N above as follows:
 datakind
-The function iter would be more readably expressed in ML
+iter would be more readably expressed in ML
 curried function notatin this way:
 | iter # (Succ #(iter #)
-We will often write functions in this style, being careful only
+we will often write functions in this style, being careful only
 to write functions that can be expressed in the primitive
 recursion notation of LX. To further simplify the presenta-
 tion, we will also use the familiar ML constructors list and
@@ -414,11 +417,11 @@ of stack types.
 2. A datakind DD (for "data descriptor"), whose elements
 will be static representations of GC tables. Every program
 in our language will designate one particular constructor
-to be its static GC table, or SGCT. This constructor
-SGCT will have kind DD .
+to be Every program
+in our language static GC table, or SGCT. SGCT will have kind DD .
 3. A constructor interpS : DD # SD # ST, that will
 turn a stack descriptor into a stack type provided that
-it only uses stack frames whose shapes are determined
+a stack descriptor only uses stack frames whose shapes are determined
 by a particular static GC table. We will be careful to
 write interpS such that for any constructors s : SD
 stacks of type interpS SGCT s will
@@ -429,7 +432,7 @@ stack type is #, we need to require that there exist
 some constructor s : SD such that
 course, we do not want the type-checker to have to guess
 the appropriate s, so we change the syntax slightly to make
-it the programmer's responsibility. The next version of our
+the syntax the programmer's responsibility. The next version of we
 allocation rule (modulo the definitions of these new LX ex-
 pressions) is:
 There will be one more development of this rule in Section
@@ -437,10 +440,11 @@ There will be one more development of this rule in Section
 In order for this expression of the interface to the garbage
 collector in terms of SGCT to guarantee correct programs,
 we must be sure that the actual data structure used as the
-GC table agrees with its static representation. While LX
+GC table agrees with the
+GC table static representation. While LX
 is capable of expressing a type for the GC table that guarantees
 this, we have chosen a simpler approach. Rather
-than forcing the program to provide its own GC table in
+than forcing the program to provide the program own GC table in
 both "static" constructor form and "dynamic" value form,
 we assume that the type-checker in our certified code system
 transforms the static GC table into a real GC table and provides
@@ -463,12 +467,13 @@ B.
 3 Describing the Stack
 Since the collector requires the stack to be structured as a
 sequence of frames, our LX representation of the stack type
-will be essentially a list of frame descriptors, which we will
+will be essentially a list of frame descriptors, which our will
 represent by constructors of another datakind, called FD. A
 frame descriptor must allow two major operations: (1) since
 lists of descriptors are passed around in the program instead
 of stack types, it must be possible to interpret a descriptor
-to get the partial stack type it represents, and (2) since we
+to get the partial stack type a descriptor
+ represents, and (2) since we
 are structuring the stack this way so as to ensure agreement
 with a GC table, it must be possible to check a descriptor
 against an entry in the table. The individual entries in the
@@ -481,7 +486,7 @@ layout required by the garbage collector is that the return
 address of one frame determines, via the GC table, the expected
 shape of the next older frame. As a result, in order
 for our constraint on the stack's type before a collection to
-guarantee proper functioning of the collector, we must ensure
+guarantee proper functioning of the garbage collector, our must ensure
 that the value stored in the return address position in
 each frame corresponds, via the static GC table, to the type
 of the next frame.
@@ -489,9 +494,9 @@ To make this happen, we must be able to reason about
 labels-i.e., pointers to code-at the constructor level of
 our language. We therefore lift label literals from the value
 level of the language to the constructor level, and add a new
-primitive kind, L, to classify them. In addition, we add a
+primitive kind, L, to classify them. In addition, We add a
 construct for forming singleton types from labels. Using this
-construct, we will be able to force the return address stored
+construct, We will be able to force the return address stored
 in a stack frame to have precisely the value it must in order
 to correctly predict the shape of the next frame on the stack.
 The syntax and typing rules for labels and singletons are
@@ -513,13 +518,15 @@ argument while maintaining its singleton type; this is
 accomplished by writing v{c}.
 The sensitivity of the garbage collector to labels found in
 the stack raises another issue that must be addressed in the
-typing rule for allocation. In order for the collector to begin
+typing rule for allocation. In order for the garbage collector to begin
 the process of scanning the stack, it must be able to find the
-GC table entry for its caller's frame (i.e., the newest program
+GC table entry for it caller's frame (i.e., the newest program
 frame). It is therefore necessary to associate a label
 with each allocation site, and require that the first frame
-descriptor in the stack descriptor correspond to that label.
-(Since this label is intended to denote the return address
+descriptor in the stack descriptor correspond to a label
+with each allocation site.
+(Since a label
+with each allocation site is intended to denote the return address
 of the call to the garbage collector, we must assume that
 all such labels in the program are distinct.) We also define
 a function retlab of kind DD # SD # L that extracts the
@@ -548,7 +555,7 @@ Figure
 5: Structure and Interpretation of Stack Descriptors
 turn type of the function whose frame it is, and two lists of
 slots. The kind Slot of slots is not defined here; we address
-its definition in the next section. A slot describes a single location
+The kind Slot of slots definition in the next section. A slot describes a single location
 on the stack; a constructor of kind Slot must support
 (1) interpretation into a type in the fashion indicated by the
 arrows in the illustration, and (2) examination to determine
@@ -573,11 +580,13 @@ where programs in a GC-ignorant language would pass stack
 types. For example, the code of a function that takes two
 integers and returns a boolean (such as a comparison func-
 might have the type:
-Unfortunately, this type does not quite capture the relationship
+Unfortunately, the type:
+ does not quite capture the relationship
 between the return address (of type code(-;
 and the caller's frame (which is hidden
-"inside" #). A code block with this type will be unable
-to perform any allocation, because its return address does
+"inside" #). A code block with the type:
+ will be unable
+to perform any allocation, because A code block with this type return address does
 not have a singleton type. In order to give the return address
 a singleton type, we must extract the label from the calling
 frame using the function retlab mentioned in Section 3.1.
@@ -626,10 +635,10 @@ of frames, the condition must
 also guarantee that the frames themselves are correctly described
 by the GC table. To accomplish this, we ensure
 that the equality can only hold if the frame descriptors in
-s are consistent with the information about them contained
+s are consistent with the information about the equality contained
 in SGCT , the GC table's constructor-level representation.
 Since the actual GC table is a mapping from return addresses
-to frame layout information, it makes sense to structure
+to frame layout information, the actual GC table makes sense to structure
 SGCT as a mapping from labels to frame layouts as
 well.
 The basic structure of DD , the kind of SGCT , is given
@@ -637,11 +646,11 @@ in
 
 Figure
 
-7. The static GC table is structured as a list of
+7. the actual GC table is structured as a list of
 pairs, each consisting of a label and a constructor of kind
 FT , which stands for frame template. A frame template is
 essentially an LX constructor representation of the information
-in a real GC table entry; it consists of two lists of table
+in a real GC table entry; A frame template consists of two lists of table
 kind
 kind list - TSlot list
 datakind
@@ -657,14 +666,15 @@ label from the frame descriptor in SGCT and checking each
 of the slots in the FD against the table slots in the FT .
 We will give definitions for Slot and TSlot and discuss this
 consistency checking shortly.
-First, however, we must make one final addition to LGC.
+First, however, We must make one final addition to LGC.
 In order to be able to write the all-important lookupDD
 function that finds the frame template for a given label,
-our constructor language must be able to compare labels
+We constructor language must be able to compare labels
 for equality. The syntax and semantics of label equality at
 the constructor level are given in Figure 8. The constructor
 definitionally equal to c3 if the labels c1
-and c2 are the same, c4 if they are not the same. Note that
+and c2 are the same, c4 if the labels c1
+and c2 are not the same. Note that
 the reduction rules for ifeq only apply when c1 and c2 are
 label literals, so the equational theory remains well-behaved.
 With these constructs in place, lookupDD is easy to write
@@ -687,11 +697,12 @@ Figure
 "monomorphic" we here mean programs in which all the
 values a function places in its stack frame have types that
 are known at compile time. 2 If the type of every value in
-a function's stack frame has a non-variable type, then it
+a function's stack frame has a non-variable type, then the type of every value in
+a function's stack frame has a non-variable type
 can be determined statically whether each slot in the frame
 contains a pointer that must be traced. More importantly,
 the traceability of any slot will be the same for every instance
-of the function. Consequently, the GC table only needs one
+of the function. Consequently, the actual GC table only needs one
 bit for each slot, and all that needs to be checked at each
 allocation site is whether the types of all the slots have the
 traceabilities specified in the table.
@@ -710,13 +721,14 @@ type it represents, and R turns a type representation into
 the type of the value representing that type. The stack interpretation
 function interpS must make use of interp to
 translate a slot (which is really a type representation) into
-a type; we will use R in the next section, when we cover
+a type; We will use R in the next section, when We cover
 polymorphic programs.
 The function checkFD checks that a frame descriptor is
-valid with respect to the static GC table. First, it must
+valid with respect to the actual GC table. First, it must
 look up the frame descriptor's label to get the corresponding
 frame template if there is one. If there is no frame template
-for that label, the descriptor is rejected as invalid. The
+for the frame descriptor's label to get the corresponding
+frame template if there is one, the descriptor is rejected as invalid. The
 2 Note that no nontrivial program in a stack-based language can really
 be totally monomorphic, since every function must be parametric
 in the stack type so that it can be called at any time.
@@ -733,7 +745,8 @@ and uses eqTSlot to determine whether the resulting
 TSlot matches the corresponding one in the frame template.
 To ensure that the stack can be parsed by the garbage
 collector, the interpretation function interpS calls checkFD
-on each of the frame descriptors it sees. This portion of the
+on each of the frame descriptors checkFD
+ sees. This portion of the
 code of interpS is essentially the following:
 (Cons #fd ,
 case checkFD SGCT fd of
@@ -747,7 +760,7 @@ which is an unsatisfiable stack type since the type void is
 uninhabited. If the stack type is interpS SGCT s at some
 reachable program point, then obviously interpS SGCT s
 must be inhabited. Therefore, reduction of this definition
-must not have taken the False branch, so it follows that
+must not have taken the False branch, so the False branch follows that
 all the frame descriptors in s must be valid in the sense of
 checkFD .
 The static GC table for the factorial example from Figure
@@ -766,18 +779,18 @@ have arguments or local variables whose types are di#erent
 each time the function is called. The TILT garbage collector
 handles such stack locations by requiring that, in any
 instance of a polymorphic frame, a value representing the
-type of each of these slots is available. The slot in the GC
-table corresponding to a location whose type is statically un-
+type of each of these slots is available. The slot in the actual GC table corresponding to a location whose type is statically un-
 known, rather than directly giving traceability information,
 tells the collector where the representation can be found.
 TILT allows some flexibility in where the representations
-are stored: they can be on the stack, in a heap-allocated
+are stored: the representations
+ can be on the stack, in a heap-allocated
 record with a pointer to the record on the stack, or in global
-storage. For our purposes, we will assume a simple, flat ar-
+storage. For our purposes, our will assume a simple, flat ar-
 rangment in which the type representations for a frame are
 all stored in that frame.
 The new definitions of Slot and TSlot to account for polymorphism
-are shown in Figure 11. We also slightly modify
+are shown in Figure 11. our also slightly modify
 the definition of FD , the kind of frame descriptors. Any
 frame in a polymorphic program will in general be parametric
 in some number of "unknown" types; since frame descriptors
@@ -808,16 +821,20 @@ new definition of Slot ; in the case of unknown-type and representation
 slots, the frame descriptor will carry a natural
 number indicating which of the type parameters gives the
 type of, or is represented by, the slot. Similarly, there are
-now four choices for a slot in the static GC table. A slot
-may be known to be traceable; it may be known to be un-
-traceable; it may contain a value of variable type; or it may
+now four choices for a slot in the actual GC table. A slot
+may be known to be traceable; A slot
+ may be known to be un-
+traceable; A slot
+ may contain a value of variable type; or A slot
+ may
 contain a representation. These four possibilites correspond
 to the arms of the new TSlot datakind.
 The interpretation of slots into types is now a bit more
 complicated as well; for slots of known type the operation is
 unchanged, but for variable and representation slots interpS
 must look up the appropriate type representation in the list
-given by the frame descriptor. Once this representation is
+given by the frame descriptor. Once the appropriate type representation in the list
+given by the frame descriptor is
 obtained, variable slots are turned into types using interp
 as before, while representation slots are turned into types
 using the R function described before. We therefore write
@@ -851,7 +868,8 @@ of type interp # and boxes it-that is, allocates and returns
 a one-field tuple of type -[interp #] containing that
 value. The stack descriptor provided at the allocation site
 adds a descriptor for the current frame to the pre-existing
-stack descriptor #. This new frame descriptor contains two
+stack descriptor #. The stack descriptor provided at the allocation site
+ contains two
 slots corresponding to the two values (other than the return
 address) that make up the function's stack frame: the
 first, RepSlot Zero, describes the run-time representation
@@ -867,11 +885,12 @@ language into LGC, demonstrating that LGC is expressive
 enough to form the basis of a target of a general-purpose
 compiler.
 The syntax of the source language is shown in Figure 13.
-Its design was driven solely by the goal of removing all explicit
+the source language design was driven solely by the goal of removing all explicit
 GC-related constructs while enabling a straightforward
 translation into LGC. We will briefly mention some
 of the issues that shaped the design of the source language,
-since they highlight the unusual properties of a language
+since some
+of the issues that shaped the design of the source language highlight the unusual properties of a language
 designed with a garbage collection interface in mind.
 Implicit Stack Operations Since the garbage collector requires
 the stack to have a certain structure, it would be very
@@ -947,10 +966,10 @@ operation, which packs a code value together with an environment
 6 Conclusion
 We have presented a language in whose type system the interface
 to a modern high-performance garbage collector can
-be expressed. In so doing, we have demonstrated that code
+be expressed. In so doing, We have demonstrated that code
 certification is indeed compatible with the use of sophisti-
 cated, accurate garbage collection technology. We have described
-the interface of one such collector in our language,
+the interface of one such collector in We language,
 and implemented a prototype type-preserving translation
 from a GC-ignorant source language into our target language
 
@@ -967,7 +986,7 @@ However, it is not clear how to give a formal definition of
 parsability that is any simpler than our specification in Appendix
 B, so such a proof would be unenlightening.
 The interface of our garbage collector is subtle, and
-expressing this interface in a type system requires a fair
+expressing The interface of our garbage collector in a type system requires a fair
 amount of programming at the level of type constructors.
 Type-checking programs in this language, in turn, involves
 deciding equivalences of a lot of large constructors that
@@ -978,7 +997,7 @@ algorithm, and while our implementation is not yet serious
 enough to reach any conclusions about e#ciency, preliminary
 results indicate the amount of work involved is not
 unreasonably large.
-This paper has examined a garbage collector interface
+this paper has examined a garbage collector interface
 based on the one used by the TILT/ML compiler, but considerably
 simpler. However, we believe that what we have
 described is su#cient to handle most of the issues that arise
@@ -1017,7 +1036,7 @@ Managing Memory With Types.
 --TR
 Proof-carrying code
 Flexible type analysis
-From system F to typed assembly language
+From System F to typed assembly language
 Type-preserving garbage collectors
 Principled scavenging
 A parallel, real-time garbage collector

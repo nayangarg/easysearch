@@ -1,18 +1,19 @@
 --T
 Transparent distributed processing for rendering.
 --A
-Rendering, in particular the computation of global illumination, uses computationally very demanding algorithms. As a consequence many researchers have looked into speeding up the computation by distributing it over a number of computational units. However, in almost all cases did they completely redesign the relevant algorithms in order to achieve high efficiency for the particular distributed or parallel environment.
+Rendering, in particular the computation of global illumination, uses computationally very demanding algorithms. As a consequence many researchers have looked into speeding up the computation by distributing the computation over a number of computational units. However, in almost all cases did almost all cases completely redesign the relevant algorithms in order to achieve high efficiency for the particular distributed or parallel environment.
 At the same time global illumination algorithms have gotten more and more sophisticated and complex. Often several basic algorithms are combined in multi-pass arrangements to achieve the desired lighting effects. As a result, it is becoming increasingly difficult to analyze and adapt the algorithms for optimal parallel execution at the lower levels. Furthermore, these bottom-up approaches destroy the basic design of an algorithm by polluting it with distribution logic and thus easily make it unmaintainable.
 In this paper we present a top-down approach for designing distributed applications based on their existing object-oriented decomposition. Distribution logic, in our case based on the CORBA middleware standard, is introduced transparently to the existing application logic. The design approach is demonstrated using several examples of multi-pass global illumination computation and ray-tracing. The results show that a good speedup can usually be obtained even with minimal intervention into existing applications.
 --B
 INTRODUCTION
-Usually, distributed algorithms differ considerably from their non-distributed
+Usually, distributed algorithms differ considerably from distributed algorithms non-distributed
 versions. In order to achieve optimal performance, care-
 Am Weichselgarten 9, 91058 Erlangen, Germany
 Email: kipfer@informatik.uni-erlangen.de
 y Gates Building 364-3B, Stanford, CA, 94306, USA
 ful attention has be paid to issues such as load-balancing, communication
-patterns, and data and task management. These issues can
+patterns, and data and task management. issues such as load-balancing, communication
+patterns, and data and task management can
 easily dominate the core application logic of distributed algorithms.
 This is in particular true for systems that allow for the flexible combination
 of different distributed algorithms at run-time.
@@ -44,24 +45,25 @@ object-orientation, the encapsulation of data and algorithms in units
 that communicate via messages, carries over nicely to distributed
 systems where objects now live in separate address spaces. All that
 needs to be changed, is the way these objects communicate with
-each other, so they do not need to be aware of the fact that a peer
+each other, so these objects do not need to be aware of the fact that a peer
 object may actually be located on a different computational unit.
 Object-oriented middleware like CORBA [OMG98a] already
 provides much of the required distribution infrastructure, such as
 location, communication, and network transparency. However,
 from a programmers perspective, CORBA is still highly visible
 due to CORBA-specific types in interface definitions and the requirements
-that distributed objects and their proxies derive from
+that distributed objects and distributed objects proxies derive from
 CORBA-specific classes. Furthermore, interfaces that work well
 with colocated objects can result in high communication costs if
-these objects get separated across a network. This raises the need
+colocated objects get separated across a network. This raises the need
 to transparently adapt the interfaces for objects that may be distributed
 
 In the remainder of this paper we present several design patterns
 for hiding the distribution infrastructure in distributed object-oriented
-systems. These patterns emerged from our work on
+systems. several design patterns
+ emerged from our work on
 speeding-up an existing large system for rendering and global illumination
-[SS95] by distributing it across a network of computers.
+[SS95] by distributing [SS95] across a network of computers.
 For educational purposes, we required the distribution infrastructure
 to be highly invisible to the normal programmer. For practical
 reasons we could not afford to redesign the whole system around
@@ -90,8 +92,8 @@ Several object-oriented frameworks for supporting parallel or
 distributed programming have been suggested (e.g. POET [MA] or
 [Jez93]). POET is a C++ toolkit that separates the algorithms
 from the details of distributed computing. User code is written as
-callbacks that operate on data. This data is distributed transparently
-and user code is called on the particular nodes on which the data is
+callbacks that operate on data. data is distributed transparently
+and user code is called on the particular nodes on which data is
 available. Although POET as well as all other frameworks abstracts
 from the underlying message passing details, it requires to adapt the
 algorithms to the given structure of the framework and is thus not
@@ -104,13 +106,14 @@ distributed computing, the demands on the code are significant and
 by no means transparent to the programmer, which is the main goal
 of our efforts.
 DISTRIBUTION
-In the following we present an integrated approach to parallelization
+In the following our present an integrated approach to parallelization
 and distribution of application modules. It is based on the fact,
 that object-oriented systems should be and usually are composed of
 several quite independent subsystems. In contrast to addressing parallelization
 at the level of individual objects, larger subsystems of
 objects usually offer a better suited granularity for distributing computation
-across computers. These subsystems are often accessed
+across computers. larger subsystems of
+objects are often accessed
 through the interface of a single object using the "facade" design
 pattern [GHJV95].
 In an application based on this common design approach,
@@ -118,9 +121,9 @@ these few facade classes can easily be mapped to CORBA interfaces
 [OMG97], providing the basis for distributing the applica-
 tion. However, this initial step does not solve our problem, as the
 CORBA-specific code would be introduced at the heart of our application
-and we do not want the details of distribution to be visible
+and our do not want the details of distribution to be visible
 to a developer. Ideally developers should be able to concentrate
-on their problem instead of being unnecessarily forced to consider
+on Ideally developers problem instead of being unnecessarily forced to consider
 distribution-specific issues, like network latencies, CORBA-types,
 request-bundling for optimized transport, marshaling and object se-
 rialization, mapping of class creation requests to factory methods,
@@ -139,20 +142,23 @@ Figure
 
 1: Wrapping existing implementations promotes code reuse
 by enabling traditional classes to communicate with the distributed
-system through the services provided by the wrapper. Because these
-services emulate the traditional interfaces to the contained class,
+system through the services provided by the wrapper. Because the services provided by the wrapper emulate the traditional interfaces to the contained class,
 and with the help of templates, this requires almost no manual coding
 
 We have chosen to build a new distribution interface that completely
 hides the CORBA distribution infrastructure from the appli-
-cation. This new interface provides the illusion of traditional, non-distributed
+cation. a new distribution interface that completely
+hides the CORBA distribution infrastructure from the appli-
+cation provides the illusion of traditional, non-distributed
 classes to the outside, while internally implementing optimized
-distributed object invocations. It is based on asynchronous
+distributed object invocations. a new distribution interface that completely
+hides the CORBA distribution infrastructure from the appli-
+cation is based on asynchronous
 communication with a multi-threaded request-callback scheme to
 enable a maximum of parallelism. Additionally, the framework
 performs load balancing and bundling of requests to avoid network
 latencies. These are the key concepts that allow us to optimally
-make use CORBA and its current synchronous method invocation
+make use CORBA and CORBA current synchronous method invocation
 paradigm (the new CORBA Messaging specification [OMG98b]
 add asynchronous method invocation, but is only now becoming
 available).
@@ -162,11 +168,11 @@ communication transport control and synchronization and many
 other services (see below). Our wrapper for the subsystems that
 contain the rendering and illumination algorithms use and inherit
 from these base classes.
-For example, our main management class, which controls the
+For example, Our main management class, which controls the
 overall execution of the rendering task, must be able to define certain
 synchronization points to ensure that all distributed objects
 have the same view on the whole system. This occurs for example
-when waiting for all distributed rendering objects to finish their
+when waiting for all distributed rendering objects to finish all distributed rendering objects
 setup and scene parsing routines before invoking rendering com-
 mands. Additionally, this management classes provide host machine
 information, a scripting engine for configuring the distribution
@@ -181,7 +187,7 @@ wrappers for entire subsystems. A wrapper actually consists of two
 half-wrappers that encapsulate the subsystem as a CORBA client
 (calling) and as a server (called). We assume that a subsystem is
 represented by at least one abstract C++ facade class, that defines
-the interface of the subsystem. We also assume that the subsystem
+the interface of a subsystem. We also assume that the subsystem
 communicates with the outside through interfaces defined by
 similar facade classes.
 We replicate each of these interfaces in CORBA IDL using struc-
@@ -215,7 +221,7 @@ any bundled messages that arrive, and managing asynchronous
 calls (see Figure 1).
 For the client role of a wrapped subsystem, we need to instantiate
 C++ classes that derive from a distributed C++ proxy template.
-They translate the calls from the old C++ interface to calls, that
+C++ classes that derive from a distributed C++ proxy template translate the calls from the old C++ interface to calls, that
 use the CORBA object references. This layer is also responsible
 for bundling individual calls and using new asynchronous interface
 methods for bundled requests within the CORBA interface.
@@ -229,20 +235,21 @@ like any other part of the traditional system using the old C++ interfaces
 
 The biggest benefit of using this kind of wrappers is the possibility
 of reusing existing code. While this does not take advantage
-of parallelization within a subsystem, it enables the distribution and
+of parallelization within a subsystem, this enables the distribution and
 parallelization of different subsystems. This can be of great value,
 in particular when multiple memory-intensive algorithms have to
 be separated across multiple machines. The interfaces, provided by
 the wrappers, finally allow wrapped traditional objects to transparently
-cooperate with other distributed objects as they are introduced
+cooperate with other distributed objects as The interfaces, provided by
+the wrappers are introduced
 in Section 2.3.
 2.2 Replication and Request-Multiplexing
 In order for old code to use distributed subsystems, we need an
-additional wrapper. Its interface is derived from the old C++ facade
-interface, but it translates the messages to corresponding calls
+additional wrapper. an
+additional wrapper interface is derived from the old C++ facade
+interface, but Its interface translates the messages to corresponding calls
 to distributed CORBA objects, e.g. those from Section 2.1. As
-mentioned before, this translation has several aspects. For one, it
-translates between traditional and CORBA types where object data
+mentioned before, this translation has several aspects. For one, this translationtranslates between traditional and CORBA types where object data
 needs to be copied into IDL structures. Second, small individual requests
 may be accumulated and sent across the network in bundles,
 thus avoiding network traffic overhead.
@@ -273,7 +280,7 @@ Figure
 equivalent objects either distributed across a network (data-parallel
 ray-tracers) or running in different threads (colocated lighting ob-
 jects). Note that the multiplexers do not contain the computation
-classes, rather they supply the requests and manage the transport
+classes, rather the multiplexers supply the requests and manage the transport
 of the responses. The embedded request managers use a re-
 quest/callback model and a thread pool to achieve asynchronous
 communication.
@@ -283,7 +290,8 @@ of CORBA method calls, multiplexing needs to use the request-
 callback scheme [SV96] provided by our base classes.
 Load balancing is performed by sending requests to the server
 with the lowest load. To this end, the servers maintain FIFOs of requests
-to balance network latencies. The fill-level of those FIFOs is
+to balance network latencies. The fill-level of FIFOs of requests
+ is
 communicated back to the wrappers piggy-packed on data returned
 in the callbacks.
 Using this scheme, the multiplexed classes look to the outside
@@ -315,7 +323,7 @@ protected:
 vector  lightOpList_;
 2.3 Transparent Services
 Some subsystems are computational bottlenecks and promise to offer
-substantial speed-up when they are completely re-implemented
+substantial speed-up when Some subsystems completely re-implemented
 Request
 Thread
 Manager
@@ -335,7 +343,7 @@ as thread-pool handling, mutexes, factories for one-to-many and
 many-to-one operating threads and their synchronization, runtime
 system state and type information.
 This pattern is the most powerful form of creating a new computation
-object for the distributed system. It does however require
+object for the distributed system. the distributed system does however require
 knowledge about the design and behavior of the distribution ser-
 vices. Because the wrapper classes provide the CORBA interface
 to the other traditional subsystems of the framework, a distributed
@@ -343,11 +351,11 @@ or parallel implementation of a subsystem can easily access them
 directly.
 A good example is a class that performs distributed lighting computation
 using the PhotonMap algorithms [Jen96] (see Figure 4
-shows our implementation). We reuse existing code for tracing of
+shows our implementation). our reuse existing code for tracing of
 photons from the light sources and for reconstructing illumination
 information. Both reused object implementations are wrapped with
-the patterns described above. Because the algorithm is aware of its
-distributed or parallel nature, it can steer and adapt to the computational
+the patterns described above. Because the algorithm is aware of the algorithm
+distributed or parallel nature, the algorithm can steer and adapt to the computational
 requirements, e.g. by adding new particle tracer threads on
 a multi-processor machine or adding new instances of distributed
 objects. This scheme allows the programmer to gradually make selected
@@ -391,9 +399,10 @@ multiplexer for speed-up.
 ffl The learning effort for beginners can be reduced dramatically
 by a transparent distribution infrastructure - in particular if
 compared to other distribution frameworks and the large number
-of new software concepts introduced by them.
+of new software concepts introduced by 
+.
 ffl Our distribution framework transparently supports modularization
-and helps to structure the framework into toolkits with
+and helps to structure Our distribution framework into toolkits with
 well defined interfaces. This can help to reduce the overall
 programming effort, and promotes a better understanding of
 the big picture.
@@ -413,7 +422,9 @@ The Vision rendering architecture [SS95] is an object-oriented system
 for physically-based realistic image synthesis. The Lighting
 Network within the Vision frame-work
 provides an object-oriented way of dealing with functional
-decomposition for lighting calculations. It implements the lighting
+decomposition for lighting calculations. The Lighting
+Network within the Vision frame-work
+ implements the lighting
 subsystem for Vision by decomposing the global illumination
 computations into a set of lighting operators that each perform a
 partial lighting simulation. Conceptually, these "LightOps" take
@@ -424,8 +435,8 @@ flexibly by simulating any light-paths in a multi-pass fashion
 [CRMT91].
 The Lighting Network acts as a data flow network much in the
 spirit of AVS [UFK + 89] or similar systems. Figure 5 shows a
-example of a very simple distributed Lighting Network. It uses
-two basic LightOps to perform direct lighting, adds their individual
+example of a very simple distributed Lighting Network. Figure 5 uses
+two basic LightOps to perform direct lighting, adds two basic LightOps individual
 contributions, and then performs indirect lighting computa-
 tions. The result is the sum of the direct and the indirect illumination
 (also see Figure 8). Direct illumination from light sources
@@ -462,7 +473,7 @@ the incident illumination at that point. This illustrates the clear
 separation of independent computation within the Vision rendering
 framework.
 We have applied the presented distribution framework to the
-Rendering and Lighting Network subsystem in Vision in that we
+Rendering and Lighting Network subsystem in Vision in that We
 allow individual Renderer and LightOp objects to be distributed
 across a network or to be run in parallel through the use of threads.
 
@@ -479,7 +490,8 @@ Figure
 
 7 shows a running distributed Vision system. Note that
 hosts 1 and 2 contain multiple concurrent LightOps within a lighting
-network. They should therefore have multiple processors to
+network. a lighting
+network should therefore have multiple processors to
 enable functional parallelism.
 The basic operating system functions are accessed via the
 portable operating system adaption layer interface of the ACE library
@@ -489,9 +501,10 @@ To facilitate further development and maintenance,
 the design of the base classes follows the guidelines of several design
 patterns [GHJV95, CS98, LS96, SHP97, McK95].
 1 The external polymophism pattern [CS98] allows treating non-polymorphic
-classes as if they have the proper inheritance relationship, by
+classes as if non-polymorphic
+classes have the proper inheritance relationship, by
 providing all classes with a method that simply delegates the calls to a sufficiently
-global template signature adapter (that's why it's called external)
+global template signature adapter (that's why This section's called external)
 who in turn calls the method that performs the task.
 This section demonstrates the flexibility of the presented distribution
 and parallelization framework as applied to the Vision rendering
@@ -524,7 +537,8 @@ method calls to transfer requests over the 100 MBit/s
 network in the case of asynchronous communication, compared to
 synchronous invocations in the second case. Both networks
 transfer identical 22.7 MB of request data through CORBA
-marshaling. It is the synchronous protocol of CORBA that blocks
+marshaling. It is the synchronous protocol of CORBA
+ that blocks
 the client until the server has completed the method call which is responsible
 for the poor performance in the second case. This shows
 clearly the important fact, that latency can be almost entirely hidden
@@ -535,7 +549,8 @@ To optimize rendering times in the case of calculating previews or
 testing new computation class implementations, we pick up the example
 from Section 2.2 (see Figure 3). The following configuration
 of a distributed Vision system shows the best achievable speedup
-we have found using our framework. It uses 4 hosts with a total
+we have found using our framework. The following configuration
+of a distributed Vision system uses 4 hosts with a total
 of 8 processors. There are 8 ray-tracers to work in data-parallel
 mode and 6 lighting modules. Each group is controlled by a multi-
 plexer. The distribution framework ensures that all communication
@@ -588,19 +603,75 @@ Renderer
 
 Figure
 
-7: Example of a running distributed Vision system. The master renderer controls the data-parallel activity of the slave renderers on
+7: Example of a running distributed Vision system. Host 4
+Host 3
+Host 2
+Host 1 Host 0
+Master
+Renderer
+Slave
+Vision
+Slave
+Renderer
+Slave
+HostManager
+HostManager
+Vision
+Vision
+HostManager
+Renderer
+Lighting
+Op
+Vision
+HostManager
+HostManager
+NetManager
+Master
+Renderer
+
+Figure
+
+7: Example of a running distributed Vision system renderer controls the data-parallel activity of the slave renderers on
 hosts 3, 4 and 5. The MultiLighting on host 0 is the facade of the lighting subsystem, which is a lighting network residing on hosts 1 and 2
-(it can also be further distributed as shown in later examples). Its entry point is the MasterLightOp, which controls the other LightOps. Note
+(The MultiLighting on host 0 can also be further distributed as shown in later examples). The MultiLighting on host 0 entry point is the MasterLightOp, which controls the other LightOps. Note
 that this functional parallelization also communicates asynchronously in a pipeline fashion (indicated by the solid arrows), enabling parallel
-execution if a host has multiple processors. A single NetManager and a HostManager on each host are responsible for bootstrapping the
+execution if a host has multiple processors. A single NetManager and a Host 4
+Host 3
+Host 2
+Host 1 Host 0
+Master
+Renderer
+Slave
+Vision
+Slave
+Renderer
+Slave
+HostManager
+HostManager
+Vision
+Vision
+HostManager
+Renderer
+Lighting
+Op
+Vision
+HostManager
+HostManager
+NetManager
+Master
+Renderer
+
+Figure
+
+7: Example of a running distributed Vision system on each host are responsible for bootstrapping the
 system onto the network by providing initial object factory methods (dashed arrows).
-CPU, the multiplexer synchronizes them in order not to overload
+CPU, the multiplexer synchronizes CPU in order not to overload
 the machine. Configuring this system, required just to name the
 hosts and the Lightop with it's parameters in a configuration file.
 The TCL scripts for system setup take care of distributing the objects
-using the Net- and HostManager of Figure 7. This distributed
+using the Net- and HostManager of Figure 7. the
 system is compared to the traditional Vision system with a single
-thread of control, running on the fastest machine in a single address
+thread of control, running on the machine in a single address
 space and calculating lighting with the very same LightOp implementation
 
 As
@@ -611,7 +682,8 @@ Table
 maximum of 12.5%. The overhead of  90 seconds consists of
 seconds session setup, 5 seconds of additional parsing on the
 CORBA startup client and another 5 seconds delay for allowing
-the hosts to clean up the CORBA objects before the main CORBA
+the hosts to clean up the CORBA
+ objects before the main CORBA
 startup client shuts down all Vision instances. After subtracting this
 overhead, we obtain a penalty of  13% during the rendering phase
 for the distributed system. We believe this is a very good result,
@@ -635,8 +707,8 @@ LightOp takes much more time to process a request, than any of
 the other LightOps in the lighting network. Consequently, a multiplexer
 is used to distribute this LightOp onto 3 hosts. In contrast,
 the three other LightOps are executed on multi-processor machines,
-because their reconstruction method is fast and the communication
-between them can be optimized, if the CORBA implementation
+because the three other LightOps reconstruction method is fast and the communication
+between the three other LightOps can be optimized, if the CORBA implementation
 supports object collocation. In order to drive this complex lighting
 subsystem, two hosts execute rendering objects controlled by a
 multiplexer in a data-parallel way.
@@ -666,10 +738,10 @@ some speed-up without any change to the application logic.
 Apart form that, one has also to take into account, that while a
 traditional system performs quite well in this case in terms of execution
 speed, it is severely limited by the host's memory resources.
-Especially the PhotonMap LightOp needs to store many photons
+Especially this LightOp needs to store many photons
 that have been shot into the scene when working with large scene
 descriptions. The distributed PhotonMap LightOps in this example
-have the memory of three hosts to their disposition. Further-
+have the memory of three hosts to The distributed PhotonMap LightOps disposition. Further-
 more, the initial shooting of particles is done in parallel, reducing
 the Lighting setup time needed to one seventh (there are 7 processors
 on the three hosts), which is of great value when simulating
@@ -742,7 +814,7 @@ Table
 compared to the traditional single-threaded system.
 Although there certainly is a price to pay for the flexibility of our
 distribution strategy, we obtain high degrees of freedom in configuring
-the distributed system and adapting it to the challenges of a
+the distributed system and adapting the distributed system to the challenges of a
 specific lighting network.
 We presented a general approach on providing a transparent infrastructure
 for distributing object-oriented systems and used this infrastructure
@@ -762,15 +834,18 @@ of asynchronous messaging to CORBA should help tremendously
 
 The implementation of distribution functionality within a few
 base classes makes distribution issues totally transparent to an application
-programmer. We demonstrated the approach with examples
+programmer. we demonstrated the approach with examples
 for the Vision rendering framework, to which it provides transparent
 data-parallelism and distribution of the existing object struc-
 ture. Developers of new computation classes are free to use the
 distribution infrastructure to add distribution aware modules or to
-wrap existing algorithms and distribute them across a network of
+wrap existing algorithms and distribute 
+wrap existing algorithms across a network of
 computers.
-The distribution infrastructure has proven to be practical and sta-
-ble. It offers well-defined interfaces without imposing any limitations
+the
+distribution infrastructure has proven to be practical and sta-
+ble. the
+distribution infrastructure offers well-defined interfaces without imposing any limitations
 on the remaining parts of the Vision system. Distributed lighting
 networks simply can be constructed and configured by scripts
 that specify the location and parameterization of specific modules

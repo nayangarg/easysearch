@@ -1,7 +1,7 @@
 --T
 Buffer management in shared-memory Time Warp systems.
 --A
-Mechanisms for managing message buffers in Time Warp parallel simulations executing on cache-coherent shared-memory multiprocessors are studied. Two simple buffer management strategies called the sender pool and receiver pool mechanisms are examined with respect to their efficiency, and in particular, their interaction with multiprocessor cache-coherence protocols. Measurements of implementations on a Kendall Square Research KSR-2 machine using both synthetic workloads and benchmark applications demonstrate that sender pools offer significant performance advantages over receiver pools. However, it is also observed that both schemes, especially the sender pool mechanism, are prone to severe performance degradations due to poor locality of reference in large simulations using  substantial amounts of message buffer memory. A third strategy called the partitioned buffer pool approach is proposed that exploits the advantages of sender pools, but exhibits much better locality. Measurements of this approach indicate that the partitioned pool mechanism yields substantially better performance than both the sender and receiver pool schemes for large-scale, small-granularity parallel simulation applications.The central conclusions from this study are: (1) buffer management strategies play an important role in determining the overall efficiency of multiprocessor-based parallel simulators, and (2) the partitioned buffer pool organization offers significantly better performance than the sender and receiver pool schemes. These studies demonstrate that poor  performance may result if proper attention is not paid to realizing an efficient buffer management mechanism.
+Mechanisms for managing message buffers in Time Warp parallel simulations executing on cache-coherent shared-memory multiprocessors are studied. Two simple buffer management strategies called the sender pool and receiver pool mechanisms are examined with respect to Two simple buffer management strategies called the sender pool and receiver pool mechanisms efficiency, and in particular, Two simple buffer management strategies called the sender pool and receiver pool mechanisms interaction with multiprocessor cache-coherence protocols. Measurements of implementations on a Kendall Square Research KSR-2 machine using both synthetic workloads and benchmark applications demonstrate that sender pools offer significant performance advantages over receiver pools. However, it is also observed that both schemes, especially the sender pool mechanism, are prone to severe performance degradations due to poor locality of reference in large simulations using  substantial amounts of message buffer memory. A third strategy called the partitioned buffer pool approach is proposed that exploits the advantages of sender pools, but exhibits much better locality. Measurements of this approach indicate that the partitioned pool mechanism yields substantially better performance than both the sender and receiver pool schemes for large-scale, small-granularity parallel simulation applications.The central conclusions from this study are: (1) buffer management strategies play an important role in determining the overall efficiency of multiprocessor-based parallel simulators, and (2) the partitioned buffer pool organization offers significantly better performance than the sender and receiver pool schemes. These studies demonstrate that poor  performance may result if proper attention is not paid to realizing an efficient buffer management mechanism.
 --B
 Introduction
 Large-scale shared-memory multiprocessors such as the
@@ -14,22 +14,23 @@ SparcServer becoming common in engineering and scientific
 computing laboratories. As technological advances enable multiple
 CPUs to be placed within a single chip or substrate of a
 multi-chip module, the simpler programming model offered by
-shared-memory machines will enable them to remain an important
+shared-memory machines will enable shared-memory machines to remain an important
 class of parallel computers in the foreseeable future.
 It is well known that many large-scale discrete event simulation
 computations are excessively time consuming, and are
 a natural candidate for parallel computation. Time Warp is a
 well known synchronization protocol that detects out-of-order
-executions of events as they occur, and recovers using a rollback
+executions of events as out-of-order
+executions of events occur, and recovers using a rollback
 mechanism [8]. Time Warp has demonstrated some success in
 speeding up simulations of combat models [14], communication
 networks [12], queuing networks [4], and digital logic circuits
 [1], among others. We assume that the reader is familiar with
 the Time Warp mechanism described in [8].
-Here, we are concerned with the efficient implementation of
+Here, We are concerned with the efficient implementation of
 Time Warp on shared-memory multiprocessor computers. While
 prior work in this area has focused on data structures [4], synchronization
-[9], or implementation of shared state [6, 11], we
+[9], or implementation of shared state [6, 11], We
 are concerned here with efficient buffer management strategies
 for message passing in shared-memory machines.
 We assume that the hardware platform is a cache-coherent,
@@ -44,7 +45,7 @@ copies in other caches when one processor modifies the block,
 or updating duplicate copies [13].
 We are particularly concerned with large-scale, small-
 granularity discrete-event simulation applications. Specifi-
-cally, we envision applications containing thousands to tensor
+cally, We envision applications containing thousands to tensor
 hundreds- of thousands of simulator objects, but only a modest
 amount of computation per simulator event. Each event may
 require the execution of as little as a few hundreds of machine in-
@@ -52,29 +53,34 @@ structions. Small granularity arises in many discrete-event simulation
 applications, e.g., cell-level simulations of asynchronous
 transfer mode (ATM) networks, simulations of wireless personal
 communication services networks, and gate-level simulations of
-digital logic circuits. For these applications, even a modest
+digital logic circuits. For many discrete-event simulation
+applications, e.g., cell-level simulations of asynchronous
+transfer mode (ATM) networks, simulations of wireless personal
+communication services networks, and gate-level simulations of
+digital logic circuits, even a modest
 amount of overhead in the central event processing mechanism
 can lead to substantial performance degradations. Thus, it is important
 that overheads incurred in the message passing and event
 processing loop in the parallel simulation executive be kept to a
 minimum.
 Message-passing is fundamental to the Time Warp mecha-
-nism. Because message-passing is utilized so frequently, it is
-crucial that it be efficiently implemented, particularly for small
+nism. Because message-passing is utilized so frequently, message-passing is
+crucial that message-passing be efficiently implemented, particularly for small
 granularity simulations. As will become apparent later, efficient
 buffer management is essential to achieving an efficient message
 passing mechanism. This is the issue that is examined here.
 The remainder of this paper is organized as follows. In section
 2 we describe the underlying message passing mechanism
-that is assumed throughout this study, and contrast it with message
+that is assumed throughout this study, and contrast this study with message
 passing mechanisms in message-based parallel computers.
 Section 3 describes a simple approach to buffer allocation that
 we call receiver pools. An alternative approach called sender
-pools is then proposed, and its performance relative to receiver
+pools is then proposed, and An alternative approach called sender
+pools performance relative to receiver
 pools is compared, and evaluated experimentally using an implementation
 executing on a KSR-2 multiprocessor. In section 4
 we observe that while the sender pool approach is generally
-superior to the receiver pool approach, it suffers severe performance
+superior to the receiver pool approach, the sender pool approach suffers severe performance
 degradations in simulations utilizing large amounts of
 memory. Section 5 describes a third mechanism called the partitioned
 pool approach that addresses this flaw in the sender pool
@@ -86,18 +92,20 @@ studies demonstrate that the partitioned pool approach yields
 superior performance compared to the other two mechanisms.
 2 The Message Passing Mechanism
 Let us first consider the implementation of message passing
-in a shared-memory multiprocessor. We assume the Time Warp
+in a shared-memory multiprocessor. us assume the Time Warp
 executive maintains a certain number of memory buffers, and
 each contains the information associated with a single event (or
-message; we use these terms synonymously here). Transmitting
+message; us use these terms synonymously here). Transmitting
 a message from one processor to another involves the following
 steps:
 1. the sender allocates a buffer to hold the message,
 2. the sender writes the data being transmitted into the message
 
-3. the sender enqueues a pointer to the message into a queue
+3. the sender enqueues a pointer to the message
+
+3 into a queue
 that is accessible to the receiver, and
-4. the receiver detects the message in the queue, removes it,
+4. the receiver detects the message in the queue, removes the receiver,
 and then reads, and (possibly) modifies the contents of the
 message buffer.
 In many Time Warp systems the message buffer will include
@@ -110,7 +118,9 @@ itself, although the Time Warp executive would have to maintain
 a separate copy in case a rollback occurs. Alternatively, the
 pointer and flag fields may be kept in a separate data structure
 that is external to the message buffer, in which case the contents
-of the message may not be modified by the receiver.
+of the message
+
+3 may not be modified by the receiver.
 The essential question we will be concerned with here is the
 organization of the pool of free (unallocated) message buffers.
 A central global pool will clearly become a bottleneck. A nat-
@@ -121,16 +131,23 @@ It is instructive to contrast the message passing mechanism
 described above with that in a message-based parallel computer.
 In a message-based machine, a pool of unallocated memory
 buffers is maintained in each processor, and a new buffer must
-be allocated prior to sending the message. After the message
-is written into the buffer, it is transmitted to the destination
-processor, and the buffer is reclaimed and returned to the sending
+be allocated prior to sending the message
+
+3. After the message
+
+3is written into a new buffer, the message
+
+3 is transmitted to the destination
+processor, and a new buffer is reclaimed and returned to the sending
 By contrast, in a shared-memory multiprocessor, the message
-need not be explicitly transmitted (copied) to the receiver as is
+
+3need not be explicitly transmitted (copied) to the receiver as is
 required in message-passing machines. Instead, it is sufficient
 to pass only a pointer to the message buffer to the destination
 processor. The memory caching mechanism will transparently
-transfer the contents of the message when it is referenced by the
-receiver.
+transfer the contents of the message
+
+3 when The memory caching mechanism is referenced by the receiver.
 A second difference between message-passing and shared-memory
 architectures is that the latter provides a global address
 space. This presents a much richer set of possible buffer organizations
@@ -142,58 +159,87 @@ a single event. Each processor maintains a pool of free (unallo-
 cated) buffers. A single buffer is allocated prior to each message
 send. Buffers are reclaimed during message cancellation or fossil
 collection. In either case, the processor that last received the
-buffer via a message send is responsible for adding it to the free
+buffer via a message send is responsible for adding a message send to the free
 pool.
 Key issues in the discussions that follow are the interaction
 between the cache coherence protocol and the message sending
 mechanism, and the number of lock operations that are required.
 Because these operations require accesses to non-local memory,
-they are typically very expensive in existing machines. For
+these operations are typically very expensive in existing machines. For
 instance, on the KSR-2, tens to hundreds of machine instructions
 may be executed in the time for a single cache miss, and hundreds
 to thousands of instructions may be executed in the time for a
 single lock operation.
 3.1 Receiver Pools
 One simple approach to managing free buffers is to associate
-each pool with the processor receiving the message. This means
+each pool with the processor receiving the message
+
+3. This means
 the buffer allocation routine obtains an unused buffer from the
-buffer pool of the processor receiving the message prior to each
+buffer pool of the processor receiving the message
+
+3 prior to each
 message send. We call this the receiver pool strategy.
 Althoughsimple to implement, receiver pools suffer from two
 drawbacks. First, locks are required to synchronize accesses
 to the free pool, even if both the sender and receiver LP are
-mapped to the same processor. 1 This is because the processor's
-list is shared among all processors that send messages to
-this processor. The second drawback is concerned with caching
+mapped to the destination
+processor. 1 This is because the destination
+processorlist is shared among all processors that send messages to
+the destination
+processor. The second drawback is concerned with caching
 effects, as discussed next.
 In multiprocessor systems using invalidate-based cache-coherence
 protocols, receiver pools do not make effective use
 of the cache. Buffers in the free pool for a processor will usually
-be resident in the cache for that processor, assuming the
+be resident in the cache for the destination
+processor, assuming the
 buffer has not deleted by the cache's replacement policy. This
-is because in most cases, the buffer was last accessed by the
-event processing procedure executing on that processor. Assume
+is because in most cases, the
+buffer was last accessed by the
+event processing procedure executing on the destination
+processor. Assume
 the sender and receiver for the message reside on different
-processors. When the sending processor allocates a buffer at the
-receiver and writes the message into the buffer, a series of cache
-misses and invalidations occur as the buffer is "moved" to the
-sender's cache. Later, when the receiver dequeues the message
-buffer and places it into its local queue, a second set of misses
+processors. When the destination
+processor allocates a buffer at the
+receiver and writes the message
+
+3 into the
+buffer, a series of cache
+misses and invalidations occur as the
+buffer is "moved" to the
+sender's cache. Later, when the
+receiver dequeues the message
+
+3buffer and places the message
+buffer into the message
+buffer local queue, a second set of misses
 occur and the buffer contents are again transferred back to the
 receiver's cache. Invalidations will also occur if the message
-buffer is modified when it is received or processed. Thus, two
+buffer is modified when the message
+
+3 is received or processed. Thus, two
 rounds of cache misses, and one or two rounds of invalidations
 occur with each message transmission.
 3.2 Sender Pools
 An alternative approach is to use sender pools. In this scheme,
-the sending processor allocates a buffer from its own local pool
-(i.e., the buffer pool of the processor sending the message), writes
-the message into it, and enqueues it at the receiver. With this
-scheme, the free pool is local to each processor, so no locks are
+the destination
+processor allocates a buffer from the destination
+processor own local pool
+(i.e., the buffer pool of the processor sending the message
+
+3), writes
+the message into it, and enqueues it at the
+receiver. With this scheme, the free pool is local to each processor, so no locks are
 required to control access to it. Also, when the sender allocates
-the buffer and writes the contents of the message into it, memory
+the buffer and writes the contents of the message
+
+3 into the message
+
+3, memory
 references will hit in the cache in the scenario described above.
-When the receiving processor accesses the message buffer, cache
+When the destination
+processor accesses the message buffer, cache
 misses and possibly invalidations occur, as was the case in the
 receiver pool mechanism. Thus, a round of cache misses are
 avoided when using sender pools compared to the receiver pool
@@ -201,7 +247,8 @@ approach.
 Sender pools create a new problem, however. Each message
 send, in effect, transfers the buffer from the sending to the
 receiving processor's buffer pool, because message buffers are
-always reclaimed by the receiver during fossil collection or can-
+always reclaimed by the
+receiver during fossil collection or can-
 cellation. Each buffer, in effect, "migrates" from processor to
 processor in a more or less random fashion as it reused for message
 sends to different processors. By contrast, in the receiver
@@ -238,21 +285,39 @@ ditional, unnecessary update traffic among the caches. To see
 this, consider the following. In the receiver pool scheme, the
 buffer will reside in the cache of the receiving processor, assuming
 again that there is sufficient space in the cache. When the
-sender writes the message into the buffer, misses occur (unless
-the buffer was recently referenced by the sending processor in
+sender writes the message
+
+3 into the
+buffer, misses occur (unless
+the
+buffer was recently referenced by the sending processor in
 another message send), but the update protocol will automatically
-transfer the message via cache updates to the receiver's
-copy of the buffer, resulting in cache hits when the receiver reads
-the message. In the sender pool scheme, cache hits will occur
-when the sender writes the message into the buffer, but receiver
-accesses will result in cache misses unless the buffer is already in
+transfer the message
+
+3 via cache updates to the receiver's
+copy of the
+buffer, resulting in cache hits when the
+receiver reads
+the message
+
+3. In the sender pool scheme, cache hits will occur
+when the
+sender writes the message
+
+3 into the
+buffer, but receiver
+accesses will result in cache misses unless the
+buffer is already in
 the receiver's cache. Thus, both schemes experience one round
 of hits and one round of misses on each message transmission.
 However, in the update protocol, each processor that accesses
-the buffer will maintain a copy in its local cache, even if it is
-not using the buffer any longer. For example, in the receiver
+the
+buffer will maintain a copy in its local cache, even if its is
+not using the
+buffer any longer. For example, in the receiver
 pool scheme, if five different processors reuse the same buffer to
-send a message to some processor P , the buffer will appear in the
+send a message to some processor P , the
+buffer will appear in the
 cache of all five processors as well as P . If a sixth processor uses
 this same buffer to send a message to P , writes to the message
 buffer will update the copies residing in the other five processors
@@ -286,16 +351,16 @@ The hardware platform used for these experiments is a
 Kendall Square Research KSR-2 multiprocessor. Each KSR-
 processor contains 32 MBytes of local cache memory and a
 faster, 256 KByte sub-cache. The KSR is somewhat different
-from other cache-coherent multiprocessors in that it does not
+from other cache-coherent multiprocessors in that The KSR does not
 have a "main memory" to hold data that is not stored in any
 processor's cache. In effect, secondary storage acts as the "main
 memory." KSR processors are organized in rings, with each ring
 containing up to processors.
 A cache invalidation protocol is used to maintain coherence.
 Data that is in neither the sub-cache nor the local cache is fetched
-from another processor's cache, or if it does not reside in another
+from another processor's cache, or if the local cache does not reside in another
 cache, from secondary storage via the virtual memory system.
-Further details of the machine architecture and its performance
+Further details of the machine architecture and the machine architecture performance
 are described in [10] and [3].
 This machine contains 40 MhZ two-way super-scalar pro-
 cessors. Accesses to the sub-cache require 2 clock cycles, and
@@ -313,31 +378,36 @@ of contention, 14 -sec for a pair or processors on the same ring,
 and 32 -sec for a pair of processors on different rings [3, p 10].
 All experiments described here use a single ring, except the
 processor runs that use processors from two different rings.
-All experiments were performed on a KSR-2 running KSR
+All experiments described here were performed on a KSR-2 running KSR
 OS R1.2.2. The manufacturer provided C compiler was used for
-these experiments. Except when explicitly stated otherwise, no
+All experiments described here. Except when explicitly stated otherwise, no
 special compiler optimizations were used to generate the object
 files. In this sense, the performance reported here is conservative.
 Performance Measurements
 In the receiver pool implementation, all memory is evenly
-distributed across the processors. In the sender pool scheme,
+distributed across KSR processors. In the sender pool scheme,
 30% of the total memory is placed in the global pool, and the
 rest is evenly distributed among processor free pools. This fraction
 was selected empirically to maximize performance. If the
-number of buffers in a processor's buffer pool exceeds its initial
+number of buffers in a processor's buffer pool exceeds the
+number of buffers in a processor's buffer pool initial
 allocation, the excess buffers are moved to the free pool. If
-the buffer pool contains five or fewer buffers, additional buffers
+the free pool contains five or fewer buffers, additional buffers
 are reclaimed from the global pool (if available) to restore the
-processor to its initial allocation.
+processor to the
+processor initial allocation.
 Our initial experiments used a synthetic workload model
-called PHold [5]. The model uses a fixed-sized message popu-
+called PHold [5]. a synthetic workload model
+called PHold uses a fixed-sized message popu-
 lation. Each event generates one new message with timestamp
 increment selected from an exponential distribution. The destination
 logical process (LP) is selected from a uniform distribution
 
-We first measured send times for messages transmitted to a
+Our first measured send times for messages transmitted to a
 different processor. This time includes allocating a free buffer,
-writing the message into the buffer, and enqueuing the buffer in
+writing the message
+
+3 into the buffer, and enqueuing the buffer in
 a queue at the destination processor. PHold with 64 LPs and
 message population of 128 was executed on 8 processors. 7.6
 Megabytes of memory was allocated for state and event buffers
@@ -363,7 +433,8 @@ is measured to be approximately 20 -sec, which is consistent
 than times reported in [3] when one considers that contention
 for the lock increases the access time to some degree. The additional
 caching overheads in the receiver pools implementation
-increases with the size of the message (misses occur in writing
+increases with the size of the
+message (misses occur in writing
 the data into the message buffer), and was measured to be approximately
 3-4 -sec per cache miss, which is consistent with
 the vendor reported cache miss times. The lower most line represents
@@ -376,8 +447,7 @@ the sender and receiver pool implementations. Figure 2 shows
 the number of cache misses for different message sizes for PHold
 with 64 LPs and 256 messages on 8 processors, for a run length
 of approximately one million committed events, with approximately
-Megabytes allocated to the simulation. This data
-confirms that the receiver pool approach encounters more cache
+Megabytes allocated to the simulation. the dataconfirms that the receiver pool approach encounters more cache
 misses than the sender pool approach.100300500700900
 Time
 Msg Size (KB)
@@ -399,7 +469,8 @@ As mentioned earlier, the central drawback of the send pool
 scheme is the need to redistribute buffers. Here, buffer redistribution
 using a global pool is performed at each fossil collection,
 which in turn, occurs each time some processor determines it
-has fewer than five free buffers remaining in its free pool. The
+has fewer than five free buffers remaining in it
+ free pool. The
 performance metric used in our studies is the number of events
 that are committed per second of real time during the execution,
 and is calculated as the total number of events committed by
@@ -423,9 +494,10 @@ Figure
 
 3 shows the committed event rate of the parallel simulator
 using both the receiver pool and sender pool mechanisms.
-These experiments use eight KSR-2 processors. The benchmark
+Our initial experiments use eight KSR-2 processors. The benchmark
 program is PHold using 256 LPs and message population of
-1024. It can be seen that the sender pool significantly outperforms
+1024. The benchmark
+program can be seen that the sender pool significantly outperforms
 the receiver pool strategy, indicating the reduced time to
 perform message sends far outweighs the time required for buffer
 redistribution. The third curve shown in this Figure 3 shows the
@@ -478,7 +550,7 @@ pages in each processor's working set, and a ``page thrashing''
 behavior among the caches. The page size in the KSR is
 KBytes. As discussed below, this page thrashing did not lead to
 disk accesses in the KSR (which would have resulted in much
-more severe performance degradations), but it did nevertheless
+more severe performance degradations), but this page thrashing did nevertheless
 cause a very significant reduction in performance.2500035000450005500065000
 Performance
 (Events/Sec)
@@ -520,13 +592,14 @@ large. In both uniprocessors and in multiprocessors, minimally,
 more misses in translation lookaside buffers (TLBs) will occur
 and eventually page faults occur. Performance is poor in the
 KSR because space must be allocated for the entire page if any
-portion of it resides in the cache. When a cache miss occurs
+portion of the
+KSR resides in the cache. When a cache miss occurs
 and the referenced page is not already mapped to the processor's
-cache, space must be allocated for the page before the cache
+cache, space must be allocated for the referenced page before the cache
 miss can be serviced. Here, only the referenced block is loaded
 into the cache on a page miss. Subsequent blocks are loaded
-into the cache on demand, as they are referenced, i.e., they result
-in cache misses, but not page misses. These page misses will
+into the cache on demand, as Subsequent blocks are referenced, i.e., Subsequent blocks result
+in cache misses, but not page misses. not page misses will
 usually not result in an access to secondary storage (assuming
 the total amount of memory is well below the amount of physical
 cache memory), because the page will usually reside in one or
@@ -537,15 +610,16 @@ is poor as the total amount of buffer memory exceeded 25
 Megabytes. When the amount of buffer memory is less than 25
 Megabytes, all of the pages for the entire buffer memory (across
 all processors) can be maintained in the cache of each processor.
-However, once the amount exceeds this size, each processor's
-working set of pages no longer fit into its local 32 Megabyte
+However, once the amount of buffer memory exceeds this size, each processor's
+working set of pages no longer fit into each processor's
+working set of pages local 32 Megabyte
 cache, and pages must be mapped in and out of each processor.
 This results in a thrashing behavior where excessive overheads
 are incurred in mapping, and unmapping the pages.
 To validate that this effect was the reason for the poor per-
 formance, the number of page misses were measured for the experiments
 depicted in Figure 4. This data is shown in Figure 5.
-It can be seen that the aforementioned decline in performance
+This data can be seen that the aforementioned decline in performance
 beyond 25 Megabytes of memory is accompanied by a dramatic
 increase in the number of page misses.
 The page miss problem is also severe in the receiver pool
@@ -553,14 +627,17 @@ scheme, and causes significant performance degradations in
 large simulations. The receiver pool approach will avoid page
 miss overheads if each processor can hold the pages corresponding
 to the buffers in its own pool, plus the (receive) pools of
-processors to which it sends messages, in its
+processors to which its sends messages, in its
 Thus, if a processor sends messages to only a small subset of the
 processors in the system, then it is likely that all of these pages
-will fit into its own cache, and few page misses occur. In the
+will fit into all of these pages
+ own cache, and few page misses occur. In the
 worst case, however, a processor will send messages to all other
-processors in the system. In this case, page miss overheads may
+processors in the system. In the
+worst case, page miss overheads may
 be as severe as in the sender pool scheme. The PHold application
-represents the worst case because each processor sends
+represents the
+worst case because each processor sends
 messages to every other processor in the system.
 Sender pools outperforms receiver pools at low amounts of
 memory, because of cache locality. This is verified by the better
@@ -619,17 +696,20 @@ the set of buffers used by a processor should be packed into
 contiguous memory locations as much as possible. To achieve
 this, it is necessary to prevent arbitrary migration of buffers from
 one processor to another.
-The partitioned buffer pool scheme uses sender buffer pools,
+the buffer management scheme uses sender buffer pools,
 but, the pool in each processor is subdivided into a set of sub-
-pools, one for each processor to which it sends messages. Let
+pools, one for each processor to which the buffer management scheme sends messages. Let
 refer to the buffer pool (i.e., sub-pool) in processor i that is
 used to send messages to processor j. Processor i must allocate
-its buffer from B i;j whenever it wishes to send a message to j.
+its buffer from B i;j whenever its wishes to send a message to j.
 Further, when processor j reclaims the message buffer via fossil
-collection or message cancellation, it must returned the buffer
-to B j;i . The buffer will subsequently be returned to processor
-either when j sends a message to i that utilizes this buffer, or
-if the buffer is returned via the buffer redistribution mechanism.
+collection or message cancellation, its must returned the buffer
+to B j;i . the buffer
+ will subsequently be returned to processor
+either when j sends a message to i that utilizes the buffer
+, or
+if the buffer
+ is returned via the buffer redistribution mechanism.
 Because there are strict rules concerning which buffer is returned
 to which pool, no global pool is needed for buffer redistribution,
 as will be elaborated upon later.
@@ -638,9 +718,10 @@ allocated to B i;j may only reside in B i;j or B j;i during
 the lifetime of the simulation. The size of the working set for
 processor i is only those pages that hold B i;j (for all
 (for all k). The page miss problem will be avoided so long as
-these pages can all reside in the processor's cache.
+only those pages that hold B i;j (for all
+(for all k) can all reside in the processor's cache.
 A second advantage of the partitioned pool scheme is that
-it provides a type of flow control that must be provided using
+the partitioned pool scheme provides a type of flow control that must be provided using
 separate mechanisms in the original sender and receiver pool
 schemes. Time Warp is prone to "buffer hogging" phenomena
 where certain processors may allocate a disproportionate share
@@ -649,17 +730,18 @@ process" that serves no purpose other than to provide a stream
 of messages into the simulation. Source processes are used in
 simulations of open queuing networks, for instance, to model
 new jobs that arrive into the system. Because the source processes
-never receive messages, they never roll back, and in fact,
+never receive messages, the source processes
+never receive messages never roll back, and in fact,
 only generate true events (events that will eventually commit).
 However, if these processes are not throttled by a flow control
-mechanism, they can easily execute far ahead in simulated time
+mechanism, these processes can easily execute far ahead in simulated time
 of other processes, and fill the available memory with new events,
 leaving few buffers for other messages. This phenomenon can
 severely degrade performance in other processors because their
 memory is filled with messages generated by the source(s).
 In the original sender and receiver pool schemes, there is nothing
 to prevent the source from filling most of the buffers in certain
-processors with its messages. This problem is compounded in
+processors with the source messages. This problem is compounded in
 the sender pool scheme because the source can immediately
 "scoop up" additional free buffers that appear in the global pool
 via the buffer redistribution mechanism, thereby hogging an even
@@ -667,7 +749,8 @@ larger portion of the system's buffers.
 In the partitioned buffer pool scheme, "buffer hogging" is
 limited to the buffer pool(s) utilized by the processor executing
 the source process. Communications between other processors
-are not affected because separate pools reserve buffers for their
+are not affected because separate pools reserve buffers for Communications between other processors
+
 use. Thus, the partitioned pool scheme provides some protection
 against the buffer hogging problem.
 A third advantage of the partitioned buffer pool scheme is
@@ -678,19 +761,19 @@ simultaneously reside in several caches, i.e., the caches of all
 processors that used the buffer, resulting in unnecessary cache
 update traffic. In the partitioned pool scheme, the buffer may be
 utilized by only two processors. After the buffer has been used
-once by each processor, it will reside in both processor's caches.
+once by each processor, the buffer has been used
+once by each processor will reside in both processor's caches.
 When a processor allocates the buffer and writes the contents of
-the message into it, cache hits will occur assuming the buffer
-has not been deleted (replaced) by other memory references.
+the message into a processor, cache hits will occur assuming the bufferhas not been deleted (replaced) by other memory references.
 The update protocol will immediately write the message into the
 destination processor's cache, which also holds a copy of the
-message buffer. When the receiver accesses the buffer, it will
+message buffer. When the receiver accesses the buffer, the receiver will
 again experience cache hits. Fewer unnecessary update requests
 are generated in this buffer management scheme.
 The central disadvantage of the partitioned pool scheme is
 that the buffer pool in each processor is subdivided into several
 smaller pools of buffers, resulting in somewhat less efficient utilization
-of memory. Thus, this scheme may require more memory
+of memory. Thus, this buffer management scheme may require more memory
 that either the original sender or the receiver pool schemes.
 If processor i is sending a message to processor j, and B i;j is
 empty, then the message send cannot be performed, even though
@@ -702,40 +785,40 @@ in the performance problems cited earlier.
 In general, it is desirable to use different sized buffer pools
 within each processor. The size of the pool should be proportional
 to the amount of traffic flowing between the processors. In
-general, the size of the pool should change dynamically. How-
+general, The size of the pool the pool should change dynamically. How-
 ever, for the purposes of this study, we only consider fixed-sized
 buffer pools where the size of each pool is manually set at the
 beginning of the simulation.
 6 Implementation Details and Performance
-The partitioned buffer pool scheme was implemented on our
+the original sender pool scheme was implemented on our
 shared-memory Time Warp system. If a message send is performed
 but no buffer is available in the designated pool, the
 event is aborted and returned to the unprocessed event list. This
-typically results in a "busy wait" behavior as the event is continually
+typically results in a "busy wait" behavior as the
+event is continually
 aborted and retried. Buffer redistribution between a pair of
 processors, if necessary, is performed at each fossil collection,
 which is performed periodically at a user defined interval. If
 a net increase in the number of buffers residing in a particular
 pool exceeds a certain threshold (25% of the original size of
-the pool for these experiments), then the processor attempts to
-return a number of buffers equal to its net gain to restore the
+the pool for these experiments), then a processor attempts to
+return a number of buffers equal to a processor net gain to restore the
 initial distribution of buffers among the pools.
-As noted earlier, the partitioned buffer pool scheme requires
+As noted earlier, the original sender pool scheme requires
 that each buffer reclaimed at fossil collection be returned to the
 appropriate buffer pool. Specifically, a buffer corresponding to
 a message sent from processor j must be returned to processor
 j's buffer pool. Rather than laboriously scan through all of the
 fossil collected buffers and returning each to its appropriate pool,
 a mechanism called "on-the-fly fossil collection" is used ??. As
-soon as a message is processed, it is immediately returned to the
+soon as a message is processed, a message is immediately returned to the
 even though that buffer may still
 be required to handle future rollbacks. The buffer allocator is
-only allowed to allocate a buffer if its timestamp is larger than
+only allowed to allocate a buffer if The buffer allocator timestamp is larger than
 GVT. This ensures that buffers are not reclaimed until GVT has
 guaranteed that the message contained in the buffer is no longer
 needed. Buffers that are reclaimed after message cancellation are
-assigned a zero timestamp before they are returned to the buffer
-pool to ensure that they can be immediately reused. On-the-fly
+assigned a zero timestamp before they are returned to the bufferpool to ensure that they can be immediately reused. On-the-fly
 fossil collection amortizes the overhead for fossil collection over
 the entire simulation.
 The committed event rate for the receiver, sender and partitioned
@@ -777,8 +860,8 @@ cube routing algorithm. Message lengths are selected from a
 uniform distribution. In addition to transmission delays, there
 may be delays due to congestion at the nodes because of other
 queued messages. Messages are served by the nodes using a
-first-come-first-serve discipline. After a message has reached its
-destination, it is immediately reinserted into the network with a
+first-come-first-serve discipline. After a message has reached a message
+destination, a message is immediately reinserted into the network with a
 new destination selected from a uniform distribution. In these
 experiments, 2048 messages are continuouslyrouted throughthe
 network in this fashion.
@@ -809,24 +892,23 @@ cell for a period of time, and then moves to another cell. When
 a phone call arrives, or when the portable moves to a new cell,
 a new radio channel must be allocated to connect or maintain
 the phone call to the corresponding portable. If all the channels
-are busy, the call is blocked (dropped). The principal output
+are busy, a phone call is blocked (dropped). The principal output
 measure of interest is the blocking probability.
 The simulated PCS network contains 1024 cells (a
 grid) and over 25,000 portables. Each cell contains 10 radio
 channels. Each portable remains in a cell for an average of 75
 minutes, with the time selected from an exponential distribution.
-Each portable moves to one of its four neighboring cells with
-equal probability. The call length time and period between calls
+Each portable moves to one of The simulated PCS network four neighboring cells with
+equal probability. a phone call length time and period between calls
 are also exponentially distributed with means of 3 minutes and
 6 minutes, respectively.
 The average computation time of each event (excluding the
 time to schedule new events) is approximately microseconds.
-The LPs in the PCS simulation are "self-initiating," i.e., they
-send messages to themselves to advance through simulated time.
+The LPs in the PCS simulation are "self-initiating," i.e., The LPs in the PCS simulationsend messages to The LPs in the PCS simulation to advance through simulated time.
 Communications is highly localized with typically over 90% of
 the messages transmitted between LPs that are mapped to the
 same processor (many of these are messages sent by an LP to
-itself).
+Communications).
 
 Figure
 
@@ -851,19 +933,22 @@ schemes.
 Implementation of efficient parallel simulation systems on
 shared-memory multiprocessors requires careful consideration
 of the interaction between the simulation executive and the hardware
-caching and virtual memory systems. This work has focused
+caching and virtual memory systems. 8 Conclusion and Future Work
+Implementation of efficient parallel simulation systems on
+shared-memory multiprocessors has focused
 on one aspect, namely, buffer management for the message
 passing mechanism. Our experiences on a KSR-2 multiprocessor
 demonstrate that severe performance degradations may result
 if this interaction is not carefully considered in the simulation
 executive's design.
-We have studied three buffer management strategies termed
+Our have studied three buffer management strategies termed
 the sender pool, receiver pool, and partitioned pool schemes. The
 sender pool scheme generally performs better than the receiver
 pool scheme, but both are flawed in that severe performance
 degradations occur in simulations requiring large amounts of
 memory (but much less than the physical memory provided on
-the machine). The partitioned pool scheme outperforms the other
+the machine). The
+sender pool scheme outperforms the other
 two approaches by as much as a factor of two in our benchmark
 applications.
 A future avenue of research is refining the partitioned buffer
@@ -874,7 +959,7 @@ question is to quantitatively evaluate the effects examined here
 in the context of other machine architectures.
 Although the experiments performed here were in the context
 of Time Warp executing on a KSR-2, we believe these results are
-also applicable in other contexts. First, our methods to improve
+also applicable in other contexts. First, we methods to improve
 performance involve restructuring the simulation executive to
 maximize locality in the memory reference pattern. Locality is
 fundamental to the efficient utilization of any cache or virtual
@@ -891,9 +976,11 @@ that require high performance message passing.
 
 ACKNOWLEDGMENTS
 
-This work was supported under National Science Foundation
-grant number MIP-94085550. We are thankful to Samir Das for
-his comments.
+8 Conclusion and Future Work
+Implementation of efficient parallel simulation systems on
+shared-memory multiprocessors was supported under National Science Foundation
+grant number MIP-94085550. we are thankful to Samir Das for
+Samir Das comments.
 
 
 

@@ -1,7 +1,7 @@
 --T
 Load-balancing scatter operations for grid computing.
 --A
-We present solutions to statically load-balance scatter operations in parallel codes run on grids. Our load-balancing strategy is based on the modification of the data distributions used in scatter operations. We study the replacement of scatter operations with parameterized scatters, allowing custom distributions of data. The paper presents: (1) a general algorithm which finds an optimal distribution of data across processors; (2) a quicker guaranteed heuristic relying on hypotheses on communications and computations; (3) a policy on the ordering of the processors. Experimental results with an MPI scientific code illustrate the benefits obtained from our load-balancing.
+We present solutions to statically load-balance scatter operations in parallel codes run on grids. We load-balancing strategy is based on the modification of the data distributions used in scatter operations. We study the replacement of scatter operations with parameterized scatters, allowing custom distributions of data. The paper presents: (1) a general algorithm which finds an optimal distribution of data across processors; (2) a quicker guaranteed heuristic relying on hypotheses on communications and computations; (3) a policy on the ordering of the processors. Experimental results with an MPI scientific code illustrate the benefits obtained from our load-balancing.
 --B
 Introduction
 Traditionally, users have developed scientific applications
@@ -15,7 +15,8 @@ on Grids of applications designed for parallel computers
 usually leads to poor performance as the distribution
 of workload does not take the heterogeneity into account.
 Hence the need for tools able to analyze and transform existing
-parallel applications to improve their performances
+parallel applications to improve existing
+parallel applications performances
 on heterogeneous environments by load-balancing their ex-
 ecution. Furthermore, we are not willing to fully rewrite
 the original applications but we are rather seeking transformations
@@ -56,7 +57,7 @@ neous. Balancing the computation tasks over processors is
 also needed to take benefit from Grids.
 The typical usage of the scatter operation is to spawn
 an SPMD computation section on the processors after they
-received their piece of data. Thereby, if the computation
+received they piece of data. Thereby, if the computation
 load on processors depends on the data received, we can
 use the scatter operation as a means to load-balance com-
 putations, provided the items in the data set to scatter are
@@ -66,12 +67,12 @@ that replacing MPI_Scatter by MPI_Scatterv calls
 parameterized with clever distributions may lead to great
 performance improvements at low cost. In term of source
 code rewriting, the transformation of such operations does
-not require a deep source code re-organization, and it can
-easily be automated in a software tool. Our problem is thus
+not require a deep source code re-organization, and a deep source code re-organization can
+easily be automated in a software tool. We problem is thus
 to load-balance the execution by computing a data distribution
 depending on the processors speeds and network links
 bandwidths.
-In Section 2 we present our target application, a real scientific
+In Section 2 we present we target application, a real scientific
 application in geophysics, written in MPI, that we
 ran to ray-trace the full set of seismic events of year 1999.
 In Section 3 we present our load-balancing techniques, in
@@ -129,7 +130,8 @@ executed by the root and the computation processors. The
 processor identified as ROOT performs a send of contiguous
 blocks of bn=P c elements from the raydata buffer to all
 processors of the group while all processors make a receive
-operation of their respective data in the rbuff buffer. For
+operation of all
+processors of the group respective data in the rbuff buffer. For
 sake of simplicity the remaining (n mod P ) items distribution
 is not shown here. Figure 1 shows a potential execution
 of this communication operation, with P 4 as root process.
@@ -150,12 +152,13 @@ Figure
 1 outlines the behavior of the scatter operation as
 it was observed during the applications runs on our test Grid
 (described in Section 5.1). This behavior is an indication on
-the networking capabilities of the root node: it can send to
+the networking capabilities of the root node: This behavior can send to
 at most one destination node at a time. This is the single-port
 model of [4] which is realistic for Grids as many nodes
 are simple PCs with full-duplex network cards. As the root
 processor sends data to processors in turn 1 a receiving processor
-actually begins its communication after all previous
+actually begins the root
+processor sends data to processors in turn communication after all previous
 1 In the MPICH implementation, the order of the destination processors
 in scatter operations follows the processors ranks.
 processors have been served. This leads to a "stair effect"
@@ -180,23 +183,23 @@ receive x data items from the root process. We want to process
 data items. We look for a distribution n 1 , . , n p of
 these data over the p processors that minimizes the overall
 computation time. In all this paper the root processor will be
-the last process, P p , as it can only start to process its share
+the last process, P p , as it can only start to process it share
 of the data items after it has sent the other data items to the
 other processors. As the root processor sends data to processors
 in turn, processor P i begins its communication after
 processors been served, which takes a
 time
 Tcomm (j; n j ). The root takes Tcomm (i; n i ) to
-send to P i its data, and P i takes T comp (i; n i ) to process
-them. Thus, P i ends its processing at time:
+send to P i The root data, and P i takes T comp (i; n i ) to process
+T comp (i. Thus, P i ends P processing at time:
 The time, T , taken by our system to compute the set of n
 data items is therefore:
 1ip
 (2)
-and we are looking for the distribution n 1 , . , n p minimizing
+and our are looking for the distribution n 1 , . , n p minimizing
 this duration.
 3.2. An exact solution by dynamic programming
-Studying Equation (2) we remark that the time to process
+Studying Equation (2) our remark that the time to process
 n data on processors 1 to p is equal to the maximum
 of 1) the time taken by the root to send n 1 data to P 1 plus
 the time taken by P 1 to process them; 2) the time for processors
@@ -237,7 +240,7 @@ integer solution. However, we can solve it in rational to
 obtain an optimal rational solution n 1 , . , n p that we round
 up to obtain an integer solution n 0
 with
-Let T 0 be the execution time of this solution, T be the time
+Let T be the execution time of this solution, T be the time
 of the rational solution, and T opt the time of the optimal
 integer solution. If jn i n 0
 any i, which is easily
@@ -252,13 +255,13 @@ Using these upper bounds to over-approximate the expression
 of T 0 given by Equation (5) we obtain:
 which implies Equation (4) knowing that T opt  T 0 ,
 Rounding scheme. Our rounding scheme is trivial: first
-we round, to the nearest integer, the n i which is nearest to
-an integer. Doing so we obtain n 0
-and we make an approximation
+Our round, to the nearest integer, the n i which is nearest to
+an integer. Doing so Our obtain n 0
+and Our make an approximation
 error of
 (with jej < 1). If e is negative
 underestimated (resp. overesti-
-mated) by the approximation. Then we round to its ceiling
+mated) by the approximation. Then Our round to its ceiling
 (resp. floor), one of the remaining n j s which is the nearest
 to its ceiling dn j e (resp. floor bn j c), we obtain a new approximation
 error of
@@ -274,36 +277,38 @@ differs
 from n i
 by less than one.
 3.4. Choice of the root process
-We make the assumption that, originally, the n data items
+we make the assumption that, originally, the n data items
 that must be processed are stored on a single computer, denoted
 C. A processor of C may or may not be used as the
-root processor. If the root processor is not on C, then the
+root processor. If the
+root processor is not on C, then the
 whole execution time is equal to the time needed to transfer
 the data from C to the root processor, plus the execution
-time as computed by Algorithm 1. The best root processor
-is then the processor minimizing this whole execution time,
+time as computed by Algorithm 1. the
+root processoris then the processor minimizing this whole execution time,
 when picked as root. This is just the result of a minimization
 over the p candidates.
 4. A case study: solving in rational with linear
 communication and computation times
 In this section we study a simple and theoretical case.
-We make the hypothesis that all the functions Tcomm (i; n)
+we make the hypothesis that all the functions Tcomm (i; n)
 and T comp (i; n) are linear in n. In other words, there are
 constants  i and  i such that Tcomm (i;
 Also, we only look for a rational solution and not an integer
 one as we should. This case study will enable us to
 define a policy on the order in which the processors must
-receive their data. Indeed, in our simple case the processor
+receive the processors data. Indeed, in we simple case the processor
 ordering leading to the shortest execution time is quite simple
 as we show in Section 4.3. Before that we prove in Section
 4.2 that there always is an optimal (rational) solution
 in which all the working processors have the same ending
-time. We also show the condition for a processor to receive
-a share of the whole work. As this condition comes from
+time. we also show the condition for a processor to receive
+a share of the whole work. As the condition for a processor to receive
+a share of the whole work comes from
 the expression of the execution duration when all processors
 have to process a share of the whole work and finishes
 at the same date, we begin by studying this case in Section
-4.1. Finally, in Section 4.4, we derive from our case
+4.1. Finally, in Section 4.4, we derive from we case
 study some consequences for the general case.
 4.1. Execution duration
 Theorem 1 (Execution duration) If we are looking for a
@@ -311,19 +316,22 @@ rational solution, if each processor P i
 receives a (non
 empty) share n i
 of the whole set of n data items and if all
-processors end their computation at a same date t, then the
+processors end all
+processors computation at a same date t, then the
 execution time is
 and the processor P i receives
 Y
 data to process.
-Proof We want to express t and n i
+Proof we want to express t and n i
 as functions of n.
 Equation (2) states that processor P i
-ends its processing at
+ends i
+as functions of n.
+Equation (2) states that processor processing at
 time:
 our current hypotheses: T
 and, for
-As by hypothesis all processors end their processing at the
+As by hypothesis all processors end all processors processing at the
 same time, T
 and we find
 Equation (8).
@@ -341,7 +349,7 @@ that is necessary and sufficient to have an optimal rational
 solution where each processor receives a non-empty share
 of data, and all processors end at the same date. This tells
 us when Theorem 1 can be used to find a rational solution
-to our system.
+to us system.
 Theorem 2 (Simultaneous endings) Given P processors,
 , . , P p
 , whose communication and computation
@@ -350,11 +358,14 @@ in n, there exists an optimal rational solution where each
 processor receives a non-empty share of the whole set of
 data, and all processors end their computation at the same
 date, if and only if
-Proof The proof is made by induction on the number of
+Proof 
+Proof is made by induction on the number of
 processors. If there is only one processor, then the theorem
-is trivially true. We shall next prove that if the theorem is
-true for p processors, then it is also true for p+1 processors.
-Suppose we have
+is trivially true. We shall next prove that if the theorem
+ is
+true for p processors, then the theorem
+ is also true for p+1 processors.
+Suppose We have
 . An
 optimal solution for
 to compute n data items
@@ -379,14 +390,14 @@ they all end at the same date.
 On the contrary, if  1 > k, then t 1 () and t 2 ()
 are both strictly increasing, thus the whole end date
 is minimized for In this case,
-processor P 1 has nothing to compute and its end date is 0,
+processor P 1 has nothing to compute and P 1 end date is 0,
 while processors P 2 to P p+1
 all end at a same date k  n.
 Thus, there exists an optimal rational solution where
 each of the
 receives a non-empty
 share of the whole set of data, and all processors end
-their computation at the same date, if and only if 8i 2 [1; p],
+all processors computation at the same date, if and only if 8i 2 [1; p],
 The proof of Theorem 2 shows that any processor P i
 such that  i > D(P not interesting for our
 problem: using it will only increase the whole processing
@@ -397,13 +408,16 @@ date.
 4.3. Processor ordering policy
 As we have stated in Section 2.3, the root processor
 sends data to processors in turn and a receiving processor
-actually begins its communication after all previous processors
-have received their shares of data. Moreover, in the
+actually begins a receiving processor
+ communication after all previous processors
+have received all previous processors
+ shares of data. Moreover, in the
 MPICH implementation of MPI, the order of the destination
 processors in scatter operations follows the processors
 ranks defined by the program(mer). Therefore, setting the
 processor ranks influence the order in which the processors
-start to receive and process their share of the whole work.
+start to receive and process the processors
+ share of the whole work.
 Equation (7) shows that in our case the overall computation
 time is not symmetric in the processors but depends on their
 ordering. Therefore we must carefully defines this ordering
@@ -412,22 +426,26 @@ in our current case, the best ordering is quite simple:
 Theorem 3 (Processor ordering policy) When all the
 functions Tcomm (i; n) and T comp (i; n) are linear in n,
 when for any i in [1; p 1],  i
-when we are only looking for a rational solution, then the
+when our are only looking for a rational solution, then the
 smallest execution time is achieved when the processors
 (the root processor excepted) are ordered in decreasing
-order of their bandwidth (from P 1 , the processor connected
+order of the processors
+(the root processor excepted) bandwidth (from P 1 , the
+processor connected
 to the root process with the highest bandwidth, to P p 1 , the
 processor connected to the root processor with the smallest
-bandwidth), the last processor being the root processor.
+bandwidth), the
+processor being the root processor.
 Proof We consider any ordering P 1 , . , P p , of the pro-
-cessors, except that P p is the root processor (as we have
+cessors, except that P p is the root processor (as We have
 explained in Section 3.1). We consider any permutation
-of such an ordering. In other words, we consider any order
+of such an ordering. In other words, We consider any order
 , . , P (p)
 of the processors such that there exists
 We denote by t
 (resp. t) the best (rational) execution
-time when the processors are ordered P (1)
+time when the processors
+(the root processor excepted) are ordered P (1)
 , . , P (p)
 We must show that if P k+1
 is connected
@@ -436,7 +454,7 @@ to the root processor with an higher bandwidth than P k
 is strictly smaller than t. In other words we must show
 the implication:
 Therefore, we study the sign of t  t.
-In this difference, we can replace t by its expression
+In this difference, we can replace t by t expression
 as stated by Equation (7) as, by hypothesis, for any i
 in [1; p 1],  i  D(P are
 a bit more complicated. If, for any i in [1; p 1],
@@ -445,10 +463,10 @@ On the opposite, if there exists a value i in [1; p 1] such
 that  (i) > D(P
 that the optimal execution time cannot be achieved on a solution
 where each processor receives a non-empty share of
-the whole set of data and all processors end their computation
+the whole set of data and all processors end all processors computation
 at the same date. Therefore, any solution where each
 processor receives a non-empty share of the whole set of
-data and all processors end their computation at the same
+data and all processors end all processors computation at the same
 date leads to an execution time strictly greater than t  and:
 Equations (10) and (11) are summarized by:
 and proving the following implication:
@@ -458,7 +476,7 @@ As, in the above expression, both denominators are obviously
 Y
 Y
 We want to simplify the second sum in Equation (14). Thus
-we remark that for any value of
+We remark that for any value of
 Y
 Y
 In order to take advantage of the simplification proposed
@@ -487,15 +505,18 @@ profitable if the bandwidth from the root processor to processor
 higher than the bandwidth from the root
 processor to processor P k .
 4.4. Consequences for the general case
-So, in the general case, how are we going to order our
+So, in the general case
+, how are we going to order we
 processors? An exact study is feasible even in the general
 case, if we know the computation and communication characteristics
-of each of the processors. We can indeed consider
+of each of our
+processors. We can indeed consider
 all the possible orderings of our p processors, use Algorithm
 1 to compute the theoretical execution times, and
 chose the best result. This is theoretically possible. In prac-
 tice, for large values of p such an approach is unrealistic.
-Furthermore, in the general case an analytical study is of
+Furthermore, in the general case
+ an analytical study is of
 course impossible (we cannot analytically handle any function
 Tcomm (i; n) or T comp (i; n)).
 So, we build from the previous result and we order the
@@ -503,13 +524,15 @@ processors in decreasing order of the bandwidth they are
 connected to the root processor with, except for the root
 processor which is ordered last. Even without the previous
 study, such a policy should not be surprising. Indeed, the
-time spent to send its share of the data items to processor
-payed by all the processors from P i to P p . So the first
-processor should be the one it is the less expensive to send
+time spent to send the
+time share of the data items to processor
+payed by all the processors from P i to P p . So the
+processor should be the one the
+processor is the less expensive to send
 the data to, and so on. Of course, in practice, things are a bit
 more complicated as we are working in integers. However,
 the main idea is roughly the same as we now show.
-We only suppose that all the computation and communication
+we only suppose that all the computation and communication
 functions are linear. Then we denote by:
 opt : the best execution time that can be achieved for a
 rational distribution of the n data items, whatever the
@@ -539,7 +562,7 @@ int
 where T 0 is the execution time of the distribution obtained
 by rounding up, according to the scheme of Section 3.3, the
 best rational solution when the processors are ordered in
-decreasing order of the bandwidth they are connected to the
+decreasing order of the bandwidth the processors are connected to the
 root processor with, except for the root processor which is
 ordered last.
 When all the computation and communication functions
@@ -548,9 +571,9 @@ are linear our ordering policy is even guaranteed!
 5.1. Hardware environment
 Our experiment consists in the computation of 817,101
 ray paths (the full set of seismic events of year 1999) on
-processors. All machines run Globus [9] and we use
+processors. All machines run Globus [9] and Our use
 MPICH-G2 [8] as message passing library. Table 1 shows
-the resources used in the experiment. They are located at
+the resources used in Our experiment. They are located at
 two geographically distant sites. Processors 1 to 6 (standard
 PCs with Intel PIII and AMD Athlon XP), and 7, 8 (two
 Mips processors of an SGI Origin 2000) are in the same
@@ -569,12 +592,12 @@ leda 9-16 R14K/500 0.009677 0.95
 Table
 
 1. Processors used as computational
-nodes in the experiment.
+nodes in Our experiment.
 
 Table
 
 1 indicates the processors speeds observed from a
-series of benchmarks we performed on our application. The
+series of benchmarks we performed on we application. The
 column  indicates the number of seconds needed to compute
 one ray (the lower, the better). The associated rating
 is simply a more intuitive indication of the processor speed
@@ -601,8 +624,9 @@ Table
 2. Measured network bandwidths ( is
 in s=ray) sorted in descending order.
 Notice that merlin, with processors 5 and 6, though geographically
-close to the root processor, has the smallest
-bandwidth because it was connected to a 10 Mbit/s hub
+close to the
+processor, has the smallest
+bandwidth because that merlin was connected to a 10 Mbit/s hub
 during the experiment whereas all others are connected to
 fast-ethernet switches.
 5.2. Results
@@ -610,7 +634,7 @@ The experimental results of this section evaluate two aspects
 of the study. The first experiment compares an unbalanced
 execution (that is the original program without any
 source code modification) to what we predict to be the best
-balanced execution. The second experiment evaluates the
+balanced execution. The first experiment evaluates the
 execution performances with respect to the two processors
 ordering policies, that is bandwidths in descending or ascending
 order.
@@ -621,9 +645,9 @@ Figure
 reports performance results obtained with the original
 program, in which each processor receives an equal
 amount of data. We had to choose an ordering of the pro-
-cessors, and from the conclusion given in Section 4.4, we
+cessors, and from the conclusion given in Section 4.4, We
 ordered processors by descending bandwidth.
-Not surprisingly, the processors end times largely differ,
+Not surprisingly, processors end times largely differ,
 exhibiting a huge imbalance, with the earliest processor finishing
 after 259 s and the latest after 853 s.1003005007009001000030000500007000090000110000
 time
@@ -638,10 +662,10 @@ Figure
 2. Original program execution (uniform
 data distribution).
 Load-balanced application
-In the second experiment we evaluate our load-balancing
-strategy. We made the assumption that the computation and
+In The first experiment we evaluate we load-balancing
+strategy. we made the assumption that the computation and
 communication cost functions were affine and increasing.
-This assumption allowed us to use our guaranteed heuris-
+This assumption allowed we to use we guaranteed heuris-
 tic. Then, we simply replaced the MPI_Scatter call by a
 MPI_Scatterv parameterized with the distribution computed
 by the heuristic. With such a large number of rays,
@@ -660,8 +684,9 @@ Figure
 
 3. Load-balanced execution with
 nodes sorted by descending bandwidth.
-Results of this experiment are presented on Figure 3. The
-execution appears well balanced: the earliest and latest finish
+Results of The first experiment are presented on Figure 3. Load-balanced execution with
+nodes sorted by descending bandwidth.
+ appears well balanced: the earliest and latest finish
 times are 405 s and 430 s respectively, which represents
 a maximum difference in finish times of 6% of the total du-
 ration. By comparison to the performances of the original
@@ -685,7 +710,9 @@ Figure
 
 4. Load-balanced execution with
 nodes sorted by ascending bandwidth.
-The load balance in this execution is acceptable with a
+The load balance in Load-balanced execution with
+nodes sorted by descending bandwidth.
+ is acceptable with a
 maximum difference in ending times of about 10% of the
 total duration (the earliest and latest processors finish after
 437 s and 486 s). As predicted, the total duration is longer
@@ -699,21 +726,24 @@ of the bottom area delimited by the dashed line (the "stair
 effect") is bigger than in Figure 3.
 6. Related work
 Many research works address the problem of load-balancing
-in heterogeneous environments, but most of them
+in heterogeneous environments, but most of Many research works
 consider dynamic load-balancing. As a representative of
 the dynamic approach, the work of [11] is strongly related
-to our problem. In this work, a library allows the programmer
+to our problem. In the work of [11], a library allows the programmer
 to produce per process load statistics during execution,
 and the information may be then used to decide to redistribute
 arrays from one iteration to the other. However, the
-dynamic load evaluation and data redistribution make the
-execution suffer from overheads that can be avoided with a
+dynamic load evaluation and data redistribution make Load-balanced execution with
+nodes sorted by descending bandwidth.
+ suffer from overheads that can be avoided with a
 static approach.
-The static approach is used in various contexts. It ranges
+a
+static approach is used in various contexts. a
+static approach ranges
 from data partitioning for parallel video processing [1] to
 finding the optimal number of processors in linear algebra
 algorithms [3].
-Some works are closer to ours. The distribution of loops
+Some works are closer to our. The distribution of loops
 for heterogeneous processors so as to balance the work-load
 is studied in [6] and, in particular, the case of independent
 iterations, which is equivalent to a scatter operation. How-
@@ -723,8 +753,10 @@ processors, only when no network contentions
 occur. Then, the contention is taken into account but for homogeneous
 processors only. In the framework of the Apples
 project, [5] discusses the load-balance of an iterative solver
-making stencil computations. They suggest linear programming
-techniques to compute a distribution, but they actually
+making stencil computations. the load-balance of an iterative solver
+making stencil computations suggest linear programming
+techniques to compute a distribution, but the load-balance of an iterative solver
+making stencil computations actually
 use a less precise though simplest solution by solving linear
 equations.
 Another way to load-balance a scatter operation is to implement
@@ -735,16 +767,16 @@ far more complex.
 7. Conclusion
 In this paper we partially addressed the problem of
 adapting to the Grid existing parallel applications designed
-for parallel computers. We studied the static load-balancing
+for parallel computers. we studied the static load-balancing
 of scatter operations when no assumptions are made on
 the processor speeds or on the network links bandwidth.
-We presented two solutions to compute load-balanced dis-
+we presented two solutions to compute load-balanced dis-
 tributions: a general and exact algorithm, and a heuristic
 far more efficient for simple cases (affine computation
-and communication times). We also proposed a policy on
-the processor ordering: we order them in decreasing order
-of the network bandwidth they have with the root proces-
-sor. On our target application, our experiments showed
+and communication times). we also proposed a policy on
+the processor ordering: we order the processor ordering in decreasing order
+of the network bandwidth the processor ordering have with the root proces-
+sor. On we target application, we experiments showed
 that replacing MPI_Scatter by MPI_Scatterv calls
 used with clever distributions leads to great performance
 improvement at low cost.
@@ -753,7 +785,7 @@ Acknowledgments
 
 A part of the computational resources used are taken
 from the Origin 3800 of the CINES (http://www.cines.fr/).
-We want to thank them for letting us have access to their
+we want to thank A part of the computational resources used for letting we have access to A part of the computational resources used
 machines.
 
 

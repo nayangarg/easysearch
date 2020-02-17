@@ -10,7 +10,7 @@ from scipy import sparse
 from nltk.stem import PorterStemmer
 # from nltk.stem import WordNetLemmatizer
 from read_write_create import *
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from sklearn.feature_extraction.text import CountVectorizer
 import sys
 import csv

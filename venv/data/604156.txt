@@ -1,14 +1,14 @@
 --T
 Ownership types for object encapsulation.
 --A
-Ownership types provide a statically enforceable way of specifying object encapsulation and enable local reasoning about program correctness in object-oriented languages. However, a type system that enforces strict object encapsulation is too constraining: it does not allow efficient implementation of important constructs like iterators. This paper argues that the right way to solve the problem is to allow objects of classes defined in the same module to have privileged access to each other's representations; we show how to do this for inner classes. This approach allows programmers to express constructs like iterators and yet supports local reasoning about the correctness of the classes, because a class and its inner classes together can be reasoned about as a module. The paper also sketches how we use our variant of ownership types to enable efficient software upgrades in persistent object stores.
+Ownership types provide a statically enforceable way of specifying object encapsulation and enable local reasoning about program correctness in object-oriented languages. However, a type system that enforces strict object encapsulation is too constraining: a type system that enforces strict object encapsulation does not allow efficient implementation of important constructs like iterators. This paper argues that the right way to solve the problem is to allow objects of classes defined in the same module to have privileged access to each other's representations; we show how to do this for inner classes. This approach allows programmers to express constructs like iterators and yet supports local reasoning about the correctness of the classes, because a class and This approach inner classes together can be reasoned about as a module. This paper also sketches how we use we variant of ownership types to enable efficient software upgrades in persistent object stores.
 --B
 Introduction
 The ability to reason locally about program correctness is
 crucial when dealing with large programs. Local reasoning
 allows correctness to be dealt with one module at a time.
-Each module has a specication that describes its expected
-behavior. The goal is to prove that each module satises its
+Each module has a specication that describes Each module expected
+behavior. The goal is to prove that each module satises Each module
 The research was supported in part by DARPA Contract
 F30602-98-1-0237, NSF Grant IIS-98-02066, and NTT.
 Permission to make digital or hard copies of all or part of this work for
@@ -40,14 +40,14 @@ A type system that enforces strict object encapsulation, how-
 ever, is too constraining [55]: it does not allow e-cient implementation
 of important constructs like iterators [48, 32].
 Consider, for example, an iterator over the above-mentioned
-Stack object s. If the iterator is encapsulated within s, it
+Stack object s. If the iterator is encapsulated within s, the iterator
 cannot be used outside s. If the iterator is not encapsulated
-within s, it cannot directly access the list nodes in s, and
+within s, the iterator cannot directly access the list nodes in s, and
 hence cannot run e-ciently.
 Previous ownership type systems were either too constraining
 to support constructs like iterators [22, 21], or too permissive
 to support local reasoning [20, 14, 11]; for example
-they allowed objects outside the above-mentioned Stack object
+Previous ownership type systems allowed objects outside the above-mentioned Stack object
 s to temporarily get direct access to the list nodes.
 This paper argues that the right way to solve the problem
 is to provide special access privileges to objects belonging to
@@ -58,16 +58,18 @@ of the corresponding outer class objects. This principled violation
 of encapsulation allows programmers to express constructs
 like iterators using inner classes, yet supports local
 reasoning about the correctness of the classes. Our system
-supports local reasoning because a class and its inner classes
+supports local reasoning because a class and Our system
+ inner classes
 can be reasoned about together as a module.
-The paper also describes how our variant of ownership types
+This paper also describes how our variant of ownership types
 enables e-cient software upgrades in persistent object stores.
-Our interest in software upgrades led us to work on ownership
-types. The paper shows how our ownership types can
+Our interest in software upgrades led Our to work on ownership
+types. This paper shows how our ownership types can
 be used to ensure that code for upgrading objects does not
 observe broken invariants or interfaces unknown at the time
 it was written; this makes it possible for programmers to
-reason about the correctness of their upgrades.
+reason about the correctness of programmers to
+ upgrades.
 This paper is organized as follows. Section 2 discusses object
 encapsulation. Section 3 describes our variant of ownership
 types for enforcing object encapsulation. Section 4 presents
@@ -75,7 +77,8 @@ a formal description of the type system. Section 5 shows how
 ownership types can be used to enable modular upgrades.
 Section 6 discusses related work and Section 7 concludes.
 Object Encapsulation
-Object encapsulation is important because it provides the
+Object encapsulation is important because Object Encapsulation
+ provides the
 ability to reason locally about program correctness. Reasoning
 about a class in an object-oriented program involves
 reasoning about the behavior of objects belonging to the
@@ -84,10 +87,12 @@ used to represent the containing object.
 Local reasoning about class correctness is possible if the sub-objects
 are fully encapsulated, that is, if all subobjects are
 accessible only within the containing object. This condition
-supports local reasoning because it ensures that outside
+supports local reasoning because This condition
+ ensures that outside
 objects cannot interact with the subobjects without calling
 methods of the containing object. And therefore the containing
-object is in control of its subobjects.
+object is in control of the containing
+object subobjects.
 However, full encapsulation is often more than is needed.
 Encapsulation is only required for subobjects that the containing
 object depends on [43, 28]:
@@ -96,17 +101,19 @@ of y and furthermore these calls expose mutable
 behavior of y in a way that aects the invariants of x.
 Thus, a Stack object s implemented using a linked list depends
 on the list but not on the items contained in the list.
-If code outside could manipulate the list, it could invalidate
+If code outside could manipulate the list, code outside could invalidate
 the correctness of the Stack implementation. But code outside
 can safely use the items contained in s because s doesn't
 call their methods; it only depends on the identities of the
 items and the identities never change. Similarly, a Set of
 immutable elements does not depend on the elements even
-if it invokes a.equals(b) to ensure that no two elements a and
+if a Set of
+immutable elements invokes a.equals(b) to ensure that no two elements a and
 b in the Set are equal, because the elements are immutable.
 Local reasoning about a class is possible if objects of that
 class encapsulate every object they depend on. But strict
-object encapsulation is too constraining [55]: it prevents efcient
+object encapsulation is too constraining [55]: strict
+object encapsulation prevents efcient
 implementation of important constructs like iterators.
 For example, to run e-ciently, an iterator over the above-mentioned
 Stack object s needs access to the list nodes in s.
@@ -116,8 +123,8 @@ Local reasoning is still possible provided all violations of encapsulation
 are limited to code contained in the same mod-
 ule. For example, if both the Stack and its iterator are imple-
 O1. Every object has an owner.
-O2. The owner can either be another object or world.
-O3. The owner of an object does not change over time.
+O2. an owner can either be another object or world.
+O3. an owner does not change over time.
 O4. The ownership relation forms a tree rooted at world.
 
 Figure
@@ -133,16 +140,16 @@ correctness locally, by examining the code of that module.
 3 Ownership Types for Encapsulation
 Ownership types [22, 20, 14, 11] provide a statically enforceable
 way of specifying object encapsulation. The idea is
-that an object can own subobjects it depends on, thus preventing
+that an object can own subobjects The idea depends on, thus preventing
 them from being accessible outside. This section
-presents our ownership type system. This system is similar
+presents our ownership type system. our ownership type system is similar
 to the one described in [20]|the main dierence is that
 to support constructs like iterators, the type system in [20]
 allows temporary violations of encapsulation. We disallow
-this violation. Instead, we support constructs like iterators
+this violation. Instead, We support constructs like iterators
 using inner classes.
 The key to the type system is the concept of object owner-
-ship. Every object has an owner. The owner can either be
+ship. Every object has an owner. an owner can either be
 another object or a special owner called world. Our type system
 statically guarantees the ownership properties shown in
 
@@ -154,15 +161,19 @@ special owner world owns objects o1, o5, and o6; o1 owns o2
 and o4; o2 owns o3; and o6 owns o7.
 Ownership allows a program to statically declare encapsulation
 boundaries that capture dependencies:
-D2. An object should own all the objects it depends on.
-The system then enforces encapsulation: if y is inside the
+D2. An object should own all the objects An object depends on.
+Our type system
+ then enforces encapsulation: if y is inside the
 encapsulation boundary of z and x is outside, then x cannot
 access y. (An object x accesses an object y if x has a pointer
 to y, or methods of x obtain a pointer to y.) In Figure 2, o7
 is inside the encapsulation boundary of o6 and o1 is outside,
 so o1 cannot access o7. An object is only allowed to access:
+itself and objects o1 owns, 2) o1 ancestors in the ownership
+tree and objects An object is only allowed to access:
 itself and objects it owns, 2) its ancestors in the ownership
 tree and objects they own, and globally accessible objects,
+namely objects owned by world own, and globally accessible objects,
 namely objects owned by world. 1 Thus, o1 can access all
 objects in the gure except for o3 and o7.
 1 Note the analogy with nested procedures: proc P1 fvar x2 ;
@@ -204,14 +215,14 @@ Figure
 
 4: Ownership Relation for TStacks s1, s2, s3
 3.1 Owner Polymorphism
-We present our type system in the context of a Java-like
+We present We type system in the context of a Java-like
 language augmented with ownership types. Every class definition
 is parameterized with one or more owners. The rst
 owner parameter is special: it identies the owner of the
 corresponding object. The other owner parameters are used
 to propagate ownership information. Parameterization allows
 programmers to implement a generic class whose objects
-have dierent owners. This parameterization is similar
+have dierent owners. Parameterization is similar
 to parametric polymorphism [54, 16, 1, 61] except that our
 parameters are owners, not types.
 An owner can be instantiated with this, with world, or with
@@ -219,8 +230,10 @@ another owner parameter. Objects owned by this are encapsulated
 objects that cannot be accessed from outside.
 Objects owned by world can be accessed from anywhere.
 proc P2 fvar x3 ; proc P3 f.ggg. Say xn+1 and Pn+1 are
-children of Pn . Pn can only access: 1) Pn and its children, 2)
+children of Pn . Pn can only access: 1) Pn and Pn children, 2)
+the ancestors of Pn and its children, 2)
 the ancestors of Pn and their children, and global variables
+and procedures children, and global variables
 and procedures.
 class C<cOwner, sOwner, tOwner> where (sOwner <= tOwner) {
 .
@@ -233,10 +246,10 @@ Figure
 Figure
 
 3 shows an example. 2 A TStack is a stack of T ob-
-jects. It is implemented using a linked list. The TStack
+jects. A TStack is implemented using a linked list. The TStack
 class is parameterized by stackOwner and TOwner. stack-
 Owner owns the TStack object; TOwner owns the T objects
-contained in the TStack. The code species that the TStack
+contained in A TStack. The code species that the TStack
 object owns the nodes in the list; therefore the list nodes
 cannot be accessed from outside the TStack object.
 The type of TStack s1 is instantiated using this for both
@@ -269,7 +282,7 @@ necessary for programmers to specify additional constraints
 on class and method parameters. For example, in Figure 5,
 the type of s is legal only if (sOwner  tOwner). We allow
 programmers to specify such additional constraints using
-where clauses [25, 54], and our type system enforces the
+where clauses [25, 54], and We type system enforces the
 constraints. For example, in Figure 5, class C species that
 (sOwner  tOwner). An instantiation of C that does not
 satisfy the constraint is illegal.
@@ -277,9 +290,9 @@ satisfy the constraint is illegal.
 The rule for declaring a subtype is that the rst owner parameter
 of the supertype must be the same as that of the
 subtype; in addition, of course, the supertype must satisfy
-the constraints on owners. The rst owners have to match
+the constraints on owners. owners have to match
 2 The example shows type annotations written explicitly.
-However, many of them can be automatically inferred. See
+However, many of owners can be automatically inferred. See
 Section 4.3 for details.
 class TStack<stackOwner, TOwner> {
 3 .
@@ -319,22 +332,24 @@ Recall from before that an owner can be instantiated with
 this, with world, or with another owner parameter. Within
 an inner class, an owner can also be instantiated with C.this,
 where C is an outer class. This feature allows an inner object
-to access the objects encapsulated within its outer objects.
+to access the objects encapsulated within This feature outer objects.
 In
 
 Figure
 
 6, the owner of the current eld inTStackEnum is
 instantiated with TStack.this. The current eld accesses list
-nodes encapsulated within its outer TStack object.
+nodes encapsulated within The current eld outer TStack object.
 An inner class is parameterized with owners just like a regular
 class. In our system, the outer class parameters are
 not automatically visible inside an inner class. If an inner
-class uses an outer class parameter, it must explicitly include
-the outer class parameter in its declaration. In Figure 6,
-the TStackEnum declaration includes the owner parameter
-TOwner from its outer class. TOwner is therefore visible
-inside TStackEnum. But the TStackEnum declaration does
+class uses an outer class parameter, an inner
+class must explicitly include
+the outer class parameter in an inner
+class declaration. In Figure 6,
+its declaration includes the owner parameter
+TOwner from its declaration outer class. TOwner is therefore visible
+inside TStackEnum. But its declaration does
 class TStack<stackOwner, TOwner> {
 3 .
 4 class TStackEnum<enumOwner, TOwner>
@@ -366,7 +381,7 @@ outer object. A program can then create a wrapper around
 an encapsulated subobject, and pass the wrapper object outside
 the encapsulation boundary.
 3.5 Encapsulation Theorem
-Our system provides the following encapsulation property:
+our system provides the following encapsulation property:
 Theorem 1. x can access an object owned by
 1.
 2. x is an inner class object of o.
@@ -401,29 +416,31 @@ are owned. The above theorem implies that owned objects
 can only be accessed from inside the owner, and by inner ob-
 jects. Therefore if ownership captures the depends relation
 described in Section 2, local reasoning about the correctness
-of a class is possible, because the class and its inner classes
+of a class is possible, because the class and a class inner classes
 together can be reasoned about as a module.
-Our ownership types are also expressive. They allow ecient
+Our ownership types are also expressive. Our ownership types allow ecient
 implementation of constructs like iterators and wrappers
-[32]. Furthermore, they also allow programs to create
+[32]. Furthermore, Our ownership types also allow programs to create
 wrappers that can be used in contexts where the underlying
 object is inaccessible. This ability was illustrated in Figure 6;
-iterator e2 can be used globally even though the TStack it
+iterator e2 can be used globally even though the TStack the TStack
 is iterating over can only be used in TStackClient.
-Ours is the rst ownership type system to support constructs
+Our is the rst ownership type system to support constructs
 like iterators and generally accessible wrappers while also ensuring
-local reasoning. We discuss this further in Section 6.
+local reasoning. Our discuss this further in Section 6.
 3.7 Eects Clauses
-Our system also contains eects clauses [49] because they
+Our also contains eects clauses [49] because our system
 are useful for specifying assumptions that hold at method
 boundaries and enable modular reasoning and checking of
-programs. We use eects with ownership types to enable
-modular upgrades; we describe this in Section 5.
-Our system allows programmers to specify reads and writes
+programs. Our use eects with ownership types to enable
+modular upgrades; Our describe this in Section 5.
+Our allows programmers to specify reads and writes
 clauses. Consider a method that species that it writes
-wn ) and reads (r1 ; :::; rm ). The method can write
+wn ) and reads (r1 ; :::; rm ). a method that species that it writes
+wn ) and reads (r1 ; :::; rm ) can write
 an object x (or call methods that write x) only if
-for some i 2 f1::ng. The method can read an object y (or
+for some i 2 f1::ng. a method that species that it writes
+wn ) and reads (r1 ; :::; rm ) can read an object y (or
 call methods that read y) only if (y  w i ) or (y  r j ), for
 some f1::mg. We thus allow a method to
 both read and write objects named in its writes clause.
@@ -433,7 +450,7 @@ Figure
 7 shows a TStack iterator that uses eects, but is
 otherwise similar to the TStack iterator in Figure 6. In the
 example, the hasMoreElements method reads the this object.
-The getNext method reads objects owned by TStack.this and
+the hasMoreElements method reads objects owned by TStack.this and
 writes (and reads) the this object.
 defn ::= class cnhformal+i extends c where constr* body
 body ::= finnerclass* eld* meth*g
@@ -468,10 +485,10 @@ Ownership types and eects can be used to locally reason
 about the side eects of method calls. Consider, for example,
 the code in Figure 8, which shows an IntStack implemented
 using an IntVector vec. (We adopted this example from [44].)
-The example has a method m that receives two arguments:
+this example has a method m that receives two arguments:
 an IntStack s and an IntVector v. The condition in the assert
 statement in m can be true only if v is not aliased to s.vec.
-In the example, the method m uses a where clause to specify
+In this example, the method m uses a where clause to specify
 that (v 6 s) and (s 6 v). Since the ownership relation forms
 a tree (see Figure 1), this constraint implies that v cannot be
 aliased to s.vec. Furthermore, IntVector.size declares that it
@@ -482,10 +499,11 @@ v.size and s.push cannot interfere, and thus the condition in
 the assert statement in m must be true.
 4 The Type System
 This section presents a formal description of our type system.
-To simplify the presentation of key ideas, we describe our
+To simplify the presentation of key ideas, we describe we
 type system in the context of a core subset of Java [33] known
 as Classic Java [31]. We add inner classes to Classic Java
-and augment its type system with ownership types. Our
+and augment Classic Java
+ type system with ownership types. Our
 approach, however, extends to the whole of Java and other
 similar languages.
 4.1 Type Checking
@@ -541,14 +559,15 @@ of e. t is the type of e. We dene a typing environment
 as
 as R, W ::= o1::n . We dene the type system using the
 judgments in Figure 11. We present the rules for these judgments
-in Figure 10. The rules use a number of predicates
+in Figure 10. the rules for these judgments
+ use a number of predicates
 that are shown in Figure 12. These predicates are based on
 similar predicates from [31]. For simplicity, we sometimes
-treat outermost classes in our rules as if they were inner
+treat outermost classes in we rules as if they were inner
 classes of class ;. We also sometime use cnhfi to denote
 4.2 Soundness of the Type System
-Our type checking rules ensure that for a program to be
-well-typed, the program respects the properties described in
+We type checking rules ensure that for a program to be
+well-typed, a program respects the properties described in
 
 Figure
 
@@ -560,9 +579,9 @@ state and that the generalized subject reduction theorem
 holds for well-typed programs. The subject reduction theorem
 states that the semantic interpretation of a term's type
 is invariant under reduction. The proof is straightforward
-but tedious, so it is omitted here.
+but tedious, so The proof is omitted here.
 4.3 Type Inference
-Although our type system is explicitly typed in principle, it
+Although We type system is explicitly typed in principle, our type system
 would be onerous to fully annotate every method with the
 extra type information. Instead, we can use a combination
 of inference and well-chosen defaults to signicantly reduce
@@ -573,7 +592,9 @@ about one in thirty lines of code had to be changed to express
 Java programs in an ownership type system.) We emphasize
 that this approach to inference is purely intraprocedural and
 does not infer method signatures or types of instance vari-
-ables. Rather, it uses a default completion of partial type
+ables. Rather, this approach to inference is purely intraprocedural and
+does not infer method signatures or types of instance vari-
+ables uses a default completion of partial type
 specications in those cases to minimize the required anno-
 tations. This approach permits separate compilation.
 Meaning
@@ -601,7 +622,8 @@ The ownership relations are used only for compile-time type
 checking and are not preserved at runtime. Consequently,
 our programs have no runtime overhead compared to regular
 (Java) programs. In fact, one way to compile and run a program
-in our system is to convert it into a regular program
+in our system is to convert a program
+ into a regular program
 after type checking, by removing the owner parameters, the
 constraints on owners, and the eects clauses.
 A language like Java, however, is not purely statically-typed.
@@ -628,7 +650,8 @@ conventional objects similar to what one might nd in an
 object-oriented language such as Java. Applications access
 persistent objects within atomic transactions, since this is
 necessary to ensure consistency for the stored objects; transactions
-allow for concurrent access and they mask failures.
+allow for concurrent access and transactions
+ mask failures.
 Upgrades are needed in such a system to improve object
 implementations, to correct errors, or even to change interfaces
 in the face of changing application requirements; this
@@ -639,7 +662,7 @@ object stores has been a long-standing challenge.
 An upgrade for a persistent object store is dened as a set
 of class-upgrades, one for each class whose objects need to
 change. A class-upgrade is a triple: hold-class, new-class,
-TFi. It indicates that all objects belonging to old-class
+TFi. A class-upgrade indicates that all objects belonging to old-class
 should be transformed, through the use of the transform
 function TF provided by the programmer, into objects of
 new-class. TF takes an old-class object and a newly allocated
@@ -655,18 +678,21 @@ performed e-ciently in both space and time. In addition,
 they must be done safely so that important persistent state
 is not corrupted. Previous approaches [4, 7, 29, 45, 56, 57]
 do not provide a satisfactory solution to these challenges;
-they either stop application access to the database while
-running the upgrade, or they keep copies of the database, or
-they limit the expressive power of transforms (e.g., transform
+Previous approaches [4, 7, 29, 45, 56, 57]
+ either stop application access to the database while
+running the upgrade, or Previous approaches [4, 7, 29, 45, 56, 57]
+ keep copies of the database, or
+Previous approaches [4, 7, 29, 45, 56, 57]
+ limit the expressive power of transforms (e.g., transform
 functions are not allowed to make method calls).
-Our system provides an e-cient solution. It performs upgrades
+Our system provides an e-cient solution. Our system performs upgrades
 lazily. An object is transformed just before an application
-accesses it: the application transaction is interrupted
-to run the transform function. The transform runs in its
-own transaction; when this transaction commits, the application
-transaction is resumed. Our system also allows later
+accesses An object: the application transaction is interrupted
+to run the transform function. The transform runs in The transform
+own transaction; when the application transaction commits, the application transaction is resumed. Our system also allows later
 upgrades to run in parallel with earlier ones. If an object has
-several pending transforms, they are run one after another,
+several pending transforms, an object has
+several pending transforms are run one after another,
 in upgrade order. Furthermore, if a transform transaction
 T encounters an object with a pending transform from an
 upgrade, T is interrupted (just like an application
@@ -674,19 +700,18 @@ to run the pending transform, and continues execution
 after the pending transform commits.
 More details can be found in [13, 12, 47].
 5.1 Ownership Types for Safe Upgrades
-Our upgrade system is e-cient and expressive: it does not
+Our system is e-cient and expressive: Our system does not
 delay application transactions, avoids the use of versions
 (copies of objects), and does not limit the expressive power
-of transform functions. But it also needs to support modular
+of transform functions. But Our system also needs to support modular
 reasoning about the correctness of transform functions.
 This is possible if each transform function encounters only
 object interfaces and invariants that existed when its upgrade
 started, even though in reality the transform function
 might run much later, after application transactions
 and other transform transactions.
-We use our variant of ownership types to enable modular
-reasoning about the correctness of transform functions. Our
-system checks statically whether transform functions satisfy
+We use We variant of ownership types to enable modular
+reasoning about the correctness of transform functions. Wechecks statically whether transform functions satisfy
 the following constraint, using ownership and eects declarations
 (eects clauses state what objects TFs access):
 S1. TF(x) only accesses objects that x owns (directly or
@@ -694,13 +719,13 @@ transitively).
 Transform functions often satisfy S1 because ownership frequently
 captures the depends relation discussed in Section 2,
 and typically transform functions only access the depended-
-on objects. (We discuss in [13] how we support modular
+on objects. (We discuss in [13] how We support modular
 reasoning of transform functions when S1 does not hold.)
-Our implementation also ensures the following:
+We implementation also ensures the following:
 S2. For any object x aected by an upgrade, x is accessed
 before any object owned by x.
 We ensure S2 using two mechanisms. If the owned object is
-encapsulated within x, the type system guarantees that x is
+encapsulated within x, Our system guarantees that x is
 accessed rst. If the owned object is shared with an inner
 class object of x, our system causes x to be accessed just
 before the inner class object is rst used after the upgrade.
@@ -716,7 +741,7 @@ given in [13]).
 Thus when S1 holds, we can ensure that transform functions
 encounter the expected interfaces and invariants. This supports
 modular reasoning: each transform function can be
-reasoned about as extra method of its old class.
+reasoned about as extra method of This old class.
 6 Related Work
 Euclid [41] is one of the rst languages that considered the
 problem of aliasing. [37] stressed the need for better treatment
@@ -727,17 +752,21 @@ outside the object. Universes [53] also enforces full
 encapsulation, except for read-only references. However, full
 encapsulation signicantly limits expressiveness, and is often
 more than is needed. The work on ESC/Java pointed out
-that encapsulation is required only for subobjects that the
+full
+encapsulation is required only for subobjects that the
 containing object depends on [43, 28], but ESC/Java was
 unable to always enforce encapsulation.
 6.1 Ownership Types and Encapsulation
 Ownership types provide a statically enforceable way of specifying
-object encapsulation. They were proposed in [22] and
+object encapsulation. 6.1 Ownership Types and Encapsulation
+Ownership types were proposed in [22] and
 formalized in [21]. These systems enforce strict object en-
 capsulation, but do so by signicantly limiting expressive-
-ness. They require that a subtype have the same owners
+ness. 6.1 Ownership Types and Encapsulation
+Ownership types require that a subtype have the same owners
 as a supertype. So TStackhstackOwner, TOwneri cannot be
-a subtype of ObjecthstackOwneri. Moreover, they do not
+a subtype of ObjecthstackOwneri. Moreover, 6.1 Ownership Types and Encapsulation
+Ownership types do not
 support iterators.
 PRFJ [14], SCJ [11], and JOE [20] extended ownership types
 to support a natural form of subtyping. To do so without
@@ -746,12 +775,12 @@ in every type with multiple owners, the rst owner  all
 other owners. As a result, in JOE, a program can create a
 pointer from object x to an object owned by
 o). PRFJ and SCJ allow an object to contain pointers to
-subobjects owned by a dierent object, but they have eects
+subobjects owned by a dierent object, but PRFJ and SCJ have eects
 clauses that prevent a program from following such point-
 ers. The above systems eectively enforce encapsulation for
 object elds. However, to support constructs like iterators,
-they allow method local variables to violate encapsulation.
-Therefore they do not support local reasoning.
+constructs like iterators allow method local variables to violate encapsulation.
+Therefore constructs like iterators do not support local reasoning.
 AliasJava [2] uses ownership types to aid program under-
 standing. Like other ownership type systems, AliasJava allows
 programmers to use ownership information to reason
@@ -761,14 +790,13 @@ ownership type systems. However, unlike other ownership
 type systems, AliasJava does not enforce any encapsulation
 properties. (This is illustrated with an example in [11].)
 Ownership types have been extended to inner classes in [19,
-2]. However, these systems do not enforce the property
+2]. However, The above systems do not enforce the property
 stated in Section 3.5, and do not support local reasoning.
 Ownership types have also been used to enforce other prop-
 erties. Parameterized Race-Free Java (PRFJ) [14] uses an
 based type system to prevent data races in multi-threaded
 programs. Safe Concurrent Java (SCJ) [11] extends
-this to prevent both data races and deadlocks. These systems
-can be combined with our approach to enforce object
+this to prevent both data races and deadlocks. The above systemscan be combined with our approach to enforce object
 encapsulation as well as prevent data races and deadlocks.
 [11] sketches a way of doing this.
 Recent work [15, 59] combines region types [60, 24, 35] with
@@ -785,7 +813,7 @@ systems. PRFJ [14] is the rst system that combines
 ownership types with conventional unique pointers. Recent
 work [23] proposes a better approach that allows a program
 to specify a unique external pointer to an object; there can
-be other internal pointers to the object from its subobjects.
+be other internal pointers to an object from an object subobjects.
 Eects clauses [49] are useful for specifying assumptions that
 must hold at method boundaries. Eects enable modular
 checking of programs. PRFJ [14] is the rst system to combine
@@ -799,13 +827,15 @@ of subtyping. Ownership types provide an alternate
 way of writing modular specications. Ownership types can
 also be used to name groups of objects in an eects clause|
 the name of an owner can be used to name all the objects
-transitively owned by the owner. Figure 8 presents an example
+transitively owned by an owner. Figure 8 presents an example
 from [44] expressed using ownership types. Data groups
 are implemented using a theorem prover, and in principle,
-they can be very
+Data groups
+ can be very
 exible. However, pivot uniqueness in [44]
 imposes drastic restrictions on pivot elds. Ownership types
-do not impose such restrictions; they only require that the
+do not impose such restrictions; Ownership types
+ only require that the
 owner of an object be unique. In [44], the owner exclusion
 constraint is hard coded. In our system, programmers can
 specify arbitrary constraints on owners using where clauses;
@@ -826,32 +856,37 @@ Object encapsulation enables sound local reasoning about
 program correctness in object-oriented languages. Ownership
 types provide a way of specifying and statically enforcing
 object encapsulation. However, a type system that
-enforces strict object encapsulation is too constraining: it
+enforces strict object encapsulation is too constraining: a type system that
+enforces strict object encapsulation
 does not allow e-cient implementation of important constructs
 like iterators.
-This paper argues that the right way to solve the problem
+This
+paper argues that the right way to solve the problem
 is to allow objects of classes dened in the same module to
 have privileged access to each other's representations. We
-show how to do this for inner classes. Our variant of ownership
+show how to do this for inner classes. We variant of ownership
 types allows objects of inner classes to have privileged
 access to the representations of the corresponding objects
 of outer classes. This principled violation of encapsulation
 allows programmers to express constructs like iterators and
-wrappers using inner classes. Our system also allows wrappers
+wrappers using inner classes. our system also allows wrappers
 to be used in more global contexts than the objects
-they wrap. Yet our system supports local reasoning about
-the correctness of classes, because a class and its inner classes
+wrappers
+ wrap. Yet Our supports local reasoning about
+the correctness of classes, because a class and our system inner classes
 can be reasoned about together as a module.
 Thus the paper describes the rst ownership type system
 that is expressive enough to support iterators and wrappers,
-while also supporting local reasoning. In addition, the paper
-describes an application of the technique to enable modular
+while also supporting local reasoning. In addition, the paperdescribes an application of the technique to enable modular
 reasoning about upgrades in persistent object stores.
 Ownership types have been used for other purposes as well,
 such as for preventing data races and deadlocks, and for safe
 region-based memory management. Since ownership types
-require little programming overhead, their type checking is
-fast and scalable, and they provide several benets, they
+require little programming overhead, ownership types
+ type checking is
+fast and scalable, and ownership types
+ provide several benets, ownership types
+
 oer a promising approach to making object-oriented programs
 more reliable.
 
@@ -859,7 +894,8 @@ Acknowledgments
 
 We thank Daniel Jackson, Viktor Kuncak, Greg Nelson,
 Martin Rinard, and Alexandru Salcianu for useful discussions
-and comments on earlier drafts of this paper.
+and comments on earlier drafts of This
+paper.
 
 
 

@@ -1,7 +1,7 @@
 --T
 An Empirical Evaluation of Performance-Memory Trade-Offs in Time Warp.
 --A
-AbstractThe performance of the Time Warp mechanism is experimentally evaluated when only a limited amount of memory is available to the parallel computation. An implementation of the cancelback protocol is used for memory management on a shared memory architecture, viz., KSR to evaluate the performance vs. memory tradeoff. The implementation of the cancelback protocol supports canceling back more than one memory object when memory has been exhausted (the precise number is referred to as the salvage parameter) and incorporates a non-work-conserving processor scheduling technique to prevent starvation.Several synthetic and benchmark programs are used that provide interesting stress cases for evaluating the limited memory behavior. The experiments are extensively monitored to determine the extent to which various factors may affect performance. Several observations are made by analyzing the behavior of Time Warp under limited memory: 1) Depending on the available memory and asymmetry in the workload, canceling back several memory objects at one time (i.e., a salvage parameter value of more than one) improves performance significantly, by reducing certain overheads. However, performance is relatively insensitive to the salvage parameter except at extreme values. 2) The speedup vs. memory curve for Time Warp programs has a well-defined knee before which speedup increases very rapidly with memory and beyond which there is little performance gain with increased memory. performance nearly equivalent to that with large amounts of memory can be achieved with only a modest amount of additional memory beyond that required for sequential execution, if memory management overheads are small compared to the event granularity. These results indicate that contrary to the common belief, memory usage by Time Warp can be controlled within reasonable limits without any significant loss of performance.
+AbstractThe performance of the Time Warp mechanism is experimentally evaluated when only a limited amount of memory is available to the parallel computation. An implementation of the cancelback protocol is used for memory management on a shared memory architecture, viz., KSR to evaluate the performance vs. memory tradeoff. An implementation of the cancelback protocol the cancelback protocol supports canceling back more than one memory object when memory has been exhausted (the precise number is referred to as the salvage parameter) and incorporates a non-work-conserving processor scheduling technique to prevent starvation.Several synthetic and benchmark programs are used that provide interesting stress cases for evaluating the limited memory behavior. The experiments are extensively monitored to determine the extent to which various factors may affect performance. Several observations are made by analyzing the behavior of Time Warp under limited memory: 1) Depending on the available memory and asymmetry in the workload, canceling back several memory objects at one time (i.e., a salvage parameter value of more than one) improves performance significantly, by reducing certain overheads. However, performance is relatively insensitive to the salvage parameter except at extreme values. 2) The speedup vs. memory curve for Time Warp programs has a well-defined knee before which speedup increases very rapidly with memory and beyond which there is little performance gain with increased memory. performance nearly equivalent to that with large amounts of memory can be achieved with only a modest amount of additional memory beyond that required for sequential execution, if memory management overheads are small compared to the event granularity. These results indicate that contrary to the common belief, memory usage by Time Warp can be controlled within reasonable limits without any significant loss of performance.
 --B
 common belief, memory usage by Time Warp can be controlled within reasonable limits without
 a significant loss of performance. This work also suggests that limiting memory can act as an
@@ -11,15 +11,14 @@ perhaps more importantly, greater transparency of the synchronization mechanism 
 programmer. Time Warp has demonstrated a fair amount of success in speeding up simulations
 of combat models [31], communication networks [3, 26], queueing networks [8], and digital logic
 circuits [2], among many others.
-One major critique of Time Warp is its apparent large and inefficient use of memory. Time Warp
-uses a checkpointing technique to implement the rollback mechanism. Past states of the processes
+One major critique of Time Warp is Time Warp apparent large and inefficient use of memory. Time Warpuses a checkpointing technique to implement the rollback mechanism. Past states of the processes
 need to be saved to enable rollback. In addition, the Time Warp system may hold a large amount
 of incorrect computations that will be rolled back or canceled in the future. Thus Time Warp may
-be inefficient in its memory usage. Large simulations may cause severe performance degradations
+be inefficient in Time Warp memory usage. Large simulations may cause severe performance degradations
 due to overheads in the virtual memory system of the underlying architecture. Memory utilization
 in Time Warp can be unbounded in principle. Even though there is a garbage collection mechanism
 (called fossil collection) for reclaiming memory, this alone may not be enough to complete the Time
-Warp execution with a reasonable amount of memory. This makes it imperative to study techniques
+Warp execution with a reasonable amount of memory. this alone makes it imperative to study techniques
 to limit the memory usage of a Time Warp execution and their performance impacts.
 A number of memory management schemes have been proposed to reduce the space usage of
 Time Warp. We classify these approaches into two categories: passive and active. Passive schemes
@@ -40,7 +39,7 @@ queueing network model [25]. In this paper, we present a comprehensive empirical
 rollback based active memory management protocol called cancelback [15]. In this context, we also
 describe an efficient implementation of the cancelback protocol in an existing multiprocessor Time
 Warp kernel.
-The cancelback protocol is attractive because it has the storage optimal property [18]. The
+the cancelback protocol is attractive because the cancelback protocol has the storage optimal property [18]. The
 storage optimal property states that the cancelback protocol is able to complete the Time Warp
 computation within the amount of memory required for the equivalent sequential computation.
 However, more memory usually gives better performance and the storage optimal property says
@@ -57,36 +56,36 @@ architecture, and the solutions we have adopted. Section 5 discusses results fro
 workloads to evaluate the performance of the cancelback protocol. Section 6 extends these
 results to specific benchmark models. In section 7, we analyze various factors controlling the limited
 memory behavior of Time Warp and the properties of the application simulation and the execution
-system that determine these factors. We also indicate how we can view limiting available memory
+system that determine these factors. We also indicate how We can view limiting available memory
 as a way to throttle Time Warp execution. Conclusions are presented in section 8.
 2 The Time Warp Protocol
 A Time Warp program consists of a collection of logical processes (LPs) that execute on (possi-
-bly) different physical processors. The LPs execute timestamped events and interact by exchanging
-events (also called messages, so we use the terms "event" and "message" synonymously here). The
-timestamp indicates the event's virtual time of occurrence and is assumed to be specified by the
-application program. For discrete event simulation programs, virtual time is identical to simulation
+bly) different physical processors. A Time Warp program execute timestamped events and interact by exchanging
+events (also called messages, so We use the terms "event" and "message" synonymously here). The
+timestamp indicates the event's virtual time of occurrence and is assumed to be specified by A Time Warp program. For discrete event simulation programs, virtual time is identical to simulation
 time and the events are simulation events.
-An event has two timestamps associated with it: (i) the timestamp at which it occurs, called the
-receive timestamp, and (ii) the timestamp of the sending LP when the event was scheduled, called
+An event has two timestamps associated with An event: (i) the timestamp at which An event occurs, called the
+receive timestamp, and (ii) the timestamp of the sending LP when An event was scheduled, called
 the send timestamp. We shall use the term "timestamp" to indicate receive timestamp, unless
 specified otherwise. Each LP in a Time Warp system must process the messages scheduled on it
-in timestamp order in order to guarantee correctness. If an LP processes events out of timestamp
-order, e.g., because it receives a message (called straggler) with a timestamp smaller than some other
-that it has already processed, the LP rolls back the corresponding event computations
+in timestamp order in order to guarantee correctness. If an Each LP in a Time Warp system processes events out of timestamp
+order, e.g., because an LP receives a message (called straggler) with a timestamp smaller than some other
+that an LP has already processed, Each LP in a Time Warp system rolls back the corresponding event computations
 that were processed out of sequence, and reexecutes them (including the newly arrived stragglers)
 in timestamp order. Rollback entails undoing event computations. Computation of an event can (i)
-modify the state 1 of the LP and (ii) send other messages to (possibly) other LPs. Thus, undoing an
-event computation entails (i) restoring the state of the LP to that which existed prior to processing
+modify the state 1 of Each LP in a Time Warp system and (ii) send other messages to (possibly) other LPs. Thus, undoing an
+event computation entails (i) restoring the state of Each LP in a Time Warp system to that which existed prior to processing
 the event, and (ii) "unsending" messages that were sent during the course of processing the event.
-To enable rollbacks, (i) the state of each LP is periodically saved, and (ii) a negative copy of each
-outgoing message is saved with the sending LP. The negative copy is called an anti-message and
+To enable rollbacks, (i) the state of each Each LP in a Time Warp system is periodically saved, and (ii) a negative copy of each
+outgoing message is saved with Each LP in a Time Warp systemEach LP in a Time Warp system. (ii) a negative copy of each
+outgoing message is called an anti-message and
 differs only in a sign field from the original, positive message. When an event computation is undone
-upon a rollback, the state of LP is restored from a past, correct copy. Unsending a previously sent
+upon a rollback, the state of each LP is restored from a past, correct copy. Unsending a previously sent
 message is accomplished by sending the corresponding anti-message that "cancels" or "annihilates"
 the previously sent positive message. If the cancelled message had already been processed (by
-another LP) when the anti-message is received, the receiver is first rolled back (possibly generating
+another Each LP in a Time Warp system) when the anti-message is received, the receiver is first rolled back (possibly generating
 additional anti-messages) prior to the message cancellation.
-In order to reclaim memory (e.g., processed messages and snapshots of the LP's state), and
+In order to reclaim memory (e.g., processed messages and snapshots of Each LP in a Time Warp system's state), and
 to allow operations that cannot be rolled back (e.g., I/O), global virtual time (GVT) is defined.
 1 Note that in Time Warp LPs do not share states, though extensions of Time Warp to implement state sharing
 has been proposed[9].
@@ -113,49 +112,60 @@ generated)
 Figure
 
 1: Time Warp Objects
-GVT is a lower bound of the timestamp of any rollback that might later occur. To guarantee
-progress, the Time Warp system should always ensure an eventual increase in GVT. Normally,
-GVT is defined operationally as the smallest receive timestamp of any unprocessed or partially
-processed message or anti-message in the system. However, some memory management schemes
+(GVT) is a lower bound of the timestamp of any rollback that might later occur. To guarantee
+progress, the Time Warp system should always ensure an eventual increase in (GVT). Normally,
+(GVT) is defined operationally as the smallest receive timestamp of any unprocessed or partially
+processed message or anti-message in the Time Warp system. However, some memory management schemes
 may require a different operational definition. Later, we will discuss this question further.
-GVT defines the commitment horizon of the simulation. Events with timestamp less than GVT
-are referred to as committed events. They will never be rolled back. Irrevocable operations that
+(GVT) defines the commitment horizon of the simulation. Events with timestamp less than (GVT)are referred to as committed events. They will never be rolled back. Irrevocable operations that
 were invoked by committed events can be performed, and, generally speaking, storage occupied by
-them or their states can be reclaimed. The latter operations are called fossil collection.
-3 Active Memory Management Schemes for Time Warp
-Time Warp consumes memory by storing three types of objects, viz., copies of state vectors,
-positive messages, and negative messages. Objects with receive time 2 earlier than GVT are called
-past objects. Objects with send time earlier than or equal to GVT, but receive time later than or
-equal to GVT are called present objects. All other objects with send time (and therefore receive
-time) later then GVT are called future objects (see Figure 1). It is apparent that the present
+They or They states can be reclaimed. Irrevocable operations that
+were invoked by committed events are called fossil collection.
+3 Active Memory Management Schemes for Time WarpTime Warp consumes memory by storing three types of objects, viz., copies of state vectors,
+positive messages, and negative messages. Objects with receive time 2 earlier than (GVT) are called
+past objects. Objects with send time earlier than or equal to (GVT), but receive time later than or
+equal to (GVT) are called present objects. All other objects with send time (and therefore receive
+time) later then (GVT) are called future objects (see Figure 1). It is apparent that the present
 messages and states are the only ones that are required in a corresponding sequential simulation,
-when the simulation time is equal to the current value of GVT in the parallel simulation. All
+when the simulation time is equal to the current value of (GVT) in the parallel simulation. All
 past objects are committed and can be fossil collected. Present and future objects are also called
 uncommitted objects. 3
-2 For a state vector the virtual send time is the time it is created, and virtual receive time is the time it is used or
+2 For a state vector the virtual send time is the time a state vector is created, and virtual receive time is the time a state vector is used or
 read.
 3 except for the present anti-messages which are also committed and can be fossil collected.
 Several techniques have been proposed that reclaim memory by removing future objects and
 thereby causing rollback of the sender of the corresponding object. Message Sendback was proposed
-by Jefferson in his original work on Time Warp [14] as a flow control scheme. When a message
-arrives at a receiving process's input queue, and there is no room to store it, the receiving process
+by Jefferson in Message Sendback original work on Time Warp [14] as a flow control scheme. When a message
+arrives at a receiving process's input queue, and there is no room to store a message
+, the receiving process
 makes room by sending back a message (possibly different from the one that was just received)
-to its original sender. This sender must then roll back 4 to the state it was in when it sent the
-message, and resend the message as it executes forward again. The "natural choice" [14] of the
+to the receiving process
+ original sender. its original sender must then roll back 4 to the state its original sender was in when its original sender sent a message
+, and resend a message
+ as a message
+ executes forward again. The "natural choice" [14] of the
 message to be sent back is the one with the largest send time.
 Gafni's protocol [11] generalizes message sendback by removing a stored object (input message,
 state vector or output message) from a process P that runs out of memory. If the discarded object
-is an input message, it is returned to the sender, as in message sendback. If it is an output message,
-it is transmitted to its receiver where it will cancel the corresponding positive message, and P rolls
-back to the state before it sent the original positive message. If the stored object is a state, it is
-discarded and P rolls back to the previous state. Typically, the stored object with the highest send
+is an input message, the discarded object
+ is returned to its original sender, as in Message Sendback. If the discarded object
+ is an output message,
+the discarded object
+ is transmitted to the discarded object
+ receiver where the discarded object
+ will cancel the corresponding positive message, and P rolls
+back to the state before the discarded object
+ sent a message
+. If the stored object is a state, the stored object is
+discarded and P rolls back to the state. Typically, the stored object with the highest send
 time is selected to be sent back.
-Message sendback and Gafni's protocol do not have the storage optimal property: they may not
+Message sendback and Gafni's protocol do not have the storage optimal property: Message sendback and Gafni's protocol may not
 be able to complete the simulation within the sequential amount of memory. 5 The cancelback protocol
 [15], however, is storage optimal. Unlike message sendback and Gafni's protocol cancelback
 is targeted for a shared memory architecture where there is a single shared pool of memory. All
-processes allocate objects from this shared pool and return free objects to this pool after reclama-
-tion. In this protocol, if a process P needs storage for any object u, it is assumed that u is always
+processes allocate objects from this shared pool and return free objects to this shared pool after reclama-
+tion. In The cancelback protocol
+[15], if a process P needs storage for any object u, a process is assumed that u is always
 allocated, but after allocation there may not be any remaining free memory. If that is the case, the
 protocol invokes fossil collection. If fossil collection fails to reclaim storage, the protocol discards
 a stored object from some process exactly as in Gafni's protocol, to free memory. The discarded
@@ -163,18 +173,19 @@ object may or may not be u. Any object with sendtime greater than the current GV
 future object) can be discarded.
 Lin described a similar protocol called artificial rollback [19, 18]. Here, if any process runs out
 4 To accommodate such sendbacks the operational definition of GVT must be modified to ensure that sendback
-does not cause rollback beyond GVT. In message sendback GVT is the minimum of (i) all local clocks and (ii) send
+does not cause rollback beyond GVT. In Message Sendback GVT is the minimum of (i) all local clocks and (ii) send
 times of all messages in transit [18]. This definition is also used in TWOS [16] that implements message sendback in
-its flow control.
-5 In fact it can be shown that the worst case space usage by these protocols is the number of processors times the
+message sendback in
+ flow control.
+5 In fact message sendback in
+ can be shown that the worst case space usage by these protocols is the number of processors times the
 sequential amount of memory [25].
-6 Cancelback protocol uses the original definition of GVT.
+6 Cancelback protocol uses the original definition of (GVT).
 of memory and fossil collection fails to reclaim enough storage, the process farthest ahead in virtual
 time is rolled back. The resulting cancellations free storage. The rollback distance is considered
 to be a design parameter. For efficiency reasons Lin recommends rolling back the process with the
-latest local clock to the second latest local clock. The process continues until a certain amount of
-storage has been reclaimed. The minimum amount of storage to be reclaimed is a parameter. Lin
-also suggests the integration of a non-work conserving processor scheduling policy with artificial
+latest local clock to the second latest local clock. the process continues until a certain amount of
+storage has been reclaimed. The minimum amount of storage to be reclaimed is a parameter. Linalso suggests the integration of a non-work conserving processor scheduling policy with artificial
 rollback to limit the number of active processors so that the memory consumption rate matches
 the amount of available memory [18].
 Artificial rollback is similar to cancelback, and thus shares the storage optimality property when
@@ -195,22 +206,25 @@ discuss the performance issues associated with implementing cancelback.
 4.1 Instantaneous Message Delivery
 One important problem in implementing cancelback is the assumption of zero message delivery
 time [15]. In real architectures message sends are not instantaneous. If processes ask for memory
-at a rate faster than it is freed by cancelback (the later rate is determined by the speed of rollback,
+at a rate faster than memory
+ is freed by cancelback (the later rate is determined by the speed of rollback,
 message send and annihilation), there must be a fairness scheme that will ensure any process that
-has asked for memory would eventually receive it. Without this provision, it is possible that the
+has asked for memory would eventually receive memory
+. Without this provision, it is possible that the
 process that is furthest behind (the GVT 7 regulator) starves forever and the simulation cannot
 progress.
 Starvation can be easily avoided by invoking cancelback atomically 8 , or having a low level
 synchronization protocol that records all memory requests and guarantees that all are eventually
 served. Serving the requests in the first-come-first-serve order is one way to ensure this. Although
 the above approach avoids starvation, it may not necessarily lead to good performance. If the
-process furthest behind in the computation (the GVT regulator) must "wait its turn" to allocate
+process furthest behind in the computation (the GVT regulator) must "wait the
+process turn" to allocate
 memory, this computation, which is very likely to be on the critical path, may be unnecessarily
 delayed.
 In our implementation, starvation is avoided by another approach. The GVT regulator is given
 priority to allocate any event buffer reclaimed by cancelback. 9 It is evident that the simulation will
-always progress if the GVT regulator is not starved for memory. The other LPs may allocate such
-reclaimed memory only after the GVT regulator successfully allocates memory and makes progress.
+always progress if The GVT regulator is not starved for memory. The other LPs may allocate such
+reclaimed memory only after The GVT regulator successfully allocates memory and makes progress.
 This scheme also eliminates busy cancelback [15], where the same message is repeatedly canceled
 back and regenerated a large number of times.
 4.2 N Event Cancelback
@@ -221,15 +235,15 @@ of cancelback. This will reduce the frequency at which the Time Warp system runs
 and thus the global computation cost will be reduced.
 Thus we allow more than one message buffer to be reclaimed in one invocation of the cancelback
 protocol. We call the number of buffers reclaimed the salvage parameter. This parameter is similar
-to a parameter used by Lin in his artificial rollback protocol [18]. Assuming a salvage value of n,
+to a parameter used by Lin in Lin artificial rollback protocol [18]. Assuming a salvage value of n,
 failed fossil collection invokes cancelback to send back the n highest send timestamped
 future events in the entire system. Note that from a correctness standpoint, any n future events may
-7 For cancelback with non-zero message delivery times a new operational definition of GVT is required. Here GVT
+7 For cancelback with non-zero message delivery times a new operational definition of (GVT) is required. Here GVT
 is the minimum of (i) all local simulation times, (ii) the receive timestamps of the messages in forward transit, and
 (iii) send timestamps of all messages in backward transit (i.e., discarded and on the way to the sender) [18].
 8 This will have performance overhead that may be excessive.
 9 This is a non-work conserving processor scheduling scheme as processor may block even if the LPs mapped onto
-them may have messages to process. a similar scheme is also suggested in connection with the artificial rollback
+the LPs may have messages to process. a similar scheme is also suggested in connection with the artificial rollback
 protocol [19, 18].
 be sent back. Here, n highest send timestamped events are chosen as these are the most optimistic
 among all future events, and thus are expected to bear a greater chance of being incorrect than the
@@ -245,19 +259,18 @@ University of Waikato (New Zealand), and SAIC (Washington, DC).
 Experiments reported in this paper were all performed on the KSR-1. Each processing node
 in the KSR-1 has a two-way superscalar processor with a 25 MHz clock. Each processing node
 has a cache. The processor caches are connected by a high-speed slotted ring interconnect.
-The interconnect routes data among the caches to implement data sharing and consistency. An
+The interconnect routes data among The processor caches to implement data sharing and consistency. An
 invalidation based hardware cache coherence protocol implements a shared virtual address space
 amongst all processing nodes. This memory system architecture is known as the ALLCACHE TM
-memory system. There is no physical main memory (in the traditional sense) in this architecture. In
-effect, the disk serves as the main memory and thus the architecture is often referred to as COMA
+memory system. There is no physical main memory (in the traditional sense) in This memory system architecture. In
+effect, the disk serves as the main memory and thus This memory system architecture is often referred to as COMA
 (cache only memory architecture). A location in the system virtual address space can reside in
 any (and possibly in more than one) cache and the cache coherence protocol ensures consistency
 respecting locality of reference. This makes the machine appear to be, at least approximately, a
 Uniform Memory Access (UMA) system, to an application with sufficient locality of access.
 There is a certain advantage of this approximate UMA behavior in the context of the cancelback
 protocol. The protocol requires the use of a single shared pool of memory objects. Thus an object
-can be allocated by any LP irrespective of the physical location of the object. Even though the
-object is located in a remote cache at the time of allocation, the object is automatically brought
+can be allocated by any LP irrespective of the physical location of the object. Even though the object is located in a remote cache at the time of allocation, the object is automatically brought
 to the local cache after allocation and can be accessed locally until the object is deallocated and
 returned to the free pool.
 One of the interesting design choices of the GTW-SM system is the use of causality pointers
@@ -273,7 +286,7 @@ Figure
 
 2: The structure of a memory buffer
 message to the new message, which essentially serves as the anti-message. Thus message cancellation
-entails traversing this pointer and annihilating (with appropriate rollback, if necessary) the
+entails traversing a pointer and annihilating (with appropriate rollback, if necessary) the
 message. In addition to space saving, this saves message copying and the time to match messages
 with anti-messages. This technique is called direct cancellation [8]. Even though direct cancellation
 is possible only in shared memory systems, an appropriate hashing technique can be devised
@@ -288,19 +301,20 @@ for ease of experimentation and analysis we shall assume all states (and message
 size. Thus, the unit of memory allocation is a single buffer of constant size (size may vary with the
 application) that includes all necessary data, both specific to the kernel (e.g., pointers implementing
 anti-messages) and the application (e.g., message data or state vector). When an LP sends a
-message to another LP, the sending LP allocates one such buffer, fills in the data portion and
-enqueues it to a receiving queue of the destination processor. The state and causality portions of
-the buffer is filled in when the message is actually processed.
+message to another an LP, an LP allocates one such buffer, fills in the data portion and
+enqueues an LP to a receiving queue of the destination processor. The state and causality portions of
+the buffer is filled in when a
+message is actually processed.
 A single shared free list may be a potential bottleneck if all memory allocations and deallocations
-utilize a single shared lock. To reduce contention each processor maintains its own free pool. If a
+utilize a single shared lock. To reduce contention each processor maintains each processor own free pool. If a
 processor fails to fossil collect, the remaining free buffers in the system (in other processors) are
 redistributed equally among all processors. If the number of free buffers is less than the number
 of processors (this could happen under severe memory limitation), the processor(s) that requested
 memory are allocated buffers. If there is no free buffer on any processor, cancelback is invoked.
-Note that we still have a "logically" shared free pool. However, this scheme eliminates contention
+Note that we still have a "logically" shared free pool. However, a similar scheme eliminates contention
 for the shared pool when there is sufficient memory in the system.
 The application simulation program is partitioned into several logical processes (LPs) that
-execute events. Events can read/write the LP's state and can send events to other LPs or to itself.
+execute events. Events can read/write the LP's state and can send events to other LPs or to the LP's state.
 For each message send, the kernel allocates a memory buffer from the shared pool to the application.
 Memory buffers are deallocated and returned to the shared free pool when events are cancelled or
 fossil collected. Rollbacks are normally non-preemptive. 10 However, rollback induced by cancelback
@@ -308,32 +322,33 @@ is made preemptive. Otherwise, the system can deadlock when operated under memor
 Evaluation of global predicates such as GVT computation or choosing one or more suitable
 events for cancelback are implemented by stopping all processors using barrier synchronization
 locks. An efficient and scalable barrier synchronization algorithm called the tournament barrier is
-used for fast synchronization. The processors resume again with a barrier after such computations
+used for fast synchronization. all processors resume again with a barrier after such computations
 have been completed. The global computation within each pair of barriers is optimized as much as
 possible. Such computation is invoked only when the system runs out of memory by trying to send
-an event. After synchronizing at a barrier, all processors compute their local virtual time (LVT)
-in parallel taking into account messages in transit. Then GVT is computed as the minimum of
-the LVTs. All processors then try to fossil collect in parallel. If fossil collection fails to reclaim
+an event. After synchronizing at a barrier, all processors compute all processors local virtual time (LVT)
+in parallel taking into account messages in transit. Then (GVT) is computed as the minimum of
+the LVTs. all processors then try to fossil collect in parallel. If fossil collection fails to reclaim
 any storage, one or more future event(s) with the highest send timestamps are canceled back
-and accordingly the corresponding source process(es) are rolled back. Then the processors again
+and accordingly the corresponding source process(es) are rolled back. Then all processors again
 perform a barrier synchronization to complete this global computation phase, and resume normal
 Time Warp operation.
 5 Experimental Results
 As discussed before, the memory consumed by the sequential simulation forms a lower bound on
-the memory required by Time Warp. 11 Thus, in our experiments we measure memory usage as the
+the memory required by Time Warp. 11 Thus, in our experiments our measure memory usage as the
 It is known that non-preemptive rollbacks can cause deadlocks in certain pathological situations, e.g., incorrect
-event computation may enter an infinite loop. However, we avoid this issue in our system in favor of a simpler
+event computation may enter an infinite loop. However, we avoid this issue in we system in favor of a simpler
 implementation.
-11 This lower bound can be achieved in practice only if it is assumed that the LP state is saved between processing
+11 This lower bound can be achieved in practice only if This lower bound is assumed that the another LP state is saved between processing
 each pair of consecutive events and the following are fossil collected - (i) positive messages with receive timestamp
 less than GVT, (ii) negative messages with send timestamp less than or equal to GVT and (iii) copies of state with
 send timestamp (time of generation) less than GVT and receive timestamp less than or equal to GVT. Thus the
 additional memory beyond M seq
-(memory required by the sequential execution). This additional
-memory must be consumed by future objects (assuming the past objects and present anti-messages
+(memory required by the sequential execution). Thus the
+additional memory beyond M seq
+(memory required by the sequential execution) must be consumed by future objects (assuming the past objects and present anti-messages
 are immediately fossil collected). Thus evaluating the performance-memory tradeoff is essentially
 evaluating the performance of Time Warp by placing a limit on the number of future objects that
-can exist in the system. Note that in our experimental testbed we have only one type of object
+can exist in the system. Note that in our experimental testbed our have only one type of object
 (memory buffer). No infrequent or incremental state saving is used. 12
 It is instructive to note that the number of future objects is dependent on the degree of optimism
 (i.e., the variations of the LVTs) in the Time Warp system. Optimism again depends on several
@@ -344,19 +359,19 @@ with real simulation models (two different communication networks) that corrobor
 behavior observed with the synthetic workload experiments.
 5.1 Symmetric PHOLD Workload
 The PHOLD workload was originally described in [10] as a parameterized synthetic workload
-model for performance evaluation of parallel simulation systems. In this workload a constant
+model for performance evaluation of parallel simulation systems. In The PHOLD workload a constant
 number of messages (called the message population) circulate among the LPs. The timestamp increments
 are selected from some stochastic distribution. Messages are equally likely to be forwarded
-to any other LP. Each LP is mapped onto a distinct processor. The computation grain per event
+to any other LP. any other LP is mapped onto a distinct processor. The computation grain per event
 is selected from an exponential distribution with mean of 5 millisecond. Several experiments were
-performed to measure speedup as the message density (defined as the message population divided
+performed to measure Speedup as the message density (defined as the message population divided
 by the number of LPs) is varied. Speedup is measured relative to the performance of a sequential
 event list simulator, where the event set is implemented as a splay tree.
 With respect to Time Warp, this simulation's behavior is similar to simulations of symmetric,
 closed queueing networks. In all our experiments with this benchmark, 8 LPs are used with each
 mapped onto one KSR-1 processor. A message population of 256 was used.
-GVT regulator LP can fossil collect all states with sendtimes less than GVT. But all other LPs must have a copy of
-state with sendtime less than GVT. However, special handling of the GVT regulator LP for fossil collection may not
+any other LP can fossil collect all states with sendtimes less than GVT. But 8 LPs must have a copy of
+state with sendtime less than GVT. However, special handling of any other LP for fossil collection may not
 be possible in practice. In such a situation, the lower bound of Time Warp memory usage should be the sequential
 amount of memory plus space to hold one state object per LP. This additional space is just a constant. For brevity
 we shall ignore this additional space in our discussions.
@@ -390,7 +405,7 @@ Figure
 3: Execution time profile for two different salvage parameters for the PHOLD model on 8
 processors.
 The performance of Time Warp is monitored to obtain a detailed accounting of the execution
-time. A processor spends its time in (i) performing memory management activities including
+time. A processor spends A processor time in (i) performing memory management activities including
 GVT computation, fossil collection and invocation of cancelback (if necessary) within the barrier
 synchronization locks, (ii) executing code for other Time Warp overheads such as rollbacks, message
 cancellation, message delivery etc., (iii) busy waiting for memory to be reclaimed, to enable
@@ -408,7 +423,7 @@ The execution profile reveals that the memory management overheads are very high
 amounts of memory and fall very rapidly as memory is added. This is because at very low values,
 the system runs out of memory very frequently. Other Time Warp overheads are also large at low
 memory because of an increase in the number of rollbacks (arising from invocations of cancelback)
-and cancellations. However, the decline of these overheads with increasing memory is less dramatic
+and cancellations. However, the decline of Other Time Warp overheads with increasing memory is less dramatic
 than that for memory management because with increasing memory the system operates with more
 and more optimism and some cancelback rollbacks are replaced by straggler induced rollbacks. Busy
 wait time for memory is reduced as the amount of memory is increased. Computation time for
@@ -419,7 +434,7 @@ characteristics of the performance-memory curve.
 13 Recall that the GVT regulator has priority to allocate memory reclaimed by cancelback. So other processes have
 to wait until the GVT regulator makes progress.
 5.1.2 Effect of the Salvage Parameter. Figure 3(b) shows the effect of increasing the value
-of the salvage parameter n. This figure shows the execution profile for n set to 20. There is a
+of the Salvage Parameter n. This figure shows the execution profile for n set to 20. There is a
 modest decrease in the total execution time for this increased value of n. The nature of the profile
 with respect to event computation time and busy wait time is also different. For low amounts of
 memory, more time is spent in event computations, and less time is spent waiting for memory.
@@ -526,36 +541,38 @@ twice (asymmetric 2.0) as slow as the rest. All data correspond to a salvage val
 
 Figure
 
-7 demonstrates that all three curves have their knees approximately at the same memory
+7 demonstrates that all three curves have all three curves knees approximately at the same memory
 value. In the two asymmetric curves the knee is marginally shifted towards the right because of
 higher memory management overheads, as cancelback needs to be called more frequently because
 of the overly optimistic behavior.
 This set of curves demonstrate that the number of future events in the unlimited memory
 execution is not the sole determinant of the limited memory performance. In the asymmetric
-models, the average number of future events is larger. But many of them (especially those with
+models, the average number of future events is larger. But many of the average number of future events (especially those with
 larger virtual timestamp) are incorrect and are liable to be retracted. So it does not degrade
 performance by limiting their number by cancelback. Thus the symmetric and asymmetric PHOLD
 workloads behave similarly, when compared to the corresponding unlimited memory execution,
 except for higher memory management overheads for the asymmetric workloads. We observe that
-to achieve good performance, it is sufficient to provide enough extra space (over the sequential
+to achieve good performance, 
+ is sufficient to provide enough extra space (over the sequential
 memory requirement) to hold the "correct" future events. Other future events may be eliminated
 by cancelback without affecting the performance. We are, however, relying on the hypothesis that
 the events with larger timestamps have a higher probability of being incorrect.
 5.3 More Asymmetry: The Arbitrary Flow Network Model
-This model is based on the simulation of a power distribution grid. In this model, there are
+The Arbitrary Flow Network Model
+ is based on the simulation of a power distribution grid. In The Arbitrary Flow Network Model
+, there are
 source nodes that generate events but do not receive any from other nodes, sink nodes that receive
 events but do not send any, and application nodes that model the actual network being simulated.
 Each node is modeled by an LP. The application nodes communicate by sending timestamped
 messages of two types: propagating and non-propagating messages. Processing a propagating
-message results in one or more additional messages to be sent by the LP. Messages are sent to
+message results in one or more additional messages to be sent by an LP. Messages are sent to
 other LPs based on a communication probability matrix. Non-propagating messages are intended
 to model data transfers which do not result in additional communication. If new messages are
 generated, only one will be propagating and the rest non-propagating. When a propagating message
 is processed, the timestamp increment is computed based on a probability distribution. In addition,
 the granularity of each event is computed based on another probability distribution. The number
 of source, sink and application nodes, the communication probability matrix, and the timestamp
-increment and granularity distribution for each node are parameters in the model. The same
-model was used in [22] for evaluating the performance of a probabilistic synchronization scheme in
+increment and granularity distribution for each node are parameters in the model. the model was used in [22] for evaluating the performance of a probabilistic synchronization scheme in
 conjunction with Time Warp.
 In the chosen instance of the model, there are one source, one sink, and eight application
 nodes. The granularity of all events is normally distributed with mean 1.0ms per event. Of the
@@ -604,7 +621,7 @@ probability of communicating with its own group and a 0.2 probability of communi
 the other group. These parameters provide a significant amount of asymmetry in the simulation
 model. 15
 The number of unprocessed messages in the system continuously grows with the progress of
-the simulation because of the existence of the unthrottled source LP which continues to generate
+the simulation because of the existence of the unthrottled source an LP which continues to generate
 messages for other LPs, and never rolls back. As our Time Warp system can only provide a finite
 amount of memory for the simulation, the cancelback protocol needs to be invoked for memory
 management whenever the system runs out of memory. Cancelback automatically reclaims memory
@@ -612,11 +629,14 @@ by undoing some computations at high timestamps thus making room (by creating me
 the lower timestamped computations to progress. We can vary the events set sizes on different
 LPs by simply varying the amount of memory (measured in terms of the number of event buffers)
 available for the simulation.
-The Arbitrary Flow Network model provides a challenging test case for experimenting with the
-limited memory behavior of Time Warp. As the source process never rolls back, it quickly consumes
+The Arbitrary Flow Network Model
+ provides a challenging test case for experimenting with the
+limited memory behavior of Time Warp. As the source process never rolls back, the source process quickly consumes
 all the available memory, even though the other processes remain far behind in virtual time. In
-[22] it was observed that Time Warp without any throttling cannot simulate this model on a real
-machine, because its memory requirements are unbounded without any flow control mechanism.
+[22] it was observed that Time Warp without any throttling cannot simulate The Arbitrary Flow Network Model
+ on a real
+machine, because The Arbitrary Flow Network Model
+ memory requirements are unbounded without any flow control mechanism.
 
 Figure
 
@@ -636,7 +656,7 @@ from using a very large amount of memory. This results in more cache misses beca
 and communication probabilities. The chosen parameters and the data presented are just representatives of the
 asymmetric behavior.
 Exec.
-Time
+time
 (sec)
 Salvage Parameter
 Execution time breakdown shown
@@ -659,7 +679,8 @@ Figure
 
 8, we see that the execution time improves by a significant amount when the salvage parameter
 is increased from a low value (1) to a moderate value (20). The large average fanout of events in
-this model is largely responsible for this behavior. If the salvage parameter is 1, cancelback reclaims
+The Arbitrary Flow Network Model
+ is largely responsible for this behavior. If the salvage parameter is 1, cancelback reclaims
 memory one buffer at a time. If the GVT regulator needs to send k events, where k ? 1, fossil
 collection and cancelback are invoked for each of these k sends. On the other hand, if the salvage
 parameter is set to a value larger than the maximum fanout, in the worst case only one cancelback
@@ -671,8 +692,8 @@ Figure
 
 9).
 This behavior is different from paging from disk. In KSR's cache protocol, a valid cache block can exist in a local
-cache only if the corresponding page also exist in that cache (all cache blocks in this page need to be in the valid
-state). If the page does not exist in the cache, it needs to be allocated. With less locality in the program, a cache
+cache only if the corresponding page also exist in that cache (all cache blocks in the corresponding page need to be in the valid
+state). If the corresponding page does not exist in the cache, the corresponding page needs to be allocated. With less locality in the program, a cache
 block miss has a greater probability of seeing a corresponding page miss and a subsequent page allocation.
 Speed
 (Events/Sec)
@@ -690,21 +711,20 @@ described above, a set of benchmark applications were studied to validate the be
 in the synthetic workloads. The two benchmarks selected are simulations of (i) a store and forward
 communication network in a hypercube configuration with and without hot-spot traffic and (ii) a
 Personal Communication Service (PCS) network simulating a mobile communication system.
-Both of these benchmarks have some properties observed in many other real simulation models:
+Both of The two benchmarks selected have some properties observed in many other real simulation models:
 (i) a large number of simulation objects (modeled as LPs) and a large event population (possibly
 time varying), and (ii) very small grain computation (often 100-s per event or less on the KSR-1).
 6.1 Store and Forward Communication Network Simulation
-The network is configured as a hypercube. There is a fixed size message population in the
-network. Messages are routed to randomly selected destination nodes using the E-cube routing
+The network is configured as a hypercube. There is a fixed size message population in The network. Messages are routed to randomly selected destination nodes using the E-cube routing
 algorithm [13]. Message lengths are selected from a uniform distribution and transmission time is
 proportional to the message length. It is assumed that there are two unidirectional links (one in
 each direction) between the neighboring nodes in the hypercube. In addition to the transmission
 latency, there may be queueing delays at the links as only one message can be transmitted over a
 link at one time. The queuing is FCFS and infinite buffer capacity is assumed in the simulation
-model. After a message has reached its destination node, another destination is picked at random
-and the message is reinserted into the network.
-In the simulation model of this network, a queueing server is associated with each link. The
-service time of the server is equivalent to the message transmission latency. In the simulation
+model. After a message has reached a message destination node, another destination is picked at random
+and a message is reinserted into The network.
+In the simulation model of The network, a queueing server is associated with each link. The
+service time of a queueing server is equivalent to the message transmission latency. In the simulation
 model, service times are precomputed and messages are forwarded immediately to the next server
 as suggested in [23]. This improves lookahead and hence performance. In one set of experiments,
 destination nodes are selected using a uniform distribution. In two other sets of experiments hot
@@ -729,8 +749,10 @@ memory for equivalent performance). The balancing effect of these two opposite f
 knee at about the same value for all three curves.
 6.2 PCS Network Simulation
 A PCS (Personal Communication Services) network is a wireless communication network, which
-provides communication services to mobile units. In the simulation model, the service area of
-the network is partitioned into checkerboard-like sub-areas or cells. The simulation model consists
+provides communication services to mobile units. In The Arbitrary Flow Network Model
+, the service area of
+A PCS (Personal Communication Services) network is partitioned into checkerboard-like sub-areas or cells. The Arbitrary Flow Network Model
+ consists
 of cells and portables. Portables model mobile units. Each cell represents a cellular re-
 0Speed
 (Events/Sec)
@@ -744,19 +766,21 @@ four neighboring cells. The behavior of a portable is modeled by different types
 as portable move, call arrival, and call completion. A detailed description of this application is
 presented in [3].
 This PCS model views the portable as only a receiver of calls and is not concerned with the
-originator of a call. When a new call arrives at a cell, the cell first determines the status of the
-destination portable. If the destination portable is busy with another call, this call counts as a busy
-line. If the portable is not busy, the cell determines channel availability. If all channels are busy,
-this call is counted as a block. If a channel is available, it is allocated for the destination portable's
-use and the call is allowed to connect. When a portable moves to another cell while a call is in
+originator of a call. When a new call arrives at a cell, a cell first determines the status of the
+destination portable. If the destination portable is busy with another call, a new call counts as a busy
+line. If the portable is not busy, a cell determines channel availability. If all channels are busy,
+a new call is counted as a block. If a channel is available, a channel is allocated for the destination portable's
+use and a new call is allowed to connect. When a portable moves to another cell while a call is in
 progress, a handoff takes place, i.e., the channel currently in use is released, and a new channel
-must be allocated in the cell it is entering. If no channels are available, the call is "dropped" (cut
+must be allocated in the cell a new channel
+ is entering. If no channels are available, a new call is "dropped" (cut
 off). Simulation is used extensively to engineer PCS systems so that call blocking and dropping
 probabilities are small.
-Each cell is modeled by an LP. Each LP also models the behavior of all the portables presently
-in the grid cell. One interesting aspect of the PCS simulation model is the self-initiating behavior
-of the LPs, i.e., that each LP often sends messages to itself to advance simulation time. In the
-PCS model, the portables generate their own incoming calls and this imparts the self-initiating
+Each cell is modeled by an LP. an LP an LP also models the behavior of all the portables presently
+in Each cell. One interesting aspect of The Arbitrary Flow Network Model
+ is the self-initiating behavior
+of the LPs, i.e., that an LP an LP often sends messages to itself to advance simulation time. In The Arbitrary Flow Network Model
+, the portables generate the portables own incoming calls and this imparts the self-initiating
 behavior of the LPs [3]. Another interesting aspect of the PCS model is the high degree of locality.
 Normally, there are a large number of grid cells in the simulation modeled by as many LPs. Since
 the neighboring LPs are mapped onto a single processor, there is much local communication and
@@ -784,10 +808,10 @@ progress. Both of these force the final, committed event executions to happen in
 (as in a sequential execution).
 The experimental results give us certain insights into the limited memory behavior of Time
 Warp as described below.
-17 Note that often executing two events out-of-timestamp order can be more efficient than executing them in
-timestamp order (even though in either case they are processed sequentially). This is because events may just be
+17 Note that often executing two events out-of-timestamp order can be more efficient than executing two events out-of-timestamp order in
+timestamp order (even though in either case two events out-of-timestamp order are processed sequentially). This is because events may just be
 generated out-of-timestamp order, and when they are generated, there may be CPU cycles immediately available to
-process them.
+process they.
 7.1 The Knee of the Performance-Memory Curve
 The performance data collected in this study indicate that there is a well-defined "knee" in the
 performance-memory curve, regardless of symmetry in the model or in the system architecture,
@@ -798,26 +822,28 @@ can be generated. If the event fan-out is k, this allows one event (other than t
 to complete processing optimistically and become a candidate for commitment. (With memory
 close to M seq
 there is not much optimism in the system and thus rollbacks are unlikely.) With an
-additional k events one more event can potentially complete its execution (on a different processor)
+additional k events one more event can potentially complete an
+additional k events execution (on a different processor)
 that will commit. Thus as memory is increased in steps of k buffers, in each step (i) one additional
 processor can become busy with useful work (this means more parallelism), and (ii) one more event
 can be potentially fossil collected in each fossil collection invocation (this means less cancelbacks
 and less overheads). Thus performance increases rapidly with additional buffers. However, soon
 a point is reached, when all the processors become busy and fossil collection invocations are able
 to collect a sufficient number of fossils so that the system runs out of memory only infrequently.
-This is the knee point. Beyond this point the performance is almost independent of the amount of
+This is the knee point. Beyond the knee point the performance is almost independent of the amount of
 memory.
 The knee of the performance-memory curve is a good operating point for Time Warp. The
 rise in performance beyond the knee value is marginal and there is a possibility of performance
 decrease at larger values of memory because of lack of locality as was observed in the Arbitrary
-Flow workload. The experiments indicate that two major factors determine the location of the
+Flow workload. Three different experiments
+ indicate that two major factors determine the location of the
 knee:
 1. The size of the future event pool.
 The size of the future event pool is affected by the following rates: (i) the rate of generation
 of new messages, (ii) the rate of message cancellations and (iii) the rate of event commitment.
 (i) is responsible for the growth of the future event pool and (ii) and (iii) are responsible for
-its shrinkage.
-For a given amount of memory, this size determines the frequency of the fossil collection/cancelback
+the growth of the future event pool and (ii) shrinkage.
+For a given amount of memory, The size of the future event pool determines the frequency of the fossil collection/cancelback
 calls and thus controls the memory management overheads. If the event grain is small, the
 memory management overheads may dominate the execution time under limited memory.
 This pushes the knee towards large memory values.
@@ -828,8 +854,8 @@ within 150 buffers per processor compared to within 15 for the latter.
 2. The number of correct future events with source events on the critical path of the simulation
 computation.
 Salvaging the storage occupied by future events will rollback one or more source uncommitted
-event(s). If these future events are correct events, then their source events will be recomputed
-to regenerate the same events. If these source events are on the critical path of the parallel
+event(s). If these future events are correct events, then these future events source events will be recomputed
+to regenerate the same events. If their source events are on the critical path of the parallel
 computation, recomputation on the critical path will slow down the progress of the simula-
 tion. On the other hand, rolling back other (i.e., incorrect, or correct but off critical path)
 uncommitted events by cancelback will have little effect on performance. Thus in case some
@@ -837,10 +863,10 @@ logical processes are systematically ahead (in virtual time) of the others, this
 only marginally affect the location of the knee. We have seen this in the PHOLD (asymmetry
 in processor speed) and the hypercube (asymmetry in the simulation model) examples.
 The exact location of the knee cannot, however, be predicted statically without some knowledge
-of the application's behavior. Also the location can shift dynamically, if there is a change in the
+of the application's behavior. Also The exact location of the knee can shift dynamically, if there is a change in the
 simulation model at runtime. However, it is possible to predict the approximate location of the
 knee by observing the behavior of Time Warp at runtime. The rate of generation of new events,
-the rate of rollbacks and rate of progress of the GVT can be monitored to predict the size of the
+the rate of rollbacks and rate of progress of GVT can be monitored to predict the size of the
 future event pool. Initial ideas regarding how this can be accomplished can be found in [6].
 7.2 Effect of the Salvage Parameter
 The experimental data suggests that there is an optimal value of the salvage parameter. Too
@@ -853,7 +879,7 @@ the fractional change in the "total" execution time per unit change in memory. T
 more memory is required.
 1 and the amount of "surplus" memory (amount available minus the amount needed to run the
 sequential simulation). The latter term is an upper bound on the salvage parameter in that larger
-values do not affect performance. It is also observed that the performance is relatively insensitive
+values do not affect performance. The latter term is also observed that the performance is relatively insensitive
 to the actual value of the parameter, once it is away from the two extremes. This indicates that it
 may not be crucial to determine the exact optimal value in practice.
 There is currently no general method of choosing an appropriate value of the salvage parameter
@@ -868,7 +894,8 @@ The optimal value of the salvage parameter generally increases (i) with smaller 
 then overheads become proportionately larger, (ii) with larger available memory, as then there is
 more optimism in the system, which may not be critical for performance, (iii) over-optimism in the
 workload, as there may be some LPs operating at a much higher virtual time than others and can
-be rolled back to free memory without affecting performance. These ground rules should help the
+be rolled back to free memory without affecting performance. some "ground rules" that should help in selecting a reasonable
+value of the parameter statically, if certain information about the application behavior is known should help the
 experimenter to choose a good static value for this parameter.
 7.3 Memory Control As An Effective Throttling Mechanism
 Limited memory execution with cancelback can be viewed as a throttling scheme that artificially
@@ -881,20 +908,21 @@ among others. They were developed primarily to limit the amount of rolled back c
 in Time Warp.
 However, the controls used in the above mechanisms to limit optimism have only an indirect
 relationship to the amount of optimism provided by the system, and hence it may be difficult to
-choose appropriate values for them. For example, the optimal size of time window or optimal
+choose appropriate values for They. For example, the optimal size of time window or optimal
 bound value depends on the density of events in virtual time. This depends on the timestamps of
 the events in the simulation application. It is not readily clear how users, particularly those that
 are not intimately familiar with the details of the underlying simulation protocol, should set this
-control for their particular application. Similarly, without elaborate experimentation or knowledge
-of the application, it is impossible to set an appropriate resynchronization interval. On the other
+control for users, particularly those that
+are not intimately familiar with the details of the underlying simulation protocol particular application. Similarly, without elaborate experimentation or knowledge
+of their particular application, it is impossible to set an appropriate resynchronization interval. On the other
 hand, the amount of memory provided to the Time Warp system can be a more straightforward
 throttling mechanism for the over-optimistic execution. A study of an adaptive memory control
 mechanism based on this principle has been presented elsewhere [6].
 Concluding Remarks
-The cancelback protocol was used for empirical evaluation of the performance of Time Warp
+the underlying simulation protocol was used for empirical evaluation of the performance of Time Warp
 programs if the amount of memory allocated to the program is limited to a predetermined value.
-Efficient implementation of the cancelback protocol is non-trivial on a real architecture because
-of its (i) instantaneous message send assumption, and (ii) high cost of the necessary memory
+Efficient implementation of the underlying simulation protocol is non-trivial on a real architecture because
+of a real architecture (i) instantaneous message send assumption, and (ii) high cost of the necessary memory
 management related computations (GVT computation, fossil collection and selection of messages
 to be canceled back). We developed reasonably efficient solutions to each of these problems. They
 are summarized below.
@@ -938,7 +966,7 @@ for cancelback) takes very little time compared to the average event granularity
 Acknowledgment
 
 We acknowledge the encouragement by Professor Ian Akyildiz during the initial phase of this work.
-Discussions with him were very helpful. Christopher Carothers developed the PCS simulation
+Discussions with Professor Ian Akyildiz were very helpful. Christopher Carothers developed the PCS simulation
 program for GTW.
 
 

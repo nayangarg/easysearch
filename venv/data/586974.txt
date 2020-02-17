@@ -1,7 +1,7 @@
 --T
 Simple Confluently Persistent Catenable Lists.
 --A
-We consider the problem of maintaining persistent lists subject to concatenation and to insertions and deletions at both ends.  Updates to a persistent data structure are nondestructive---each operation produces a new list incorporating the change, while keeping intact the list or lists to which it applies. Although general techniques exist for making data structures persistent, these techniques fail for structures that are subject to operations, such as catenation, that combine two or more versions.  In this paper we develop a simple implementation of persistent double-ended queues (deques) with catenation that supports all deque operations in constant amortized time. Our implementation is functional if we allow memoization.
+We consider the problem of maintaining persistent lists subject to concatenation and to insertions and deletions at both ends.  Updates to a persistent data structure are nondestructive---each operation produces a new list incorporating the change, while keeping intact the list or lists to which it applies. Although general techniques exist for making data structures persistent, general techniques fail for structures that are subject to operations, such as catenation, that combine two or more versions.  In this paper we develop a simple implementation of persistent double-ended queues (deques) with catenation that supports all deque operations in constant amortized time. we implementation is functional if we allow memoization.
 --B
 Introduction
 . Over the last fteen years, there has been considerable development
@@ -30,7 +30,7 @@ uent persistence concrete is that of implementing persistent double-ended queues
 and Tarjan [11, 10], who developed a con
 uently persistent implementation of deques
 with catenation that has a worst-case constant time and space bound for any deque
-operation, including catenation. The Kaplan-Tarjan data structure and its precursors
+operation, including catenation. The Kaplan-Tarjan data structure and The Kaplan-Tarjan precursors
 obtain con
 uent persistence by being purely functional.
 Department of Computer Science, Tel Aviv University, Tel Aviv 69978, Israel.
@@ -49,27 +49,28 @@ functional in our sense) data structures that are con
 uently persistent. In order to
 analyze such structures, Okasaki developed a novel kind of debit-based amortization.
 Using these techniques and weakening the time bound from worst-case to amortized,
-he was able to considerably simplify the Kaplan-Tarjan data structure, in particular
-to eliminate its complicated skeleton that encodes a tree extension of a redundant
+Okasaki was able to considerably simplify the Kaplan-Tarjan data structure, in particular
+to eliminate particular
+ complicated skeleton that encodes a tree extension of a redundant
 digital numbering system.
 In this paper we explore the problem of further simplifying the Kaplan-Tarjan
 result. We obtain a con
 uently persistent implementation of deques with catenation
-that has a constant amortized time bound per operation. Our structure is
+that has a constant amortized time bound per operation. We structure is
 substantially simpler than the original Kaplan-Tarjan structure, and even simpler
 than Okasaki's catenable deques: whereas Okasaki requires e-cient persistent deques
-without catenation as building blocks, our structure is entirely self-contained. Furthermore
+without catenation as building blocks, Our structure is entirely self-contained. Furthermore
 our analysis uses a standard credit-based approach. We give two alternative,
-but closely related implementations of our method. The rst uses memoization. The
+but closely related implementations of We method. The rst uses memoization. The
 second, which saves a small constant factor in time and space, uses an extension of
 memoization in which any expression can replace an equivalent expression.
-The remainder of the paper consists of ve sections. In Section 2, we introduce
-terminology and concepts. In Section 3, we illustrate our approach by developing
+The remainder of this paper consists of ve sections. In Section 2, we introduce
+terminology and concepts. In Section 3, We illustrate We approach by developing
 a persistent implementation of deques without catenation. In Section 4, we extend
-our approach to handle stacks with catenation. In Section 5, we develop our solution
+we approach to handle stacks with catenation. In Section 5, We develop We solution
 for deques with catenation. We conclude in Section 6 with some remarks and open
 problems. An extended abstract of this work appeared in [9].
-2. Preliminaries. The objects of our study are lists. As in [11, 10] we allow the
+2. Preliminaries. The objects of our study are lists. As in [11, 10] our allow the
 following operations on lists:
 return a new list containing the single element x.
 return a new list formed by adding element x to the
@@ -85,7 +86,7 @@ all but the last element of L and whose second
 component is the last element of L.
 catenate(L; R): return a new list formed by catenating L and R,
 with L rst.
-We seek implementations of these operations (or specic subsets of them) on
+We seek implementations of these operations (or specic subsets of these operations) on
 persistent lists: any operation is allowed on any previously constructed list or lists
 at any time. For discussions of various forms of persistence see [5]. A stack is a list
 on which only push and pop are allowed. A queue is a list on which only inject
@@ -93,27 +94,27 @@ and pop are allowed. A steque (stack-ended queue) is a list on which only push,
 pop, and inject are allowed. Finally, a deque (double-ended queue) is a list on which
 all four operations push, pop, inject, and eject are allowed. For any of these
 four structures, we may or may not allow catenation. If catenation is allowed, push
-and inject become redundant, since they are special cases of catenation, but it is
-sometimes convenient to treat them as separate operations because they are easier to
+and inject become redundant, since catenation is allowed are special cases of catenation, but it is
+sometimes convenient to treat catenation is allowed as separate operations because catenation is allowed are easier to
 implement than general catenation.
-We say a data structure is purely functional if it can be built and manipulated
-using the LISP functions car, cons, cdr. That is, the structure consists of a set
+We say a data structure is purely functional if a data structure can be built and manipulated
+using the LISP functions car, cons, cdr. That is, a data structure consists of a set
 of immutable nodes, each either an atom or a node containing two pointers to other
-nodes, with no cycles of pointers. The nodes we use to build our structures actually
-contain a xed number of elds; reducing our structures to two elds per node by
+nodes, with no cycles of pointers. The nodes we use to build we structures actually
+contain a xed number of elds; reducing we structures to two elds per node by
 adding additional nodes is straightforward. Various nodes in our structure represent
 lists.
-To obtain our results, we extend pure functionality by allowing memoization,
+To obtain our results, our extend pure functionality by allowing memoization,
 in which a function is evaluated only once on a node; the second time the same
 function is evaluated on the same node, the value is simply retrieved from the previous
 computation. In all our constructions, there are only a constant number of memoized
-functions (one or two). We can implement memoization by having a node point to
+functions (one or two). our can implement memoization by having a node point to
 the results of applying each memoized function to it. Initially each such pointer is
 undened. The rst function evaluation lls in the appropriate pointer to indicate the
-result. Subsequent evaluations merely follow the pointer to the result, which takes
+result. Subsequent evaluations merely follow the appropriate pointer to the result, which takes
 time.
 We also consider the use of a more substantial extension of pure functionality,
-in which we allow the operation of replacing a node in a structure by another node
+in which We allow the operation of replacing a node in a structure by another node
 representing the same list. Such a replacement can be performed in an imperative
 setting by replacing all the elds in the node, for instance in LISP by using replaca
 and replacd. Replacement can be viewed as a generalization of memoization. In our
@@ -124,9 +125,9 @@ algorithm, with only a constant-factor loss of e-ciency.) The use of overwriting
 instead of memoization saves a small constant factor in running time and storage
 space and slightly simplies the amortized analysis.
 To perform amortized analysis, we use a standard potential-based framework.
-We assign to each conguration of the data structure (the totality of nodes currently
-existing) a potential. We dene the amortized cost of an operation to be its actual
-cost plus the net increase in potential caused by performing the operation. In our
+we assign to each conguration of the data structure (the totality of nodes currently
+existing) a potential. we dene the amortized cost of an operation to be an operation actual
+cost plus the net increase in potential caused by performing the operation. In we
 applications, the potential of an empty structure is zero and the potential is always
 non-negative. It follows that, for any sequence of operations starting with an empty
 structure, the total actual cost of the operations is bounded above by the sum of
@@ -139,7 +140,8 @@ simpler. The result presented here illustrates our technique for doing amortized
 of a persistent data structure. At the end of the section we comment on the
 relation between the structure proposed here and previously existing solutions.
 3.1. Representation. Here and in subsequent sections we say a data structure
-is over a set A if it stores elements from A. Our representation is recursive. It
+is over a set A if a data structure
+ stores elements from A. Our representation is recursive. It
 is built from bounded-size deques called buers, each containing at most three ele-
 4 H. KAPLAN, C. OKASAKI, and R. E. TARJEN
 ments. Buers are of two kinds: prexes and su-xes. A nonempty deque d over A
@@ -160,23 +162,25 @@ Whenever we refer to a deque d we actually mean a particular representation of d
 one that will be clear from the context.
 The pointer representation for this representation is the obvious one: a node
 representing a deque d contains pointers to pr(d), c(d), and sf(d). Note that the
-pointer structure of d is essentially a linked list of its descendants, since c i (d) contains
+pointer structure of d is essentially a linked list of the
+pointer structure of d descendants, since c i (d) contains
 a pointer to c i+1 (d), for each i.
-3.2. Operations. Implementing the deque operations is straightforward, except
+3.2. Operations. Implementing Operations is straightforward, except
 for maintaining the size bounds on buers. Specically, a push on a deque is easy
-unless its prex is of size three, a pop on a deque is easy unless its prex is empty,
+unless a deque prex is of size three, a pop on a deque is easy unless a pop on a deque prex is empty,
 and symmetric statements hold for inject and eject. We deal with buer over
 ow
 and under
-ow in a proactive fashion, rst xing the buer so that the operation to
-be performed cannot violate its size bounds and then actually doing the operation.
+ow in a proactive fashion, rst xing buer so that the operation to
+be performed cannot violate the operation to
+ size bounds and then actually doing the operation.
 The details are as follows.
-We dene a buer to be green if it contains one or two elements, and red if it
+We dene a buer to be green if a buer contains one or two elements, and red if a buer
 contains zero or three. We dene two memoized functions on a deque: gp, which
 constructs a representation of the same list but with a green prex; and gs, which
 constructs a representation of the same list with a green su-x. We only apply gp (gs,
 respectively) to a list whose prex (su-x) is red and can be made green. Specically,
-for gp, if the prex is empty, the child deque must be nonempty, and symmetrically
+for gp, if whose prex (su-x) is empty, the child deque must be nonempty, and symmetrically
 for gs. Below we give implementations of push, pop, and gp; the implementations
 for inject, eject, and gs are symmetric. We denote a deque with prex p, child
 deque c, and su-x s by [p; c; s]. As mentioned in Section 2, we can implement the
@@ -190,17 +194,17 @@ y, z be the three elements in pr(d). Let p be a prex
 containing only x, and let c
 (pr(d) is empty and c(d) is not), let ((x; be a prex
 containing x followed by y. Return [p
-3.3. Analysis. The amortized analysis of this method relies on the memoization
-of gp and gs. We call a node representing a deque secondary if it is returned by a
+3.3. Analysis. Analysis relies on the memoization
+of gp and gs. We call a node representing a deque secondary if a node representing a deque secondary is returned by a
 call to gp or gs and primary otherwise. If a secondary node y is constructed by a call
 gp(x) (gs(x), respectively), the only way to access y later is via another call gp(x)
 (gs(x), respectively): no secondary node is returned as the result of a push, pop,
 inject, or eject operation. This means that gp and gs are called only on primary
 nodes.
 We devide the nodes representing deques into three states: such a node is rr if
-both its buers are red, gr if exactly one of its buers is red, and gg if both its buers
+both such a node buers are red, gr if exactly one of such a node buers is red, and gg if both such a node buers
 are green. We subdivide the rr and gr states: an rr node is rr0 if neither gp nor gs
-has been applied to it, rr1 if exactly one of gp and gs has been applied to it, and
+has been applied to an rr node, rr1 if exactly one of gp and gs has been applied to it, and
 rr2 if both gp and gs have been applied to it; a gr node is gr0 if neither gp nor gs
 has been applied to it, and gr1 otherwise. By the discussion above every secondary
 node is gr0 or gg. We dene #rr0, #rr1, and #gr0 to be the numbers of primary
@@ -212,15 +216,15 @@ turn calls pop. We charge the O(1) time spent in a call to gp (exclusive of the 
 call to push or pop) to the push or pop that calls gp. A call to push results in
 a sequence of recursive calls to push (via calls to gp), of which the bottommost is
 terminal and the rest are nonterminal. A nonterminal push has one of the following
-eects: it converts a primary rr0 node to rr1 and creates a new primary gr0 node
+eects: A nonterminal push converts a primary rr0 node to rr1 and creates a new primary gr0 node
 (the result of the push) and a new secondary gr0 node (the result of the call to gp);
-it converts a primary rr1 node to rr2 and creates a new primary gr0 node and a
-new secondary gr0 node; or, it converts a primary gr0 node to gr1 and creates a new
+A nonterminal push converts a primary rr1 node to rr2 and creates a new primary gr0 node and a
+new secondary gr0 node; or, A nonterminal push converts a primary gr0 node to gr1 and creates a new
 primary gg node and a new secondary gg node. In each case the total potential drops
 by one, paying for the time needed for the push (excluding the recursive call). A
 terminal push takes O(1) time, creates O(1) new nodes, and increases the potential
 by O(1). We conclude that push takes O(1) amortized time. Analogous arguments
-apply to pop, inject, and eject, giving us the following theorem:
+apply to pop, inject, and eject, giving We the following theorem:
 Theorem 3.1. Each of the operations push, pop, inject, and eject dened
 above takes O(1) amortized time.
 3.4. Implementation Using Overwriting. With the memoized implementation
@@ -230,51 +234,54 @@ representing the same list. These redundant representations exist simultanously.
 gr representation, however, dominates an rr representation for performing deque op-
 erations, and a gg representation dominates a gr representation. This allows us to
 improve the e-ciency of the implementation by using overwriting in place of memo-
-ization: when gp is called on a node, it overwrites the contents of the node with the
+ization: when gp is called on a node, gp overwrites the contents of a node with the
 results of the gp computation, and similarly for gs. Then only one representation of
 a list exists at any time, and it evolves from rr to gr to gg (via one of two alternative
 paths, depending on whether gp or gs is called rst). Each node now needs only
 three elds (for prex, child deque, and su-x) instead of ve (two extra for gp and
 gs).
 Not only does the use of overwriting save a constant factor in running time and
-storage space, but it also simplies the amortized analysis, as follows. We dene
+storage space, but the use of overwriting also simplies the amortized analysis, as follows. We dene
 #rr and #gr to be the number of nodes in states rr and gr, respectively. (There
 are now no secondary nodes.) We dene the potential of a collection of nodes to be
-3#rr +#gr. A nonterminal push has one of the following eects: it converts an rr
+3#rr +#gr. A nonterminal push has one of the following eects: A nonterminal push converts an rr
 6 H. KAPLAN, C. OKASAKI, and R. E. TARJEN
 node to gr and creates a new gr node, or converts a gr node to gg and creates a
 new gg node. In either case it reduces the potential by one, paying for the O(1) time
-required by the push (excluding the recursive call). A terminal push takes O(1) time
+required by A nonterminal push (excluding the recursive call). A terminal push takes O(1) time
 and can increase the potential by O(1). We conclude that push takes O(1) amortized
 time. Similar arguments apply to pop, inject, and eject.
 3.5. Related Work. The structure just described is based on the Kaplan-Tarjan
-structure of [10, Section 4], but simplies it in three ways. First, the skeleton of our
+structure of [10, Section 4], but simplies The structure just described in three ways. First, the skeleton of our
 structure (the sequence of descendants) is a stack; in the Kaplan-Tarjan structure,
-this skeleton must be partitioned into a stack of stacks in order to support worst-case
+the skeleton of our
+structure (the sequence of descendants) must be partitioned into a stack of stacks in order to support worst-case
 constant-time operations (via a redundant binary counting mechanism). Second, the
-recursive changes to the structure to make its nodes green are one-sided, instead of
-two-sided: in the original structure, the stack-of-stacks mechanism requires coordination
+recursive changes to The structure just described to make The structure just described nodes green are one-sided, instead of
+two-sided: in The structure just described, the stack-of-stacks mechanism requires coordination
 to keep both sides of the structure in related states. Third, the maximum buer
 size is reduced, from ve to three. In the special case of a steque, the maximum size
 of the su-x can be further reduced, to two. In the special case of a queue, both the
 prex and the su-x can be reduced to maximum size two.
 There is an alternative, much older approach that uses incremental recopying
 to obtain persistent deques with worst-case constant-time operations. See [7] for a
-discussion of this approach. The incremental recopying approach yields an arguably
+discussion of an alternative, much older approach that uses incremental recopying
+to obtain persistent deques with worst-case constant-time operations. an alternative, much older approach that uses incremental recopying
+to obtain persistent deques with worst-case constant-time operations yields an arguably
 simpler structure than the one presented here, but our structure generalizes to allow
 catenation, which no one knows how to implement e-ciently using incremental
 recopying. Also, our structure can be extended to support access, insertion, and deletion
 d positions away from the end of a list in O(log d) amortized time, by applying
 the ideas in [12].
-4. Catenable Steques. In this section we show how to extend our ideas to
-support catenation. Specically, we describe a data structure for catenable steques
+4. Catenable Steques. In this section our show how to extend our ideas to
+support catenation. Specically, our describe a data structure for catenable steques
 that achieves an O(1) amortized time bound for push, pop, inject, and catenate.
-The data structure is based on the same recursive decomposition of lists as that in
+our structure is based on the same recursive decomposition of lists as that in
 Section 5 of [10]. The pointer structure that we need here is much simpler than that
 in [10], and the analysis is amortized, following the framework outlined in Section 2
 and used in Section 3.
-4.1. Representation. Our structure is similar to the structure of Section 3,
-but with slightly dierent denitions of the component parts. As in Section 3, we use
+4.1. Representation. our structure is similar to the structure of Section 3,
+but with slightly dierent denitions of the component parts. As in Section 3, our use
 buers of two kinds: prexes and su-xes. Each prex contains two to six elements
 and each su-x contains one to three elements. A nonempty steque d over A is
 represented either by a su-x sf(d) only, or by an ordered triple consisting of a prex
@@ -286,20 +293,21 @@ of recursion is what allows e-cient catenation.
 The order of elements in a steque is the one consistent with the order of each
 triple, each buer, each pair, each steque within a pair, and each child steque. As in
 Section 3, there can be many dierent representations of a steque containing a given
-list of elements; when speaking of a steque, we mean a particular representation of it.
-The pointer structure for this representation is straightforward. Each triple is
+list of elements; when speaking of a steque, we mean a particular representation of a steque.
+The pointer structure for a particular representation of it is straightforward. Each triple is
 represented by a node containing three pointers: to a prex, a child steque, and a
 su-x. Each pair is represented by a node containing two pointers: to a prex and a
 steque.
-4.2. Operations. The implementation of the steque operations is much like the
-implementation of the noncatenable deque operations presented in Section 3.2. We
+4.2. Operations. The implementation of Operations is much like the
+implementation of Operations presented in Section 3.2. We
 call a prex red if it contains either two or six elements, and green otherwise. We call a
-su-x red if it contains three elements and green otherwise. The prex in a su-x-only
+su-x red if a
+su-x red contains three elements and green otherwise. The prex in a su-x-only
 steque is considered to have the same color as the su-x. We dene two memoized
 functions, gp, and gs, which produce green-prex and green-su-x representations of
 a steque, respectively. Each is called only when the corresponding buer is red and
 can be made green. We dene push, pop, and inject to call gp or gs when necessary
-to obtain a green buer. In the denitions below, we represent a steque with prex
+to obtain a green buer. In the denitions below, We represent a steque with prex
 child steque c, and su-x s by [p; c; s].
 Case 1: Steque d is represented by a triple. If
 Case 2: Steque d is represented by a su-x only. If create a prex p
@@ -319,7 +327,7 @@ Case 2: d 1 or d 2 is represented by a su-x only. Push or inject the elements of
 su-x-only steque one-by-one into the other steque.
 Note that both push and catenate produce valid steques even when their second
 arguments are steques with prexes of length one. Although such steques are not
-normally allowed, they may exist transiently during a pop. Every such steque is
+normally allowed, such steques are may exist transiently during a pop. Every such steque is
 immediately passed to push or catenate, and then discarded, however. In order to
 dene the pop, gp, and gs operations, we dene a n aive-pop operation that simply
 pops its steque argument without making sure that the result is a valid steque.
@@ -339,7 +347,7 @@ c(d) 6= ;), proceed as follows. Inspect the rst pair (p; d 0 ) in c(d). If jpj  
 not empty, let ((p; d 0
 Now inspect p.
 Case 1: p contains at least four elements. Pop the rst two elements from p to form
-inject these two elements into pr(d) to obtain p 0 . Let c
+inject least four elements into pr(d) to obtain p 0 . Let c
 Return
 Case 2: p contains at most three elements. Push the two elements in pr(d) onto p
 to obtain p 0 . Let c is nonempty, or c
@@ -347,33 +355,33 @@ Return
 (Steque d is represented by a triple with contain the rst
 two elements of sf(d) and s the last element on sf(d). Let c
 Return
-4.3. Analysis. The analysis of this method is similar to the analysis in Section
+4.3. Analysis. Analysis is similar to the analysis in Section
 3.3. We dene primary and secondary nodes, node states, and the potential function
 exactly as in Section 3.3: the potential function, as there, is 4#rr0
 where #rr0, #rr1, and #gr0 are the numbers of primary nodes in states rr0, rr1,
 and gr0, respectively.
-As in Section 3.3, we charge the O(1) cost of a call to gp or gs (excluding the cost
+As in Section 3.3, We charge the O(1) cost of a call to gp or gs (excluding the cost
 of any recursive call to push, pop, or inject) to the push, pop, or inject that calls
 gp or gs. The amortized costs of push and inject are O(1) by an argument identical
 to that used to analyze push in Section 3.3. Operation catenate calls push and
-inject a constant number of times and creates a single new node, so its amortized
+inject a constant number of times and creates a single new node, so Operation catenate amortized
 cost is also O(1).
 To analyze pop, assume that a call to pop recurs to depth k (via intervening calls
 to gp). By an argument analogous to that for push, each of the rst k 1 calls pays
-for itself by decreasing the potential by one. The terminal call to pop can result in a
+for each of the rst k 1 calls by decreasing the potential by one. The terminal call to pop can result in a
 call to either push or catenate, each of which has O(1) amortized cost. It follows
 that the overall amortized cost of pop is O(1), giving us the following theorem:
 Theorem 4.1. Each of the operations push, pop, inject, and catenate dened
 above takes O(1) amortized time.
 We can improve the time and space e-ciency of the steque data structure by
 constant factors by using overwriting in place of memoization, exactly as described in
-Section 3.4. If we do this, we can also simplify the amortized analysis, again exactly
+Section 3.4. If We do this, We can also simplify the amortized analysis, again exactly
 as described in Section 3.4.
 4.4. Related work. The structure presented in this section is analogous to the
 Kaplan-Tarjan structure of [10, Section 5] and the structure of [8, Section 7], but
 simplies them as follows. First, the buers are of constant-bounded size, whereas
 the structure of [10, Section 5] uses noncatenable steques as buers, and the structure
-of [8, Section 7] uses noncatenable stacks as buers. These buers in turn must
+of [8, Section 7] uses noncatenable stacks as buers. the buers must
 be represented as in Section 3 of this paper or by using one of the other methods
 mentioned there. In contrast, the structure of the present section is entirely self-
 contained. Second, the skeleton of the present structure is just a stack, instead of
@@ -385,14 +393,14 @@ con
 uently persistent catenable steques that also achieves an O(1) amortized bound
 per operation. His solution obtains its e-ciency by (implicitly) using a form of path
 reversal [18] in addition to lazy evaluation and memoization. Our structure extends to
-the double-ended case, as we shall see in the next section; whether Okasaki's structure
+the double-ended case, as Our shall see in the next section; whether Okasaki's structure
 extends to this case is an open problem.
-5. Catenable Deques. In this section we show how to extend our ideas to
-support all ve list operations. Specically, we describe a data structure for catenable
+5. Catenable Deques. In this section Our show how to extend Our ideas to
+support all ve list operations. Specically, Our describe a data structure for catenable
 deques that achieves an O(1) amortized time bound for push, pop, inject, eject,
 and catenate. Our structure is based upon an analogous structure of Okasaki [16],
 but simplied to use constant-size buers.
-5.1. Representation. We use three kinds of buers: prexes, middles, and
+5.1. Representation. Our use three kinds of buers: prexes, middles, and
 su-xes. A nonempty deque d over A is represented either by a su-x sf(d) or by a
 5-tuple that consists of a prex pr(d), a left deque of triples ld(d), a middle md(d),
 a right deque of triples rd(d), and a su-x sf(d). A triple consists of a rst middle
@@ -449,7 +457,8 @@ nonempty middle buer in t contains 3 elements or t contains a nonempty deque, le
 assume that x is nonempty if t consists of only one nonempty middle buer. Apply
 the appropriate one of the following two subcases.
 Case 2.1: x 0 from pr(d), m, and x by popping an
-element from m and injecting it into pr(d) to form p, popping an element from
+element from m and injecting an
+element from m into pr(d) to form p, popping an element from
 m and injecting the rst element from x to form m 0 , and popping the rst
 element from x to form x 0 . Return
 Case 2.2: 2. Inject the two elements in md(d) into pr(d) to form p. Let
@@ -484,7 +493,7 @@ the preferred implementation, unless one is using a functional programming langu
 that supports memoization but does not easily allow overwriting.
 5.4. Related Work. The structure presented in this section is analogous to
 the structures of [16, Chapter 11] and [8, Section 9] but simplies them as follows.
-First, the buers are of constant size, whereas in [16] and [8] they are noncatenable
+First, the buers are of constant size, whereas in [16] and [8] them are noncatenable
 deques. Second, the skeleton of the present structure is a binary tree, instead of a
 tree extension of a redundant digital numbering system as in [8]. Also, our amortized
 analysis uses the standard potential function method of [17] rather than the more
@@ -497,10 +506,12 @@ of triples rather than 5-tuples.
 which deques are constructed has a total order, we can extend the structures described
 here to support an additional heap order based on the order on A. Specically, we
 can support the additional operation of nding the minimum element in a deque (but
-not deleting it) while preserving a constant amortized time bound for every operation,
-including nding the minimum. We merely have to store with each buer, each deque,
-and each pair or triple the minimum element in it. For related work see [1, 2, 6, 13].
-We can also support a
+not deleting the universe A of elements over
+which deques are constructed) while preserving a constant amortized time bound for every operation,
+including nding the minimum. we merely have to store with each buer, each deque,
+and each pair or triple the minimum element in the universe A of elements over
+which deques are constructed. For related work see [1, 2, 6, 13].
+we can also support a
 ip operation on deques. A
 ip operation reverses the
 linear order of the elements in the deque: the ith from the front becomes the ith from
@@ -530,7 +541,7 @@ sizes of the prexes and su-xes are between 3 and 5 instead of 3 and 6. We do thi
 memoizing the pop and eject operations and avoiding creating a new structure with
 a green prex (su-x, respectively) representing the original deque when performing
 pop (eject, respectively). Using a more complicated potential function than the
-ones used in earlier sections, we can show that such an implementation runs in O(1)
+ones used in earlier sections, We can show that such an implementation runs in O(1)
 amortized time per operation.
 One direction for future research is to nd a way to simplify our structures fur-
 ther. Specically, consider the following alternative representation of catenable de-
@@ -539,7 +550,8 @@ nonempty deque d over A is represented by a triple that consists of a prex pr(d)
 (possibly empty) child deque of triples c(d), and a su-x sf(d). A triple consists of a
 nonempty prex , a deque of triples, and a nonempty su-x, or just of a nonempty prex
 or su-x. All buers and triples are over A. The operations push, pop, inject, and
-eject have implementations similar to their implementations in Section 5. The major
+eject have implementations similar to pop, inject, and
+eject implementations in Section 5. The major
 dierence is in the implementation of catenate, which for this structure requires a
 call to pop. Specically, let d 1 and d 2 be two deques to be catenated. catenate
 pops c(d 1 ) to obtain a triple (p; d and a new deque c, injects (s; c; sf(d 1
@@ -551,13 +563,13 @@ Another research direction is to design a con
 uently persistent representation of
 sorted lists such that accesses or updates d positions from either end take O(log d)
 time, and catenation takes O(1) time. The best structure so far developed for this
-problem has a doubly logarithmic catenation time [12]; it is purely functional, and
+problem has a doubly logarithmic catenation time [12]; The best structure is purely functional, and
 the time bounds are worst-case.
 
 Acknowledgment
 
 . We thank Michael Goldwasser for a detailed reading of this
-paper, and Jason Hartline for discussions that led to our implementations using memoization
+paper, and Jason Hartline for discussions that led to We implementations using memoization
 
 
 

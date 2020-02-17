@@ -1,10 +1,10 @@
 --T
 A Full Formalization of SLD-Resolution in the Calculus of Inductive Constructions.
 --A
-This paper presents a full formalization of the semantics of definite programs, in the calculus of inductive constructions. First, we describe a formalization of the proof of first-order terms unification: this proof is obtained from a similar proof dealing with quasi-terms, thus showing how to relate an inductive set with a subset defined by a predicate. Then, SLD-resolution is explicitely defined: the renaming process used in SLD-derivations is made explicit, thus introducing complications, usually overlooked, during the proofs of classical results. Last, switching and lifting lemmas and soundness and completeness theorems are formalized. For this, we present two lemmas, usually omitted, which are needed. This development also contains a formalization of basic results on operators and their fixpoints in a general setting. All the proofs of the results, presented here, have been checked with the proof assistant Coq.
+This paper presents a full formalization of the semantics of definite programs, in the calculus of inductive constructions. First, we describe a formalization of the proof of first-order terms unification: the proof of first-order terms unification is obtained from a similar proof dealing with quasi-terms, thus showing how to relate an inductive set with a subset defined by a predicate. Then, SLD-resolution is explicitely defined: the renaming process used in SLD-derivations is made explicit, thus introducing complications, usually overlooked, during the proofs of classical results. Last, switching and lifting lemmas and soundness and completeness theorems are formalized. For this, we present two lemmas, usually omitted, which are needed. This development also contains a formalization of basic results on operators and their fixpoints in a general setting. All the proofs of the results, presented here, have been checked with the proof assistant Coq.
 --B
 Introduction
-This paper is concerned with programming languages semantics. Its aim is
+This paper is concerned with programming languages semantics. This paper aim is
 to formalize SLD-resolution in the calculus of inductive constructions (Coq).
 First, terms and substitutions are dened, and the unication theorem, constantly
 used in the denition of the semantics of denite programs, is proved
@@ -48,7 +48,8 @@ denite goal. For every correct answer  for P [fGg, there exists
 a computed answer  for P [ fGg and a substitution
 such that
 .
-In 1994, J. C. Shepherdson wrote about this theorem: This is not true [27]
+In 1994, J. C. Shepherdson wrote about the fundamental
+theorem of completeness of SLD-resolution: This is not true [27]
 and gave a very simple counterexample. Of course, it is true that we can nd
 two substitutions  and
 such that
@@ -99,26 +100,28 @@ variables occurring in the input clauses (variants of clauses used in the resolu
 steps) coinciding with other variables in the derivation. Surprisingly,
 another problem comes from the necessity of an explicitation a priori of all
 the assumptions needed to obtain a proof. Curiously, even if this requirement
-seems natural, it is a common practice in logic programming, to suppose,
+seems natural, this requirement
+ is a common practice in logic programming, to suppose,
 during the proofs (on paper) of most of basic results, some assumptions
 on the variables occurring in the clauses used, without any justication. Of
 course, there exists an independence result asserting that the existence of a
 derivation does not depend on the choice of variables in the input clauses
 (even if this choice is very important during the proofs), and these results
 are still correct. However, these properties on variables have to be formally
-proved from this independence result, and, furthermore, they can only express
+proved from this independence result, and, furthermore, these properties on variables can only express
 properties on the objects occurring in the theorem (for instance, we
 cannot suppose during a proof that a clause does not share variables with a
 goal built in the proof if this goal does not appear in the theorem).
 Standard semantics ( la Herbrand) of denite programs deals with well-known
 objects: substitutions and renaming. However, several non-equivalent
-denitions for these objects can be found in the literature, thus introducing
+denitions for well-known
+objects: substitutions and renaming can be found in the literature, thus introducing
 some confusion (for example, the meaning of renaming is often assumed
-simpler than its formal denition implies). In [15], H. P. Ko and M. E. Nadel
+simpler than the meaning of renaming formal denition implies). In [15], H. P. Ko and M. E. Nadel
 point out that dierent authors give subtley dierent denitions of substitu-
 tions. They cite six non-equivalent denitions and point out the implication
 for the is an instance relation, thus giving dierent versions of the lifting
-lemma. Therefore, substitutions are not as simple as they might rst ap-
+lemma. Therefore, substitutions are not as simple as substitutions might rst ap-
 pear, and this motivates some authors, as R. S. Kemp and G. A. Ringwood
 in [14], to take the instance relation as primitive rather than taking substi-
 tutions. There is also a confusion in the literature concerning the denition
@@ -137,7 +140,8 @@ formalization settles down the problem of variable renaming, which has long
 been a cause of errors in the eld of logic programming.
 Description of Coq
 We use here version 6.2 of the proof assistant Coq [4], which allows the interactive
-development of formal proofs. Coq is based on a logical framework
+development of formal proofs. Coq
+ is based on a logical framework
 known as the calculus of inductive constructions [5], which is an extension of
 a typed -calculus supporting dependent types and polymorphic types. The
 basic idea underlying this logical framework, based on the Curry-Howard
@@ -154,14 +158,18 @@ Three induction principles are (automatically) generated by this denition:
 nat_id :(P:nat->s)(P O)->((n:nat)(P n)->(P (S n)))->(n:nat)(P n)
 (id; s) is either (ind,Prop) or (rec,Set) or (rect,Type). A classical
 example of a co-inductive type is the type of innite sequences, formed with
-elements of type A, or streams for shorter. In Coq, it can be introduced by
+elements of type A, or streams for shorter. In Coq
+, it can be introduced by
 CoInductive Set Stream [A:Set]:=cons:A->(Stream A)->(Stream A).
-Note that there is no induction principle for co-inductive types. Coq also
+Note that there is no induction principle for co-inductive types. Coq
+ also
 allows the denition of mutually recursive types. We shall use here two
 distinct sorts: Prop is the type of logical propositions; Set is the type of data
 type specications. The type of Prop and Set is Type. Constructing a proof
-within Coq is an interactive process: given a goal, the user species which
-deduction rule should be applied, and Coq does all the computations. The
+within Coq
+ is an interactive process: given a goal, the user species which
+deduction rule should be applied, and Coq
+ does all the computations. The
 theorem prover solves successive subgoals with tactics (i.e., functions that
 build a proof of a given goal from proofs of more elementary subgoals).
 Goal
@@ -184,7 +192,7 @@ called a unier of t 1 and t 2 (unif_t). s is called a minimal
 unier (min_unif_t), if for every unier s 0 of t 1 and t 2 , we have s  s 0 (i.e.,
 there exists a substitution s 0 such that s 0 which is denoted by the
 predicate less_subst_t). A unier s of t 1 and t 2 is called a most general
-unier if it is minimal, idempotent (i.e. 8x 2 X which is
+unier if A unier s of t 1 and t 2 is minimal, idempotent (i.e. 8x 2 X which is
 denoted by the predicate idempotent_t) and relevant to t 1 and t 2 (i.e., every
 variable occurring in the domain of s also occurs in the list formed by t 1 and
 and every variable occurring in the range of s also occurs in the
@@ -196,7 +204,8 @@ proof, dealing with quasi-terms, has been obtained by J. Rouyer [26], we have
 transposed the unication property from quasi-terms to terms. Originally,
 quasi-terms were introduced by Z. Manna and R. J. Waldinger in order
 to illustrate their technique for program synthesis: in [21], an unication
-algorithm has been derived by proving that its specication can be satised.
+algorithm has been derived by proving that an unication
+algorithm specication can be satised.
 This proof has been veried within the Cambridge LCF theorem prover [10],
 by L. C. Paulson [23]. A similar proof has been obtained by J. Rouyer [26]
 for quasi-terms dened as follows:
@@ -210,7 +219,8 @@ a quasi-substitution, is indeed a substitution. Clearly, T [X] is a proper
 subset of Q [X] (ConsArg(ConsArg(x; x); x) is neither a term nor a list of
 terms), and, in order to transpose the unication property, we have to dene
 a mapping f from well-formed quasi-terms (i.e., quasi-terms representing
-terms) to terms. However, Coq does not incorporate the notion of partiality:
+terms) to terms. However, Coq
+ does not incorporate the notion of partiality:
 any function is total. The current solution we have taken in this development
 consists in considering simultaneously a quasi-term and the proof that it is
 well formed. Hence, a predicate P on Q [X] characterizing well-formed
@@ -225,7 +235,8 @@ dened recursively on the structure of the proof
 that the quasi-term considered is well formed.
 In addition to the interest of the unication theorem, we are motivated by
 developing an approach based on the reusability of formal proofs. Therefore,
-this development shows how to dene partial functions. More precisely, we
+this development
+ shows how to dene partial functions. More precisely, we
 outline how from
 two inductively dened sets,
 a predicate P on E 1 , such that there exists a bijection between E 2 and
@@ -237,7 +248,7 @@ of functions or predicates on E P
 stands for 8e
 2. We just know the bijection between
 such that
-Furthermore, we would like to have
+Furthermore, We would like to have
 The function f 21 is easy to obtain, seeing that every e 2 in E 2 is in relation
 with an element in E 1 . Furthermore, for every e 2 in
 The denition of f 12 is rather critical because of the denition, by a pred-
@@ -262,7 +273,7 @@ and f 21 , we can prove the property U 2 on E 2 , by the following reasoning. Le
 e 2 be an element in by hypothesis, we have U 1 (f 21 (e 2 )), and there exists
 a proof p for f 21
 And the claim now follows, since
-. In this manner, we have proved the unication theorem
+. In this manner, our have proved the unication theorem
 without really working on unication, but by proving only few conservativity
 lemmas (for a full presentation of this proof, see [13]).
 Theorem 3.1 (Unication) Given two terms t 1 and t 2 , either t 1 and t 2
@@ -270,7 +281,8 @@ are not uniable, or they are and there exists an idempotent minimal unier
 relevant to these terms.
 4 Objects Used in Logic Programming
 We present in this section the formal denitions of the objects used in logic
-programming, and we introduce, for each of them, an interpretation schema.
+programming, and We introduce, for each of the objects used in logic
+programming, an interpretation schema.
 First, let  be a relational signature. The collection At; [X] of atoms
 is inductively dened as follows: if p is a predicate symbol in  such that
 l is a list of terms of length n, then pl(p; l) is an atom. Then,
@@ -295,11 +307,11 @@ Table
 
 1: Terms, substitutions, and unication.
 In order to be able to give an interpretation of these objects, it is necessary
-to attach some meaning to each of the symbols occurring in them. Therefore,
+to attach some meaning to each of the symbols occurring in these objects. Therefore,
 let us dene the interpretations of the signature [. For this, let ' n [A] be
 the dependent polymorphic type of lists of elements of type A of length n,
 and bool the set of booleans (with its usual operators,
-order to dierentiate them from the operators :, ^, _ on Prop). We dene
+order to dierentiate them from the operators :, ^, _ on Prop). us dene
 two collections of mappings: F n [A] is formed by mappings from ' n [A] to A,
 and P n [A] is formed by mappings from ' n [A] to bool. According to these
 denitions, interpretations, over a domain D, are dened, in a classical way,
@@ -310,7 +322,7 @@ F ar(f) [D] I
 Y
 Hence, given an interpretation I, over D, of  (resp. ), a n-ary function f
 predicate p) is interpreted by a mapping f I
-bool). We are now in position to give the following interpretation
+bool). us are now in position to give the following interpretation
 At; [X] Inductive atom : Set :=
 pl:(p:predic)(list_term (arity_p p))->atom.
 Inductive request : Set :=
@@ -380,7 +392,7 @@ An interpretation I, over a domain D, is said to be a model of an object
 In this case, we write (depending on the interpretation schema used
 for a query r, we write either I r or j= I ~ r). Note that, whereas given a
 valuation v 2 D X , the proposition true is decidable, since D can be
-an innite set, the proposition I o is not necessarily decidable. This will
+an innite set, the proposition true I o is not necessarily decidable. This will
 introduce many complications in the following. To terminate, we dene the
 relation of logical consequence (j=) between a Horn clause and a query as
 follows:
@@ -431,7 +443,7 @@ r(C )] is the query obtained by replacing in R, the (n 1)-th atom by
 the query r(C ) ((change_n_r n (rsubst_req r (body_c C)) R)). In each
 resolution step, two choices are made: the choice of the selected atom and
 the choice of the input clause whose head unies with the selected atom.
-Therefore, the resolution rule can be viewed as a rule that moves from a state
+Therefore, The resolution rule can be viewed as a rule that moves from a state
 to another, dened as follows. First, we introduce SR as the collection of
 mappings from X to X (the classical properties on substitutions are extended
 to SR ) and a predicate P R on SR , characterizing the renaming substitutions
@@ -439,7 +451,7 @@ r such that
 occurring in the domain of r also occurs in the range of r
 (r is idempotent).
 A resolution state is a pair :R, where  is a substitution and R a query.
-We give now the formal denitions of the renaming conditions that have to
+we give now the formal denitions of the renaming conditions that have to
 be satised during a transition  i :R i
 . First, the initial resolution
 state  i :R i must satisfy  i R Then, the renaming substitution r has
@@ -540,7 +552,8 @@ At each resolution step of a derivation, an atom and a clause must be selected.
 The following well-known lemma ensures that the non-determinism in the
 choice of atom does not matter: this is called don't care non-determinism.
 Lemma 6.1 (Switching) If during a valid derivation, two atoms A and B
-are successively selected, then they can also be selected in the reverse order,
+are successively selected, then two atoms A and B
+ can also be selected in the reverse order,
 and the derived states are the same up to renaming of variables.
 This lemma is proved by decomposing the two transitions:
 s id :R 0
@@ -552,9 +565,10 @@ we have the assumption This proof (presented in details
 in [12]) is classical and requires constantly the denition of the variable renaming
 process used during a valid derivation. Note that we explicitely
 build, during this proof, the substitution relating the two derived states, thus
-allowing us to assert they are the same up to renaming of variables.
+allowing us to assert the two derived states are the same up to renaming of variables.
 6.1.2 Lifting Lemma
-The lifting lemma is another classical lemma and is used during the completeness
+Lifting Lemma
+ is another classical lemma and is used during the completeness
 proof. As we said in the introduction, we have to assume some
 additional conditions on the renaming used, in order to prove it.
 Lemma 6.2 (Lifting) Let d : s id :R
@@ -616,23 +630,23 @@ The corresponding proof requires the notion of free transitions that are
 transitions satisfying the resolution rule, except that the uniers used are
 not necessarily most general uniers. Hence, the condition  on the
 initial step (condition (*H5*) of the predicate rsl) does not necessarily hold.
-This proof is obtained by using a right induction schema.
+The corresponding proof is obtained by using a right induction schema.
 6.2.2 Completeness of SLD-Resolution
 Let us now turn to the formalization of the completeness theorem of SLD-
 resolution: if there exists a solution to a query, then there exists an answer
 to this query (in this form, the completeness theorem is weaker than the
-usual completeness theorem and the soundness theorem proved; we don't
+usual completeness theorem and the soundness theorem proved; us don't
 relate here the solution with the answer). As usual, we need some new
-denitions and lemmas rst: let us summarize them.
-First, we have to dene Herbrand interpretations with respect to our
+denitions and lemmas rst: let we summarize some new
+denitions and lemmas rst.
+First, we have to dene Herbrand interpretations with respect to we
 denitions. For this, we dene inductively the collection, T [;], of ground
 terms (Ground_Term) that are terms not containing variables, obtained using
 only function symbols occurring in  (this set is also called the Herbrand
 universe of ). At the same time, the collection, L n; [;], of lists of ground
 terms is dened. Similarly, we dene the collection, At; [;], of ground
 atoms (Ground_Atom), which can be formed by using relation symbols from
-with ground terms from the Herbrand universe of  as arguments (this
-set is also called the Herbrand base of  [ ). We also dene S ; , as the
+with ground terms from the Herbrand universe of  as arguments (this set is also called the Herbrand base of  [ ). we also dene S ; , as the
 collection of ground substitutions (Ground_subst), which are mappings from
 X to T [;] (which exactly corresponds to T [;] X ). Furthermore, to avoid
 some uninteresting complications, we assume, from now, on that the signature
@@ -640,7 +654,7 @@ used, contains a constant (i.e., a 0-ary function symbol); hence the
 above-dened sets are nonempty (in [8], J. H. Gallier discusses in detail the
 need for at least one constant symbol in  in the context of the Herbrand
 theorem).
-We can now introduce the denition of the Herbrand interpretation of
+we can now introduce the denition of the Herbrand interpretation of
 , written H. For every f 2 , f H is a mapping from ' ar(f) [T  [;]] to T [;]
 dened by:
 where tfg is the unique constructor of ground terms and where l 0 has type
@@ -684,7 +698,7 @@ model of this atom, needed to evaluate atoms not necessarily ground in
 the body of the clause aected by T P .
 Since Herbrand models of a program P are exactly the xpoints of T P , we
 formalize some results on operators and their xpoints in a general setting.
-In fact, T P is easily seen to be upward continuous, and it follows that its
+In fact, T P is easily seen to be upward continuous, and T P follows that T P
 least xpoint is T "!
 P and is equal to M P .
 us turn to the denition of the operational counterpart of the
@@ -714,13 +728,14 @@ Table
 
 10: Operators, ordinals, and xpoints.
 One delicate step in the proof of the completeness theorem of SLD-resolution
-is concerned with the combination of derivations. This proof is made by
+is concerned with the combination of derivations. the proof of the completeness theorem of SLD-resolution
+ is made by
 induction over the length of the initial query, and the following argument is
 always used:
 has a refutation
 Because each B i is ground, these refutations
 can be combined into a refutation of P [
-However, the combination of derivations is rather delicate, and the way it is
+However, the combination of derivations is rather delicate, and the way the combination of derivations is
 made is never given. Therefore, during the formalization of this proof, we
 need a (technical?) lemma, whose proof is not so immediate and shows (in
 a constructive way) how the nal refutation can be obtained from the initial
@@ -765,7 +780,7 @@ occurring in R is in the success set of P , then, there exists a valid derivatio
 s id :R
 Proof. We proceed by induction over R. For
 the claim is obvious. For induction hypothesis,
-if for every atom a 0 occurring in r, we have S P (a 0 ), then, there exists a
+if for every atom a 0 occurring in r, We have S P (a 0 ), then, there exists a
 valid derivation s id :r
 Moreover, by hypothesis, we have
 By the induction hypothesis, we can build the valid derivation
@@ -824,30 +839,31 @@ traditional we have chosen to take as the referential notion of
 truth a semantical notion (an alternative could consist in taking another
 referential notion like natural deduction or sequent calculus).
 First, note that, instead of proving the unication theorem by following
-the unication algorithm, as J. Rouyer did in [26], we have used his result on
-quasi-terms to obtain our proof. The technique proposed is based on dening
+the unication algorithm, as J. Rouyer did in [26], we have used J. Rouyer result on
+quasi-terms to obtain we proof. The technique proposed is based on dening
 a bijection between terms and quasi-terms satisfying a given predicate and
 proving the preservation of the unication property. In this way, we have
 proved the unication theorem without really dealing with unication theory,
 thus avoiding a heavy proof requiring to handle sophisticated theories. This
-construction is interesting because it represents an alternative to the classical
+construction is interesting because This
+construction represents an alternative to the classical
 approach and shows how to take advantage of a previous formal proof, even
 if the desired proof does not exactly deal with the same objects. Whereas
 the unication theorem proved in [26] requires about 140 lemmas, only 75
 lemmas have been proved in our development. This shows the interest that
 a proofs library be provided.
 In more informal presentations, variable renaming problems are often
-ignored; however, these problems cannot be ignored here. As we said, the
+ignored; however, variable renaming problems cannot be ignored here. As we said, the
 results presented here have been proved in the calculus of inductive construc-
 tions, thus making a dierence from the proofs one can nd in many books on
 logic programming. The main dierence is concerned with the renaming process
-used in an SLD-derivation: it is made explicit. A typical example is the
+used in an SLD-derivation: The main dierence is made explicit. A typical example is the
 proof of the completeness theorem that requires a variant lemma (assert-
 ing that the existence of an SLD-derivation does not depend on the choice of
 variables in the input clauses used) and a lemma on combination of derivations
 (which explicitely allows this operation), whose proofs are rather long.
 Therefore, formalizing SLD-resolution introduces many complications. Even
-if combining some SLD-derivations seems to be easy, this operation requires
+if combining some SLD-derivations seems to be easy, This operation requires
 several renamings in order to satisfy the standardization apart assumed
 in the denition of a derivation. Usually, these lemmas are implicitly used
 without any proof or any justication. Not surprisingly, a full formalization
@@ -868,7 +884,7 @@ of explicit substitutions [1] for -reduction (the -calculus is a renement
 of the -calculus, where substitutions are manipulated explicitely, and provides
 a link between the classical -calculus and concrete implementations).
 The renaming process required in an SLD derivation plays an essential role
-in logic programming: it constitutes an important step in the denition of
+in logic programming: The renaming process required in an SLD derivation constitutes an important step in the denition of
 operational semantics of denite programs from the declarative reading of
 Horn clauses.
 

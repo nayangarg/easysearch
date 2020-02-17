@@ -1,18 +1,22 @@
 --T
 A Router Architecture for Real-Time Communication in Multicomputer Networks.
 --A
-AbstractParallel machines have the potential to satisfy the large computational demands of real-time applications. These applications require a predictable communication network, where time-constrained traffic requires bounds on throughput and latency, while good average performance suffices for best-effort packets. This paper presents a new router architecture that tailors low-level routing, switching, arbitration, flow-control, and deadlock-avoidance policies to the conflicting demands of each traffic class. The router implements bandwidth regulation and deadline-based scheduling, with packet switching and table-driven multicast routing, to bound end-to-end delay and buffer requirements for time-constrained traffic while allowing best-effort traffic to capitalize on the low-latency routing and switching schemes common in modern parallel machines. To limit the cost of servicing time-constrained traffic, the router includes a novel packet scheduler that shares link-scheduling logic across the multiple output ports, while masking the effects of clock rollover on the represention of packet eligibility times and deadlines. Using the Verilog hardware description language and the Epoch silicon compiler, we demonstrate that the router design meets the performance goals of both traffic classes in a single-chip solution. Verilog simulation experiments on a detailed timing model of the chip show how the implementation and performance properties of the packet scheduler scale over a range of architectural parameters.
+AbstractParallel machines have the potential to satisfy the large computational demands of real-time applications. the large computational demands of real-time applications require a predictable communication network, where time-constrained traffic requires bounds on throughput and latency, while good average performance suffices for best-effort packets. This paper presents a new router architecture that tailors low-level routing, switching, arbitration, flow-control, and deadlock-avoidance policies to the conflicting demands of each traffic class. The router implements bandwidth regulation and deadline-based scheduling, with packet switching and table-driven multicast routing, to bound end-to-end delay and buffer requirements for time-constrained traffic while allowing best-effort traffic to capitalize on the low-latency routing and switching schemes common in modern parallel machines. To limit the cost of servicing time-constrained traffic, The router includes a novel packet scheduler that shares link-scheduling logic across the multiple output ports, while masking the effects of clock rollover on the represention of packet eligibility times and deadlines. Using the Verilog hardware description language and the Epoch silicon compiler, we demonstrate that the router design meets the performance goals of both traffic classes in a single-chip solution. Verilog simulation experiments on a detailed timing model of the chip show how the implementation and performance properties of the packet scheduler scale over a range of architectural parameters.
 --B
 Introduction
 Real-time applications, such as avionics, industrial process
 control, and automated manufacturing, impose strict
 timing requirements on the underlying computing system.
-As these applications grow in size and complexity, parallel
+As --B
+Introduction
+Real-time applications, such as avionics, industrial process
+control, and automated manufacturing grow in size and complexity, parallel
 processing plays an important role in satisfying the
 large computational demands. Real-time parallel computing
 hinges on effective policies for placing and scheduling
 communicating tasks in the system to ensure that critical
-operations complete by their deadlines. Ultimately, a
+operations complete by critical
+operations deadlines. Ultimately, a
 parallel or distributed real-time system relies on an inter-connection
 network that can provide throughput and delay
 guarantees for critical communication between cooperating
@@ -24,8 +28,7 @@ focus on providing good average network throughput and
 The work reported in this paper was supported in part by the National
 Science Foundation under grant MIP-9203895 and the Office
 of Naval Research under grants N00014-94-1-0229. Any opinions,
-findings, and conclusions or recommendations expressed in this paper
-are those of the authors and do not necessarily reflect the views
+findings, and conclusions or recommendations expressed in this paperare those of the authors and do not necessarily reflect the views
 of NSF or ONR.
 J. Rexford is with AT&T Labs - Research in Florham Park, New
 Jersey, and J. Hall and K. G. Shin are with the University of Michigan
@@ -42,7 +45,7 @@ bandwidth available in multi-hop topologies. In addition,
 multi-hop networks often have several disjoint routes between
 each pair of processing nodes, improving the ap-
 plication's resilience to link and node failures. However,
-these networks complicate the effort to guarantee end-to-
+multi-hop networks complicate the effort to guarantee end-to-
 end performance, since the system must bound delay at
 each link in a packet's route. To deliver predictable communication
 performance in multi-hop networks, we present
@@ -62,7 +65,8 @@ that have experienced large delays earlier in their
 routes [10]. Ultimately, though, bounding worst-case communication
 latency requires prior reservation of link and
 buffer resources, based on the application's anticipated
-traffic load. Under this traffic contract, the network can
+traffic load. Under this traffic contract, the interconnection
+network can
 provide end-to-end performance guarantees through effective
 link-scheduling and buffer-allocation policies. To handle
 a wide range of bandwidth and delay requirements,
@@ -85,9 +89,10 @@ to/from
 processor
 Fig. 1. Router in a Mesh Network: This figure shows a router
 in a 4 \Theta 4 square mesh of processing nodes. To communicate
-with another node, a processor injects a packet into its router;
-then, the packet traverses one or more links before reaching the
-reception port of the router at the destination node.
+with another node, a processor injects a packet into a processor router;
+then, a packet traverses one or more links before reaching the
+reception port of a router
+ at the destination node.
 would prove too slow to serve multiple high-speed links.
 This software would have to rank packets by deadline for
 each outgoing link, in addition to scheduling and executing
@@ -129,21 +134,21 @@ and link resources in establishing time-constrained connec-
 tions. In addition to managing the packet memory and
 connection data structures, the real-time router effectively
 handles the effects of clock rollover in computing scheduling
-for each packet. The router overlaps communication
+for each packet. the real-time router overlaps communication
 scheduling with packet transmission to maximize utilization
 of the network links. To reduce hardware complex-
 ity, the architecture shares packet buffers and sorting logic
-amongst the router's multiple output links, as discussed in
+amongst the real-time router's multiple output links, as discussed in
 Section V; a hybrid of serial and parallel comparison operations
 enables the scheduler to trade space for time to
 further reduce implementation complexity. Section VI describes
 the router implementation, using the Verilog hardware
 description language and the Epoch silicon compiler.
-The Epoch implementation demonstrates that the router
-can satisfy the performance goals of both traffic classes in
+Our prototype implementation demonstrates that the real-time routercan satisfy the performance goals of both traffic classes in
 an affordable, single-chip solution. Verilog simulation experiments
 on a detailed timing model of the chip show the
-correctness of the design and investigate the scaling properties
+correctness of The
+design and investigate the scaling properties
 of the packet scheduler across a range of architectural
 parameters. Section VII discusses related work on real-time
 multicomputer networks, while Section VIII concludes the
@@ -182,9 +187,11 @@ times, the real-time channel model limits the influence an
 ill-behaving or malicious connection can have on other traffic
 in the network. The run-time link scheduler guarantees
 that message m i
-reaches its destination node by its deadline
-Per-hop delay bounds: The network does not admit a
-new connection unless it can reserve sufficient buffer and
+reaches The run-time link scheduler guarantees
+that message m destination node by The run-time link scheduler guarantees
+that message m deadline
+Per-hop delay bounds: the network does not admit a
+new connection unless the network can reserve sufficient buffer and
 bandwidth resources without violating the requirements of
 Traffic Data Structure
 Queue 1 On-time time-constrained traffic Priority queue (by deadline '(m)+d)
@@ -200,7 +207,8 @@ any early time-constrained messages.
 existing connections [11, 20]. A connection establishment
 procedure decomposes the connection's end-to-end delay
 bound D into local delay bounds d j
-for each hop in its
+for each hop in j
+
 route such that d j - I min and
 D. Based on the
 local delay bounds, a message m i
@@ -239,24 +247,27 @@ Queue 1.
 Link horizon parameter: By delaying the transmission
 of early time-constrained messages, the link scheduler
 can avoid overloading the buffer space at the downstream
-node [11, 15, 16]. Still, the scheduler could potentially improve
+node [11, 15, 16]. Still, the link scheduler
+ could potentially improve
 link utilization and average latency by transmitting
 early messages from Queue 3 when the other two scheduling
 queues are empty. To balance this trade-off between
 buffer requirements and average performance, the link can
 transmit an early time-constrained message from Queue
 3, as long as the message is within a small horizon h - 0
-of its logical arrival time (i.e., ' j
+of the message logical arrival time (i.e., ' j
 values of h permit the link to transmit more early time-constrained
 traffic, at the expense of increased memory requirements
 at the downstream node. Although each connection
-could conceivably have its own h value, employing
+could conceivably have each connection
+ own h value, employing
 a single horizon parameter allows the link to transmit early
 traffic directly from the head of Queue 3, without any per-connection
 data structures.
 Buffer requirements: To avoid buffer overflow or message
 loss, a connection must reserve sufficient memory for
-storing traffic at each node in its route. The required buffer
+storing traffic at each node in 
+ . The required buffer
 space at node j depends on the connection's local delay
 bound d j
 , as well as the horizon parameter h j \Gamma1 for the
@@ -264,7 +275,7 @@ incoming link. In particular, node j can receive a message
 from node j \Gamma 1 as early as ' j
 transmits the message at the earliest possible
 time. In the worst case, node j can hold a message
-until its deadline ' j
+until node deadline ' j
 . Hence, for this connection,
 messages m i
 stored
@@ -272,10 +283,10 @@ at node j at time t. If a connection has messages arrive as
 early as possible, and depart as late as possible, then node
 could have to store as many as
 I min
-messages from this connection at the same time. By reserving
+messages from a connection at the same time. By reserving
 buffer and bandwidth resources in advance, the real-time
 channel model guarantees that every message arrives
-at its destination node by its deadline, independent of other
+at every message destination node by every message deadline, independent of other
 best-effort and time-constrained traffic in the network.
 III. Mixing Best-Effort and Time-Constrained
 Traffic
@@ -284,7 +295,8 @@ worst-case performance of time-constrained messages, the
 scheduling model in Table I can impose undue restrictions
 on the packet size and flow-control schemes for best-effort
 traffic. To overcome these limitations, we propose a router
-architecture that tailors its low-level communication policies
+architecture that tailors router
+ low-level communication policies
 to the unique demands of the two traffic classes. Fine-
 grain, priority-based arbitration at the network links permits
 the best-effort traffic to capitalize on the low-latency
@@ -316,12 +328,12 @@ time-constrained
 best-effort
 time-constrained
 Fig. 2. Real-Time Router: This figure shows the real-time router architecture, with separate control and data path for best-effort and
-time-constrained packets. The router includes a packet memory, connection routing table, and scheduling logic to support delay and
-bandwidth guarantees for time-constrained traffic. To connect to the local processor, the router exports a control interface, a reception
+time-constrained packets. Real-Time Router includes a packet memory, connection routing table, and scheduling logic to support delay and
+bandwidth guarantees for time-constrained traffic. To connect to the local processor, Real-Time Router exports a control interface, a reception
 port, and separate injection ports for each traffic class.
 A. Complementary Switching Schemes
-To ensure that time-constrained connections meet their
-delay requirements, the router must have control over
+To ensure that time-constrained connections meet time-constrained connections
+delay requirements, Real-Time Router must have control over
 bandwidth and memory allocation. For example, suppose
 that a time-constrained message arrives with a tight deadline
 (i.e., '(m i
@@ -338,7 +350,7 @@ consists of 10-20 byte exchanges of command or status information
 time-constrained traffic to small, fixed-size packets that
 can support a distributed memory read or write operation.
 This bounds link access latency and buffering delay while
-simplifying memory allocation in the router.
+simplifying memory allocation in Real-Time Router.
 To ensure predictable consumption of link and buffer re-
 sources, time-constrained traffic employs store-and-forward
 packet switching . By buffering packets at each node, packet
@@ -376,13 +388,13 @@ link is not available, the packet stalls in the network
 instead of buffering entirely within the router.
 In effect, wormhole switching converts the best-effort
 scheduling "queue" in Table I into a logical queue that
-spans multiple nodes. The router simply includes small
+spans multiple nodes. Real-Time Router simply includes small
 five-byte flit (flow control unit) buffers [23] to hold a few
 bytes of a packet from each input link. When an incoming
 packet fills these buffers, inter-node flow control halts further
 transmission from the previous node until more space
 is available; once the five-byte chunk proceeds to a buffer
-at the outgoing link, the router transmits an acknowledg-
+at the outgoing link, Real-Time Router transmits an acknowledg-
 1virtual channel id
 data byte
 strobe/enable
@@ -390,7 +402,7 @@ flit acknowledgement
 Fig. 3. Link Encoding: In the real-time router, each link can
 transmit a byte of data, along with a strobe signal and a virtual
 channel identifier. In the reverse direction, an acknowledgment
-bit indicates that the router can store another flit on the best-effort
+bit indicates that Real-Time Router can store another flit on the best-effort
 virtual channel.
 x offset
 y offset
@@ -407,7 +419,7 @@ data. Time-constrained packets are 20 bytes long and include the
 connection identifier and the deadline from the previous hop in
 the route, which serves as the logical arrival time at the current
 router.
-ment bit to signal the upstream router to start sending the
+ment bit to signal the downstream router to start sending the
 next flit. This fine-grain, per-hop flow control permits best-effort
 traffic to use large variable-sized packets, reducing or
 even avoiding packetization overheads, without increasing
@@ -421,7 +433,7 @@ Even though wormhole and packet switching exercise
 complementary buffer resources, best-effort and time-constrained
 traffic still share access to the same net-work
 links. To provide tight delay guarantees for time-constrained
-connections, the router must bound the time
+connections, Real-Time Router must bound the time
 that the variable-sized, wormhole packets can stall the forward
 progress of on-time, time-constrained traffic. How-
 ever, a blocked wormhole packet can hold link resources at
@@ -462,10 +474,9 @@ with the policies in Table I. Although this arbitration
 mechanism ensures effective scheduling of the traffic
 on the outgoing links and the reception port, the best-effort
 and time-constrained packets could still contend for
-resources at the injection port at the source node. The
-local processor could solve this problem by negotiating between
+resources at the injection port at the source node. the local processor could solve this problem by negotiating between
 best-effort and time-constrained traffic at the injection
-port, but this would require the processor to perform
+port, but this would require the local processor to perform
 flit-level arbitration. Instead, the real-time router includes
 a dedicated injection port for each traffic class. The two
 injection ports, coupled with the low-level arbitration on
@@ -486,7 +497,7 @@ stalling the flow of data while waiting for access to the bus.
 The best-effort bus is one flit wide and performs round-robin
 arbitration among the flit buffers at the incoming
 ports. Running at the same speed as the byte-wide input
-ports, this five-byte bus has sufficient throughput to
+ports, The best-effort bus has sufficient throughput to
 accommodate a peak load of best-effort traffic. Transferring
 best-effort packets in five-byte chunks incurs a small
 initial transmission delay at each router, which could be
@@ -517,14 +528,13 @@ first-out order, the real-time router must have a data
 structure that records the idle memory locations in the
 packet buffer. Similar to many shared-memory switches
 in high-speed networks, the real-time router maintains an
-idle-address pool [29], implemented as a stack. This stack
-consists of a small memory, which stores the address of
+idle-address pool [29], implemented as a stack. a stackconsists of a small memory, which stores the address of
 each free location in the packet buffer, and a pointer to
-the first entry. Initially, the stack includes the address of
+the first entry. Initially, a stack includes the address of
 each location in the packet memory. An incoming packet
-retrieves an address from the top of the stack and increments
+retrieves an address from the top of a stack and increments
 the stack pointer to point to the next available entry.
-Upon packet departure, the router decrements this pointer
+Upon packet departure, Real-Time Router decrements this pointer
 and returns the free location to the top of stack. The idle-
 address stack always has at least one free address when
 a new packet arrives, since the real-time channel model
@@ -543,9 +553,11 @@ the shaded nodes in Figure 1. Dimension-ordered routing
 avoids packet deadlock in a square mesh [30] and also facilitates
 an efficient implementation based on x and y offsets
 in the packet header, as shown in Figure 4(a); the offsets
-reach zero when the packet has arrived at its destination
+reach zero when An incoming packet
+ has arrived at An incoming packet
+ destination
 node. To improve the performance of best-effort traffic,
-an enhanced version of the router could support adaptive
+an enhanced version of Real-Time Router could support adaptive
 wormhole routing and additional virtual channels, at the
 expense of increased implementation complexity [31, 32].
 In particular, non-minimal adaptive routing would enable
@@ -561,8 +573,8 @@ header of each time-constrained packet, as shown in Figure
 4(b). As part of establishing a real-time channel, the
 network protocol software can select a fixed path from the
 source to the destination(s), based on the available band-width
-and buffer resources at the routers. The protocol
-software can employ a variety of algorithms for selecting
+and buffer resources at the routers. the
+network protocol software can employ a variety of algorithms for selecting
 unicast and multicast routes based on the resources available
 in the network [33]. Once the connection establishment
 protocol reserves buffer and bandwidth resources for
@@ -600,9 +612,10 @@ in most cases, the network can establish the required time-constrained
 connections before the application commences.
 To permit a single-chip solution, the real-time router relegates
 these non-real-time operations to the protocol soft-
-ware. The network could select routes and admit new connections
+ware. the network could select routes and admit new connections
 through a centralized server or a distributed pro-
-tocol. In either case, this protocol software can use the
+tocol. In either case, the
+network protocol software can use the
 best-effort virtual network, or even a set of dedicated time-constrained
 connections, to exchange information to select
 a route and provision resources for each new connection.
@@ -610,8 +623,8 @@ The route selected for a connection depends on the traffic
 characteristics and performance requirements, as well
 as the available buffer and bandwidth resources in the net-
 work. As part of establishing a new real-time channel, the
-protocol software assigns a unique connection identifier at
-each hop in the route. Then, each node in the route writes
+network protocol software assigns a unique connection identifier at
+each hop in The route. Then, each node in The route writes
 Time-Constrained Best-Effort
 Switching Packet switching Wormhole switching
 Packet size Small, fixed size Variable length
@@ -637,16 +650,16 @@ III
 Control Interface Commands: This table summarizes the
 control commands used to configure the real-time router.
 control information into the router's connection table, as
-shown in Table III. At run-time, this table is indexed
+shown in Table III. At run-time, This table is indexed
 by the connection identifier field of each incoming time-constrained
 packet, as shown in Figure 4(b). To minimize
 the number of pins on the router chip, the controlling processor
-updates this table as a sequence of four, one-byte operations
+updates This table as a sequence of four, one-byte operations
 that specify the incoming connection identifier and
 the three fields in the table. After closing a connection, the
 network protocol software can reuse the connection identifier
-by overwriting the entry in the routing table. The
-processor uses the same control interface to set the horizon
+by overwriting the entry in the routing table. the controlling processor
+ uses the same control interface to set the horizon
 parameters h for each of the five outgoing ports.
 As shown in Table III, the routing table stores the con-
 nection's identifier at the next node, the local delay bound
@@ -669,7 +682,7 @@ the router queues the updated packet for transmission on
 the appropriate outgoing port(s).
 By implementing a shared packet memory, the real-time
 router can store a single copy of each multicast packet, removing
-the packet only after it has been transmitted by
+the packet only after the packet has been transmitted by
 each output port selected in the bit mask. The shared
 packet memory also permits the network protocol software
 to employ a wide variety of buffer allocation policies. On
@@ -689,19 +702,18 @@ links when the node does not have sufficient buffer space
 to admit new connections.
 B. Handling a Clock with Finite Range
 The packet deadline at one node serves as the logical
-arrival time at the downstream node in the route. Carrying
+arrival time at the downstream node in The route. Carrying
 these logical arrival times in the packet header, as
 shown in Figure 4(b), implicitly assumes that the net-work
 routers have a common notion of time, within some
 bounded clock skew. Although this is not appropriate in
 a wide-area network context, the tight coupling in parallel
 machines minimizes the effects of clock skew. Alternatively,
-the router could store additional information in the connection
+Real-Time Router could store additional information in the connection
 table to compute ' j
 ) from a packet's actual arrival
 time and the logical arrival time of the connection's previous
-packet [34]; however, this approach would require the
-router to periodically refresh this connection state to correctly
+packet [34]; however, this approach would require Real-Time Router to periodically refresh this connection state to correctly
 handle the effects of clock rollover. Instead, the real-time
 router avoids this overhead by capitalizing on the tight
 coupling between nodes to assume synchronized clocks.
@@ -710,14 +722,14 @@ completely ignore the effects of clock rollover. To
 schedule time-constrained traffic, the router architecture
 includes a real-time clock, implemented as a counter that
 increments once per packet transmission time. For a practical
-implementation, the router must limit the number
+implementation, Real-Time Router must limit the number
 of bits b used to represent the logical arrival times and
 deadlines of time-constrained packets. Since logical arrival
 times continually increase, the design must use modulo
 arithmetic to compute packet deadlines and schedule
 traffic for transmission. As a result, the network must restrict
 the logical arrival times that can exist in a router at
-the same time; otherwise, the router cannot correctly distinguish
+the same time; otherwise, Real-Time Router cannot correctly distinguish
 between different packets awaiting access to the
 outgoing link.
 Selecting a value for b introduces a fundamental trade-off
@@ -733,7 +745,7 @@ packets. Larger values of b would increase the hardware
 cost and latency for performing these packet comparison
 operations. However, smaller values of b would restrict the
 network's ability to select large delay bounds d and horizon
-parameters h for time-constrained connections. The
+parameters h for time-constrained connections. the
 network protocol software can limit the delay and horizon
 parameters, based on the value of b imposed by the
 router implementation. Alternatively, in implementing the
@@ -744,21 +756,19 @@ missibility, consider a connection traversing consecutive
 links local delay parameters d j \Gamma1 and d j
 respectively, where link
 As discussed in Section II, a packet can arrive as much as
-units ahead of its logical arrival time ' j
-and depart as late as its deadline ' j
+units ahead of a packet logical arrival time ' j
+and depart as late as a packet deadline ' j
 . Consequently,
 for any messages m i
-from this connection at time t. The
-network must ensure that the router can differentiate between
+from this connection at time t. the network must ensure that the router can differentiate between
 the full range of logical arrival times in this set.
-The router can correctly interpret logical arrival times and
+Real-Time Router can correctly interpret logical arrival times and
 deadlines, even in the presence of clock rollover, as long
 as every connection has
 values that are
-less than half the range of the on-chip clock. That is, the
-router requires d j
+less than half the range of the on-chip clock. That is, Real-Time Router requires d j
 connections sharing the link.
-Under this restriction, the router can compare packets
+Under this restriction, Real-Time Router can compare packets
 based on their logical arrival times and deadlines by using
 modulo arithmetic. For example, suppose (i.e., the
 clock has a range of 256 time units) and the connections all
@@ -787,7 +797,7 @@ compare on-time packets based on their deadlines.
 V. Scheduling Time-Constrained Packets
 To satisfy connection delay, throughput, and buffer
 requirements, each outgoing port must schedule time-constrained
-packets based on their logical arrival times and
+packets based on each outgoing port logical arrival times and
 deadlines, as well as the horizon parameter. The real-time
 router reduces implementation complexity by sharing a single
 scheduler amongst the early and on-time traffic on each
@@ -810,7 +820,7 @@ using a systolic array or shift register consisting of n comparators
 [35, 40, 41]. Additional technical challenges arise
 in trying to integrate packet scheduling with bandwidth
 regulation [42], since the link cannot transmit a packet unless
-it has reached its logical arrival time.
+it has reached it logical arrival time.
 To perform bandwidth regulation and deadline-based
 scheduling, the real-time router could include two priority
 queues for each of its five outgoing ports, as suggested
@@ -821,7 +831,7 @@ Table
 I. However, this approach would be extremely expensive
 and would require additional logic to transfer packets
 from the "early" queue to the "on-time" queue; this is
-particularly complicated when multiple packets reach their
+particularly complicated when multiple packets reach multiple packets
 eligibility times simultaneously. In the worst case, an out-going
 port could have to dequeue a packet from Queue 1
 or Queue 3, enqueue several arriving packets to Queue 1
@@ -853,12 +863,14 @@ Fig. 7. Scheduler Keys: This figure illustrates how the real-time
 router assigns a key to each time-constrained packet awaiting
 transmission on an outgoing port. A single bit differentiates on-time
 and early packets; ineligible traffic refers to packets that are
-not destined to this port.
+not destined to an out-going
+port.
 and/or Queue 3, and move a large number of packets from
 Queue 3 to Queue 1, all during a single packet transmission
 time. To avoid this complexity, the real-time router
 does not attempt to store the time-constrained packets in
-sorted order. Instead, the router selects the packet with the
+sorted order. Instead, the real-time router
+ selects the packet with the
 smallest key via a comparator tree, as shown in Figure 6.
 Like the systolic and shift register approaches, the tree architecture
 introduces O(n) hardware complexity. For the
@@ -875,7 +887,7 @@ lower bits of the key represent packet laxity , the time remaining
 till the local deadline expires, whereas the key for
 early traffic represents the time left before reaching the
 packet's logical arrival time. The packet keys are normal-
-ized, relative to current time t, to allow the scheduler to
+ized, relative to current time t, to allow Comparator Tree Scheduler to
 perform simple, unsigned comparison operations, even in
 the presence of clock rollover. Each scheduling operation
 operates independently to locate the packet with the minimum
@@ -887,9 +899,10 @@ tree stores per-packet state information, whereas the packet
 memory stores the actual packet contents.
 B. Sharing the Scheduler Across Output Ports
 By using a comparator tree, instead of trying to store the
-packets in sorted order, the router can allow all five out-going
+packets in sorted order, the real-time router
+ can allow all five out-going
 ports to share access to this scheduling logic, since
-the tree itself does not store the packet keys. As shown
+the tree itself does not store The packet keys. As shown
 in
 
 Figure
@@ -899,30 +912,32 @@ time '(m), a deadline '(m)+d, and a bit mask of outgoing
 ports, assigned at packet arrival based on the connection
 state. The bit mask determines if the leaf is eligible to compete
 for access to a particular outgoing port. When a port
-transmits a selected packet, it clears the corresponding field
+transmits a selected packet, When a port
+transmits a selected packet clears the corresponding field
 in the leaf's bit mask; a bit mask of zero indicates an empty
 packet leaf slot and a corresponding idle slot in the packet
-memory. The base of the tree also determines if packets
+memory. The base of the tree itself also determines if packets
 are early ('(m) ? t) or on-time ('(m) - t) and computes
 the sorting keys based on the current value of t. At the top
 of the sorting tree, an additional comparator checks to see
 if the winner is an early packet that falls within the port's
-horizon parameter; if so, the port transmits this packet,
+horizon parameter; if so, the port's
+ transmits this packet,
 unless best-effort flits await service.
-Still, to share the comparator logic, the scheduler must
+Still, to share the comparator logic, Comparator Tree Scheduler must
 operate quickly enough to overlap run-time scheduling with
 packet transmission on each of the outgoing ports. Conse-
 quently, the real-time router pipelines access to the comparator
-tree. With p stages of pipelining, the scheduler has
-a row of latches at in the tree, to store the sorting
+tree. With p stages of pipelining, Comparator Tree Scheduler has
+a row of latches at in the tree itself, to store the sorting
 key and buffer location for the winning packet in the
-subtrees. Every few cycles, another link begins its scheduling
-operation at the base of the tree. Similarly, every few
+subtrees. Every few cycles, another link begins another link scheduling
+operation at The base of the tree. Similarly, every few
 horizon
 parameter
 levels
 packets
-Fig. 8. Logic Sharing: This figure illustrates how the scheduler can
+Fig. 8. Logic Sharing: This figure illustrates how Comparator Tree Scheduler can
 trade space for time by sharing comparator logic amongst groups
 of k packets.
 cycles, another link completes a scheduling operation and
@@ -941,11 +956,11 @@ in the real-time router architecture. To handle n
 packets, the scheduler in Figure 6 has a total of 2+ lg n
 stages of logic, including the operations at the base of the
 tree as well as the comparator for the horizon parameter.
-In terms of implementation cost, the tree requires n comparators
+In terms of implementation cost, The pipelined comparator tree requires n comparators
 and n leaf nodes, for a total of 2n elements of
 similar complexity. As n grows, the number of leaf nodes
 can have a significant influence on the bus loading at the
-base of the tree. Fortunately, for certain values of n, the
+base of the tree itself. Fortunately, for certain values of n, the
 comparator tree has low enough latency to avoid the need
 to fully pipeline the scheduling logic. This suggests that
 the scheduler could reduce the number of comparators by
@@ -954,19 +969,20 @@ Under this approach, the scheduler combines several leaf
 units into a single module with a small memory (e.g., a
 register file) to store the deadlines and logical arrival times
 for k packets, as shown in Figure 8. At the base of the
-tree, each of the n=k modules can sequentially compare its k
+tree, each of the n=k modules can sequentially compare the base of the
+tree k
 sorting keys, using a single comparator, to select the packet
 with the minimum incurs k stages of delay. Then,
 a smaller comparator tree finds the smallest key amongst
 n=k packets. As a result, the scheduler incurs
 stages of delay. Note that, for the architecture reduces
-to the comparator tree in Figure 6, with its 2
+to the comparator tree in Figure 6, with the comparator tree 2
 stages of logic. For larger values of k, the scheduler has
 larger arbitration delay but reduced implementation com-
 plexity. The architecture in Figure 8 has 2n=k compara-
 tors, as well as a lighter bus loading of n=k elements at
-the base of the tree. In addition, larger values of k allow
-the base of the tree to consist of n=k k-element register
+the base of the tree itself. In addition, larger values of k allow
+the base of the tree itself to consist of n=k k-element register
 files, instead of n individual registers, with a reduction
 in chip complexity. With a careful selection of n and
 k, the real-time router can have an efficient, single-chip
@@ -974,19 +990,18 @@ implementation that performs bandwidth regulation and
 deadline-based scheduling on multiple outgoing ports.
 VI. Performance Evaluation
 To demonstrate the feasibility of the real-time router,
-and study its scaling properties, a prototype chip has been
+and study the real-time router,
+ scaling properties, a prototype chip has been
 designed using the Verilog hardware description language
 and the Epoch silicon compiler from Cascade Design Au-
 tomation. This framework facilitates a detailed evaluation
 of the implementation and performance properties of the
 architecture. The Epoch tools compile the structural and
 behavioral Verilog models to generate a chip layout and
-an annotated Verilog model for timing simulations. These
-tools permit extensive testing and performance evaluation
+an annotated Verilog model for timing simulations. The Epoch tools permit extensive testing and performance evaluation
 without the expense of chip fabrication.
 A. Router Complexity
-Using a three-metal, 0:5-m CMOS process, the 123-pin
-chip has dimensions 8:1 mm \Theta 8:7 mm for an implementation
+Using a three-metal, 0:5-m CMOS process, a prototype chip has dimensions 8:1 mm \Theta 8:7 mm for an implementation
 with 256 time-constrained packets and up to 256
 connections, as shown in Table IV. The scheduling logic
 accounts for the majority of the chip area, with the packet
@@ -1006,14 +1021,14 @@ transmission every 400 nsec for each of the five output ports
 To match the memory and link throughputs, the comparator
 tree consists of a two-stage pipeline, where each stage
 requires approximately 50 nsec.
-Although the tree could incorporate up to five pipeline
+Although the tree itself could incorporate up to five pipeline
 stages, the two-stage design provides sufficient throughput
 to satisfy the output ports. This suggests that the link
 scheduler could effectively support a larger number of packets
 or additional output ports, for a higher-dimensional
-mesh topology. Alternately, the router design could reduce
+mesh topology. Alternately, the two-stage design could reduce
 the hardware cost of the comparator tree by sharing
-comparator logic between multiple leaves of the tree, as
+comparator logic between multiple leaves of the tree itself, as
 Parameter Value
 Connections 256
 Time-constrained packets 256
@@ -1053,7 +1068,7 @@ with a grouping size of k= 4, since the Epoch library does
 not support static RAM components with fewer than four
 lines. 1, the graphs plot results from the router
 implementation in Table V, which uses flip-flops to store
-packet state at the base of the tree. The Epoch silicon compiler
+packet state at The base of the tree. The Epoch silicon compiler
 generates a better automated layout of these flip-flops
 than of the small SRAMs, resulting in better area statistics
 in
@@ -1070,16 +1085,16 @@ mentation. For example, a group size of k =4 reduces the
 number of transistors by 45% (from 555; 025 to 306; 829).
 The number of transistors does not decrease by a factor of
 four, since the smaller scheduler still has to store the state
-information for each packet; in addition, the scheduler requires
+information for each packet; in addition, the smaller scheduler requires
 additional logic and registers to serialize access to
 the shared comparators. Still, logic sharing significantly
 reduces implementation complexity. Larger values of k further
 reduce the number of comparators and improve the
-density of the memory at the base of the tree. Scheduler
+density of the memory at The base of the tree. Scheduler
 latency does not grow significantly for small values of k. For
-4, delay in the comparator tree increases by just 67%
+4, delay in the tree itself increases by just 67%
 (from 0:115 -sec to 0:192 -sec). The lower bus loading at
-the base of the tree helps counteract the increased latency
+The base of the tree helps counteract the increased latency
 from serializing access to the first layer of comparators and
 significantly reduces power dissipation.
 B. Simulation Experiments
@@ -1088,7 +1103,7 @@ memory and CPU intensive, we focus on a modest set of
 timing experiments, aimed mainly at testing the correctness
 of the design. A preliminary experiment tests the
 baseline performance of best-effort wormhole packets. To
-study a multi-hop configuration, the router connects its
+study a multi-hop configuration, the router connects 
 links in the x and y directions. The packet proceeds from
 the injection port to the positive x link, then travels from
 the negative x input link to the positive y direction; after
@@ -1113,7 +1128,8 @@ d I min
 All three connections compete for access to a single network
 link with horizon parameter h= 0, where each connection
 has a continual backlog of traffic. The time-constrained
-connections receive service in proportion to their through-put
+connections receive service in proportion to The time-constrained
+connections through-put
 requirements, since a packet is not eligible for service
 k (group size)100000300000500000Number
 of
@@ -1127,7 +1143,7 @@ Area of tree
 Scheduling latency
 (milliwatts)
 Power dissipation
-Fig. 9. Evaluating Logic Sharing: These plots compare different implementations of the comparator tree, with different group sizes k.
+Fig. 9. Evaluating Logic Sharing: These plots compare different implementations of the tree itself, with different group sizes k.
 As k grows, implementation complexity decreases but scheduler latency increases.
 till its logical arrival time. Similarly, the link transmits
 each packet by its deadline, with best-effort flits consuming
@@ -1158,7 +1174,7 @@ service
 connection 2
 connection 1
 connection 0
-Fig. 10. Timing Experiment: This experiment evaluates a mixture
+Fig. 10. Timing Experiment: Experiment evaluates a mixture
 of time-constrained and best-effort packets competing for
 access to a single outgoing link with horizon The scheduler
 satisfies the deadlines of the time-constrained packets, while
@@ -1183,7 +1199,7 @@ these policies can bound end-to-end packet latency by limiting
 the service and blocking times for higher-priority traffic
 [3]. Although assigning priorities to virtual channels
 provides some control over packet scheduling, this ties priority
-resolution to the number of virtual channels. The
+resolution to the number of virtual channels. A
 router can support fine-grain packet priorities by increasing
 the number of virtual channels, at the expense of additional
 implementation complexity; these virtual channels
@@ -1194,7 +1210,8 @@ and flit buffers to each priority level, a router can increase
 priority resolution by adopting a packet-switched design.
 The priority-forwarding router chip [6] follows this approach
 by employing a 32-bit priority field in small, 8-
-packet priority queues at each input port. The router incorporates
+packet priority queues at each input port. A
+router incorporates
 a priority-inheritance protocol to limit the effects
 of priority inversion when a full input buffer limits
 the transmission of high-priority packets from the previous
@@ -1233,7 +1250,9 @@ As ongoing research, we are considering alternate link-
 scheduling algorithms that would improve the router's scal-
 ability. In this context, we are investigating efficient hardware
 architectures for integrating bandwidth regulation
-and packet scheduling [42]; these algorithms include approximate
+and packet scheduling [42]; alternate link-
+scheduling algorithms that would improve the router's scal-
+ability include approximate
 scheduling schemes that balance the trade-off
 between accuracy and complexity, allowing the router to
 efficiently handle a larger number of time-constrained pack-

@@ -6,14 +6,15 @@ To maximize the benefit and minimize the overhead of software-based latency tole
 Introduction
 As the disparity between processor and memory speeds continues to grow, memory latency is becoming an
 increasingly important performance bottleneck. Cache hierarchies are an essential step toward coping with
-this problem, but they are not a complete solution. To further tolerate latency, a number of promising
+this problem, but Cache hierarchies are not a complete solution. To further tolerate latency, a number of promising
 software-based techniques have been proposed. For example, the compiler can tolerate modest latencies by
-scheduling non-blocking loads early relative to when their results are consumed [12], and can tolerate larger
+scheduling non-blocking loads early relative to when non-blocking loads results are consumed [12], and can tolerate larger
 latencies by inserting prefetch instructions [7, 9].
-While these software-based techniques provide latency-hiding benefits, they also typically incur runtime
+While these software-based techniques provide latency-hiding benefits, these software-based techniques also typically incur runtime
 overheads. For example, aggressive scheduling of non-blocking loads increases register lifetimes which can
 lead to spilling, and software-controlled prefetching requires additional instructions to compute prefetch
-addresses and launch the prefetches themselves. While the benefit of a technique typically outweighs its
+addresses and launch the prefetches prefetch
+addresses. While the benefit of a technique typically outweighs its
 overhead whenever a miss is tolerated, the overhead hurts performance in cases where the reference would
 have enjoyed a cache hit anyway. Therefore to maximize overall performance, we would like to apply a
 latency-tolerance technique only to the precise set of dynamic references that would suffer misses. While
@@ -54,7 +55,7 @@ may see more predictable behavior. In this example, contexts A and B result in a
 load missing, whereas contexts C and D do not. Hence we would like to apply a latency tolerance technique
 within contexts A and B but not C or D.
 The dynamic contexts shown in Figure 1 should be viewed simply as non-overlapping sets of dynamic
-instances of the load which can be grouped together because they share a common distinguishable pattern. In
+instances of the load which can be grouped together because The dynamic contexts shown in Figure 1 share a common distinguishable pattern. In
 this paper, we consider three different types of information which can be used to distinguish these contexts.
 The first is control-flow information-i.e. the sequence of N basic block numbers preceding the load. The
 other two are based on sequences of cache access outcomes (i.e. hit or miss) for previous memory references:
@@ -76,12 +77,12 @@ The goal of this paper is to determine whether correlation profiling can predict
 accurately in non-numeric codes than summary profiling, and if so, can we translate this into significant
 performance improvements by applying software-based latency tolerance techniques with greater precision.
 We focus specifically on predicting load misses in this paper because load latency is fundamentally more
-difficult to tolerate (store latency can be hidden through buffering and pipelining). Although we rely on
-simulation to capture our profiling information in this study, correlation profiling is a practical technique
-since it could be performed with relatively little overhead using informing memory operations [6].
+difficult to tolerate (store latency can be hidden through buffering and pipelining). Although We rely on
+simulation to capture We profiling information in this study, correlation profiling is a practical technique
+since correlation profiling could be performed with relatively little overhead using informing memory operations [6].
 The remainder of this paper is organized as follows. We begin in Section 2 by discussing the three different
-types of history information that we use for correlation profiling, and in Section 3 we present a qualitative
-analysis of the expected performance benefits. In Section 4, we present our experimental results which
+types of history information that We use for correlation profiling, and in Section 3 we present a qualitative
+analysis of the expected performance benefits. In Section 4, we present we experimental results which
 quantify the performance advantages of correlation profiling in a collection of 22 non-numeric applications.
 In addition, in Section 5, we report the memory-access behaviors of individual applications which explain
 when and how correlation profiling is effective. In Section 6, we compare the performance of software
@@ -98,7 +99,8 @@ correlation is useful for detecting cases where either data reuse or cache displ
 If we are on a path which leads to data reuse-either temporal or spatial-then the next reference is
 likely to be a cache hit. Consider the example shown in Figure 2(a)-(b), where a graph is traversed by the
 recursive procedure walk(). Any cyclic paths (e.g., A!B!C!D!A or P!Q!R!S!P) will result in
-temporal reuse of p!data. In this example, control-flow correlation can potentially detect that if the last
+temporal reuse of p!data. In the example shown in Figure 2(a)-(b), where a graph is traversed by the
+recursive procedure walk(), control-flow correlation can potentially detect that if the last
 four traversal decisions lead to a cycle (e.g., right, down, left, and up), then there is a high probability that
 the next p!data reference will enjoy a cache hit.
 Some control-flow paths may increase the likelihood of a cache miss by displacing a data line before it is
@@ -139,7 +141,7 @@ Figure
 
 3: Example of using self-correlation profiling to detect spatial locality for p!data. (Consecutively
 numbered nodes are adjacent in memory.)
-to displace *p from the primary cache before it can be loaded again. Note that while paths which access
+to displace *p from the primary cache before the primary cache can be loaded again. Note that while paths which access
 large amounts of data are obvious problems, the displacement might also be due to a mapping conflict.
 2.2 Self Correlation
 Under self correlation, we profile a load L by correlating its cache outcome with the N previous cache
@@ -147,14 +149,14 @@ outcomes of L itself. This approach is particularly useful for detecting forms o
 not apparent at compile time. For example, consider the case in Figure 3 where a tree is constructed in
 preorder, assuming that consecutive calls to the memory allocator return contiguous memory locations, and
 that a cache line is large enough to hold exactly two treeNodes. Depending on the traversal order (and the
-extent to which the tree is modified after it is created), we may experience spatial locality when the tree
-is subsequently traversed. For example, if the tree is also traversed in preorder, we will expect p!data to
+extent to which the tree is modified after the tree is created), we may experience spatial locality when the treeis subsequently traversed. For example, if the tree is also traversed in preorder, we will expect p!data to
 suffer misses on every-other reference as cache line boundaries are crossed. Therefore despite the fact that
 the overall miss ratio of p!data is 50% and the compiler would have difficulty recognizing this as a form of
 spatial locality, self correlation profiling would accurately predict the dynamic cache outcomes for p!data.
 2.3 Global Correlation
 In contrast with self correlation, the idea behind global correlation is to correlate the cache outcome of a load
-L with the previous N cache outcomes regardless of their positions within the program. The profiling tool
+L with the previous N cache outcomes regardless of the cache outcome of a load
+L with the previous N cache outcomes positions within the program. The profiling tool
 maintains this pattern using a single N-deep FIFO which is updated whenever dynamic cache accesses occur.
 while (1) f
 register int
@@ -195,7 +197,8 @@ references. One example of this situation is when we move to a new portion of a 
 been accessed in a long time (and hence has been displaced from the cache), in which case the fact that the
 first access to an object suffers a miss is a good indication that associated references to neighboring objects
 will also miss. Figure 4 illustrates such a case where a large hash table (too large to fit in the cache) is
-organized as an array of linked lists. In this case, we might expect a strong correlation between whether
+organized as an array of linked lists. In such a case where a large hash table (too large to fit in the cache) is
+organized as an array of linked lists, we might expect a strong correlation between whether
 htab[i] (the list head pointer) misses and whether subsequent accesses to curr!data (the list elements)
 also miss. Similarly, if the same entry is accessed twice within a short interval (e.g., htab[10]), the fact that
 the head pointer hits is a strong indicator that the list elements (e.g., A!data and B!data) will also hit.
@@ -203,7 +206,7 @@ In summary, by correlating cache outcomes with the context in which the referenc
 surrounding control flow or the cache outcomes of prior references-we can potentially predict the dynamic
 caching behavior more accurately than what is possible with summarized miss ratios.
 Qualitative Analysis of Expected Benefits
-Before presenting our quantitative results in later sections, we begin in this section by providing some
+Before presenting our quantitative results in later sections, our begin in this section by providing some
 intuition on how correlation profiling can improve performance. A key factor which dictates the potential
 performance gain is the ratio of the latency tolerance overhead (V ) to the cache miss latency (L). In the
 extreme cases where V
@@ -222,7 +225,7 @@ applied, then the CPL is simply mL, where m is the average miss ratio. At the ot
 apply T , then the latency will always be hidden, but all references (even those that normally hit) will suffer
 the hence the . Note that when V
 is better to never apply T rather than
-always applying it. Figure 5(b) shows an alternative view of CPL, where it is plotted as a function of m for
+always applying T. Figure 5(b) shows an alternative view of CPL, where it is plotted as a function of m for
 a fixed V
 L . Again, we observe that the choice of whether to always or never apply T depends on the value of
 m relative to V
@@ -264,7 +267,7 @@ for the summary and correlation profiling cases can be found in the Appendix)
 Quantitative Evaluation of Performance Gains
 In this section, we present experimental results to quantify the performance benefits offered by correlation
 profiling. We begin by measuring and understanding the potential performance advantages for a generic
-latency tolerance scheme. Later, in Section 6, we will focus on software-controlled prefetching as a specific
+latency tolerance scheme. Later, in Section 6, We will focus on software-controlled prefetching as a specific
 case study.
 4.1 Experimental Methodology
 We measured the impact of correlation profiling on the following 22 non-numeric applications: the entire
@@ -275,12 +278,12 @@ applications, including the input data sets that were run to completion in each 
 relevant dynamic statistics of these applications.
 We compiled each application with -O2 optimization using the standard MIPS C compilers under
 IRIX 5.3. We used the MIPS pixie utility [13] to instrument these binaries, and piped the resulting
-trace into our detailed performance simulator. To increase simulation speed and to simplify our analysis,
-we model a perfectly-pipelined single-issue processor (similar to the MIPS R2000) in this section. (Later, in
-Section 6, we model a modern superscalar processor: the MIPS R10000).
-To reduce the simulation time, our simulator performs correlation profiling only on a selected subset of
-load instructions. Our criteria for profiling a load is that it must rank among the top 15 loads in terms
-of total cache miss count, and its miss ratio must be between 10% and 90%. Using this criteria, we focus
+trace into We detailed performance simulator. To increase simulation speed and to simplify We analysis,
+We model a perfectly-pipelined single-issue processor (similar to the MIPS R2000) in this section. (Later, in
+Section 6, We model a modern superscalar processor: the MIPS R10000).
+To reduce the simulation time, We simulator performs correlation profiling only on a selected subset of
+load instructions. We criteria for profiling a load is that profiling a load must rank among the top 15 loads in terms
+of total cache miss count, and profiling a load miss ratio must be between 10% and 90%. Using Our criteria for profiling a load, we focus
 only on the most significant loads which have intermediate miss ratios. We will refer to these loads as the
 correlation-profiled loads. The fraction of dynamic load references in each application that is correlation
 profiled is shown in Table 2.
@@ -310,19 +313,19 @@ em3d Simulates the propagation of E.M. waves in a 3D object 2000 H-nodes, 32KB
 voronoi Computes the voronoi diagram of a set of points 20,000 points 8KB
 UNIX awk Unix script language AWK Extensive test of 32KB
 Utilities AWK's capabilities
-We attempt to maintain as much history information as possible for the sake of correlation. For control-flow
+Utilities AWK's attempt to maintain as much history information as possible for the sake of correlation. For control-flow
 correlation, we typically maintained a path length of 200 basic blocks-in some cases this resulted in
 such a large number of distinct paths that we were forced to measure only 50 basic blocks. For the self and
 global correlation experiments, we maintained a path length of previous cache outcomes (either self or
 global).
-We focus on the predictability of a single level of data cache (two levels makes the analysis too compli-
+we focus on the predictability of a single level of data cache (two levels makes the analysis too compli-
 cated). The choice of data cache size is important because if it is either too large or too small relative to the
 problem size, predicting dynamic misses becomes too easy (they either always hit or always miss). Therefore
 we would like to operate near the "knee" of the miss ratio curve, where predicting dynamic hits and misses
 presents the greatest challenge. Although we could potentially reach this knee by altering the problem size,
-we had greater flexibility in adjusting the cache size within a reasonable range. We chose the data cache size
-as follows. We first used summary profiling to collect the miss ratios of all loads within the application on
-different cache sizes ranging from 4KB to 128KB. We then chose the cache size which resulted in the largest
+we had greater flexibility in adjusting the cache size within a reasonable range. we chose the data cache size
+as follows. we first used summary profiling to collect the miss ratios of all loads within the application on
+different cache sizes ranging from 4KB to 128KB. we then chose the cache size which resulted in the largest
 number of significant loads having intermediate miss ratios-these sizes are shown in Table 1. In all cases,
 we model a two-way set-associative cache with lines.
 4.2 Improvements in Prediction Accuracy and Performance
@@ -333,14 +336,19 @@ Figure
 improve the prediction accuracy of correlation-profiled loads. Each bar is normalized with respect to the
 number of mispredicted references in summary profiling (P), and is broken down into two categories. The
 top section ("Predict HIT / Actual MISS") represents a lost opportunity where we predict that a reference
-hits (and thus do not attempt to tolerate its latency), but it actually misses. The "Predict MISS / Actual
+hits (and thus do not attempt to tolerate a reference
+hits ( latency), but a reference
+hits ( actually misses. The "Predict MISS / Actual
 HIT" section accounts for wasted overhead where we apply latency tolerance to a reference that actually
 hits.
 As discussed earlier in Section 3, our threshold for deciding whether to apply latency tolerance to a
-reference is that its miss ratio must exceed V
+reference is that a
+reference miss ratio must exceed V
 is the latency tolerance overhead and L is the miss
-latency. For summary profiling, this threshold is applied to the overall miss ratio of an instruction; for
-correlation profiling, it is applied to groups of dynamic references along individual paths. Figure 6 shows
+latency. For summary profiling, our threshold for deciding whether to apply latency tolerance to a
+reference is applied to the overall miss ratio of an instruction; for
+correlation profiling, our threshold for deciding whether to apply latency tolerance to a
+reference is applied to groups of dynamic references along individual paths. Figure 6 shows
 results with two values of V
 summary profiling tends to apply latency tolerance
 aggressively, thus resulting in a noticeable amount of wasted overhead. In contrast, for V
@@ -396,7 +404,7 @@ miss ratio distribution, the stall cycles per load (CPL) due to correlation-prof
 I. While CPL and CP I measure the impacts on execution time, the miss ratio distribution gives us
 insight into how effectively correlation profiling has isolated the dynamic hit and miss instances of static
 load instructions.
-failing to hide a miss is more expensive than wasting overhead, it is possible to improve performance by replacing more
+failing to hide a miss is more expensive than wasting overhead, a miss is possible to improve performance by replacing more
 expensive with less expensive mispredictions, even if the total misprediction count increases (e.g., raytrace with control-flow
 correlation when V
 Predict MISS / Actual HIT
@@ -483,7 +491,7 @@ Over half of the total load misses are caused by two pointer dereferences: this!
 p!n flags in sweep(), as illustrated by the pseudo-code in Figure 8.
 The access patterns behave as follows. The procedure mark() traverses a binary tree through the three
 while loops shown in Figure 8(a). Starting at a particular node, the first inner while loop continues
-descending the tree-choosing either the left or right child as it goes-until it reaches either a marked node
+descending a binary tree-choosing either the left or right child as it goes-until it reaches either a marked node
 or a leaf node. At this point, we then backup to a node where we can continue descending through a search
 Predict HIT Actual MISS
 Predict MISS Actual HIT
@@ -594,7 +602,7 @@ in
 Figure
 
 3, except much larger. Therefore we enjoy spatial locality as long as we continue following left
-branches in the tree, but spatial locality is disrupted whenever we backup in the second inner while loop,
+branches in The tree, but spatial locality is disrupted whenever we backup in the second inner while loop,
 as illustrated by Figure 8(c).
 All three types of correlation profiling provide better cache outcome predictions than summary profiling
 for the this!n flags reference in mark() for li. Self correlation detects this form of spatial locality
@@ -635,7 +643,7 @@ loop iteration).
 Finally, the reference p!n flags in sweep() (shown in Figure 8(b)) is in fact an array reference written
 in pointer form. Both self correlation and global correlation detect the spatial locality caused by accessing
 consecutive elements within the array. (Although the compiler could potentially recognize this spatial locality
-through static analysis if it can recognize that p!n flags is effectively an array reference, this is not always
+through static analysis if the compiler can recognize that p!n flags is effectively an array reference, this is not always
 possible for all such cases.)
 
 Figure
@@ -671,7 +679,7 @@ Figure
 
 9: Detailed performance results for li.
 profiling only 27% of the isolated loads have miss ratios in the 30-50% range, and over 45% are either below
-10% or above 90%. All three correlation schemes increase the degree of bias in this case.
+10% or above 90%. All three correlation schemes increase the degree of bias in the summary profiling case.
 This increased degree of bias of correlation-profiled loads translates into a reduction in CPL, as shown in
 
 Figure
@@ -696,14 +704,14 @@ Figure
 11(a), two of which are array references (a ptand[i] and b ptand[i]). Clearly the spatial locality
 enjoyed by these two array references can be detected through self correlation (and hence global correlation).
 However, the access patterns of the other two loads (a[0]!ptand and b[0]!ptand) are more complicated.
-The procedure cmppt() has multiple call sites, and two of them, say S 1 and S 2 , invoke it very frequently.
+The procedure cmppt() has multiple call sites, and two of multiple call sites, say S 1 and S 2 , invoke The procedure cmppt() very frequently.
 Whenever cmppt() is called at S 1 , a[0] will very likely be unchanged but b[0] will have a new value. In
 contrast, whenever cmppt() is called at S 2 , b[0] will very likely be unchanged but a[0] will have a new
 value. Moreover, both S 1 an S 2 repeatedly call cmppt(). This call-site dependent behavior results in the
 streams of cache outcomes illustrated in Figure 11(b). Self correlation captures these streaming behavior,
 and control-flow correlation also predicts the cache outcomes accurately by distinguishing the two call sites
 of cmppt().
-The cache outcomes of a[0]!ptand also help predict those of a ptand[i]-if a[0]!ptand is a hit, it
+The cache outcomes of a[0]!ptand also help predict those of a ptand[i]-if a[0]!ptand is a hit, a ptand[i]-if a[0]!ptand
 implies that the array a ptand[] has been loaded recently, and therefore the a ptand[i] references are likely
 to also hit. (Similar correlation also exists between b[0]!ptand and b ptand[i]). Hence global correlation
 is quite effective in this case. Control-flow correlation also predicts the cache outcomes of a ptand[i] and
@@ -775,16 +783,19 @@ middle
 
 Figure
 
-13: Example of a case where more spatial locality is found at the bottom of a tree. This example
-assumes that one cache line can hold three tree nodes and the tree is allocated in preorder. Nodes having
+13: Example of a case where more spatial locality is found at the bottom of a tree. A quadtree allocated in preorder (b) Code for traversing the quadtree in (a)
+
+Figure
+
+13: Example of a case where more spatial locality is found at the bottom of a treeassumes that one cache line can hold three tree nodes and a tree is allocated in preorder. Nodes having
 consecutive numbers are adjacent in the memory.
 5.1.2 perimeter and bisort
 
 Figure
 
 12 shows the detailed performance results for perimeter. The main data structures used in both
-perimeter and bisort are trees: quadtrees in perimeter, and binary trees in bisort. These trees are
-allocated in preorder, but the orders in which they are traversed are rather arbitrary. As a result, we do
+perimeter and bisort are trees: quadtrees in perimeter, and binary trees in bisort. binary trees in bisort are
+allocated in preorder, but the orders in which binary trees in bisort are traversed are rather arbitrary. As a result, we do
 not see very regular cache outcome patterns (such as the one illustrated in Figure 3) for these applications.
 CPL
 summary
@@ -814,10 +825,10 @@ detect whether we are close to the bottom of the tree by noticing the number of 
 Most of the misses in mst (see the detailed performance results in Figure 14) are caused by loads in
 HashLookup() and the tmp!edgehash load in BlueRule(), as illustrated in Figure 15. The mst application
 consists of two phases: a creation phase and a computation phase. Both phases invoke HashLookup(), but
-the creation phase causes most of the misses when it calls HashLookup() to check whether a key already
-exists in the hash table before allocating a new entry for it. During the computation phase, much of the data
+the creation phase causes most of the misses when the creation phase calls HashLookup()() to check whether a key already
+exists in the hash table before allocating a new entry for it. During the creation phase, much of the data
 has already been brought into the cache, and hence there are relatively few misses. Both self correlation and
-global correlation accurately predict the cache outcomes of these two distinct phases, since they appear as
+global correlation accurately predict the cache outcomes of these two distinct phases, since Both appear as
 repeated streams of either hits or misses. Control-flow correlation is also effective since it can distinguish
 the call chains which invoke HashLookup().
 The load of tmp!edgehash in BlueRule() accesses a linked lists whose nodes are in fact allocated at
@@ -863,7 +874,7 @@ Figure
 
 Detailed performance results for raytrace.
 5.1.4 raytrace and tsp
-In raytrace (refer to Figure 16 for its performance results), over 30% of load misses are caused by the
+In raytrace (refer to Figure 16 for Figure 16 performance results), over 30% of load misses are caused by the
 pointer dereference of tmp!bv in prims in box2() (see Figure 17). In subdiv bintree(), the two calls to
 prims in box2() copy part of the array pe of the current node btn to the arrays btn1!pe and btn2!pe,
 where btn1 and btn2 are the children of btn. This process of copying pe is performed recursively on the
@@ -904,14 +915,15 @@ Figure
 codes drawn from tsp. Procedure makelist(Tree t) slings t into a list consisting of
 all nodes of t.
 Similar to raytrace, tsp also traverses a binary tree recursively, and some data which is read by the current
-node will be read again by its descendents. As illustrated in Figure 18, the procedure tsp() recursively
+node will be read again by the current
+node descendents. As illustrated in Figure 18, the procedure tsp() recursively
 traverses the tree t and calls conquer(t) if the size of t is not greater than sz. The procedure conquer(t)
 uses makelist(t) to sling every node of t into a list which is then traversed by the for loop. Therefore
 since all descendents of t are brought into the cache whenever conquer(t) is called, subsequent recursion
 down t!left and t!right within tsp() results in many cache hits. Hence the l!data references either
 mainly hit or mainly miss for a given node t. Self correlation captures this pattern effectively. Control-flow
 correlation is also quite effective because it can observe the number of times conquer() has been called in
-a given recursive descent-most misses occur the first time it is invoked.
+a given recursive descent-most misses occur the first time the number of times conquer() is invoked.
 5.1.5 voronoi and compress
 Control-flow correlation offers the best prediction accuracy in both of these applications. Most of the
 misses in voronoi are caused by loading b!next in splice(), which is called from three different places in
@@ -949,7 +961,8 @@ Figure
 19: Detailed performance results for compress.
 table access htabof[i] in the procedure compress() (see Figure 20(b)). The index i to the hash table htab
 is a function of the combination of the prefix code ent and the new character c. If this combination has
-been seen before, the hash probe test ((htab[i] == fcode)) will be true-if it has been seen recently, the
+been seen before, the hash probe test ((htab[i] == fcode)) will be true-if this combination has
+been seen before, the hash probe test ((htab[i] == fcode)) has been seen recently, the
 load of htab[i] is likely to hit in the cache. Since the input file we use (provided by SPEC) is generated
 from a frequency distribution of common English texts, some strings will appear more often than others.
 Because of this, we expect that the condition (htab[i] == fcode) should be true quite frequently once
@@ -995,7 +1008,7 @@ outcome patterns.
 5.2 Lessons Learned from All Case Studies
 Although global correlation makes excellent predictions in some cases by correlating behavior across different
 load instructions (e.g., eqntott), in most cases it essentially assimilates self correlation, but does not perform
-quite as well since it records less history for a given load. Self correlation is often successful since it recognizes
+quite as well since it records less history for a given load. Self correlation is often successful since Self correlation recognizes
 forms of spatial locality which are not recognizable at compile time (e.g, li, perimeter, bisort, and mst),
 and also long runs of either all hits or all misses (e.g., eqntott, mst, tsp, and raytrace). We often find that
 as few as four previous cache outcomes per reference are sufficient to achieve good predictability with self
@@ -1012,7 +1025,7 @@ guide the manual insertion of prefetch instructions into three applications: (eq
 In the case of correlation profiling, we used procedure cloning [5] to isolate different dynamic instances of a
 static reference, and adapted the prefetching strategy accordingly with respect to the call sites. We assumed
 that V
-deciding whether to insert prefetches, 3 and we performed fully-detailed simulations of a
+deciding whether to insert prefetches, 3 and We performed fully-detailed simulations of a
 processor similar to the MIPS R10000 [8] (details of the memory hierarchy are shown in Figure 23(a)).
 3 We assume an average prefetch overhead (V ) of two cycles, and an average miss latency (L) of 20 cycles.
 of
@@ -1063,7 +1076,8 @@ can achieve. For example, with an 8KB primary data cache, correlation profiling 
 summary profiling in the case of eqntott.
 7 Related Work
 Abraham et al. [2] investigated using summary profiling to associate a single latency tolerance strategy (i.e.
-either attempt to tolerate the latency or not) with each profiled load. They used this approach to reduce
+either attempt to tolerate the latency or not) with each profiled load. [2] investigated using summary profiling to associate a single latency tolerance strategy (i.e.
+either attempt to tolerate the latency or not) with each profiled load used this approach to reduce
 Memory Parameters for the MIPS R10000 Simulator
 Primary Instr and Data Caches 32KB, 2-way set-assoc.
 Unified Secondary Cache 2MB, 2-way set-assoc.
@@ -1093,7 +1107,7 @@ Figure
 23: Impact of correlation profiling on prefetching performance no prefetching, prefetching
 directed by summary profiling, prefetching directed by correlation profiling).
 the cache miss ratios of nine SPEC89 benchmarks, including both integer and floating-point programs. In
-a follow-up study [1], they also report the improvement in effective cache miss ratio. In contrast with this
+a follow-up study [1], the cache miss ratios of nine SPEC89 benchmarks, including both integer and floating-point programs also report the improvement in effective cache miss ratio. In contrast with this
 earlier work, our study has focused on correlation profiling, which is a novel technique that provides superior
 prediction accuracy relative to summary profiling.
 Ammons et al.[3] used path profiling techniques to observe that a large fraction of primary data cache
@@ -1106,15 +1120,15 @@ Conclusions
 To achieve the full potential of software-based latency tolerance techniques, we have proposed correlation
 profiling, which is a technique for isolating which dynamic instances of a static memory reference are likely to
 suffer cache misses. We have evaluated the potential performance benefits of three different forms of correlation
-profiling on a wide variety of non-numeric applications. Our experiments demonstrate that correlation
+profiling on a wide variety of non-numeric applications. We experiments demonstrate that correlation
 profiling techniques always outperform summary profiling by increasing the degree of bias in the miss ratio
 distribution, and this improved prediction accuracy can translate into significant reductions in the memory
 stall time for roughly half of the applications we study. Detailed case studies of individual applications show
 that self correlation works well because the cache outcome patterns of individual references often repeat in
 predictable ways, and that control-flow correlation works mainly because many cache outcomes are call-chain
-dependent. Although global correlation offers superior performance in some cases, for the most part it mainly
+dependent. Although global correlation offers superior performance in some cases, for the most part the most part mainly
 assimilates self correlation. Finally, we observe that correlation profiling offers superior performance over
-summary profiling when prefetching on a superscalar processor. We believe that these promising results may
+summary profiling when prefetching on a superscalar processor. we believe that these promising results may
 lead to further innovations in optimizing the memory performance of non-numeric applications.
 
 
@@ -1122,15 +1136,15 @@ Appendix
 
 Derivation of the Stall Cycles Per Load (CPL) under
 Five Latency-Tolerance Schemes
-Denote the CPL under a particular tolerance scheme S by CPL S . Let CPL i
+Denote the CPL under a particular tolerance scheme S by CPL S . Let the CPL i
 S be the CPL S of load i in the
 program and f i be the fraction of references made by load i out of the total references of all loads. Then:
 S \Theta f i (1)
 Let L be the cycles stalled upon a load miss, V be the overhead of applying the latency-tolerance technique
 T to a load reference, m i is miss ratio of load i and m is the overall miss ratio of all loads.
-load reference is stalled only when it is a cache miss, so:
+load reference is stalled only when load reference is a cache miss, so:
 fully tolerates the latencies of all load references but always incurs the overhead, so:
-CPL single action per load : The miss ratio m i decides whether T should be applied to load i:
+the CPL single action per load : The miss ratio m i decides whether T should be applied to load i:
 single action per load =
 ae
 L (i.e. not apply T)
@@ -1208,4 +1222,4 @@ Jiwei Lu , Howard Chen , Rao Fu , Wei-Chung Hsu , Bobbie Othmer , Pen-Chung Yew 
 Chi-Keung Luk , Robert Muth , Harish Patil , Richard Weiss , P. Geoffrey Lowney , Robert Cohn, Profile-guided post-link stride prefetching, Proceedings of the 16th international conference on Supercomputing, June 22-26, 2002, New York, New York, USA
 Jaydeep Marathe , Frank Mueller , Tushar Mohan , Sally A. Mckee , Bronis R. De Supinski , Andy Yoo, METRIC: Memory tracing via dynamic binary rewriting to identify cache inefficiencies, ACM Transactions on Programming Languages and Systems (TOPLAS), v.29 n.2, p.12-es, April 2007
 Characterizing the memory behavior of Java workloads: a structured view and opportunities for optimizations, ACM SIGMETRICS Performance Evaluation Review, v.29 n.1, p.194-205, June 2001
-Mark Horowitz , Margaret Martonosi , Todd C. Mowry , Michael D. Smith, Informing memory operations: memory performance feedback mechanisms and their applications, ACM Transactions on Computer Systems (TOCS), v.16 n.2, p.170-205, May 1998
+Mark Horowitz , Margaret Martonosi , Todd C. Mowry , Michael D. Smith, Informing memory operations: memory performance feedback mechanisms and Margaret Martonosi , Todd C. Mowry , Michael D. Smith applications, ACM Transactions on Computer Systems (TOCS), v.16 n.2, p.170-205, May 1998

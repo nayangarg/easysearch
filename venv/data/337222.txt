@@ -1,7 +1,7 @@
 --T
 Light-weight context recovery for efficient and accurate program analyses.
 --A
-To compute accurate information efficiently for programs that use pointer variables, a program analysis must account for the fact that a procedure may access different sets of memory locations when the procedure is invoked under different callsites. This paper presents light-weight context recovery, a technique that can efficiently determine whether a memory location is accessed by a procedure under a specific callsite. The paper also presents a technique that uses this information to improve the precision and efficiency of program analyses. Our empirical studies show that (1) light-weight context recovery can be quite precise in identifying the memory locations accessed by a procedure under a specific call-site and (2) distinguishing memory locations accessed by a procedure under different callsites can significantly improve the precision and the efficiency of program analyses on programs that use pointer variables.
+To compute accurate information efficiently for programs that use pointer variables, a program analysis must account for the fact that a procedure may access different sets of memory locations when a procedure is invoked under different callsites. This paper presents light-weight context recovery, a technique that can efficiently determine whether a memory location is accessed by a procedure under a specific callsite. This paper also presents a technique that uses this information to improve the precision and efficiency of program analyses. Our empirical studies show that (1) light-weight context recovery can be quite precise in identifying the memory locations accessed by a procedure under a specific call-site and (2) distinguishing memory locations accessed by a procedure under different callsites can significantly improve the precision and the efficiency of program analyses on programs that use pointer variables.
 --B
 INTRODUCTION
 Software development, testing, and maintenance activities
@@ -15,7 +15,8 @@ impact analysis use program slicing (e.g., [5, 6, 15]) to
 focus attention on those parts of the software that can
 influence a particular statement. To support software
 engineering tools e#ectively, a program analysis must be
-su#ciently e#cient so that the tools will have a reason-able
+su#ciently e#cient so that software
+engineering tools will have a reason-able
 response time or an acceptable throughput. More-
 over, the program analysis must be su#ciently precise
 so that useful information will not be hidden within spurious
@@ -58,12 +59,14 @@ that y is referenced by *p in statement 3 and thus, conclude
 incorrectly that procedure f() does not modify y.
 Second, in programs that use pointer variables, a procedure
 can access di#erent memory locations through
-pointer dereferences when the procedure is invoked at
+pointer dereferences when a procedure
+ is invoked at
 di#erent callsites. For example, f() accesses y and x
 when it is called by statement 8, but it accesses w and x
 when it is called by statement 16. A program analysis
 that cannot distinguish the memory locations accessed
-by the procedure under the context of a specific callsite
+by a procedure
+ under the context of a specific callsite
 might compute spurious program information for this
 callsite. For example, a program analysis might report
 that y, z, and w are modified by f() when f() is called
@@ -75,7 +78,8 @@ safe program information by accounting for the e#ects
 of aliasing in the analysis. However, only a few of these
 techniques (e.g., [8, 12]) can distinguish memory locations
 accessed by a procedure under the context of specific
-callsites. These techniques use conditional analysis
+callsites. these
+techniques (e.g., [8, 12]) use conditional analysis
 that attaches conditions to the information generated
 during program analysis. For example, *p references w
 at statement 3 (Figure 1) if *p is aliased to w at the entry
@@ -120,7 +124,8 @@ technique is based on the observation that, under the
 context of a callsite, a formal parameter for a procedure
 typically points to the same set of memory loca-
 tions, throughout the procedure, as the actual parameter
-to which it is bound if the formal parameter is a
+to which This
+technique is bound if the formal parameter is a
 pointer. Given a memory location that is accessed exclusively
 through the pointer dereferences of this formal
 parameter, such memory location can be accessed by
@@ -141,7 +146,7 @@ callsite to the called procedure or from the called procedure
 to the callsite. Thus, this technique can improve
 the precision and the e#ciency of program analyses.
 This paper presents our new first presents
-a light-weight context recovery algorithm (Section 2); it
+a light-weight context recovery algorithm (Section 2); This paper
 then illustrates, using interprocedural slicing [15], the
 technique that uses information provided by the light-weight
 context recovery to improve program analyses
@@ -195,10 +200,10 @@ object name is an indirect object name. For example,
 x.f is a direct object name, whereas *p is an indirect
 object name. A direct object name obj represents a
 memory location, which we refer to as L(obj).
-We say object name N 1 is an extension of object name
+we say object name N 1 is an extension of object name
 constructed by applying a possibly empty
 sequence of dereferences and field accesses # to N 2 ; in
-this case, we denote N 1 as E#N 2 #. We refer to N 2 as
+this case, we denote N 1 as E#N 2 #. we refer to N 2 as
 a prefix of N 1 . If # is not empty, then N 1 is a proper
 extension of N 2 , and N 2 is a proper prefix of N 1 . If
 N is a formal parameter and a is the actual parameter
@@ -211,8 +216,10 @@ to function F and *q is the actual parameter bound to
 r at a callsite c to F , then A c (E #.f #r#) is (*q).f .
 Given an object name obj and a statement s, an alias
 analysis can determine a set of memory locations that
-may be aliased to obj at s. We refer to this set as obj's
-accessed set at s, and denote this set as ASet(obj, s).
+may be aliased to obj at s. We refer to a set of memory locations that
+may be aliased to obj at s. as obj's
+accessed set at s, and denote a set of memory locations that
+may be aliased to obj at s. as ASet(obj, s).
 For example, in Figure 1, ASet(#p,
 Landi and Ryder's algorithm [7] is used. Given a memory
 location loc and a procedure P , the name set of loc
@@ -257,7 +264,7 @@ filter) some spurious information when the information
 is propagated from the procedure to a callsite during
 program analyses. We say that, if loc has this property
 in P , then loc is eligible to be filtered under callsites to
-P , and we say that loc is a candidate. More precisely,
+P , and We say that loc is a candidate. More precisely,
 loc is a candidate in P if the following conditions hold.
 Condition 1: loc's name set in P contains a single
 indirect name obj.
@@ -313,7 +320,7 @@ begin ContextRecovery
 13. endfor
 14. add P to W
 15. endfor
-16. while W # do /*Interprocedural phase*/
+16. while E #r# do /*Interprocedural phase*/
 17. take the first procedure P from W
 18. foreach callsite c to R in P do
 19. foreach nonlocal memory loc referenced in R do
@@ -331,7 +338,7 @@ begin ContextRecovery
 31. endfor
 32. validate object names in OBJP with MODP
 33. if MarkP or MODP updated then add P 's callers to W
-34. endwhile
+. endwhile
 ContextRecovery
 procedure Update(Q,l,m,o)
 input Q is a procedure, l is a memory location,
@@ -402,6 +409,7 @@ and Update(f,w,T,*p). ContextRecovery also checks
 x at statement 3. Because x is a direct name,
 ContextRecovery calls Update(f, x,F,#). After f() is
 processed, Mark f and OBJ f have the following values:
+Mark
 Mark f
 Mark f
 Mark f
@@ -409,8 +417,9 @@ In the interprocedural phase, ContextRecovery processes
 each callsite c to procedure R in a procedure P
 (lines 16-34) using the worklist W . For each nonlocal
 memory location loc referenced in R, ContextRecovery
-checks MarkR [loc] (line 20). If MarkR [loc] is not
-# , then ContextRecovery assumes that loc is accessed
+checks MarkR [loc] (line 20). If MarkR [loc] (line 20) [loc] is not
+# , then ContextRecovery
+ assumes that loc is accessed
 by R under each callsite to R, including c.
 Thus, ContextRecovery calls Update(P ,loc,F,#) to indicate
 that loc is accessed by R under c in some
@@ -429,10 +438,17 @@ loc is processed, if MODR [loc] is true, then MODP [loc]
 is also set to true (line 29).
 For example, when ContextRecovery processes the
 callsite to f() at statement 8 (Figure 1), it first
-checks x. Mark f [x] is -. Thus, the algorithm
-calls Update(f1,x,F,#). The algorithm then checks y.
-Mark f [y] is # . The algorithm checks whether y is in
-Thus, the algorithm calls Update(f1,y,T,*q). The algorithm
+checks x. Mark f
+Mark f
+ [x] is -. Thus, the algorithm
+calls Update(f1,x,F,#). the algorithm
+ then checks y.
+Mark f
+Mark f
+ is # . the algorithm
+ checks whether y is in
+Thus, the algorithm
+ calls Update(f1,y,T,*q). the algorithm
 finally checks z and w and does nothing because
 z and w are not in ASet(#q, 8). The values for Mark f1
 and OBJ f1 change from
@@ -453,8 +469,10 @@ olated. Thus, ContextRecovery updates MarkP [loc]
 with - and OBJP [loc] with #.
 After ContextRecovery processes P in the inter-procedural
 phase, if MODP or MarkP is updated,
-then the algorithm puts P 's callers in W (line
-33). ContextRecovery continues until W becomes
+then the algorithm
+ puts P 's callers in W (line
+33). ContextRecovery continues until W
+ becomes
 empty.
 
 Table
@@ -462,9 +480,10 @@ Table
 1 shows the results computed by
 ContextRecovery for the example program (Figure 1).
 Mark OBJ MOD
-Mark f
-Mark f
-Mark f
+Mark OBJ MOD
+ Mark OBJ MOD
+ Mark OBJ MOD
+ f
 Mark f
 Mark f1
 Mark f1
@@ -476,7 +495,7 @@ Table
 1: Mark, OBJ , and MOD for example program.
 Given that n is the size of the program, the complexity
 of ContextRecovery is O(n 2 ) in the absence of recursion
-and O(n 3 ) in the presence of recursion. The complexity
+and O(n 3 ) in the presence of recursion. the complexity
 of ContextRecovery is the same as the algorithm for
 computing modification side e#ects for the procedures.
 TO IMPROVE SLICING
@@ -522,12 +541,14 @@ of [s, v]. Therefore, after P s is processed, for each call-site
 c i that calls P s , the reuse-driven slicer binds each
 relevant input f back to c i and creates a new partial
 slicing standard [c i , a i ], given that a i is bound to f at
-c i . The reuse-driven slicer then invokes the partial slicer
+c i . the reuse-driven slicer then invokes the partial slicer
 on [c i , a i ] to identify the statements in P c i
 that should
-be included in the slice. The algorithm continues until
+be included in the slice. the algorithm
+ continues until
 no additional partial slicing standards can be generated.
-The algorithm returns the union of all partial slices computed
+the algorithm
+ returns the union of all partial slices computed
 by the partial slicer as the program slice for #s, v#.
 
 Figure
@@ -544,7 +565,7 @@ for #3, x#; solid lines show graph edges; dotted lines
 show relationships among partial slicing standards.
 1. The graph is annotated with partial slicing standards
 created by the reuse-driven slicer to compute the
-slice for #3, x#. The reuse-driven slicer first invokes the
+slice for #3, x#. the reuse-driven slicer first invokes the
 partial slicer on f() with respect to [3, x]. The partial
 slicer computes partial slice {3} and relevant input
 set {x}. After f() is processed, the reuse-driven slicer
@@ -616,14 +637,16 @@ dures called by Q, ProcessCall() simply adds u to
 IN [c] (lines 3-4). Otherwise, ProcessCall() creates a
 partial slicing standard [Q.exit, u # ], in which Q.exit is
 the exit of Q. ProcessCall() then checks the cache
-against [Q.exit, u # ] (line 6). If the cache does not contain
+against [Q.exit, u # ] (line 6). If the cache
+ does not contain
 information for [Q.exit, u # ], then ProcessCall()
 invokes ComputePSlice() on [Q.exit, u # ], and stores
 the partial slice and the relevant inputs returned by
 ComputePSlice() in the cache (line 7). ProcessCall()
 then merges the partial slice with the program slice (line
 9), and calls BackBind() (not show) to bind the relevant
-inputs back to c and adds them to the IN [c] (line
+inputs back to c and adds the relevant
+inputs back to c to the IN [c] (line
 10). After c has been processed, if some statements in
 are included in the slice, then c and statements on
 which c is control dependent are added to the slice.
@@ -631,18 +654,22 @@ For example, to compute the slice for #17, w#, the slicer
 first propagates w from statement 17 to OUT [16]. Because
 statement 16 is a callsite, the slicer propagates
 w into f() and creates a new partial slicing standard
-[4, w]. The slicer then invokes the partial slicer on
+[4, w]. the slicer
+ then invokes the partial slicer on
 [4, w], and computes partial slice {3} and relevant inputs
 {x,y,z,w,p}. The slicer binds x, y, z, w, and p
 back to statement 16 and puts x,y,z, and w in IN[16].
-The slicer keeps processing and adds statements 3, 6, 7,
+the slicer
+ keeps processing and adds statements 3, 6, 7,
 and 17 to the slice.
 Interprocedural Slicing Using Information Provided
 by Light-Weight Context Recovery
 The precision and the e#ciency of the reuse-driven slicer
-can be improved if it can identify the set of memory locations
+can be improved if the reuse-driven slicer
+ can identify the set of memory locations
 modified by a procedure under a specific callsite.
-To do this, before the slicer propagates a memory location
+To do this, before the slicer
+ propagates a memory location
 from the callsite to the called procedure, it first
 checks whether the memory location can be modified
 by the procedure under this callsite. If the memory location
@@ -689,7 +716,8 @@ Figure
 tions referenced by a procedure under a specific callsite.
 The slicer propagates, from the called procedure to a
 callsite, only the memory locations that are referenced
-under the callsite. Both improvements can reduce the
+under a
+callsite. Both improvements can reduce the
 spurious information propagated across the procedure
 boundaries, and thus can improve the precision and efficiency
 of the reuse-driven slicer.
@@ -738,7 +766,7 @@ specific callsite to reduce the spurious information propagated
 from a procedure to its callsites. Figure 5 shows
 the modified BackBind() in which line 16 has been
 changed. BackBind() checks each memory location l
-in its input eV ars (line 13). If l is a formal parameter,
+in BackBind input eV ars (line 13). If l is a formal parameter,
 BackBind() adds the memory locations that are bound
 to l at c to CalleeV ars (lines 14-15). Otherwise, the
 new BackBind() checks whether l is referenced when P
@@ -780,7 +808,7 @@ the precision and the e#ciency of program analyses. We
 implemented ContextRecovery and the reuse-driven
 slicing algorithm that uses information provided by
 ContextRecovery using PROLANGS Analysis Frame-work
-(PAF) [3]. In the studies, we compared the results
+(PAF) [3]. In the studies, We compared the results
 computed with alias information provided by Liang and
 Harrold's algorithm (LH) [9] and by Andersen's algorithm
 (AND) [1]. 4 We gathered the data for the studies
@@ -838,18 +866,18 @@ subject programs di#er from those reported in our previous work.
 Figure
 
 Average sizes of MOD at a callsite.
-a callsite). We compared the size of MOD at a callsite
+a callsite). our compared the size of MOD at a callsite
 computed by the traditional context-insensitive modification
 side-e#ect analysis algorithm (the CI-MOD al-
 gorithm) and by our algorithm. The reduction of the
 size of MOD at a callsite indicates the e#ectiveness of
 our technique in filtering spurious information at a call-
-site. We also compared the results computed by our
+site. our also compared the results computed by our
 algorithm with the results computed by Landi, Ryder,
 and Zhang's modification side e#ect analysis algorithm
 (the LRZ algorithm) [8] that uses conditional analy-
 sis. The results computed by the LRZ algorithm can
-be viewed as a lower bound for our algorithm. We used
+be viewed as a lower bound for our algorithm. our used
 our implementations of the CI-MOD algorithm and of
 our algorithm, and used the implementation of the LRZ
 algorithm provided with PAF.
@@ -885,10 +913,10 @@ the length of each bar indicated by LRZ represents the
 average size of MOD at a callsite computed by the LRZ
 algorithm. For example, the LRZ algorithm reports that
 a callsite in space can modify 5 memory locations. Note
-that because this algorithm uses alias information computed
+that because the LRZ algorithm uses alias information computed
 by Landi and Ryder's algorithm [7], which treats
 a structure in the same way as its fields in some cases,
-this algorithm reports a larger MOD at a callsite than
+the LRZ algorithm reports a larger MOD at a callsite than
 our algorithm for space. The graph shows that, for several
 programs we studied, the size of MOD at a callsite
 computed by our algorithm is close to that computed
@@ -919,7 +947,7 @@ provided by light-weight context recovery can
 significantly improve the precision of computing inter-procedural
 slices. However, for other programs, we do
 not see significant improvement. One explanation for
-this may be that, on these programs, the precision of
+this may be that, on other programs, the precision of
 the interprocedural slicing is not sensitive to the precision
 of identifying memory locations that are modified
 or referenced at a statement. This result is consistent
@@ -930,7 +958,7 @@ The right side of the Table 3 shows T , the average
 time to compute a slice using information provided by
 6 Data for some programs are unavailable: Landi and Ryder's
 algorithm [7] fails to terminate within 10 hours (time limit we set)
-when computing alias information for these programs.
+when computing alias information for some programs.
 average size time in seconds
 name alias S S' S/S' T T' T/T'
 load- LH 187 241 77.9% 2.3 6.4 35.0%
@@ -973,7 +1001,7 @@ by light-weight context recovery. The time measured
 does not include time required for building CFG, alias
 analysis, computing modification side-e#ect, and context
 recovery. The table also shows the ratio of T to
-. From the table, we see that using information provided
+. From The table, we see that using information provided
 by light-weight context recovery can significantly
 reduce the time required to compute interprocedural
 slices. This suggests that that our technique might e#ec-
@@ -996,9 +1024,11 @@ information in the procedure, we developed a technique
 [10] that partitions these memory locations into equivalence
 classes. Memory locations in an equivalence class
 share the same program information in a procedure.
-Therefore, when the procedure is analyzed, only the information
+Therefore, when a procedure is analyzed, only the information
 for a representative of each equivalence class
-is computed. This information is then reused for other
+is computed. only the information
+for a representative of each equivalence class
+ is then reused for other
 memory locations in the same equivalence class. Experiments
 [10, 11] show that this technique can e#ec-
 tively improve the performance of program analyses.
@@ -1009,14 +1039,17 @@ further improve the e#ciency of program analyses.
 Horwitz, Reps, and Binkley [6] present a technique that
 uses the sets of variables that may be modified or may
 be referenced by a procedure to avoid including unnecessary
-callsites in a slice. This technique is needed so
+callsites in a slice. a technique that
+uses the sets of variables that may be modified or may
+be referenced by a procedure to avoid including unnecessary
+callsites in a slice is needed so
 that a system-dependence-graph based slicer can compute
 slices that are as precise as those computed by
 other interprocedural slicers (e.g., [5]). Our technique
-di#ers from theirs in that our technique uses the sets of
+di#ers from Our in that Our technique uses the sets of
 memory locations that may be accessed by a procedure
 under a specific callsite to filter spurious program infor-
-mation. Thus, our technique can improve the precision
+mation. Thus, Our technique can improve the precision
 and performance of many program analyses on which
 Horwitz, Reps, and Binkley's technique cannot apply.
 There are many other techniques that can improve the
@@ -1025,23 +1058,24 @@ context-recovery technique can be used with
 many of these approaches to improve further the performance
 of data-flow analyses.
 6 CONCLUSION AND FUTURE WORK
-We presented a light-weight context recovery algorithm,
+Our presented a light-weight context recovery algorithm,
 and illustrated a technique that uses the information
 provided by the light-weight context recovery to improve
 the precision and the e#ciency of program anal-
-yses. We also conducted several empirical studies. The
-results of our studies suggest that, in many cases, using
+yses. Our also conducted several empirical studies. The
+results of Our studies suggest that, in many cases, using
 light-weight context recovery can e#ectively improve the
 precision and e#ciency of program analyses.
-In our future work, first, we will repeat the studies in
-this paper on larger programs to further validate our
-conclusions. Second, we will perform studies to evaluate
+In Our future work, first, Our will repeat the studies in
+this paper on larger programs to further validate Our
+conclusions. Second, Our will perform studies to evaluate
 the e#ectiveness of combining light-weight context
 recovery with equivalence analysis to improve the e#-
-ciency of computing interprocedural slices. Third, we
-will apply our technique to other program analyses and
-evaluate its e#ectiveness on those program analyses. Fi-
-nally, we will perform studies to compare our technique
+ciency of computing interprocedural slices. Third, Our
+will apply Our technique to other program analyses and
+evaluate we
+ e#ectiveness on those program analyses. Fi-
+nally, Our will perform studies to compare Our technique
 with conditional analysis.
 
 ACKNOWLEDGMENTS

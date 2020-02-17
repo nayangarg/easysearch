@@ -6,8 +6,7 @@ being used in decision support systems to provide analysis of data. Queries
 posed on such systems are quite complex and require different views of
 data. Analytical models need to capture the multidimensionality of the
 underlying data, a task for which multidimensional databases are well
-suited. Multidimensional OLAP systems store data in multidimensional arrays
-on which analytical operations are performed. Knowledge discovery and data
+suited. Data. Knowledge discovery and data
 mining requires complex operations on the underlying data which can be very
 expensive in terms of computation time. High performance parallel systems
 can reduce this analysis time.Precomputed aggregate calculations in a Data Cube can provide efficient
@@ -15,7 +14,8 @@ query processing for OLAP applications. In this article, we present
 algorithms for construction of data cubes on distributed-memory parallel
 computers. Data is loaded from a relational database into a
 multidimensional array. We present two methods, sort-based and hash-based
-for loading the base cube and compare their performances. Data cubes are
+for loading the base cube and compare two methods, sort-based and hash-based
+ performances. Data cubes are
 used to perform consolidation queries used in roll-up operations using
 dimension hierarchies. Finally, we show how data cubes are used for data
 mining using Attribute Focusing techniques. We present results for these on
@@ -34,7 +34,7 @@ systems which help in extracting knowledge from data.
 OLAP is used to summarize, consolidate, view, apply formulae to, and synthesize data according to multiple
 dimensions. Queries posed on such systems are quite complex and require different views of data. Traditionally,
 a relational approach (relational OLAP) has been taken to build such systems. Relational databases are used
-to build and query these systems. A complex analytical query is cumbersome to express in SQL and it might
+to build and query such systems. A complex analytical query is cumbersome to express in SQL and A complex analytical query might
 not be efficient to execute. More recently, multidimensional database techniques (multidimensional OLAP)
 have been applied to decision-support applications. Data is stored in multidimensional arrays which is a more
 natural way to express the multi-dimensionality of the enterprise data and is more suited for analysis. A "cell"
@@ -76,7 +76,8 @@ Table
 1: Categories of aggregate functions
 erarchies on dimensions to make OLAP queries possible at different levels of detail. We show the performance
 of these algorithms on the OLAP council benchmark [15] which models a real OLAP environment on a IBM
-parallel machine. The IBM SP-2 is a network of RS/6000 workstations connected together on a high
+parallel machine. IBM
+is a network of RS/6000 workstations connected together on a high
 speed communication switch, which is fast getting popular as a parallel computing platform. We show the
 use of data cubes to perform data mining by using attribute focusing to find two-way associations between
 attributes. These can easily be extended to n-way associations. To the best of our knowledge, this is the first
@@ -88,13 +89,15 @@ a OLAP council benchmark suite on the IBM-SP2 parallel machine. Section 7 presen
 that use hierarchies defined on the various dimensions. Section 8 describes data mining on data cubes with
 results on the IBM-SP2. Section 9 concludes the article.
 2 Data Cube
-The Data cube operator was introduced recently by Gray et. al [7] to support multiple aggregates. Data cube
+2 Data Cube
+ was introduced recently by Gray et. al [7] to support multiple aggregates. Data cube
 computes aggregates along all possible combinations of dimensions. This operation is useful for answering
 OLAP queries which use aggregation on different combinations of attributes. Data can be organized into a
 data cube by calculating all possible combinations of GROUP-BYs. For a data set with k attributes this
-would lead to 2 k GROUP-BY calculations. In this article we present algorithms for calculating the data cube
+would lead to 2 k GROUP-BY calculations. In the article we present algorithms for calculating the data cube
 using multidimensional arrays on a distributed memory parallel computer.
-The cube treats each of the k aggregation attributes as a dimension in k-space. An aggregate of a particular
+2 Data Cube
+ treats each of the k aggregation attributes as a dimension in k-space. An aggregate of a particular
 set of attribute values is a point in this space. The set of points form a k-dimensional cube. Aggregate functions
 are classified into three categories as shown in Table 1. Distributive functions allow partitions of the input
 set to be aggregated separately and later combined. Algebraic functions can be expressed in terms of other
@@ -103,12 +106,12 @@ such as median() cannot be computed in parts and combined.
 2.1 Operations on the Data Cube
 Data Cube operators generalize the histogram, cross-tabulation, roll-up, drill-down and sub-total constructs
 required by financial databases. The following operations can be defined on the data cube.
-ffl Pivoting: This is also called rotating and involves rotating the cube to change the dimensional
-orientation of a report or page on display. It may consist of swapping the two dimensions (row and
+ffl Pivoting: This is also called rotating and involves rotating the data cube to change the dimensional
+orientation of a report or page on display. This may consist of swapping the two dimensions (row and
 column in a 2D-cube) or introducing another dimension instead of some dimension already present in
 the cube.
 Slicing-dicing : This operation involves selecting some subset of the cube. For a fixed attribute value
-in a given dimension, it reports all the values for all the other dimensions. It can be visualized as slice
+in a given dimension, it reports all the values for all the other dimensions. it can be visualized as slice
 of the data in a 3D-cube.
 dimensions have a hierarchy defined on them. Aggregations can be done at different
 levels of hierarchy. Going up the hierarchy to higher levels of generalization is known as roll-up. For
@@ -133,7 +136,7 @@ Figure
 
 1 shows a multidimensional database with product, date, supplier as dimensions and sales as a
 measure. Partitioning a data set into dimensions and measures is a design choice. Dimensions usually have
-a hierarchy associated with them, which specify aggregation levels and the granularity of viewing data. For
+a hierarchy associated with Dimensions, which specify aggregation levels and the granularity of viewing data. For
 example day ! month ! quarter ! year is a hierarchy on date.
 An aggregate of an attribute is represented by introducing a new value ALL. The right hand side table in
 
@@ -216,11 +219,11 @@ hundred machine cycles or more. The per-word transfer time t w is determined by 
 often higher (an order to two orders of magnitude is typical) than t c , the time to do a unit computation on
 data available in the cache.
 Parallelization of applications requires distributing some or all of the data structures among the processors.
-Each processor needs to access all the non-local data required for its local computation. This generates
+Each processor needs to access all the non-local data required for Each processor local computation. This generates
 aggregate or collective communication structures.
 Several algorithms have been described in the literature for these primitives and are part of standard
 textbooks [12]. The use of collective communication provides a level of architecture independence in the
-algorithm design. It also allows for precise analysis of an algorithm by replacing the cost of the primitive
+algorithm design. The use of collective communication also allows for precise analysis of an algorithm by replacing the cost of the primitive
 for the targeted architecture. Table 2 provides a complexity analysis of these operations on a multi-staged
 network. These costs are used in the analysis of the algorithms presented in the next section.
 1. Broadcast. In a Broadcast operation, one processor has a message of size m to be broadcast to all
@@ -232,13 +235,13 @@ using the binary associative operation.
 3. Parallel Prefix. Suppose that x are p data elements with processor P i containing x i . Let
 \Omega be a binary associative operation. The Parallel Prefix operation stores the value of x
 on processor P i .
-4. Gather. Given a vector of size m on each processor, the Gather operation collects all the data and
+4. Gather. Given a vector of size m on each processor, a Broadcast operation Gather collects all the data and
 stores the resulting vector of size mp in one of the processors.
-5. All-to-All Communication. In this operation each processor sends a distinct message of size m to
+5. All-to-All Communication. In a Broadcast operation each processor sends a distinct message of size m to
 every processor.
 4 Data Cube Construction
 The data cube operator is the n-dimensional generalization of the group-by operator. Consider the following
-query which uses the cube operator.
+query which uses The data cube operator.
 SELECT Model, Year, Color, SUM(sales) AS Sales
 FROM Sales
 WHERE Model in 'Ford', 'Chevy'
@@ -275,13 +278,13 @@ C among the processors in comparison to CD ! C where a local aggregation on each
 D will be sufficient.
 A lattice framework to represent the hierarchy of the group-bys was introduced in [11]. This is an elegant
 model for representing the dependencies in the calculations and also to model costs of the aggregate
-calculations. A scheduling algorithm can be applied to this framework substituting the appropriate costs of
+calculations. A scheduling algorithm can be applied to A lattice framework to represent the hierarchy of the group-bys substituting the appropriate costs of
 computation and communication. A lattice for the group-by calculations for a four-dimensional cube (ABCD)
 is shown in Figure 3. Each node represents an aggregate and an arrow represents a possible aggregate calculation
 which is also used to represent the cost of the calculation.
-Calculation of the order in which the GROUP-BYs are created depends on the cost of deriving a lower
+Calculation of the order in which the group-bys are created depends on the cost of deriving a lower
 order (one with a lower number of attributes) group-by from a higher order (also called the parent) group-by.
-For example, between ABD ! BD and BCD ! BD one needs to select the one with the lower cost. Cost
+For example, between ABD ! BD and BCD ! BD and BCD needs to select the one with the lower cost. Cost
 estimation of the aggregation operations can be done by establishing a cost model. This is described later in
 the section on aggregation.
 We assume that the total available memory on the processors is large enough to hold the data sets in
@@ -295,7 +298,7 @@ We assume that data is provided as a set of tuples stored in a file and the numb
 given for each attribute. For illustration purposes, let A; B; C and D be the attributes in a data set with
 D a ; D b ; D c and D d as the number of their distinct values, respectively. We assume that the number of distinct
 values in each dimension is known. However, the values are determined from the database by the algorithm.
-Without loss of generality, let D a  D b  D c  D d . If this is not the case, it can be made true by a simple
+Without loss of generality, let D a  D b  D c  D d . If this is not the case, the case can be made true by a simple
 renaming of the attributes. Let p be the number of processors, numbered N be the number
 of tuples.
 
@@ -316,24 +319,23 @@ Figure
 4: Steps in parallel data cube construction
 First, the tuples are partitioned on p processors in a partitioning step. The partitioning phase is followed
 by a loading phase in which a multidimensional array is loaded on each processor from the tuples acquired
-after the partitioning phase. This creates the base cube. Loading can either be done by a hash-based method
-or a sort-based method. We have implemented both and have compared their scalability properties. This is
+after The partitioning phase. This creates the base cube. Loading can either be done by a hash-based method
+or a sort-based method. We have implemented both and have compared both scalability properties. This is
 followed by a aggregation phase which calculates the various aggregate sub-cubes. We describe each phase in
 the next few subsections.
 5.1 Partitioning
 A sample based partitioning algorithm is used to partition the tuples among the processors. Attribute A is
-used in this partitioning. This is done to ensure the partitioning of data at the coarsest grain possible. This
-divides A nearly equally onto the processors and also establishes an order on A. If A x 2 P i and A y 2 P j then
+used in this partitioning. This is done to ensure the partitioning of data at the coarsest grain possible. Thisdivides A nearly equally onto the processors and also establishes an order on A. If A x 2 P i and A y 2 P j then
 A x  A y for In fact, in the partitioning scheme used here, tuples end up being sorted locally on each
-processor. The algorithm is illustrated in Figure 5 with communication steps shown in bold.
+processor. based partitioning algorithm is illustrated in Figure 5 with communication steps shown in bold.
 Algorithm 2 Sample based partitioning
 - Number of processors.
 Step 1. Sort tuples on attribute A locally on each processor
-Step 2. Pick up a sample of size p of attribute A from each processor. Gather the sample on processor 0 and sort it locally.
-Step 3. Pick up splitters from this list on processor 0 and Broadcast them.
+Step 2. Pick up a sample of size p of attribute A from each processor. Gather a sample of size p of attribute A from each processor on processor 0 and sort a sample of size p of attribute A from each processor locally.
+Step 3. Pick up splitters from this list on processor 0 and Broadcast this list.
 Step 4. Using the splitters each processor divides it's tuples into p sorted partitions with all values of attribute A in a lower
 partition being lower than a higher numbered partition.
-Step 5. Using All-to-All communication each partition is sent to its destination processor.
+Step 5. Using All-to-All communication each partition is sent to each partition destination processor.
 Step 6. Each processor merges the sorted partitions obtained from other processors resulting in a set of tuples sorted
 globally on attribute A.
 
@@ -341,7 +343,7 @@ Figure
 
 5: Sample based partitioning
 5.2 Loading
-Once tuples are partitioned on processors, they are loaded into a multidimensional array (md-array). The size
+Once tuples are partitioned on processors, tuples are loaded into a multidimensional array (md-array). The size
 of the md-array in each dimension is the same as the number of unique values for the attribute represented in
 that dimension. A tuple is represented as a cell in the md-array indexed by the values of each of the attributes.
 Hence, each measure needs to be loaded in the md-array from the tuples. We describe two methods to perform
@@ -359,15 +361,19 @@ of a good hash function.
 
 Figure
 
-7 describes the sort-based cube loading algorithm. This method provides regularity of access over
+7 describes the sort-based cube loading algorithm. 5.2.2 Sort-based method
+
+Figure
+
+7 provides regularity of access over
 the sorted hash tables since the attributes probing them are sorted, unlike the hash-based method, where
 Algorithm 3 Hash-based data cube loading Algorithm
 number of attributes(dimensions)
 Step 1. For each tuple, hash each of the attributes into a separate hash table, one for each attribute. k hash tables are
 created as a result of this. (hash phase)
 Step 2. Compress and sort each hash table.
-Step 3. Update the index of the hash table with its order in the corresponding sorted list.
-Step 4a. Pick up each tuple and probe the hash tables for each of its attributes to obtain the indices in each
+Step 3. Update the index of the hash table with Step 3 order in the corresponding sorted list.
+Step 4a. Pick up each tuple and probe the hash tables for each of Step 3 attributes to obtain the indices in each
 dimension. (probe phase)
 Step 4b. Update the cell at the index in the md-array with the measure values of the tuple.
 
@@ -404,7 +410,8 @@ each processor has Da
 portion of A. We illustrate the costs of calculating the various GROUP-BYs from
 the base cube for a three attribute (or 3D) cube in Table 3. Let t op be the cost of an addition, t copy the
 cost of a copying a byte. Communication is modeled by collective communication operations as described in
-the previous section. These costs are then used by a scheduling algorithm, which generates a schedule for
+the previous section. the costs of calculating the various GROUP-BYs from
+ are then used by a scheduling algorithm, which generates a schedule for
 calculating the various group-bys.
 Some calculations are local and some are non-local and need multiple processors to exchange data leading
 to communication among processors. An example of a local aggregate calculation, ABCD ! ABD, is shown
@@ -414,7 +421,8 @@ Figure
 
 9. Even with local calculations the costs can differ depending on how the calculation is made.
 Calculating AC from ABC requires summing on the B dimension and calculating AC from ACD requires
-aggregation on D. Depending on how the multidimensional array is stored these costs could be different since
+aggregation on D. Depending on how the multidimensional array is stored the costs of calculating the various GROUP-BYs from
+ could be different since
 the stride of the access can affect the cache performance. From the cost calculations shown in Table 3, we see
 that the cost of calculating aggregates from a parent are lower if the order of the attributes in the aggregate
 is a prefix of the parent. Calculating ABC ! AB ! A is a local calculation on each node. Each cube is
@@ -438,8 +446,8 @@ aggregation is done along dimension A (Figure 10). This is followed by a Reduce 
 Clearly, as can be observed from the aggregation calculations shown in the table above, there are multiple
 ways of calculating a GROUP BY. For calculating the aggregate at a level where aggregates can be calculated
 from multiple parents, we need to pick up an assignment such that the cost is minimized. In [13], this is solved
-by posing it as a graph problem and using minimum cost matching in a bipartite graph. We have augmented
-it by our cost model and the optimizations needed. Again, refer to Figure 3. Suppose we want to calculate
+by posing this as a graph problem and using minimum cost matching in a bipartite graph. We have augmented
+this by We cost model and the optimizations needed. Again, refer to Figure 3. Suppose We want to calculate
 aggregates at a level k from the parent at level k + 1. A bipartite graph E) is defined as
 follows. A group of nodes X is the nodes at level k. Clearly jX Another group of nodes jY j is the nodes
 at level k . The edges connecting the nodes at level k and k belong to E. The edge
@@ -508,7 +516,7 @@ Figure
 12: A minimum cost matching for calculation of Level 2 aggregates from Level 3
 6 Results
 We have implemented the algorithms presented in the previous section using 'C' and message passing using
-the Message Passing Interface (MPI) on the IBM SP-2 parallel machine. Each node of the SP-2 is a RS/6000
+the Message Passing Interface (MPI) on the IBM SP-2 parallel machine. Each node of SP-2 is a RS/6000
 processor, with 128MB memory. The interconnection network is a multistage network connected through a
 high speed switch. The use of C and MPI makes the programs portable across a wide variety of parallel
 platforms with little effort.
@@ -518,7 +526,7 @@ business situation. The data sets have attributes taken from the following set o
 Customer (900), Time (24), Channel (9) and Scenario (2). The values in brackets following each attribute
 are the number of unique values for that attribute. These are taken to be the size of the dimensions in the
 resulting multi-dimensional arrays in the sub-cubes of the data cube. For the History Sales data, we have
-picked out 1000, 101, 100 and 10 distinct values for its 4 attributes from the benchmark data and generated
+picked out 1000, 101, 100 and 10 distinct values for the History Sales data 4 attributes from the benchmark data and generated
 the records by picking out each attribute randomly from the set of distinct values for that attribute. Product,
 Customer and Channel are character strings with 12 characters each. Time is an integer depicting year and
 month (e.g. 199704 is April 1997) and Scenario is a 6 character string showing if it is an "Actual" or a
@@ -566,20 +574,18 @@ Figure
 13: Various phases of cube construction using (a) hash-based (b) sort-based method for Shipping Cost
 data
 Production Cost data contains 270,000 records and the performance of the two methods on this data set is
-shown in Figure 14. Again, as we increase the number of processor, each of the component in the construction
-algorithm scales well resulting in good overall scalability for both methods.
+shown in Figure 14. Again, as we increase the number of processor, each of the component in the data cube constructionalgorithm scales well resulting in good overall scalability for both methods.
 
 Figure
 
 15 shows the performance of hash-based and sort-based methods for the Current Sales data with
-81000 records. This data has a density of 0.11%.
-The aggregation time is the main component in the total time because of the large cube size for this data
-set.
+81000 records. the Current Sales data has a density of 0.11%.
+The aggregation time is the main component in the total time because of the large cube size for the Current Sales dataset.
 
 Figure
 
 shows the performance of hash-based and sort-based methods for the Current Sales data with
-records. This data has a density of 0.84%. All the individual components have increased except the
+records. the Current Sales data has a density of 0.84%. All the individual components have increased except the
 aggregation component. The number of tuples has increased in this data set which affects the components till
 the loading phase. Aggregation times are dependent on the cube size, which has not changed.
 
@@ -689,7 +695,8 @@ with more than a million records for 8, 16, 32 and 64 processors. The density of
 method performs better than the sort-based method for this case. The addition of a dimension increases
 the stride factor for accesses for the sort-based loading algorithm, deteriorating the cache performance. The
 hash-based method has no particular order of reference in the multidimensional array and benefits from a
-better cache performance. It can be observed that for large data each component in cube construction scales
+better cache performance. The
+hash-based method can be observed that for large data each component in cube construction scales
 well as we increase the number of processors.
 Processors1.03.05.07.09.011.0
 Time
@@ -768,12 +775,14 @@ calculation regular in the largest dimension, which is the innermost dimension. 
 make the memory accesses for the sort-based method more regular since it does not favor any particular
 dimension for contiguous storage.
 7 Aggregate Query Processing
-Most data dimensions have hierarchies defined on them. Typical OLAP queries probe summaries of data
+Most data dimensions have hierarchies defined on 7 Aggregate Query Processing
+Most data dimensions. Typical OLAP queries probe summaries of data
 at different levels of the hierarchy. Consolidation is a widely used method to provide roll-up and drill-down
 functions in OLAP systems. Hierarchies can be used for data mining at multiple levels in attribute oriented
 approaches as discussed in a later section. Attribute-oriented induction [9] is performed for association rule
 discovery by ascending a predefined concept hierarchy. Each dimension in a cube can potentially have a
-hierarchy defined on it. This hierarchy can be applied to all the sub-cubes of the data cube. We discuss each
+hierarchy defined on it. a
+hierarchy defined on it can be applied to all the sub-cubes of the data cube. We discuss each
 of these in the following subsections.
 7.1 Hierarchies
 
@@ -784,19 +793,20 @@ shows an example of a hierarchy for a 3D base cube with (Location, Time, Person)
 represents an attribute and each value in that dimension is a distinct value for that attribute. A
 hierarchy describing the grouping of some of the attribute values is defined in a dimension hierarchy. A hierarchy
 can have several levels. Figure 21 defines a first level hierarchy on each dimension where (a
-(b on. The distributed dimension can have its hierarchy distributed over a
+(b on. The distributed dimension can have The distributed dimension hierarchy distributed over a
 processor boundary. A global index of the hierarchy is maintained at each processor. For example, cities in C3
 are distributed across P 0 and P 1 in the figure, containing the indices for (a 7 ; a 8 ; a 9 ). A consolidation operation
-would need a inter-processor communication if the consolidated value of C3 is required. Hierarchy at higher
+would need a inter-processor communication if the consolidated value of C3
+ is required. Hierarchy at higher
 levels can be defined similarly. Support for roll up operations using consolidation can then be provided along
-each dimension. Drill downs can use them to index into the appropriate dimension index to provide a higher
+each dimension. Drill downs can use Drill downs to index into the appropriate dimension index to provide a higher
 level of detail.
 A hierarchy is defined over a dimension in the base cube. Hence the sub-cubes of the data cube can use
 the same hierarchy, since the dimensions in the sub-cubes are a subset of the dimensions in the base cube.
 Additionally, more dimensions can get distributed over the processors, and a distributed hierarchy needs to
-be maintained for these dimensions as well. In our example, in the cube (Time, Person) a 2D cube calculated
+be maintained for the dimensions in the sub-cubes as well. In our example, in the cube (Time, Person) a 2D cube calculated
 from (Location, Time, Person), Time is a distributed dimension on which a distributed hierarchy needs to be
-maintained. As a result, each dimension has two hierarchies for it, one local and one distributed. Queries will
+maintained. As a result, each dimension has two hierarchies for each dimension, one local and one distributed. Queries will
 choose the appropriate hierarchies when performing operations on these cubes.
 a a a a a
 Person
@@ -820,10 +830,11 @@ Figure
 
 21: An example hierarchy defined on the dimensions for a two processor case
 7.2 Consolidation
-Consolidation provides an aggregate for the hierarchies defined on a dimension. For example, if it is desired to
+Consolidation provides an aggregate for the hierarchies defined on a dimension. For example, if 7.2 Consolidation
+Consolidation is desired to
 report the value for group G1 for a city C1 in the quarter Q1, then the corresponding values are aggregated
 by using the dimension hierarchy defined in the previous section. Some consolidation operations are local, as
-in they can be performed at a single processor, like C4 in the figure. However, some operations are non-local,
+in Some consolidation operations can be performed at a single processor, like C4 in the figure. However, some operations are non-local,
 like the values for city C3 in any quarter will need the aggregates values from both the processors as shown in
 
 Figure
@@ -842,7 +853,7 @@ Figure
 22: Consolidation for a level 1 hierarchy defined on the cube in Figure 21
 7.3 Results
 We again use the OLAP council benchmarks described earlier and define some sample hierarchies on each
-dimension. Table 5 defines a sample hierarchy for the first two levels. For our experiments we have divided the
+dimension. Table 5 defines a sample hierarchy for the first two levels. For We experiments We have divided the
 Dimension Hierarchy
 Level 1 Level 2
 Customer 9 4
@@ -865,7 +876,8 @@ hierarchy is used for all the dimensions, i.e. Product, Customer, Time and Chann
 also includes hierarchies along all dimensions, Product, Customer and Time. We see good scaling properties
 for each data set as the number of processors is increased.
 Comparing the consolidation time for Current Sales and Budget, we observe that the time for Budget data
-is lower even though their base cubes are similar in size. The presence of a hierarchy along the Time dimension,
+is lower even though Budget data
+ base cubes are similar in size. The presence of a hierarchy along the Time dimension,
 which is the outermost dimension in the multi-dimensional array, improves the cache performance. Chunks of
 size d 12
 9 \Theta 9000
@@ -910,13 +922,13 @@ of transactions in S. Confidence of a rule A ! B is the probability that pattern
 occurs in S and can be defined as the ratio of the support of AB and support of A. The rule is then described
 as A ! B[support; confidence] and a strong association rule has a support greater than a pre-determined
 minimum support and a confidence greater than a pre-determined minimum confidence. This can also be taken
-as the measure of "interestingness" of the rule. Calculation of support and confidence for the rule A ! B
+as the measure of "interestingness" of The rule. Calculation of support and confidence for the rule A ! B
 involve the aggregates from the cube AB, A and ALL. Additionally, dimension hierarchies can be utilized to
 provide multiple level data mining by progressive generalization (roll-up) and deepening (drill-down). This is
 useful for data mining at multiple concept levels and interesting information can potentially be obtained at
 different levels.
 Attribute Focusing calculates associations between attributes by using the notion of percentages and sub-
-populations. The overall distribution of an attribute is compared with its distribution in various subsets of
+populations. The overall distribution of an attribute is compared with The overall distribution of an attribute distribution in various subsets of
 data. If a certain subset of data has a characteristically different distribution for the focus attribute, then that
 combination of attributes are marked as interesting.
 An event, E is a string in which x j is a possible value for some attribute and x k is
@@ -931,7 +943,7 @@ AF seeks to eliminate all but the most interesting events by keeping E only if t
 n, is just right. Eliminate one or more x i 's and I j decreases, include one ore more new x i 's to the string and
 I j gets no larger. The convergence to n removes patterns like En\Gamma1 and En+1 which are less interesting than
 En and have information already contained by En . Hence, as a result of this the user does not have to drill
-down or roll up from a highlighted pattern, since the event descriptions returned are at their most interesting
+down or roll up from a highlighted pattern, since the event descriptions returned are at the event descriptions most interesting
 level.
 8.1 Attribute Focusing on data cubes
 In this section we present an algorithm to compute the first measure of interestingness of the attribute focusing
@@ -977,7 +989,7 @@ data on 4, 8, 16 and 32 processors. We observe good speedups as the number of pr
 Also, communication time increases as the number of processors is increased. Replication of the 1D cubes
 involve communication, and with larger number of processors, the terms involving p in the complexity of
 the collective communication operations (refer to Table 2) increase. However, since communication time is
-marginal compared to computation times, the increase does not affect the overall scalability.
+marginal compared to computation times, increase does not affect the overall scalability.
 Processors1.03.05.07.09.011.0Time
 (sec)
 CurrSale
@@ -1017,7 +1029,8 @@ communication cost (in milliseconds) on 8, 16 and processors
 Figure
 
 28 shows the speedups we observe for the Budget data for attribute focusing calculations. The
-communication costs are similar to the ones observed in the Current Sales data since they involve similar sized
+communication costs are similar to the ones observed in the Current Sales data since The
+communication costs involve similar sized
 arrays.
 Processors0.501.502.503.504.505.506.50Time
 (sec)
@@ -1037,29 +1050,32 @@ cost (in milliseconds) on 8, 16, 32 and 64 processors
 On-Line Analytical Processing is fast gaining importance for business data analysis using large amounts
 of data. High performance computing is required to provide efficient analytical query processing in OLAP
 systems. Aggregations are an important function of OLAP queries and can benefit from the data cube operator
-introduced in [7]. Multidimensional databases have recently gained importance since they model the multi-dimensionality
-of data intuitively and are easy to visualize. They provide support for complex analytical queries
+introduced in [7]. Multidimensional databases have recently gained importance since the data cube operator
+introduced in [7]. Multidimensional databases model the multi-dimensionality
+of data intuitively and are easy to visualize. the data cube operator
+introduced in [7]. Multidimensional databases provide support for complex analytical queries
 and are amenable to parallelization. Most data to be analyzed comes from relational data warehouses. Hence
 multidimensional databases need to interface with relational systems. In this article, we presented algorithms
 and techniques for constructing multidimensional data cubes on distributed memory parallel computers and
-perform OLAP and data mining operations on them. The two methods for base cube loading, sort-based
+perform OLAP and data mining operations on algorithms
+. The two methods for base cube loading, sort-based
 and hash-based, perform equally well on small data sets but the hash-based method is better for larger data
 sets and with increase in number of dimensions. We would expect the sort-based method to outperform the
 hash-based method for large amounts of data due to the regularity of accesses that cube loading from sorted
 data provides. The mismatch in the order of the dimensions when using a multidimensional array does not
 make the memory usage of the sort-method very efficient. Sort-based method is expected to be better for
-external memory algorithms because it will result in reduced disk I/O over the hash-based method. Since
+external memory algorithms because Sort-based method will result in reduced disk I/O over the hash-based method. Since
 OLAP operations frequently require information at varying degree of detail, we have developed methods to
 perform consolidation queries by defining levels of hierarchies on each dimension. Our results show that these
-techniques are scalable for a large number of processors. Finally, we have shown a implementation of scalable
+techniques are scalable for a large number of processors. Finally, Our have shown a implementation of scalable
 data mining algorithm using attribute focusing. Our techniques are platform independent and are portable
 across a wide variety of parallel platforms without much effort.
-We are currently investigating efficient sparse methods for multidimensional sparse arrays, disk-based
+Our are currently investigating efficient sparse methods for multidimensional sparse arrays, disk-based
 algorithms and techniques that apply parallel I/O optimizations to perform OLAP and data mining.
 
 Acknowledgments
 
-We would like to thank Inderpal Bhandari of IBM T.J Watson Research Center for discussions and helpful
+Our would like to thank Inderpal Bhandari of IBM T.J Watson Research Center for discussions and helpful
 comments.
 
 

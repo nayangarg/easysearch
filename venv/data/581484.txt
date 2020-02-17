@@ -1,7 +1,7 @@
 --T
 Contracts for higher-order functions.
 --A
-Assertions play an important role in the construction of robust software. Their use in programming languages dates back to the 1970s. Eiffel, an object-oriented programming language, wholeheartedly adopted assertions and developed the "Design by Contract" philosophy. Indeed, the entire object-oriented community recognizes the value of assertion-based contracts on methods.In contrast, languages with higher-order functions do not support assertion-based contracts. Because predicates on functions are, in general, undecidable, specifying such predicates appears to be meaningless. Instead, the functional languages community developed type systems that statically approximate interesting predicates.In this paper, we show how to support higher-order function contracts in a theoretically well-founded and practically viable manner. Specifically, we introduce con, a typed lambda calculus with assertions for higher-order functions. The calculus models the assertion monitoring system that we employ in DrScheme. We establish basic properties of the model (type soundness, etc.) and illustrate the usefulness of contract checking with examples from DrScheme's code base.We believe that the development of an assertion system for higher-order functions serves two purposes. On one hand, the system has strong practical potential because existing type systems simply cannot express many assertions that programmers would like to state. On the other hand, an inspection of a large base of invariants may provide inspiration for the direction of practical future type system research.
+Assertions play an important role in the construction of robust software. Their use in programming languages dates back to the 1970s. Eiffel, an object-oriented programming language, wholeheartedly adopted assertions and developed the "Design by Contract" philosophy. Indeed, the entire object-oriented community recognizes the value of assertion-based contracts on methods.In contrast, languages with higher-order functions do not support assertion-based contracts. Because predicates on functions are, in general, undecidable, specifying such predicates appears to be meaningless. Instead, the functional languages community developed type systems that statically approximate interesting predicates.In this paper, we show how to support higher-order function contracts in a theoretically well-founded and practically viable manner. Specifically, we introduce con, a typed lambda calculus with assertions for higher-order functions. The calculus models the assertion monitoring system that we employ in DrScheme. We establish basic properties of the model (type soundness, etc.) and illustrate the usefulness of contract checking with examples from DrScheme's code base.We believe that the development of an assertion system for higher-order functions serves two purposes. On one hand, an assertion system for higher-order functions has strong practical potential because existing type systems simply cannot express many assertions that programmers would like to state. On the other hand, an inspection of a large base of invariants may provide inspiration for the direction of practical future type system research.
 --B
 In this paper, we show how to support higher-order function contracts
 in a theoretically well-founded and practically viable man-
@@ -12,7 +12,7 @@ basic properties of the model (type soundness, etc.) and
 illustrate the usefulness of contract checking with examples from
 DrScheme's code base.
 We believe that the development of an assertion system for higher-order
-functions serves two purposes. On one hand, the system has
+functions serves two purposes. On one hand, an assertion system for higher-order functions has
 strong practical potential because existing type systems simply cannot
 express many assertions that programmers would like to state.
 On the other hand, an inspection of a large base of invariants may
@@ -34,14 +34,17 @@ widely used in procedural and object-oriented languages [11, 14,
 these contracts have great practical value in improving the robustness
 of systems in procedural languages. Eiffel [22] even developed
 an entire philosophy of system design based on contracts (Design
-by Contract). Although Java [12] does not support contracts, it is
+by Contract). Although Java [12] does not support contracts, Java [12] is
 one of the most requested extensions.1
 With one exception, higher-order languages have mostly ignored
 assertion-style contracts. The exception is Bigloo Scheme [28],
 where programmers can write down first-order, type-like constraints
-on procedures. These constraints are used to generate more
-efficient code when the compiler can prove they are correct and are
-turned into runtime checks when the compiler cannot prove them
+on procedures. first-order, type-like constraints
+on procedures are used to generate more
+efficient code when the compiler can prove first-order, type-like constraints
+on procedures are correct and are
+turned into runtime checks when the compiler cannot prove first-order, type-like constraints
+on procedures
 correct.
 First-order procedural contracts have a simple interpretation. Consider
 this contract, written in an ML-like syntax:
@@ -52,16 +55,22 @@ contract compiler inserts code to check that x is in the proper range
 when f is called and that f's result is in the proper range when f
 returns. If x is not in the proper range, f's caller is blamed for
 a contractual violation. Symmetrically, if f's result is not in the
-proper range, the blame falls on f itself. In this world, detecting
+proper range, the blame falls on f. In this world, detecting
 contractual violations and assigning blame merely means checking
 appropriate predicates at well-defined points in the program's evaluation
 
 This simple mechanism for checking contracts does not generalize
 to languages with higher-order functions. Consider this contract:
 val rec
-The contract's domain states that g accepts int int functions and
-must apply them to ints larger than 9. In turn, these functions must
-produce ints between 0 and 99. The contract's range obliges g to
+this contract:
+val rec
+'s domain states that g accepts int int functions and
+must apply g accepts int int functions and
+ to ints larger than 9. In turn, g accepts int int functions and
+ must
+produce ints between 0 and 99. this contract:
+val rec
+'s range obliges g to
 produce ints between 0 and 99.http://developer.java.sun.com/developer/bugParade/top25rfes.html
 Although g may be given f, whose contract matches g's domain
 contract, g should also accept functions with stricter contracts:
@@ -81,10 +90,11 @@ else 5000.
 as long as the context is properly established when g applies its
 argument.
 Clearly, there is no algorithm to statically determine whether proc
-matches its contract, and it is not even possible to dynamically
+matches proc
+ contract, and it is not even possible to dynamically
 check the contract when g is applied. Even worse, it is not enough
 to monitor applications of proc that occur in g's body, because g
-may pass proc to another function or store it in a global variable.
+may pass proc to another function or store another function in a global variable.
 Additionally, higher-order functions complicate blame assignment.
 With first-order functions, blame assignment is directly linked to
 pre- and post-condition violations. A pre-condition violation is the
@@ -94,15 +104,15 @@ are tangled in a more complex manner, mostly due to function-valued
 arguments.
 In this paper, we present a contract system for a higher-order world.
 The key observation is that a contract checker cannot ensure that g's
-argument meets its contract when g is called. Instead, it must wait
+argument meets g's
+argument contract when g is called. Instead, it must wait
 until proc is applied. At that point, it can ensure that proc's argument
 is greater than 9. Similarly, when proc returns, it can ensure
 that proc's result is in the range from 0 to 99. Enforcing contracts in
 this manner ensures that the contract violation is signaled as soon as
 the contract checker can establish that the contract has indeed been
-violated. The contract checker provides a first-order value as a witness
-to the contract violation. Additionally, the witness enables the
-contract checker to properly assign blame for the contract violation
+violated. the contract checker provides a first-order value as a witness
+to the contract violation. Additionally, the witness enables the contract checker to properly assign blame for the contract violation
 to the guilty party.
 The next section introduces the subtleties of assigning blame for
 higher-order contract violations through a series of examples in
@@ -115,9 +125,9 @@ how to extend the calculus with function contracts whose range depends
 on the input to the function, and section 8 discusses the interactions
 between contracts and tail recursion.
 Example Contracts
-We begin our presentation with a series of Scheme examples that
-explain how contracts are written, why they are useful, and how to
-check them. The first few examples illustrate the syntax and the basic
+We begin We presentation with a series of Scheme examples that
+explain how contracts are written, why contracts are useful, and how to
+check contracts. The first few examples illustrate the syntax and the basic
 principles of contract checking. Sections 2.2 and 2.3 discuss the
 problems of contract checking in a higher-order world. Section 2.4
 explains why it is important for contracts to be first-class values.
@@ -142,7 +152,7 @@ contracts, in turn, consist of a pair of contracts (each either a
 predicate or another function contract), one for the domain of the
 function and one for the range of the function:
 
-The domain portion of sqrt's contract requires that it always receives
+The domain portion of sqrt's contract requires that The domain portion of sqrt's contract always receives
 a non-negative number. Similarly, the range portion of the
 contract guarantees that the result is non-negative. The example
 also illustrates that, in general, contracts check only certain aspects
@@ -158,10 +168,11 @@ number number
 (bigger-than-zero? - bigger-than-zero?)
 (l
 The contract on sqrt can be strengthened by relating sqrt's result to
-its argument. The dependent function contract constructor allows
+
+ argument. The dependent function contract constructor allows
 the programmer to specify range contracts that depend on the value
-of the function's argument. This constructor is similar to -, except
-that the range position of the contract is not simply a contract.
+of the function's argument. The dependent function contract constructor is similar to -, except
+that the range position of The contract on sqrt is not simply a contract.
 Instead, it is a function that accepts the argument to the original
 function and returns a contract:
 d
@@ -206,7 +217,7 @@ argument.
 The key to checking higher-order assertion contracts is to postpone
 contract enforcement until some function receives a first-order
 value as an argument or produces a first-order value as a result.
-This section demonstrates why these delays are necessary and discusses
+The next section demonstrates why these delays are necessary and discusses
 some ramifications of delaying the contracts. Consider this
 toy module:
 (module delayed scheme/contract
@@ -242,11 +253,29 @@ Figure
 2. Contract Manually Distributed
 (bigger-than-zero? bigger-than-zero?)
 (l (n) (saved n))))
-The module [8, 9] declaration consists of a name for the module,
-the language in which the module is written, a provide declaration
-and a series of definitions. This module provides save and use. The
+this
+toy module:
+(module delayed scheme/contract
+( [8, 9] declaration consists of a name for the module,
+the language in which this
+toy module:
+(module delayed scheme/contract
+( is written, a provide declaration
+and a series of definitions. this
+toy module:
+(module delayed scheme/contract
+( provides save and use. The
 variable saved holds a function that should map positive numbers
-to positive numbers. Since it is not exported from the module, it
+to positive numbers. Since this
+toy module:
+(module delayed scheme/contract
+( is not exported from this
+toy module:
+(module delayed scheme/contract
+(, this
+toy module:
+(module delayed scheme/contract
+(
 has no contract. The getter (use) and setter (save) are the two visible
 accessors of saved. The function save stores a new function
 and use invokes the saved function. Naturally, it is impossible for
@@ -285,31 +314,35 @@ Figure
 
 3. Abstraction for Predicate Contracts
 Every GUI control needs two values: a parent, and a callback that is
-invoked when the control is manipulated. Some GUI controls need
+invoked when Every GUI control is manipulated. Some GUI controls need
 additional control-specific values, such as a label or a list of choices.
 In order to add new preference panels, extensions define a function
 that accepts a parent panel, creates a sub-panel of the parent panel,
-fills the sub-panel with controls that configure the extension, and
-returns the sub-panel. These functions are then registered by calling
+fills a sub-panel of the parent panel with controls that configure the extension, and
+returns a sub-panel of the parent panel. These functions are then registered by calling
 add-panel. Each time the user opens DrScheme's preferences
 dialog, DrScheme constructs the preferences dialog from the registered
 functions.
 
 Figure
 
-1 shows the definition of add-panel and its contract (boxed
-in the figure). The contract requires that add-panel's arguments are
-functions that accept a single argument. In addition, the contract
-guarantees that the result of each call to add-panel's argument is a
-panel and is the first child in its parent panel. Together, these checks
+1 shows the definition of add-panel and Figure
+
+1 contract (boxed
+in the figure). its contract (boxed
+in the figure) requires that add-panel's arguments are
+functions that accept a single argument. In addition, its contract (boxed
+in the figure)guarantees that the result of each call to add-panel's argument is a
+panel and is the first child in a
+panel parent panel. Together, these checks
 ensure that the order of the panels in the preferences dialog matches
 the order of the calls to add-panel.
-The body of add-panel saves the panel making function in a list.
+The body of add-panel saves add-panel making function in a list.
 Later, when the user opens the preferences dialog, the open-dialog
 function is called, which calls the make-panel functions, and the
 contracts are checked. The dialog% and single-panel% classes are
 part of the primitive GUI library and instantiate creates instances
-of them.
+of The dialog% and single-panel% classes.
 In comparison, figure 2 contains the checking code, written as if
 there were no higher-order contract checking. The boxed portion of
 the figure, excluding the inner box, is the contract checking code.
@@ -317,7 +350,7 @@ The code that enforces the contracts is co-mingled with the code
 that implements the preferences dialog. Co-mingling these two decreases
 the readability of both the contract and call-make-panel,
 since client programmers now need to determine which portion of
-the code concerns the contract checking and which performs the
+The code that enforces the contracts concerns the contract checking code checking and which performs the
 function's work. In addition, the author of the preferences module
 must find every call-site for each higher-order function. Finding
 these sites in general is impossible, and in practice the call sites are
@@ -327,19 +360,21 @@ Assigning blame for contractual violations in the world of first-class
 functions is complex. The boundaries between cooperating components
 are more obscure than in the world with only first-order func-
 tions. In addition to invoking a component's exported functions,
-one component may invoke a function passed to it from another
+one component may invoke a function passed to one component from another
 component. Applying such first-class functions corresponds to a
 flow of values between components. Accordingly, the blame for a
 corresponding contract violation must lie with the supplier of the
 bad value, no matter if the bad value was passed by directly applying
 an exported function or by applying a first-class function.
 As with first-order function contract checking, two parties are involved
-for each contract: the function and its caller. Unlike first-
+for each contract: the function and first-order function contract caller. Unlike first-
 order function contract checking, a more general rule applies for
-blame assignment. The rule is based on the number of times that
+blame assignment. a more general rule is based on the number of times that
 each base contract appears to the left of an arrow in the higher-order
 contract. If the base contract appears an even number of times, the
-function itself is responsible for establishing the contract. If it appears
+function itself is responsible for establishing the higher-order
+contract. If the
+function itself appears
 an odd number of times, the function's caller is responsible.
 This even-odd rule captures which party supplies the values and
 corresponds to the standard notions of covariance (even positions)
@@ -366,19 +401,24 @@ the user's program is run. The accessors and mutators for this state
 implicitly accept the current thread as a parameter, so the code that
 initializes the state must run on the user's thread.2
 To enable DrScheme's extensions to run code on the user's thread,
-DrScheme provides the primitive run-on-user-thread. It accepts a
+DrScheme provides the primitive run-on-user-thread. the code that
+initializes the state accepts a
 thunk, queues the thunk to be run on the user's thread and returns.
-It has a contract that promises that when the argument thunk is ap-
+the code that
+initializes the state has a contract that promises that when the argument thunk is ap-
 plied, the current thread is the user's thread:
 (define/contract run-on-user-thread
 
 any)
 (l (thunk)
-This contract is a higher-order function contract. It only has one
+a contract that promises that when the argument thunk is ap-
+plied is a higher-order function contract. a contract that promises that when the argument thunk is ap-
+plied only has one
 interesting aspect: the pre-condition of the function passed to run-
 on-user-thread. This is a covariant (even) position of the function
 contract which, according to the rule for blame assignment, means
-that run-on-user-thread is responsible for establishing this contract.This state is not available to user's program because the accessors and
+that run-on-user-thread is responsible for establishing this contract.this state
+ is not available to user's program because the accessors and
 mutators are not lexically available to the user's program.
 (module preferences scheme/contract
 (provide add-panel .)
@@ -414,18 +454,23 @@ must be values that can be passed to and from functions. For exam-
 ple, curried comparision operators are common (see figure 3).
 More interestingly, patterns of higher-order function contracts are
 also common. For example, DrScheme's code manipulates mixins
-[7, 10] as values. These mixins are functions that accept a class
+[7, 10] as values. example, DrScheme's code manipulates mixins
+[7, 10] as values are functions that accept a class
 and returns a class derived from the argument. Since extensions of
 DrScheme supply mixins to DrScheme, it is important to verify that
-the mixin's result truly is derived from its input. Since this contract
-is so common, it is defined in DrScheme's contract library:
+the mixin's result truly is derived from that
+ input. Since this contract
+is so common, this contract
+ is defined in DrScheme's contract library:
 contract
 (define mixin-contract
 d
 res arg)))))
 
-This contract is a dependent contract. It states that the input to the
-function is a class and its result is a subclass of the input.
+this contract
+ is a dependent contract. this contract
+ states that the input to the
+function is a class and a class result is a subclass of the input.
 Further, it is common for the contracts on these mixins to guarantee
 that the base class passed to the mixin is not just any class,
 but a class that implements a particular interface. To support these
@@ -444,7 +489,7 @@ Although the mixin contract is, in principle, checkable by a type
 system, no such type system is currently implemented. OCaml [18,
 19, 26] and OML [26] are rich enough to express mixins, but type-checking
 fails for any interesting use of mixins [7], since the type
-system does not allow subsumption for imported classes. This contract
+system does not allow subsumption for imported classes. this contract
 is an example where the expressiveness of contracts leads to
 an opportunity to improve existing type systems. Hopefully this
 example will encourage type system designers to build richer type
@@ -452,10 +497,10 @@ systems that support practical mixins.
 2.5 Callbacks and Stateful Contracts
 Callbacks are notorious for causing problems in preserving invari-
 ants. Szyperski [32] shows why callbacks are important and how
-they cause problems. In short, code that invokes the callback must
+callbacks cause problems. In short, code that invokes the callback must
 guarantee that certain state is not modified during the dynamic extent
 of the callback. Typically, this invariant is maintained by examining
-the state before the callback is invoked and comparing it to
+the state before the callback is invoked and comparing the callback to
 the state after the callback returns.3
 Consider this simple library for registering and invoking callbacks.
 (module callbacks scheme/contract
@@ -464,7 +509,7 @@ Consider this simple library for registering and invoking callbacks.
 (any
 d
 (l (arg)
-(let ([old-state . save the relevant state .])
+(let ([old-state . save the state .])
 (l
 . compare the new state to the old state .))))
 (l (c)
@@ -474,18 +519,24 @@ d
 (define callback (l () (void))))
 The function register-callback accepts a callback function and registers
 it as the current callback. The invoke-callback function calls
-the callback. The contract on register-callback makes use of the
+The function register-callback. (module callbacks scheme/contract
+(provide register-callback invoke-callback)
+(define/contract register-callback
+(any
+d
+(l (arg)
+(let ([old-state makes use of the
 dependent contract constructor in a new way. The contract checker
 applies the dependent contract to the original function's arguments
 before the function itself is applied. Therefore, the range portion
 of a dependent contract can determine key aspects of the state and
-save them in the closure of the resulting predicate. When that predicate
-is called with the result of the function, it can compare the
+save key aspects of the state in the closure of the resulting predicate. When the resulting predicateis called with the result of the function, the resulting predicate can compare the
 current version of the state with the original version of the state,
 thus ensuring that the callback is well-behaved.
 This technique is useful in the contract for DrScheme's preferences
 panel, whose contract we have already considered. Consider the
-revision of add-panel's contract in figure 4. The revision does moreIn practice, lock variables are often used for this; the technique presented
+revision of add-panel's contract in figure 4. the
+revision of add-panel's contract in figure 4 does moreIn practice, lock variables are often used for this; the technique presented
 here adapts to a lock-variable based solution to the callback problem.
 core syntax
 | n | e aop e | e rop e
@@ -518,11 +569,12 @@ Figure
 5. lCON Syntax, Types, Evaluation Contexts, and Values
 than just ensure that the new child is the first child. In addition, it
 guarantees that the original children of the preferences panel remain
-in the panel in the same order, thus preventing an extension from
+in the preferences panel in the same order, thus preventing an extension from
 removing the other preference panels.
 3 Contract Calculus
 Although contracts can guarantee stronger properties than types
-about program execution, their guarantees hold only for particular
+about program execution, contracts can guarantee stronger properties than types
+about program execution guarantees hold only for particular
 program executions. In contrast, the type checker's weaker guarantees
 hold for all program executions. As such, contracts and types
 play synergistic roles in program development and maintenance so
@@ -558,11 +610,14 @@ points, numbers and numeric primitives, lists and list primitives,
 if expressions, booleans, and strings. The final expression forms
 specify contracts. The contract(e) and e - e expressions construct
 flat and function contracts, respectively. A flatp expression
-returns true if its argument is a flat contract and false if its argument
+returns true if A flatp expression
+ argument is a flat contract and false if A flatp expression
+ argument
 is a function contract. The pred, dom, and rng expressions select
 the fields of a contract. The blame primitive is used to assign blame
-to a definition that violates its contract. It aborts the program. This
-first model omits dependent contracts; we return to them later.
+to a definition that violates The blame primitive contract. The blame primitive aborts Each program
+. This
+first model omits dependent contracts; we return to dependent contracts later.
 The types for lCON are those of core ML (without polymorphism),
 plus types for contract expressions. The typing rules for contracts
 are given in figure 7. The first typing rule is for complete programs.
@@ -597,7 +652,7 @@ must be an - contract because the type of sqrt is a function type.
 
 Further, the domain and range portions of the contract are predicates
 on integers because sqrt consumes and produces integers.4
-More succinctly, the predicates in this contract augment the sqrt's
+More succinctly, the predicates in the contract augment the sqrt's
 type, indicating that the domain and range must be positive.
 
 Figures
@@ -606,9 +661,9 @@ Figures
 base language without contracts [4].
 4 Contract Monitoring
 As explained earlier, the contract monitor must perform two tasks.
-First, it must track higher-order functions to discover contract vio-
-lations. Second, it must properly assign blame for contract viola-
-tions. To this end, it must track higher-order functions through the
+First, the contract monitor must track higher-order functions to discover contract vio-
+lations. Second, the contract monitor must properly assign blame for contract viola-
+tions. To this end, this end must track higher-order functions through the
 program's evaluation and the covariant and contravariant portions
 of each contract.
 To monitor contracts, we add a new form of expression, some new
@@ -617,7 +672,7 @@ the new expression form, representing an obligation:
 e,x,x
 e
 The first superscript is a contract expression that the base expression
-is obliged to meet. The last two are variables. The variables enableTechnically, sqrt should consume and produce any number, but since
+is obliged to meet. The last two are variables. variables enableTechnically, sqrt should consume and produce any number, but since
 lCON only contains integers and the precise details of sqrt are unimportant,
 we consider a restricted form of sqrt that operates on integers.
 the contract monitoring system to assign blame properly. The first
@@ -625,11 +680,12 @@ variable names the party responsible for values that are produced by
 the expression under the superscript and the second variable names
 the party responsible for values that it consumes.
 An implementation would add a fourth superscript, representing the
-source location where the contract is established. This superscript
-would be carried along during evaluation until a contract violation
-is discovered, at which point it would be reported as part of the error
+source location where the contract is established. a fourth superscriptwould be carried along during evaluation until a contract violation
+is discovered, at which point a fourth superscript would be reported as part of the error
 message.
-In this model, each definition is treated as if it were written by a
+In This
+first model, each definition is treated as if This
+first model were written by a
 different programmer. Thus, each definition is considered to be a
 separate entity for the purpose of assigning blame. In an implemen-
 tation, this is too fine-grained. Blame should instead be assigned to
@@ -642,7 +698,7 @@ are no obligation expressions in p.
 Obligations are placed on each reference to a val rec-defined vari-
 able. The first part of the obligation is the definition's contract ex-
 pression. The first variable is initially the name of the referenced
-definition. The second variable is initially the name of the defini-
+definition. The first variable is initially the name of the defini-
 tion where the reference occurs (or main if the reference occurs in
 the last expression). The function I (defined in the accompanying
 technical report [6]) specifies precisely how to insert the obligations
@@ -651,7 +707,7 @@ The introduction of obligation expressions induces the extension of
 the set of evaluation contexts, as shown in figure 8. They specify
 that the value of the superscript in an obligation expression is
 determined before the base value. Additionally, the obligation expression
-induces a new type rule. The type rule guarantees that the
+induces a new type rule. a new type rule guarantees that the
 obligation is an appropriate contract for the base expression.
 obligation expressions
 obligation type rule
@@ -672,10 +728,12 @@ that the delayed values are always functions, or functions wrapped
 with additional obligations.
 For the reductions in figure 6, superscripted evaluation proceeds
 just like the original evaluation, except that the superscript is carried
-from the instruction to its result. There are two additional re-
+from the instruction to the superscript result. There are two additional re-
 ductions. First, when a predicate contract reaches a flat value, the
-predicate on that flat value is checked. If the predicate holds, the
-contract is discarded and evaluation continues. If the predicate fails,
+predicate on that flat value is checked. If First, when a predicate contract reaches a flat value, the
+predicate on that flat value is checked holds, the
+contract is discarded and evaluation continues. If First, when a predicate contract reaches a flat value, the
+predicate on that flat value is checked fails,
 execution halts and the definition named by the variable in the positive
 position of the superscript is blamed.
 The final reduction of figure 8 is the key to contract checking for
@@ -695,10 +753,11 @@ For example, consider the definition of sqrt with a single use in
 the main expression. The reduction sequence for the application
 of sqrt is shown on the left in figure 10. For brevity, references
 to variables defined by val rec are treated as values, even though
-they would actually reduce to the variable's current values. The
+
+ would actually reduce to the variable's current values. The
 first reduction is an example of how obligations are distributed on
 an application. The domain portion of the superscript contract is
-moved to the argument of the procedure and the range portion is
+moved to the argument of the procedure and The domain portion of the superscript contract is
 moved to the application. The second reduction and the second
 string string t
 ct. l x. l p. l n.
@@ -714,7 +773,8 @@ Figure
 to last reduction are examples of how flat contracts are checked.
 In this case, each predicate holds for each value. If, however, the
 predicate had failed in the second reduction step, main would be
-blamed, since main supplied the value to sqrt. If the predicate had
+blamed, since main supplied the value to sqrt. If the
+predicate had
 failed in the second to last reduction step, sqrt would be blamed
 since sqrt produced the result.
 For a second example, recall the higher-order program from the
@@ -731,8 +791,8 @@ add them; the contract checker would simply ignore them.
 Accordingly, the variable g in the body of the main expression is
 the only reference to a definition with a contract. Thus, it is the
 only variable that is compiled into an obligation. The contract for
-the obligation is g's contract. If an even position of the contract is
-not met, g is blamed and if an odd position of the contract is not
+the obligation is g's contract. If an even position of g's contract is
+not met, g is blamed and if an odd position of g's contract is not
 met, main is blamed. Here is the reduction sequence:
 
 
@@ -744,12 +804,14 @@ In the first reduction step, the obligation on g is distributed to g's
 argument and to the result of the application. Additionally, the variables
 indicating blame are swapped in (l x. 25)'s obligation. The
 second step substitutes l x. 25 in the body of g, resulting in an application
-of l x. 25 to 0. The third step distributes the contract on l
+of l x. 25 to 0. The
+second step distributes the contract on l
 x. 25 to 0 and to the result of the application. In addition, the variables
 for even and odd blame switch positions again in 0's contract.
-The fourth step reduces the flat contract on 0 to an if test that determines
+The
+second step reduces the flat contract on 0 to an if test that determines
 if the contract holds. The final reduction steps assign blame
-to g for supplying 0 to its argument, since it promised to supply a
+to g for supplying 0 to its argument, since its promised to supply a
 number greater than 9.
 val rec sqrt : contract(l x.x
 l n. body intentionally elided .
@@ -785,19 +847,20 @@ functions are treated uniformly in the calculus. Higher-order functions
 merely require more distribution reductions than first-order
 functions. In fact, each nested arrow contract expression induces a
 distribution reduction for a corresponding application. For simplic-
-ity, we focus on our sqrt example for the remainder of the paper.
+ity, we focus on we sqrt example for the remainder of the paper.
 5 Contract Implementation
 To implement lCON, we must compile away obligation expressions.
 The key to the compilation is the wrapper function in figure 9. The
 wrapper function is defined in the calculus (the let expression is
 short-hand for inline applications of l-expressions, and is used for
-clarity). It accepts a contract, a value to test, and two strings. These
-strings correspond to the variables in the superscripts. We write
+clarity). The
+wrapper function accepts a contract, a value to test, and two strings. two strings correspond to the variables in the superscripts. We write
 wrap as a meta-variable to stand for the program text in figure 9,
 not a program variable.
 Compiling the obligations is merely a matter of replacing an obligation
 expression with an application of wrap. The first argument
-is the contract of the referenced variable. The second argument is
+is the contract of the referenced variable. The first argument
+ is
 the expression under the obligation and the final two arguments are
 string versions of the variables in the obligation. Accordingly, we
 define a compiler (C) that maps from programs to programs. It
@@ -805,31 +868,40 @@ replaces each obligation expression with the corresponding application
 of wrap. The formal definition is given in the accompanying
 technical report [6].
 The function wrap is defined case-wise, with one case for each kind
-of contract. The first case handles flat contracts; it merely tests if
+of contract. one case for each kind
+of contract handles flat contracts; one case for each kind
+of contract merely tests if
 the value matches the contract and blames the positive position if
-the test fails. The second case of wrap deals with function con-
-tracts. It builds a wrapper function that tests the original function's
-argument and its result by recursive calls to wrap. Textually, the
+the test fails. one case for each kind
+of contract. one case for each kind
+of contract builds a wrapper function that tests the original function's
+argument and one case for each kind
+of contract result by recursive calls to wrap. Textually, the
 first recursive call to wrap corresponds to the post-condition check-
-ing. It applies the range portion of the contract to the result of the
+ing. one case for each kind
+of contract applies the range portion of the contract to the result of the
 original application. The second recursive call to wrap corresponds
-to the pre-condition checking. It applies the domain portion of the
+to the pre-condition checking. one case for each kind
+of contract applies the domain portion of the
 contract to the argument of the wrapper function. This call to wrap
 has the positive and negative blame positions reversed as befits the
 domain checking for a function.
 The right-hand side of figure 10 shows how the compiled version
-of the sqrt program reduces. It begins with one call to wrap from
+of the sqrt program reduces. The right-hand side of figure 10 shows how the compiled version
+of the sqrt program reduces begins with one call to wrap from
 the one obligation expression in the original program. The first
 reduction applies wrap. Since the contract in this case is a function
-contract, wrap takes the second case in its definition and returns a
-l expression. Next, the l expression is applied to 4. At this point,
+contract, wrap takes the second case in function
+ definition and returns a
+l expression. Next, a
+l expression is applied to 4. At this point,
 the function contract has been distributed to sqrt's argument and to
 the result of sqrt's application, just like the distribution reduction in
 lCON (as shown on the left side of figure 10). The next reduction
-step is another call to wrap, in the argument to sqrt. This contract is
+step is another call to wrap, in the argument to sqrt. the function contract is
 flat, so the first case in the definition of wrap applies and the result is
-an if test. If that test had failed, the else branch would have assigned
-blame to main for supplying a bad value to sqrt. The test passes,
+an if test. If an if test had failed, the else branch would have assigned
+blame to main for supplying a bad value to sqrt. an if test passes,
 however, and the if expression returns 4 in the next reduction step.
 if I(p) -fh l x. p
 
@@ -844,7 +916,7 @@ Figure
 
 11. Evaluator Functions
 After that, sqrt returns 2. Now we arrive at the final call to wrap.
-As before, the contract is a flat predicate, so wrap reduces to an if
+As before, the function contract is a flat predicate, so wrap reduces to an if
 expression. This time, however, if the if test had failed, sqrt would
 have been blamed for returning a bad result. In the final reduction,
 the if test succeeds and the result of the entire program is 2.
@@ -870,9 +942,8 @@ The remainder of this section formulates and proves a theorem that
 relates the evaluation of programs in the instrumented semantics
 from section 4 and the contract compiled programs from section 5.
 To relate these two semantics, we introduce a new semantics and
-show how it bridges the gap between them. The new semantics
-is an extension of the semantics given in figures 5 and 6. In
-addition to those expressions it contains obligation expressions,
+show how a new semantics bridges the gap between them. a new semanticsis an extension of the semantics given in figures 5 and 6. In
+addition to those expressions a new semantics contains obligation expressions,
 flat
 evaluation contexts, and - reduction from figure 8 (but not the
 hoc wrap
@@ -896,15 +967,15 @@ an evaluation context and an instruction, unless it is a value. From
 this, it follows that the evaluators are (partial) functions.
 THEOREM 6.7 (COMPILER CORRECTNESS).
 PROOF. Combine lemma 6.8 with lemma 6.9.
-PROOF SKETCH. This proof is a straightforward examination of
+PROOF SKETCH. PROOF is a straightforward examination of
 the evaluation sequences of E and Efw. Each reduction of an appli-
 flat wrap
 cation of wrap corresponds directly to either a - or a - reduction
 and otherwise the evaluators proceed in lock-step.
 The full proof is given in an accompanying technical report [6].
 LEMMA 6.9.
-PROOF SKETCH. This proof establishes a simulation between Efh
-and Efw. The simulation is preserved by each reduction step and it
+PROOF SKETCH. The full proof establishes a simulation between Efh
+and Efw. The simulation is preserved by each reduction step and The simulation
 relates values to themselves and errors to themselves.
 The full proof is given in an accompanying technical report [6].
 7 Dependent Contracts
@@ -932,16 +1003,17 @@ Figure
 
 12. Dependent Function Contracts for lCON
 The evaluation contexts given in figure 8 dictate that an obligation's
-superscript is reduced to a value before its base expression. In par-
+superscript is reduced to a value before an obligation's
+superscript base expression. In par-
 ticular, this order of evaluation means that the superscripted application
 resulting from the dependent contract reduction in figure 12
 is reduced before the base expression. Therefore, the procedure in
 the dependent contract can examine the state (of the world) before
-the function proper is applied. This order of evaluation is critical
+the function proper is applied. this order of evaluation is critical
 for the callback examples from section 2.5.
 8 Tail Recursion
 Since the contract compiler described in section 5 checks post-
-conditions, it does not preserve tail recursion [2, 30] for procedures
+conditions, the contract compiler does not preserve tail recursion [2, 30] for procedures
 with post-conditions. Typically, determining if a procedure
 call is tail recursive is a simple syntactic test. In the presence of
 higher-order contracts, however, understanding exactly which calls
@@ -960,24 +1032,26 @@ contracts can co-mingle during evaluation, sometimes a call to a
 function is a tail-call but at other times a call to the same function
 call is not a tail-call. For instance, imagine that the argument to f
 was a locally defined recursive function. The recursive calls would
-be tail-calls, since they would not be associated with any top-level
+be tail-calls, since The recursive calls would not be associated with any top-level
 variable, and thus no contract would be enforced.
-Contracts are most effective at module boundaries, where they serve
+Contracts are most effective at module boundaries, where Contracts serve
 the programmer by improving the opportunities for modular rea-
 soning. That is, with well-written contracts, a programmer can
 study a single module in isolation when adding functionality or
 fixing defects. In addition, if the programmer changes a contract,
 the changed contract immediately indicates which other source files
-must change.At a minimum, compiling it as a tail-call becomes much more difficult.
+must change.At a minimum, compiling a minimum as a tail-call becomes much more difficult.
 Since experience has shown that module boundaries are typically
 not involved in tight loops, we conjecture that losing tail recursion
 for contract checking is not a problem in practice. In particular,
 adding these contracts to key interfaces in DrScheme has had no
-noticeable effect on its performance. Removing the tail-call optimization
+noticeable effect on DrScheme performance. Removing the tail-call optimization
 entirely, however, would render DrScheme useless.
 presents further evidence for this conjecture about tail re-
-cursion. His compiler does not preserve tail recursion for any cross-module
-procedure call - not just those with contracts. Still, he has
+cursion. tail re-
+cursion compiler does not preserve tail recursion for any cross-module
+procedure call - not just those with contracts. Still, tail re-
+cursion has
 not found this to be a problem in practice [29, section 3.4.1].
 9 Conclusion
 Higher-order, typed programming language implementations [1,
@@ -985,45 +1059,50 @@ Higher-order, typed programming language implementations [1,
 abuses of the language's primitive operations. For example, programs
 that might apply non-functions, add non-numbers, or invoke
 methods of non-objects are all statically rejected. Yet these languages
-go further. Their run-time systems dynamically prevent additional
+go further. these languages
+ run-time systems dynamically prevent additional
 abuses of the language primitives. For example, the primitive
 array indexing operation aborts if it receives an out of bounds
 index, and the division operation aborts if it receives zero as a divi-
 sor. Together these two techniques dramatically improve the quality
 of software built in these languages.
 With the advent of module languages that support type abstraction
-[13, 18, 24], programmers are empowered to enforce their own
-abstractions at the type level. These abstractions have the same
+[13, 18, 24], programmers are empowered to enforce programmers own
+abstractions at the type level. their own
+abstractions have the same
 expressive power that the language designer used when specifying
 the language's primitives. The dynamic part of the invariant en-
 forcement, however, has become a second-class citizen. The programmer
 must manually insert dynamic checks and blame is not
-assigned automatically when these checks fail. Even worse, as discussed
-in section 2, it is not always possible for the programmer
-to insert these checks manually because the call sites may be in
+assigned automatically when dynamic checks and blame fail. Even worse, as discussed
+in section 2, it is not always possible for The programmer
+to insert dynamic checks and blame manually because the call sites may be in
 unavailable modules.
 This paper presents the first assertion-based contract checker for
-languages with higher-order functions. Our contract checker enables
-programmers to refine the type-specifications of their abstractions
-with additional, dynamically enforced invariants. We illustrate
+languages with higher-order functions. the first assertion-based contract checker for
+languages with higher-order functions enables
+programmers to refine the type-specifications of programmers abstractions
+with additional, dynamically enforced invariants. Our illustrate
 the complexities of higher-order contract checking with a series
 of examples chosen from DrScheme's code-base. These examples
-serve two purposes. First, they illustrate the subtleties of contract
+serve two purposes. First, These examples
+ illustrate the subtleties of contract
 checking for languages with higher-order functions. Second,
-they demonstrate that current static checking techniques are not expressive
+These examples
+ demonstrate that current static checking techniques are not expressive
 enough to support the contracts underlying DrScheme.
-We believe that experience with assertions will reveal which contracts
-have the biggest impact on software quality. We hope that this
+Our believe that experience with assertions will reveal which contracts
+have the biggest impact on software quality. Our hope that this
 information, in turn, helps focus type-system research in practical
 directions.
 
 Acknowledgments
 
 Thanks to Thomas Herchenroder, Michael Vanier, and the anonymous
-ICFP reviews for their comments on this paper.
-We would like to send a special thanks to ICFP reviewer #3, whose
-careful analysis and insightful comments on this paper have renewed
-our faith in the conference reviewing process.
+ICFP reviews for Thomas Herchenroder, Michael Vanier comments on This paper.
+Our would like to send a special thanks to ICFP reviewer #3, whose
+careful analysis and insightful comments on This paper have renewed
+Our faith in the conference reviewing process.
 
 
 --R
@@ -1103,7 +1182,7 @@ Debunking the MYAMPERSANDldquo;expensive procedure callMYAMPERSANDrdquo; myth or
 
 --CTR
 Frances Perry , Limin Jia , David Walker, Expressing heap-shape contracts in linear logic, Proceedings of the 5th international conference on Generative programming and component engineering, October 22-26, 2006, Portland, Oregon, USA
-Dana N. Xu, Extended static checking for haskell, Proceedings of the 2006 ACM SIGPLAN workshop on Haskell, September 17-17, 2006, Portland, Oregon, USA
+Dana N. Xu, Extended static checking for Haskell, Proceedings of the 2006 ACM SIGPLAN workshop on Haskell, September 17-17, 2006, Portland, Oregon, USA
 Philippe Meunier , Robert Bruce Findler , Matthias Felleisen, Modular set-based analysis from contracts, ACM SIGPLAN Notices, v.41 n.1, p.218-231, January 2006
 Matthias Blume , David McAllester, A sound (and complete) model of contracts, ACM SIGPLAN Notices, v.39 n.9, September 2004
 Matthias Blume , David McAllester, Sound and complete models of contracts, Journal of Functional Programming, v.16 n.4-5, p.375-414, July 2006

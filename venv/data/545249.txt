@@ -1,7 +1,7 @@
 --T
 Design tradeoffs for the Alpha EV8 conditional branch predictor.
 --A
-This paper presents the Alpha EV8 conditional branch predictor The Alpha EV8 microprocessor project, canceled in June 2001 in a late phase of development, envisioned an aggressive 8-wide issue out-of-order superscalar microarchitecture featuring a very deep pipeline and simultaneous multithreading. Performance of such a processor is highly dependent on the accuracy of its branch predictor and consequently a very large silicon area was devoted to branch prediction on EV8. The Alpha EV8 branch predictor relies on global history and features a total of 352 Kbits.The focus of this paper is on the different trade-offs performed to overcome various implementation constraints for the EV8 branch predictor. One such instance is the pipelining of the predictor on two cycles to facilitate the prediction of up to 16 branches per cycle from any two dynamically successive, 8 instruction fetch blocks. This resulted in the use of three fetch-block old compressed branch history information for accesing the predictor. Implementation constraints also restricted the composition of the index functions for the predictor and forced the usage of only single-ported memory cells.Nevertheless, we show that the Alpha EV8 branch predictor achieves prediction accuracy in the same range as the state-of-the-art academic global history branch predictors that do not consider implementation constraints in great detail.
+This paper presents the Alpha EV8 conditional branch predictor The Alpha EV8 microprocessor project, canceled in June 2001 in a late phase of development, envisioned an aggressive 8-wide issue out-of-order superscalar microarchitecture featuring a very deep pipeline and simultaneous multithreading. Performance of such a processor is highly dependent on the accuracy of such a processor branch predictor and consequently a very large silicon area was devoted to branch prediction on EV8. The EV8 branch predictor relies on global history and features a total of 352 Kbits.The focus of This paper is on the different trade-offs performed to overcome various implementation constraints for the EV8 branch predictor. One such instance is the pipelining of the predictor on two cycles to facilitate the prediction of up to 16 branches per cycle from any two dynamically successive, 8 instruction fetch blocks. This resulted in the use of three fetch-block old compressed branch history information for accesing The Alpha EV8 branch predictor. Implementation constraints also restricted the composition of the index functions for The Alpha EV8 branch predictor and forced the usage of only single-ported memory cells.Nevertheless, we show that the EV8 branch predictor achieves prediction accuracy in the same range as the state-of-the-art academic global history branch predictors that do not consider implementation constraints in great detail.
 --B
 Introduction
 The Alpha EV8 microprocessor [2] features a 8-wide superscalar
@@ -12,7 +12,8 @@ branch prediction accuracy. The architecture and technology
 of the Alpha EV8 are very aggressive and new challenges
 were confronted in the design of the branch predictor. This
 paper presents the Alpha EV8 branch predictor in great de-
-tail. The paper expounds on different constraints that were
+tail. This
+paper expounds on different constraints that were
 This work was done while the authors were with Compaq during 1999
 faced during the definition of the predictor, and on various
 trade-offs performed that lead to the final design. In par-
@@ -51,7 +52,8 @@ briefly presents the instruction fetch pipeline of the
 Alpha EV8. Section 3 explains why a global history branch
 predictor scheme was preferred over a local. In Section 4,
 we present the prediction scheme implemented in the Alpha
-EV8, 2Bc-gskew. This section also presents the design
+EV8, 2Bc-gskew. Section
+ also presents the design
 space of 2Bc-gskew. The various design dimensions were
 harnessed to fit the EV8 predictor in 352 Kbits memory bud-
 get. Section 5 presents and justifies the history and path information
@@ -67,7 +69,8 @@ evaluation of the EV8 branch predictor as constraints are
 added and turn-around solutions are adopted. Finally, we
 provide concluding remarks in Section 9.
 Alpha EV8 front-end pipeline
-To sustain high performance, the Alpha EV8 fetches up
+To sustain high performance, the Alpha
+EV8 fetches up
 to two, 8-instruction blocks per cycle from the instruction
 cache. An instruction fetch block consists of all consecutive
 valid instructions fetched from the I-cache: an instruction
@@ -136,7 +139,7 @@ But performing the 16 prediction table reads would require
 a 16-ported prediction table.
 Whenever an occurrence of a branch is inflight, the speculative
 history associated with the younger inflight occurrence
-of the branch should be used [8]. Maintaining and
+of a branch should be used [8]. Maintaining and
 using speculative local history is already quite complex
 on a processor fetching and predicting a single branch per
 cycle[20]. On Alpha EV8, the number of inflight branches
@@ -144,7 +147,9 @@ is possibly equal to the maximum number of inflight instructions
 (that is more than 256). Moreover, in EV8 when
 indexing the branch predictor there are up to three fetch
 blocks for which the (speculative) branch outcomes have
-not been determined (see Fig. 1). These three blocks may
+not been determined (see Fig. 1). to three fetch
+blocks for which the (speculative) branch outcomes have
+not been determined (see Fig. 1) may
 contain up to three previous occurrences of every branch in
 the fetch block. In contrast, single speculative global history
 (per thread) is simpler to build and as shown in Section 8
@@ -153,9 +158,10 @@ virtually insensitive to the effects of three fetch blocks old
 global history.
 Finally, the Alpha EV8 is a simultaneous multithreaded
 processor [25, 26]. When independent threads are running,
-they compete for predictor table entries. Such interference
+independent threads compete for predictor table entries. Such interference
 on a local history based scheme can be disastrous, because
-it pollutes both the local history and prediction tables. What
+
+ pollutes both the local history and prediction tables. What
 is more, when several parallel threads are spawned by a single
 application, the pollution is exacerbated unless the local
 history table is indexed using PC and thread number.
@@ -205,7 +211,7 @@ consists of four 2-bit counters banks. Bank BIM is the bi-modal
 predictor, but is also part of the e-gskew predictor.
 Banks G0 and G1 are the two other banks of the e-gskew
 predictor. Bank Meta is the meta-predictor. Depending
-on Meta, the prediction is either the prediction coming out
+on Bank Meta, the prediction is either the prediction coming out
 from BIM or the majority vote on the predictions coming
 out from G0, G1 and BIM
 4.2 Partial update policy
@@ -219,8 +225,7 @@ history
 e-gskew prediction
 bimodal prediction
 metaprediction
-Meta
-address
+Bank Metaaddress
 majority
 vote
 address
@@ -237,7 +242,7 @@ The partial update policy implemented on the Alpha EV8
 consists of the following:
 ffl on a correct prediction:
 when all predictors were agreeing do not update (see
-otherwise: strengthen Meta if the two predictions were
+otherwise: strengthen Bank Meta if the two predictions were
 different, and strengthen the correct prediction on all
 participating tables G0, G1 and BIM as follows:
 -strengthen BIM if the bimodal prediction was used
@@ -252,8 +257,8 @@ prediction according to the new value of the chooser
 -misprediction: update all banks
 Rationale 1 The goal is to limit the number of strengthened
 counters on a correct prediction. When a counter is
-strengthened, it is harder for another (address,history) pair
-to "steal" it. But, when the three predictors BIM, G0 and
+strengthened, a counter is harder for another (address,history) pair
+to "steal" a counter. But, when the three predictors BIM, G0 and
 G1 are agreeing, one counter entry can be stolen by another
 (address, history) pair without destroying the majority pre-
 diction. By not strengthening the counters when the three
@@ -264,7 +269,8 @@ table entry from another (address, history) pair when it can
 be avoided.
 4.3 Using distinct prediction and hysteresis arrays
 Partial update leads to better prediction accuracy than
-total update policy due to better space utilization. It also
+total update policy due to better space utilization. 
+total update policy also
 allows a simpler hardware implementation of a hybrid predictor
 with 2-bit counters.
 When using the partial update described earlier, on a correct
@@ -285,7 +291,7 @@ For the Alpha EV8, silicon area and chip layout constraints
 allowed less space for the hysteresis memory array
 than the prediction memory array. Instead of reducing the
 size of the prediction array, it was decided to use half size
-hysteresis tables for components G1 and Meta. As a result,
+hysteresis tables for components G1 and Bank Meta. As a result,
 two prediction entries share a single hysteresis entry: the
 prediction table and the hysteresis table are indexed using
 the same index function, except the most significant bit.
@@ -312,7 +318,8 @@ for the two tables allows slightly better behavior. Moreover
 as pointed out by Juan et al. [12], the optimal history length
 for a predictor varies depending on the application. This
 phenomenon is less important on a hybrid predictor featuring
-a bimodal table as a component. Its significance is further
+a bimodal table as a component. This
+phenomenon significance is further
 reduced on 2Bc-gskew if two different history lengths
 are used for tables G0 and G1. A medium history length
 can be used for G0 while a longer history length is used for
@@ -341,8 +348,8 @@ Consequently, the large branch predictor used in EV8
 implements a BIM table smaller than the other three components
 
 4.7 The EV8 branch predictor configuration
-The Alpha EV8 implements a very large 2Bc-gskew pre-
-dictor. It features a total of 352 Kbits of memory, consisting
+the Alpha EV8 implements a very large 2Bc-gskew pre-
+dictor. a BIM table features a total of 352 Kbits of memory, consisting
 of 208 Kbits for prediction and 144 Kbits for hysteresis. Design
 space exploration lead to the table sizes indexed with
 different history lengths as listed in Table 1. It may be re-marked
@@ -353,10 +360,11 @@ when implementation constraints are discussed in Section
 5 Path and branch outcome information
 The accuracy of a branch predictor depends both on the
 prediction scheme and predictor table sizes as well as on the
-information vector used to index it. This section describes
+information vector used to index as well. This section describes
 how pipeline constraints lead to the effective information
 vector used for indexing the EV8 Alpha branch predictor.
-This information vector combines the PC address, a compressed
+the effective information
+vector used for indexing the EV8 Alpha branch predictor combines the PC address, a compressed
 form of the three fetch blocks old branch and path
 history and path information form the three last blocks.
 5.1 Three fetch blocks old block compressed his-
@@ -376,7 +384,7 @@ Block compressed history lghist When a single branch is
 predicted per cycle, at most one history bit has to be shifted
 in the global history register on every cycle. When up to
 branches are predicted per cycle, up to 16 history bits
-have to be shifted in the history on every cycle. Such an
+have to be shifted in the global history on every cycle. Such an
 update requires complex circuitry. On the Alpha EV8, this
 complex history-register update would have stressed critical
 paths to the extent that even older history would have had
@@ -406,20 +414,22 @@ blocks
 Due to EV8 pipeline constraints (Section 2), three fetch-
 blocks old lghist is used for the predictor. Although, no
 branch history information from these three blocks can be
-used, their addresses are available for indexing the branch
+used, no
+branch history information from these three blocks can be
+used addresses are available for indexing the branch
 predictor. The addresses of the three previous fetch blocks
 are used in the index functions of the predictor tables.
 5.3 Using very long history
-The Alpha EV8 features a very large branch predictor
+the Alpha EV8 features a very large branch predictor
 compared to those implemented in previous generation mi-
 croprocessors. Most academic studies on global history
 branch predictors have assumed that the length of the global
 history is smaller or equal to log 2 of the number of entries
 of the branch predictor table. For the size of predictor used
-in Alpha EV8, this is far from optimal even when using
+in the Alpha EV8, this is far from optimal even when using
 lghist. For example, when considering "not compressed"
 branch history for a 4*64K 2-bit entries 2Bc-gskew predic-
-tor, using equal history length for G0, G1 and Meta, history
+tor, using equal history length for G0, G1 and Bank Meta, history
 length 24 was found to be a good design point. When considering
 different history lengths, using 17 for G0, 20 for
 Meta and 27 for G1 was found to be a good trade-off.
@@ -503,7 +513,13 @@ fetch block Z, let (y52,y51,.,y6,y5,y4,y3,y2,0,0) be the binary
 representation of address Y, then BA is computed as
 follows:
 if ((y6,y5)==B Z ) then BA =(y6,y5\Phi1) else BA= (y6,y5)
-This computation guarantees the prediction for a fetch
+The
+bank number computation described below guarantees by
+construction that any two dynamically successive fetch
+unshuffle
+Cycle 0
+Phase 1
+Y and Z flows out guarantees the prediction for a fetch
 block will be read from a different bank than that of the
 previous fetch block. The only information bits needed to
 compute the bank numbers for the two next fetch blocks A
@@ -520,7 +536,8 @@ tables.
 As previously mentioned, the Alpha EV8 branch predictor
 is 4-way interleaved and the prediction and hysteresis
 tables are separate. Since the logical organization of
-the predictor contains the four 2Bc-gskew components, this
+the Alpha EV8 branch predictor
+ contains the four 2Bc-gskew components, this
 should translate to an implementation with memory ta-
 bles. However, the Alpha EV8 branch predictor only implements
 eight memory arrays: for each of the four banks
@@ -528,8 +545,9 @@ there is an array for prediction and an array for hysteresis.
 Each word line in the arrays is made up of the four logical
 predictor components.
 This section, presents the physical implementation of the
-branch predictor arrays and the constraints they impose on
-the composition of the indexing functions. The section also
+branch predictor arrays and the constraints the
+branch predictor arrays impose on
+the composition of the indexing functions. This section also
 includes detailed definition of the hashing functions that
 were selected for indexing the different logical components
 in the Alpha EV8 branch predictor.
@@ -578,11 +596,13 @@ predictor tables. As only one cycle phase is available to
 compute the index in the column, only a single 2-entry XOR
 gate is allowed to compute each of these column bits.
 3. Unshuffle: 8-bit prediction words are systematically
-read. This word is further rearranged through a XOR permutation
+read. One 8-bit prediction word is further rearranged through a XOR permutation
 (that is bit at position i is moved at position i \Phi f ).
-This final permutation ensures a larger dispersion of the
+a XOR permutation
+(that is bit at position ensures a larger dispersion of the
 predictions over the array (only entries corresponding to a
-branch instruction are finally useful). It allows also to discriminate
+branch instruction are finally useful). a XOR permutation
+(that is bit at position allows also to discriminate
 between longer history for the same branch PC,
 since the computation of the parameter f for the XOR permutation
 can span over a complete cycle: each bit of f can
@@ -622,13 +642,14 @@ wordline number (i10, ., i5). The bank number computation
 was described in Section 6.
 The wordline number must be immediately available at
 the very beginning of the branch predictor access. There-
-fore, it can either be derived from information already available
+fore, There-
+ can either be derived from information already available
 earlier, such as the bank number, or directly extracted
 from information available at the end of the previous cycle
 such as the three fetch blocks old lghist and the fetch block
 address.
 The fetch block address is the most natural choice, since
-it allows the use of an effective bimodal table for component
+The fetch block address allows the use of an effective bimodal table for component
 BIM in the predictor. However, simulations showed that the
 distribution of the accesses over the BIM table entries were
 unbalanced. Some regions in the predictor tables were used
@@ -637,7 +658,8 @@ Using a mix of lghist history bits and fetch block address
 bits leads to a more uniform use of the different word
 lines in the predictor, thus allowing overall better predictor
 performance. As a consequence, component BIM in the
-branch predictor uses 4 bits of history in its indexing function
+branch predictor uses 4 bits of history in component BIM in the
+branch predictor indexing function
 
 The wordline number used is given by
 (i10,i9,i8,i7,i6,i5)= (h3,h2,h1,h0,a8,a7).
@@ -669,13 +691,14 @@ histories differ by only one or two bits then the two occurrences
 should not map onto the same predictor entry in any
 table : to guarantee this, whenever an information bit is XORed
 with another information bit for computing a column
-bit, at least one of them will appear alone for the computation
+bit, at least one of the same instruction fetch block address A, two
+histories differ by only one or two bits then will appear alone for the computation
 of one bit of the unshuffle parameter.
-3. if a conflict occurs in a table, then try to avoid it on the
+3. if a conflict occurs in a table, then try to avoid a conflict on the
 two other tables: to approximate this, different pairs of history
 bits are XORed for computing the column bits for the
 three tables.
-This methodology lead to the design of the indexing
+The following methodology lead to the design of the indexing
 functions defined below:
 Indexing G0 To simplify the implementation of column s-
 electors, G0 and Meta share i15 and i14. Column selection
@@ -694,8 +717,8 @@ h5\Phih13,h4\Phih9,a9\Phih6).
 Unshuffling is defined by (i4,i3,i2)= (a4\Phia10\Phia5
 \Phih7\Phih10\Phih14\Phih13\Phiz5, a3\Phia12\Phia14\Phia6\Phih4\Phi h6
 8 Evaluation
-In this section, we evaluate the different design decisions
-that were made in the Alpha EV8 predictor design. We first
+In This section, we evaluate the different design decisions
+that were made in the Alpha EV8 predictor design. we first
 justify the choice of the hybrid skewed predictor 2Bc-gskew
 against other schemes relying on global history. Then step
 by step, we analyze benefits or detriments brought by design
@@ -704,7 +727,7 @@ decisions and implementation constraints.
 8.1.1 Simulation
 Trace driven branch simulations with immediate update
 were used to explore the design space for the Alpha EV8
-branch predictor, since this methodology is about three orders
+branch predictor, since The following methodology is about three orders
 of magnitude faster than the complete Alpha EV8 processor
 simulation. We checked that for branch predictors
 using (very) long global history as those considered in this
@@ -776,7 +799,7 @@ table size history
 length (for our benchmark set) was 20. For log 2 history
 length 17 bits were used.
 ffl a 1M entries (2M bits) gshare. The optimum history
-length (on our benchmark set) was 20 (i.e log 2 of the
+length (on our ) was 20 (i.e log 2 of the
 predictor table size).
 ffl a 288 Kbits and 576 Kbits YAGS predictor [4] (respec-
 tive best history length 23 and 25 ) the small configuration
@@ -786,7 +809,8 @@ partially tagged tables called direction caches, tags are
 (resp. not-taken), the not-taken (resp. taken) direction
 cache is searched. On a miss in the searched direction
 cache, the bimodal table provides the prediction. On
-a hit, the direction cache provides the prediction. For
+a hit, direction
+cache provides the prediction. For
 log 2 history length 14 bits (resp 15 bits) were used. 1
 
 Figure
@@ -857,7 +881,7 @@ EV8 Size. The latter fits the 352Kbits budget of the Alpha
 EV8 predictor. The information vector used for indexing
 the predictor is the information vector used on Alpha EV8.
 Reducing the size of the BIM table has no impact at all
-on our benchmark set. Except for go, the effect of using half
+on our benchmark set. Except for GO, the effect of using half
 size hysteresis tables for G0 and Meta is barely noticeable.
 go presents a very large footprint and consequently is the
 most sensitive to size reduction.
@@ -870,8 +894,10 @@ Simulations results presented so far did not take into account
 hardware constraints on the indexing functions. 8 bits
 of index must be shared and can not be hashed, and computation
 of the column bits can only use one 2-entry XOR gate
-Intuitively, these constraints should lead to some loss of ef-
-ficiency, since it restricts the possible choices for indexing
+Intuitively, account
+hardware constraints on the indexing functions should lead to some loss of ef-
+ficiency, since ef-
+ restricts the possible choices for indexing
 functions.
 However, it was remarked in [16] that (for caches) partial
 skewing is almost as efficient as complete skewing. The
@@ -879,7 +905,8 @@ same applies for branch predictors: sharing 8 bits in the
 indices does not hurt the prediction accuracy as long as the
 shared index is uniformly distributed.
 The constraint of using unhashed bits for the wordline
-number turned out to be more critical, since it restricted the
+number turned out to be more critical, since the wordline
+number restricted the
 distribution of the shared index. Ideally for the EV8 branch
 predictor, one would desire to get the distribution of this
 shared 8 bit index as uniform as possible to spread accesses
@@ -905,7 +932,7 @@ in lghist has only a small impact on a 2Bc-gskew predictor
 indexed using hashing functions with no hardware
 constraints. However, adding the path information in the
 history for the Alpha EV8 predictor makes the distribution
-of lghist more uniform, allows its use in the shared index
+of lghist more uniform, allows the Alpha EV8 predictor use in the shared index
 compress gcc go ijpeg li m88ksim perl vortex
 lghist/ghist 1.24 1.57 1.12 1.20 1.55 1.53 1.32 1.59
 
@@ -933,7 +960,7 @@ stands the comparison against a 512 Kbits 2Bc-gskew
 predictor using conventional branch history.
 9 Conclusion
 The branch predictor on Alpha EV8 was defined at the
-beginning of 1999. It features 352 Kbits of memory and delivers
+beginning of 1999. The branch predictor on Alpha EV8 features 352 Kbits of memory and delivers
 up to 16 branch predictions per cycle for two dynamically
 succesive instruction fetch blocks. Therefore, a global
 history prediction scheme had to be used. In 1999, the hybrid
@@ -953,18 +980,18 @@ Implementation constraints imposed a three fetch blocks
 old compressed form of branch history, lghist, instead of the
 effective branch history. However, the information vector
 used to index the Alpha EV8 branch predictor stands the
-comparison with complete branch history. It achieves that
+comparison with complete branch history. the Alpha EV8 branch predictor achieves that
 by combining path information with the branch outcome to
 build lghist and using path information from the three fetch
 blocks that have to be ignored in lghist.
-The Alpha EV8 is four-way interleaved and each bank
+Alpha EV8 is four-way interleaved and each bank
 is single ported. On each cycle, the branch predictor supports
 requests from two dynamically succesive instruction
 fetch blocks but does not require any hardware conflict res-
 olution, since bank number computation guarantees by construction
 that any two dynamically succesive fetch blocks
 will access two distinct predictors banks.
-The Alpha EV8 branch predictor features four logical
+the Alpha EV8 branch predictor features four logical
 components, but is implemented as only two memory ar-
 rays, the prediction array and the hysteresis array. There-
 fore, the definition of index functions for the four (logi-
@@ -980,7 +1007,7 @@ branch history for which no constraint on the indexing functions
 was imposed.
 In future generation microprocessors, branch prediction
 accuracy will remain a major issue. Even larger predictors
-than the predictor implemented in the Alpha EV8 may
+than the predictor implemented in Alpha EV8 may
 be considered. However, this brute force approach would
 have limited return except for applications with a very large
 number of branches. This is exemplified on our benchmark
@@ -1068,7 +1095,8 @@ Chunrong Lai , Shih-Lien Lu , Yurong Chen , Trista Chen, Improving branch predic
 Daniel A. Jimnez, Fast Path-Based Neural Branch Prediction, Proceedings of the 36th annual IEEE/ACM International Symposium on Microarchitecture, p.243, December 03-05,
 Haitham Akkary , Srikanth T. Srinivasan , Konrad Lai, Recycling waste: exploiting wrong-path execution to improve branch prediction, Proceedings of the 17th annual international conference on Supercomputing, June 23-26, 2003, San Francisco, CA, USA
 E. F. Torres , P. Ibanez , V. Vinals , J. M. Llaberia, Store Buffer Design in First-Level Multibanked Data Caches, ACM SIGARCH Computer Architecture News, v.33 n.2, p.469-480, May 2005
-Abhas Kumar , Nisheet Jain , Mainak Chaudhuri, Long-latency branches: how much do they matter?, ACM SIGARCH Computer Architecture News, v.34 n.3, p.9-15, June 2006
+Abhas Kumar , Nisheet Jain , Mainak Chaudhuri, Long-latency branches: how much do May 2005
+Abhas Kumar , Nisheet Jain , Mainak Chaudhuri, Long-latency branches matter?, ACM SIGARCH Computer Architecture News, v.34 n.3, p.9-15, June 2006
 Daniel A. Jimnez, Improved latency and accuracy for neural branch prediction, ACM Transactions on Computer Systems (TOCS), v.23 n.2, p.197-218, May 2005
 Jamison Collins , Suleyman Sair , Brad Calder , Dean M. Tullsen, Pointer cache assisted prefetching, Proceedings of the 35th annual ACM/IEEE international symposium on Microarchitecture, November 18-22, 2002, Istanbul, Turkey
 David Tarjan , Kevin Skadron, Merging path and gshare indexing in perceptron branch prediction, ACM Transactions on Architecture and Code Optimization (TACO), v.2 n.3, p.280-300, September 2005

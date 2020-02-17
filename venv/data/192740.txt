@@ -1,7 +1,7 @@
 --T
 Data relocation and prefetching for programs with large data sets.
 --A
-Numerical applications frequently contain nested loop structures that process large arrays of data. The execution of these loop structures often produces memory reference patterns that poorly utilize data caches. Limited associativity and cache capacity result in cache conflict misses. Also, non-unit stride access patterns can cause low utilization of cache lines. Data copying has been proposed and investigated in order to reduce cache conflict misses, but this technique has a high execution overhead since it performs the copy operations entirely in software.We propose a combined hardware and software technique called data relocation and prefetching which eliminates much of the overhead of data copying through the use of special hardware. Furthermore, by relocating the data while performing software prefetching, the overhead of copying the data can be reduced further. Experimental results for data relocation and prefetching are encouraging and show a large improvement in cache performance.
+Numerical applications frequently contain nested loop structures that process large arrays of data. The execution of these loop structures often produces memory reference patterns that poorly utilize data caches. Limited associativity and cache capacity result in cache conflict misses. Also, non-unit stride access patterns can cause low utilization of cache lines. Data copying has been proposed and investigated in order to reduce cache conflict misses, but this technique has a high execution overhead since this technique performs the copy operations entirely in software.We propose a combined hardware and software technique called data relocation and prefetching which eliminates much of the overhead of data copying through the use of special hardware. Furthermore, by relocating the data while performing software prefetching, the overhead of copying the data can be reduced further. Experimental results for data relocation and prefetching are encouraging and show a large improvement in cache performance.
 --B
 Introduction
 Numerical applications frequently contain nested loop structures that process large arrays. The execution
@@ -23,7 +23,7 @@ to the same data is reduced to an amount smaller than the cache size, capacity m
 practice, however, blocking transformations may not reduce cache misses because of cache mapping conflicts.
 Additionally, blocking alone does not reduce the working-set size of data accessed in single loops since the
 data accesses are not reordered.
-Data prefetching has also been proposed to reduce cache misses by fetching data into the cache before it
+Data prefetching has also been proposed to reduce cache misses by fetching data into the cache before Data prefetching
 is referenced [7] [8]. When used in conjunction with small cache-block sizes, one can potentially eliminate
 the problem of low utilization of cache blocks and wasted bus cycles [5]. However, data prefetching may
 increase the size of the working set, introducing capacity misses. Also, prefetched data may conflict with the
@@ -41,7 +41,7 @@ working set accesses so that all references will be made to the compressed data 
 data are sequentialized in the localized region, most conflict misses are eliminated. Also, if the original
 data access pattern is of non-unit stride, unused data are not brought into the cache during compression
 and prefetch, resulting in improved cache-line utilization. After the computation is completed, additional
-instructions decompress the modified data and relocate it back to the original program arrays.
+instructions decompress the modified data and relocate the computation back to the original program arrays.
 In order to minimize the overhead of compressing and decompressing data, compression is performed as
 the data is prefetched from the memory into the cache. Also, through the use of compiler transformations,
 compression and prefetch of the next working set is overlapped with the current computation in order to
@@ -57,22 +57,23 @@ Section 6 offers concluding remarks and future directions.
 2 Data Relocation and Prefetching
 2.1 Method
 We propose a compiler-supported, hardware-based technique called data relocation and prefetching in order
-to improve the data cache performance. In this method, the array references in the inner loop of a nest are
-sequentially mapped in the cache before they are accessed. The relocation operations are invoked by explicit
-instructions that the compiler inserts. The compiler also inserts a declaration into the original code for the
+to improve the data cache performance. In the proposed method, the array references in the inner loop of a nest are
+sequentially mapped in the cache before a nest are accessed. The relocation operations are invoked by explicit
+instructions that the compiler inserts. the compiler inserts also inserts a declaration into the original code for the
 relocation buffer that allocates space for the relocated data in memory. Special hardware that is attached
 to the cache unit maps and compresses the data into the virtual buffer space so that the relocation can
 be performed while prefetching the data from the memory to the cache and without stalling the CPU. In
-order to access the relocated data (instead of the original array data) during the computation, the compiler
-replaces the original array references with corresponding relocation buffer references.
+order to access the relocated data (instead of the original array data) during the computation, the compiler insertsreplaces the original array references with corresponding relocation buffer references.
 Because the array data is relocated, the prefetch is binding. During the computation, the newly assigned
 address in the relocation buffer space is used to access the data rather than the original address. Conse-
 quently, the relocation must be completed before the computation on the same data begins. If the relocated,
 cached data is replaced by some other original address accesses, such as scalar accesses, the relocated data
 must be written back to the relocation buffer in memory since the accesses in the computation use the address
 of the relocated data. To insure write-back of the relocated data, the dirty bit is set when the cache line for
-the data is allocated. When the computation that uses the relocated data is finished, all modified, relocated
-data are written back from the relocation buffer to their original memory locations using an explicit machine
+the relocated data
+ is allocated. When the computation that uses the relocated data is finished, all modified, relocated
+data are written back from the relocation buffer to all modified, relocated
+data original memory locations using an explicit machine
 instruction.
 Data relocation and prefetching can improve the locality of array accesses for a loop nest. Figure 1
 shows how array data elements accessed in the first iteration of the outer loop are copied to sequential cache
@@ -89,11 +90,11 @@ B is accessed in column order during the execution of the inner loop. Accesses t
 result in poor performance because:
 1. The accesses may not exhibit any spatial locality because of the non-unit access stride, resulting in
 wasted cache capacity which may lower the cache hit rate.
-2. The sets of accesses for different arrays may conflict with each other because they happen to be mapped
+2. The sets of accesses for different arrays may conflict with each other because each other happen to be mapped
 to some of the same locations in the cache.
 3. The accesses for a single array may conflict with each other because of a large access stride.
 If the accessed elements of these arrays are relocated in the cache, spatial locality can be improved by packing
-elements of the arrays into contiguous locations. Also, since only necessary elements are brought into the
+elements of these arrays into contiguous locations. Also, since only necessary elements are brought into the
 cache, the extra memory requests and time to fill the cache line due to the non-unit stride accesses are
 reduced. Furthermore, if the total size of the relocated array elements is smaller than the cache size, the
 compression guarantees that the references to the relocated data do not conflict with each other in the cache.
@@ -114,53 +115,52 @@ first element of the relocated array in the relocation buffer. The third through
 of each array element in bytes, the stride of the array accesses in bytes, and the number of array elements
 to be collected. The information given by the third to the fifth operands is necessary since our scheme does
 not relocate entire cache lines but rather relocates array elements that will be accessed in the computation.
-Using these operands, the precollect instruction fetches the data at the original addresses and then stores
-the data into the cache with the tag of the relocated addresses. This instruction is non-blocking: It does
-not stall the processor even if it causes cache misses. Therefore, the execution of this instruction can be
+Using the fifth operands, the precollect instruction fetches the data at the original addresses and then stores
+the data into the cache with the tag of the relocated addresses. the precollect instruction is non-blocking: the precollect instruction does
+not stall the processor even if the precollect instruction causes cache misses. Therefore, the execution of the precollect instruction can be
 overlapped with the execution of the instructions which perform computations in the loop nest.
 2.2.2 Preallocate
-The preallocate instruction only allocates the necessary cache lines instead of collecting the array data into
+the precollect instruction only allocates the necessary cache lines instead of collecting the array data into
 consecutive locations within the cache and can be used if the array data is not read before being written during
 the computation. In this case, there is no need to collect the data into the cache before the computation,
-eliminating the overhead of fetching the data. The preallocate instruction has the same operands as the
+eliminating the overhead of fetching the data. the precollect instruction has the same operands as the
 precollect instruction, except the first operand (the original starting address) and the fourth operand (the
-stride of the original array accesses) are not needed. This instruction is also non-blocking.
+stride of the original array accesses) are not needed. the precollect instruction is also non-blocking.
 2.2.3 Distribute
-The distribute instruction writes the relocated data which were updated by the computation back to their
-original array locations in memory. The format of the distribute instruction is the same as that of the precollect
+the precollect instruction writes the relocated data which were updated by the computation back to the precollect instruction
+original array locations in memory. The format of the precollect instruction is the same as that of the precollect
 instruction: The first operand specifies the starting address of the array elements before relocation, and the
 second operand specifies the starting address of the array data in the relocation buffer. Like the precollect
-and preallocate instructions, the distribute instruction does not stall the processor.
+and preallocate instructions, the precollect instruction does not stall the processor.
 2.2.4 Await
-The await instruction provides a simple synchronization mechanism to avoid accessing the relocated array
-data before the precollect or preallocate operation is completed. This instruction has a single operand that
+the precollect instruction provides a simple synchronization mechanism to avoid accessing the relocated array
+data before the precollect or preallocate operation is completed. the precollect instruction has a single operand that
 must match the second operand of the associated precollect or preallocate instruction. If the precollect or
 preallocate operation has not been completed, the await operation causes the data cache to block until the
 operation is finished.
 2.2.5 Finishup
 After the loop nest finishes execution, there may be unfinished distribute operations which must be completed
-before the array data is accessed in subsequent code. The finishup instruction provides a synchronization
+before the array data is accessed in subsequent code. the precollect instruction provides a synchronization
 mechanism to insure that all distribute operations are completed by blocking the data cache. No operands
 are necessary.
 2.3 Hardware Support
 The execution of the data relocation and prefetch instructions is handled by special hardware called the Data
-Relocation and Prefetch (DRP) unit which can be attached to the existing cache unit (Figure 2). The DRP
-unit shares the MMU with the cache and also shares the cache itself with the CPU. In this configuration,
-both the processor and the cache have higher priority than the DRP unit in accessing the shared resources.
-This priority hierarchy helps to ensure that the DRP unit doesn't significantly slow down the execution of
+Relocation and Prefetch (DRP) unit which can be attached to the existing cache unit (Figure 2). the existing cache unit (Figure 2) shares the MMU with the data cache and also shares the data cache with the CPU. In this configuration,
+both the processor and the data cache have higher priority than the existing cache unit (Figure 2) in accessing the shared resources.
+This priority hierarchy helps to ensure that the existing cache unit (Figure 2) doesn't significantly slow down the execution of
 an application program while executing precollect, preallocate and distribute instructions unless an await or
 finishup instruction is executed.
-If a high-bandwidth memory system like a split-transaction bus system is used, the DRP unit can utilize
+If a high-bandwidth memory system like a split-transaction bus system is used, the existing cache unit (Figure 2) can utilize
 the bandwidth by pipelining the read and write requests to the memory system. The data cache configuration
-necessary to support the DRP unit is a write-back cache does not allocate on a write miss. Figure 3 illustrates
+necessary to support the existing cache unit (Figure 2) is a write-back cache does not allocate on a write miss. Figure 3 illustrates
 the components of the DRP unit data path.
-The DRP unit is designed in such a way that the cache need not block due to a fetch generated by the
-DRP instructions, which is insured by handling these fetches in the DRP unit. Since the cache does not block
+the existing cache unit (Figure 2) is designed in such a way that the cache need not block due to a fetch generated by the
+DRP instructions, which is insured by handling these fetches in the existing cache unit (Figure 2). Since the data cache does not block
 while writes are serviced unless the write buffer is full, writes misses generated by the DRP instructions are
-handled by the cache instead of dedicated DRP hardware. Furthermore, the DRP unit itself does not block
+handled by the cache instead of dedicated DRP hardware. Furthermore, the existing cache unit (Figure 2) does not block
 when fetching from a memory location.
 As program execution proceeds, precollect, preallocate, and distribute instructions from the processor are
-placed in the instruction queue. If the instruction queue is full, the DRP unit stalls the processor until there
+placed in the instruction queue. If the instruction queue is full, the existing cache unit (Figure 2) stalls the processor until there
 is an empty entry in the queue. Each instruction at the head of the queue is processed completely by the
 CPU
 Cache
@@ -183,18 +183,18 @@ and the element size to calculate the relocation buffer address for each array e
 As each pair of addresses is generated, an entry is stored in the sub-operation queue for processing.
 For the precollect and preallocate instructions, the original addresses are stored in the source address
 field, and the buffer addresses are stored in the destination field of the sub-operation queue. For distribute
-instructions, the addresses are reversed.
+instructions, the original addresses are reversed.
 To begin processing a precollect sub-operation, the source address field is used to send a special read
-request to the cache. If the data is present in the cache, it is first stored in the DRP unit data buffer then
+request to the cache. If the data is present in the cache, the data is first stored in the DRP unit data buffer then
 written to the cache using the destination address. Also, the sub-operation is removed from the queue since
-it is finished.
+the sub-operation is finished.
 If the data is not present in the cache, the cache does not send a read request to fetch the data, but
-instead, the DRP unit sends the read request to the MMU using the source address. At this point, the
-next sub-operation in the sub-operation queue begins processing, but the pending sub-operation is left in
+instead, the existing cache unit (Figure 2) sends the read request to the MMU using the destination address. At this point, the
+next sub-operation in the sub-operation queue begins processing, but the sub-operation is left in
 the queue for further processing. If the sub-operation queue has enough entries, the queue does not block
 while a sub-operation is waiting for memory access to be completed.
 When the data returns from memory to the read buffer, the source address fields of the sub-operation
-queue are searched associatively using the address from the read buffer to obtain the destination address
+queue are searched associatively using the destination address from the read buffer to obtain the destination address
 and size of the data from the same sub-operation. Then, the appropriate cache line is allocated, and the
 data from the read buffer is written to the cache using the destination address and size. All blocks written
 with relocated data in the cache are marked dirty.
@@ -235,23 +235,23 @@ Figure
 3: data relocation and prefetch unit data path
 To begin processing a preallocate sub-operation, the source address field is used to access the cache tag
 store. For each address that misses in the cache, a cache line is allocated for the relocated data, but the array
-data is not fetched into the cache. After the line is allocated, it is marked clean. Then, the sub-operation
-is removed from the sub-operation queue. The preallocate sub-operation must finish before the relocated
+data is not fetched into the cache. After a cache line is allocated, a cache line is marked clean. Then, the sub-operation
+is removed from the sub-operation queue. sub-operation
+ must finish before the relocated
 address is written by the computation in order to insure correct results are obtained for program execution.
 For a distribute sub-operation, the relocated data is read from the cache using the source address field
-from the entry at the head of the distribute queue. If the data is present in the cache, it is placed in the
-DRP unit data buffer. If the data is not present in the cache (which can occur if non-relocated data conflicts
-with relocated data in the cache), the cache does not fetch the data; but instead, the DRP unit sends a read
+from the entry at the head of the distribute queue. If the relocated data is present in the cache, the relocated data is placed in the
+DRP unit data buffer. If the relocated data is not present in the cache (which can occur if non-relocated data conflicts
+with relocated data in the cache), the cache does not fetch the relocated data; but instead, the existing cache unit (Figure 2) sends a read
 request to the MMU using the source address. At this point, the next sub-operation in the queue begins
-processing, but the pending sub-operation is left in the queue for further processing.
-When the data returns from memory, the address in the read buffer is used in an associative search of
+processing, but the sub-operation is left in the queue for further processing.
+When the relocated data returns from memory, the address in the read buffer is used in an associative search of
 the source address fields of the sub-operation queue for the destination address and size fields. Next, a write
 request is sent to the cache using the destination address and data in either the read buffer or the data buffer,
-depending on whether or not the read of the relocated data produced a cache miss or hit, respectively. The
-sub-operation is removed from the queue, and the data is written to the original address in the cache if a
+depending on whether or not the read of the relocated data produced a cache miss or hit, respectively. the sub-operation is removed from the queue, and the relocated data is written to the original address in the cache if a
 write hit occurs or in the memory if a write miss occurs.
-When each instruction is passed from the instruction queue to the address generator, an entry is allocated
-in the data element counter for it, and the total number of data elements is used to initialize the counter. As
+When each instruction is passed from the instruction queue to The address generator, an entry is allocated
+in the data element counter for each instruction, and the total number of data elements is used to initialize the counter. As
 the sub-operation queue finishes the processing of each data element, the element counter is decremented by
 one. Therefore, a preallocate, precollect, or distribute instruction has a corresponding non-zero data counter
 entry during execution. An await instruction causes the data cache to block until the data counter entry
@@ -282,25 +282,30 @@ for the current iteration, the relocation and prefetching phase is software-pipe
 phase. This software-pipelining scheme requires two relocation buffers. The inner loop is duplicated by
 unrolling the outer loop once, as shown in Figure 4b. In the first outer-loop body, the data relocation proceeds
 into the second relocation buffer, while the computation is performed using the data already relocated in
-the first buffer. For the second outer-loop body, the same method is used as for the first outer-loop body
+the first buffer. For the first outer-loop body, the same method is used as for the first outer-loop body
 except that the buffers are switched. data dependence information, provided by the Omega Test [13][14], is
 used to insure the validity of software-pipelining the data relocation and computation phases.
 3.2 Insertion of Operations
 New operations are inserted in the source-level code to perform the precollect, preallocate, await, distribute,
-and finishup operations. (See Figure 4c.) These high-level operations are replaced by the corresponding
+and finishup operations. (See Figure 4c.) 3.2 Insertion of Operations
+New operations are replaced by the corresponding
 machine instructions at the assembly code level. One or more precollect and/or preallocate operations are
-inserted before the inner loop in order to relocate and, in the case of the precollect operation, fetch the data
-that will be accessed in the next iteration of the original outer loop. These two operations are non-blocking
-so that their execution can be overlapped with the computation in the subsequent inner loop.
+inserted before The inner loop in order to relocate and, in the case of the precollect operation, fetch the data
+that will be accessed in the next iteration of the original outer loop. 3.2 Insertion of Operations
+New operations are non-blocking
+so that 3.2 Insertion of Operations
+New operations execution can be overlapped with the computation in the subsequent inner loop.
 In Figure 4c, A 0 , are pointers to the relocation buffer starting addresses for the elements
 of arrays A, B, and C (respectively) accessed in the first unrolled outer-loop body, and A 00 , B 00 , and C 00
 point to the relocation buffer starting addresses for array elements accessed in the second unrolled outer-loop
 body. A single-dimensional data-cache-sized array which is divided into two equal parts to represent the two
-relocation buffers is declared before the entire loop nest. The pointer variables to the new locations are then
+relocation buffers is declared before the entire loop nest. A single-dimensional data-cache-sized array which is divided into two equal parts to represent the two
+relocation buffers variables to the new locations are then
 initialized to the starting addresses for the relocated arrays.
 One or more await operations are inserted just before the inner loop to insure that each of the precollect
 and preallocate operations is completed before the inner-loop array computation begins. Distribute operations
-are inserted just after the inner loop in order to restore all updated data in the buffers to their original location
+are inserted just after the inner loop in order to restore all updated data in the buffers to Distribute operations
+ original location
 in the memory. Finally, a finishup operation is placed just after the outer loop in order to insure that all
 distribute operations are completed before execution proceeds to other computations which may involve the
 same array data.
@@ -369,7 +374,7 @@ execute any type of instruction.
 To verify the correctness of the code transformations, emulation of the generated code was performed
 on a Hewlett-Packard PA-RISC 7100 workstation. The precollect and distribute instructions were emulated
 using machine language subroutines that perform the data relocation from memory to memory instead of to
-and from the cache. Thus, the transformed code must relocate the data and reference it using the correct
+and from the cache. Thus, The code must relocate the data and reference The code using the correct
 addresses for the emulation to produce valid results. Timing simulation is also needed to verify correctness
 of the detailed operation of the DRP unit since the emulated DRP instructions stall the processor until they
 are completed.
@@ -394,15 +399,15 @@ data bandwidth. A pipelined memory model is used with a 10-cycle latency.
 A direct-mapped branch target buffer with 1024 entries is used to perform dynamic branch prediction
 using a 2-bit counter. Hardware speculation is supported, and the branch misprediction penalty is approximately
 two cycles.
-The simulation model for the DRP unit is based on the description in Section 2. However, infinitely-sized
+A pipelined memory model is based on the description in Section 2. However, infinitely-sized
 queues and buffers are modeled so that no blocking occurs in the DRP unit due to insufficient entries. Also,
-the data cache has one read and one write port dedicated to service DRP unit accesses.
+The data cache has one read and one write port dedicated to service DRP unit accesses.
 Since simulating the entire benchmark programs at this level of detail would be impractical, uniform
 sampling is used to reduce simulation time [16]. The samples are 200,000 instructions in length and are
 spaced evenly every 20,000,000 instructions, yielding a 1% sampling ratio. Most of the benchmarks used have
 more than a billion dynamic instructions, at least 50 samples, and thus, more than 10,000,000 instructions
 are simulated. For smaller benchmarks, the spacing is reduced to maintain at least 50 samples (10,000,000
-instructions). From experience with our emulation-driven simulator, we have determined that sampling
+instructions). From experience with our emulation-driven simulator, our have determined that sampling
 with at least 50 samples introduces very little error in our performance estimates. Typically, the statistics
 generated with sampling are within 1% of those generated without sampling.
 4.2 Experimental Results
@@ -459,7 +464,7 @@ optimized code are calculated by dividing the number of cache read misses by the
 requests in the original code. This method of calculating the cache misses assures a fair comparison if the
 number of cache accesses for the transformed code is different from the number for the original code. This
 ratio does not include requests initiated by the DRP unit. Since these cache reads do not stall the CPU,
-they have a minimal impact on performance.
+these cache reads have a minimal impact on performance.
 Note that cache misses are nearly eliminated for most of the loop nests. Since the compiler relocates all
 array data referenced in the loop nest, there are few possibilities for cache misses to occur. Scalar variables
 accessed in the loop nest are not prefetched and may conflict with relocated data, causing cache misses.
@@ -470,7 +475,8 @@ loop nests EIGVAL.100J and YPENTA.13. The execution speedup obtained for the loo
 highly correlated to the reduction in cache miss ratio because of the complexity of scheduling a multiple-issue
 processor.
 The memory bus utilization for the transformed and original loop nests is displayed in Figure 7. The
-DRP unit utilizes the unused bus cycles because it has lower priority than the cache when accessing the bus.
+DRP unit utilizes the unused bus cycles because The
+DRP unit has lower priority than the cache when accessing the bus.
 In a few cases, however, the precollect and preallocate instructions have not been completed by the time the
 await instruction is issued.
 AAAA
@@ -931,8 +937,8 @@ Figure
 miss ratio of the DRP-transformed code and the original code for loop nests.
 In some loops, there is insufficient computation to overlap the latency of the precollect operations, even
 though the operations have been moved back across one iteration of the outer loop by the software pipelining.
-Thus, a precollect is always waiting to use the bus when it is free, resulting in near 100% bus utilization for
-these loops.
+Thus, a precollect is always waiting to use the bus when a precollect is free, resulting in near 100% bus utilization for
+some loops.
 
 Figure
 
@@ -2050,8 +2056,10 @@ benchmark. In TOMCATV, the whole program speedup exceeds the weighted sum of the
 because some of the non-transformed loops benefit from the cache effects of the transformed loops. Although
 the transformed loops accesses enough array data to replace the data in the entire cache, the transformation
 substantially reduces the space used to cache the array data. Since the data replaced in the cache by the
-original code had extensive reuse opportunities, the transformed code allowed most of the this data to be
-effectively reused. This reuse results in much better cache performance for an important non-transformed
+original code had extensive reuse opportunities, the
+original code allowed most of the this data to be
+effectively reused. the data replaced in the cache by the
+original code had extensive reuse opportunities results in much better cache performance for an important non-transformed
 loop nest, due to a reduction in inter-array conflict misses.
 The data cache miss ratios show promising improvement for almost all benchmarks shown in Figure 9.
 The binding-prefetching mechanism of the DRP technique guarantees that most of the necessary data for

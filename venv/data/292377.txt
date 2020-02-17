@@ -1,7 +1,7 @@
 --T
 Approximate Inverse Preconditioners via Sparse-Sparse Iterations.
 --A
-The standard incomplete LU (ILU) preconditioners often fail for general sparse indefinite matrices because they give rise to "unstable" factors L and U.  In such cases, it may be attractive to approximate the inverse of the matrix directly.  This paper focuses on approximate inverse preconditioners based on minimizing ||I-AM||F, where AM is the preconditioned matrix.  An iterative descent-type method is used to approximate each column of the inverse.  For this approach to be efficient, the iteration must be done in sparse mode, i.e., with "sparse-matrix by sparse-vector" operations.  Numerical dropping is applied to maintain sparsity; compared to previous methods, this is a natural way to determine the sparsity pattern of the approximate inverse.  This paper describes Newton, "global," and column-oriented algorithms, and discusses options for initial guesses, self-preconditioning, and dropping strategies. Some limited theoretical results on the properties and convergence of approximate inverses are derived.  Numerical tests on problems from the Harwell--Boeing collection and the FIDAP fluid dynamics analysis package show the strengths and limitations of approximate inverses. Finally, some ideas and experiments with practical variations and applications are presented.
+The standard incomplete LU (ILU) preconditioners often fail for general sparse indefinite matrices because The standard incomplete LU (ILU) preconditioners give rise to "unstable" factors L and U.  In such cases, it may be attractive to approximate the inverse of the matrix directly.  This paper focuses on approximate inverse preconditioners based on minimizing ||I-AM||F, where AM is the preconditioned matrix.  An iterative descent-type method is used to approximate each column of the inverse.  For this approach to be efficient, the iteration must be done in sparse mode, i.e., with "sparse-matrix by sparse-vector" operations.  Numerical dropping is applied to maintain sparsity; compared to previous methods, this is a natural way to determine the sparsity pattern of the approximate inverse.  This paper describes Newton, "global," and column-oriented algorithms, and discusses options for initial guesses, self-preconditioning, and dropping strategies. Some limited theoretical results on the properties and convergence of approximate inverses are derived.  Numerical tests on problems from the Harwell--Boeing collection and the FIDAP fluid dynamics analysis package show the strengths and limitations of approximate inverses. Finally, some ideas and experiments with practical variations and applications are presented.
 --B
 Introduction
 . The incomplete LU factorization preconditioners were originally
@@ -19,7 +19,7 @@ the matrix A is diagonally dominant, L and U are typically well conditioned, and
 size of L remains confined within reasonable limits, typically with a clustering
 of its eigenvalues around the origin. On the other hand, when the original matrix is
 not diagonally dominant, L \Gamma1 or U \Gamma1 may have very large norms, causing the error
-to be very large and thus adding large perturbations to the identity matrix.
+to be very large and thus adding large perturbations to the original matrix.
 This form of instability was studied by Elman [14] in a detailed analysis of ILU and
 MILU preconditioners for finite difference matrices. It can be observed experimentally
 This work was supported in part by the National Science Foundation under grant NSF/CCR-
@@ -47,7 +47,7 @@ columns of the residual matrix I \Gamma AM
 in which e j and m j are the j-th columns of the identity matrix and of the matrix
 M , respectively. Thus, minimizing (1.4) is equivalent to minimizing the individual
 functions
-This is clearly useful for parallel implementations. It also gives rise to a number of
+This is clearly useful for parallel implementations. This also gives rise to a number of
 different options.
 The minimization in (1.5) is most often performed directly by prescribing a sparsity
 pattern for M and solving the resulting least squares problems. Grote and Simon
@@ -65,7 +65,7 @@ definite systems and construct factorized sparse approximate inverse preconditio
 which are also symmetric, positive definite. Each factor implicitly approximates the
 inverse of the lower triangular Cholesky factor of A. The structure of each factor is
 chosen to be the same as the structure of the lower triangular part of A. In their more
-recent work [24], fill-in elements may be added, and their locations are chosen such
+recent work [24], fill-in elements may be added, and fill-in locations are chosen such
 that the construction and application of the approximate inverse is not much more
 expensive on a model hypercube computer. Preconditioners for general systems may
 be constructed by approximating the left and right factors separately.
@@ -83,17 +83,17 @@ an appropriate pattern is usually not known beforehand. In contrast to the previ
 work described above, the locations and values of the nonzero elements are determined
 naturally as a side-effect of utilizing an iterative procedure to minimize (1.3)
 or (1.5). In addition, elements in the approximate inverse may be removed by a numerical
-dropping strategy if they contribute little to the inverse. These features are
+dropping strategy if elements in the approximate inverse contribute little to the inverse. These features are
 clearly necessary for general sparse matrices. In xx2.1 and 2.2 we briefly describe two
-approaches where M is treated as a matrix in its entirety, rather than as individual
-columns. We found, however, that these methods converge more slowly than if the
+approaches where M is treated as a matrix in M entirety, rather than as individual
+columns. we found, however, that these methods converge more slowly than if the
 columns are treated separately. In the remaining sections, we consider this latter
 approach and the various options that are available.
 2.1. Newton iteration. As an alternative to directly minimizing the objective
 function (1.3), an approximate inverse may also be computed using an iterative process
 known as the method of Hotelling and Bodewig [20]. This method, which is modeled
 after Newton's method for solving f(x) j 1=x \Gamma a = 0, has many similarities to our
-descent methods which we describe later. The iteration takes the form
+descent methods which we describe later. Newton iteration takes the form
 For convergence, we require that the spectral radius of I \Gamma AM 0 be less than one, and
 if we choose an initial guess of the form M convergence is achieved if
 In practice, we can follow Pan and Reif [27] and use
@@ -156,7 +156,7 @@ Proof. For any matrix E we have
 Thus, the differential of F applied to E is the inner product of \Gamma2A T R with E plus
 a second order term. The gradient is therefore simply \Gamma2A T R.
 The steepest descent algorithm consists of simply replacing G in line 3 of the MR
-algorithm described above by This algorithm can be a very slow in some
+algorithm described above by The steepest descent algorithm can be a very slow in some
 cases, since it is essentially a steepest descent-type algorithm applied to the normal
 equations.
 In either global steepest descent or minimal residual, we need to form and store
@@ -164,20 +164,22 @@ the G matrix explicitly. The scalars kAGk 2
 F and tr(R T AG) can be computed from the
 successive columns of AG, which can be generated, used, and discarded. Therefore,
 we need not store the matrix AG.
-We will show the results of some numerical experiments with this global iteration
-and compare them with other methods in x4.
+we will show the results of some numerical experiments with this global iteration
+and compare some numerical experiments with this global iteration
+ with other methods in x4.
 2.3. Implementation of sparse mode MR and GMRES. We now describe
 column-oriented algorithms which consist of minimizing the individual objective functions
 (1.5). We perform this minimization by taking a sparse initial guess and solving
 approximately the n linear subproblems
 with a few steps of a nonsymmetric descent-type method, such as MR or untruncated
-GMRES. For this method to be efficient, the iterative method must work in sparse
+GMRES. For this method to be efficient, this method must work in sparse
 mode, i.e., m j is stored and operated on as a sparse vector, and the Arnoldi basis in
 GMRES is kept in sparse format.
 In the following MR algorithm, n i iterations are used to solve (2.3) approximately
 for each column, giving an approximation to the j-th column of the inverse of A.
 Each initial m j is taken from the columns of an initial guess, M 0 . Again, we assume
-numerical dropping is applied to M . In the GMRES version of the algorithm, we
+numerical dropping is applied to M . In the 
+GMRES version of the algorithm, we
 never use restarting since since n i is typically very small. Also, a variant called
 FGMRES [31] which allows an arbitrary Arnoldi basis, is actually used in this case.
 Algorithm 2.3. (Minimal Residual iteration)
@@ -191,7 +193,7 @@ Algorithm 2.3. (Minimal Residual iteration)
 8. Apply numerical dropping to m j
 9. End do
 10. End do
-Thus, the algorithm computes the current residual r j and then minimizes the
+Thus, Algorithm 2.3 computes the current residual r j and then minimizes the
 residual norm e j;new in the set
 In the sparse implementation of MR and GMRES, the matrix-vector product,
 SAXPY, and dot product kernels now all entirely involve sparse vectors. The matrix-vector
@@ -207,12 +209,14 @@ the spectral radius ae(I \Gamma ffAM ). Denoting the initial guess as M writing
 leads to
 tr(AM)
 The transpose initial guess is more expensive to use because it is denser than the
-identity initial guess. However, for very indefinite systems, this guess immediately
+identity initial guess. However, for very indefinite systems, The transpose initial guess immediately
 produces a symmetric positive definite preconditioned system, corresponding to the
 normal error equations. Depending on the structure of the inverse, a denser initial
 guess is often required to involve more of the matrix A in the computation. Interest-
-ingly, the cheaper the computation, the more it uses only 'local' information, and the
-less able it may be to produce a good approximate inverse.
+ingly, the cheaper the computation, the more Interest-
+ uses only 'local' information, and the
+less able Interest-
+ may be to produce a good approximate inverse.
 The choice of initial guess also depends to some degree on 'self-preconditioning'
 which we describe next. Additional comments on the choice of initial guess will be
 presented there.
@@ -242,7 +246,8 @@ combined with a scaled transpose initial guess; the initial preconditioned syste
 is positive definite, and the subsequent preconditioned systems somewhat maintain
 this property, even in the presence of numerical dropping. Self-preconditioning with
 a transpose initial guess, however, may produce worse results if the matrix A is
-very ill-conditioned. In this case, the initial worsening of the conditioning of the
+very ill-conditioned. In this
+case, the initial worsening of the conditioning of the
 system is too severe, and the alternative scaled identity initial guess should be used
 instead. We have also found cases where self-preconditioning produces worse results,
 usually for positive definite problems; this is not surprising, since the minimizations
@@ -250,7 +255,7 @@ would progress very well, only to be hindered by self-preconditioning with a poo
 approximate inverse in the early stages. Numerical evidence of these phenomena will
 be provided in x4.
 Algorithm 2.4 implements the Minimal Residual iteration with self-preconditioning.
-In the algorithm, n iterations and n i inner iterations are used. Again,
+In The steepest descent algorithm, n iterations and n i inner iterations are used. Again,
 initially. We have also indicated where numerical dropping might be applied.
 Algorithm 2.4. (Self-preconditioned Minimal Residual iteration)
 1. Start:
@@ -271,7 +276,7 @@ In a FORTRAN 77 implementation, M is stored as n sparse vectors, each holding
 up to lfil entries. M is thus constructed in place.
 The multiple outer iterations used in constructing the approximate inverse suggests
 the use of factorized updates. Factorized matrices can express denser matrices
-than the sum of their numbers of elements alone. Suppose that one outer iteration
+than the sum of Factorized matrices numbers of elements alone. Suppose that one outer iteration
 has produced the approximate inverse M 1 . Then a second outer iteration tries to
 find M 2 , an approximate inverse to AM 1 . In general, after i outer iterations, we are
 looking for the update M i+1 which minimizes
@@ -283,14 +288,16 @@ which alternate from left to right factors. This latter form is reminiscent of t
 symmetric form of Kolotilina and Yeremin [23].
 Since the product never formed explicitly, the factorized approach
 effectively uses less memory for the preconditioner at the cost of multiplying with each
-factor for each matrix-vector multiplication. This approach may be suitable for very
+factor for each matrix-vector multiplication. the factorized approach
+ may be suitable for very
 large problems, where memory rather than solution time is the limiting factor. The
 implementation, however, is much more complex, since a sequence of matrices needs
 to be maintained.
 2.5. Numerical dropping strategies. There are many options for numerical
 dropping. So far, to ease the presentation, we have only discussed the case where
 dropping is performed on the solution vectors or matrices. Section 2.5.1 discusses
-this case in more detail, while x2.5.2 discusses the case where dropping is applied to
+this
+case in more detail, while x2.5.2 discusses the case where dropping is applied to
 the search directions. In the latter case, the descent property of the algorithms is
 maintained.
 2.5.1. Dropping in the solution. When dropping is performed on the solution,
@@ -303,14 +310,16 @@ column of M is computed. Typically this option is too expensive, but as a compro
 dropping may be performed at the end of a few inner iterations, before M is updated,
 namely before step 13 in Algorithm 2.4. Interestingly, we found experimentally that
 this option is not always better.
-In GMRES, the Krylov basis vectors are kept sparse by dropping elements just
+In 
+GMRES, the Krylov basis vectors are kept sparse by dropping elements just
 after the self-preconditioning step, before the multiplication by A.
 To address which elements are dropped, we can utilize a dual threshold strategy
 based on a drop tolerance, droptol, and the maximum number of elements per column,
 lfil. By limiting the maximum number of elements per column, the maximum storage
 for the preconditioner is known beforehand.
 The drop tolerance may be applied directly to the elements to be dropped: i.e.,
-elements are dropped if their magnitude is smaller than droptol. However, we found
+elements are dropped if 
+elements magnitude is smaller than droptol. However, we found
 that this strategy could cause spoiling of the minimization, i.e., the residual norm
 may increase after several steps, along with a deterioration of the quality of the
 preconditioner.
@@ -328,7 +337,8 @@ close to zero so that for practical sizes of kdk 2 , kAdk 2
 becomes dominant,
 causing an increase in the residual norm.
 Consider specifically the situation where only one element is dropped, and assume
-that all the columns Ae i of A have been pre-scaled so that kAe i 1. In this case,
+that all the columns Ae i of A have been pre-scaled so that kAe i 1. In this
+case,
 and the above equation becomes
 A strategy could therefore be based on attempting to make the function
 nonpositive, a condition which is easy to verify. This suggests selecting elements to
@@ -337,7 +347,7 @@ However, note that this is not entirely rigorous since in practice a few element
 dropped at the same time. Thus we do not entirely perform dropping via numerical
 values alone. In a two-stage process, we first select a number of candidate elements
 to be dropped based only on the numerical size as determined by a certain tolerance.
-Among these, we drop all those that satisfy the condition
+Among This, we drop all those that satisfy the condition
 or we can keep those lfil elements that have the largest ae ij .
 Another alternative is based on attempting to achieve maximum reduction in the
 function (2.8). Ideally, we wish to have
@@ -410,15 +420,15 @@ the approximate inverse is relatively high. Let n be the dimension of the linear
 be the number of outer iterations, and n i be the number of inner iterations (n
 in Algorithm 2.5).
 We approximate the cost by the number of sparse matrix-sparse vector multiplications
-in the sparse mode implementation of MR and GMRES. Profiling for a
+in the sparse mode implementation of MR and 
+GMRES. Profiling for a
 few problems shows that this operation accounts for about three-quarters of the time
 when self-preconditioning is used. The remaining time is used primarily by the sparse
 dot product and sparse SAXPY operations, and in the case of sparse mode GMRES,
 the additional work within this algorithm.
 If Algorithm 2.4 is used, two sparse mode matrix-vector products are used, the
 first one for computing the residual; three are required if self-preconditioning is used.
-In Algorithm 2.5 the residual may be updated easily and stored, or recomputed as in
-Algorithm 2.4. Again, an additional product is required for self-preconditioning. The
+In Algorithm 2.4 the residual may be updated easily and stored, or recomputed as inAlgorithm 2.4. Again, an additional product is required for self-preconditioning. The
 cost is simply nn times the number of these sparse mode matrix-vector multipli-
 cations. Each multiplication is cheap, depending on the sparseness of the columns in
 M . Dropping in the search directions, however, is slightly more expensive because,
@@ -464,15 +474,15 @@ Of particular interest is the 1-norm. Each column is obtained independently by
 requiring a condition on the residual norm of the form
 We typically use the 2-norm since we measure the magnitude of the residual I \Gamma AM
 using the Frobenius norm. However, using the 1-norm for a stopping criterion allows
-us to prove a number of simple results. We will assume in the following that we
+us to prove a number of simple results. We will assume in the following that We
 require a condition of the form
-for each column. Then we can prove the following result.
+for each column. Then We can prove the following result.
 Proposition 3.3. Assume that the condition (3.5) is imposed on each computed
 column of the approximate inverse and let
 1. Any eigenvalue  of the preconditioned matrix AM is located in the disc
 2. If  ! 1, then M is nonsingular.
 3. If any k columns of M , with k  n, are linearly dependent then at least one
-residual associated with one of these columns has a 1-norm  1.
+residual associated with one of any k columns of M , with k   has a 1-norm  1.
 Proof. To prove the first property we invoke Gershgorin's theorem on the matrix
 each column of R is the residual vector r . The column version of
 Gershgorin's theorem, see e.g., [30, 17], asserts that all the eigenvalues of the matrix
@@ -496,14 +506,14 @@ norms. Since the other norms are equivalent we can clearly adapt the above resul
 in an easy way. For example,
 However, the resulting statements would be too weak to be of any practical value. We
 can exploit the fact that since we are computing a sparse approximation, the number
-p of nonzero elements in each column is small, and thus we replace the scalar n in the
+p of nonzero elements in each column is small, and thus We replace the scalar n in the
 above inequalities by p [18].
-We should point out that the result does not tell us anything about the degree
+We should point out that the result does not tell We anything about the degree
 of sparsity of the resulting approximate inverse M . It may well be the case that in
-order to guarantee nonsingularity, we must have an M that is dense, or nearly dense.
-In fact, in the particular case where the norm in the proposition is the 1-norm, it has
+order to guarantee nonsingularity, We must have an M that is dense, or nearly dense.
+In fact, in the particular case where the norm in the proposition is the 1-norm, the proposition has
 been proved by Cosgrove, D'iaz and Griewank [10] that the approximate inverse may
-be structurally dense, in that it is always possible to find a sparse matrix A for which
+be structurally dense, in that the approximate inverse is always possible to find a sparse matrix A for which
 M will be dense if kI \Gamma AMk 1 ! 1.
 14 E. CHOW AND Y. SAAD
 Next we examine the sparsity of M and prove a simple result for the case where
@@ -514,14 +524,14 @@ then the element m ij is nonzero.
 Proof. From the equality
 Thus,
 and
-Thus, if the condition (3.9) is satisfied, we must have us
+Thus, if the condition (3.9) is satisfied, we must have we
 that if R is small enough, then the nonzero elements of M are located in positions
 corresponding to the larger elements in the inverse of A. The following negative result
 is an immediate corollary.
 Corollary 3.5. Let  de defined as in Proposition 3.3. If the nonzero elements
 of are -equimodular in that
 then the nonzero sparsity pattern of M includes the nonzero sparsity pattern of A \Gamma1 .
-In particular, if A \Gamma1 is dense and its elements are -equimodular, then M is also
+In particular, if A \Gamma1 is dense and A \Gamma1 elements are -equimodular, then M is also
 dense. The smaller the value of  , the more likely the condition of the corollary will
 be satisfied. Another way of stating the corollary is that we will be able to compute
 accurate and sparse approximate inverses only if the elements of the actual inverse
@@ -529,7 +539,7 @@ have variations in size. Unfortunately, this is difficult to verify in advance.
 3.2. Case of a nearly singular A. Consider first a singular matrix A, with
 a singularity of rank one, i.e., the eigenvalue 0 is single. Let z be an eigenvector
 associated with this eigenvalue. Then, each subsystem (2.3) that is being solved by
-MR or GMRES will provide an approximation to the system, except that it cannot
+MR or GMRES will provide an approximation to the system, except that the system cannot
 resolve the component of the initial residual associated with the eigenvector z. In
 other words, the iteration may stagnate after a few steps. Let us denote by P the
 spectral projector associated with the zero eigenvalue, by m 0 the initial guess to the
@@ -547,14 +557,14 @@ zero with an associated eigenvector z. Note that for any vector v we have
 If z and v are of norm one, then the residual is perturbed by a magnitude of ffl. Viewed
 from another angle, we can say that for a perturbation of order ffl in the residual, the
 approximate inverse can be perturbed by a matrix of norm close to one.
-3.3. Eigenvalue clustering around zero. We observed in many of our experiments
+3.3. Eigenvalue clustering around zero. We observed in many of We experiments
 that often the matrix M obtained in a self-preconditioned iteration would
 admit a cluster of eigenvalues around the origin. More precisely, it seems that if at
 some point an eigenvalue of AM moves very close to zero, then this singularity tends
 to persist in the later stages in that the zero eigenvalue will move away from zero
 only very slowly. These eigenvalues seem to slow-down or even prevent convergence.
-In this section, we attempt to analyze this phenomenon. We examine the case where
-at a given intermediate iteration the matrix M becomes exactly singular. We start
+In this section, we attempt to analyze this phenomenon. we examine the case where
+at a given intermediate iteration the matrix M becomes exactly singular. we start
 by assuming that a global MR iteration is taken, and that the preconditioned matrix
 AM is singular, i.e., there exists a nonzero vector z such that
 In our algorithms, the initial guess for the next (outer) iteration is the current M ,
@@ -611,12 +621,12 @@ Note that B k+1 is also a polynomial of degree 2 k in B 0 . In particular, if th
 (equivalently R 0 ) is symmetric, then all subsequent R k 's and B k 's are also symmetric.
 This is achieved when the initial M is a multiple of A T , i.e., when
 We are now ready to prove a number of simple results.
-Proposition 3.6. If the self-preconditioned MR iteration converges, then it does
+Proposition 3.6. If the self-preconditioned MR iteration converges, then Proposition 3.6 does
 so quadratically.
 Proof. Define for any ff,
 Recall that ff k achieves the minimum of kR(ff)k F over all ff's. In particular,
 This proves quadratic convergence at the limit.
-The following proposition is a straightforward generalization to the matrix case
+Proposition 3.6 is a straightforward generalization to the matrix case
 of a well-known result [13] concerning the convergence of the vector Minimal Residual
 iteration.
 Proposition 3.7. Assume that at a given step k, the matrix B k is positive
@@ -663,7 +673,8 @@ simplify the notation. The new residual associated with the current column is gi
 by
 We use the orthogonality of the new residual against AMr to obtain
 kr new k 2
-Replacing ff by its value defined above we get
+Replacing ff by k 2
+ value defined above We get
 kr new k 2
 Thus, at each inner iteration, the residual norm for the j-th column is reduced according
 to the formula
@@ -693,25 +704,26 @@ As a result, when the algorithm converges, it does so quadratically.
 Proof. Inequality (3.22) was proved above. To prove quadratic convergence, we
 first transform this inequality by using the fact that kXk 2  kXkF to obtain
 kr new
-Here the k index corresponds to the outer iteration and the j-index to the column.
+Here the index corresponds to the outer iteration and the j-index to the column.
 We note that the Frobenius norm is reduced for each of the inner steps corresponding
 to the columns, and therefore
 This yields
 kr new
 F kr j k 2which, upon summation over j gives
 This completes the proof.
-It is also easy to show a similar result for the following variations:
+This is also easy to show a similar result for the following variations:
 1. MR with an arbitrary number of inner steps,
 2. GMRES(m) for an arbitrary m.
 These follow from the fact that the algorithms deliver an approximate column which
 has a smaller residual than what we obtain with one inner step MR.
 We emphasize that quadratic convergence is guaranteed only at the limit and
 that the above theorem does not prove convergence. In the presence of numerical
-dropping, the proposition does not hold.
+dropping, Proposition 3.6 does not hold.
 4. Numerical experiments and observations. Experiments with the algorithms
 and options described in x2 were performed with matrices from the Harwell-Boeing
 sparse matrix collection [12], and matrices extracted from example problems
-in the FIDAP fluid dynamics analysis package [16]. The matrices were scaled so that
+in the FIDAP fluid dynamics analysis package [16]. matrices from the Harwell-Boeing
+sparse matrix collection [12] were scaled so that
 the 2-norm of each column is unity. In each experiment, we report the number of
 GMRES(20) steps to reduce the initial residual of the right-preconditioned linear system
 by 10 \Gamma5 . A zero initial guess was used, and the right-hand-side was constructed
@@ -725,7 +737,7 @@ vectors) one inner iteration was used unless otherwise indicated; in algorithm 2
 codes in FORTRAN 77, C++, and Matlab were used, and run in 64-bit precision on
 Sun workstations and a Cray C90 supercomputer.
 We begin with a comparison of Newton, 'global' and column-oriented iterations.
-Our early numerical experiments showed that in practice, Newton iteration converges
+We early numerical experiments showed that in practice, Newton iteration converges
 very slowly initially and is more adversely affected by numerical dropping. Global
 iterations were also worse than column-oriented iterations, perhaps because a single
 ff defined by (2.2) is used, as opposed to one for each column in the column-oriented
@@ -756,7 +768,7 @@ MR 281 120 86 61 43
 The eigenvalues of the preconditioned WEST0067 matrix are plotted in Fig. 4.1,
 both with and without dropping, using column-oriented MR iterations. As the iterations
 proceed, the eigenvalues of the preconditioned system become closer to 1.
-Numerical dropping has the effect of spreading out the eigenvalues. When dropping
+Numerical dropping has the effect of spreading out The eigenvalues of the preconditioned WEST0067 matrix. When dropping
 is severe and spoiling occurs, we have observed two phenomena: either dropping causes
 22 E. CHOW AND Y. SAAD
 some eigenvalues to become negative, or some eigenvalues stay clustered around the
@@ -778,8 +790,11 @@ origin.
 -0.10.10.3
 Fig. 4.1. Eigenvalues of preconditioned system, WEST0067
 Next we show some results on matrices that arise from solving the fully-coupled
-Navier-Stokes equations. The matrices were extracted from the FIDAP package at the
-final nonlinear iteration of each problem in their Examples collection. The matrices are
+Navier-Stokes equations. matrices from the Harwell-Boeing
+sparse matrix collection [12] were extracted from the FIDAP package at the
+final nonlinear iteration of each problem in matrices from the Harwell-Boeing
+sparse matrix collection [12] Examples collection. matrices from the Harwell-Boeing
+sparse matrix collection [12] are
 from 2-dimensional finite element discretizations using 9-node quadrilateral elements
 for velocity and temperature, and linear discontinuous elements for pressure.
 
@@ -787,9 +802,10 @@ Table
 
 4.2 lists some statistics about all the positive definite matrices from the
 collection. The combination of ill-conditioning and indefiniteness of the other matrices
-was too difficult for our methods, and their results are not shown here.
-All the matrices are also symmetric, except for Example 7. None of the matrices
-could be solved with ILU(0) or ILUT [32], a threshold incomplete LU factorization,
+was too difficult for our methods, and our methods results are not shown here.
+matrices from the Harwell-Boeing
+sparse matrix collection [12] are also symmetric, except for Example 7. None of matrices from the Harwell-Boeing
+sparse matrix collection [12]could be solved with ILU(0) or ILUT [32], a threshold incomplete LU factorization,
 
 Table
 FIDAP Example matrices.
@@ -801,7 +817,9 @@ flow over multiple steps in a channel
 13 2568 75628 Axisymmetric flow through a poppet valve
 of a liquid in an annulus
 radiation heat transfer in a cavity
-even with large amounts of fill-in. Our experience with these matrices is that they
+even with large amounts of fill-in. Our experience with matrices from the Harwell-Boeing
+sparse matrix collection [12] is that matrices from the Harwell-Boeing
+sparse matrix collection [12]
 produce unstable L and U factors in (1.2).
 
 Table
@@ -822,8 +840,8 @@ Perturbations are added to the inverse of diagonal elements to avoid small pivot
 and thus control the size of the elements in the L and U factors. We use a two-level
 block ILU strategy called BILU(0)-SVD(ff), that uses a modified singular value
 decomposition to invert the blocks. When a block needs to be inverted,
-it is replaced by the perturbed inverse
-\Sigma is \Sigma with its singular
+a block is replaced by the perturbed inverse
+\Sigma is \Sigma with \Sigma singular
 values thresholded by ffoe 1 , a factor of the largest singular value.
 
 Table
@@ -833,14 +851,14 @@ for this set of problems, showing results comparable to approximate inverse prec
 ditioning, but with less work to compute the preconditioner. None of the problems
 converged, however, for 0:1, and there was not one ff that gave the best result
 for all problems.
-We now show our main results in Table 4.5 for several standard matrices in
+We now show We main results in Table 4.5 for several standard matrices in
 the Harwell-Boeing collection. All the problems are nonsymmetric and indefinite,
 except for SHERMAN1 which is symmetric, negative definite. In addition, SAYLR3
 is singular. SHERMAN2 was reordered with reverse Cuthill-McKee to attempt to
 change the sparsity pattern of the inverse. Again, we show the number of GMRES
 iterations to convergence against the number of outer iterations used to compute the
 approximate inverse. A scaled transpose initial guess was used. When columns in
-the initial guess contained more than lfil nonzeros, dropping was applied to the guess.
+the initial guess contained more than lfil nonzeros, dropping was applied to A scaled transpose initial guess.
 
 Table
 preconditioner.
@@ -866,7 +884,7 @@ pivot, where ffi is the drop tolerance. ILU factorization strategies simply do n
 in these cases.
 We have shown the best results after a few trials with different parameters. The
 method is sensitive to the widely differing characteristics of general matrices, and
-apart from the comments we have already made for selecting an initial guess and
+apart from the comments We have already made for selecting an initial guess and
 whether or not to use self-preconditioning, there is no general set of parameters that
 works best for constructing the approximate inverse.
 The following two tables illustrate some different behaviors that can be seen for
@@ -901,12 +919,12 @@ none I p 5.34 4.21 3.53 3.08 2.75
 PORES3 none A T p 10.78 9.30 8.25 7.66 7.16
 none A T u 12.95 12.02 11.48 10.82 10.20
 5. Practical variations and applications. Approximate inverses can be expensive
-to compute for very large and difficult problems. However, their best potential
+to compute for very large and difficult problems. However, Approximate inverses best potential
 is in combinations with other techniques. In essence, we would like to apply these
 techniques to problems that are either small, or for which we start close to a good
 solution in a certain sense.
-We saw in Table 4.5 that approximate inverses work well with small matrices,
-most likely because of their local nature. In the next section, we show how smaller
+we saw in Table 4.5 that approximate inverses work well with small matrices,
+most likely because of small matrices local nature. In the next section, we show how smaller
 approximate inverses may be used effectively in incomplete block tridiagonal factorizations
 
 5.1. Incomplete block tridiagonal factorizations. Incomplete factorization
@@ -933,10 +951,12 @@ block size that would yield a block tridiagonal system (the last block has size 
 Since the matrix arises from a finite element problem, a more careful selection of the
 partitioning may yield better results. In the worse case, a pivot block may be singular;
 this would cause difficulties for several approximate inverse techniques such as [23] if
-the sparsity pattern is not augmented. In our case, a minimal residual solution in the
+the sparsity pattern is not augmented. In the worse case, a minimal residual solution in the
 null space would be returned.
 Since the matrix contains different equations and variables, the rows of the system
-were scaled by their 2-norms, and then their columns were scaled similarly. A Krylov
+were scaled by the rows of the system
+ 2-norms, and then the rows of the system
+ columns were scaled similarly. A Krylov
 subspace size for GMRES of 50 was used. Table 5.1 first illustrates the solution with
 BILU(0)-SVD(ff) with a block size of 5 for comparison. The infinity-norm condition
 of the inverse of the block LU factors is estimated with k(LU) \Gamma1 ek1 , where e is the
@@ -975,7 +995,7 @@ est. steps precon solve total precon
 The timings show that BTIF-MR-s(10) is comparable to BILU(0)-SVD(0.5) but
 uses much less memory. Although the actual number of nonzeros in the matrix is
 259 879, there were 39 355 block nonzeros required in BILU(0), and therefore almost a
-million entries that needed to be stored. BILU(0) required more time in the iterations
+million entries that needed to be stored. BILU(0 required more time in the iterations
 because the preconditioner was denser, and needed to operate with much smaller
 blocks. The MR methods produced approximate inverses that were sparser than
 the original pivot blocks. The LS method produces approximate inverses with the
@@ -984,15 +1004,15 @@ computation time. The solution was poor, however, possibly because the second,
 third, and fourth pivot blocks were poorly approximated. In these cases, at least one
 local least squares problem had linearly independent columns. No pivot blocks were
 singular.
-5.2. Improving a preconditioner. In all of our previous algorithms, we sought
+5.2. Improving a preconditioner. In all of our previous algorithms, our sought
 a matrix M to make AM close to the identity matrix. To be more general, we can
 seek instead an approximation to some matrix B. Thus, we consider the objective
 function
 F
 in which B is some matrix to be defined. Once we find a matrix M whose objective
-function (5.3) is small enough, then the preconditioner for the matrix A is defined by
+function (5.3) is small enough, then the preconditioner for the identity matrix A is defined by
 This implies that B is a matrix which is easy to invert, or rather, that solving systems
-with B should be inexpensive. At one extreme when A, the best M is the identity
+with B should be inexpensive. At one extreme when A, a matrix M is the identity
 matrix, but solves with B are expensive. At the other extreme, we find our standard
 situation which corresponds to I , and which is characterized by trivial B-solves
 but expensive to obtain M matrices. In between these two extremes there are a
@@ -1001,8 +1021,8 @@ A.
 28 E. CHOW AND Y. SAAD
 Another way of viewing the concept of approximately minimizing (5.3) is that of
 improving a preconditioner. Here B is an existing preconditioner, for example, an
-LU factorization. If the factorization gives an unsatisfactory convergence rate, it is
-difficult to improve it by attempting to modify the L and U factors. One solution
+LU factorization. If the factorization gives an unsatisfactory convergence rate, the factorization is
+difficult to improve the factorization by attempting to modify the L and U factors. One solution
 would be to discard this factorization and attempt to recompute a fresh one, possibly
 with more fill-in. Clearly, this may be wasteful especially in the case when this process
 must be iterated a few times due to persistent failures.
@@ -1020,7 +1040,7 @@ Improving a preconditioner.
 block block
 Matrix
 Besides these applications, we have used approximate inverse techniques for several
-other purposes. Like in (5.3), we can generalize our problem to minimize
+other purposes. Like in (5.3), we can generalize we problem to minimize
 F
 where b is a right-hand side and x is an approximate sparse solution. The right-hand
 side b does not need to be sparse if dropping is used in the search direction. Sparse
@@ -1029,24 +1049,26 @@ example, to form a sparse approximation to a Schur complement or its inverse. Se
 and [8] for more details.
 6. Conclusion. This paper has described an approach for constructing approximate
 inverses via sparse-sparse iterations. The sparse mode iterations are designed
-to be economical, however, their cost is still not competitive with ILU factorizations.
+to be economical, however, The sparse mode iterations cost is still not competitive with ILU factorizations.
 Other approximate inverse techniques that use adaptive sparsity selection schemes
 also suffer from the same drawback. However, several examples show that these preconditioners
 may be applied to cases where other existing options, such as perturbed
 ILU factorizations, fail.
 More importantly, our conclusion is that the greatest value of sparse approximate
-inverses may be their use in conjunction with other preconditioners. We demonstrated
+inverses may be the greatest value of sparse approximate
+inverses use in conjunction with other preconditioners. our demonstrated
 this with incomplete block factorizations and improving block diagonal pre-
-conditioners. They have also been used successfully for computing sparse solutions
+conditioners. the greatest value of sparse approximate
+inverses have also been used successfully for computing sparse solutions
 when constructing preconditioners, and one variant has the promise of computing
 approximations to operators that may be effectively dense.
-Two limitations of approximate inverses in general are their local nature, and
+Two limitations of approximate inverses in general are Two limitations of approximate inverses in general local nature, and
 the question of whether or not an inverse can be approximated by a sparse matrix.
-Their local nature suggests that their use is more effective on small problems, for
+Their local nature suggests that Their use is more effective on small problems, for
 example the pivot blocks in incomplete factorizations, or else large amounts of fill-in
 must be allowed. In current work, Tang [33] couples local inverses over a domain in
 a Schur complement approach. Preliminary results are consistently better than when
-the approximate inverse is applied directly to the matrix, and its effect has similarities
+the approximate inverse is applied directly to the matrix, and the matrix effect has similarities
 to [7].
 In trying to ensure that there is enough variation in the entries of the inverse for
 a sparse approximation to be effective, we have tried reordering to reduce the profile
@@ -1056,8 +1078,8 @@ inverse, and thus permit a better sparse approximation.
 
 Acknowledgments
 
-. The authors are grateful to the referees for their comments
-which substantially improved the quality of this paper. The authors also wish to
+. The authors are grateful to the referees for The authors comments
+which substantially improved the quality of This paper. The authors also wish to
 acknowledge the support of the Minnesota Supercomputer Institute which provided
 the computer facilities and an excellent environment to conduct this research.
 

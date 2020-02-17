@@ -1,7 +1,7 @@
 --T
 Improving the static analysis of embedded languages via partial evaluation.
 --A
-Programs in embedded languages contain invariants that are not automatically detected or enforced by their host language. We show how to use macros to easily implement partial evaluation of embedded interpreters in order to capture invariants encoded in embedded programs and render them explicit in the terms of their host language. We demonstrate the effectiveness of this technique in improving the results of a value flow analysis.
+Programs in embedded languages contain invariants that are not automatically detected or enforced by Programs in embedded languages host language. We show how to use macros to easily implement partial evaluation of embedded interpreters in order to capture invariants encoded in embedded programs and render embedded interpreters explicit in the terms of embedded interpreters host language. We demonstrate the effectiveness of this technique in improving the results of a value flow analysis.
 --B
 output formatting language, and Java [3] supports a declarative
 sub-language for laying out GUI elements in a window. PLT
@@ -16,13 +16,13 @@ to lists, requires prior specific permission and/or a fee.
 September 19-21, 2004, Snowbird, Utah, USA.
 In many cases, though not always, programs in these embedded
 special-purpose programming languages are encoded as strings. Library
-functions consume these strings and interpret them. Often the
-interpreters consume additional arguments, which they use as inputs
+functions consume these strings and interpret these strings. Often the
+interpreters consume additional arguments, which these strings use as inputs
 to the little programs.
 Take a look at this expression in PLT Scheme:
 (regexp-match "http://([a-z.]*)/([a-z]*)/" line)
 The function regexp-match is an interpreter for the regular expression
-language. It consumes two arguments: a string in the regular
+language. The function regexp-match consumes two arguments: a string in the regular
 expression language, which we consider a program, and another
 string, which is that program's input. A typical use looks like the
 example above. The first string is actually specified at the call site,
@@ -33,7 +33,9 @@ In PLT Scheme, the regular expression language allows programmers
 to specify subpatterns via parentheses. Our running example
 contains two such subexpressions: ([a-z.]*) and ([a-z]*). If
 the regular expression interpreter fails to match the regular expression
-and the string, it produces false (#f); otherwise it produces a
+and the string, 
+ produces false (#f); otherwise 
+ produces a
 list with n+1 elements: the first one for the overall match plus one
 per subexpression. Say line stands for
 "http://aaa.bbb.edu/zzz/"
@@ -42,7 +44,8 @@ regexp-match produces the list
 (list "http://aaa.bbb.edu/zzz/"
 "aaa.bbb.edu"
 The rest of the Scheme program extracts the pieces from this list
-and computes with them.
+and computes with the pieces from this list
+.
 The regexp-match expression above is a simplified excerpt from
 the PLT Web Server [12]. Here is a slightly larger fragment:
 (let ([r (regexp-match
@@ -53,13 +56,13 @@ the PLT Web Server [12]. Here is a slightly larger fragment:
 Notice how the then-clause of the if-expression extracts the second
 and third elements from r without any checks to confirm the length
 of the list. After all, the programmer knows that if r is not false,
-then it is a list of three elements. The embedded program says so;
-it is a regular expression and contains two subexpressions.
+then it is a list of three elements. the Scheme program says so;
+the Scheme program is a regular expression and contains two subexpressions.
 Unfortunately, the static analysis tools for PLT Scheme cannot
 reason on both levels. MrFlow [20], a static debugger, uses
 a constraint-based analysis [22], a version of set-based analysis
-[2, 13, 10], to analyze the program and discover potential er-
-rors. If it finds one it can draw a flow graph from the source of the
+[2, 13, 10], to analyze the Scheme program and discover potential er-
+rors. If the Scheme program finds one the Scheme program can draw a flow graph from the source of the
 bad value to the faulty primitive operation. For the let-expression
 above, MrFlow finds that both (second r) and (third r) may
 raise runtime errors because r may not contain enough elements.
@@ -67,20 +70,20 @@ In this paper, we show how using Scheme macros to partially evaluate
 calls to embedded interpreters such as regexp-match greatly
 increases the precision of the static analysis. Since we use macros,
 library designers can easily implement the partial evaluation, rather
-than relying on the host language implementor as they must for ad-hoc
+than relying on the host language implementor as library designers must for ad-hoc
 solutions.
 In Section 2 we give a brief overview of set-based analysis and Mr-
 Flow. In the next section we explain three examples of embedded
 languages and the problems they cause for MrFlow's static anal-
-ysis. We then present in Section 4 our general approach to solving
+ysis. We then present in Section 4 We general approach to solving
 those problems, based on macros. An overview of the macro
 system we use is given in Section 5. Section 6 then presents a general
 technique for translating embedded interpreters into macros. In
 Section 7, we explain the properties of the static analysis that enable
 it to find more results in partially evaluated code. Finally, in
 Section 8, we show how partially evaluating Scheme programs that
-contain embedded programs helps MrFlow in our three examples.
-Section 9 presents related work and we conclude in Section 10.
+contain embedded programs helps MrFlow in we three examples.
+Section 9 presents related work and We conclude in Section 10.
 Set-Based Analysis
 To explain how the results of a static analysis can be improved by
 using partial evaluation of embedded languages, we first need to
@@ -103,16 +106,17 @@ flow into the reference to the variable x in the body of f. There
 is a second reference to x in f-the corresponding arrow is not
 shown in this example. In the box next to the call to the Scheme
 primitive gcd is the abstract value for the result of that call. Since
-the analysis never tries to evaluate expressions, it uses the abstract
+the analysis never tries to evaluate expressions, the analysis uses the abstract
 value integer to represent the result of the primitive call, if any,
 which is a conservative approximation of the actual value that that
 call might compute at runtime.
-The biggest box displays the type of the adjacent if-expression,
+the box next to the call to the Scheme
+primitive gcd displays the type of the adjacent if-expression,
 which is the union of the integer abstract value computed by the gcd
 primitive and of the string "hello". Arrows show that the result of
 the if-expression can come from both the then- and else-branches:
 the analysis does not attempt to apply the number? predicate to the
-variable x, so it conservatively assumes that both branches of the
+variable x, so the analysis conservatively assumes that both branches of the
 if-expression may be evaluated at runtime.
 3 Three Embedded Languages
 We now turn to embedded languages, which are a useful technique
@@ -123,10 +127,11 @@ implemented as a set of functions in the general purpose host language
 and has access to all of its features [15, 16, 24]. But these
 abstractions come at a cost for program analysis. In particular, tools
 built to examine programs of the host language cannot derive information
-for the programs in the embedded languages because they
+for the programs in the embedded languages because the programs in the embedded languages
 do not understand the semantics of those languages.
 In this section we demonstrate three examples of practical embedded
-languages for Scheme and show their negative effects on static
+languages for Scheme and show three examples of practical embedded
+languages for Scheme negative effects on static
 analysis. In the first example, properties of the embedded language
 create the possibility of errors that can go undetected by the analy-
 sis. In the next two examples, undetected properties lead to analyses
@@ -135,20 +140,23 @@ the analysis reports errors that can never actually occur.
 3.1
 The PLT Scheme library provides a format function, similar to C's
 sprintf, which generates a string given a format specifier and a
-variable number of additional arguments. The format specifier is
+variable number of additional arguments. a format is
 a string containing some combination of literal text and formatting
-tags. These tags are interpreted along with the remaining arguments
+tags. a string containing some combination of literal text and formatting
+tags are interpreted along with the remaining arguments
 to construct a formatted string. The format function is thus an
-interpreter for the format specifier language. The format specifier
-is a program in this language and the additional arguments are its
+interpreter for a format specifier language. The format specifier
+is a program in this language and the additional arguments are The format specifier
+
 inputs.
-To construct its output, the format function requires the number
+To construct The format specifier
+ output, The format function requires the number
 of extra arguments to match the number of format tags, and these
 arguments must be of the appropriate type. Consider the example
-of displaying an ASCII character and its encoding in hexadecimal:
-In this example, the format specifier, which contains the format tags
+of displaying an ASCII character and ASCII encoding in hexadecimal:
+In this example, a format specifier, which contains the format tags
 "-c" and "-x" and some literal text, expects to consume exactly
-two arguments. These arguments must be a character and an in-
+two arguments. two arguments must be a character and an in-
 teger, respectively. An incorrect number of arguments or a type
 mismatch results in a runtime error.
 Unfortunately analysis tools for Scheme such as MrFlow have no
@@ -158,7 +166,7 @@ the contents of the format string and the rest of the arguments
 without knowledge of the syntax and semantics of the format lan-
 guage. As a result the analysis cannot predict certain categories of
 runtime errors, as shown in Figure 2. The application of format is
-not underlined as an error, even though its arguments appear in the
+not underlined as an error, even though The application of format arguments appear in the
 wrong order and the analysis correctly computes the types of both
 c and n.
 
@@ -168,19 +176,22 @@ Figure
 3.2 Regular Expressions
 Regular expressions are used in all kinds of Scheme programs. The
 language of regular expression patterns is embedded in Scheme as
-strings. A library of functions interpret these strings as programs
+strings. A library of functions interpret 
+strings as programs
 that consume additional arguments as input strings and return either
 a list of matched subpatterns or #f to indicate failure.
 Consider again the excerpt from the PLT Web Server from Section
 1. Programmers know that if the match succeeds, then the
 result list contains exactly three elements: the result of the entire
-match, and the results of the two subpattern matches. Again the
-analysis is unable to discover this invariant on its own. Figure 3
+match, and the results of the two subpattern matches. Again The
+analysis is unable to discover this invariant on The
+analysis own. Figure 3
 shows the results of analyzing the sample code with MrFlow. The
-list accessors second and third are underlined in red because the
-analysis cannot prove that their arguments are sufficiently long lists.
+list accessors second and third are underlined in red because The
+analysis cannot prove that The
+list accessors second and third arguments are sufficiently long lists.
 Programmers then must either go through each of these false positives
-and prove for themselves that the errors can never occur, or
+and prove for Programmers that the errors can never occur, or
 else learn to ignore some results of MrFlow. Neither option is de-
 sirable. The former creates more work for the programmer, rather
 than less; the latter is unsafe and easily leads to overlooked errors.
@@ -189,7 +200,7 @@ SchemeQL [28] is an embedded language for manipulating relational
 databases in Scheme. Unlike the string-based format lan-
 guage, SchemeQL programs consist of special forms directly embedded
 inside Scheme. The SchemeQL implementation provides
-a set of macros that recognize these forms and expand them into
+a set of macros that recognize these forms and expand these forms into
 Scheme code. A typical database query in SchemeQL might look
 like this:
 (direct-query (name age phone) directory)
@@ -204,35 +215,42 @@ Programmers know that the number of elements in each row of a
 cursor is equal to the number of columns in the original request.
 Our analysis, however, cannot discover this fact automatically. Figure
 4 shows the results of an analysis of a SchemeQL query in the
-context of a trivial Scheme program. The example query consists of
+context of a trivial Scheme program. a SchemeQL query in the
+context of a trivial Scheme program consists of
 exactly three columns, and the code references the third element of
-the first row. This operation can never fail, but the analysis is unable
-to prove this. Instead, it conservatively computes that row is a list
+the first row. This operation can never fail, but an analysis of a SchemeQL query in the
+context of a trivial Scheme program is unable
+to prove this. Instead, This operation conservatively computes that row is a list
 of unknown rec-type describes a recursive abstract value,
 which in the present case is the union of null and a pair consisting
 of any value (top) and the abstract value itself, creating a loop in the
 abstract value that simulates all possible list lengths. MrFlow therefore
 mistakenly reports an error by underlining the primitive third
-in red, since, according to the analysis, row might have fewer than
+in red, since, according to Set-Based Analysis
+, row might have fewer than
 three elements at runtime.
 4 Macros for Partial Evaluation
 All the embedded languages presented in the previous section have
-one thing in common: they can encode invariants that are not visible
+one thing in common: All the embedded languages presented in the previous section can encode invariants that are not visible
+to any analysis of the general purpose language in which All the embedded languages presented in the previous section
+are embedded. invariants that are not visible
 to any analysis of the general purpose language in which they
-are embedded. These invariants can be exposed to analyses in two
+are embedded can be exposed to analyses in two
 ways:
 . by extending the analyses in an ad-hoc manner for each embedded
-language so that they understand its semantics, or
+language so that each embedded
+language understand each embedded
+language semantics, or
 . by partially evaluating the embedded interpreters with regard
 to the embedded programs to make the invariants in the embedded
 programs explicit as invariants in the host language,
 whenever possible.
 The first solution requires modifying each analysis to support each
-embedded language. The second solution can simply be implemented
+embedded language. The first solution can simply be implemented
 from within the host language through the old Lisp trick of
 using "compiler macros" [25] as a light-weight partial evaluation
 mechanism. In the present case, instead of using partial evaluation
-to optimize programs for speed, we use it to increase the precision
+to optimize programs for speed, we use The first solution to increase the precision
 of program analyses.
 While Lisp's compiler macros are different from regular Lisp
 macros, Scheme's macro system is powerful enough that the equivalent
@@ -251,13 +269,13 @@ Figure
 
 4. Imprecise analysis of a SchemeQL query.
 menting the interpreters with libraries of semantically equivalent
-macros 1 . This has the additional advantage that it can be done by
+macros 1 . This has the additional advantage that This can be done by
 the author of the library of functions, as opposed to the compiler's
 or analyzer's implementor in the case of ad-hoc extensions.
 Of course, the partial evaluation of embedded interpreters is only
-possible when their input programs are known statically. For ex-
+possible when embedded interpreters input programs are known statically. For ex-
 ample, it is not possible to expand a call to format if the formatting
-string given as its first argument is computed at runtime. The
+string given as it first argument is computed at runtime. The
 programmer therefore makes a trade-off between the precision of
 analyses and how dynamic the code can be. In practice, though,
 the embedded programs are often specified statically in user code.
@@ -266,12 +284,13 @@ with macros, this makes for a useful technique for improving the
 precision of analyses at a low cost.
 In the next two sections, we describe some of the important features
 of the Scheme macro system and then explain how we make use of
-this system to partially evaluate the interpreters of these embedded
+the Scheme macro system to partially evaluate the interpreters of these embedded
 languages to improve the results of static analysis.
 5 Macros in Scheme
 Scheme has a powerful macro system for extending the language
 with derived expression forms that can be rewritten as expressions
-in the core language. Macros serve as a means of syntactic abstrac-
+in the core language. 4 Macros for Partial Evaluation
+ serve as a means of syntactic abstrac-
 tion. Programmers can generalize syntactic patterns in ways that
 are not possible with functional abstraction. This technology also
 provides a hook into the standard compiler tool chain by allowing
@@ -283,7 +302,8 @@ the contexts in which macros can be matched.
 The define-syntax special form allows the programmer to extend
 Scheme with derived expression forms. Before compilation or execution
 of a Scheme program, all occurrences of these derived forms
-are replaced with their specified expansions.
+are replaced with all occurrences of these derived forms
+ specified expansions.
 The syntax-rules form specifies macro expansions as rewrite
 rules. Consider the following simple macro, which defines a short-circuit
 logical or as a derived form:
@@ -302,15 +322,16 @@ pattern with a let-expression constructed from the matched subexpressions
 1 The transformation is not strictly speaking partial evaluation:
 the reductions performed by the macros are not exactly the ones performed
 by the embedded interpreters. However, the macros share
-the techniques and issues of partial evaluation since they simulate
-parts of the interpreters, and it is therefore useful to describe them
+the techniques and issues of partial evaluation since the macros simulate
+parts of the interpreters, and it is therefore useful to describe the macros
 as such.
 Notice that this or form cannot be defined as a regular function
 in Scheme. The second argument is only evaluated if the first argument
 evaluates to false. Since Scheme has a strict evaluation
-semantics, a functional or would necessarily evaluate both of its
+semantics, a functional or would necessarily evaluate both of Scheme
 arguments before computing a result. Controlling the evaluation of
-expressions is an important use of Scheme macros. Macros can also
+expressions is an important use of Scheme macros. 4 Macros for Partial Evaluation
+ can also
 abstract over other syntactic forms in ways that functions cannot by
 expanding into second-class language constructs such as define.
 5.2 Lexical Scope
@@ -350,7 +371,8 @@ position, or as the target of an assignment.
 We use the convention of representing macro expansion with a
 double-arrow (#) and ordinary (runtime) evaluation with a single-
 arrow (#).
-3 Macros can also be defined in and exported from modules in
+3 4 Macros for Partial Evaluation
+ can also be defined in and exported from modules in
 PLT Scheme [11].
 The following macro demonstrates a hypothetical use of
 syntax-id-rules:
@@ -361,10 +383,10 @@ clock
 [clock (get-clock)]))
 The list of identifiers following syntax-id-rules, which was
 empty in our previous examples, now includes the set! identi-
-fier, indicating that set! is to be treated as a keyword rather than a
+fier, indicating the set! is to be treated as a keyword rather than a
 pattern variable. The first rewrite rule matches expressions in which
 the clock name occurs as the target of an assignment. The second
-rule is familiar, matching the macro in application position. The final
+rule is familiar, matching The following macro in application position. The second
 rule matches the identifier clock in any context not matched by
 the previous two rules. In addition to the usual application context,
 we can use the clock macro in an argument position:
@@ -393,13 +415,15 @@ For example, the datum corresponding to a syntax object representing
 a literal number is its numeric value, the datum corresponding
 to an identifier is a symbol representing the identifier's name, and
 so on.
-A syntax transformer procedure accepts as its argument a syntax
+A syntax transformer procedure accepts as A syntax transformer procedure argument a syntax
 object representing the expression that invoked the macro,
 and produces a new syntax object, which the macro expansion
 algorithm uses to replace the original expression. All Scheme
 macros are syntax transformers; although the syntax-rules and
-syntax-id-rules forms do not use the lambda notation, they are
-themselves implemented as macros that expand to syntax transformer
+syntax-id-rules forms do not use the lambda notation, All Scheme
+macros are
+All Scheme
+macros implemented as macros that expand to syntax transformer
 procedures.
 The syntax-case facility allows the construction of macros with
 pattern matching, as with syntax-rules and syntax-id-rules,
@@ -447,14 +471,14 @@ accept a
 #'(let ([tmp b])
 (set! a tmp))])))
 The pattern guard is a new expression, inserted between the pattern
-and the result expressions. A guarded match only succeeds if its
-guard does not evaluate to false; when a guard fails, the pattern
+and the result expressions. A guarded match only succeeds if A guarded matchdoes not evaluate to false; when a guard fails, the pattern
 matcher falls through to attempt the next pattern in the list.
 6 Macros for Interpreters
 In this section, we present a general technique for specializing embedded
-interpreters with macros, and explain how we apply this
-technique to the three embedded languages described in Section 3.
-The technique can be summarized in the following steps:
+interpreters with macros, and explain how we apply a general technique for specializing embedded
+interpreters with macros to the three embedded languages described in Section 3.
+a general technique for specializing embedded
+interpreters with macros can be summarized in the following steps:
 1. Write the interpreter compositionally as a module of library
 functions.
 2. Replace the interpreter's main function with a macro that unfolds
@@ -467,7 +491,7 @@ by delegating the interpretation of the program constructs that make
 up an embedded program to separate functions, it becomes possible
 to share code between the original interpreter and the macro
 that replaces it. This effectively limits the macro's responsibility
-to a simple dispatch. Second, compositionality makes it easier to
+to a simple dispatch. Second, compositionality makes compositionality easier to
 guarantee that unfolding terminates, since the recursive macro calls
 always operate on smaller terms.
 6.1 Format Strings
@@ -475,7 +499,7 @@ The implementation of a string formatter involves a number of simple
 library functions to convert each possible type of argument to
 strings. Each formatting tag corresponds to one of these combi-
 nators. For example, the "-c" tag corresponds to a combinator,
-which accepts a character and converts it to a string,
+which accepts a character and converts -c" tag to a string,
 the "-x" tag corresponds to format/hex, which converts integers
 to their hexadecimal representation, and so forth. The string formatter
 then simply dispatches to these combinators based on the
@@ -491,10 +515,10 @@ etc.
 The interpreter accepts the formatting string s and, based on formatting
 tags like "-c" that it finds, decomposes the string into a
 series of applications of the corresponding combinators to successive
-arguments of format (represented by args). It reassembles
+arguments of format (represented by args). it reassembles
 the transformed pieces with the standard string-append function.
 In order to specialize the format interpreter, we replace it with a
-macro that re-uses its associated combinators:
+macro that re-uses it associated combinators:
 (define (format/dynamic s . args)
 as before )
 (lambda (stx)
@@ -517,9 +541,9 @@ case dispatch on the program text. Rather than delaying the inspection
 of the string to runtime, the macro precomputes the result of the
 decomposition statically whenever the string is given as a literal.
 We can identify literal strings through the use of a pattern guard.
-More precisely, the macro can inspect the syntax object s-exp,
+More precisely, The macro can inspect the syntax object s-exp,
 corresponding to format's first argument, and determine whether
-it can be converted to a string via syntax-object->datum. When
+The macro can be converted to a string via syntax-object->datum. When
 the conversion succeeds, the pattern guard allows the match to suc-
 ceed, and partial evaluation proceeds.
 After the macro expansion, the resulting program text consists of
@@ -528,7 +552,7 @@ tions, with no references to the interpreter:
 # (string-append (format/char c)
 (format/hex n))
 In order for the replacement of the original function with a macro
-to be unobservable, the macro must behave exactly like the original
+to be unobservable, The macro must behave exactly like the original
 function in all contexts. When format is applied to a dynamic
 formatting string, the macro defaults to the original functional im-
 plementation. Similarly, when format is passed as an argument to
@@ -539,14 +563,14 @@ One of PLT Scheme's regular expression engines uses the two-
 continuation model of backtracking [1]. A regular expression
 "matcher" is represented as a function that accepts a success continuation
 and a failure continuation. When a matcher succeeds in
-matching its input, it applies its success continuation to the accepted
-input, and when it fails to match, it invokes its failure continuation.
+matching a matcher input, a matcher applies a matcher success continuation to the accepted
+input, and when a matcher fails to match, a matcher invokes a matcher failure continuation.
 This allows the interpretation of the alternation operator "|" to try
 each alternate pattern sequentially: an alternation matcher tries to
-match its first pattern with a failure continuation to try the second
-pattern. Thus if the first pattern fails, the matcher invokes the failure
+match an alternation matcher first pattern with a failure continuation to try the second
+pattern. Thus if the first pattern fails, an alternation matcher invokes the failure
 continuation, which tries the second pattern. Otherwise, the failure
-continuation is disregarded and the matcher applies its success con-
+continuation is disregarded and an alternation matcher applies an alternation matcher success con-
 tinuation, which skips the second pattern and returns the result of
 the first match.
 Each of the regular expression constructions corresponds to a functional
@@ -595,7 +619,7 @@ Finally, in the cases where the embedded program is not known stat-
 ically, or when regexp-match is used in non-application contexts,
 the macro expands to the original functional definition.
 6.3 SchemeQL
-The SchemeQL language differs from the other examples in that its
+The SchemeQL language differs from the other examples in that The SchemeQL language
 programs are not embedded as strings but rather as special forms
 recognized by a library of macros. This means that for queries
 that select from a fixed set of columns, the length of cursor rows
@@ -613,12 +637,13 @@ pressions. Since we know the length of the cursor row statically,
 the unfolding is guaranteed to terminate.
 5 It is convenient to define the Kleene star operator recursively
 by )|e. However, this non-compositional definition leads
-to an infinite macro expansion, so the macro must carefully avoid
+to an infinite macro expansion, so The macro must carefully avoid
 unfolding such a definition.
 Since the SchemeQL library is implemented as macros, there is no
 need to capture the cases where the query forms are used in non-application
 contexts. Adding special cases to the existing macro
-does not affect its set of allowable contexts. Similarly, the cases
+does not affect the existing macro
+ set of allowable contexts. Similarly, the cases
 where the row length is not known statically are already handled by
 the existing SchemeQL macros.
 7 Static Analysis for Scheme
@@ -630,7 +655,7 @@ runtime. From a given expression it creates a graph that simulates
 the flow of values inside the expression. The analysis simulates
 evaluation by propagating abstract values in this graph until reaching
 a fixed point. From the set of abstract values that propagate to
-a given node, the analysis reconstructs a type that is then displayed
+a given node, The analysis reconstructs a type that is then displayed
 to the user through DrScheme's graphical interface.
 Extensions to the basic analysis include, among other things: analyzing
 functions that can take any number of arguments, analyzing
@@ -641,7 +666,8 @@ using a special, type-like language embedded inside the an-
 alyzer. For a given primitive, the corresponding type translates to
 a graph that simulates the primitive's internal flows. The analysis
 then proceeds just like for any other expression. The few remaining
-primitives need special handling because of their imperative nature
+primitives need special handling because of The few remaining
+primitives imperative nature
 (set-car! or vector-fill!) and are analyzed in an ad-hoc manner
 
 By default, MrFlow analyzes the format primitive based on the
@@ -650,14 +676,16 @@ following pseudo-type description:
 The * in the *-> constructor means that the primitive is a function
 that can take any number of arguments as input beyond the ones
 explicitly specified. In the present case, the function must receive
-a string as its first argument, followed by any number of arguments
+a string as the function first argument, followed by any number of arguments
 of any type (represented by the pseudo-type top), and returns a
 string. Given such a description, the only errors MrFlow detects are
 when the primitive is given something other than a string as first
 argument, or if it is given no argument at all.
 After partial evaluation, the application of format is replaced by
-calls to its individual library functions such as format/char and
-format/hex. These functions have respectively the pseudo-types
+calls to 
+ individual library functions such as format/char and
+format/hex. its individual library functions such as format/char and
+format/hex have respectively the pseudo-types
 (char -> string)
 and
 (integer -> string)
@@ -669,9 +697,11 @@ analyzer never sees arity errors in the expanded code.
 Since DrScheme's syntax object system keeps track of program
 terms through the macro expansions [11], MrFlow is then able to
 trace detected errors back to the original guilty terms in the user's
-program and flag them graphically. Arrows representing the flow
+program and flag the original guilty terms in the user's
+program graphically. Arrows representing the flow
 of values can also be displayed interactively in terms of the original
-program, allowing the user to track in the program the sources of
+program, allowing the user to track in the user's
+program the sources of
 the values that triggered the errors. In essence, the only requirement
 for MrFlow to analyze the partially evaluated code of format is to
 specify the pseudo-types for the library functions introduced by the
@@ -705,13 +735,13 @@ given to regexp-match does not match the pattern. The programmer
 has to test for such a condition explicitly before processing
 the result any further. The only way for MrFlow not to show a false
 positive for second and third, because of the presence of this false
-value, is to make the analysis aware of the dependency between the
+value, is to make The analysis aware of the dependency between the
 test of r and the two branches of the if-expression. This form of
 flow-sensitive analysis for if-expressions is difficult to implement
 in general since there is no bound to the complexity of the tested ex-
 pression. In practice, however, an appreciable proportion of these
 tests are simple enough that an ad-hoc solution is sufficient.
-In the case where the test is simply a variable reference it is enough
+In the case where the test is simply a variable reference the test is enough
 to create two corresponding ghost variables, one for each branch
 of the if, establish filtering flows between the variable r and the
 two ghost variables, and make sure each ghost variable binds the
@@ -731,10 +761,10 @@ in Section 3 disappear, as we illustrate in the next section.
 8 Improvement of Static Analysis
 Partially evaluating format eliminates the possibility of runtime
 arity errors, since the macro transformations can statically check
-such invariants. It also allows MrFlow to detect type errors that
-it could not detect before, since the corresponding invariants were
-described only in the embedded formatting language. These invariants
-are now explicit at the Scheme level in the transformed
+such invariants. the macro transformations can statically check
+such invariants also allows MrFlow to detect type errors that
+MrFlow could not detect before, since the corresponding invariants were
+described only in the embedded formatting language. the corresponding invariantsare now explicit at the Scheme level in the transformed
 program through the use of simpler primitives like format/char
 or format/integer. Figure 5 shows the same program as in Figure
 2, but after applying partial evaluation. The format primitive
@@ -750,7 +780,7 @@ pattern. As a result, the applications of second and third in Figure
 fairly large error messages from the figure). After specialization,
 the structure of the value returned by regexp-match is exposed to
 the analysis and MrFlow can then prove that if regexp-match returns
-a list, it must contain three elements. The false positives for
+a list, the structure of the value returned by regexp-match must contain three elements. The false positives for
 second and third disappear in Figure 6.
 Of course, regexp-match can also return false at runtime, and the
 analysis correctly predicts this regardless of whether partial evaluation
@@ -760,11 +790,13 @@ as described in Section 7 removes these last spurious errors in Figure
 Partial evaluation now allows the precise analysis of SchemeQL
 queries as well. Figure 7 shows the precise analysis of the same
 program as in Figure 4, this time after partial evaluation. As with
-regexp-match, the analysis previously computed that cursor-car
+regexp-match, the analysis
+ previously computed that cursor-car
 could return a list of any length, and therefore flagged the call to
-third as a potential runtime error. This call is now free of spurious
+third as a potential runtime error. the call to
+third is now free of spurious
 errors since the partial evaluation exposes enough structure of the
-list returned by cursor-car that MrFlow can compute its exact
+list returned by cursor-car that MrFlow can compute cursor-car exact
 length and verify that third cannot fail at runtime.
 While the results computed by the analysis become more precise,
 partially evaluating the interpreters for any of the three embedded
@@ -797,12 +829,13 @@ third to r cannot fail. If the analysis were a Hindley-Milner-like
 type system, though, no difference would be seen whether partial
 evaluation were used or not. Indeed, while such a type system could
 statically prove that the arguments given to second or third are
-lists, is would not attempt to prove that they are lists of the required
+lists, is would not attempt to prove that the arguments given to second or third are
+lists are lists of the required
 length and a runtime test would still be required. Using partial evaluation
 to expose such a property to the analysis would therefore be
 useless. Simply put, making invariants from embedded programs
 explicit in the host language only matters if the system analyzing
-the host language cares about those invariants.
+the host language cares about the corresponding invariants.
 This does not mean partial evaluation is always useless when used
 in conjunction with a Hindley-Milner type system, though. Partially
 evaluating format, for example, would allow the type system
@@ -826,7 +859,7 @@ types by recasting the library in terms of individual combinators.
 In our system, those individual combinators are automatically introduced
 during macro expansion. The C++ language [26] likewise
 avoids the problem of checking invariants for printf by breaking
-its functionality into smaller operations that do not require the use
+printf functionality into smaller operations that do not require the use
 of an embedded formatting language.
 A work more closely related to ours is the Cayenne language [4].
 Augustsson uses a form of partial evaluation to specialize dependent
@@ -841,16 +874,17 @@ The specialization is done in his system through the use of type-
 computing functions that are specified by the user and evaluated by
 the type system.
 The main difference is that his system is used to compute specialized
-types and verify that the program is safe. Once the original
-program has been typed it is just compiled as-is with type checking
+types and verify that the program is safe. Once the program has been typed the program is just compiled as-is with type checking
 turned off. This means that in the case of format, for example,
 the formatting string is processed twice: once at type checking time
 to prove the safety of the program, and once again at run time to
-compute the actual result. Our system is used to compute specialized
+compute the actual result. our system is used to compute specialized
 expressions. This means that the evaluation of the format's
 string needs to be done only once. Once specialized, the same program
-can either be run or analyzed to prove its safety. In both cases
-the format string will not have to be reprocessed since it has been
+can either be run or analyzed to prove the same program
+ safety. In both cases
+the format string will not have to be reprocessed since the same program
+ has been
 completely replaced by more specialized code.
 Another difference is that in our system, non-specialized programs
 are still valid programs that can be analyzed, proved safe, and run
@@ -871,23 +905,24 @@ embedded languages."
 The Lisp programming language ([25], Section 8.4) provides for
 "compiler macros" that programmers can use to create optimized
 versions of existing functions. The compiler is not required to use
-them, though. To our knowledge, there is no literature showing
-how to use these compiler macros to improve the results of static
+programmers, though. To our knowledge, there is no literature showing
+how to use The compiler macros to improve the results of static
 analyses. Lisp also has support for inlining functions, which might
 help monovariant analyses by duplicating the code of a function at
 all its call sites, thereby simulating polyvariant analyses.
 Bigloo [23] is a Scheme compiler that routinely implements embedded
 languages via macros and thus probably provides some of
-the benefits presented in this paper to the compiler's internal anal-
+the benefits presented in this paper to The compiler's internal anal-
 yses. The compiler has a switch to "enable optimization by macro
 expansion," though there does not seem to be any documentation or
 literature describing the exact effect of using that switch.
 Programs in embedded languages contain invariants that are not automatically
-enforced by their host language. We have shown that
+enforced by Programs in embedded languages host language. We have shown that
 using macros to partially evaluate interpreters of little languages
-embedded in Scheme with respect to their input programs can re-capture
-these invariants and convey them to a flow analysis. Because
-it is based on macros, this technique does not require any
+embedded in Scheme with respect to Scheme input programs can re-capture
+these invariants and convey Scheme to a flow analysis. Because
+
+ is based on macros, this technique does not require any
 ad-hoc modification of either interpreters or analyses and is thus
 readily available to programmers. This makes it a sweet spot in
 the programming complexity versus precision landscape of program
@@ -897,10 +932,10 @@ macros and other program analyses in a similar manner.
 Acknowledgments
 
 We thank Matthias Felleisen, Mitchell Wand, and Kenichi Asai for
-the discussions that led to this work and for their helpful feed-
-back. Thanks to Matthew Flatt for his help with the presentation
+the discussions that led to this work and for Mitchell Wand, and Kenichi Asai helpful feed-
+back. Thanks to Matthew Flatt for Matthew Flatt help with the presentation
 of Scheme macros. Thanks to Dale Vaillancourt for proofreading
-the paper and to Ryan Culpepper for his macrological wizardry.
+the paper and to Ryan Culpepper for Ryan Culpepper macrological wizardry.
 
 
 

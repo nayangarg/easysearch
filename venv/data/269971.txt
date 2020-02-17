@@ -1,14 +1,15 @@
 --T
 Making graphs reducible with controlled node splitting.
 --A
-Several compiler optimizations, such as data flow analysis, the exploitation of instruction-level parallelism (ILP), loop transformations, and memory disambiguation, require programs with reducible control flow graphs. However, not all programs satisfy this property. A new method for transforming irreducible control flow graphs to reducible control flow graphs, called Controlled Node Splitting (CNS), is presented. CNS duplicates nodes of the control flow graph to obtain reducible control flow graphs. CNS results in a minimum number of splits and a minimum number of duplicates. Since the computation time to find the optimal split sequence is large, a heuristic has been developed. The results of this heuristic are close to the optimum. Straightforward application of node splitting  resulted in an average code size increase of 235% per procedure of our benchmark programs. CNS with the heuristic limits this increase to only 3%. The impact on the total code size of the complete programs is 13.6% for a straightforward application of node splitting. However, when CNS is used, with the heuristic the average growth in code size of a complete program dramatically reduces to 0.2%
+Several compiler optimizations, such as data flow analysis, the exploitation of instruction-level parallelism (ILP), loop transformations, and memory disambiguation, require programs with reducible control flow graphs. However, not all programs satisfy this property. A new method for transforming irreducible control flow graphs to reducible control flow graphs, called Controlled Node Splitting (CNS), is presented. CNS duplicates nodes of the control flow graph to obtain reducible control flow graphs. CNS results in a minimum number of splits and a minimum number of duplicates. Since the computation time to find the optimal split sequence is large, a heuristic has been developed. The results of a heuristic are close to the optimum. Straightforward application of node splitting  resulted in an average code size increase of 235% per procedure of our benchmark programs. CNS with the heuristic limits this increase to only 3%. The impact on the total code size of the complete programs is 13.6% for a straightforward application of node splitting. However, when CNS is used, with the heuristic the average growth in code size of a complete program dramatically reduces to 0.2%
 --B
 Introduction
 In current computer architectures improvements can be obtained by the exploitation of instruction level parallelism
 (ILP). ILP is made possible due to higher transistor densities which allows the duplication of function units
 and data paths. Exploitation of ILP consists of mapping the ILP of the application onto the ILP of the target architecture
 as efficient as possible. This mapping is used for Very Long Instruction Word (VLIW) and superscalar
-architectures. The latter are used in most workstations. These architectures may execute multiple operations per
+architectures. The latter are used in most workstations. Very Long Instruction Word (VLIW) and superscalar
+architectures may execute multiple operations per
 cycle. Efficient usage requires that the compiler fills the instructions with operations as efficient as possible. This
 process is called scheduling.
 Problem statement: In order to find sufficient ILP to justify the cost of multiple function units and data paths, a
@@ -18,19 +19,20 @@ scopes can be found which go beyond the basic block level [1]. The most general 
 region [2]. This is a set of basic blocks that corresponds to the body of a natural loop. Since loops can be nested,
 regions can also be nested in each other. Like natural loops, regions have a single entry point (the loop header)
 and may have multiple exits [2]. In [1] a speedup over 40% is reported when extending the scheduling scope to a
-region, the problem of region scheduling is that it requires loops in the control flow graph with a single entry point.
+region, the problem of region scheduling is that the problem of region scheduling requires loops in the control flow graph with a single entry point.
 These flow graphs are called reducible flow graphs. Fortunately, most control flow graphs are reducible, nevertheless
 the problem of irreducible flow graphs cannot be ignored. To exploit the benefits of region scheduling,
 irreducible control flow graphs should be converted to reducible control flow graphs.
 Exploiting ILP also requires efficient memory disambiguation. To accomplish this the nesting of loops must be
 determined. Since in an irreducible flow graph the nesting of loops is not clear, memory disambiguation techniques
-cannot directly be applied to these loops. To exploit the benefits of memory disambiguation, irreducible
+cannot directly be applied to loops. To exploit the benefits of memory disambiguation, irreducible
 control flow graphs should be converted to reducible control flow graphs as well. Another pleasant property of
 reducible control flow graphs is the fact that data flow analysis, that is an essential part of any compiler, can be
 done more efficiently [3].
 Related work: The problem of converting irreducible flow graphs to reducible flow graphs can be tackled at
 the front-end or at the back-end of the compiler. In [4] and [5] methods for normalizing the control flow graph
-of a program at the front-end are given. These methods rewrite an intermediate program in a normalized form.
+of a program at the front-end are given. [5] methods for normalizing the control flow graph
+of a program at the front-end rewrite an intermediate program in a normalized form.
 During normalization irreducible flow graphs are converted to reducible ones. To make a graph reducible, code
 has to be duplicated, which results in a larger code size. Since the front-end is unaware of the precise number of
 machine instructions needed to translate a piece of code, it is difficult to minimize the growth of the code size.
@@ -38,7 +40,7 @@ Another approach is to convert irreducible flow graphs at the back-end. The adva
 (machine)code to duplicate one can take the resulting code size into account. Solutions for solving the problem
 at the back-end are given in [6, 7, 8, 9]. The solution given by Cocke and Miller [6, 9] is very time complex
 and it does not try to minimize the resulting code size. The method described by Hecht et al. [7, 8] is even more
-inefficient in the sense of minimizing the code size, but it requires less analysis. In this paper a new method for
+inefficient in the sense of minimizing the code size, but The method described by Hecht et al requires less analysis. In this paper a new method for
 converting irreducible flow graphs at the back-end is given which is very efficient in terms of the resulting code
 size.
 Paper overview: In section 2 reducible and irreducible flow graphs are defined and a method for the detection of
@@ -82,7 +84,7 @@ Figure
 As stated in the introduction, finding sufficient ILP requires as input a reducible flow graph. Many definitions for
 reducible flow graphs are proposed. The one we adopt is given in [8] and is based on the partitioning of the edges
 of a control flow graph G into two disjoint sets:
-1. The set of back edges BE consist of all edges whose heads dominate their tails.
+1. The set of back edges BE consist of all edges whose heads dominate whose heads tails.
 2. The set of forward edges FE consists of all edges which are not back edges, thus
 A node u of a flow graph dominates node v, if every path from the initial node s of the flow graph to v goes through
 u. The dominance relations of figure 1 are: node s dominates all nodes, node a dominates all nodes except node
@@ -94,16 +96,17 @@ The control flow graph of figure 1 is reducible since acyclic. The flow graph of
 however is irreducible. The set of back edges is empty, because neither node a nor node b, dominates the other.
 FE is equal to f(s; a) s) is not acyclic.
 From definition 2.2 we can derive that if a control flow graph G is irreducible then the graph
-contains at least one loop. These loops are called irreducible loops. To remove irreducible loops, they must be
+contains at least one loop. These loops are called irreducible loops. To remove irreducible loops, These loops must be
 s
 a b
 
 Figure
 
 2: The basic irreducible control flow graph.
-detected first. There are several methods for doing this. One of them is to use interval analysis [10, 11]. The
+detected first. There are several methods for doing this. One of several methods for doing this is to use interval analysis [10, 11]. The
 method used here is the Hecht-Ullman T1-T2 analysis [12, 3]. This method is based on two transformations
-and T2. These transformations are illustrated in figure 3 and are defined as:
+and T2. two transformations
+and T2 are illustrated in figure 3 and are defined as:
 Definition 2.3 Let be a control flow graph and let u 2 N . The removes
 the edge (u; u) 2 E, which is a self-loop, if this edge exists. The derived graph becomes G
 In short G T 1(u)
@@ -114,13 +117,13 @@ Figure
 3: The
 Definition 2.4 Let be a control flow graph and let node v 6= s have a single predecessor u. The
 transformation is the consumption of node v by node u. The successor edges of node v become successor edges
-of node u. The original successor edges of node u are preserved except for the edge to node v. If I is the set of
+of node u. The successor edges of node are preserved except for the edge to node v. If I is the set of
 successor nodes of v then the derived graph G
 In short G T 2(v)
 Definition 2.5 The graph that results when repeatedly applying the transformations in any possible
 order to a flow graph, until a flow graph results for which no application of T1 or T2 is possible is called the limit
 flow graph. This transformation is denoted as
-In [7] it is proven that the limit flow graph is unique and independent of the order in which the transformations
+In [7] This transformation is proven that the limit flow graph is unique and independent of the order in which the transformations
 are applied.
 Theorem 2.6 A flow graph is reducible if and only if after repeatedly applying transformations in any
 particular order the flow graph can be reduced into a single node.
@@ -167,7 +170,7 @@ Figure
 
 4: An example of application of the
 If after applying transformations the resulting flow graph consists of multiple nodes, the graph is irre-
-ducible. The transformations T1 and T2 not only detect irreducibility but they also detect the nodes that causes
+ducible. The transformations T1 and T2 not only detect irreducibility but The transformations T1 and T2 also detect the nodes that causes
 the irreducibility. Examples of irreducible graphs are given in figure 5. From theorem 2.6 it follows that we can
 alternatively define irreducibility by:
 Corollary 2.7 A flow graph is irreducible if and only if the limit flow graph is not a single node 1 .
@@ -194,8 +197,7 @@ to reduce an irreducible flow graph is described. Section 3.2 shows how node spl
 to reduce an irreducible graph.
 3.1 Node Splitting
 Node Splitting is a technique that converts a graph G 1 to an equivalent graph G 2 . We assign a label to each node
-of a graph; the label of node x i is denoted label Duplication of a node creates a new node with the same
-label. An equivalence relation between two flow graphs is derived from Hecht [7] and given below.
+of a graph; the label of node x i is denoted label Duplication of a node creates a new node with a label. An equivalence relation between two flow graphs is derived from Hecht [7] and given below.
 Definition 3.1 If path in a flow graph, then define Labels(P ) to be a sequence of labels
 corresponding to this path; that is, Labels(P Two flow graphs G 1 and G 2 are
 equivalent if and only if, for each path P in G 1 , there is a path Q in G 2 such that Labels(P
@@ -234,14 +236,14 @@ Figure
 If node v is split in n copies named v i the split graph G 2 results. The set of all paths of graph G 2 is:
 k=0 f(label
 label (v i
-This graph is given in figure 7b. Since label (v i label (v) every path in G 2 exists also in G 1 and conversely.
+The graph that results when repeatedly applying the transformations in any possible
+order to a flow graph, until a flow graph results for which no application of T1 or T2 is possible is given in figure 7b. Since label (v i label (v) every path in G 2 exists also in G 1 and conversely.
 This leads to the conclusion that the graphs G 1 and G 2 are equivalent. Since in figure 7 we split a node with an
 arbitrary number of incoming and outgoing edges we may in general conclude that splitting a node of any graph
 results in an equivalent graph. Using the same reasoning it will be clear that the equivalence relation is transitive,
-splitting a finite number of nodes in either the original graph or any of its equivalent graphs results in a graph
+splitting a finite number of nodes in either the original graph or any of it equivalent graphs results in a graph
 which is equivalent to the original graph. 2
-The name node splitting is deceptive because it suggests that the node is split in different parts but in fact the node
-is duplicated.
+The name node splitting is deceptive because The name node splitting suggests that a node is split in different parts but in fact a nodeis duplicated.
 3.2 Uncontrolled Node Splitting
 The node splitting transformation technique can be used to convert an irreducible control flow graph into a reducible
 control flow graph. From Hecht [7] we adopt theorem 3.4.
@@ -250,20 +252,22 @@ any control flow graph can be transformed into a single node by the transformati
 represented by the regular expression T (ST )   .
 The proof of the theorem is given in [7].
 Hecht et al. describe a straightforward application of node splitting to reduce irreducible control flow graphs. This
-method selects a node for splitting from the limit graph if the node has multiple predecessors. The selected node
-is split into several identical copies, one for each entering edge. This approach has the advantage that it is rather
-simple, but it has the disadvantage that it can select nodes that did not have to be split to make a graph reducible.
+method selects a node for splitting from the limit graph if a node has multiple predecessors. The selected node
+is split into several identical copies, one for each entering edge. This approach has the advantage that This approach is rather
+simple, but This approach has the disadvantage that This approach can select nodes that did not have to be split to make a graph reducible.
 In figure 8a we see that the nodes a, b, c and d are candidate nodes for splitting. In figure 8b node d is split, the
 number of nodes reduces after the application of two T2 transformations, but the graph is still irreducible. Splitting
 of node a neither makes the graph reducible, see figure 8c. Only splitting of node b or c converts the graph into a
 reducible control flow graph, see figure 8d.
-Although this method does inefficient node splitting, it does transform an irreducible control flow graph eventually
+Although This
+method does inefficient node splitting, This
+method does transform an irreducible control flow graph eventually
 in a reducible one. The consequence of this inefficient node splitting is that the number of duplications becomes
 unnecessarily large.
 4 Presentation of Controlled Node Splitting
 The problem of existing methods is that the resulting code size after converting an irreducible graph can grow
 uncontrolled. Controlled Node Splitting (CNS) controls the amount of copies which results in a smaller growth of
-the code size. CNS restricts the set of candidate nodes for splitting. First we introduce the necessary terminology:
+the code size. CNS restricts the set of candidate nodes for splitting. First CNS introduce the necessary terminology:
 Definition 4.1 A loop in a flow graph is a path (n is an immediate successor of n k . The set of
 nodes contained in the loop is called a loop-set.
 In figure 8a fa; bg ; fb; cg and fa; b; cg are loop-sets.
@@ -300,37 +304,36 @@ The definition says that an MSED-set cannot be a proper subset of another SED-se
 can be identified like fa; bg, fb; cg and fa; b; cg. But there is only one MSED-set: fa; b; cg.
 Definition 4.5 Nodes in an SED-set of a flow graph can be classified into three sets:
 ffl Common Nodes (CN): Nodes that dominate other SED-set(s) and are not reachable from the SED-set(s)
-they dominate.
+Nodes that dominate other SED-set(s) and are not reachable from the SED-set(s)
+ dominate.
 ffl Reachable Common nodes (RC): Nodes that dominate other SED-set(s) and are reachable from the SED-
 they dominate.
-ffl Normal Nodes (NN): Nodes of an SED-set that are not classified in one of the above classes. These nodes
-dominate no other SED-sets.
+ffl Normal Nodes (NN): Nodes of an SED-set that are not classified in one of the above classes. Nodes of an SED-set that are not classified in one of the above classesdominate no other SED-sets.
 In the initial graph of figure 9a we can identify the MSED-sets fa; bg and (c; dg. The nodes a, c and d are elements
 of the set NN and node b is an element of the set RC. If the edge (c; b) was not present then node b would be an
 element of the set CN. Note that loop (b; c) is not a SED-set.
-Theorem 4.6 A SED-set(L) has one node , The corresponding loop L has a single header and is reducible.
+Theorem 4.6 A SED-set(L) has one node , that loop (b; c) has a single header and is reducible.
 The proof of this theorem can be derived from [7]. An example of an SED-set which has one node is the graph in
 figure 4 just before the transformation
-In section 4.1 a description of CNS is given. It treats a method for minimizing the number of nodes to split. Section
+In section 4.1 a description of CNS is given. CNS treats a method for minimizing the number of nodes to split. Section
 4.2 gives a method for minimizing the amount of copies. The number of copies is not equal to the number of
 splits because a split creates for every entering edge a copy. If a node has n entering edges then one split creates
 copies. To speed up the process for minimizing the amount of copies a heuristic is given. The algorithms
 implementing this heuristic are given in section 4.3.
 4.1 Controlled Node Splitting
 All nodes of an irreducible limit graph, except the initial node s of the graph, are possible candidates for node
-splitting since they have at least two predecessors. However splitting of some nodes is not efficient; see section 3.2.
+splitting since possible candidates for node
+splitting have at least two predecessors. However splitting of some nodes is not efficient; see section 3.2.
 CNS minimizes the number of splits. To accomplish this, two restrictions are made to the set of candidate nodes.
-These restrictions are:
+two restrictions are:
 1. Only nodes that are elements of an SED-set are candidates for splitting.
 2. Nodes that are elements of RC are not candidates for splitting.
 The first restriction prevents the splitting of nodes that are not in an SED-set. Splitting such a node is inefficient
 and unnecessary. An example of such a split was shown in figure figure 8b (the only SED-set in figure 8b is fb; cg).
-The second restriction is more complicated. The impact of this restriction is illustrated in figure 9. This figure
-shows two different sequences of node splitting. The initial graph of the figure is a graph on which T has been
-applied. In figure 9a there are three splits needed and in figure 9b only two. In figure 9a node b is split, this node
-however is an element of the set RC. The second restriction prevents a splitting sequence as the one in figure 9a.
+The first restriction is more complicated. The impact of The first restriction is illustrated in figure 9. figure 9shows two different sequences of node splitting. The initial graph of figure 9 is a graph on which T has been
+applied. In figure 9a there are three splits needed and in figure 9b only two. In figure 9a node b is split, a nodehowever is an element of the set RC. The first restriction prevents a splitting sequence as the one in figure 9a.
 Node splitting with the above restrictions, alternated with eventually result in a
-single node. This can be seen easily. Every time a node that is an element of an SED-set is split, it is reduced by the
+single node. This can be seen easily. Every time a node that is an element of an SED-set is split, a node that is an element of an SED-set is reduced by the
 transformation and the number of nodes involved in SED-sets decreases with one. Since we are considering
 flow graphs with a finite number of nodes, a single node eventually remains.
 s
@@ -356,7 +359,7 @@ Figure
 9: Graph with two different split graphs.
 Theorem 4.7 The minimum number of splits needed to reduce an MSED-set with k nodes is given by:
 Proof: Every time a node is split and T is applied, the number of nodes in the MSED-set decreases with one. For
-every predecessor of the node to split a duplicate is made, this means that every duplicate has only one predecessor
+every predecessor of a node to split a duplicate is made, this means that every duplicate has only one predecessor
 and all the duplicates can be reduced by the T2 transformation. This results in an MSED-set with one node less
 than the original MSED-set. To reduce the complete MSED-set all nodes but one of the MSED-set must be split
 until there is only one node left. This results in k-1 splits. 2
@@ -365,7 +368,7 @@ reducible graph is given by:
 where T splits is the total number of splits, and k i is the number of nodes of MSED-set i.
 Proof: The proof consists of multiple parts, first some related lemmas are proven.
 Lemma 4.9 All MSED-sets are disjoint, that is there are no two MSED-sets that share a node.
-Proof: If a node is shared by two MSED-sets then this node must have two different immediate domina-
+Proof: If a node is shared by two MSED-sets then a node must have two different immediate domina-
 tors. This conflicts however with the definition of an immediate dominator as given in 4.2. 2
 Since the MSED-sets are disjoint the number of splits of the individual MSED-sets can be added. If however
 splitting nodes results in merging MSED-sets this result does not hold anymore. Therefore we have to prove that
@@ -385,23 +388,24 @@ Figure
 
 10: Merging of two MSED-sets.
 to go from G 1 to G 2 and vice-versa. The reason that both subgraphs do not form a single MSED-set
-is the fact that they have different immediate dominators. By splitting a node that is in RC, in this case
+is the fact that both subgraphs have different immediate dominators. By splitting a node that is in RC, in this case
 node x, and applying T to the complete graph the immediate dominator of subgraph G 1 becomes also
-the immediate dominator of subgraph G 2 . Since the subgraphs add up to a single loop and share the
+the immediate dominator of subgraph G 2 . Since both subgraphs add up to a single loop and share the
 same immediate dominator the MSED-sets are merged. This holds also in the general case where x
 dominates and is reachable by n MSED-sets.
 Splitting nodes that are not in RC do not merge MSED-sets. There are now two types of nodes left
-that are candidates for splitting, these are the nodes of the sets NN and CN.
-Splitting nodes that are element of the set NN do not merge MSED-sets. These nodes do not have
-edges that go to other MSED-sets, therefore splitting of these nodes does not affect the edges from
+that are candidates for splitting, two types of nodes left
+that are candidates for splitting are the nodes of the sets NN and CN.
+Splitting nodes that are element of the set NN do not merge MSED-sets. nodes that are element of the set NN do not have
+edges that go to other MSED-sets, therefore splitting of nodes that are element of the set NN does not affect the edges from
 one MSED-set to another and therefore the splitting will never result in merging MSED-sets.
-Splitting nodes that are element of the set CN do not merge MSED-sets. These nodes do not form
-a loop with the MSED-set it dominates. By splitting such a node the nodes of both MSED-sets
+Splitting nodes that are element of the set CN do not merge MSED-sets. nodes that are element of the set NN do not form
+a loop with the MSED-set nodes that are element of the set NN dominates. By splitting such a node the nodes of both MSED-sets
 get the same immediate dominator but there is no loop between the MSED-sets and therefore are
 not merged.
 Lemma 4.11 Reducing two merged MSED-sets results in more splits to reduce a graph than reducing the
 MSED-sets separately.
-Proof: Suppose SED-set 1 consists of x nodes and SED-set 2 has y nodes. Merging them costs one split
+Proof: Suppose SED-set 1 consists of x nodes and SED-set 2 has y nodes. Merging y nodes costs one split
 since the RC node must be split. Reducing the resulting SED-set which has now x
 splits. The total number of splits is x \Gamma 1+y. Reducing the two SED-sets separately results
 in splits. This is one split less than the splits needed when merging the SED-sets. 2
@@ -409,13 +413,13 @@ The combination of lemmas 4.10 and 4.11 justifies the restriction to prevent the
 of RC.
 Lemma 4.12 There exists always a node in an irreducible graph that is part of an MSED-set but that is not
 an element of RC.
-Proof: If all nodes of all MSED-sets are elements of RC then these nodes must dominate at least two other
-nodes because a node cannot dominate its own dominators. These nodes are also elements of an MSED-set
+Proof: If all nodes of all MSED-sets are elements of RC then all nodes of all MSED-sets must dominate at least two other
+nodes because a node cannot dominate a node own dominators. all nodes of all MSED-sets are also elements of an MSED-set
 and of RC. The graph therefore must have an infinite number of nodes. Since we are considering graphs
 with a finite number of nodes there must be a node that is part of an MSED-set but that is not an element of
 Since MSED-sets are disjoint and our algorithm can always find a node that can be split without merging MSED-
 sets the result of equation 1 holds. 2
-Example 4.13 In figure 9 the MSED-sets fa; bg and fc; dg can be identified. They have both two nodes. This
+Example 4.13 In figure 9 the MSED-sets fa; bg and fc; dg can be identified. bg and fc have both two nodes. This
 results in a minimal number of splits needed to reduce the graph.
 4.2 Minimizing the amount of copies
 In the previous section we saw that the algorithm minimizes the number of splits, but this does not result in a
@@ -443,8 +447,8 @@ number of instructions in node b is less than in node a then the number of copie
 latter case. Thus keeping the set of candidate nodes as big as possible pays off if one would like to minimize
 the amount of copies.
 2. The sequence of splitting nodes must be chosen optimal. There exists multiple split sequences to solve an
-irreducible graph. A tree can be build to discover them all. Figure 12 shows a flow graph and the tree with
-all possible split sequences. The nodes of this tree indicate how many copies are introduced by the split. The
+irreducible graph. A tree can be build to discover A tree. Figure 12 shows a flow graph and the tree with
+all possible split sequences. The nodes of A tree indicate how many copies are introduced by the split. The
 s
 a b c
 a 2b c
@@ -500,9 +504,8 @@ b. Splitting a node that is in the set RC.
 
 Figure
 
-13: The influence on the number of copies by splitting a RC node.
-Consider the graph of figure 13. In this figure the subgraph G has at least one MSED-set, otherwise the
-graph would not be irreducible. Figure 13a shows the reduction of a graph in the case that splitting of a RC
+13: The influence on The number of copies by splitting a RC node.
+Consider the graph of figure 13. In figure 13 the subgraph G has at least one MSED-set, otherwise the graph of figure 13 would not be irreducible. Figure 13a shows the reduction of a graph in the case that splitting of a RC
 node is not allowed and in 13b splitting of such a node is allowed. The node g is the reduced subgraph G
 and the notation sa in a node means that node s has consumed a copy of node a. The resulting quantity of
 the node is the sum of the quantities of nodes s and a. As we can see the resulting total quantity of the split
@@ -514,8 +517,8 @@ increases. It takes much computation time to compute all possibilities, therefor
 picks a node n i to split with the smallest H (n i ) as defined by:
 The results of this heuristic, compared to the best possible split sequence, are given in section 5.
 4.3 Algorithms
-The method described in the previous sections detects an irreducible control flow graph and converts it to a reducible
-control flow graph. In this section the algorithm for this method is given. The algorithm consists of three
+The method described in the previous sections detects an irreducible control flow graph and converts The method described in the previous sections to a reducible
+control flow graph. In this section the algorithm for The method described in the previous sections is given. the algorithm for this method consists of three
 parts (1) the T1 and T2 transformations, (2) the selection of a candidate node and (3) the splitting of a node.
 Algorithm 4.1 Controlled Node Splitting
 Input : The control flow graph of a procedure.
@@ -533,14 +536,14 @@ the flow graph of nodes is also performed in the flow graph of basic blocks. Aft
 and T2 transformations are applied till the graph of nodes does not change any more (2). If the graph of nodes
 is reduced to a single node, the graph is reducible and no splitting is needed. However if there remain multiple
 nodes, node splitting must be applied. First a node for splitting is selected (4). This is done with algorithm 4.2
-that is discussed later. The selected node is then split (5) as defined in definition 3.2. In the graph of basic blocks,
+that is discussed later. node splitting is then split (5) as defined in definition 3.2. In the graph of basic blocks,
 the corresponding basic blocks are copied also. After splitting the T1 and T2 transformations are applied again
 on the graph of nodes (6). When there is still more than one node left the process start over again. The algorithm
 terminates if the graph of nodes is reduced to a single node and thus the graph of basic blocks is converted to a
 reducible flow graph.
 The algorithms for the transformations and for node splitting are quite straightforward and not given
 here. Algorithm 4.2 selects a node for splitting. Initially every node is a candidate. A node is rejected as a candidate
-if it does not fulfill the restrictions (3) as discussed in subsection 4.1. For all nodes that fulfill these restrictions
+if A node does not fulfill the restrictions (3) as discussed in subsection 4.1. For all nodes that fulfill these restrictions
 the heuristic is calculated (4) with equation 1. The node with the smallest heuristic is selected for splitting.
 The goal of our experiments is to measure the quality of controlled node splitting in the sense of minimizing the
 amount of copies. In the experiments four methods for node splitting are used:
@@ -559,19 +562,20 @@ made to the set of nodes that are candidate for splitting.
 Controlled Node Splitting, CNS. Node splitting with the restrictions discussed in section 4.1.
 Controlled Node Splitting with Heuristic, CNSH. The same method as CNS but now a heuristic is used to
 select a node from the set of candidate nodes.
-The algorithms are applied to a selective group of benchmarks. These benchmarks are procedures with an irreducible
+The algorithms are applied to a selective group of benchmarks. benchmarks are procedures with an irreducible
 control flow graph and are obtained from the real world programs: a68, bison, expand, gawk, gs, gzip,
-sed, tr. The programs are compiled with the GCC compiler which is ported to a RISC architecture 2 . The amount
+sed, tr. the real world programs: a68, bison, expand, gawk, gs, gzip,
+ are compiled with the GCC compiler which is ported to a RISC architecture 2 . The amount
 of copies of two different quantities are considered. In table 1 the number of copies of basic blocks are listed and
 in table 2 the number of copied instructions. The reported results of the methods UCNS, CNS and CNSH are the
 averages of all possible split sequences.
 The first column in the tables 1 and 2 lists the procedure name, with the program name in parentheses. The second
 column gives the number of basic blocks or instructions of the procedure before an algorithm is applied. The other
-columns give the number of copies that result from the algorithms. The absolute number of copies is given and a
+columns give the number of copies that result from The algorithms. the number of copies that result from the algorithms is given and a
 percentage that indicates the growth of the quantity with respect to the original quantity is given.
 From the results of the ONS method we can conclude that node splitting does not have to lead to an excessive
 number of copies. Furthermore we can conclude that CNS outperforms UCNS. UCNS can lead to an enormous
-amount of copies, the average percentage of growth in basic blocks is 241.7% and in code size it is 235.5%. CNS
+amount of copies, the average percentage of growth in basic blocks is 241.7% and in code size 241.7% is 235.5%. CNS
 performs better, a growth of 26.2% for basic blocks and 30.1% for the number of instruction, but there is still a big
 gap with the optimal case. When using the heuristic, controlled node splitting performs very close to the optimum.
 The average growth in basic blocks for the methods CNSH and ONS is respectively 3.1% and 3.0%. The growth
@@ -605,15 +609,16 @@ blocks and in table 4 the impact on the code size is listed. The first column of
 the second column list the total number of basic blocks or instructions. The remaining columns list the increase
 in basic blocks or in instructions for each method.
 As can be seen from the tables the impact of node splitting can be substantial in terms of number of basic blocks or
-instructions. As we can see, for UCNS the average increase in basic blocks is 15.4% and in instructions it is 13.6%.
+instructions. As we can see, for UCNS the average increase in basic blocks is 15.4% and in instructions UCNS is 13.6%.
 Using UCNS can even result in a code size increase of 80% for the program bison. When using controlled node
 splitting the increases are smaller and quite acceptable. CNSH results as expected in the smallest increases for
-both quantities. These results show the importance of a clever transformation of irreducible control flow graphs.
+both quantities. CNSH results as expected in the smallest increases for
+both quantities show the importance of a clever transformation of irreducible control flow graphs.
 6 Conclusions
 A method has been given which transforms an irreducible control flow graph to a reducible control flow graph.
 This gives us the opportunity to exploit ILP over a larger scope than a single basic block for any program. The
 method is based on node splitting. To achieve the minimum number of splits the set of possible candidate nodes
-is limited to nodes with specific properties. Since splitting of these nodes can result in a minimum resulting code
+is limited to nodes with specific properties. Since splitting of nodes with specific properties can result in a minimum resulting code
 size the algorithm can be used to prevent uncontrolled growth of the code size. Because the computation time to
 determine the optimum split sequence is (very) large, a heuristic has been developed.
 
@@ -635,9 +640,10 @@ compile program(sed) 693 2 (0%) 391.4 (56%) 267.5 (39%) 2.0 (0%)
 re search 2(sed) 1857 91 (5%) 4803.7 (259%) 227.5 (12%) 93.0 (5%)
 squeeze filter(tr) 119 22 (18%) 57.0 (48%) 55.5 (47%) 22.0 (18%)
 total 11588 335 (2.9%) 27291.7 (235.5%) 3484.1 (30.1%) 337 (2.9%)
-The method with the heuristic is called controlled node splitting with heuristic. This method is applied to a set of
+The method with the heuristic is called controlled node splitting with heuristic. The method with the heuristic is applied to a set of
 procedures which contain irreducible control flow graphs. The results are compared with the results of the other
-methods; these methods are uncontrolled node splitting and controlled node splitting. From our experiments it
+methods; the other
+methods are uncontrolled node splitting and controlled node splitting. From our experiments it
 follows that uncontrolled node splitting can lead to an enormous number of copies, the average growth in code
 size per procedure is 235.5%. Controlled node splitting performs better (30.1%) but there is still a big gap with the
 optimal case. We observed that the average number of copies when using controlled node splitting with heuristic
@@ -690,7 +696,8 @@ Flow graph reducibility.
 Compilers: principles, techniques, and tools
 Elimination algorithms for data flow analysis
 Global instruction scheduling for superscalar machines
-A Control-Flow Normalization Algorithm and its Complexity
+A Control-Flow Normalization Algorithm and superscalar machines
+ Complexity
 An elimination algorithm for bidirectional data flow problems using edge placement
 A new framework for exhaustive and incremental data flow analysis using DJ graphs
 loops using DJ graphs

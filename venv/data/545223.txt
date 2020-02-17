@@ -1,7 +1,7 @@
 --T
 A large, fast instruction window for tolerating cache misses.
 --A
-Instruction window size is an important design parameter for many modern processors. Large instruction windows offer the potential advantage of exposing large amounts of instruction level parallelism. Unfortunately naively scaling conventional window designs can significantly degrade clock cycle time, undermining the benefits of increased parallelism.This paper presents a new instruction window design targeted at achieving the latency tolerance of large windows with the clock cycle time of small windows. The key observation is that instructions dependent on a long latency operation (e.g., cache miss) cannot execute until that source operation completes. These instructions are moved out of the conventional, small, issue queue to a much larger waiting instruction buffer (WIB). When the long latency operation completes, the instructions are reinserted into the issue queue. In this paper, we focus specifically on load cache misses and their dependent instructions. Simulations reveal that, for an 8-way processor, a 2K-entry WIB with a 32-entry issue queue can achieve speedups of 20%, 84%, and 50% over a conventional 32-entry issue queue for a subset of the SPEC CINT2000, SPEC CFP2000, and Olden benchmarks, respectively.
+Instruction window size is an important design parameter for many modern processors. Large instruction windows offer the potential advantage of exposing large amounts of instruction level parallelism. Unfortunately naively scaling conventional window designs can significantly degrade clock cycle time, undermining the benefits of increased parallelism.This paper presents a new instruction window design targeted at achieving the latency tolerance of large windows with the clock cycle time of small windows. The key observation is that instructions dependent on a long latency operation (e.g., cache miss) cannot execute until that source operation completes. instructions dependent on a long latency operation (e.g., cache miss) cannot execute until that source operation completes are moved out of the conventional, small, issue queue to a much larger waiting instruction buffer (WIB). When that source operation completes, instructions dependent on a long latency operation (e.g., cache miss) cannot execute until that source operation completes are reinserted into the issue queue. In This paper, we focus specifically on load cache misses and their dependent instructions. Simulations reveal that, for an 8-way processor, a 2K-entry WIB with a 32-entry issue queue can achieve speedups of 20%, 84%, and 50% over a conventional 32-entry issue queue for a subset of the SPEC CINT2000, SPEC CFP2000, and Olden benchmarks, respectively.
 --B
 Introduction
 Many of today's microprocessors achieve high performance
@@ -30,7 +30,7 @@ on long latency operations cannot execute until the
 long latency operation completes. This allows us to separate
 instructions into those that will execute in the near future
 and those that will execute in the distant future. The key
-to our design is that the entire chain of instructions dependent
+to us design is that the entire chain of instructions dependent
 on a long latency operation is removed from the issue
 window, placed in a waiting instruction buffer (WIB), and
 reinserted after the long latency operation completes. Fur-
@@ -40,19 +40,19 @@ need to implement select logic rather than the full wakeup-
 select required by a conventional issue window. Tracking
 true dependencies (as done by the wakeup logic) is handled
 by the issue window when the instructions are reinserted.
-In this paper we focus on tolerating data cache misses,
-however we believe our technique could be extended to
+In This paper us focus on tolerating data cache misses,
+however us believe us technique could be extended to
 other operations where latency is difficult to determine at
-compile time. Specifically, our goal is to explore the design
+compile time. Specifically, us goal is to explore the design
 of a microarchitecture with a large enough "effective" window
-to tolerate DRAM accesses. We leverage existing techniques
+to tolerate DRAM accesses. us leverage existing techniques
 to provide a large register file [13, 34] and assume
 that a large active list 1 is possible since it is not on the critical
 path [4] and techniques exist for keeping the active list
-1 By active list, we refer to the hardware unit that maintains the state of
+1 By active list, us refer to the hardware unit that maintains the state of
 in-flight instructions, often called the reorder buffer.
 large while using relatively small hardware structures [31].
-We explore several aspects of WIB design, including:
+us explore several aspects of WIB design, including:
 detecting instructions dependent on long latency operations,
 inserting instructions into the WIB, banked vs. non-banked
 organization, policies for selecting among eligible instructions
@@ -64,13 +64,15 @@ two-level register files (128 L1/2048 L2) to a conventional
 32-entry issue window with single-level register files (128
 registers). These simulations show WIB speedups over the
 conventional design of 20% for SPEC CINT2000, 84% for
-SPEC CFP2000, and 50% for Olden. These speedups are
+SPEC CFP2000, and 50% for Olden. WIB speedups over the
+conventional design of 20% for SPEC CINT2000, 84% for
+SPEC CFP2000, and 50% for Olden are
 a significant fraction of those achieved with a 2048-entry
 conventional issue window (35%, 140%, and 103%), even
 ignoring clock cycle time effects.
 The remainder of this paper is organized as follows. Section
 provides background and motivation for this work.
-Our design is presented in Section 3 and we evalute its performance
+Our design is presented in Section 3 and Our evalute Our design performance
 in Section 4. Section 5 discusses related work and
 Section 6 summarizes this work and presents future directions
 
@@ -122,29 +124,31 @@ The remainder of this section evaluates the effect of window
 size on program performance, ignoring clock cycle
 time effects. The goal is to determine the potential performance
 improvement that could be achieved by large instruction
-windows. We begin with a description of our processor
-model. This is followed by a short discussion of its performance
+windows. We begin with a description of We processor
+model. This is followed by a short discussion of This performance
 for various instruction window sizes.
 2.2.1 Methodology
-For this study, we use a modified version of SimpleScalar
+For 2.2 Limit Study
+, We use a modified version of SimpleScalar
 (version 3.0b) [8] with the SPEC CPU2000 [17] and
-Olden [11] benchmark suites. Our SPEC CPU2000 benchmarks
+Olden [11] benchmark suites. We SPEC CPU2000 benchmarks
 are pre-compiled binaries obtained from the SimpleScalar
 developers [33] that were generated with compiler
 flags as suggested at www.spec.org and the Olden binaries
 were generated with the Alpha compiler (cc) using optimization
-flag -O2. The SPEC benchmarks operate on their
+flag -O2. Our SPEC CPU2000 benchmarks
+ operate on Our SPEC CPU2000 benchmarks
 reference data sets and for the subset of the Olden benchmarks
 we use, the inputs are: em3d 20,000 nodes, arity 10;
 mst 1024 nodes; perimeter 4Kx4K image; treeadd
-levels. We omit several benchmarks either because the
-data cache miss ratios are below 1% or their IPCs are
+levels. we omit several benchmarks either because the
+data cache miss ratios are below 1% or several benchmarks IPCs are
 unreasonably low (health and ammp are both less than
 for our base configuration.
-Our processor design is loosely based on the Alpha
-21264 microarchitecture [12, 14, 19]. We use the same
+we processor design is loosely based on the Alpha
+21264 microarchitecture [12, 14, 19]. we use the same
 seven stage pipeline, including speculative load execution
-and load-store wait prediction. We do not model the clustered
+and load-store wait prediction. we do not model the clustered
 design of the 21264. Instead, we assume a single integer
 issue queue that can issue up to 8 instructions per cycle
 and a single floating point issue queue that can issue up to 4
@@ -181,25 +185,26 @@ Table
 
 1. Base Configuration
 point register files are as large as the active list. For the remainder
-of this paper we state a single value for the active
+of This paper we state a single value for the active
 list/register file size, this value applies to both the integer
 and floating point register files.
 The simulator was modified to support speculative up-date
 of branch history with history-based fixup and return-
 address-stack repair with the pointer-and-data fixup mechanism
-[26, 27]. We also modified the simulator to warm up
+[26, 27]. We also modified The simulator to warm up
 the instruction and data caches during an initial fast forward
-phase. For the SPEC benchmarks we skip the first four hundred
+phase. For Our SPEC CPU2000 benchmarks
+ we skip the first four hundred
 million instructions, and then execute the next one hundred
 million instructions with the detailed performance sim-
 ulator. The Olden benchmarks execute for 400M instructions
 or until completion. This approach is used throughout
-this paper. We note that our results are qualitatively similar
+This paper. We note that We results are qualitatively similar
 when using a different instruction execution window [24].
 2.2.2 Varying Window Size
 We performed simulations varying the issue queue size,
 from (the base) in powers of 2, up to 4096. For issue
-queue sizes of 32, 64, and 128 we keep the active list fixed
+queue sizes of 32, 64, and 128 We keep the active list fixed
 at 128 entries. For the remaining configurations, the active
 list, register files and issue queue are all equal size.
 The load and store queues are always set to one half the
@@ -229,26 +234,30 @@ windows. The challenge for architects is to accomplish
 this without significant impact on clock cycle
 time. The next section presents our proposed solution.
 3 A Large Window Design
-This section presents our technique for providing a large
+The next section presents our technique for providing a large
 instruction window while maintaining the advantages of
 small structures on the critical path. We begin with an
-overview to convey the intuition behind the design. This
+overview to convey the intuition behind A Large Window Design
+. This
 is followed by a detailed description of our particular de-
-sign. We conclude this section with a discussion of various
+sign. We conclude The next section with a discussion of various
 design issues and alternative implementations.
 3.1
 
 Overview
 
-In our base microarchitecture, only those instructions in
+In We base microarchitecture, only those instructions in
 the issue queue are examined for potential execution. The
 active list has a larger number of entries than the issue queue
 (128 vs. 32), allowing completed but not yet committed
-instructions to release their issue queue entries. Since the
+instructions to release The
+active list issue queue entries. Since The
 active list is not on the critical path [4], we assume that
-we can increase its size without affecting clock cycle time.
+we can increase 
+ size without affecting clock cycle time.
 Nonetheless, in the face of long latency operations, the issue
-queue could fill with instructions waiting for their operands
+queue could fill with instructions waiting for the issue
+queue operands
 and stall further execution.
 We make the observation that instructions dependent on
 long latency operations cannot execute until the long latency
@@ -263,63 +272,81 @@ Figure
 ined by the wakeup-select logic on the critical path. We note
 this same observation is exploited by Palacharla, et. al [22]
 and their technique of examining only the head of the issue
-queues. However, the goal of our design is to remove these
-waiting instructions from the issue queue and place them in
+queues. However, the goal of We design is to remove these
+waiting instructions from the issue queue and place these
+waiting instructions from the issue queue in
 a waiting instruction buffer (WIB). When the long latency
-operation completes, the instructions are moved back into
-the issue queue for execution. In this design, instructions
-remain in the issue queue for a very short time. They either
-execute properly or they are removed due to dependence on
+operation completes, these
+waiting instructions from the issue queue are moved back into
+the issue
+ queue for execution. In our design, instructions
+remain in the issue
+ queue for a very short time. instructions
+ either
+execute properly or instructions
+ are removed due to dependence on
 a long latency operation.
-For this paper we focus specifically on instructions in
+For this paper We focus specifically on instructions in
 the dependence chain of load cache misses. However, we
-believe our technique could be extended to other types of
+believe We technique could be extended to other types of
 long latency operations. Figure 2 shows the pipeline for
 a WIB-based microarchitecture, based on the 21264 with
 two-level register files (described later).
 The fetch stage includes the I-cache, branch prediction
 and the instruction fetch queue. The slot stage directs instructions
 to the integer or floating point pipeline based on
-their type. The instructions then go through register rename
+their type. these
+waiting instructions from the issue queue then go through register rename
 before entering the issue queue. Instructions are selected
-from the issue queue either to proceed with the register read,
+from the issue
+ queue either to proceed with the register read,
 execution and memory/writeback stages or to move into the
-WIB during the register read stage. Once in the WIB, instructions
-wait for the specific cache miss they depend on to
-complete. When this occurs, the instructions are reinserted
+WIB during the register read stage. Once in the
+WIB, instructions
+wait for the specific cache miss instructions
+ depend on to
+complete. When this occurs, these
+waiting instructions from the issue queue are reinserted
 into the issue queue and repeat the wakeup-select process,
-possibly moving back into the WIB if they are dependent on
+possibly moving back into the
+WIB if instructions
+ are dependent on
 another cache miss. The remainder of this section provides
-details on WIB operation and organization.
+details on the
+WIB operation and organization.
 3.2 Detecting Dependent Instructions
 An important component of our design is the ability to
 identify all instructions in the dependence chain of a load
-cache miss. To achieve this we leverage the existing issue
+cache miss. To achieve this our leverage the existing issue
 queue wakeup-select logic. Under normal execution, the
 wakeup-select logic determines if an instruction is ready for
-execution (i.e., has all its operands available) and selects a
+execution (i.e., has all an instruction operands available) and selects a
 subset of the ready instructions according to the issue constraints
 (e.g., structural hazards or age of instructions).
 To leverage this logic we add an additional signal-
 called the wait bit-that indicates the particular source
 operand (i.e., input register value) is "pretend ready". This
 signal is very similar to the ready bit used to synchronize
-true dependencies. It differs only in that it is used to indicate
+true dependencies. This
+signal differs only in that This
+signal is used to indicate
 the particular source operand will not be available for an extended
 period of time. An instruction is considered pretend
-ready if one or more of its operands are pretend ready and
+ready if one or more of An instruction operands are pretend ready and
 all the other operands are truly ready. Pretend ready instructions
-participate in the normal issue request as if they were
+participate in the normal issue request as if ready instructions
+ were
 truly ready. When it is issued, instead of being sent to the
 functional unit, the pretend ready instruction is placed in
-the WIB and its issue queue entry is subsequently freed by
-the issue logic as though it actually executed. We note that
-a potential optimization to our scheme would consider an
-instruction pretend ready as soon as one of its operands is
+the WIB and WIB issue queue entry is subsequently freed by
+the issue logic as though WIB actually executed. We note that
+a potential optimization to We scheme would consider an
+instruction pretend ready as soon as one of WIB operands is
 pretend ready. This would allow instructions to be moved to
-the WIB earlier, thus further reducing pressure on the issue
+the
+WIB earlier, thus further reducing pressure on the issue
 queue resources.
-In our implementation, the wait bit of a physical register
+In We implementation, the wait bit of a physical register
 is initially set by a load cache miss. Dependent instructions
 observe this wait bit, are removed from the issue queue, and
 set the wait bit of their destination registers. This causes
@@ -361,46 +388,61 @@ Figure
 2. WIB-based Microarchitecture
 registers. Therefore, all instructions directly or indirectly
 dependent on the load are identified and removed from the
-issue queue. The load miss signal is already generated in
+issue queue. the load miss signal is already generated in
 the Alpha 21264 since load instructions are speculatively
 assumed to hit in the cache allowing the load and dependent
 instructions to execute in consecutive cycles. In the case of
 a cache miss in the Alpha, the dependent instructions are
 retained in the issue queue until the load completes. In our
-case, these instructions move to the WIB.
+case, the dependent instructions move to the
+WIB.
 An instruction might enter the issue queue after the
-instructions producing its operands have exited the issue
-queue. The producer instructions could have either executed
-properly and the source operand is available or they
-could be in the WIB and this instruction should eventually
-be moved to the WIB. Therefore, wait bits must be available
-wherever conventional ready bits are available. In this
-case, during register rename. Note that it may be possible
-to steer instructions to the WIB after the rename stage and
-before the issue stage, we plan to investigate this as future
-work. Our current design does not implement this, instead
+instructions producing the issue operands have exited the issuequeue. the dependent instructions could have either executed
+properly and the source operand is available or the dependent instructions
+could be in the
+WIB and this instruction should eventually
+be moved to the
+WIB. Therefore, wait bits must be available
+wherever conventional ready bits are available. In the case of
+a cache miss in the Alpha, during register rename. Note that it may be possible
+to steer instructions to the
+WIB after the rename stage and
+before the issue stage, our plan to investigate this as future
+work. our current design does not implement this, instead
 each instruction enters the issue queue and then is moved to
-the WIB if necessary.
+the
+WIB if necessary.
 3.3 The Waiting Instruction Buffer
-The WIB contains all instructions directly or indirectly
-dependent on a load cache miss. The WIB must be designed
-to satisfy several important criteria. First, it must contain
+the
+WIB contains all instructions directly or indirectly
+dependent on a load cache miss. the
+WIB must be designed
+to satisfy several important criteria. First, the
+WIB must contain
 and differentiate between the dependent instructions of individual
-outstanding loads. Second, it must allow individual
+outstanding loads. Second, the
+WIB must allow individual
 instructions to be dependent on multiple outstanding loads.
-Finally, it must permit fast "squashing" when a branch mispredict
+Finally, the
+WIB must permit fast "squashing" when a branch mispredict
 or exception occurs.
-To satisfy these requirements, we designed the WIB to
+To satisfy these requirements, we designed the
+WIB to
 operate in conjunction with the active list. Every instruction
-in the active list is allocated an entry in the WIB. Although
-this may allocate entries in the WIB that are never
-dependent on a load miss, it simplifies squashing on mispre-
+in the active list is allocated an entry in the
+WIB. Although
+this may allocate entries in the
+WIB that are never
+dependent on a load miss, this simplifies squashing on mispre-
 dicts. Whenever active list entries are added or removed, the
-corresponding operations are performed on the WIB. This
+corresponding operations are performed on the
+WIB. This
 means WIB entries are allocated in program order.
-To link WIB entries to load misses we use a bit-vector
+To link the
+WIB entries to load misses we use a bit-vector
 to indicate which WIB locations are dependent on a specific
-load. When an instruction is moved to the WIB, the
+load. When an instruction is moved to the
+WIB, the
 appropriate bit is set. The bit-vectors are arranged in a two
 dimensional array. Each column is the bit-vector for a load
 cache miss. Bit-vectors are allocated when a load miss is
@@ -414,45 +456,53 @@ operand wait bits with an index into the bit-vector table corresponding
 to the load cache miss this instruction is dependent
 on. In the case where an instruction is dependent on
 multiple outstanding loads, we use a simple fixed ordering
-policy to examine the source operand wait bits and store
-the instruction in the WIB with the first outstanding load
+policy to examine the
+operand wait bits and store
+the instruction in the
+WIB with the first outstanding load
 encountered. This requires propagating the bit-vector index
 with the wait bits as described above. It is possible
 to store the bit-vector index in the physical register, since
 that space is available. However, this requires instructions
-that are moved into the WIB to consume register ports. To
+that are moved into the
+WIB to consume register ports. To
 reduce register pressure we assume the bit-vector index is
 stored in a separate structure with the wait bits.
-Instructions in the WIB are reinserted in the issue queue
+Instructions in the
+WIB are reinserted in the issue queue
 when the corresponding load miss is resolved. Reinsertion
 shares the same bandwidth (in our case, 8 instructions
 per cycle) with those newly arrived instructions that are decoded
 and dispatched to the issue queue. The dispatch logic
 is modified to give priority to the instructions reinserted
-from the WIB to ensure forward progress.
+from the
+WIB to ensure forward progress.
 Note that some of the instructions reinserted in the issue
 queue by the completion of one load may be dependent
-on another outstanding load. The issue queue logic detects
+on another outstanding load. the issue
+ queue logic detects
 that one of the instruction's remaining operands is unavail-
 able, due to a load miss, in the same way it detected the
 first load dependence. The instruction then sets the appropriate
 bit in the new load's bit-vector, and is removed from
 the issue queue. This is a fundamental difference between
-the WIB and simply scaling the issue queue to larger en-
+the WIB and simply scaling the issue
+ queue to larger en-
 tries. The larger queue issues instructions only once, when
-all their operands are available. In contrast, our technique
+all The larger queue operands are available. In contrast, our technique
 could move an instruction between the issue queue and WIB
 many times. In the worst case, all active instructions are dependent
 on a single outstanding load. This requires each
 bit-vector to cover the entire active list.
-The number of entries in the WIB is determined by the
+The number of entries in the
+WIB is determined by the
 size of the active list. The analysis in Section 2 indicates
 that 2048 entries is a good window size to achieve significant
 speedups. Therefore, initially we assume a 2K-entry
 active list and 1K-entry load and store queues. Assuming
 each WIB entry is 8 bytes then the total WIB capacity is
 16KB. The bit-vectors can also consume a great deal of
-storage, but it is limited by the number of outstanding requests
+storage, but The bit-vectors is limited by the number of outstanding requests
 supported. Section 4 explores the impact of limiting
 the number of bit-vectors below the load queue size.
 3.3.1 WIB Organization
@@ -463,7 +513,8 @@ instruction and reading the appropriate WIB entry. There
 is a fixed instruction width between the WIB and the issue
 queue. We set the number of banks equal to twice this
 width. Therefore, we can sustain reinsertion at full band-width
-by reading instructions from the WIB's even banks in
+by reading instructions from the
+WIB's even banks in
 one cycle and from odd banks in the next cycle, if enough
 instructions are eligible in each set of banks.
 Recall, WIB entries are allocated in program order in
@@ -472,12 +523,13 @@ using round-robin across the banks, interleaving at
 the individual instruction granularity. Therefore, entries in
 each bank are also allocated and released in program or-
 der, and we can partition each load's bit-vector according
-to which bank the bits map to. In our case, a 2K entry
+to which bank the bits map to. In We case, a 2K entry
 WIB with a dispatch width to the issue queue of 8 would
 have banks with 128 entries each. Each bank also stores
-its local head and tail pointers to reflect program order of
-instructions within the bank. Figure 3 shows the internal
-organization of the WIB.
+Each bank local head and tail pointers to reflect program order of
+instructions within Each bank. Figure 3 shows the internal
+organization of the
+WIB.
 During a read access each bank in a set (even or odd)
 operates independently to select an instruction to reinsert
 to the issue queue by examining the appropriate 128 bits
@@ -501,32 +553,36 @@ by the issue queue logic. This highlights an important
 difference between the WIB and a conventional issue
 queue. A conventional issue queue requires wakeup
 logic that broadcasts a register specifier to each entry.
-The WIB eliminates this broadcast by using the completed
+the
+WIB eliminates this broadcast by using the completed
 loads' bit-vectors to establish the candidate instructions for
 selection. The issue queue requires the register specifier
 broadcast to maintain true dependencies. In contrast, the
 WIB-based architecture leverages the much smaller issue
-queue for this task and the WIB can select instructions for
+queue for this task and the
+WIB can select instructions for
 reinsertion in any order.
 It is possible that there are not enough issue queue entries
 available to consume all instructions extracted from
-the WIB. In this case, one or more banks will stall for this
+the
+WIB. In this case, one or more banks will stall for this
 access and wait for the next access (two cycles later) to attempt
-reinserting its instruction. To avoid potential livelock,
+reinserting this
+access instruction. To avoid potential livelock,
 on each access we change the starting bank for allocating
 the available issue queue slots. Furthermore, a bank remains
-at the highest priority if it has an instruction to reinsert but
-was not able to. A bank is assigned the lowest priority if it
+at the highest priority if a bank has an instruction to reinsert but
+was not able to. A bank is assigned the lowest priority if A bank
 inserts an instruction or does not have an instruction to rein-
 sert. Livelock could occur in a fixed priority scheme since
-the instructions in the highest priority bank could be dependent
+the instructions in A bank could be dependent
 on the instructions in the lower priority bank. This
 could produce a continuous stream of instructions moving
-from the WIB to the issue queue then back to the WIB since
-their producing instructions are not yet complete. The producing
-instructions will never complete since they are in the
-lower priority bank. Although this scenario seems unlikely
-it did occur in some of our benchmarks and thus we use
+from the
+WIB to the issue queue then back to the
+WIB since
+their producing instructions are not yet complete. their producing instructions will never complete since their are in the lower priority bank. Although this scenario seems unlikely
+this scenario did occur in some of our benchmarks and thus our use
 Bit Vectors WIB Bank
 To Issue Queue
 Priority
@@ -543,7 +599,8 @@ Tail
 
 Figure
 
-3. WIB Organization
+3. the
+WIB Organization
 round-robin priority.
 3.3.2 Squashing WIB Entries
 Squashing instructions requires clearing the appropriate
@@ -564,19 +621,20 @@ the cache hierarchy. Simulations of a multi-banked register
 file show similar results. Further details on the register file
 designs and performance are available elsewhere [20].
 Alternative WIB Designs
-The above WIB organization is one of several alterna-
+WIB Organization is one of several alterna-
 tives. One alternative we considered is a large non-banked
 multicycle WIB. Although it may be possible to pipeline the
 WIB access, it would not produce a fully pipelined access
 and our simulations (see Section 4) indicate pipelining may
 not be necessary.
-Another alternative we considered is a pool-of-blocks
-structure for implementing the WIB. In this organziation,
-when a load misses in the cache it obtains a free block to
-buffer dependent instructions. A pointer to this block is
+Another alternative our considered is a pool-of-blocks
+structure for implementing the
+WIB. In this organziation,
+when a load misses in the cache the cache obtains a free block to
+buffer dependent instructions. A pointer to a free block is
 stored with the load in the load queue (LQ) and is used to
-deposit dependent instructions in the WIB. When the load
-completes, all the instructions in the block are reinserted
+deposit dependent instructions in the
+WIB. When the load in the load queue (LQ)completes, all the instructions in the block are reinserted
 into the issue queue. Each block contains a fixed number of
 instruction slots and each slot holds information equivalent
 to issue queue entries.
@@ -589,7 +647,8 @@ with the WIB entries. Although we could maintain
 information on program order, the list management of each
 load's dependence chain becomes too complex and time
 consuming during a squash. Although the bit-vector approach
-requires more space, it simplifies this management.
+requires more space, the bit-vector approach
+ simplifies this management.
 The pool-of-blocks approach has the potential of deadlock
 if there are not enough WIB entries. We are continuing to
 investigate techniques to reduce the list management overhead
@@ -600,8 +659,8 @@ Summary
 
 The WIB architecture effectively enlarges the instruction
 window by removing instructions dependent on load cache
-misses from the issue queue, and retaining them in the WIB
-while the misses are serviced. In achieving this, we leverage
+misses from the issue queue, and retaining the issue queue in the
+WIBwhile the misses are serviced. In achieving this, We leverage
 the existing processor issue logic without affecting the processor
 cycle time and circuit complexity. In the WIB archi-
 tecture, instructions stay in the issue queue only for a short
@@ -617,8 +676,8 @@ dependence chain of a load miss are awakened when the
 miss is resolved. There is no need to broadcast and have all
 the instructions monitor the result buses.
 Evaluation
-In this section we evaluate the WIB architecture. We
-begin by presenting the overall performance of our WIB
+In this section we evaluate The WIB architecture. We
+begin by presenting the overall performance of We WIB
 design compared to a conventional architecture. Next, we
 explore the impact of various design choices on WIB per-
 formance. This includes limiting the number of available
@@ -686,10 +745,10 @@ Table
 
 2. Benchmark Performance Statistics
 the other scales the issue queue to 2K entries (2K-IQ/2K).
-These configurations help isolate the issue queue from the
+Both configurations help isolate the issue queue from the
 active list and to provide an approximate upper bound on
 our expected performance.
-From the results shown in Figure 4, we make the following
+From the results shown in Figure 4, our make the following
 observations. First, the WIB design produces speedups
 over 10% for 12 of the benchmarks. The average
 speedup is 20%, 84%, and 50% for SPEC INT, SPEC
@@ -701,14 +760,17 @@ For most programs with large speedups from the large
 issue queue, the WIB design is able to capture a significant
 fraction of the available speedup. However, for a few
 programs the 2K issue queue produces large speedups when
-the WIB does not. mgrid is the most striking example
-where the WIB does not produce any speedup while the 2K
+the
+WIB does not. mgrid is the most striking example
+where the
+WIB does not produce any speedup while the 2K
 issue queue yields a speedup of over two. This phenomenon
 is a result of the WIB recycling instructions through the issue
 queue. This consumes issue bandwidth that the 2K issue
 queue uses only for instructions ready to execute. As evidence
 of this we track the number of times an instruction
-is inserted into the WIB. In the banked implementation the
+is inserted into the
+WIB. In the banked implementation the
 average number of times an instruction is inserted into the
 Bzip2 Gcc Gzip Parser Perlbmk Vortex Vpr Average
 a) SPEC 2000 Integer
@@ -728,7 +790,8 @@ insertion count of one and a maximum of 9, producing
 a speedup of 17%.
 We also note that for several benchmarks just increasing
 the active list produces noticable speedups, in some cases
-even outperforming the WIB. This indicates the issue queue
+even outperforming the
+WIB. This indicates the issue queue
 is not the bottleneck for these benchmarks. However, over-all
 the WIB significantly outperforms an increased active
 list.
@@ -742,7 +805,8 @@ a 9% improvement, over the 32KB data cache, indicating0.200.601.001.401.80Intege
 Figure
 
 5. Performance of Limited Bit-Vectors
-the WIB may be a better use of this space. We explore this
+the
+WIB may be a better use of this space. We explore this
 tradeoff more later in this section.
 We also performed two sensitivity studies by reducing
 the memory latency from 250 cycles to 100 cycles and
@@ -753,12 +817,13 @@ the SPEC INT, SPEC FP, and Olden benchmarks, respec-
 tively. The larger L2 cache has a smaller impact on the
 speedups achieved with a WIB. The average speedups were
 5%, 61%, and 38% for the SPEC INT, SPEC FP, and Olden
-benchmarks, respectively. The larger cache has the most
+benchmarks, respectively. The larger L2 cache has the most
 impact on the integer benchmarks, which show a dramatically
 reduced local L2 miss ratio (from an average of 22%
 to 6%). Caches exploit locality in the program's reference
 stream and can sometimes be sufficiently large to capture
-the program's entire working set. In contrast, the WIB can
+the program's entire working set. In contrast, the
+WIB can
 expose parallelism for tolerating latency in programs with
 very large working sets or that lack locality.
 For the remainder of this paper we present only the average
@@ -776,8 +841,10 @@ even with only 16 bit-vectors the WIB can achieve average
 speedups of 16% for SPEC INT, 26% for SPEC FP, and
 38% for the Olden benchmarks. The SPEC FP programs
 (particularly art) are affected the most by the limited bit-vectors
-since they benefit from memory level parallelism.
-bit-vectors (16KB) the WIB can achieve speedups
+since The SPEC FP programs
+(particularly art) benefit from memory level parallelism.
+bit-vectors (16KB) the
+WIB can achieve speedups
 of 19%, 45%, and 50% for the three sets of benchmarks,
 respectively.
 Integer FP Olden
@@ -788,7 +855,7 @@ Figure
 Reducing WIB area by limiting the number of bit-vectors
 is certainly a useful optimization. However, further decreases
 in required area can be achieved by using a smaller
-capacity WIB. This section explores the performance impact
+capacity WIB. this section explores the performance impact
 of reducing the capacity of the WIB, active list and
 register file.
 
@@ -803,14 +870,15 @@ space (8KB for WIB entries, 8KB for bit-vectors, and
 8KB for each 1024-entry register file). This is roughly area
 equivalent to doubling the cache size to 64KB. As stated
 above, the 64KB L1 data cache did not produce noticable
-speedups for our benchmarks, and the WIB is a better use
+speedups for our benchmarks, and the
+WIB is a better use
 of the area.
 4.4 WIB to Issue Queue Instruction Selection
 Our WIB design implements a specific policy for selecting
 from eligible instructions to reinsert into the issue
 queue. The current policy chooses instructions from each
 bank in program order. Since the banks operate independently
-and on alternate cycles, they do not extract instructions
+and on alternate cycles, the banks do not extract instructions
 in true program order. To evaluate the impact of instruction
 selection policy we use an idealized WIB that has
 single cycle access time to the entire structure. Within this
@@ -835,7 +903,7 @@ Figure
 speedups are due to better scheduling of the actual dependence
 graph. However, in some cases the schedule can be
 worse. Three programs show slowdowns compared to the
-banked WIB for the oldest load policy (4): bzip 11%,
+WIB for the oldest load policy (4): bzip 11%,
 parser 15%, and facerec 5%.
 4.5 Non-Banked Multicycle WIB Access
 We now explore the benefits of the banked organization
@@ -856,10 +924,14 @@ limit the benefits of larger instruction windows, that better
 branch prediction and better instruction cache behavior have
 synergistic effects, and that the benefits of larger instruction
 windows and larger data caches trade off and have overlapping
-effects. Their simulation assumes a very large 8MB L2
+effects. the benefits of larger instruction
+windows and larger data caches trade off and have overlapping
+effects simulation assumes a very large 8MB L2
 cache and models a register update unit (RUU) [29], which
 is a unified active list, issue queue, and rename register file.
-In their study, only instruction window sizes up to 256 are
+In the benefits of larger instruction
+windows and larger data caches trade off and have overlapping
+effects study, only instruction window sizes up to 256 are
 examined.
 There has been extensive research on architecture designs
 for supporting large instruction windows. In the multiscalar
@@ -900,12 +972,15 @@ This paper presents a new technique for achieving the
 latency tolerance of large windows while maintaining the
 high clock rates of small window designs. We accomplish
 this by removing instructions from the conventional issue
-queue if they are directly or indirectly dependent on a long
-latency operation. These instructions are placed into a waiting
+queue if queue are directly or indirectly dependent on a long
+latency operation. instructions from the conventional issue
+ are placed into a waiting
 instruction buffer (WIB) and reinserted into the issue
 queue for execution when the long latency operation com-
-pletes. By moving these instructions out of the critical path,
-their previously occupied issue queue entries can be further
+pletes. By moving instructions from the conventional issue
+ out of the critical path,
+instructions from the conventional issue
+ previously occupied issue queue entries can be further
 utilized by the processor to look deep into the program for
 more ILP. An important difference between the WIB and
 scaled-up conventional issue queues is that the WIB implements
@@ -919,12 +994,14 @@ queue reveal that adding a 2K-entry WIB can produce
 speedups of 20%, 84%, and 50% for a subset of the SPEC
 CINT2000, SPEC CFP2000, and Olden benchmarks, re-
 spectively. We also explore several WIB design parameters
-and show that allocating chip area for the WIB produces
+and show that allocating chip area for the
+WIB produces
 signifcantly higher speedups than using the same area to
 increase the level one data cache capacity from 32KB to
 64KB.
-Our future work includes investigating the potential for
-executing the instructions from the WIB on a separate execution
+We future work includes investigating the potential for
+executing the instructions from the
+WIB on a separate execution
 core, either a conventional core or perhaps a grid
 processor [25]. The policy space for selecting instructions
 is an area of current research. Finally, register file design
@@ -934,12 +1011,12 @@ further investigation.
 
 Acknowledgements
 
-This work was supported in part by NSF CAREER
+Our future work was supported in part by NSF CAREER
 Awards MIP-97-02547 and CCR-0092832, NSF Grants
 CDA-97-2637 and EIA-99-72879, Duke University, and
 donations from Intel, IBM, Compaq, Microsoft, and Erics-
 son. We thank the anonymous reviewers for comments and
-suggestions on this work.
+suggestions on Our future work.
 
 
 

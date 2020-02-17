@@ -1,16 +1,16 @@
 --T
 Parallel Divide and Conquer on Meshes.
 --A
-AbstractWe address the problem of mapping divide-and-conquer programs to mesh connected multicomputers with wormhole or store-and-forward routing. We propose the binomial tree as an efficient model of parallel divide-and-conquer and present two mappings of the binomial tree to the 2D mesh. Our mappings exploit regularity in the communication structure of the divide-and-conquer computation and are also sensitive to the underlying flow control scheme of the target architecture. We evaluate these mappings using new metrics which are extensions of the classical notions of dilation and contention. We introduce the notion of communication slowdown as a measure of the total communication overhead incurred by a parallel computation. We conclude that significant performance gains can be realized when the mapping is sensitive to the flow control scheme of the target architecture.
+AbstractWe address the problem of mapping divide-and-conquer programs to mesh connected multicomputers with wormhole or store-and-forward routing. We propose the binomial tree as an efficient model of parallel divide-and-conquer and present two mappings of the binomial tree to the 2D mesh. two mappings of the binomial tree exploit regularity in the communication structure of the divide-and-conquer computation and are also sensitive to the underlying flow control scheme of the target architecture. We evaluate two mappings of the binomial tree using new metrics which are extensions of the classical notions of dilation and contention. We introduce the notion of communication slowdown as a measure of the total communication overhead incurred by a parallel computation. We conclude that significant performance gains can be realized when the mapping is sensitive to the flow control scheme of the target architecture.
 --B
 Introduction
 A well-known problem-solving paradigm that occurs in many computations is divide-and-
-conquer. If the subproblems are independent of each other, they may be executed in
+conquer. If the subproblems are independent of each other, the subproblems are independent of each other may be executed in
 parallel, and this makes it a useful paradigm for designing large scale parallel programs.
 Divide-and-conquer has been studied by many researchers [7, 2, 3, 13, 14] and is applicable
 to a wide range of applications. In this paper, we address the problem of mapping degree-
 two divide and conquer computations on two-dimensional meshes. We represent these
-computations as a binomial tree and show that it runs in a phase by phase manner and
+computations as a binomial tree and show that a binomial tree runs in a phase by phase manner and
 that there is a regular pattern in the times at which messages are sent. In addition, the
 message volumes also exhibit regularity. One of our goals is to exploit all aspects of the
 regularity (topological, temporal, and message volume), and still develop parameterized
@@ -25,8 +25,8 @@ are significantly larger or smaller than the startup overhead, and whether the r
 mechanism is wormhole or store-and-forward.
 The remainder of the paper is organized as follows: Section 2 discusses related work.
 Section 3 describes the regular structure of divide-and-conquer computations. We present
-our mappings in Section 4 and describe the new performance metrics in Section 5. Section
-6 presents our analysis and we conclude with a discussion and indication of future
+We mappings in Section 4 and describe the new performance metrics in Section 5. Section
+6 presents We analysis and We conclude with a discussion and indication of future
 work.
 Related Work
 The divide and conquer model has been widely recognized as an effective parallel programming
@@ -64,20 +64,22 @@ to improve the performance is to use the "keep half, send half" strategy, outlin
 The parameter ff, used in step 2 below (we assume that 0 ! ff - 1), denotes the message
 size in each phase, as a fraction of the incoming message. Each node in the tree performs
 the following computation:
-1. Receive a problem (of size x) from the parent (the host, if the node is the root).
+1. Receive a problem (of size x) from the parent (the host, if Each node in the tree is the root).
 2. Solve the problem locally (if 'small enough'), or divide the problem into two parts
-(each of size ffx), and spawn a child process to solve one of them. In parallel, start
+(each of size ffx), and spawn a child process to solve one of two parts
+(each of size ffx). In parallel, start
 solving the other one, by repeating Step 2.
-3. Get the results from the children and combine them. Repeat until all children's
+3. Get the results from the children and combine the children. Repeat until all children's
 results have been combined.
-4. Send the results to the parent (the host, if the node is the root).
+4. Send all children's
+results to the parent (the host, if the node is the root).
 There are two stages in the computation-divide (Step 2), and combine (Step 3).
-Note that during the divide stage, each node receives a message from its parent exactly
+Note that during the divide stage, each node receives a message from a message parent exactly
 once, but may send messages multiple times (once to each child process that is spawned).
 During the combine stage, the message traffic is in the opposite direction-a node may
 receive many times, but sends exactly once. The patterns of data flow in the two stages
-are identical except for direction. We therefore restrict our analysis to the divide stage,
-without any loss of generality. We will also normalize our analysis so that the volume of
+are identical except for direction. We therefore restrict We analysis to the divide stage,
+without any loss of generality. We will also normalize We analysis so that the volume of
 the message sent to the root (the initial problem size) is unity.
 Figure
 
@@ -95,11 +97,11 @@ Assuming messages passed to children consist of an adjacency matrix we have 1Not
 stage and the combine stage. In multiplying a sequence of n \Theta n matrices, for example,
 ff is 1in the divide mode, and 1 in the combine mode. We now show that that the graph
 corresponding to the "keep half send half" strategy is a binomial tree.
-1 The binomial tree B(n) is defined inductively as follows [18] (see Fig. 1):
+1 a binomial tree is defined inductively as follows [18] (see Fig. 1):
 ffl B(0) is a single node with no edges.
-ffl B(n) consists of two copies of B(n \Gamma 1) together with an edge connecting their roots,
+ffl B(n) consists of two copies of B(n \Gamma 1) together with an edge connecting two copies of B(n \Gamma 1) roots,
 one of which is designated as the root of B(n).
-Note that the subtree rooted at any node is itself a binomial tree. Moreover, the root of
+Note that the subtree rooted at any node is the subtree rooted at any node a binomial tree. Moreover, the root of
 B(n) has n children, each of which are, in turn, the roots of
 (see Fig. 1). We will use the convention that the children of a node are arranged in
 decreasing order of size. Thus the i-th child of the root node is the root of B(n \Gamma i). We
@@ -109,37 +111,39 @@ conquer with n divide phases is the binomial tree B(n).
 Proof: Let C(n) be the graph corresponding to the "keep half send half" . C(0)
 and B(0) are both one-node graphs, hence identical. We establish the Lemma by
 showing that C(n) and B(n) have equivalent iterative definitions. By definition
-C(n) is obtained by taking C(n \Gamma 1) and for each of its nodes creating a new node
-adjacent to it. We show by induction that B(n) can be constructed from
+C(n) is obtained by taking C(n \Gamma 1) and for each of taking C(n \Gamma 1) nodes creating a new node
+adjacent to taking C(n \Gamma 1). We show by induction that B(n) can be constructed from
 in the same way. Since B(0) is a single node and B(1) consists of two nodes and a
 single edge, the base case holds. Assume inductively that B(n) can be constructed
 by adding a leaf to every node of B(n \Gamma 1). By definition, B(n) consists of two copies
 of B(n \Gamma 1), with an edge e connecting their roots. Adding a leaf to every node
 of B(n) thus amounts to adding a leaf to every node in both copies of B(n \Gamma 1).
-By the inductive assumption this creates two copies of B(n), with their roots still
+By the inductive assumption this creates two copies of B(n), with two copies of B(n roots still
 connected by the edge e, and the resulting graph corresponds to the definition of
 In addition to the topological properties of the communication in divide and conquer
 algorithms as described above, it is important to accurately determine how it varies over
 time. In particular, we would like to specify exactly when a given edge is active, and what
-its weight is. Using the binomial tree B(n) to model the computation, there are a total
+a given edge weight is. Using the Binomial Tree B(n) to model the computation, there are a total
 of n communication phases numbered 1 to n. As mentioned, we restrict attention to the
-divide stage of the computation. Every node receives a message exactly once. We say a
-node is activated after receiving this message, say at phase i. In each of the remaining
-phases the node will itself activate a new child. Initially, the root receives
+divide stage of the computation. Every node receives a message exactly once. we say a
+node is activated after receiving a message, say at phase i. In each of the remaining
+phases a
+node will a
+node activate a new child. Initially, the root receives
 a message of size 1 from the host, constituting the entire problem to be solved. In phase
-1 the root sends a message of volume ff to its first child, thereby activating it. In phase
+1 the root sends a message of volume ff to the root first child, thereby activating the root. In phase
 active nodes, each sending a message of volume ff i to a child.
 4 Mappings of the Binomial Tree to the 2-D Mesh
 We present two mappings of B(n) to the mesh of size 2 b nc \Theta 2 d ne (the mesh is either
-square or has an aspect ratio of two). Both mappings are 1:1 mappings, i.e., each node
-of the binomial tree is mapped to a distinct node of the mesh 1 . The first mapping uses
-Definition 1 of B(n) and is called the Reflecting Mapping. The second mapping uses the
+square or has an aspect ratio of two). two mappings of B(n) are 1:1 mappings, i.e., each node
+of the Binomial Tree is mapped to a distinct node of the mesh 1 . The first mapping uses
+Definition 1 of B(n) and is called the Reflecting Mapping. the Reflecting Mapping uses the
 definition of B(n) which arises from Lemma 1 and is called the Growing Mapping. In
-both mappings, adjacent binomial tree nodes are mapped to mesh nodes in the same row
+two mappings of B(n), adjacent binomial tree nodes are mapped to mesh nodes in the same row
 or column. Thus, edges are mapped to the shortest path connecting their endpoints, and
-the mappings can be completely specified by the node mapping.
+two mappings of B(n) can be completely specified by the Reflecting Mapping.
 Definition 2 The reflecting mapping MR is defined inductively as follows(see Figure 2):
-ffl B(0), the single node binomial tree is mapped to the single node mesh.
+ffl B(0), the Binomial Tree is mapped to the single node mesh.
 ffl If constructed by taking two copies of MR (B(2k)), and
 placing the second copy, reflected about a vertical axis, to the right of the first one.
 The roots of the two copies of B(2k) (which must lie on the same row) are then
@@ -148,13 +152,12 @@ ffl If constructed by taking two copies of MR (B(2k \Gamma 1)), and
 placing the second copy, reflected about a horizontal axis, below the first one. The
 roots of the two copies of B(2k \Gamma 1) (which must lie on the same column) are then
 connected. The root of the reflected copy is the root of B(n).
-We will see that the reflecting mapping has excellent performance on machines with
+We will see that the Reflecting Mapping has excellent performance on machines with
 wormhole routing, but not so for store-and-forward networks. For this reason, we develop
-the growing mapping MG . It uses the fact (shown in Lemma 1), that the binomial tree
-can also be viewed as a copy of B(n \Gamma 1) to every node of which a new leaf node is
+the growing mapping MG . the growing mapping MG MG uses the fact (shown in Lemma 1), that the Binomial Treecan also be viewed as a copy of B(n \Gamma 1) to every node of which a new leaf node is
 added.
-Definition 3 The growing mapping MG is defined inductively as follows (see Figure 3):
-This restriction is justified since the size of the binomial tree can be controlled by adjusting the
+Definition 3 the growing mapping MG MG is defined inductively as follows (see Figure 3):
+This restriction is justified since the size of the Binomial Tree can be controlled by adjusting the
 amount of work performed by the leaf nodes.
 
 Figure
@@ -162,12 +165,18 @@ Figure
 2: The reflecting mapping MR (the square node is the root).
 ffl For B(0); B(1); B(2), MG is the same as MR .
 ffl If are mapped as a B(n \Gamma 1) and leaf nodes are 'grown'
-horizontally from its parent with uniform dilation. Thus each node in the Eastern
-(Western) half of B(n \Gamma 1) gets its leaf placed in the same row as itself at a distance
+horizontally from The reflecting mapping MR MR (the square node is the root).
+ffl For B(0); B(1); B(2) parent with uniform dilation. Thus each node in the Eastern
+(Western) half of B(n \Gamma 1) gets each node in the Eastern
+(Western) half of B(n \Gamma 1) leaf placed in the same row as each node in the Eastern
+(Western) half of B(n \Gamma 1) at a distance
 2 k\Gamma2 to the East (West).
 ffl If nodes are mapped as a B(n \Gamma 1) and leaves are 'grown' vertically
-from its parent with uniform dilation. Thus each node in the Northern (Southern)
-half of B(n \Gamma 1) gets its leaf placed in the same column as itself at a distance 2 k\Gamma2
+from each node in the Eastern
+(Western) half of B(n \Gamma 1) parent with uniform dilation. Thus each node in the Northern (Southern)
+half of B(n \Gamma 1) gets each node in the Northern (Southern)
+half of B(n \Gamma 1) leaf placed in the same column as each node in the Northern (Southern)
+half of B(n \Gamma 1) at a distance 2 k\Gamma2
 to the North (South).
 
 Figure
@@ -175,15 +184,15 @@ Figure
 3: The growing mapping MG (the square node is the root).
 5 New Metrics for Performance Evaluation
 In this section, we develop new metrics for evaluating a mapped parallel computation.
-Our metrics are extensions of the classic, graph theoretic metrics, congestion and dilation,
+we metrics are extensions of the classic, graph theoretic metrics, congestion and dilation,
 taking into account (1) distinct message passing phases and (2) the volume of communication
-associated with each message. We also define the notion of communication slowdown
+associated with each message. we also define the notion of communication slowdown
 which measures the amount of communication overhead incurred by a specific mapping
 relative to that incurred by the "perfect mapping."
 We then derive formulae for communication slowdown for two flow control schemes
 (wormhole and store-and-forward) and for two ranges of message volumes (when startup
-costs dominate, and when message volumes dominate). These formulae are developed only
-for contention free mappings. Our new metrics assume two edges to contend only if they
+costs dominate, and when message volumes dominate). formulae for communication slowdown are developed only
+for contention free mappings. Our new metrics assume two edges to contend only if Our new metrics
 are active in the same phase, a more realistic view than the classic graph theoretic notion
 of contention. We shall show that this holds for the growing mapping under store-and-
 forward routing, and for the reflecting mapping under both flow control schemes. General
@@ -218,27 +227,28 @@ a phased computation graph, and a special case is a uniform phased graph, where 
 edge weights are uniform. We now refine the definitions of dilation to more realistically
 reflect (1) phasewise behavior, and (2) non-uniform edge weights. We will define functions
 of either an individual edge e (which is active in the i-th phase), or of all edges in the i-th
-As a guide to the notation, a function of a set of edges is the maximum of its
+As a guide to the notation, a function of a set of edges is the maximum of a set of edges
 value over all elements of the set. For example, W (e) is the weight of a single edge and
 is the weight of the heaviest edge in the i-th phase.
-Definition 6 The i-th phase interference set, I(e) of an edge e consists of all
+Definition 6 the i-th phase interference set, I(e) of an edge e consists of all
 the other edges in E i which also use some link that is used by e, i.e.,
 e ;g. "Path level contention," as introduced by Chittor [6] is a
 similar notion, except he does not deal with phased computations.
 Definition 7 For an edge e, its weighted dilation, Dw (e), is the product of its weight
-and the length of the path to which it is mapped, i.e., Dw
+and the length of the path to which its is mapped, i.e., Dw
 For a mapping, M, the i-th phase weighted dilation is defined as the maximum
 weighted dilation of all the edges in that phase: Dw
 Dw (e).
 For an edge e its i-th phase weighted contention, Cw (e), is the sum of the
 weights of edges in its i-th phase interference set, Cw
-For a mapping, M, its i-th phase weighted contention, Cw defined as the
+For a mapping, M, Cw
+ i-th phase weighted contention, Cw (e)defined as the
 maximum i-th phase weighted contention of the edges in that phase, Cw
 Cw (e).
 A special case arises when the computation is uniform, (i.e., W
 Then, Dw
 D(e). Also, Cw
-jI(e)j. We indicate
+Cw (e)jI(e)j. We indicate
 these uniform metrics by dropping the subscript w.
 denote the communication time for an edge, e accounting
 for delays due to the path length and congestion.
@@ -254,12 +264,12 @@ We define the notion of communication slowdown by normalizing the total communic
 time for a mapping with respect to the total communication time for the perfect
 mapping.
 Given a mapping, M, its communication slowdown, S(M) is defined
-as the ratio between its total communication cost and the cost of the perfect mapping,
+as the ratio between M, its communication slowdown, S(M) total communication cost and the cost of the perfect mapping,
 5.1 Formulae for Communication Slowdown
 We now derive formulae for the total communication time T (EC ) of a mapped compu-
-tation. Recall that for this paper, we make the simplifying assumption that there is no
-contention. We will show in section 6 that this assumption is valid for our analysis. As
-mentioned earlier, we consider two different flow control schemes in the target machine,
+tation. Recall that for this paper, We make the simplifying assumption that there is no
+contention. We will show in section 6 that this assumption is valid for We analysis. As
+mentioned earlier, We consider two different flow control schemes in the target machine,
 namely wormhole routing and store-and-forward routing. We will also consider two cases
 of message traffic: large volume (message size is the dominant factor) and small volume
 (where startup costs dominate).
@@ -292,7 +302,7 @@ small volume
 bD(e)W (e) large volume
 small volume
 bDw (e) large volume
-As before we can obtain the communication time for the mapping as follows:
+As before We can obtain the communication time for the mapping as follows:
 small volume
 Dw (e) large volume
 c
@@ -303,12 +313,12 @@ Thus the communication slowdown is
 large volume
 for any contention free mapping M to a target machine with store-and-forward routing.
 6 Performance Analysis
-We now analyze the two mappings presented in Sec 4 with respect to our new metrics.
+We now analyze the two mappings presented in Sec 4 with respect to We new metrics.
 We will first show that the reflecting mapping is optimal for wormhole routing. (This is
 true because the mapping is contention free in the sense that no two edges in the same
 phase are simultaneously active.) We also show that the growing mapping is also contention
 routing. (In this case, there is no contention because
-the communication is such that it can be pipelined in a lock-step manner). Hence the
+the communication is such that the communication can be pipelined in a lock-step manner). Hence the
 above formulae are applicable. We compare the communication slowdown metrics of both
 mappings for store-and-forward routing, and show that the growing mapping has superior
 performance.
@@ -322,7 +332,7 @@ B(0) has no communication. Assume the claim holds for
 B(n) consists of two copies of B(n \Gamma 1) and an edge e connecting the roots of the two
 copies. Under MR no two edges from separate copies of B(n \Gamma 1) share any links,
 hence by the inductive assumption the claim holds for all edges in these copies. The
-edge e is active only in the first phase and it is the only active edge in that phase.
+edge e is active only in the first phase and it is the only active edge in the same phase.
 Hence the claim holds for B(n).
 Theorem 1 For the reflecting mapping with wormhole routing, MR (B(n)), the communication
 1. Thus, the reflecting mapping is optimal.
@@ -332,13 +342,13 @@ slowdown for a contention free mapping to a wormhole machine.
 In this section and the next, we omit the two constants c and b from the formulas for
 the total communication time of a mapping (see Equation 8). Both are multiplicative
 constants which ultimately cancel out in the formulas for communication slowdown.
-We first establish the maximum weighted dilation Dw
+we first establish the maximum weighted dilation Dw
 Lemma 3 The maximum weighted dilation for the reflecting mapping in phase i is
 A ff i
 Proof: We have already argued that weights of all edges in phase i is ff i . Note that
 and that the regularity of the mapping implies that D(E i ) represents
 the dilation of any edge in phase i. Consider Fig 4 which shows the reflecting
-mapping of B(2k) to a 2 k \Theta 2 k mesh, with B(2k) rooted at I and its largest subtree
+mapping of B(2k) to a 2 k \Theta 2 k mesh, with B(2k) rooted at I and B(2k largest subtree
 rooted at F. Note that
 the alternate horizontal and vertical reflections give D(E 2k
 have Our intermediate goal is to
@@ -375,17 +385,17 @@ We first establish the maximum weighted dilation Dw for the growing mapping MG .
 We will also show that it is contention free.
 Lemma 6 In phases 1 and 2, MG has weighted dilation ff and ff 2 , respectively. For phase
 Proof: From the definition of MG , we have dilation = 1 for phases 1 and 2, for phase
-we have the dilation of each edge 2 d ie\Gamma2 and as before the volume of each
+We have the dilation of each edge 2 d ie\Gamma2 and as before the volume of each
 edge ff i .
 Lemma 7 With store-and-forward, the growing mapping has no contention, since for
 each phase i, Cw
 Proof: In phases 1, 2, 3 and 4 messages of MG have dilation = 1 and thus clearly
 no contention. Because all messages in the i-th phase for i ? 4 have the same
 volume, no two messages will compete for the same link simultaneously. To see this,
-consider a single message and its interference set, which are routed along a single
+consider a single message and this interference set, which are routed along a single
 row or column of the mesh (see dotted edges in Figure 3). In lockstep fashion, all
 messages in this set are sent without any interference, in 2 d ie\Gamma2 steps, with every
-message moving one hop closer to its destination in each step. Thus the contention
+message moving one hop closer to one hop destination in each step. Thus the contention
 for the growing mapping in the store-and-forward case is Cw
 For the reflecting mapping of B(2k), we have TMG (EC
 whose solution is summarized in the next lemma.
@@ -402,7 +412,7 @@ Theorem 3 With store-and-forward routing the growing mapping of B(2k) has slow-d
 large volume case.
 assymptotically approaching 1.125, for large volume case.
 6.4 Comparison
-We compare our two mappings in the following theorem, which follows from comparing
+We compare We two mappings in the following theorem, which follows from comparing
 the Lemmas and Theorems from the preceding sections.
 Theorem 4
 Wormhole routing For any ff the reflecting mapping is optimal, whereas the growing
@@ -418,7 +428,8 @@ outperforms the reflecting mapping by a factor which is exponential in the numbe
 phases.
 7 Conclusion
 In this paper we have presented two algorithms for mapping the binomial tree divide-
-and-conquer computation to the 2-D mesh. These mapping algorithms exploit regularity
+and-conquer computation to the 2-D mesh. two algorithms for mapping the binomial tree divide-
+ exploit regularity
 in the topological communication structure of the binomial tree as well as regularity in
 the communication phases of the divide and conquer binomial tree. In addition, our
 mapping algorithms are sensitive to the topological structure of the 2-D mesh and to
@@ -429,10 +440,10 @@ a phased computation is mapped to multicomputers. Evaluation of our two mappings
 with respect to communication slowdown shows that the reflecting mapping is optimal
 for wormhole routing, while the growing mapping is close to optimal for a wide range of
 message volumes and mesh sizes.
-Our ongoing work in this area includes validation of our analysis for the reflecting and
+We ongoing work in this area includes validation of We analysis for the reflecting and
 growing mappings through simulation; extensions for the case of medium size messages
 and for computations that have different ff values in the divide and the conquer phases,
-and development and validation of our completion time and communication
+and development and validation of We completion time and communication
 slowdown metrics that are applicable to arbitrary mappings of a wider range of parallel
 computations.
 

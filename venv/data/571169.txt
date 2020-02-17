@@ -1,7 +1,7 @@
 --T
 Constraint-based mode analysis of mercury.
 --A
-Recent logic programming languages, such as Mercury and HAL, require type, mode and determinism declarations for predicates. This information allows the generation of efficient target code and the detection of many errors at compile-time. Unfortunately, mode checking in such languages is difficult. One of the main reasons is that, for each predicate mode declaration, the compiler is required to decide which parts of the procedure bind which variables, and how conjuncts in the predicate definition should be re-ordered to enforce this behaviour. Current mode checking systems limit the possible modes that may be used because they do not keep track of aliasing information, and have only a limited ability to infer modes, since inference does not perform reordering. In this paper we develop a mode inference system for Mercury based on mapping each predicate to a system of Boolean constraints that describe where its variables can be produced. This allows us handle programs that are not supported by the existing system.
+Recent logic programming languages, such as Mercury and HAL, require type, mode and determinism declarations for predicates. This information allows the generation of efficient target code and the detection of many errors at compile-time. Unfortunately, mode checking in such languages is difficult. One of the main reasons is that, for each predicate mode declaration, the compiler is required to decide which parts of the procedure bind which variables, and how conjuncts in the predicate definition should be re-ordered to enforce this behaviour. Current mode checking systems limit the possible modes that may be used because checking systems do not keep track of aliasing information, and have only a limited ability to infer modes, since inference does not perform reordering. In this paper we develop a mode inference system for Mercury based on mapping each predicate to a system of Boolean constraints that describe where Mercury variables can be produced. This allows us handle programs that are not supported by the existing system.
 --B
 INTRODUCTION
 Logic programming languages have traditionally been untyped
@@ -16,10 +16,12 @@ PPDP'02, October 6-8, 2002, Pittsburgh, Pennsylvania, USA.
 cury [19] have shown that strong type and mode systems can
 provide many advantages. The type, mode and determinism
 declarations of a Mercury program not only provide useful
-documentation for developers, they also enable compilers to
+documentation for developers, The type, mode and determinism
+declarations of a Mercury program also enable compilers to
 generate very e#cient code, improve program robustness,
 and facilitate integration with foreign languages. Information
-gained from these declarations is also very useful in
+gained from The type, mode and determinism
+declarations of a Mercury program is also very useful in
 many program analyses and optimisations.
 The Mercury mode system, as described in the language
 reference manual, is very expressive, allowing the programmer
@@ -29,7 +31,7 @@ the current release of the Melbourne Mercury compiler has
 some limitations which remove much of this expressiveness
 (see [8]). In particular, while the current mode analyser
 allows the construction of partially instantiated data struc-
-tures, in most cases it does not allow them to be filled in.
+tures, in most cases it does not allow most cases to be filled in.
 Another limitation is that mode inference prevents reordering
 in order to limit the number of possibilities examined.
 The e#ect of these limitations is that it is hard to write
@@ -37,18 +39,23 @@ Mercury programs that use anything other than the most
 basic modes and that it is just not possible to write programs
 with certain types of data flow.
 As well as being limited in the ways described above, the
-current mode analysis algorithm is also very complicated. It
+current mode analysis algorithm is also very complicated. As well as being limited in the ways described above
 combines several conceptually distinct stages of mode analysis
 into a single pass. This makes modifications to the algorithm
 (e.g. to include the missing functionality) quite dif-
-ficult. The algorithm is also quite ine#cient when analysing
+ficult. the
+current mode analysis algorithm is also quite ine#cient when analysing
 code involving complex modes.
 In this paper, we present a new approach to mode analysis
 of Mercury programs which attempts to solve some of these
 problems of the current system. We separate mode checking
 into several distinct stages and use a constraint based
 approach to naturally express the constraints that arise during
-mode analysis. We believe that this approach makes it
+mode analysis. We believe that a new approach to mode analysis
+of Mercury programs which attempts to solve some of these
+problems of the current system makes a new approach to mode analysis
+of Mercury programs which attempts to solve some of these
+problems of the current system
 easier to implement an extensible mode analysis system for
 Mercury that can overcome the limitations of the current
 system.
@@ -85,7 +92,7 @@ and using the types of variables as the domains of mode
 analysis. Several papers since then (e.g. [14, 17]) have been
 based on similar ideas. Like other papers on mode infer-
 ence, these also assume that the program is to be analyzed
-as is, without reordering. They therefore use modes to describe
+as is, without reordering. these therefore use modes to describe
 program executions, whereas we are interested in using
 modes to prescribe program execution order, and insist
 that the compiler must have exact information about instantiation
@@ -106,15 +113,17 @@ tional, and rely on delaying the complex cases where there
 are three or more occurrences of a variable in a goal.
 There has been other work on constraint-based analysis
 of Mercury. In particular, the work of [20] on a constraint-based
-binding-time analysis is notable. It has a similar basic
+binding-time analysis is notable. the work of [20] on a constraint-based
+binding-time analysis has a similar basic
 approach to ours of using constraints between the "po-
 sitions" in the type trees of variables to express data flow
 dependencies. However, binding-time analysis has di#erent
-objectives to mode analysis and, in fact, their analysis requires
+objectives to mode analysis and, in fact, binding-time analysis analysis requires
 the results of mode analysis to be available.
 In Section 2 we give the background information the rest
 of the paper depends on. In Section 3 we briefly outline the
-current approach and some of its weaknesses. In Section 4
+current approach and some of the work of [20] on a constraint-based
+binding-time analysis weaknesses. In Section 4
 we give a simplified example of our constraint-based system
 before presenting the full system in Section 5. In Section 6
 we show how the results of the analysis are used to select an
@@ -124,16 +133,16 @@ give some preliminary experimental results.
 Mercury is a purely declarative logic programming language
 designed for the construction of large, reliable and
 e#cient software systems by teams of programmers [19].
-Mercury's syntax is similar to the syntax of Prolog, but Mercury
-also has strong module, type, mode and determinism
+Mercury's syntax is similar to the syntax of Prolog, but Mercuryalso has strong module, type, mode and determinism
 systems, which catch a large fraction of programmer errors
 and enable the compiler to generate fast code. The rest of
-this section explains the main features of Mercury that are
+Section 6
+ explains the main features of Mercury that are
 relevant for this paper.
 2.1 Programs
 The definition of a predicate in Mercury is a goal containing
 atoms, conjunctions, disjunctions, negations and if-
-then-elses. To simplify its algorithms, the compiler converts
+then-elses. To simplify then-elses algorithms, the compiler converts
 the definition of each predicate into what we call superho-
 mogeneous form [19]. In this form, each predicate is defined
 by one clause, all variables appearing in a given atom (in-
@@ -153,21 +162,22 @@ rule
 In order to describe where a variable becomes bound, our
 algorithms need to be able to uniquely identify each subgoal
 of a predicate body. The code of a subgoal itself cannot
-serve as its identifier, since a piece of code may appear more
+serve as The code of a subgoal itself identifier, since a piece of code may appear more
 than once in a predicate definition. We therefore use goal
 paths for this purpose. A goal path consists of a sequence of
 path components. We use # to represent the path with zero
 components, which denotes the entire procedure body.
 . If the goal at path p is a conjunction, then the goal
-path p.cn denotes its nth conjunct.
+path p.cn denotes the goal
+ nth conjunct.
 . If the goal at path p is a disjunction, then the goal
 path p.dn denotes its nth disjunct.
 . If the goal at path p is an if-then-else, then the goal
-path p.c denotes its condition, p.t denotes its then-
+path p.c denotes the goal at path p is an if-then-else condition, p.t denotes the goal at path p is an if-then-else then-
 part, and p.e denotes its else-part.
 Definition 1. The parent of goal path p.cn , p.dn , p.c, p.t,
 or p.e, is goal path p. The function parent(p) maps a goal
-path to its parent.
+path to The function parent.
 Definition 2. Let #(G) be the set of variables that occur
 within a goal, G. Let #(G) #(G) be the set of
 variables that are nonlocal to goal G, i.e. occur both inside
@@ -200,7 +210,7 @@ f/n # and {x1 , . , xn} # NT . A tree grammar is deterministic
 regular if for each x # NT and f/n #, there can
 be at most one rule of the form x # f(x1 , . , xn ).
 For brevity we shall often write tree grammars in a more
-compressed form. We use x
+compressed form. we use x
 for the sequence of production rules: x # t1 , x # t2 , . ,
 2.3 Types
 Types in Mercury are polymorphic Hindley-Milner types.
@@ -231,16 +241,17 @@ We define rules(t) to be the production rules:
 #(f(v1 , . , vn
 #(f(v1 , . , vn
 Vtype we define rules(t) to be the empty sequence.
-We can extend this notation to associate a tree grammar
+we can extend this notation to associate a tree grammar
 with a type expression. Let grammar(t) be the sequence of
 production rules recursively defined by
 where the ++ operation concatenates sequences of production
 rules, removing second and later occurrences of duplicate
 production rules.
 We call each nonterminal in a set of production rules a po-
-sition, since we will use them to describe positions in terms;
+sition, since We will use a po-
+sition to describe positions in terms;
 each position is the root of one of the term's subterms. We
-also sometimes call positions nodes, since they correspond
+also sometimes call positions nodes, since positions nodes correspond
 to nodes in type trees.
 Example 2. Consider the type list(abc), then the corresponding
 grammar is
@@ -249,7 +260,7 @@ abc # a
 There are two nonterminals and thus two positions in the
 grammar: list(abc) and abc.
 Mode inference and checking takes place after type check-
-ing, so we assume that we know the type of every variable
+ing, so We assume that we know the type of every variable
 appearing in the program.
 2.4 Instantiations and Modes
 An instantiation describes the binding pattern of a variable
@@ -273,7 +284,7 @@ where w1 , . , wn are distinct instantiation parameters,
 are instantiation expressions in #inst #
 {free, ground}, Vinst ).
 We can associate a set of production rules rules(i) with
-an instantiation expression i just as we do for type expres-
+an instantiation expression i just as We do for type expres-
 sions. For the base instantiations we define
 Example 3. For example the instantiation definition
 inst list skel(I) == bound([] ; [I | list skel(I)] ).
@@ -284,7 +295,7 @@ given by instantiation variable I and whose tail also has the
 instantiation list skel(I). For example list skel(free) describes
 a list in which the elements are all free.
 Each instantiation is usually intended to be used with a
-specific type, e.g. list skel(I) with list(T), and it normally
+specific type, e.g. list skel(I) with list(T), and Each instantiation normally
 lists all the function symbols that variables of that type can
 be bound to. Instantiations that do not do so, such as
 inst non empty skel(I) == bound([I | list skel(I)] ).
@@ -299,37 +310,41 @@ bind that position; a goal that requires the initial instantiation
 state of a position to be ground is said to consume that
 position.
 3. CURRENT MODE ANALYSIS SYSTEM
-The mode analysis algorithm currently used by the Mercury
-compiler is based on abstract interpretation. The abstract
+The mode analysis algorithm currently used by the Mercurycompiler is based on abstract interpretation. The abstract
 domain maps each program variable to an instantia-
-tion. Before mode analysis, the compiler creates a separate
-procedure for each mode of usage of each predicate. It then
+tion. Before mode analysis, the Mercury
+compiler creates a separate
+procedure for each mode of usage of each predicate. the Mercury
+compiler then
 analyses each procedure separately.
 Starting with the initial instantiation states for each argument
 given by the mode declaration, the analysis traverses
 the procedure body goal determining the instantiation state
 of each variable at each point in the goal. When traversing
 conjunctions, if a conjunct is not able to be scheduled
-because it needs as input a variable that is not su#ciently
+because a conjunct needs as input a variable that is not su#ciently
 bound, it is delayed and tried again later. Once the goal
 has been analysed, if there are no unschedulable subgoals
 and the computed final instantiation states of the arguments
-match their final instantiation states in the mode declara-
+match no unschedulable subgoals
+and the computed final instantiation states of the arguments
+ final instantiation states in the mode declara-
 tion, the procedure is determined to be mode correct. See [8,
 for more details (although those papers talk about other
 languages, the approach in Mercury is similar).
-The system is also able to do mode inference for predicates
+CURRENT MODE ANALYSIS SYSTEM
+ is also able to do mode inference for predicates
 which are not exported from their defining module, using
 a top down traversal of the module. However, to prevent
 combinatorial explosion, the mode analysis algorithm does
 not reorder conjunctions when performing
-it arrives at a call, it assumes that the called predicate is
+the mode analysis algorithm arrives at a call, the mode analysis algorithm assumes that the called predicate is
 supposed to be able to run given only the variables that
-have been bound to its left.
-The mode analysis system has several tasks that it does
-all at once. It must (1) determine the producer and the
+have been bound to the mode analysis algorithm left.
+The mode analysis system has several tasks that The mode analysis system does
+all at once. The mode analysis system must (1) determine the producer and the
 consumers of each variable; (2) reorder conjunctions to ensure
-that all consumers of a variable are executed after its
+that all consumers of a variable are executed after The mode analysis system
 producer; and (3) ensure that sub-typing constraints are
 met. This leads to a very complicated implementation.
 One of the aims of our constraint-based approach is to simplify
@@ -346,7 +361,7 @@ without must-alias information about free nodes, we cannot
 do accurate mode analysis of code that manipulates partially
 instantiated data structures.
 Partially instantiated data structures are data structures
-that contain free variables. They are useful when one wants
+that contain free variables. Partially instantiated data structures are useful when one wants
 di#erent parts of a data structure to be filled in by di#erent
 parts of a program.
 Example 4. Consider the following small program.
@@ -371,12 +386,12 @@ mode inference prevents many correct modes from being
 detected.
 Example 5. Consider mode inference for the predicate
 pred append3(list(T), list(T), list(T), list(T)).
-Inference will find only the mode app3(in,in,in,out); it
+Inference will find only the mode app3(in,in,in,out); Inference
 will not find the mode app3(out,out,out,in).
 The reordering restriction cannot simply be lifted, because
-without it, the current mode inference algorithm can explore
+without The reordering restriction, the current mode inference algorithm can explore
 arbitrarily large numbers of modes, which will in fact be
-useless, since it does not "look ahead" to see if the modes
+useless, since The reordering restriction does not "look ahead" to see if the modes
 inferred for a called predicate will be useful in constructing
 the desired mode for the current predicate.
 4. SIMPLIFIED EXAMPLE
@@ -389,29 +404,34 @@ determine an execution order for the procedure. For now,
 we will focus on the first task; we will return to the second
 in Section 6.
 For ease of explanation, we will first show a simplified form
-of our approach. This simplified form requires variables to
+of we approach. a simplified form
+of our approach requires variables to
 be instantiated all at once, (i.e. the only two instantiation
 states it recognizes are free and ground) and requires all variables
 to eventually reach the ground state. This avoids the
 complexities that arise when di#erent parts of variables are
 bound at di#erent times, or some parts are left unbound.
-We will address those complexities when we give the full
+we will address the
+complexities that arise when di#erent parts of variables are
+bound at di#erent times when we give the full
 algorithm in Section 5.
 4.1 Constraint Generation
-The algorithm associates several constraint variables with
+The mode analysis algorithm currently used by the Mercury
+compiler associates several constraint variables with
 each program variable. With every program variable V , we
 associate a family of constraint variables of the form Vp ; Vp
 is true i# V is produced by the goal at path p in the predicate
 body.
-We explain the algorithm using append/3. The code below
+We explain The mode analysis algorithm currently used by the Mercury
+compiler using append/3. The code below
 is shown after transformation by the compiler into superho-
 mogeneous form as described in Section 2.1. We also ensure
 that each variable appears in at most one argument of one
 functor by adding extra unifications if necessary.
 pred append(list(T),list(T),list(T)).
 append(AT, B, CT)
-We examine the body and generate constraints from it.
-The body is a disjunction, so the constraints we get simply
+We examine the body and generate constraints from the body.
+the body is a disjunction, so the constraints we get simply
 specify, for each variable nonlocal to the disjunction, that if
 the disjunction produces a variable, then all disjuncts must
 produce that variable, while if the disjunction does not produce
@@ -419,14 +439,14 @@ a variable, then no disjunct may produce that variable.
 For append, this is expressed by the constraints:
 (A# A d 1
 (A# A d 2
-We then process the disjuncts one after another. Both disjuncts
-are conjunctions. When processing a conjunction, our
-algorithm considers each variable occurring in the conjunction
+We then process the disjuncts one after another. the disjunctsare conjunctions. When processing a conjunction, The mode analysis algorithm currently used by the Mercury
+compiler considers each variable occurring in the conjunction
 that has more than one potential producer. If a variable
 is nonlocal to the conjunction, then it may be produced either
 inside or outside the conjunction; if a variable is shared
 by two or more conjuncts, then it may be produced by any
-one of those conjuncts. The algorithm generates constraints
+one of those conjuncts. The mode analysis algorithm currently used by the Mercury
+compiler generates constraints
 that make sure that each variable has exactly one producer.
 If the variable is local, the constraints say that exactly one
 conjunct must produce the variable. If the variable is non-
@@ -439,7 +459,8 @@ i# it is produced by the only conjunct in which it appears:
 The first conjunct in the first disjunct yields no nontrivial
 constraints. Intuitively, the lack of constraints from this goal
 reflects the fact that A = [] can be used both to produce A
-and to test its value.
+and to test A
+ value.
 The second conjunct in the first disjunct yields one con-
 straint, which says that the goal can be used to produce
 at most one of B and C:
@@ -448,12 +469,14 @@ to those for the first conjunct for the nonlocal variables. But
 this disjunct, unlike the first, contains some shared local
 variables: AH, CH, AT and CT, each of which appears in two
 conjuncts. Constraints for these variables state that each
-of these variables must be produced by exactly one of the
+of some shared local
+variables: AH, CH, AT and CT, each of which appears in two
+conjuncts must be produced by exactly one of the
 conjuncts in which it appears.
 The first conjunct in the second disjunct shows how we handle
 unifications of the form
 The key to understanding the behavior of our algorithm in
-this case is knowing that it is trying to decide between only
+this case is knowing that this case is trying to decide between only
 two alternatives: either this unification takes all the Y i s as
 input and produces X, or it takes X as input and produces
 all the Y i s. This is contrary to most people's experience,
@@ -462,26 +485,25 @@ be used in ways that make no bindings, or that produce
 only a subset of the Y i . However, using this unification in
 a way that requires both X and some or all of the Y i to
 be input is possible only if those Y i have producers outside
-this unification. When we transform the program into su-
+this unification. When we transform the following small program into su-
 perhomogeneous form, we make sure that each unification
 of this form has fresh variables on the right hand side. So
-if a Y i could have such a producer, it would be replaced on
-the right hand side of the unification with a new variable
+if a Y i could have such a producer, a Y would be replaced on
+the right hand side of this unification with a new variable
 , with the addition of a new unification Y
 . That
 is, we convert unifications that take both X and some or all
 of the Y i to be input into unifications that take only X as
 input, and produce all the variables on the right hand side.
 If some of the variables on the right hand side appear only
-once then those variables must be unbound, and using this
-unification to produce X would create a nonground term.
+once then those variables must be unbound, and using this unification to produce X would create a nonground term.
 Since the simplified approach does not consider nonground
 terms, in such cases it generates an extra constraint that
 requires X to be input to this goal.
 In the case of A = [AH | AT], both AH and AT appear
 elsewhere so we get the constraints:
 The first says that either this goal produces all the variables
-on the right hand side, or it produces none of them. In
+on the right hand side, or this goal produces none of the right hand side. In
 conjunction with the first, the second constraint says that
 the goal cannot produce both the variable on the left hand
 side, and all the variables on the right hand side.
@@ -491,7 +513,7 @@ disjunct, generating:
 The last conjunct is a call, in this case a recursive call. We
 assume that all calls to a predicate in the same SCC as the
 caller have the same mode. 1 This means that the call produces
-its ith argument i# the predicate body produces its ith
+the call ith argument i# the predicate body produces # the predicate body ith
 argument. This leads to one constraint for each argument
 position:
 This concludes the set of constraints generated by our algorithm
@@ -508,14 +530,16 @@ A# B# -C# append(out, out, in)
 -A# -B# C# append(in, in, out)
 Of these five modes, two (append(in, in, out) and
 append(out, out, in)) are what we call principal modes.
-The other three are implied modes, because their existence
+The other three are implied modes, because # -B# C# append(in, in, out)
+Of these five modes, two (append(in, in, out) and
+append(out, out, in)) existence
 is implied by the existence of the principal modes; changing
 the mode of an argument from out to in makes the
 job of a predicate strictly easier. In the rest of the pa-
 per, we assume that every predicate's set of modes is downward
 closed, which means that if it contains a mode pm,
 it also contains all the modes implied by pm. In prac-
-tice, the compiler generates code for a mode only if it is
+tice, the compiler generates code for a mode only if the compiler is
 declared or it is a principal mode, and synthesizes the other
 modes in the caller by renaming variables and inserting extra
 unifications. This synthesis does the superhomogeneous
@@ -536,26 +560,27 @@ other constraint variables. Sometimes, there is more than
 one set of value assignments to the constraint variables in
 the body that is consistent with a given value assignment
 for the constraint variables in the head. In such cases, the
-compiler can choose the assignment it prefers.
+compiler can choose the assignment the
+compiler prefers.
 5. FULL MODE INFERENCE
 5.1 Expanded Grammars
 We now consider the problem of handling programs in
 which di#erent parts of a variable may be instantiated by
 This assumption somewhat restricts the set of allowable
-well-moded programs. However, we have not found this to
+well-moded programs. However, We have not found this to
 be an unreasonable restriction in practice. We have not
 come across any cases in typical Mercury programs where
 one would want to make a recursive call in a di#erent mode.
 di#erent goals. We need to ensure that if two distinct positions
 in a variable may have di#erent instantiation be-
-haviour, then we have a way of referring to each separately.
+haviour, then We have a way of referring to each separately.
 Hence we need to expand the type grammar associated with
 that variable.
 We begin with an empty grammar and with the original
 code of the predicate expressed in superhomogeneous normal
 form. We modify both the grammar and the predicate body
 during the first stage of mode analysis.
-If the unification appears in the definition
+If this unification appears in the definition
 of the predicate, then
 . if X has no grammar rule for functor f/n, add a rule
 An ), and for each A i which already
@@ -589,7 +614,7 @@ can fulfill both these functions, when one variable is strictly
 part of another. For example, the nonterminal AH stands
 both for the variable AH and the first element in any list
 bound to variable A, but the variables B and C, which are
-unified on some computation paths, each have their own
+unified on some computation paths, each have each own
 nonterminal.
 A predicate needs three Boolean variables for each position
 in is true if the position is produced outside the
@@ -630,23 +655,23 @@ Definition 9. Given an expanded grammar I and a rule
 I we say that X is the parent node
 of each of the nodes Y1 , . , Yn .
 5.2 Mode Inference Constraints
-We ensure that no variable occurs in more than one pred-
-icate, renaming them as necessary. We construct an expanded
+we ensure that no variable occurs in more than one pred-
+icate, renaming them as necessary. we construct an expanded
 grammar I for P , the program module being com-
-piled. We next group the predicates in the module into
+piled. we next group the predicates in the program module into
 strongly-connected components (SCCs), and process these
 SCCs bottom up, creating a function CSCC for each SCC.
 This represents the Boolean constraints that we generate for
-the predicates in that SCC. The remainder of this section
+the predicates in the same SCC. The remainder of this section
 defines CSCC .
 The constraint function CSCC (I, S) for an SCC S is the
 conjunction of the constraint functions C Pred (I, p/n) we generate
 for all predicates p/n in that SCC, i.e. CSCC (I, S) is
 The constraint function we infer for a predicate p/n is the
-constraint function of its SCC, i.e. C Inf (I,
+constraint function of a predicate p/ SCC, i.e. C Inf (I,
 for each p/n # S. C Inf (I, p/n) may be stricter than
-C Pred (I, p/n) if p/n is not alone in its SCC. For predicates
-defined in other modules, we derive their C Inf from their
+C Pred (I, p/n) if p/n is not alone in the same SCC. For predicates
+defined in other modules, we derive p/n is not alone in its SCC C Inf from p/n is not alone in its SCC
 mode declarations using the mechanism we will describe in
 Section 5.3.
 C Pred itself is the conjunction of two functions: C Struct ,
@@ -661,13 +686,14 @@ that V is bound by this predicate. These constraints relate
 the relationships between the above variables and relationships
 of boundedness at di#erent times.
 If a node is not reachable from one of the predicate's argument
-variables, then it cannot be bound at call.
-A node is bound at return if it is bound at call or it is
+variables, then a node cannot be bound at call.
+A node is bound at return if A node is bound at call or A node is
 produced within the predicate body. A node may not be
 both bound at call and produced in the predicate body.
-If a node is bound at call then its parent node must also
+If a node is bound at call then a node parent node must also
 be bound at call. Similarly, if a node is bound at return
-then its parent node must also be bound at return.
+then a node is bound at return
+ must also be bound at return.
 C Struct (I,
 D# I (V )
 (D in # V in ) # (D out # V out )
@@ -701,7 +727,7 @@ conjunction of these two sets.
 The general constraints have two components. The first,
 that any node reachable from a variable that is
 local to a goal will be bound at return i# it is produced
-by that goal. The second, C Ext , says that a node reachable
+by a goal. The second, C Ext , says that a node reachable
 from a variable V that is external to the goal G (i.e. does
 not occur in G) cannot be produced by G. The conjunction
 in the definition of C Ext could be over all the variables in the
@@ -723,18 +749,18 @@ most one conjunct.
 In each disjunctive goal a node either must be produced
 in each disjunct or not produced in each disjunct.
 For an if-then-else goal a node is produced by the if-then-
-else if and only if it is produced in either the condition, the
+else if and only if a node is produced in either the condition, the
 then branch or the else branch. A node may not be produced
 by both the condition and the then branch. Nodes reachable
 from variables that are nonlocal to the if-then-else must not
 be produced by the condition. If a node reachable from a
-nonlocal variable is produced by the then branch then it
+nonlocal variable is produced by the then branch then a node
 must also be produced by the else branch, and vice versa.
 5.2.4 Atomic Goals
 Due to space considerations, we leave out discussion of
 higher-order terms which may be handled by a simple extension
 to the mode-checking algorithm.
-We consider three kinds of atomic goals:
+we consider three kinds of atomic goals:
 1. Unifications of the form
 2. Unifications of the form
 3. Calls of the form q(Y1 , . , Yn ).
@@ -747,11 +773,11 @@ p, the constraints C Goal (I, are
 Example 8. For the unification in append at goal
 path d1 .c2 the constraints generated are:
 2 During the goal scheduling phase, we further require that
-a node must be produced before it is aliased to another
+a node must be produced before a node is aliased to another
 node. These two restrictions together disallow most uses of
 partially instantiated data structures. In the future, when
 the Mercury implementation can handle the consequences,
-we would like to lift both restrictions.
+we would like to lift These two restrictions together.
 A unification of the form , Yn) at path p
 does not produce any of the arguments Y1 , . , Yn . X must
 be produced somewhere (either at p or somewhere else). The
@@ -764,11 +790,11 @@ SCC, we only allow recursive calls that are in the same mode
 as the caller. The constraints C Goal (I, p, q(Y1 , . , Yn)) are
 #V,W# I (#(q/n),#Y 1 ,.,Y n #) (V#Wp) # (V in #W out )
 The first part ensures that the call produces the position if
-the position is produced by the predicate in the SCC. The
-second part ensures that call variable W is produced somewhere
+the position is produced by the predicate in the same SCC. The
+second part ensures that call variable #W is produced somewhere
 if it is required to be bound at call to the call (V in ).
 in is true V# will not be true, we can't mistakenly
-use this call site to produce W .
+use this call site to produce #W .
 Example 10. For the recursive call append(AT,B,CT) at
 goal path d2 .c4 in append the constraints generated on the
 first argument are:
@@ -783,14 +809,15 @@ For any predicate which has modes declared, the mode
 analysis system should check these declarations against the
 inferred mode information. This involves generating a set
 of constraints for the mode declarations and ensuring that
-they are consistent with the constraints generated from the
+
+ are consistent with the constraints generated from the
 predicate body.
 The declaration constraint C Decls (I, D) for a predicate with
 a set of mode declarations D is the disjunction of the constraints
 C Decl (I, d) for each mode declaration d:
 d#D C Decl (I, d)
-The constraint C Decl (I, d) for a mode declaration
-p(m1 , . , mn ) for a predicate p(H1 , . , Hn) is the conjunction
+d#D C Decl (I, d)
+ is the conjunction
 of the constraints C Arg (I, m,H) for each argument mode
 m with corresponding head variable H:
 # C Struct (I, {H1 , . , Hn}, #)
@@ -805,11 +832,11 @@ Figure
 1: Constraints for conjunctions, disjunctions and if-then-elses.
 C Init (I, i, H) for the initial instantiation state i, and the constraint
 C Fin (I, f, H) for the final instantiation state f :
-The constraint C Init (I, i, H) for an initial instantiation
-state i of a head variable H is given below:
+C Init (I, i, H) for an initial instantiation
+state i of a head variable H out is given below:
 W# I (H) W in
 The constraint C Fin (I, i, H) for a final instantiation state
-i of a head variable H is given below:
+i of a head variable H out is given below:
 C Fin (I,
 C Fin (I, ground,
 W# I (H) W out
@@ -819,7 +846,7 @@ modes are at least as strong as the inferred modes. For
 each declared mode d of predicate p/n we check whether
 the implication
 holds or not. If it doesn't, the declared mode is incorrect.
-If we are given declared modes D for a predicate p/n, they
+If we are given declared modes D for a predicate p/n, we are given declared modes D for a predicate p/
 can be used to shortcircuit the calculation of SCCs, since
 we can use C Decls (I, D) in mode inference for predicates q/m
 that call p/n.
@@ -835,16 +862,18 @@ We can show that C Decl (I, d1) # C Inf (I, append/3).
 6. SELECTING PROCEDURES AND EXECUTION
 ORDER
 Once we have generated the constraints for an SCC, we
-can solve those constraints. If the constraints have no solu-
+can solve those constraints. If those constraints have no solu-
 tion, then some position has consumers but no producer, so
 we report a mode error. If the constraints have some solu-
 tions, then each solution gives a mode for each predicate in
 the SCC; the set of solutions thus defines the set of modes
 of each predicate. We then need to find a feasible execution
-order for each mode of each predicate in the SCC. The algorithm
+order for each mode of each predicate in the same SCC. The algorithm
 for finding feasible execution orders takes a solution
-as its input. If a given mode of a predicate corresponds to
-several solutions, it is su#cient for one of them to have a
+as a solution
+ input. If a given mode of a predicate corresponds to
+several solutions, it is su#cient for one of 
+several solutions to have a
 feasible ordering.
 The main problem in finding a feasible schedule is that the
 mode analyser and the code generator have distinct views
@@ -873,21 +902,21 @@ For a unification of the form we say that a node
 on one side of the equation is consumed i# a corresponding
 node on the other side is produced. (Due to the symmetric
 nature of this relationship, if V 1 and V 2 both correspond
-to W , then V 1 is consumed i# V 2 is consumed, and V 1 is
+to #W , then V 1 is consumed i# V 2 is consumed, and V 1 is
 produced is produced.) It is also possible for a pair of
 corresponding nodes to be neither produced nor consumed
 by the unification. This can mean one of two things. If the
 subterms of X and Y at that node are already bound, then
 the unification will test the equality of those subterms; if
-they are still free, then it will create an alias between them.
+the unification are still free, then the unification will create an alias between the unification.
 Note that if the unification produces either of the top level
-nodes X or Y , then we call it an assignment unification.
+nodes X or Y , then we call the unification an assignment unification.
 For a unification of the form
-that the node X is consumed i# it is not produced, and
+that the node X is consumed i# the node X is not produced, and
 that no other nodes are ever consumed. The reason for
 the latter half of that rule is that our grammar will use
 the same nonterminal for e.g. Y1 as for the first subterm of
-X. Since this unification merely creates aliases between the
+X. Since the unification merely creates aliases between the
 Y i and the corresponding subterms of X, the nonterminals
 produced M (I, p)
 
@@ -904,10 +933,10 @@ produced M (I, p)
 Figure
 
 2: Calculating which nodes are "consumed" at which positions.
-of the Y i cannot be produced by this unification; if they
+of the Y i cannot be produced by the unification; if they
 are produced at all, they have to be produced elsewhere.
-Note that if the unification produces X, then we call it a
-construction unification; if it consumes X, then we call it a
+Note that if the unification produces X, then we call the unification a
+construction unification; if the unification consumes X, then we call the unification a
 deconstruction unification.
 For a call to a predicate q, we know which nodes of the
 actual parameters of the call the model M of the predicate
@@ -928,42 +957,51 @@ Path produced consumed
 d2 .c4 {CT, CE} {AT, AE,B,BE}
 Neither disjunct produces any position that it also con-
 sumes. Therefore, if our ordering algorithm only required
-a node to be produced before it is consumed, it would find
+a node to be produced before our ordering algorithm is consumed, our ordering algorithm would find
 any order acceptable. On the other hand, the code generator
-is more fussy; for example, before it can emit code for
-the recursive call, it needs to know where variables AH and
-AT are stored, even if they have not been bound yet. This is
+is more fussy; for example, before the code generator
+ can emit code for
+the recursive call, the code generator
+ needs to know where variables AH and
+AT are stored, even if variables AH and
+AT have not been bound yet. This is
 why we need the concept of visibility.
 Definition 13. A variable is visible at a goal path p if the
 variable is a head variable or has appeared in the predicate
 body somewhere to the left of p. The functions make visible
 and need visible defined in Figure 3 respectively determine
-whether a goal makes a variable visible or requires it to be
+whether a goal makes a variable visible or requires a goal to be
 visible.
 Example 13. Given the (in, in, out) mode of append
 the make visible and need visible sets of the conjuncts are:
 Path make visible need visible
 Our algorithm needs to find, in each conjunction in the
 body, an ordering of the conjuncts such that the producer
-of each node comes before any of its consumers, and each
-variable is made visible before any point where it needs to
+of each node comes before any of each node consumers, and each
+variable is made visible before any point where each node needs to
 be visible. We do this by traversing the predicate body top
-down. At each conjunction, we construct a directed graph
-whose nodes are the conjuncts. The initial graph has an
+down. At each conjunction, We construct a directed graph
+whose nodes are the conjuncts. a directed graph
+whose nodes are the conjuncts has an
 edge from c i to c j i# c i produces a node that c j consumes.
-If this graph is cyclic, then mode ordering fails. If it isn't,
-we try to add more edges while keeping the graph acyclic.
+If a directed graph
+whose nodes are the conjuncts is cyclic, then mode ordering fails. If it isn't,
+we try to add more edges while keeping a directed graph
+whose nodes are the conjuncts acyclic.
 We sort the variables that need to be visible anywhere in
 the conjunction that are also made visible in the conjunction
 into two classes: those where it is clear which conjunct
 should make them visible and those where it isn't. A variable
-falls into the first class i# it is made visible in only
-one conjunct, or if a conjunct that makes it visible is also
-the producer of its top level node. (In the forward mode of
+falls into the first class i# A variable
+ is made visible in only
+one conjunct, or if a conjunct that makes A variable
+ visible is also
+the producer of A variable
+ top level node. (In the forward mode of
 append, all variables fall into the first class; the only variable
 that is made visible in more than one conjunct, CH, does not
 need to be visible in any conjunct in that conjunction.) For
-each of these variables, we add an edge from the conjunct
+each of all variables, we add an edge from the conjunct
 that makes the variable visible to all the conjuncts c j need
 it to be visible. If the graph is still acyclic, we then start
 searching the space of mappings that map each variable in
@@ -978,11 +1016,13 @@ the whole conjunction, by another conjunction that encloses
 this one, then everything is fine. If it isn't, then the ordering
 of the enclosing conjunction would have already failed,
 because if no conjunct makes the variable visible, then the
-conjunction as a whole needs it visible.
+conjunction as a whole needs no conjunct visible.
 If no mapping yields an acyclic graph, the procedure has
 a mode error. If some mappings do, then the algorithm in
-general has two choices to make: it can pick any acyclic
-graph, and it can pick any order for the conjuncts that is
+general has two choices to make: the algorithm in
+general can pick any acyclic
+graph, and the algorithm in
+general can pick any order for the conjuncts that is
 consistent with that graph.
 make visibleM (I, p, G) => > > > > <
 (make visible M (I, p.c, Gc) # make visible M (I, p.t, G t
@@ -998,37 +1038,38 @@ Figure
 All the nodes the forward mode of append consumes are
 input to the predicate, so there are no ordering constraints
 between producers and consumers. The first disjunct has
-no visibility constraints either, so it can be given any or-
+no visibility constraints either, so The first disjunct can be given any or-
 der. In the second disjunct, visibility requirements dictate
 that must occur before both
 append(AT, B, CT ), to make AH and AT visible where re-
 quired. This leaves the compiler with this
 append(AT, B, CT )
-This graph does not completely fix the order of the con-
+a directed graph
+whose nodes are the conjuncts does not completely fix the order of the con-
 juncts. A parallel implementation may choose to execute
-several conjuncts in parallel, although it this case that would
+several conjuncts in parallel, although A parallel implementation this case that would
 not be worth while. More likely, an implementation may
 choose to schedule the recursive call last to ensure tail re-
 cursion. (With the old mode analyser, we needed a program
 transformation separate from mode analysis [15] to introduce
 tail recursion in predicates like this.)
 7. EXPERIMENTAL EVALUATION
-Our analysis is implemented within the Melbourne Mercury
-compiler. We represent the Boolean constraints as reduced
+we analysis is implemented within the compiler. we represent the Boolean constraints as reduced
 ordered binary decision diagrams (ROBDDs) [2] using
 a highly-optimised implementation by Schachte [16] who has
 shown that ROBDDs provide a very e#cient representation
 for other logic program analyses based on Boolean domains.
 ROBDDs are directed acyclic graphs with common-
-subexpressions merged. They provide an e#cient, canonical
+subexpressions merged. acyclic graphs with common-
+subexpressions merged provide an e#cient, canonical
 representation for Boolean functions.
 In the worst case, the size of an ROBDD can be exponential
 in the number of variables. In practice, however, with a
 bit of care this worst-case behaviour can usually be avoided.
-We use a number of techniques to keep the ROBDDs as
+we use a number of techniques to keep the ROBDDs as
 small and e#cient as possible.
-We now present some preliminary results to show the feasibility
-of our analysis. The timings are all taken from tests
+we now present some preliminary results to show the feasibility
+of we analysis. The timings are all taken from tests
 run on a Gateway Select 950 PC with a 950MHz AMD
 Athlon CPU, 256KB of L2 cache and 256MB of memory,
 running Linux kernel 2.4.16.
@@ -1081,7 +1122,8 @@ for which the old analysis fails.
 It is interesting to observe the di#erences between the simple
 constraint system and the full system. None of these
 benchmarks require partially instantiated data structures
-so they are all able to be analysed by the simple system.
+so None of these
+benchmarks are all able to be analysed by the simple system.
 In some cases, the simple system is not very di#erent to
 the full system, but in others-particularly in the bigger
 
@@ -1118,7 +1160,7 @@ removed. It is interesting to note the saving in analysis
 time achieved by adding mode declarations. This is particularly
 notable for the "copytree" benchmark where mode
 inference is able to infer many more modes than the one we
-have declared. (We can similarly declare only the (in, in,
+have declared. (we can similarly declare only the (in, in,
 out) mode of append and reduce the analysis time for that
 to 210ms.)
 8. CONCLUSION
@@ -1140,7 +1182,8 @@ programs, where client and server processes (modelled as
 recursive loops) cooperate to instantiate di#erent parts of a
 data structure in a coroutining manner.
 We would like to thank the Australian Research Council
-for their support.
+for the Australian Research Council
+ support.
 9.
 
 

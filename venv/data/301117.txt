@@ -1,7 +1,7 @@
 --T
 Predictive analysis of a wavefront application using LogGP.
 --A
-This paper develops a highly accurate LogGP model of a complex wavefront application that uses MPI communication on the IBM SP/2. Key features of the model include: (1) elucidation of the principal wavefront synchronization structure, and (2) explicit high-fidelity models of the MPI-send and MPI-receive primitives. The MPI-send/receive models are used to derive L, o, and G from simple two-node micro-benchmarks. Other model parameters are obtained by measuring small application problem sizes on four SP nodes. Results show that the LogGP model predicts, in seconds and with a high degree of accuracy, measured application execution time for large problems running on 128 nodes. Detailed performance projections are provided for very large future processor configurations that are expected to be available to the application developers. These results indicate that scaling beyond one or two thousand nodes yields greatly diminished improvements in execution time, and that synchronization delays are a principal factor limiting the scalability of the application.
+This paper develops a highly accurate LogGP model of a complex wavefront application that uses MPI communication on the IBM SP/2. Key features of the model include: (1) elucidation of the principal wavefront synchronization structure, and (2) explicit high-fidelity models of the MPI-send and MPI-receive primitives. The MPI-send/receive models are used to derive L, o, and G from simple two-node micro-benchmarks. Other model parameters are obtained by measuring small application problem sizes on four SP nodes. Results show that the LogGP model predicts, in seconds and with a high degree of accuracy, measured application execution time for large problems running on 128 nodes. Detailed performance projections are provided for very large future processor configurations that are expected to be available to the application developers. Results indicate that scaling beyond one or two thousand nodes yields greatly diminished improvements in execution time, and that synchronization delays are a principal factor limiting the scalability of the application.
 --B
 INTRODUCTION
 This paper investigates the use of the parallel machine model
@@ -10,7 +10,7 @@ application on a state-of-the-art commercial parallel platform.
 The application, known as Sweep3D, is of interest because it is a
 three-dimensional particle transport problem that has been
 identified as an ASCI benchmark for evaluating high performance
-parallel architectures. The application is also of interest because it
+parallel architectures. The application is also of interest because The application
 has a fairly complex synchronization structure. This
 synchronization structure must be captured in the analytic model
 in order for the model to accurately predict application execution
@@ -31,23 +31,22 @@ important but fairly simple kernel algorithms, such as FFT, LU
 sorting algorithms, or sparse matrix multiply.
 Two experimental studies have applied the model to complex full
 applications such as the Splash benchmarks [9, 11]. However, in
-these studies, the effects of synchronization on application
+Two experimental studies, the effects of synchronization on application
 performance and scalability were measured empirically rather than
 estimated by the model. Many other previous analytic models for
 analyzing application performance are restricted to simpler
 synchronization structures than Sweep3D (e.g., [8]). One
 exception is the deterministic task graph analysis model [1],
 which has been shown to accurately predict the performance of
-applications with complex synchronization structures. The
-LogGP model represents synchronization structures more
+applications with complex synchronization structures. the model represents synchronization structures more
 abstractly than a task graph. A key question addressed in this
 research is whether the more abstract representation is sufficient
 for analyzing a full, complex application such as Sweep3D.
 We construct a LogGP model that not only captures the
 synchronization structure but also elucidates the basic
 synchronization structure of Sweep3D. Similar to the approach in
-[2], we use communication micro-benchmarks to derive the input
-parameters, L, o, and G. However, as we show in section 3,
+[2], We use communication micro-benchmarks to derive the input
+parameters, L, o, and G. However, as We show in section 3,
 deriving these parameters is somewhat more complex for MPI
 communication on the SP/2 than for the Meiko CS-2; thus explicit
 models of the MPI-send and MPI-receive primitives are
@@ -118,10 +117,12 @@ neighbor destination processors, determined by the direction of
 the sweep.
 In the optimized version of Sweep3D that we analyze, once all
 blocks at a given processor are calculated for the sweeps from a
-given pair of octants, the processor is free to start calculating
+given pair of octants, a given processor is free to start calculating
 blocks for sweeps from the next pair of octants. For example, the
 lower left corner processor can start to compute the first block of
-the sweep for octant 7 after it has computed its last block of the
+the sweep for octant 7 after the
+lower left corner processor has computed the
+lower left corner processor last block of the
 sweep originating from octant 6. This will be shown in greater
 detail in the LogGP model of Sweep3D in section 4.
 The pipelined sweep for octant 8 completes one iteration of the
@@ -130,7 +131,8 @@ iterations are executed for one time step. The target problems of
 interest to the ASCI program involve on the order of
 groups and 10,000 time steps, for grid sizes on the order of 10 9
 or twenty million (e.g., 280-280-255). We
-can scale the model projections to these problem sizes, as shown
+can scale the model projections to grid sizes on the order of 10 9
+or twenty million (e.g., 280-280-255), as shown
 in section 5.
 3. Communication Parameters: L, o, G
 Before we present the LogGP model of Sweep3D for the SP/2, we
@@ -147,7 +149,7 @@ Below we give the roundtrip communication times for MPI
 communication on the IBM SP, which are measured using simple
 communication micro-benchmarks. The value of G (Gap per byte)
 is derived directly from these measurements. We then discuss
-how we modeled the SP/2 MPI-send and MPI-receive primitives
+how We modeled the SP/2 MPI-send and MPI-receive primitives
 using the L, o, and G parameters, followed by a description of
 how the values of L and are derived. A significant result is that
 we derive the same values of L and G (but different values of o)
@@ -174,8 +176,8 @@ Figures
 3 (a) and (b). For each data point, a message of the given
 size is sent from processor A to processor B, received by a process
 on processor B, and immediately sent back to A. The roundtrip
-time is measured on A by subtracting the time just before it calls
-MPI-send from the time that its MPI-receive operation completes.
+time is measured on A by subtracting the time just before A calls
+MPI-send from the time that A MPI-receive operation completes.
 Each figure also includes the results of our model of the roundtrip
 communication, which is used to derive the L and
 as discussed below.
@@ -201,7 +203,7 @@ on the SP/2, which we were able to obtain from the author of the
 MPI software. It might be necessary to modify the models for
 future versions of the MPI library, or if Sweep3D is run on a
 different message-passing architecture or is modified to use non-blocking
-MPI primitives. The models below illustrate a general
+MPI primitives. The models developed here illustrate a general
 approach for capturing the impact of such system modifications.
 Since the SP/2 system uses polling to receive messages, we can
 assume the overhead to send a message is approximately the same
@@ -215,20 +217,19 @@ For messages larger than 4KB, the end-to-end communication
 requires a "handshake" in which just the header is initially sent to
 the destination processor and the destination processor must reply
 with a short acknowledgment when the corresponding receive has
-been posted. If the receive has been posted when the header
+been posted. If when the corresponding receive has been posted when the header
 message is sent, the end-to-end cost is modeled as follows:
 Note that the processing overhead for receiving the ack is
 modeled as being subsumed in the processing overhead for
 sending the data. If the corresponding receive has not yet been
-posted, a additional synchronization delay will be incurred. This
-delay is modeled in the next section.
+posted, a additional synchronization delay will be incurred. a additional synchronization delay is modeled in the next section.
 In addition to the total cost for communication given above, the
 LogGP model for Sweep3D requires separate costs for sending
 and receiving messages. For message size less than 4KB:
 where the value of o depends on the message size. For message
 size greater than or equal to 4KB:
 The receive cost includes the time to inform the sending processor
-that the receive is posted, and then the delay for the message to
+that when the corresponding receive is posted, and then the delay for the message to
 arrive.
 3.3 Communication Parameter Values
 Using the above equations for Total_Comm and the measured
@@ -268,25 +269,24 @@ in good agreement.
 4. The LogGP Model of Sweep3D
 In this section we develop the LogGP model of Sweep3D, using
 the models of the MPI communication costs developed in section
-3. We first present the model that assumes each processor in the
+3. we first present the model that assumes each processor in the
 m-n processor grid is mapped to a different SMP node in the
 SP/2. In this case, network latency is the same for all
-communication. We then give the modified equations for the case
-that 2-2 regions of the processor grid are mapped to a single
+communication. we then give the modified equations for this casethat 2-2 regions of the processor grid are mapped to a single
 (four-processor) SMP node in the SP/2. The round-trip times and
 parameter values computed in section 3 were for communication
 between processors in different SMP nodes. The same equations
 can be used to compute intra-node communication parameters.
 4.1 The Basic Model
-The LogGP model takes advantage of the symmetry in the sweeps
+The Basic Model
+ takes advantage of the symmetry in the sweeps
 that are performed during the execution, and thus calculates the
 estimated execution time for sweeps from one octant pair and then
 uses this execution time to obtain the total execution time for all
 sweeps, as explained below.
 During a sweep, as described in section 2, a processor waits for
 input from up to two neighbor processors and computes the values
-for a portion of its grid of size mmi - mk - it - jt. The processor
-then sends the boundary values to up to two neighbor processors,
+for a portion of its grid of size mmi - mk - it - jt. a processorthen sends the boundary values to up to two neighbor processors,
 and waits to receive new input again. Using costs associated with
 each of these activities, we develop the LogGP model summarized
 in
@@ -302,7 +302,7 @@ of
 Table
 
 2. In this equation, W g is the measured time to compute
-one grid point, and mmi, mk, it and jt are the input parameters,
+one grid point, and mmi, mk, W g and jt are the input parameters,
 defined in section 2, that specify the number of angles and grid
 points per block per processor.
 Consider the octant pair (5,6) for which the sweeps begin at the
@@ -314,15 +314,14 @@ Figure
 2. Recall that the upper-left processor is numbered p 1,1 .
 To account for the pipelining of the wavefronts in the sweeps, we
 use the recursive formula in equation (6) of Table 2 to compute
-the time that processor p i,j begins its calculations for these sweeps,
-where i denotes the horizontal position of the processor in the
+the time a processor p i,j begins j calculations for these sweeps,
+where i denotes the horizontal position of a processor in the
 grid. The first term in equation (6) corresponds to the case where
 the message from the West is the last to arrive at processor p i,j . In
 this case, the message from the North has already been sent but
-cannot be received until the message from the West is processed
+cannot be received until the message from the West the West is processed
 due to the blocking nature of MPI communications. The second
-term in equation (6) models the case where the message from the
-North is the last to arrive. Note that StartP and that the
+term in equation (6) models the case where the message from the North is the last to arrive. Note that StartP and that the
 appropriate one of the two terms in equation (6) is deleted for
 each of the other processors at the east or north edges of the
 processor grid.
@@ -333,7 +332,8 @@ the two right-downward sweeps is computed in equation (7) of
 Table
 
 2. This is the time until the lower-left corner processor p 1,m
-has finished communicating the results from its last block of the
+has finished communicating the results from the lower-left corner processor p 1,m
+ last block of the
 sweep for octant 6. At this point, the sweeps for octants 7 and 8
 (to the upper right) can start at processor p 1,m and proceed toward
 . Note that the subscripts on the Send and Receive terms in
@@ -342,7 +342,7 @@ communication event, to make it easier to understand why the
 term is included in the equation. The send and receive costs are
 as derived in section 3.2.
 The critical path for the sweeps for octants 7 and 8 is the time
-until all processors in the grid complete their calculations for the
+until all processors in the grid complete The send and receive costs calculations for the
 sweeps, since the sweeps from octants 1 and 2 (in the next
 iteration) won't begin until processor p n,1 is finished. Due to the
 symmetry in the Sweep3D algorithm, mentioned above, the time
@@ -351,7 +351,7 @@ sweeps for octants 5 and 6, which start at processor p 0,0 and move
 Southeast to processor p n,m . Thus, we compute the critical path
 time for octants 7 and 8 as shown in equation (8) of Table 2.
 Equation (8) represents the time until processor p n,m has finished
-its last calculation for the second octant pair. The processor
+m last calculation for the second octant pair. The processor
 
 Table
 
@@ -361,7 +361,7 @@ Message Size: - 1024 > 1024
 Table
 
 1. SP/2 MPI Communication Parameters
-directly to its East, p n-1,m , must start computing, calculate and
+directly to m East, p n-1,m , must start computing, calculate and
 communicate all needed results from the blocks for both octants,
 and then wait for processor p n,m to receive the results from the last
 block of these calculations and compute the results based on this
@@ -378,10 +378,10 @@ communication cost discussed in section 3. The (m-1)L term in
 T 5,6 and T 7,8 captures the delay caused by a send which is blocked
 until the destination processor posts the corresponding receive.
 This delay accumulates in the j direction; thus the total delay at
-1,m depends on the number of processors to its North (m-1).
+1,m depends on the number of processors to 
+1,m North (m-1).
 Furthermore, this synchronization cost is zero for the problems
-with message sizes smaller than 4KB, since in this case, the
-processor sends the message whether or not the corresponding
+with message sizes smaller than 4KB, since in this case, a processor sends the message whether or not the corresponding
 receive has been posted. The second synchronization delay in T 7,8 ,
 (n-2)L, represents difference between when a receive is posted,
 and when a message is actually received from the sending
@@ -404,7 +404,8 @@ Let L local denote the network latency for an intracluster message,
 remote denote the latency for an intercluster message, and L
 local + L remote )/2. In the following discussion, are
 assumed to be the same for intra-cluster and inter-cluster
-messages, but the equations can easily be modified if this is not
+messages, but The same equations
+ can easily be modified if this is not
 the case. Let L and R be subscripts that denote a model variable
 (e.g,. TotalComm, Send, or Receive) that is computed using L local
 or L remote , respectively. Using this notation, the modified
@@ -414,7 +415,7 @@ in
 Table
 
 3 and described below.
-Recall that processor numbering starts from 1 in both the i and j
+Recall a processor numbering starts from 1 in both the i and j
 dimensions. Also recall that, for processor p i,j , i denotes its
 horizonal position in the processor grid. If both i and j are even,
 then all incoming messages are intra-cluster and all outgoing
@@ -432,7 +433,7 @@ processors in each of the i and j dimensions is even when
 mapping 2-2 processor regions to the SMP clusters. The
 synchronization terms in T 5,6 and T 7,8 are computed using L avg .
 These are the only changes required in the model.
-The modified model has been validated against detailed
+the model has been validated against detailed
 simulation [3]. However, since we cannot yet validate them with
 system measurements (because efficient MPI software for intra-cluster
 communication doesn't yet exist), only results for the case
@@ -470,7 +471,7 @@ time for the Sweep3D application.
 In this section we present the results obtained from the LogGP
 model. We validate the LogGP projections of Sweep3D running
 time against measured running time for up to 128 processors and
-then use the LogGP model to predict and evaluate the scalability
+then use the model to predict and evaluate the scalability
 of Sweep3D to thousands of processors, for two different problem
 sizes of interest to the application developers. Unless otherwise
 stated the reported execution times are for one energy group and
@@ -485,8 +486,8 @@ version of Sweep3d on up to 128 SP/2 processors, for fixed total
 problems sizes (150-150-150 and 50-50-50), and k-blocking
 mk, equal to 10. As the number of processors increases, the
 message size and the computation time per processor decrease,
-while the overhead for synchronization increases. For these
-problem sizes and processor configurations, the message sizes
+while the overhead for synchronization increases. For fixed total
+problems sizes (150-150-150 and 50-50-50), the message sizes
 vary from over 16KB to under 1KB; there is remarkably high
 agreement between the model estimates and the measured system
 performance across the entire range. Figure 5 shows that the
@@ -499,8 +500,7 @@ In
 Figure
 
 6, we show the predicted and measured application
-execution time as a function of the number of processors on the
-SP/2, for two different cases of fixed problem size per processor.
+execution time as a function of the number of processors on the IBM SP/2, for two different cases of fixed problem size per processor.
 In
 
 Figure
@@ -532,10 +532,11 @@ Processors
 and the measured execution time is again generally excellent for
 the level of abstraction in the model. However these results show
 that the model is less quantitatively accurate when mk=1. We
-have verified for many configurations that the LogGP model is
+have verified for many configurations that the model is
 qualitatively accurate in determining whether the execution time
 with mk=1 is higher or lower than the execution time with mk=10.
-We have also verified that the model is quantitatively accurate for
+We have also verified that The Model for the Clustered SMP Nodes
+ is quantitatively accurate for
 values of mk larger than 10. The results for 45x45x1000 also
 illustrate that the C version of the code (which was created from
 the Fortran version using f2c) is somewhat slower than the
@@ -618,7 +619,7 @@ the fact that the computation of interest to the scientists involves
 energy groups rather than one. Note that the problem size per
 processor decreases as the number of processors increases, and
 thus the Sweep3D configurations with larger mk have higher
-performance. The LogGP model can be used to determine which
+performance. the LogGP Model can be used to determine which
 values of the Sweep3D configuration parameters (i.e., mmi and
 yield the lowest execution time for given processor
 configurations and problem sizes.
@@ -690,10 +691,10 @@ wavefront application, the LogGP equations that capture the
 principal synchronization costs also elucidate the basic pipelined
 synchronization structure, illustrating an abstraction capability in
 this domain that is comparable to the simplicity of the
-communication parameters (L, o, and G). This research provides a
+communication parameters (L, o, and G). this research provides a
 case study in which the model validates extremely well against
 measured application performance, and further illustrates the
-potential of the LogGP model for analyzing a wide variety of
+potential of the LogGP Model for analyzing a wide variety of
 interesting applications including the important class of wavefront
 applications.
 The most significant results obtained for the Sweep3D application

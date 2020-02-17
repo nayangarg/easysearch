@@ -1,7 +1,7 @@
 --T
 Abstractions for Portable, Scalable Parallel Programming.
 --A
-AbstractIn parallel programming, the need to manage communication, load imbalance, and irregularities in the computation puts substantial demands on the programmer. Key properties of the architecture, such as the number of processors and the cost of communication, must be exploited to achieve good performance, but coding these properties directly into a program compromises the portability and flexibility of the code because significant changes are then needed to port or enhance the program. We describe a parallel programming model that supports the concise, independent description of key aspects of a parallel programincluding data distribution, communication, and boundary conditionswithout reference to machine idiosyncrasies. The independence of such components improves portability by allowing the components of a program to be tuned independently, and encourages reuse by supporting the composition of existing components. The isolation of architecture-sensitive aspects of a computation simplifies the task of porting programs to new platforms. Moreover, the model is effective in exploiting both data parallelism and functional parallelism. This paper provides programming examples, compares this work to related languages, and presents performance results.
+AbstractIn parallel programming, the need to manage communication, load imbalance, and irregularities in the computation puts substantial demands on the programmer. Key properties of the architecture, such as the number of processors and the cost of communication, must be exploited to achieve good performance, but coding Key properties of the architecture, such as the number of processors and the cost of communication directly into a program compromises the portability and flexibility of the code because significant changes are then needed to port or enhance a program. We describe a parallel programming model that supports the concise, independent description of key aspects of a parallel programincluding data distribution, communication, and boundary conditionswithout reference to machine idiosyncrasies. The independence of such components improves portability by allowing the components of a program to be tuned independently, and encourages reuse by supporting the composition of existing components. The isolation of architecture-sensitive aspects of a computation simplifies the task of porting programs to new platforms. Moreover, the model is effective in exploiting both data parallelism and functional parallelism. This paper provides programming examples, compares this work to related languages, and presents performance results.
 --B
 Introduction
 The diversity of parallel architectures puts the goals of performance and portability in conflict. Programmers
@@ -16,11 +16,11 @@ In recent years, a parallel programming style has evolved that might be termed a
 computing. This style is characterized by:
 ffl Data parallelism. The program's parallelism comes from executing the same function on many elements
 of a collection. Data parallelism is attractive because it allows parallelism to grow-or scale-with the
-number of data elements and processors. SIMD architectures exploit this parallelism at a very fine
+number of data elements and processors. SIMD architectures exploit The program's parallelism at a very fine
 grain.
 ffl Aggregate execution. The number of data elements typically exceeds the number of processors, so
 multiple elements are placed on a processor and manipulated sequentially. This is attractive because
-placing groups of interacting elements on the same processor vastly reduces communication costs.
+placing groups of interacting elements on a processor vastly reduces communication costs.
 Moreover, this approach uses good sequential algorithms locally, which is often more efficient than
 simply multiplexing parallel algorithms. Another benefit is that data can be passed between processors
 in batches to amortize communication overhead. Finally, when a computation on one data element is
@@ -31,13 +31,13 @@ same conceptual function. For instance, data elements on the boundary of a compu
 have no neighbors with which to communicate, but data parallelism normally assumes that interior
 and exterior elements be treated the same. By executing a different function on the boundaries, these
 exceptional cases can be easily handled.
-These features make the aggregate data-parallel style of programming attractive because it can yield
+These features make the aggregate data-parallel style of programming attractive because These features can yield
 efficient programs when executed on typical MIMD architectures. However, without linguistic support this
 style of programming promotes inflexible programs through the embedding of performance-critical features
 as constants, such as the number of processors, the number of data elements, boundary conditions, the
 processor interconnection, and system-specific communication syntax. If the machine, its size, or the problem
 size changes, significant program changes to these fixed quantities are generally required. As a consequence,
-1 We consider a program to be portable with respect to a given machine if its performance is competitive with
+1 We consider a program to be portable with respect to a given machine if a program performance is competitive with
 machine-specific programs solving the same problem [2].
 several languages have been introduced to support key aspects of this style. However, unless all aspects of
 this style are supported, performance, scalability, portability, or development cost can suffer.
@@ -63,7 +63,7 @@ provide sufficient control over the algorithm that is applied to aggregate data,
 the parallel algorithm when there are multiple data points on a processor [43, 44].
 Many language models do not adequately support loose synchrony. The boundaries of parallel computations
 often introduce irregularities that require significant coding effort. When all processes execute the
-same code, programs become riddled with conditionals, increasing code size and making them difficult to
+same code, programs become riddled with conditionals, increasing code size and making programs difficult to
 understand, hard to modify, and potentially inefficient. Programming in a typical MIMD-style language is
 not much cleaner. For instance, writing a slightly different function for each type of boundary process is
 problematic because a change to the algorithm is likely to require all versions to be changed.
@@ -72,9 +72,9 @@ data-parallel programming style. This model can serve as a foundation for portab
 that preserve the performance available in the underlying machine. Our belief is that for many tasks
 programmers-and not compilers or runtime systems-can best handle the performance-sensitive aspects of
 a parallel program. This belief leads to three design principles.
-First, we provide abstractions that are efficiently implementable on all MIMD architectures, along with
+First, Our provide abstractions that are efficiently implementable on all MIMD architectures, along with
 specific mechanisms to handle common types of parallelism, data distribution, and boundary conditions.
-Our model is based on a practical MIMD computing model called the Candidate Type Architecture (CTA)
+Our is based on a practical MIMD computing model called the Candidate Type Architecture (CTA)
 [45].
 Second, the insignificant but diverse aspects of computer architectures are hidden. If exposed to the
 programmer, assumptions based on these characteristics can be sprinkled throughout a program, making
@@ -94,73 +94,74 @@ a global data structure to be defined and distributed over processes, and allows
 location of data elements-to be controlled by load-time parameters. The ensemble also has a code form for
 describing what operations to execute on which elements and for handling boundary conditions. Likewise,
 interprocessor connections are described with a port ensemble that provides similar flexibility. By using
-ensembles for all three components of a global operation-data, code and communication-they can be
+ensembles for all three components of a global operation-data, code and communication-using
+ensembles for all three components of a global operation-data, code and communication can be
 scaled together with the same parameters. Because the three parts of an ensemble and the boundary
 conditions are specified independently, reusability is enhanced.
-The remainder of this paper is organized as follows. We first present our solution to the problem by
-describing our architectural model and the basic language model-the CTA and the Phase Abstractions.
+The remainder of this paper is organized as follows. We first present We solution to the problem by
+describing We architectural model and the basic language model-the CTA and the Phase Abstractions.
 Section 3 then gives a detailed illustration of our abstractions, using the Jacobi Iteration as an example. To
 demonstrate the expressiveness and programmability of our abstractions, Section 4 shows how simple array
-language primitives can be built on top of our model. Section 5 discusses the advantages of our programming
+language primitives can be built on top of our . Section 5 discusses the advantages of our programming
 model with respect to performance and portability, and Section 6 presents experimental evidence that the
 Phase Abstractions support portable parallel programming. Finally, we compare Phase Abstractions with
 related languages and models, and close with a summary.
 Phase Abstractions
 In sequential computing, languages such as C, Pascal and Fortran have successfully combined efficiency with
-portability. What do these languages have in common that make them successful? All are based on a
-model where a sequence of operations manipulate some infinite random-access memory. This programming
-model succeeds because it preserves the characteristics of the von Neumann machine model, which itself has
+portability. What do these languages have in common that make these languages successful? All are based on a
+model where a sequence of operations manipulate some infinite random-access memory. This model succeeds because This model preserves the characteristics of the von Neumann machine model, which itself has
 been a reasonably faithful representation of sequential computers. While these models are never literally
 implemented-unit-cost access to infinite memory is an illusion provided by virtual memory, caches and
-backing store-the model is accurate for the vast majority of programs. There are only rare cases, such
-as programs that perform extreme amounts of disk I/O, where the deviations from the model are costly
+backing store-This model is accurate for the vast majority of programs. There are only rare cases, such
+as programs that perform extreme amounts of disk I/O, where the deviations from This model are costly
 to the programmer. It is critical that the von Neumann model capture machine features that are relevant
 to performance: If some essential machine features were ignored, better algorithms could be developed
-using a more accurate machine model. Together, the von Neumann machine model and its accompanying
+using a more accurate machine model. Together, the von Neumann machine model and It accompanying
 programming model allow languages such as C and Fortran to be both portable and efficient.
 In the parallel world, we propose that the Candidate Type Architecture (CTA) play the role of the von
-Neumann model, 2 and the Phase Abstractions the role of the programming model. Finally, the sequential
+Neumann model, 2 and the Phase Abstractions the role of This model. Finally, the sequential
 languages are replaced by languages based on the Phase Abstractions, such as Orca C [32, 34].
-The CTA. The CTA [45] is an asynchronous MIMD model. It consists of P von Neumann processors
-that execute independently. Each processor has its own local memory, and the processors communicate
+The CTA. The CTA [45] is an asynchronous MIMD model. The CTA [45] consists of P von Neumann processors
+that execute independently. Each processor has Each processor own local memory, and the processors communicate
 through some sparse but otherwise unspecified communication network. Here "sparse" means that the
 network has a constant degree of connectivity. The network topology is intentionally left unbound to provide
-maximum generality. Finally, the model includes a global controller that can communicate with all processors
-through a low bandwidth network. Logically, the controller provides synchronization and low bandwidth
+maximum generality. Finally, This model includes a global controller that can communicate with all processors
+through a low bandwidth network. Logically, a global controller that can communicate with all processors
+through a low bandwidth network provides synchronization and low bandwidth
 communication such as a broadcast of a single value.
-Although it is premature to claim that the CTA is as effective a model as the von Neumann model, it
-does appear to have the requisite characteristics: It is simple, makes minimal architectural assumptions, but
-captures enough significant features that it is useful for developing efficient algorithms. For example, the
-CTA's unbound topology does not bias the model towards any particular machine, and the topologies of
+Although it is premature to claim that The CTA [45] is as effective a model as the von Neumann model, The CTA [45]
+does appear to have the requisite characteristics: The CTA [45] is simple, makes minimal architectural assumptions, but
+captures enough significant features that The CTA [45] is useful for developing efficient algorithms. For example, the
+CTA's unbound topology does not bias This model towards any particular machine, and the topologies of
 existing parallel computers are typically not significant to performance. On the other hand, the distinction
-between global and local memory references is key, and this distinction is clear in the CTA model. Finally,
+between global and local memory references is key, and this distinction is clear in This modelThe CTA [45] . Finally,
 the assumption of a sparse topology is realistic for all existing medium and large scale parallel computers.
-The Phase Abstractions extend the CTA in the same way that the sequential imperative programming
+The Phase Abstractions extend The CTA [45] in the same way that the sequential imperative programming
 2 The more recent BSP [48] and LogP [8] models present a similar view of a parallel machine and for the most part
 suggest a similar way of programming parallel computers.
-model extends the von Neumann model. The main components of the Phase Abstractions are the XYZ levels
+model extends the von Neumann model. The main components of The Phase Abstractions are the XYZ levels
 of programming and ensembles [1, 19, 46].
 2.1 XYZ Programming Levels
 A programmer's problem-solving abilities can be improved by dividing a problem into small, manageable
-pieces-assuming the pieces are sufficiently independent to be considered separately. Additionally, these
-pieces can often be reused in other programs, saving time on future problems. One way to build a parallel
+pieces-assuming the pieces are sufficiently independent to be considered separately. Additionally, the pieces can often be reused in other programs, saving time on future problems. One way to build a parallel
 program from smaller reusable pieces is to compose a sequence of independently implemented phases, each
 executing some parallel algorithm that contributes to the overall solution. At the next conceptual level, each
 such phase is comprised of a set of cooperating sequential processes that implements the desired parallel
 algorithm. Each sequential process may be developed separately. These levels of problem solving-program,
-phase, and process, also called the Z, Y, and X levels-have direct analogies in the CTA.
-The X level corresponds to the individual von Neumann processors of the CTA, and an X level program
+phase, and process, also called the Z, Y, and X levels-have direct analogies in The CTA [45].
+The X level corresponds to the individual von Neumann processors of The CTA [45], and an X level program
 specifies the sequential code that executes in one process. Because the model is MIMD, each process can
 execute different code.
 The Y level is analogous to the set of von Neumann processors cooperating to compute a parallel
-algorithm, forming a phase. The Y-level may specify how the X-level programs are connected to each other
+algorithm, forming a phase. The Y level may specify how the X-level programs are connected to each other
 for inter-process communication. Examples of phases include parallel implementations of the FFT, matrix
 multiplication, matrix transposition, sort, and global maximum. A phase has a characteristic communication
 structure induced by the data dependencies among the processes. For example, the FFT induces a butterfly,
 while Batcher's sort induces a hypercube [1].
-Finally, the Z level corresponds to the actions of the CTA's global controller, where sequences of parallel
+Finally, the Z level corresponds to the actions of The CTA [45]'s global controller, where sequences of parallel
 phases are invoked and synchronized. A Z level program specifies the high level logic of the computation
-and the sequential invocation of phases (although their execution may overlap) that are needed to solve
+and the sequential invocation of phases (although the computation
+ execution may overlap) that are needed to solve
 complex problems. For example, the Car-Parrinello molecular dynamics code simulates the behavior of a
 collection of atoms by iteratively invoking a series of phases that perform FFT's, matrix products, and other
 computations [49]. In Z-Y-X order, these three levels provide a top-down view of a parallel program.
@@ -189,29 +190,28 @@ Send local_max to parent;
 Figure
 
 1: XYZ Illustration of the Jacobi Iteration
-The Jacobi phase uses a mesh interconnection topology, and the Max phase uses a binary tree. Other details
+Each Y level phase uses a mesh interconnection topology, and Each Y level phase uses a binary tree. Other details
 of the Y level, such as the distribution of data, are not shown in this figure but will be explained in the next
 subsection.
 Finally, a sketch of the X level program for the two phases is shown at the right of Figure 1. The X level
-code for the Jacobi phase assigns to each data point the average of its four neighbors. The Max phase finds,
+code for Each Y level phase assigns to each data point the average of Each Y level phase four neighbors. Each Y level phase finds,
 for all data points, the largest difference between the current iteration and the previous iteration. 2
 A Z level program is basically a sequential program that provides control flow for the overall computation.
-An X level program, in its most primitive form, can also be viewed as a sequential program with additional
-operations that allow it to communicate with other processes. Although parallelism is not explicitly specified
+An X level program, in An X level program most primitive form, can also be viewed as a sequential program with additional
+operations that allow An X level program to communicate with other processes. Although parallelism is not explicitly specified
 at the X and Z levels, these two levels may still contain parallelism. For example, phase invocation may
 be pipelined, and the X level processes can execute on superscalar architectures to achieve instruction-level
 parallelism.
 It is the Y level that specifies scalable parallelism and most clearly departs from a sequential program.
 Ensembles support the definition and manipulation of this parallelism.
 2.2 Ensembles
-The Phase Abstractions use the ensemble structure to describe data structures and their partitioning, process
+The Phase Abstractions use the ensemble structure to describe data structures and The Phase Abstractions partitioning, process
 placement, and process interconnection. In particular, an ensemble is a partitioning of a set of elements-
-data, codes, or port connections-into disjoint sections. Each section represents a thread of execution, so the
-section is a unit of concurrency and the degree of parallelism is modulated by increasing or decreasing the
+data, codes, or port connections-into disjoint sections. Each section represents a thread of execution, so Each section is a unit of concurrency and the degree of parallelism is modulated by increasing or decreasing the
 number of sections. Because all three aspects of parallel computation-data, code and communication-are
 unified in the ensemble structure, all three components can be reconfigured and scaled in a coherent, concise
 fashion to provide flexibility and portability.
-A data ensemble is a data structure with a partitioning. At the Z level the data ensemble provides a
+A data ensemble is a data structure with a partitioning. At the Z level A data ensemble provides a
 logically global view of the data structure. At the X level a portion of the ensemble is mapped to each
 section and is viewed as a locally defined structure with local indexing. For example, the 6 \Theta 6 data ensemble
 in
@@ -228,9 +228,10 @@ Global View
 Figure
 
 2: A 6\Theta6 Array (left) and its corresponding Data Ensemble for a 2\Theta2 array of sections.
-A code ensemble is a collection of procedures with a partitioning. The code ensemble gives a global view
+A code ensemble is a collection of procedures with a partitioning. A code ensemble gives a global view
 of the processes performing the parallel computation. When the procedures in the ensemble differ the model
-is MIMD; when the procedures are identical the model is SPMD. Figure 3 shows a code ensemble for the
+is MIMD; when the procedures in the ensemble are identical the model
+ is SPMD. Figure 3 shows a code ensemble for the
 Jacobi phase in which all processes execute the xJacobi() function.
 
 Figure
@@ -239,7 +240,7 @@ Figure
 Finally, a port ensemble defines a logical communication structure by specifying a collection of port name
 pairs. Each pair of names represents a logical communication channel between two sections, and each of
 these port names is bound to a local port name used at the X level. Figure 4 depicts a port ensemble for
-the Jacobi phase. For example, the north port (N) of one process is bound to the south port (S) of its
+the Jacobi phase. For example, the north port (N) of one process is bound to the south port (S) of the north port (N) of one process
 neighboring process.
 
 Figure
@@ -251,20 +252,20 @@ The sections of each ensemble are ordered numerically so that the i th section o
 the i th section of each data and port ensemble. This correspondence allows each section to be allocated to
 a processor for normal sequential execution: The process executes on that processor, the data can be stored
 in memory local to that processor, and the ports define connections for interprocessor communication.
-Consequently, the i th sections of all ensembles are assigned to the same processor to maintain locality across
+Consequently, the i th sections of all ensembles are assigned to that processor to maintain locality across
 phases. If two phases share a data ensemble but require different partitionings for best performance, a
 separate phase may be used to move the data.
-The Z level logically stores ensembles in Z level variables, composes them into phases and stores their
+The Z level logically stores ensembles in Z level variables, composes The Z level logically stores ensembles in Z level variables into phases and stores The Z level logically stores ensembles in Z level variables
 results. The phase invocation interface between the Z and X levels encourages modularity because the same
 level code can be invoked with different ensemble parameters in the same way that procedures are reused
 in sequential languages.
 The ensemble abstraction helps hide the diversity of parallel architectures. However, to map well to
-individual architectures the abstraction must be parameterized, for example, by the number of processors
+individual architectures The ensemble abstraction must be parameterized, for example, by the number of processors
 and the size of the problem. This parameterization is illustrated in the next section.
 3 Ensemble Example: Jacobi
-To provide a better understanding of the ensembles and the Phase Abstractions, we now complete the
-description of the Jacobi program. We adopt notation from the proposed Orca C language [30, 32], but
-other languages based on the Phase Abstractions are possible (see Section 4).
+To provide a better understanding of the ensembles and The Phase Abstractions, we now complete the
+description of the Jacobi program. we adopt notation from the proposed Orca C language [30, 32], but
+other languages based on The Phase Abstractions are possible (see Section 4).
 3.1
 #define Rows 1 /* Constants to define the shape */
 #define Cols 2 /* of the logical processor array */
@@ -275,7 +276,7 @@ case Rows: rows = Processors;
 break;
 case Cols: rows
 break;
-case TwoD: Partition2D(&rows, &cols, Processors);
+case TwoD: Partition2D(&rows, &Cols, Processors);
 break;
 (rows, cols, Processors) /* Configuration Parameter List */
 !data ensemble definitions?; /* Y Level */
@@ -294,27 +295,26 @@ Figure
 As shown in Figure 5, a Phase Abstractions program consists of X, Y, and Z descriptions, plus a list of
 configuration parameters that are used by the program to adapt to different execution environments. In this
 case, two runtime parameters are accepted: Processors and shape. The first parameter is the number of
-processors, while the second specifies the shape of the processor array. As will be discussed later, the program
-uses a 2D data decomposition, so by setting shape to Rows (Cols) we choose a horizontal strips (vertical
+processors, while the second specifies the shape of the processor array. As will be discussed later, the programuses a 2D data decomposition, so by setting shape to Rows (Cols) we choose a horizontal strips (vertical
 strips) decomposition. (The function Partition2D() computes values of rows and cols such that (rows
 Processors and the difference between rows and cols is minimized.) With this configuration
-computation this program can, through the use of different load time parameters, adapt to different numbers
+computation the program can, through the use of different load time parameters, adapt to different numbers
 of processors and assume three different data decompositions. The configuration computation is executed
 once at load time.
 3.2 Z Level of Jacobi
-After the program is configured, the Z level program is executed, which initializes program variables, reads
+After the program is configured, the program is executed, which initializes program variables, reads
 the input data, and then iteratively invokes the Jacobi and Max phases until convergence is reached, at
 which point an output phase is invoked. The data, processing, and communication components of the Jacobi
 and Max phases are specified by defining and composing code, data and port ensembles as described below.
 3.3 Y Level: Data Ensembles
-This program uses two arrays to store floating point values at each point of a 2D grid. Parallelism is achieved
-by partitioning these arrays into contiguous 2D blocks:
+the program uses two arrays to store floating point values at each point of a 2D grid. Parallelism is achieved
+by partitioning two arrays into contiguous 2D blocks:
 partition block[r][c] float p[rows][cols],
 float newP[rows][cols];
 This declaration states that p and newP have dimensions (rows * cols) and are partitioned onto an (r * c)
 section array (process array). The keyword partition identifies p and newP as ensemble arrays, and block
 names this partitioning so that it can be reused to define other ensembles. This partitioning corresponds to
-the one in Figure 2 when rows=6, cols=6, 2, and this ensemble declaration belongs in the
+the one in Figure 2 when rows=6, cols=6, 2, and This declaration belongs in the
 !data ensembles? meta-code of Figure 5. (Section 5 shows how an alternate decomposition is declared.)
 The values of r and c are assumed to be specified in the program's configuration parameter list. Each
 section is implicitly defined to be of size (s *
@@ -329,13 +329,16 @@ Consequently, X level
 processes contain no assumptions about the data decomposition except the dimension of the subarrays, so
 these processes can scale in both the number of logical processors and in the problem size.
 3.4 Jacobi Phase
-Ensemble. The Jacobi phase computes for each point the average of its four nearest neighbors,
-implying that each section will communicate with its four nearest neighbor sections (See Figure 4). The
+Ensemble. The Jacobi phase computes for each point the average of 3.4 Jacobi Phase
+ four nearest neighbors,
+implying that each section will communicate with 3.4 Jacobi Phase
+ four nearest neighbor sections (See Figure 4). The
 following Y level ensemble declaration defines the appropriate port ensemble:
 Jacobi.portnames !-? N, E, W, S /* North, East, West, South */
 The first line declares the phase's port names so the following bindings can be specified. The second and
-third lines define a mesh connectivity between Y level port names. This port ensemble declaration does not
-specify connections for the ports that lie on the boundaries. In this case these unbound ports are bound
+third lines define a mesh connectivity between Y level port names. Y level ensemble declaration does not
+specify connections for the ports that lie on the boundaries. In this
+case the ports that lie on the boundaries are bound
 to derivative functions, which compute boundary conditions using data local to the section. The following
 binds derivative functions to ports on the edges of Jacobi.
 Jacobi[0][i] .port.N receive !-? RowZero, where 0
@@ -356,14 +359,15 @@ even modestly complicated boundary conditions can lead to a proliferation of spe
 Code Ensemble. To define the code ensemble for Jacobi, each of the r * c sections is assigned an instance
 of the xJacobi() code:
 Jacobi[i][j].code !-? xJacobi(); where 0
-Because Jacobi contains heterogeneity only on the boundaries, which in this program is handled by derivative
+Because Jacobi contains heterogeneity only on the boundaries, which in the program is handled by derivative
 functions, all the functions are the same. In general, however, the only restriction is that the function's
 argument types and return type must match those of the phase invocation.
-Level. The X level code for Jacobi is shown in Figure 6. It first sends edge values to its four neighbors,
-it then receives boundary values from its neighbors, and finally it uses the four point stencil to compute the
+Level. The X level code for Jacobi is shown in Figure 6. The X level code for Jacobi first sends edge values to The X level code for Jacobi four neighbors,
+The X level code for Jacobi then receives boundary values from The X level code for Jacobi neighbors, and finally The X level code for Jacobi uses the four point stencil to compute the
 average for each interior point. Several features of the X level code are noteworthy:
 ffl parameters-The arguments to the X level code establish a correspondence between local variables and
-the sections of the ensembles. In this case, the local value array is bound to a block of ensemble values.
+the sections of the ensembles. In this
+case, the local value array is bound to a block of ensemble values.
 ffl communication-Communication is specified using the transmit operator (!==), for which a port name
 on the left specifies a send of the righthand side, and a port on the right indicates a receive into the
 variable on the lefthand side. The semantics are that receive operations block, but sends do not.
@@ -378,12 +382,12 @@ ffl array slices-Slices provide a concise way to refer to an entire row (or in g
 block) of data. When slices are used in conjunction with the transmit operator (!==), the entire block
 is sent as a single message, thus reducing communication overhead.
 The Complete Phase. To summarize, the data ensemble, the port ensemble, and the code ensemble
-collectively define the Jacobi phase. Upon execution the sections declared by the configuration parameters
+collectively define The Complete Phase. Upon execution the sections declared by the configuration parameters
 are logically connected in a nearest-neighbor mesh, and each section of data is manipulated by one xJacobi()
 process. The end result is a parallel algorithm that computes one Jacobi iteration.
 3.5 Max Phase
-The Max phase finds the maximum change of all grid points, and uses the same data ensemble as the Jacobi
-phase. The port ensemble is shown graphically in Figure 8 and is defined below.
+The Complete Phase finds the maximum change of all grid points, and uses the same data ensemble as the Jacobi
+phase. the port is shown graphically in Figure 8 and is defined below.
 Max.portnames !-? P, L, R /* Parent, Left, Right */
 xJacobi(value[1:s][1:t], new-value[1:s][1:t])
 double value[0:s+1][0:t+1]; /* extra storage on all four sides */
@@ -405,14 +409,14 @@ for (j=1; i!=t; i++)
 Figure
 
 Level Code for the Jacobi Phase
-The derivative functions for this phase are bound so that a receive from a leaf section's Left or Right port
+The derivative functions for The Complete Phase are bound so that a receive from a leaf section's Left or Right port
 will return the value computed by the Smallest Value() function, and a send from the root's unbound
 Parent port will be a no-op.
 Max[i].port.L receive !-? Smallest-Value() where r*c/2 Processors
 Max[i].port.R receive !-? Smallest-Value() where r*c/2 Processors
 Max[i].port.P send !-? No-Op() where
-The Smallest Value() derivative function simply returns the smallest value that can be represented on the
-architecture. The code ensemble for this phase is similar to the Jacobi phase, except that xMax() replaces
+the Smallest Value() derivative function simply returns the smallest value that can be represented on the
+architecture. The code ensemble for The Complete Phase is similar to the Jacobi phase, except that xMax() replaces
 xJacobi(). (See Figure 7.)
 xMax(value[1:s][1:t], new-value[1:s][1:t])
 double value[1:s][1:t];
@@ -433,7 +437,8 @@ Figure
 
 7: X Level Code for the Max Phase
 With applications that are more complicated than Jacobi, the benefit of using ensembles increases while
-their cost is amortized over a larger program. The cost of using ensembles will also decrease as libraries of
+Jacobi, the benefit of using ensembles increases while
+ cost is amortized over a larger program. The cost of using ensembles will also decrease as libraries of
 
 Figure
 
@@ -459,8 +464,8 @@ values, or sorting some elements. There can be X level communication functions f
 in a ring, for broadcasting data, or for communicating up and down a tree structure. Reductions, which
 naturally combine both communication and computation, are notable exceptions where the separation of
 3 Since the submission of this paper, an array sublanguage known as ZPL has been developed to support data
-parallel computations [35, 47, 31, 37]. While its syntax differs significantly from Orca C, ZPL remains true to the
-Phase Abstractions model. It provides a powerful Z level language that hides all of the X and Y level details from
+parallel computations [35, 47, 31, 37]. While ZPL syntax differs significantly from Orca C, ZPL remains true to the
+Phase Abstractions model. ZPL provides a powerful Z level language that hides all of the X and Y level details from
 the user.
 communication from computation is not desirable. For such operations it suffices to define a communication-oriented
 phase that takes an additional function parameter for combining the results of communications.
@@ -478,12 +483,12 @@ analogous to add, and the other shift functions are analogous to the left-shift.
 There are three consequences of this approach. First, the interface to a phase is substantially simplified.
 Second, some problems are harder to describe because it is not possible to combine computation and communication
 within a single X level function. Finally, X level functions (and the phases that they comprise)
-are smaller and are more likely to perform just one task, increasing their composability and reusability.
-Although the array sublanguage defined here is similar to APL, it has some salient differences. Most
+are smaller and are more likely to perform just one task, increasing they composability and reusability.
+Although the array sublanguage defined here is similar to APL, the array sublanguage defined here has some salient differences. Most
 significantly, the Orca C functions operate on subarrays, rather than individual elements, which means
 that fast sequential algorithms can be applied to subarrays. So while this solution achieves some of the
-conciseness and reusability of APL, it does not sacrifice control over data decompositions or lose the ability
-to use separate global and local algorithms. This solution also has the advantage of embedding an array
+conciseness and reusability of APL, this solution does not sacrifice control over data decompositions or lose the ability
+to use separate global and local algorithms. this solution also has the advantage of embedding an array
 language in Orca C, allowing other programming styles to be used as they are needed.
 The power of the Phase Abstractions comes from the decomposition of parallel programs into X, Y and Z
 levels, the encoding of key architectural properties as simple parameters, and the concept of ensembles, which
@@ -491,8 +496,8 @@ allows data, port and code decompositions to be specified and reused as individu
 types of ensembles work together to allow the problem and machine size to be scaled. In addition, derivative
 functions allow a single X level program to be used for multiple processes even in the presence of boundary
 conditions. This section discusses the Phase Abstractions with respect to performance and expressiveness.
-Portability and Scalability. When programs are moved from one platform to another they must adapt
-to the characteristics of their host machine if they are to obtain good performance. If such adaptation is
+Portability and Scalability. When programs are moved from one platform to another programs must adapt
+to the characteristics of programs host machine if programs are to obtain good performance. If such adaptation is
 automatic or requires only minor effort, portability is achieved. The Phase Abstractions support portability
 and scalability by encoding key architectural characteristics as ensemble parameters and by separating phase
 definitions into several independent components.
@@ -549,7 +554,7 @@ new port ensemble that uses a tree of variable degree. Such a solution is shown 
 ports are represented by an array of ports. This new program can use either a binary tree or the "rows and
 columns" approach. The port ensemble declaration for the latter approach is shown below.
 /* Rows and Columns communication structure */
-With the code suitably parameterized, this program can now execute efficiently on a variety of architectures
+With the code suitably parameterized, This new program can now execute efficiently on a variety of architectures
 by selecting the proper port ensemble.
 xMax(value[1:s][1:t], new[1:s][1:t], numChildren)
 double value[1:s][1:t];
@@ -577,7 +582,7 @@ of sections to be
 P: If a 1D strip partitioning is desired, the number of sections can simply
 be defined to be P. This strip decomposition requires that each process have only East-West
 neighbors instead of the four neighbors used in the block decomposition. By using the port ensembles to
-bind derivative functions to unused ports-in this case the North and South ports-the program can easily
+bind derivative functions to unused ports-in this case the North and South ports-This new program can easily
 accommodate this change in the number of neighbors. No other source level changes are required.
 The explicit dichotomy between local and non-local access encourages the use of different algorithms
 locally and globally. Batcher's sort, for example, benefits from this approach (see Section 1). This contrasts
@@ -585,12 +590,12 @@ with most approaches in which the programmer or compiler identifies as much fine
 possible and the compiler aggregates this fine-grained parallelism to a granularity appropriate for the target
 machine.
 Boundary Conditions. Typically, processes on the edge of the problem space must be treated separately. 4
-In the Jacobi Iteration, for example, a receive into the East port must be conditionally executed because
+In the Jacobi Iteration, for example, a receive into the port must be conditionally executed because
 processes on the East edge have no eastern neighbors. Isolated occurrences of these conditionals pose little
 problem, but in most realistic applications these lead to convoluted code. For example, SIMPLE can have up
 to nine different cases-depending on which portions of the boundaries are contained within a process-and
 these conditionals can lead to code that is dominated by the treatment of exceptional cases [18, 41].
-For example, suppose a program with a block decomposition assumes in its conditional expression that
+For example, suppose a program with a block decomposition assumes in a program with a block decomposition conditional expression that
 a process is either a NorthEast, East, or SouthEast section, as shown below:
 if (NorthEast)
 /* special case 1 */
@@ -609,14 +614,16 @@ Our model attempts to insulate the port and code ensembles from changes in the d
 Processes send and receive data through ports that in some cases involve interprocess communication and in
 other cases invoke derivative functions. The handling of boundary conditions has thus been decoupled from
 the X level source code. Instead of cluttering up the process code, special cases due to boundary conditions
-are handled at the problem level where they naturally belong.
+are handled at the problem level where special cases due to boundary conditions
+ naturally belong.
 Reusability. The same characteristics that provide flexibility in the Phase Abstractions also encourage
 reusability. For example, the Car-Parrinello molecular dynamics program [49] consists of several phases,
 one of which is computed using the Modified Gram-Schmidt (MGS) method of solving QR factorization.
 Empirical results have shown that the MGS method performs best with a 2D data decomposition [36].
 However, other phases of the Car-Parrinello computation require a 1D decomposition, so in this case a 1D
-decomposition for MGS yields the best performance since it avoids data movement between phases. This
-illustrates that a reusable component is most effective if it is flexible enough to accommodate a variety of
+decomposition for MGS yields the best performance since this case avoids data movement between phases. This
+illustrates that a reusable component is most effective if This
+ is flexible enough to accommodate a variety of
 execution environments.
 Irregular Problems. Until now this paper has only described statically defined array-based ensembles.
 However, this should not imply that Phase Abstractions are ill suited to dynamic or unstructured problems.
@@ -637,7 +644,7 @@ Dynamic computations could be generalized from the above idea. For example, a lo
 could move data between sections and also create revised data and port ensembles to represent the new
 partitioning. Technical difficulties remain before such dynamic ensembles can be supported, but the concepts
 do not change.
-Limits of the Non-Shared Memory Model. The non-shared memory model encourages good locality
+Limits of the Non-Shared Memory Model. the Non-Shared Memory Model encourages good locality
 of reference by exposing data movement to the programmer, but the performance advantage for this model is
 small for applications that inherently have poor locality. For example, direct methods of performing sparse
 factorization have poor locality of reference because of the sparse and irregular nature of the input
@@ -648,21 +655,27 @@ model also provides notational convenience, especially when pointer-based struct
 Experimental evidence suggests that the Phase Abstractions can provide portability across a diverse set of
 MIMD computers [32, 33]. This section summarizes these results for just one program, SIMPLE, but similar
 results were achieved for QR factorization and matrix multiplication [30]. Here we briefly describe SIMPLE,
-the machines on which this program was run, the manner in which this portable program was implemented,
+the machines on which This new program was run, the manner in which This new program was implemented,
 and the significant results.
 SIMPLE is a large computational fluid dynamics benchmark whose importance to high performance
-computing comes from the substantial body of literature already devoted to its study. It was introduced in
-1977 as a sequential benchmark to evaluate new computers and Fortran compilers [7]. Since its creation it
+computing comes from the substantial body of literature already devoted to high performance
+computing study. high performance
+computing was introduced in
+1977 as a sequential benchmark to evaluate new computers and Fortran compilers [7]. Since high performance
+computing creation high performance
+computing
 has been studied widely in both sequential and parallel forms [3, 9, 13, 16, 17, 23, 24, 40, 42].
 Hardware. The portability of our parallel SIMPLE program was investigated on the iPSC/2 S, iPSC/2
 F, nCUBE/7, Sequent Symmetry, BBN Butterfly GP1000, and a Transputer simulator. These machines
-are summarized in Table 1. The two Intel machines differ in that the iPSC/2 S has a slower Intel 80387
+are summarized in Table 1. These machines
+ differ in that the iPSC/2 S has a slower Intel 80387
 floating point coprocessor, while the other has the faster iPSC SX floating point accelerator. The simulator
 is a detailed Transputer-based non-shared memory machine. Using detailed information about arithmetic,
-logical and communication operators of the T800 [24], this simulator executes a program written in a Phase
+logical and communication operators of the T800 [24], The simulator
+ executes a program written in a Phase
 Abstraction language and estimates program execution time.
-Implementation. The SIMPLE program was written in Orca C. Since no compiler exists for any language
-based on the Phase Abstractions, this program was hand-compiled in a straight-forward fashion to C code
+Implementation. This new program was written in Orca C. Since no compiler exists for any language
+based on the Phase Abstractions, This new program was hand-compiled in a straight-forward fashion to C code
 that uses a message passing substrate to support the Phase Abstractions. The resulting C code is machine-
 Machine Sequent Intel Intel nCUBE BBN Transputer
 model Symmetry A iPSC/2 S iPSC/2 F nCUBE/7 Butterfly GP1000 simulator
@@ -716,10 +729,11 @@ iPSC/2's with 4MB of memory and 80387 floating point units. All other parameters
 The largest potential difference lies in the performance of the sequential programs on which speedups are
 computed. Although these results are encouraging for proponents of functional languages, we point out
 that our results do not make use of a sophisticated compiler: The type of compiler technology developed by
-Pingali and Rogers can likely improve the performance of our programs as well.
-Even though the machines differ substantially-for example, in memory structure-the speedups fall
+Pingali and Rogers' can likely improve the performance of our programs as well.
+Even though These machines
+ differ substantially-for example, in memory structure-the speedups fall
 roughly within the same range. Moreover, this version of SIMPLE compares favorably with machine-specific
-implementations. These results suggest, then, that portability has been achieved for this application running
+implementations. these results suggest, then, The portability of our parallel SIMPLE program has been achieved for this application running
 on these machines.
 7 Related Work
 Many systems support a global view of parallel computation, SPMD execution, and data decompositions
@@ -729,8 +743,8 @@ handling boundary conditions or controlling granularity. This section discusses 
 address scalability and portability in the aggregate data parallel programming style.
 Dataparallel C. Dataparallel C [21] (DPC) is a portable shared-memory SIMD-style language that has
 similarities to C++. Unlike the Phase Abstractions, DPC supports only point-wise parallelism. DPC has
-point-wise processor (poly) variables that are distributed across the processors of the machine. Unlike its
-predecessor C* [43], DPC supports data decompositions of its data to improve performance on coarse-grained
+point-wise processor (poly) variables that are distributed across the processors of the machine. Unlike DPC
+predecessor C* [43], DPC supports data decompositions of DPC data to improve performance on coarse-grained
 architectures. However, because DPC only supports point-wise communication, the compiler or
 runtime system must detect when several point sends on a processor are destined for the same processor
 and bundle them. Also, to maintain performance of the SIMD model on a MIMD machine, extra compiler
@@ -739,9 +753,8 @@ be removed. Because each point-wise process is identical, edge effects must be c
 determine which processes are on the edge of the computation. It is hard to reuse such code because the
 boundary conditions may change from problem to problem. Constant and variable boundary conditions can
 be supported by expanding the data space and leaving some processes idle.
-Dino. Dino [44] is a C-like, SPMD language. Like C*, it constructs distributed data structures by replicating
-structures over processors and executing a single procedure over each element of the data set. Dino
-provides a shared address space, but remote communication is specified by annotating accesses to non-local
+Dino. Dino [44] is a C-like, SPMD language. Like C*, a C-like, SPMD language constructs distributed data structures by replicating
+structures over processors and executing a single procedure over each element of the data set. Dinoprovides a shared address space, but remote communication is specified by annotating accesses to non-local
 objects by the # symbol, and the default semantics are true message-passing. Parallel invocations of a procedure
 synchronize on exit of the procedure. Dino allows the mapping of data to processes to be specified
 by programmer-defined functions. To ensure fast reads to shared data, a partitioning can map an individual
@@ -749,23 +762,24 @@ variable to multiple processors. Writes to such variables are broadcast to all c
 effects in the same fashion as C*. Because Dino only supports point-wise communication, the compiler or
 runtime system must combine messages.
 Mehrotra and Rosendale. A system described by Mehrotra and Rosendale [39] is much like Dino in
-that it supports a small set of data distributions. However, this system provides no way to control or
-precisely determine which points are local to each other, so it is not possible to control communication costs
-or algorithm choice based on locality. On the other hand, this system does not require explicit marking
+that it supports a small set of data distributions. However, A system described by Mehrotra and Rosendale [39] provides no way to control or
+precisely determine which points are local to each other, so A system described by Mehrotra and Rosendale [39] is not possible to control communication costs
+or algorithm choice based on locality. On the other hand, A system described by Mehrotra and Rosendale [39] does not require explicit marking
 of external memory references as in Dino. Instead, their system infers, when possible, which references are
-global and which are not. In algorithms where processes dynamically choose their "neighbors," this simplifies
+global and which are not. In algorithms where processes dynamically choose algorithms "neighbors," this simplifies
 programming. Also, programs are more portable than those written in Dino. The communication structure
 of the processor is not visible to the programmer, but the programmer can change the partitioning clauses
 on the data aggregates. SPMD processing is allowed, but there are no special facilities for handling edge
 effects.
 Fortran Dialects. Recent languages such as Kali [26], Vienna Fortran [6], and HPF [22] focus on data
-decomposition as the expression of parallelism. Their data decompositions are similar to the Phase Abstractions
+decomposition as the expression of parallelism. data
+decomposition data decompositions are similar to the Phase Abstractions
 notion of data ensembles, but the overall approach is fundamentally different. Phase Abstractions
-require more effort from the programmer, while this other approach relies on compiler technology to exploit
+require more effort from the programmer, while the overall approach relies on compiler technology to exploit
 loop level parallelism. This compiler-based approach can guarantee deterministic sequential semantics, but
-it has less potential for parallelism since there may be cases where compilers cannot transform a sequential
+This compiler-based approach has less potential for parallelism since there may be cases where compilers cannot transform a sequential
 algorithm into an optimal parallel one.
-Kali, Vienna Fortran and HPF depart from sequential languages primarily in their support for data
+Kali, Vienna Fortran and HPF depart from sequential languages primarily in Kali, Vienna Fortran and HPF support for data
 though some of these languages do provide mechanisms for specifying parallel loops. Vienna
 Fortran provides no form of parallel loops, while the FORALL statement in HPF and Kali specifies that a
 loop has no loop carried dependencies. To ensure deterministic semantics of updates to common variables
@@ -773,37 +787,40 @@ by different loop iterations, values are deterministically merged at the end of 
 optional in HPF; the compiler may attempt to extract parallelism even where a FORALL is not used.
 HPF and Vienna Fortran allow arrays to be aligned with respect to an abstract partitioning. These
 are very powerful constructs. For example, arrays can be dynamically remapped, and procedures can define
-their own data distribution. Together these features are potentially very expensive because although the
+These
+ own data distribution. Together these features are potentially very expensive because although the
 programmer helps in specifying the data distribution at various points of the program, the compiler must
 determine how to move the data. In addition to data distribution directives, Kali allows the programmer to
 control the assignment of loop iterations to processors through the use of the On clause, which can help in
 maintaining locality.
 LPAR. LPAR is a portable language extension that supports structured, irregular scientific parallel computations
 [28, 27]. In particular, LPAR provides mechanisms for describing non-rectangular distributed
-partitions of the data space to manage load-balancing and locality. These partitions are created through
+partitions of the data space to manage load-balancing and locality. non-rectangular distributed
+partitions of the data space to manage load-balancing and locality are created through
 the union, intersection and set difference of arrays. Because support for irregular decompositions has a high
 cost, LPAR syntactically distinguishes irregular decompositions so that faster runtime support can be used
 for regular decompositions. 5 Computations are invoked on a group of arrays by the foreach operator, which
-executes its body in parallel on each array to yield coarse-grained parallelism. LPAR uses the overlapping
+executes a group of arrays body in parallel on each array to yield coarse-grained parallelism. LPAR uses the overlapping
 indices of distributed subarrays to support sharing of data elements. Overlapping domains provide an elegant
 way of describing multilevel mesh algorithms and computations for boundary conditions. There is an
 operator for redistributing data elements, but LPAR depends on a routine written in the base language to
 compute what the new decomposition should be.
 The Phase Abstraction's potential to support dynamic, irregular decompositions is discussed in Section 5.
 For multigrid decompositions, a sublanguage supporting scaled partitionings and communication between
-scaled ensembles would be useful. The Phase Abstractions' support for loose synchrony naturally supports
+scaled ensembles would be useful. Phase Abstractions
+ support for loose synchrony naturally supports
 the use of refined grids in conjunction with the base grid.
 Split-C. Split-C is a shared-memory SPMD language with memory reference operations that support
 latency-hiding [10]. Split-C procedures are concurrently applied in an "owner-computes" fashion to the
 partitions of an aggregate data structure such as an array or pointer-based graph. A process reads data that
-it does not own with a global pointer (a Split-C data type). To hide latency, Split-C supports an asynchronous
+A process does not own with a global pointer (a Split-C data type). To hide latency, Split-C supports an asynchronous
 read-akin to an unsafe Multilisp future [20]-that initiates a read of a global pointer but does not wait
-for the data to arrive. A process can invoke the sync() operation to block until all outstanding reads
+for data that
+it does not own with a global pointer (a Split-C data type) to arrive. A process can invoke the sync() operation to block until all outstanding reads
 5 Scott Baden, Personal Communication.
 complete. There is a similar operation for global writes. These operations hide latency while providing a
 global namespace and reducing the copying of data in and out of message queues. (Copying may be necessary
-for bulk communication of non-contiguous data, such as the column of an array.) However, these operations
-can lead to complex programming errors because a misplaced reference or synchronization operation can
+for bulk communication of non-contiguous data, such as the column of an array.) However, These operationscan lead to complex programming errors because a misplaced reference or synchronization operation can
 lead to incorrect output but no immediate failure.
 Array distribution in Split-C is straightforward but somewhat limited; some number of higher order
 dimensions can be cyclically distributed while the remaining dimensions are distributed as blocks. Load
@@ -818,7 +835,7 @@ body of the SPMD procedures.
 8 Conclusion
 Parallelism offers the promise of great performance but thus far has been hampered by a lack of portability,
 scalability, and programming convenience that unacceptably increase the time and cost of developing efficient
-programs. Support is required for quickly programminga solution and easily moving it to new machines as old
+programs. Support is required for quickly programminga solution and easily moving Support to new machines as old
 ones become obsolete. Rather than defining a new parallel programming paradigm, the Phase Abstractions
 model supports well-known techniques for achieving high-performance-computing sequentially on local
 aggregates of data elements and communicating large groups of data as a unit-by allowing the programmer
@@ -829,10 +846,11 @@ control of parallelism and allows programmers to write in an SPMD manner without
 of MIMD processing.
 Message passing has often been praised for its efficiency but condemned as being difficult to use. The
 contribution of the Phase Abstractions is a language model that focuses on efficiency while reducing the
-difficulty of non-shared memory programming. The programmability of this model is exemplified by the
+difficulty of non-shared memory programming. The programmability of a language model that focuses on efficiency while reducing the
+difficulty of non-shared memory programming is exemplified by the
 straight-forward solution of problems such as SIMPLE, as well as the ability to define specialized high-level
 array sublanguages. Because the Phase Abstractions model is designed to be structurally similar to MIMD
-architectures, it performs very well on a variety of MIMD processors. This claim is supported by tests on
+architectures, the Phase Abstractions performs very well on a variety of MIMD processors. This claim is supported by tests on
 machines such as the Intel iPSC, the Sequent Symmetry and the BBN Butterfly.
 
 

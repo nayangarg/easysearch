@@ -10,12 +10,13 @@ neuralcoref.add_to_pipe(nlp)
 
 # You're done. You can now use NeuralCoref as you usually manipulate a SpaCy document annotations.
 
-data_path = '/home/nayan/coding/Major/sCake Phrase/venv/data'
+data_path = '/home/test/EasySearch/data'
+data_path1 = '/home/test/EasySearch/dataRes'
 
 for every_file in (os.listdir(data_path)):
-    doc = nlp(read_text_from_file(data_path, every_file))
+	print(every_file)
+	doc = nlp(read_text_from_file(data_path, every_file))
 
-    write_text_to_file(data_path, every_file, doc._.coref_resolved)
-
-    #print(doc._.coref_clusters)
-# print(doc._.coref_resolved)
+	write_text_to_file(data_path1, every_file, doc._.coref_resolved)
+	print(doc._.coref_clusters)
+	#print(doc._.coref_resolved)

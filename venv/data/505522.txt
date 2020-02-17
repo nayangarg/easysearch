@@ -1,7 +1,7 @@
 --T
 High-speed architectures for Reed-Solomon decoders.
 --A
-New high-speed VLSI architectures for decoding Reed-Solomon codes with the Berlekamp-Massey algorithm are presented in this paper. The speed bottleneck in the Berlekamp-Massey algorighm is in the iterative computation of discrepencies followed by the updating of the error-locator polynomial. This bottleneck is eliminated via a series of algorithmic transformations that result in a fully systolic architecture in which a single array of processors computes both the error-locator and the error-evaluator polynomials. In contrast to conventional Berlekamp-Massey architectures in which the critical path passes through two multipliers and 1+[log2(t +1)] adders, the critical path in the proposed architecture passes through only one multiplier and one adder, which is comparable to the critical path in architectures based on the extended Euclidean algorithm. More interestingly, the proposed architecture requires approximately 25% fewer multipliers and a simpler control structure than the architectures based on the popular extended Euclidean algorithm. For block-interleaved Reed-Solomon codes, embedding the interleaver memory into the decoder results in a further reduction of the critical path delay to just one XOR gate and one multiplexer, leading to speed ups of as much as an order of magnitude over conventional architectures.
+New high-speed VLSI architectures for decoding Reed-Solomon codes with the Berlekamp-Massey algorithm are presented in this paper. The speed bottleneck in the Berlekamp-Massey algorighm is in the iterative computation of discrepencies followed by the updating of the error-locator polynomial. The speed bottleneck in the Berlekamp-Massey algorighm is eliminated via a series of algorithmic transformations that result in a fully systolic architecture in which a single array of processors computes both the error-locator and the error-evaluator polynomials. In contrast to conventional Berlekamp-Massey architectures in which the critical path passes through two multipliers and 1+[log2(t +1)] adders, the critical path in the proposed architecture passes through only one multiplier and one adder, which is comparable to the critical path in architectures based on the extended Euclidean algorithm. More interestingly, the proposed architecture requires approximately 25% fewer multipliers and a simpler control structure than the architectures based on the popular extended Euclidean algorithm. For block-interleaved Reed-Solomon codes, embedding the interleaver memory into the decoder results in a further reduction of the critical path delay to just one XOR gate and one multiplexer, leading to speed ups of as much as an order of magnitude over conventional architectures.
 --B
 Introduction
 Reed-Solomon codes [1], [3] are employed in numerous communications systems such as those
@@ -11,8 +11,7 @@ high-speed implementations of decoders for Reed-Solomon codes. Recently reported
 implementations [5], [19] have quoted data rates of ranging from 144 Mb/s to 1.28 Gb/s. These
 high throughputs have been achieved by architectural innovations such as pipelining and parallel
 processing. A majority of the implementations [2], [8], [15], [19] employ an architecture based
-on the extended Euclidean (eE) algorithm for computing the greatest common divisor of two
-polynomials [3]. A key advantage of architectures based upon the eE algorithm is regularity.
+on the eE algorithm is regularity.
 In addition, the critical path delay in these architectures is at best Tmult
 Tmult , T add , and Tmux are the delays of the nite-eld multiplier, adder, and 2  1 multiplexer
 respectively, and this is su-ciently small for most applications. In contrast, relatively few decoder
@@ -21,10 +20,10 @@ DRAFT June 19, 2000
 [1], [3], [10], presumably because the architectures were found to be irregular and to have a
 longer critical path delay that was also dependent on the error-correcting capability of the code
 [5]. In this paper, we show that, in fact, it is possible to reformulate the BM algorithm to
-achieve extremely regular decoder architectures. Surprisingly, these new architectures can not
-only operate at data rates comparable to architectures based on the eE algorithm, but they also
+achieve extremely regular decoder architectures. Surprisingly, the architectures can not
+only operate at data rates comparable to architectures based on the eE algorithm, but the architectures also
 have lower gate complexity and simpler control structures.
-This paper begins with a brief tutorial overview of the encoding and decoding of Reed-Solomon
+this paper begins with a brief tutorial overview of the encoding and decoding of Reed-Solomon
 codes in Section II. Conventional architectures for decoders based on the BM algorithm are
 described in Section III. In Section IV, we show that it is possible to algorithmically transform
 the BM algorithm so that a homogenous systolic array architecture for the decoder can be
@@ -35,7 +34,9 @@ II. Reed-Solomon Codes
 We provide a brief overview of the encoding and decoding of Reed-Solomon codes.
 A. Encoding of Reed-Solomon Codes
 data symbols (bytes) that are to be transmitted over
-a communication channel (or stored in memory.) These bytes are regarded as elements of the
+a communication channel (or stored in memory.) A. Encoding of Reed-Solomon Codes
+data symbols (bytes) that are to be transmitted over
+a communication channel (or stored in memory.) are regarded as elements of the
 nite eld (also called Galois eld) GF(2 m ), 1 and encoded into a codeword (c
 of n > k bytes. These codeword symbols are transmitted over the communication channel (or
 stored in memory.)
@@ -43,7 +44,9 @@ For Reed-Solomon codes over GF(2 m is odd, and the code can correct
 (n k)=2 byte errors. The encoding process is best described in terms of the data polynomial
 being transformed into a codeword polynomial
 polynomials C(z) are polynomial
-Addition (and subtraction) in GF(2 m ) is the bit-by-bit XOR of the bytes. The 2 m 1 nonzero elements of
+Addition (and subtraction) in GF(2 m ) is the bit-by-bit XOR of A. Encoding of Reed-Solomon Codes
+data symbols (bytes) that are to be transmitted over
+a communication channel (or stored in memory.). The 2 m 1 nonzero elements of
 can also be regarded as the powers,  of a primitive element  (where
 so that the product of eld elements
 June 19, 2000 DRAFT
@@ -64,17 +67,17 @@ is given by
 and consists of the data symbols followed by the parity-check symbols.
 B. Decoding of Reed-Solomon Codes
 Let C(z) denote the transmitted codeword polynomial and let R(z) denote the received word
-polynomial. The input to the decoder is R(z), and it assumes that
+polynomial. The input to the decoder is R(z), and the decoder assumes that
 where, if e > 0 errors have occurred during transmission, the error polynomial E(z) can be
 written as
 It is conventional to say that the error values have occurred at the error locations
-. Note that the decoder does not know E(z); in fact, it does
+. Note that the decoder does not know E(z); in fact, the decoder does
 DRAFT June 19, 2000
-not even know the value of e. The decoder's task is to determine E(z) from its input R(z), and
+not even know the value of e. The decoder's task is to determine E(z) from The decoder's task input R(z), and
 thus correct the errors by subtracting o E(z) from R(z). If e  t, then such a calculation is
 always possible, that is, t or fewer errors can always be corrected.
-The decoder begins its task of error correction by computing the syndrome values
-If all 2t syndrome values are zero, then R(z) is a codeword, and it is assumed that
+the decoder begins the decoder task of error correction by computing the syndrome values
+If all 2t syndrome values are zero, then R(z) is a codeword, and all 2t syndrome values are zero, then R(z) is assumed that
 that is, no errors have occurred. Otherwise, the decoder knows that e > 0 and uses the syndrome
 polynomial S(z), which is dened to be
 to calculate the error values and error locations. Dene the error locator polynomial (z) of
@@ -104,7 +107,7 @@ z) have been found, the decoder can nd the error locations by checking
 whether for each j, 0  j  n 1. Usually, the decoder computes the value of
 just before the j-th received symbol r j leaves the decoder circuit. This process is called
 a Chien search [1], [3]. If is one of the error locations (say X i ). In other
-words, r j is in error, and needs to be corrected before it leaves the decoder. The decoder can
+words, r j is in error, and needs to be corrected before it leaves the decoder. the decoder can
 June 19, 2000 DRAFT
 6 SUBMITTED TO IEEE TRANS. VLSI SYSTEMS
 calculate the error value Y i to be subtracted from r j via Forney's error value formula [3]:
@@ -120,12 +123,15 @@ In summary, a Reed-Solomon decoder consists of three blocks:
 the syndrome computation (SC) block,
 the key-equation solver (KES) block, and
 the Chien search and error evaluator (CSEE) block.
-These blocks usually operate in pipelined mode in which the three blocks are separately and
+three blocks:
+the syndrome computation (SC) block,
+the key-equation solver (KES) block, and
+the Chien search and error evaluator (CSEE) block usually operate in pipelined mode in which the three blocks are separately and
 simultaneously working on three successive received words. The SC block computes the syndromes
-via (3) usually as the received word is entering the decoder. The syndromes are passed to
+via (3) usually as the received word is entering a Reed-Solomon decoder. The syndromes are passed to
 the KES block which solves (6) to determine the error locator and error evaluator polynomials.
-These polynomials are then passed to the CSEE block which calculates the error locations and
-error values via (7) and corrects the errors as the received word is being read out of the decoder.
+the error locator and error evaluator polynomials are then passed to the CSEE block which calculates the error locations and
+error values via (7) and corrects the errors as the received word is being read out of a Reed-Solomon decoder.
 The throughput bottleneck in Reed-Solomon decoders is in the KES block which solves (6):
 in contrast, the SC and CSEE blocks are relatively straightforward to implement. Hence, in
 this paper we focus on developing high-speed architectures for the KES block. As mentioned
@@ -134,7 +140,7 @@ mentations), or via the BM algorithm (see [5] for implementations). In this pape
 high-speed architectures for a reformulated version of the BM algorithm because we believe that
 this reformulated algorithm can be used to achieve much higher speeds than can be achieved
 by other implementations of the BM and eE algorithms. Furthermore, as we shall show in
-Section IV.B.4, these new architectures also have lower gate complexity and a simpler control
+Section IV.B.4, the architectures also have lower gate complexity and a simpler control
 structure than architectures based on the eE algorithm.
 DRAFT June 19, 2000
 III. Existing Berlekamp-Massey (BM) Architectures
@@ -142,8 +148,10 @@ In this section, we give a brief description of dierent versions of the Berlekam
 algorithm and then discuss a generic architecture, similar to that in the paper by Reed et al.
 [13], for implementation of the algorithm.
 A. The Berlekamp-Massey Algorithm
-The BM algorithm is an iterative procedure for solving (6). In the form originally proposed
-by Berlekamp [1], the algorithm begins with polynomials (0;
+The Berlekamp-Massey Algorithm
+ is an iterative procedure for solving (6). In the form originally proposed
+by Berlekamp [1], The Berlekamp-Massey Algorithm
+ begins with polynomials (0;
 iteratively
 determines polynomials (r; z)
 and
@@ -151,12 +159,15 @@ satisfying the polynomial congruence,
 for thus obtains a solution (2t; z) and
 d t; z) to the key equation (6). Two
 \scratch" polynomials B(r; z) and H(r; z) with initial values B(0; are
-used in the algorithm. For each successive value of r, the algorithm determines (r; z) and B(r; z)
+used in The Berlekamp-Massey Algorithm
+. For each successive value of r, The Berlekamp-Massey Algorithm
+ determines (r; z) and B(r; z)
 from (r 1; z) and B(r 1; z). Similarly, the algorithm
 determines
 z) and H(r; z) from
 r 1; z) and H(r 1; z). Since S(z) has degree 2t 1, and the other polynomials can have
-degrees as large as t, the algorithm needs to store roughly 6t eld elements. If each iteration
+degrees as large as t, The Berlekamp-Massey Algorithm
+ needs to store roughly 6t eld elements. If each iteration
 is completed in one clock cycle, then 2t clock cycles are needed to nd the error-locator and
 error-evaluator polynomials.
 In recent years, most researchers have used the formulation of the BM algorithm given by
@@ -167,7 +178,7 @@ y t; z) is computed as the terms of degree
 t 1 or less in the polynomial product (2t; z)S(z). An implementation of this version thus
 needs to store only 4t eld elements, but the computation of
 t; z) requires an additional t
-clock cycles. Although this version of the BM algorithm trades space against time, it also
+clock cycles. Although this version of the BM algorithm trades space against time, this version of the BM algorithm also
 suers from the same problem as the Berlekamp version, viz. during some of the iterations, it is
 necessary to divide each coe-cient of (r; z) by a quantity - r . These divisions are most e-ciently
 handled by rst computing - 1
@@ -182,18 +193,16 @@ June 19, 2000 DRAFT
 path delay and higher clock speeds would be usable. 2 A less well-known version of the BM
 algorithm [4], [13], has precisely this property, and has been recently employed in practice [13],
 [5]. We focus on this version of the BM algorithm in this paper.
-The inversionless BM (iBM) algorithm is described by the pseudocode shown below. The
-iBM algorithm actually nds scalar multiples   (z) and
+The inversionless BM (iBM) algorithm is described by the pseudocode shown below. The inversionless BM (iBM) algorithm actually nds scalar multiples   (z) and
 z) instead of the (z)
 and
 dened in (4) and (5). However, it is obvious that the Chien search will nd the same error
-locations, and it follows from (7) that the same error values are obtained. Hence, we continue
+locations, and the Chien search follows from (7) that the same error values are obtained. Hence, we continue
 to refer to the polynomials computed by the iBM algorithm as (z)
 and
 z). As a minor
-implementation detail,  in (4) and thus requires no latches for storage, but the iBM
-algorithm must store  Note also that b 1 (r) which occurs in Steps iBM.2 and iBM.3 is
-a constant: it has value 0 for all r.
+implementation detail,  in (4) and thus requires no latches for storage, but The inversionless BM (iBM) algorithm must store  Note also that b 1 (r) which occurs in Steps iBM.2 and iBM.3 is
+a constant: iBM.3 has value 0 for all r.
 The iBM Algorithm
 Initialization:
 t.
@@ -206,7 +215,7 @@ then
 begin
 else
 2 The astute reader will have noticed that the Forney error value formula (7) also involves a division. Fortunately,
-these divisions can be pipelined because they are feed-forward computations. Similarly, the polynomial evaluations
+these divisions can be pipelined because these divisions are feed-forward computations. Similarly, the polynomial evaluations
 needed in the CSEE block (as well as those in the SC block) are feed-forward computations that can be pipelined.
 Unfortunately, the divisions in the KES block occur inside an iterative loop, and hence pipelining the computation
 becomes di-cult. Thus, as was noted in Section II, the throughput bottleneck is in the KES block.
@@ -223,11 +232,10 @@ Due to the similarity of Steps iBM.1 and iBM.4, architectures based on the iBM a
 need only two major computational structures as shown in Fig. 1:
 The discrepancy computation (DC) block for implementing Step iBM.1, and
 The error locator update (ELU) block which implements Steps iBM.2 and iBM.3 in parallel.
-The DC block contains latches for storing the syndromes s i , the GF(2 m ) arithmetic units for
-computing the discrepancy -(r) and the control unit for the entire architecture. It is connected
+the KES block contains latches for storing the syndromes s i , the GF(2 m ) arithmetic units for
+computing the discrepancy -(r) and the control unit for the entire architecture. the KES block is connected
 to the ELU block which contains latches for storing for (r; z) and B(r; z) as well as GF(2 m )
-arithmetic units for updating these polynomials, as shown in Fig. 1. During a clock cycle, the
-DC block computes the discrepancy -(r) and passes this value together with
+arithmetic units for updating these polynomials, as shown in Fig. 1. During a clock cycle, the KES block computes the discrepancy -(r) and passes this value together with
 (r) and a control
 signal MC(r) to the ELU block which updates the polynomials during the same clock cycle.
 operations are completed in one clock cycle, we assume that m-bit
@@ -337,13 +345,14 @@ speeds.
 In the next section, we describe algorithmic reformulations of the iBM algorithm that lead to
 June 19, 2000 DRAFT
 14 SUBMITTED TO IEEE TRANS. VLSI SYSTEMS
-a systolic architecture for the DC block and reduce its critical path delay to TELU .
+a systolic architecture for the DC block and reduce the DC block critical path delay to TELU .
 IV. Proposed Reed-Solomon Decoder Architectures
 The critical path in iBM architectures of the type described in Section III passes through two
 multipliers as well as the adder tree structure in the DC block. The multiplier units contribute
 signicantly to the critical path delay and hence reduce the throughput achievable with the iBM
-architecture. In this section, we propose new decoder architectures that have a smaller critical
-path delay. These architectures are derived via algorithmic reformulation of the iBM algorithm.
+architecture. In the next section, we propose new decoder architectures that have a smaller critical
+path delay. new decoder architectures that have a smaller critical
+path delay are derived via algorithmic reformulation of the iBM algorithm.
 This reformulated iBM (riBM) algorithm computes the next discrepancy -(r + 1) at the same
 time that it is computing the current polynomial coe-cient updates, that is, the
 and the b i (r 1)'s. This is possible because the reformulated discrepancy computation does not
@@ -375,7 +384,8 @@ since
 c t; z)  (2t; z)  S(z) mod z 2t it follows from (11) that the low-order coe-cients of
 (2t; z) are
 just
-s t; z), that is, the 2t iterations compute both the error-locator polynomial
+s t; z), that is, The 2t iterations
+ compute both the error-locator polynomial
 (2t; z) and the error-evaluator
 polynomial
 y t; z) { the additional t iterations of Step iBM.4
@@ -397,8 +407,8 @@ the discrepancy - r (r) is computed in processor PE0 r . Thus, multiplexers are 
 June 19, 2000 DRAFT
 appropriate latch contents to the control unit and to the ELU block that computes (r
 Additional reformulation of the iBM algorithm, as described next, eliminates
-these multiplexers. We use the fact that for any i < aect the value
-of any later discrepancy - r+j (r j). Consequently, we need not store - i (r) and  i (r) for i < r.
+multiplexers. We use the fact that for any i < aect the value
+of any later discrepancy - r+j (r j). Consequently, We need not store - i (r) and  i (r) for i < r.
 Thus, for
 and the polynomials
 with initial values ^
@@ -429,7 +439,8 @@ B. High-speed Reed-Solomon Decoder Architectures
 As in the iBM architecture described in Section III, the riBM architecture consists of a
 reformulated discrepancy computation (rDC) block connected to an ELU block.
 B.1 The rDC Architecture
-The rDC block uses the processor PE1 shown in Fig. 4(a) and the rDC architecture shown
+a
+reformulated discrepancy computation (rDC) block connected to an ELU block uses the processor PE1 shown in Fig. 4(a) and the rDC architecture shown
 in Fig. 4(b). Notice that processor PE1 is very similar to processor PE0 of Fig. 3(a). How-
 ever, the contents of the upper latch \
 ow through" PE1 while the contents of the lower latch
@@ -458,10 +469,13 @@ s
 (b)
 Fig. 4. The rDC block diagram:(a) the PE1 processor, and (b) the rDC architecture.
 B.2 The riBM Architecture
-The overall riBM architecture is shown in Fig. 5. It uses the rDC block of Fig. 4 and the
-ELU block in Fig. 3. Note that the outputs of the ELU block do not feed back into the rDC
+The overall riBM architecture is shown in (b)
+Fig. 5. The overall riBM architecture uses the rDC block of (b)
+Fig. 4 and the
+ELU block in (b)
+Fig. 3. Note that the outputs of the ELU block do not feed back into the rDC
 block. Both blocks have the same critical path delay of T add and since
-they operate in parallel, our proposed riBM architecture achieves the same critical path delay:
+Both blocks operate in parallel, our proposed riBM architecture achieves the same critical path delay:
 which is less than half the delay T add of the enhanced iBM
 architecture.
 As noted in the previous subsection, at the end of the 2t-th iteration, the PE1 i s,
@@ -471,7 +485,8 @@ of
 are used to determine both (z)
 and
 (h) (z) as needed in (12). Ignoring the control unit, the
-hardware requirement of this architecture is 3t
+hardware requirement of the RiBM architecture
+ is 3t
 DRAFT June 19, 2000
 d (r)
 l l l l 0t-1
@@ -492,7 +507,7 @@ lengthened into an array of 3t processors as shown in Fig. 6. In this completely
 architecture, a single array computes both (z)
 and
 (z). Since the t processors
-eliminated from the ELU block re-appear as the t additional PE1 processors, the RiBM
+eliminated from the ELU block re-appear as the t additional PE1 processors, the riBM
 architecture has the same hardware complexity and critical path delay as the riBM architecture.
 June 19, 2000 DRAFT
 However, its extremely regular structure is esthetically pleasing, and also oers some advantage
@@ -506,7 +521,7 @@ s
 Fig. 6. The homogenous systolic RiBM architecture.
 An array of PE0 processors in the riBM architecture (see Fig. 5) carries out the same polynomial
 computation as an array of PE1 processors in the RiBM architecture (see Fig 6), but in
-the latter array, the polynomial coe-cients shift left with each clock pulse. Thus, in the RiBM
+the latter array, the polynomial coe-cients shift left with each clock pulse. Thus, in the riBM
 architecture, suppose that the initial loading of PE1 0 , PE1 1 , . , PE1 2t 1 is as in Fig. 4, while
 are loaded with zeroes, and the latches in PE1 3t are loaded
 as the iterations proceed, the polynomials ^
@@ -519,12 +534,13 @@ Next, note that PE1 3t contains (0; z) and B(0; z), and as the iterations
 proceed, (r; z) and B(r; z) shift leftwards through the processors in the right-hand end of the
 array, with  i (r) and b i (r) being stored in processor PE1 3t r+i . After 2t clock cycles, processor
 PE1 t+i contains  i (2t) and b i (2t) for t. Thus, the same array is carrying out two
-separate computations. These computations do not interfere with one another. Polynomials
+separate computations. two
+separate computations do not interfere with one another. Polynomials
 DRAFT June 19, 2000
 are stored in processors numbered 3t r or higher. On the other hand,
 since deg (r;
 is known to be an upper bound on deg (r; z). It is known [3] that l(r) is
-a nondecreasing function of r, and that it has maximum value errors have
+a nondecreasing function of r, and that It has maximum value errors have
 occurred. Hence, 2t 1 r thus, as (r; z) and B(r; z)
 shift leftwards, they do not over-write the coe-cients of ^
 We denote the contents of the array in the RiBM architecture as polynomials ~
@@ -566,7 +582,7 @@ automatically generating regular layouts (via a core generator) with predictable
 values of t and m.
 Comparison of the riBM and RiBM architectures with eE architectures is complicated by the
 fact that most recent implementations use folded architectures in which each processor element
-in the systolic array has only a few arithmetic units, and these units carry out all the needed
+in the systolic array has only a few arithmetic units, and only a few arithmetic units carry out all the needed
 computations via time-division-multiplexing. For example, the hypersystolic eE architecture in
 [2] has 2t elements each containing only one multiplier and adder. Since each
 iteration of the Euclidean algorithm requires 4 multiplications, the processors of [2] need several
@@ -603,7 +619,8 @@ architectures and the eE architectures is that the controllers for the systolic 
 are actually much simpler. In the eE architecture of [14], each processor also has a \control
 section" that uses an arithmetic adder, comparator, and two multiplexers. 2dlog 2 te bits of
 arithmetic data are passed from processor to processor in the array, and these are used to
-generate multiplexer control signals in each processor. Similarly, the eE architecture of [2] has a
+generate multiplexer control signals in each processor. Similarly, the hypersystolic eE architecture in
+[2] has a
 separate control circuit for each processor. The delays in these control circuits are not accounted
 for in the critical path delays for the eE architectures that we have listed in Table I. In contrast,
 all the multiplexers in the riBM and RiBM architectures receive the same signal and the
@@ -612,18 +629,22 @@ exactly the same computation in each cycle, with all the multiplexers set the sa
 June 19, 2000 DRAFT
 processors { there are no cell-specic control signals.
 Preliminary Layout Results
-Preliminary layout results from a core generator are shown in Fig. 7 for the KES block for
+Preliminary layout results from a core generator are shown in (b)
+Fig. 7 for the KES block for
 a 4-error-correcting Reed-Solomon code over GF(2 8 ). The processing element PE1 is shown
-in Fig. 7(a) where the upper 8 latches store the element ~
+in (b)
+Fig. 7(a) where the upper 8 latches store the element ~
 - r while the lower 8 latches store the
 element ~
-r . A complete RiBM architecture is shown in Fig. 7(b) where the 13 PE1 processing
+r . A complete RiBM architecture is shown in (b)
+Fig. 7(b) where the 13 PE1 processing
 elements are arrayed diagonally and the error locator and error evaluator polynomials output
 latches can be seen to be arrayed vertically. The critical path delay of the RiBM architecture
 as reported by the synthesis tool in SYNOPSYS was 2:13 ns in TSMC's 0:25m 3:3V CMOS
 technology.
 (a) (b)
-Fig. 7. The RiBM architecture synthesized in a 3:3V , 0:25m CMOS technology:(a) the PE1 processing
+Fig. 7. the RiBM architecture
+ synthesized in a 3:3V , 0:25m CMOS technology:(a) the PE1 processing
 element, and (b) the RiBM architecture.
 In the next section, we develop a pipelined architecture that further reduces the critical path
 delay by as much as an order of magnitude by using a block-interleaved code.
@@ -633,8 +654,9 @@ The iterations in the original BM algorithm were pipelined using the look-ahead 
 [12] by Liu et al. [9], and the same method can be applied to the riBM and RiBM algorithms.
 However, such pipelining requires complex overhead and control hardware. On the other hand,
 pipeline interleaving (also described in [12]) of a decoder for a block-interleaved Reed-Solomon
-code is a simple and e-cient technique that can reduce the critical path delay in the decoder by
-an order of magnitude. We describe our results for only the RiBM architecture of Section IV
+code is a simple and e-cient technique that can reduce the critical path delay in a decoder for a block-interleaved Reed-Solomon
+code by
+an order of magnitude. We describe We results for only the RiBM architecture of Section IV
 but the same techniques can also be applied to the riBM architecture as well as to the decoder
 architectures described in Section III.
 A. Block-Interleaved Reed-Solomon Codes
@@ -644,7 +666,7 @@ so that symbols from the same codeword are not transmitted consecutively. A burs
 causes single errors in multiple codewords rather than multiple errors in a single codeword. The
 latter occurrence is undesirable since it can easily overwhelm the error-correcting capabilities of
 the code and cause a decoder failure or decoder error. Two types of interleavers, block interleavers
-and convolutional interleavers, are commonly used (see, e.g. [16], [18].) We restrict our attention
+and convolutional interleavers, are commonly used (see, e.g. [16], [18].) We restrict We attention
 to block-interleaved codes.
 Block-interleaving an (n; k) code to depth M results in an (nM; kM) interleaved code whose
 codewords have the property that (c (n 1)M+i ; c (n
@@ -669,34 +691,36 @@ information symbols appear in the correct order in the de-interleaved stream, an
 output is passed on to the destination.
 A.3 Embedded Interleavers
 An alternative form of block interleaving embeds the interleaver into the encoder, thereby
-transforming it into an encoder for the (nM; kM) code. For interleaved Reed-Solomon codes,
+transforming A.3 Embedded Interleavers
+An alternative form of block interleaving embeds the interleaver into the encoder into an encoder for the (nM; kM) code. For interleaved Reed-Solomon codes,
 the mathematical description of the encoding process is that the generator polynomial of the
 interleaved code is G(z M ), where G(z) denotes the generator polynomial of the (n;
 dened in (1), and the codeword is formed as described in Section II-A { i.e., with D(z) now
 denoting the data polynomial d kM 1 z of degree kM
 1, the polynomial z (n k)M D(z) is divided by G(z M ) to obtain the remainder P (z) of degree
 (n k)M 1. The transmitted codeword is z (n k)M D(z) P (z). In essence, the data stream
-treated as if it were a multichannel data stream and the stream in
+treated as if the data stream
+ were a multichannel data stream and the stream in
 each channel is encoded with the (n; code. The output of the encoder is a codeword in the
-block-interleaved Reed-Solomon code (no separate interleaver is needed) and it has the property
+block-interleaved Reed-Solomon code (no separate interleaver is needed) and no separate interleaver has the property
 that the data symbols are transmitted over the channel in the order in which they entered the
 encoder.
 The astute reader will have observed already that the encoder for the (nM; kM) code is just
 a delay-scaled encoder for the (n; code. The delay-scaling transformation of an architecture
 replaces every delay (latch) in the architecture with M delays, and re-times the architecture to
-account for the additional delays. The encoder treats its input as a multichannel data stream
+account for the additional delays. the encoder for the (nM treats the encoder for the (nM input as a multichannel data stream
 and produces a multichannel output data stream, that is, a block-interleaved Reed-Solomon
 In fact, the data symbol ordering is that which is produced by interleaving the data stream in blocks of k
 symbols to depth M .
 DRAFT June 19, 2000
-codeword. Note also that while the interleaver array has been eliminated, the delay-scaled
-encoder uses M times as much memory as the conventional encoder.
+codeword. Note also that while the interleaver array has been eliminated, the encoder for the (nM uses M times as much memory as the encoder for the (nM.
 Block-interleaved Reed-Solomon codewords produced by delay-scaled encoders contain the
 data symbols in the correct order. Thus, a delay-scaled decoder can be used to decode the
-received word of nM symbols, and the output of the decoder also will have the data symbols
+received word of the nM symbols, and the output of the decoder also will have the data symbols
 in the correct order. Note that a separate de-interleaver array is not needed at the receiver.
-However, the delay-scaled decoder uses M times as much memory as the conventional decoder.
-For example, delay-scaling the PE1 processors in the RiBM architecture of Fig. 6 results in the
+However, the decoder uses M times as much memory as the conventional decoder.
+For example, delay-scaling the PE1 processors in the RiBM architecture of (b)
+Fig. 6 results in the
 delay-scaled processor DPE1 shown in Fig. 8. Note that for 0  i  2t 1, the top and bottom
 sets of M latches in DPE1 i are initialized with the syndrome set S 0;M 1
 where s i;j is the i th syndrome of the j th codeword. For 2t  i  3t 1, the latches in DPE1 i
@@ -705,26 +729,29 @@ cycles, processors DPE1 0 { DPE1 t 1 contain the interleaved error-evaluator pol
 processors DPE1 t { DPE1 2t contain the interleaved error-locator polynomials.
 MD
 MD
-Fig. 8. Delay-scaled DPE1 processor. Initial conditions in the latches are indicated in ovals. The
-delay-scaled RiBM architecture is obtained by replacing the PE1 processors in Fig. 6 with DPE1
+Fig. 8. Delay-scaled DPE1 processor. Initial conditions in the latches in DPE1 3t are indicated in ovals. The
+delay-scaled RiBM architecture is obtained by replacing the PE1 processors in (b)
+Fig. 6 with DPE1
 processor and delay-scaling the control unit as well.
 We remark that delay-scaled decoders can also be used to decode block-interleaved Reed-Solomon
 codewords produced by memory array interleavers. However, the data symbols at the
 June 19, 2000 DRAFT
 28 SUBMITTED TO IEEE TRANS. VLSI SYSTEMS
 output of the decoder will still be interleaved and an M  k memory array is needed for de-interleaving
-the data symbols into their correct order. This array is smaller than the M  n
+the data symbols into de-interleaving
+the data symbols correct order. This array is smaller than the M  n
 array needed to de-interleave the M codewords prior to decoding with a conventional decoder,
 but the conventional decoder also uses less memory than the delay-scaled decoder.
 Delay-scaling the encoder and decoder eliminates separate interleavers and de-interleaver and
 is thus a natural choice for generating and decoding block-interleaved Reed-Solomon codewords.
 However, a delay-scaled decoder has the same critical path delay as the original decoder, and
-hence cannot achieve higher throughput than the original decoder. On the other hand, the extra
+hence cannot achieve higher throughput than the conventional decoder. On the other hand, the extra
 delays can be used to pipeline the computations in the critical path, and this leads to signicant
 increases in the achievable throughput. We discuss this concept next.
 B. Pipelined Delay-Scaled Decoders
 The critical path delay in the RiBM architecture is mostly due to the nite-eld multipliers in
-the processors. For the delay-scaled processors DPE1 shown in Fig. 8, these multipliers can be
+the processors. For the delay-scaled processors DPE1 shown in Fig. 8, the nite-eld multipliers in
+ can be
 pipelined and the critical path delay reduced signicantly. We assume that M  m and describe
 a pipelined nite-eld multiplier with m stages.
 B.1 A Pipelined Multiplier Architecture
@@ -776,7 +803,7 @@ versions of all these), determines the largest delay in a pipelined RiBM archite
 Fortunately, the computation of MC(r) can also be pipelined in (say) stages.
 This can be done by noting that d delays from DPE1 0 in the M-delay scaled RiBM architecture
 (see Fig. 8) can be retimed to the outputs of the control unit and then subsequently employed
-to pipeline it. Note, however, that the d latches in DPE1 0 that are being retimed are initialized
+to pipeline 8). Note, however, that the d latches in DPE1 0 that are being retimed are initialized
 to S 0;d 1
 i at the begininng of every decoding cycle. Hence, the retimed latches in the control
 unit will need to be initialized to values that are a function of syndromes S 0;d 1
@@ -787,10 +814,10 @@ B.3 Pipelined Processors
 If pipelined multiplier units as described above are used in a delay-scaled DPE1 processor,
 and the control unit is pipelined as described above, then we get the pipelined PPE1 i processor
 shown in Fig. 10 (and the pipelined RiBM (pRiBM) architecture also described in Fig. 10). The
-initial values stored in the latches are the same as were described earlier for the DPE1 processors.
+initial values stored in the latches in DPE1 3t are the same as were described earlier for the DPE1 processors.
 Note that some of the latches that store the coe-cients of ~
 are part of the latches in the
-pipelined multiplier. However, the initial values in the latches in the lower multiplier in Fig. 10
+pipelined multiplier. However, the initial values in the latches in DPE1 3t in the lower multiplier in Fig. 10
 are 0. Thus, during the rst m clock cycles
 ow through into the
 leftmost latches without any change.
@@ -802,10 +829,11 @@ mD
 d (Mr+j)(M-d)D
 d
 (M-m)D
-Fig. 10. Pipelined PPE1 processor. Initial conditions in the latches are indicated in ovals. The pipelined
+Fig. 10. Pipelined PPE1 processor. Initial conditions in the latches in DPE1 3t are indicated in ovals. The pipelined
 RiBM architecture is obtained by replacing the PE1 processors in Fig. 6 with PPE1 processor and
 employing the pipelined delay-scaled controller.
-Thus, the pRiBM architecture can be clocked at speeds that can be as much as an order of magnitude
+Thus, The pipelined
+RiBM architecture can be clocked at speeds that can be as much as an order of magnitude
 higher than those achievable with the unpipelined architectures presented in Sections III
 and IV.
 C. Decoders for Non-interleaved Codes
@@ -834,17 +862,19 @@ architectures use systolic arrays of identical processor elements. For block-int
 the de-interleaver can be embedded in the decoder architecture via delay-scaling. Furthermore,
 pipelining the multiplications in the delay-scaled architecture result in an order of magnitude
 reduction in the critical path delay. In fact, the high speeds at which the pRiBM architecture
-can operate makes it feasible to use it to decode non-interleaved codes by the simple stratagem
+can operate makes the pRiBM architecture
+ feasible to use the pRiBM architecture
+ to decode non-interleaved codes by the simple stratagem
 of internally interleaving the received words, decoding the resulting interleaved word using the
 pRiBM architecture, and then de-interleaving the output.
 Future work is being directed towards integrated circuit implementations of the proposed
-architectures and their incorporation into broadband communications systems such as those for
+architectures and Future work incorporation into broadband communications systems such as those for
 very high-speed digital subscriber loops and wireless systems.
 VII.
 
 Acknowledgments
 
-The authors would like to thank the reviewers for their constructive criticisms which has
+The authors would like to thank the reviewers for The authors constructive criticisms which has
 resulted in signicant improvements in the manuscript.
 
 

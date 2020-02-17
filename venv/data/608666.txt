@@ -16,8 +16,7 @@ accessed via database-like queries. For instance, consider the query
 the Visa credit-card?" Assume that we have two information sources
 that provide information about LA restaurants: the Zagat Guide and
 LA Weekly (see Figure 1). To answer this query, an agent could use
-Zagat's to identify seafood restaurants under $20 and then use LA
-Weekly to check which of these accept Visa.
+Zagat's to identify seafood restaurants under $20 and then use LAWeekly to check which of these accept Visa.
 c
 Publishers. Printed in the Netherlands.
 Ion Muslea, Steven Minton, Craig A. Knoblock
@@ -38,7 +37,7 @@ wrapper construction that enables unsophisticated users to painlessly
 turn Web pages into relational information sources. The next section
 presents a formalism describing semistructured Web documents, and
 then Sections 3 and 4 present a domain-independent information extractor
-that we use as a skeleton for all our wrappers. Section 5 describes
+that we use as a skeleton for all we wrappers. Section 5 describes
 stalker, a supervised learning algorithm for inducing extraction
 rules, and Section 6 presents a detailed example. The final sections
 describe our experimental results, related work and conclusions.
@@ -52,7 +51,8 @@ elements. With these observations in mind, we developed the
 embedded catalog (EC) formalism, which can describe the structure of
 a wide-range of semistructured documents.
 The EC description of a page is a tree-like structure in which the
-leaves are the items of interest for the user (i.e., they represent the
+leaves are the items of interest for the user (i.e., the
+leaves represent the
 relevant data). The internal nodes of the EC tree represent lists of k-tuples
 (e.g., lists of restaurant descriptions), where each item in the
 k-tuple can be either a leaf l or another list L (in which case L is called
@@ -80,13 +80,13 @@ and phone-number.
 3. Extracting Data from a Document
 In order to extract the items of interest, a wrapper uses the EC description
 of the document and a set of extraction rules. For each node in the
-tree, the wrapper needs a rule that extracts that particular node from
-its parent. Additionally, for each list node, the wrapper requires a list
+tree, a wrapper needs a rule that extracts that particular node from
+a wrapper parent. Additionally, for each list node, a wrapper requires a list
 iteration rule that decomposes the list into individual tuples. Given the
 EC tree and the rules, any item can be extracted by simply determining
 the path P from the root to the corresponding node and by successively
-extracting each node in P from its parent. If the parent of a node x is a
-list, the wrapper applies first the list iteration rule and then it applies
+extracting each node in P from P parent. If the parent of a node x is a
+list, the wrapper applies first the list iteration rule and then the wrapper applies
 x's extraction rule to each extracted tuple.
 In our framework a document is a sequence of tokens S (e.g., words,
 tags, etc). It follows that the content of the root node
@@ -103,8 +103,10 @@ paper.tex; 19/11/1999; 16:12; p.
 Figure
 
 3. A simplified version of a Zagat document.
-its children is a subsequence of S. More generally, the content of an
-arbitrary node x represents a subsequence of the content of its parent
+A simplified version of a Zagat document.
+ children is a subsequence of S. More generally, the content of an
+arbitrary node x represents a subsequence of the content of A simplified version of a Zagat document.
+ parent
 p. A key idea underlying our work is that the extraction rules can be
 based on "landmarks" (i.e., groups of consecutive tokens) that enable
 a wrapper to locate the content of x within the content of p.
@@ -124,7 +126,8 @@ at the beginning of the restaurant name. Similarly, one can identify
 the end of a node's content by applying a rule that consumes the
 corresponding suffix of the parent. For instance, in order to find the
 end of the restaurant name, one can apply the rule
-from the end of the document towards its beginning.
+from the end of the document towards the rule
+ beginning.
 The rules R1 and are called start and end rules, and, in most of
 the cases, they are not unique. For instance, instead of R1 we can use
 or
@@ -139,7 +142,7 @@ By contrast, the start rules SkipTo(:) and SkipTo(!i?) are said to
 match incorrectly because they consume too few or too many tokens,
 respectively (in stalker terminology, the former is an early match,
 while the later is a late match). Finally, a rule like SkipTo(!table?)
-fails because the landmark !table? does not exist in the document.
+fails because b? landmark? does not exist in the document.
 To deal with variations in the format of the documents, our extraction
 rules allow the use of disjunctions. For example, if the names
 of the recommended restaurants appear in bold, while the other ones
@@ -153,11 +156,12 @@ or SkipTo(Cuisine)SkipTo(!/i?)
 Disjunctive rules, which represent a special type of decision lists (Rivest,
 1987), are ordered lists of individual disjuncts. Applying a disjunctive
 rule is a straightforward process: the wrapper succesively applies each
-disjunct in the list until it finds the first one that matches (see more
+disjunct in the list until the wrapper finds the first one that matches (see more
 details in the next section's footnote).
 To illustrate how the extraction process works for list members,
 consider the case where the wrapper has to extract all the area codes
-from the sample document in Figure 3 . In this case, the wrapper starts
+from the sample document in Figure 3 . In the case where the wrapper has to extract all the area codes
+from the sample document in Figure 3, the wrapper starts
 by extracting the entire list of addresses, which can be done based on
 the start rule SkipTo(!p?!i?) and the end rule SkipTo(!/i?). Then
 the wrapper has to iterate through the content of list of addresses (lines
@@ -165,7 +169,7 @@ the wrapper has to iterate through the content of list of addresses (lines
 
 Figure
 
-and to break it into individual tuples. In order to find
+and to break the wrapper into individual tuples. In order to find
 the start of each individual address, the wrapper starts from the first
 token in the parent and repeatedly applies SkipTo(!i?) to the content
 of the list (each successive rule-matching starts at the point where
@@ -183,16 +187,17 @@ to extract the ZIP Codes. The list extraction and the list iteration
 remain unchanged, but the ZIP Code extraction is more difficult because
 there is no landmark that separates the state from the ZIP Code.
 Even though in such situations the SkipTo() rules are not sufficiently
-expressive, they can be easily extended to a more powerful extraction
+expressive, Even though in such situations the SkipTo() rules are not sufficiently
+expressive can be easily extended to a more powerful extraction
 language. For instance, we can use
 to extract the ZIP Code from the entire address. The argument of
 SkipUntil() describes a prefix of the content of the item to be extracted,
-and it is not consumed when the rule is applied (i.e., the rule stops immediately
-before its occurrence). The rule R5 means "ignore all tokens
-until you find the landmark ',', and then ignore everything until you
+and the item is not consumed when the start rule SkipTo(!p?!i?) is applied (i.e., the start rule SkipTo(!p?!i?) stops immediately
+before the start rule SkipTo(!p?!i?) occurrence). The rule R5 means "ignore all tokens
+until you find b? landmark ',', and then ignore everything until you
 find, but do not consume, a number". Rules like R5 are extremely
-useful in practice, and they represent only variations of our SkipTo()
-rules (i.e., the last landmark has a special meaning). In order to keep the
+useful in practice, and Rules like R5 represent only variations of our SkipTo()
+rules (i.e., b? landmark has a special meaning). In order to keep the
 presentation simple, the rest of the paper focuses mainly on SkipTo()
 rules. When necessary, we will explain the way in which we handle the
 construct.
@@ -200,8 +205,9 @@ The extraction rules presented in this section have two main advan-
 tages. First of all, the hierarchical extraction based on the EC tree
 allows us to wrap information sources that have arbitrary many levels
 of embedded data. Second, as each node is extracted independently of
-its siblings, our approach does not rely on there being a fixed ordering
-of the items, and we can easily handle extraction tasks from documents
+
+ siblings, our approach does not rely on there being a fixed ordering
+of the items, and our can easily handle extraction tasks from documents
 that may have missing items or items that appear in various
 orders. Consequently, in the context of using an inductive algorithm
 that generates the extraction rules, our approach turns an extremely
@@ -209,21 +215,22 @@ hard problem into several simpler ones: rather then finding a single
 extraction rule that takes into account all possible item orderings and
 becomes more complex as the depth of the EC tree increases, we create
 several simpler rules that deal with the easier task of extracting each
-item from its EC tree parent.
+item from each
+item EC tree parent.
 Hierarchical Wrapper Induction for Semistructured Information Sources 7
 4. Extraction Rules as Finite Automata
-We now introduce two key concepts that can be used to define extraction
+our now introduce two key concepts that can be used to define extraction
 rules: landmarks and landmark automata. In the rules described
 in the previous section, each argument of a SkipTo() function is a
 landmark, while a group of SkipTo() functions that must be applied in
 a pre-established order represents a landmark automaton. In our frame-
 work, a landmark is a sequence of tokens and wildcards (a wildcard
 represents a class of tokens, as illustrated in the previous section, where
-we used wildcards like Number and HtmlTag). Such landmarks are
-interesting for two reasons: on one hand, they are sufficiently expressive
+our used wildcards like Number and HtmlTag). Such landmarks are
+interesting for two reasons: on one hand, Such landmarks are sufficiently expressive
 to allow efficient navigation within the EC structure of the documents,
 and, on the other hand, as we will see in the next section, there is a
-simple way to generate and refine them.
+simple way to generate and refine Such landmarks.
 Landmark automata (LAs) are nondeterministic finite automata in
 which each transition S i
 (i 6= j) is labeled by a landmark l i;j
@@ -241,7 +248,7 @@ looping transitions have the meaning "consume all tokens until
 you encounter the landmark that leads to the next state".
 The extraction rules presented in the previous section are ordered lists
 of linear LAs. In order to apply such a rule to a given sequence of
-tokens S, we apply the linear LAs to S in the order in which they
+tokens S, we apply linear LAs to S in the order in which they
 appear in the list. As soon as we find an LA that matches within S,
 we stop the matching process 1 .
 Disjunctive iteration rules are applied in a slightly different manner. As we
@@ -265,7 +272,7 @@ parent p. Note that finding a start rule that consumes the prefix of p
 with respect to x (for short Prefix x (p)) is similar to finding an end
 rule that consumes the suffix of p with respect to x (i.e., Suffix x (p));
 in fact, the only difference between the two types of rules consists of
-how they are actually applied: the former starts by consuming the first
+how the two types of rules are actually applied: the former starts by consuming the first
 token in p and goes towards the last one, while the later starts at the
 last token in p and goes towards the first one. Consequently, without
 any loss of generality, in the rest of this paper we discuss only the way
@@ -279,7 +286,7 @@ leaves of the EC tree); once a page is marked up, the GUI generates the
 sequences of tokens that represent the content of the parent p, together
 with the index of the token that represents the start of x and uniquely
 identifies the prefix to be consumed.
-Before describing our rule induction algorithm, we will present an
+Before describing our rule induction algorithm, our will present an
 illustrative example. Let us assume that the user marked the four area
 codes from Figure 4 and invokes stalker on the corresponding four
 training examples (that is, the prefixes of the addresses E1, E2, E3,
@@ -293,13 +300,13 @@ Hierarchical Wrapper Induction for Semistructured Information Sources 9
 (remember that each such LA represents a disjunct in the final rule)
 that covers as many as possible of the four positive examples. Then it
 tries to create another linear LA for the remaining examples, and so
-on. Once stalker covers all examples, it returns the disjunction of all
+on. Once stalker covers all examples, stalker returns the disjunction of all
 the induced LAs. In our example, the algorithm generates first the rule
 which has two important properties:
-it accepts the positive examples in E2 and E4;
-- it rejects both E1 and E3 because D1 can not be matched on them.
+the algorithm accepts the positive examples in E2 and E4;
+- the algorithm rejects both E1 and E3 because D1 can not be matched on E1 and E3.
 During a second iteration, the algorithm considers only the uncovered
-examples E1 and E3, based on which it generates the rule
+examples E1 and E3, based on which the algorithm generates the rule
 As there are no other uncovered examples, stalker returns the disjunctive
 rule either D1 or D2.
 To generate a rule that extracts an item x from its parent p, stalker
@@ -316,7 +323,7 @@ any other sub-sequence or super-sequence of S represents a negative
 example. stalker tries to generate a rule that accepts all positive
 examples and rejects all negative ones.
 stalker is a typical sequential covering algorithm: as long as there
-are some uncovered positive examples, it tries to learn a perfect disjunct
+are some uncovered positive examples, stalker tries to learn a perfect disjunct
 (i.e., a linear LA that accepts only true positives). When all the positive
 examples are covered, stalker returns the solution, which consists
 of an ordered list of all learned disjuncts. The ordering is performed
@@ -325,11 +332,11 @@ heuristic: the disjuncts with fewer early and late matches should appear
 in case of a tie, the disjuncts with more correct matches are
 preferred to the other ones.
 The function LearnDisjunct() is a greedy algorithm for learning
-perfect disjuncts: it generates an initial set of candidates and repeatedly
-selects and refines the best refining candidate until it either finds a
+perfect disjuncts: The function LearnDisjunct() generates an initial set of candidates and repeatedly
+selects and refines the best refining candidate until The function LearnDisjunct() either finds a
 perfect disjunct, or runs out of candidates. Before returning a learned
 disjunct, stalker invokes PostProcess(), which tries to improve the
-quality of the rule (i.e., it tries to reduce the chance that the disjunct
+quality of the rule (i.e., The function LearnDisjunct() tries to reduce the chance that the disjunct
 will match a random sequence of tokens). This step is necessary because
 during the refining process each disjunct is kept as general as possible
 in order to potentially cover a maximal number of examples; once the
@@ -338,8 +345,7 @@ Ion Muslea, Steven Minton, Craig A. Knoblock
 al be an empty rule
 aDisjunct =LearnDisjunct(Examples)
 - remove all examples covered by aDisjunct
-add aDisjunct to RetV al
-return OrderDisjuncts(RetV al)
+add aDisjunct to RetV alreturn OrderDisjuncts(RetV al)
 Examples be the shortest example
 return PostProcess(BestSolution)
 consist on the consecutive landmarks l 1 , l 2 , \Delta \Delta \Delta, l n
@@ -358,7 +364,7 @@ Figure
 
 5. The stalker algorithm.
 Hierarchical Wrapper Induction for Semistructured Information Sources 11
-refining ends, we post-process the disjunct in order to minimize its
+refining ends, we post-process the disjunct in order to minimize we post-process the disjunct
 potential interference with other disjuncts 2 .
 Both the initial candidates and their refined versions are generated
 based on a seed example, which is the shortest uncovered example (i.e.,
@@ -369,7 +375,7 @@ each token t that ends the seed example and for each wildcard w i that
 In each such automaton, the transition S 0 labeled by a landmark
 that is either t or one of the wildcards w i . The rationale behind
 this choice is straightforward: as disjuncts have to completely consume
-each positive example, it follows that any disjunct that consumes a
+each positive example, this choice follows that any disjunct that consumes a
 t-ended prefix must end with a landmark that consumes the trailing t.
 Before describing the actual refining process, let us present the main
 intuition behind it. If we reconsider now the four training examples
@@ -394,21 +400,23 @@ become failed matches. This is exactly what happens when we refine
 R0 into the new rule does not match anymore
 on E2 and E4, and R0's early matches on E1 and E3 become correct
 matches for R2.
-We perform three types of post processing operations: replacing wildcards
+we perform three types of post processing operations: replacing wildcards
 with tokens, merging landmarks that match immediately after each other, and
 adding more tokens to the short landmarks (e.g., SkipTo(!b?) is likely to match
 in most html documents, while SkipTo(Maritime Claims : !b?) matches in significantly
-fewer). The last operation has a marginal influence because it improves
+fewer). The last operation has a marginal influence because The last operation improves
 the accuracies of only three of the rules discussed in Section 7.
 3 As explained in Section 3, a disjunct D that consumes more tokens than
 Prefixx(p) is called a late match on p. It is easy to see that by adding more terminals
-to D we can not turn it into an early or a correct match (any refined version of D is
+to D we can not turn more terminals
+ into an early or a correct match (any refined version of D is
 guaranteed to consume at least as many tokens as D itself). Consequently, the only
-hope to avoid an incorrect match of D on p is to keep adding terminals until it fails
+hope to avoid an incorrect match of D on p is to keep adding terminals until an incorrect match of D on p fails
 to match on p.
 12 Ion Muslea, Steven Minton, Craig A. Knoblock
 The Refine() function in Figure 5 tries to obtain (potentially) better
-disjuncts either by making its landmarks more specific (landmark
+disjuncts either by making (potentially) better
+disjuncts landmarks more specific (landmark
 refinements), or by adding new states in the automaton (topology re-
 finements). In order to perform a refinement, stalker uses a refining
 terminal, which can be either a token or a wildcard (besides the nine
@@ -417,7 +425,8 @@ Capitalized, AllCaps, HtmlTag, NonHtml, and Punctuation, stalker
 can also use domain specific wildcards that are defined by the user). A
 straightforward way to generate the refining terminals consists of using
 all the tokens in the seed example, together with the wildcards that
-match them. 4 .
+match A
+straightforward way to generate the refining terminals. 4 .
 Given a disjunct D, a landmark l from D, and a refining terminal t,
 a landmark refinement makes l more specific by concatenating t either
 at the beginning or at the end of l. By contrast, a topology refinement
@@ -488,7 +497,7 @@ item, fewer wildcards, longer landmarks closer to the item's content,
 and fewer unconsumed tokens in the covered prefixes (i.e., in case of
 incorrect match, the result of the extraction contains fewer irrelevant
 tokens).
-Finally, stalker can be easily extended such that it also uses
+Finally, stalker can be easily extended such that stalker also uses
 constructs. The rule refining process remains unchanged
 (after all, SkipUntil() changes only the meaning of the last landmark
 paper.tex; 19/11/1999; 16:12; p.
@@ -511,7 +520,7 @@ During the second iteration, LearnDisjunct() is invoked with the
 uncovered training examples fE1, E3g; the new seed example is E1,
 and stalker creates again three initial candidates:
 As all three initial candidates match early in all uncovered examples,
-stalker selects R4 as the best possible refiner because it uses no wild-cards
+stalker selects R4 as the best possible refiner because R4 uses no wild-cards
 in the landmark. By refining R4, we obtain the three landmark
 refinements
 Anything !b?)
@@ -530,11 +539,11 @@ along with the 21 topology refinements shown in Figure 7.
 At this stage, we have already generated several perfect disjuncts:
 R7, R11, R12, R13, R15, R16, and R19. They all match correctly
 on E1 and E3, and fail to match on E2 and E4; however, stalker
-dismisses R19 because it is the only one using wildcards in its land-
+dismisses R19 because it is the only one using wildcards in it land-
 marks. Of the remaining six candidates, R7 represents the best solution
-because it has the longest end landmark (all other disjuncts end with a
+because R7 has the longest end landmark (all other disjuncts end with a
 1-token landmark). Consequently, LearnDisjunct() returns R7, and
-because there are no more uncovered examples, stalker completes its
+because there are no more uncovered examples, stalker completes LearnDisjunct()
 execution by returning the disjunctive rule either R1 or R7.
 7. Experimental Results
 In order to evaluate stalker's capabilities, we tested it on the information
@@ -547,8 +556,8 @@ for which wien had labeled examples, we used the exact same data;
 for the remaining 9 sources, we worked closely with Kushmerick to
 reproduce the original wien extraction tasks. Furthermore, we also
 used wien's experimental setup: we start with one randomly chosen
-training example, learn an extraction rule, and test it against all the
-unseen examples. We repeated these steps times, and we average
+training example, learn an extraction rule, and test an extraction rule against all the
+unseen examples. we repeated these steps times, and we average
 the number of test examples that are correctly extracted. Then we
 5 Remember that a perfect disjunct correctly matches at least one example (e.g.,
 E2 and E4) and rejects all other ones.
@@ -560,10 +569,10 @@ repeated the same procedure with 2, 3, . , and 10 training examples.
 As opposed to wien, we do not train on more than 10 examples because
 we noticed that, in practice, a user rarely has the patience of labeling
 more than 10 training examples.
-This section has four distinct parts. We begin with an overview of
+This section has four distinct parts. we begin with an overview of
 the performance of stalker and wien over the test domains, and we
 continue with an analysis of stalker's ability to learn list extraction
-and iteration rules, which are key components in our approach to hierarchical
+and iteration rules, which are key components in we approach to hierarchical
 wrapper induction. Then we compare and contrast stalker and
 wien based on the number of examples required to wrap the sources,
 and we conclude with the main lessons drawn from this empirical
@@ -571,29 +580,33 @@ evaluation.
 7.1. Overall Comparison of stalker and wien
 The data in Table I provides an overview of the two systems' performance
 over the sources. The first four columns contain the source
-name, whether or not the source has missing items or items that may
+name, whether or not the source
+ has missing items or items that may
 appear in various orders, and the number of embedded lists in the EC
 tree. The next two columns specify how well the two systems performed:
-whether they wrapped the source perfectly, imperfectly, or completely
-failed to wrap it. For the time being, let us ignore the last two columns
+whether The next two columns wrapped the source
+ perfectly, imperfectly, or completely
+failed to wrap the source
+. For the time being, let us ignore the last two columns
 in the table.
-In order to better understand the data from Table I, we have to
+In order to better understand the data from Table I, us have to
 briefly describe the type of wrappers that wien generates (a more
 technical discussion is provided in the next section). wien uses a fairly
-simple extraction language: it does not allow the use of wildcards
+simple extraction language: wien does not allow the use of wildcards
 and disjunctive rules, and the items in each k-tuple are assumed to
 be always present and to always appear in the same order. Based on
 the assumptions above, wien learns a unique multi-slot extraction rule
 that extracts all the items in a k-tuple at the same time (by contrast,
 stalker generates several single-slot rules that extract each item independently
-of its siblings in the k-tuple). For instance, in order to
+of stalker siblings in the k-tuple). For instance, in order to
 extract all the addresses and area codes from the document in Figure 3,
 a hypothetical wien rule does the following: it ignores all characters
 until it finds the string "!p?!i?" and extracts as Address everything
 until it encounters a "(". Then it immediately starts extracting the
 AreaCode, which ends at ")". After extracting such a 2-tuple, the rule
-is applied again until it does not match anymore.
-Out of the sources, wien wraps perfectly of them, and completely
+is applied again until the rule
+ does not match anymore.
+Out of the sources, wien wraps perfectly of the sources, and completely
 fails on the remaining 12. These complete failures have a straight-forward
 explanation: if there is no perfect wrapper in wien's language
 (because, say, there are some missing items), the inductive algorithm
@@ -628,9 +641,10 @@ As opposed to wien, which performs an implicit list iteration by repeatedly
 applying the same multi-slot extraction rule, stalker learns
 explicit list extraction and iteration rules that allow us to navigate
 within the EC tree. These types of rules are crucial to our approach
-because they allow us to decompose a difficult wrapper induction problem
-into several simpler ones in which we always extract one individual
-item from its parent. To estimate stalker's performance, we have to
+because These types of rules allow our to decompose a difficult wrapper induction problem
+into several simpler ones in which our always extract one individual
+item from individual
+ parent. To estimate stalker's performance, we have to
 analyze its performance at learning the list extraction and list
 iteration rules that appeared in the 28 test domains above.
 The results are shown in the last two columns of Table I, where
@@ -638,23 +652,25 @@ we provide the number of training examples and the accuracy for each
 such rule. Note that there are some sources, like S16, that have no lists
 at all. At the other end of the spectrum, there are several sources that
 include two lists 8 .
-7 The documents in S21 are difficult to wrap because they include a heterogeneous
+7 The documents in S21 are difficult to wrap because The documents in S21 include a heterogeneous
 list (i.e., the list contains elements of several types). As each type of element uses a
 different kind of layout, the iteration task is extremely difficult. The second source,
 raises a different type of problem: some of the items have just a handful of
-occurrences in the collection of documents, and, furthermore, about half of them
+occurrences in the collection of documents, and, furthermore, about half of some of the items
 represent various types of formatting/semantic errors (e.g., the date appearing in
 the location of the price slot, and the actual date slot remaining empty). Under
-these circumstances, we decided to declare this source unwrappable by stalker.
+these circumstances, we decided to declare The second source unwrappable by stalker.
 8 For sources with multiple lists, we present the data in two different ways. If
-all the learned rules are perfect, the results appear on the same table line (e.g., for
+all the learned rules are perfect, The results appear on the same table line (e.g., for
 S7, the list extraction rules required 6 and 1 examples, respectively, while the list
 iteration rules required 2 and 7 examples, respectively). If at least one of the rules
 Hierarchical Wrapper Induction for Semistructured Information Sources 19
 The results are extremely encouraging: only one list extraction and
 two list iteration rules were not learned with a 100% accuracy, and
 all these imperfect rules have accuracies above 90%. Furthermore, out
-of the 72 rules, 50 of them were learned based on a single training
+of the 72 rules, 50 of The results are extremely encouraging: only one list extraction and
+two list iteration rules were not learned with a 100% accuracy, and
+all these imperfect rules have accuracies above 90% were learned based on a single training
 example! As induction based on a single example is quite unusual in
 machine learning, it deserves a few comments. stalker learns a perfect
 rule based on a single example whenever one of the initial candidates
@@ -705,7 +721,7 @@ and V, we present an individual description for each learned rule by
 providing the reached accuracy and the required number of training
 examples.
 By analyzing the data from Table II, we can see that for the
-sources that both systems can wrap correctly, stalker requires up to
+sources that Both Systems can wrap correctly, stalker requires up to
 two orders of magnitude fewer training examples. stalker requires no
 more than 9 examples for any rule in these sources, and for more than
 half of the rules it can learn perfect rules based on a single example
@@ -741,7 +757,9 @@ training data, the advantage of stalker becomes quite obvious.
 
 Table
 
-IV reveals that despite its advantages, stalker may learn
+IV reveals that despite Table
+
+IV advantages, stalker may learn
 imperfect wrappers for sources that pose no problems to wien. The explanation
 is quite simple and is related to the different ways in which the
 two systems define a training example: wien's examples are entire doc-
@@ -777,7 +795,7 @@ this problem by using active learning techniques (RayChaudhuri and
 Hamey, 1997) to identify all possible types of variations.
 Finally, in Table V we provide detailed data about the learned rules
 for the six most difficult sources. Besides the problem mentioned above,
-which leads to several rules of 99% accuracy, these sources also contain
+which leads to several rules of 99% accuracy, the six most difficult sources also contain
 missing items and items that may appear in various orders. Out of
 the 62 rules learned by stalker for these six sources, 42 are perfect
 and another 14 have accuracies above 90%. Sources like S6 and S9
@@ -797,7 +815,7 @@ both fast and painless. Our hierarchical approach to wrapper induction
 played a key role at reducing the number of examples: on one hand,
 we decompose a hard problem into several easier ones, which, in turn,
 require fewer examples. On the other hand, by extracting the items
-independently of each other, we can label just a few examples for the
+independently of each other, Our can label just a few examples for the
 items that are easy to extract (as opposed to labeling every single
 occurrence of each item in each training page).
 Third, by using single-slot rules, we do not allow the harder items to
@@ -816,7 +834,7 @@ Research on learning extraction rules has occurred mainly in two con-
 texts: creating wrappers for information agents and developing general
 purpose information extraction systems for natural language text. The
 former are primarily used for semistructured information sources, and
-their extraction rules rely heavily on the regularities in the structure of
+semistructured information sources extraction rules rely heavily on the regularities in the structure of
 the documents; the latter are applied to free text documents and use
 extraction patterns that are based on linguistic constraints.
 With the increasing interest in accessing Web-based information
@@ -834,36 +852,39 @@ help the users cope with these difficulties, Ashish and Knoblock (Ashish
 and Knoblock, 1997) proposed an expert system approach that uses a
 fixed set of heuristics of the type "look for bold or italicized strings."
 The wrapper induction techniques introduced in wien (Kushmerick,
-1997) are a better fit to frequent format changes because they rely on
+1997) are a better fit to frequent format changes because The wrapper induction techniques introduced in wien (Kushmerick,
+1997) rely on
 learning techniques to generate the extraction rules. Compared to the
 manual wrapper generation, Kushmerick's approach has the advantage
 of dramatically reducing both the time and the effort required to wrap a
-source; however, his extraction language is significantly less expressive
+source; however, Kushmerick extraction language is significantly less expressive
 than the ones provided by the manual approaches. In fact, the wien
 extraction language can be seen as a non-disjunctive stalker rules that
 use just a single SkipTo() and do not allow the use of wildcards. There
 are several other important differences between stalker and wien.
 First, as wien learns the landmarks by searching common prefixes at
-the character level, it needs more training examples than stalker.
+the character level, the character level needs more training examples than stalker.
 Hierarchical Wrapper Induction for Semistructured Information Sources 25
 Second, wien cannot wrap sources in which some items are missing or
 appear in various orders. Last but not least, stalker can handle EC
 trees of arbitrary depths, while wien's approach to nested documents
 turned out to be impractical: even though Kushmerick was able to
-manually write 19 perfect "nested" wrappers, none of them could be
+manually write 19 perfect "nested" wrappers, none of wien's approach to nested documents
+turned out to be impractical could be
 learned by wien.
 SoftMealy (Hsu and Dung, 1998) uses a wrapper induction algorithm
 that generates extraction rules expressed as finite transducers.
 The SoftMealy rules are more general than the wien ones because
-they use wildcards and they can handle both missing items and items
+the wien ones use wildcards and the wien ones can handle both missing items and items
 appearing in various orders. Intuitively, SoftMealy's rules are similar to
 the ones used by stalker, except that each disjunct is either a single
 SkipTo() or a SkipTo()SkipUntil() in which the two landmarks must
 match immediately after each other. As SoftMealy uses neither multiple
-SkipTo()s nor multiple SkipUntil()s, it follows that its extraction
+SkipTo()s nor multiple SkipUntil()s, it follows that it extraction
 rules are strictly less expressive than stalker's. Finally, SoftMealy
 has one additional drawback: in order to deal with missing items and
-various orderings of items, SoftMealy may have to see training examples
+various orderings of items, SoftMealy
+ may have to see training examples
 that include each possible ordering of the items.
 In contrast to information agents, most general purpose information
 extraction systems are focused on unstructured text, and therefore
@@ -875,9 +896,10 @@ can use the landmarks that immediately precede and/or follow the item
 to be extracted, while whisk is capable of using multiple landmarks.
 But, similarly to stalker and unlike whisk, Rapier and srv extract
 a particular item independently of the other relevant items. It follows
-that whisk has the same drawback as SoftMealy: in order to handle
+that whisk has the same drawback as SoftMealy
+: in order to handle
 correctly missing items and items that appear in various orders, whisk
-must see training examples for each possible ordering of the items.
+must see training examples for each possible ordering of the other relevant items.
 None of these three systems can handle embedded data, though all use
 powerful linguistic constraints that are beyond stalker's capabilities.
 9. Conclusions and Future Work
@@ -892,11 +914,11 @@ intended to be human readable, the EC structure is generally reflected
 by actual landmarks on the page. stalker merely has to find the
 landmarks, which are generally in the close proximity of the items to
 be extracted. In other words, the extraction rules are typically very
-small, and, consequently, they are easy to induce.
-We plan to continue our work on several directions. First, we plan to
+small, and, consequently, the extraction rules are easy to induce.
+We plan to continue We work on several directions. First, We plan to
 use unsupervised learning in order to narrow the landmark search-space.
-Second, we would like to use active learning techniques to minimize
-the amount of labeling that the user has to perform. Third, we plan to
+Second, We would like to use active learning techniques to minimize
+the amount of labeling that the user has to perform. Third, We plan to
 provide PAC-like guarantees for stalker.
 
 Acknowledgments
@@ -910,7 +932,7 @@ DABT63-96-C-0066, and by research grants from NCR and General
 Dynamics Information Systems. The views and conclusions contained
 in this paper are the authors' and should not be interpreted as representing
 the official opinion or policy of any of the above organizations
-or any person connected with them.
+or any person connected with the authors'.
 
 
 

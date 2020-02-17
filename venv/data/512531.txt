@@ -1,7 +1,7 @@
 --T
 Flow-sensitive type qualifiers.
 --A
-We present a system for extending standard type systems with flow-sensitive type qualifiers. Users annotate their programs with type qualifiers, and inference checks that the annotations are correct. In our system only the type qualifiers are modeled flow-sensitively---the underlying standard types are unchanged, which allows us to obtain an efficient constraint-based inference algorithm that integrates flow-insensitive alias analysis, effect inference, and ideas from linear type systems to support strong updates. We demonstrate the usefulness of flow-sensitive type qualifiers by finding a number of new locking bugs in the Linux kernel.
+We present a system for extending standard type systems with flow-sensitive type qualifiers. Users annotate Users programs with type qualifiers, and inference checks that the annotations are correct. In our system only the type qualifiers are modeled flow-sensitively---the underlying standard types are unchanged, which allows us to obtain an efficient constraint-based inference algorithm that integrates flow-insensitive alias analysis, effect inference, and ideas from linear type systems to support strong updates. We demonstrate the usefulness of flow-sensitive type qualifiers by finding a number of new locking bugs in the Linux kernel.
 --B
 INTRODUCTION
 Standard type systems are flow-insensitive, meaning a
@@ -11,8 +11,7 @@ properties requires associating di#erent facts with a value at
 di#erent program points.
 This paper shows how to extend standard type systems
 with user-specified flow-sensitive type qualifiers, which are
-atomic properties that refine standard types. In our system
-users annotate programs with type qualifiers, and inference
+atomic properties that refine standard types. In our systemusers annotate programs with type qualifiers, and inference
 checks that the annotations are correct. The critical feature
 of our approach is that flow-sensitivity is restricted to the
 type qualifiers that decorate types-the underlying standard
@@ -24,30 +23,33 @@ large code bases with few user annotations.
 As an example of type qualifiers, consider the type File
 used for I/O operations on files. In most systems File operations
 can only be used in certain ways: a file must be
-opened for reading before it is read, it must be opened for
-writing before it is written to, and once closed a file cannot
-be accessed. We can express these rules with flow-sensitive
-type qualifiers. We introduce qualifiers open, read, write,
+opened for reading before a file is read, a file must be opened for
+writing before a file is written to, and once closed The type open File cannot
+be accessed. our can express these rules with flow-sensitive
+type qualifiers. our introduce qualifiers open, read, write,
 readwrite, and closed. The type open File describes a
 file that has been opened in an unknown mode, the type
-read File (respectively write File) is a file that is open
+read File (respectively write The type open File is a file that is open
 for reading (respectively writing), the type readwrite File
 is a file open for both reading and writing, and the type
-closed File is a closed file. These qualifiers capture inherently
+closed The type open File is a closed file. flow-sensitive
+type qualifiers capture inherently
 flow-sensitive properties. For example, the close()
 function takes an open File as an argument and changes
-the file's state to closed File.
-These five qualifiers have a natural subtyping relation:
+the file's state to closed The type open File.
+flow-sensitive
+type qualifiers have a natural subtyping relation:
 readwrite # read # open and readwrite # write # open.
 The qualifier closed is incomparable to other qualifiers because
 a file may not be both closed and open. Qualifiers that
 introduce subtyping are very common, and our framework
 supports subtyping directly; in addition to a set of qualifiers,
-users can define a partial order on the qualifiers.
+users can define a partial order on flow-sensitive
+type qualifiers.
 Our results build on recent advances in flow-sensitive type
-systems [5, 7, 25] as well as our own previous work on flow-insensitive
+systems [5, 7, 25] as well as Our own previous work on flow-insensitive
 type qualifiers [16, 24]. The main contribution
-of our work is a practical, flow-sensitive type inference al-
+of Our work is a practical, flow-sensitive type inference al-
 gorithm, in contrast to the type checking systems of [5, 7,
 Our flow-sensitive type inference algorithm is made practical
 by solving constraints lazily. As in any flow-sensitive
@@ -57,45 +59,46 @@ By generating a constraint system linear in the size of the
 type-annotated program and solving only the portion of the
 constraints needed to check qualifier annotations, our algorithm
 is able to scale to large examples.
-Finally, our system is designed to be sound; we aim to
+Finally, Our system is designed to be sound; Our aim to
 prove the absence of bugs, not just to be heuristically good
-at finding bugs. For example, we believe that our system
-could be integrated into Java in a sound manner. We have
+at finding bugs. For example, Our believe that Our system
+could be integrated into Java in a sound manner. Our have
 shown soundness for restrict (Section 4), a key new construct
 in our system (see technical report [15]). Since the
 remainder of our system can be viewed as a simplification
-of [25], we believe it is straightforward to prove soundness
-for our full type system using their techniques.
-In Section 5 we report on experience with two applica-
+of [25], Our believe it is straightforward to prove soundness
+for Our full type system using our full type system techniques.
+In Section 5 Our report on experience with two applica-
 tions, analyzing locking behavior in the Linux kernel and
-analyzing C stream library usage in application code. Our
-system found a number of new locking bugs, including some
+analyzing C stream library usage in application code. our system
+ found a number of new locking bugs, including some
 that extend across multiple functions or even, in one case,
 across multiple files.
 1.1 System Architecture
 Our flow-sensitive qualifier inference algorithm has several
-interlocking components. We first give an overview of the
-major pieces and how they fit together.
-We expect programmers to interact with our type sys-
+interlocking components. Our first give an overview of the
+major pieces and how the
+major pieces fit together.
+Our expect programmers to interact with Our type sys-
 tem, both when adding qualifier annotations and when reviewing
 the results of inference. Thus, we seek a system
 that supports e#cient inference and is straightforward for
 a programmer to understand and use. Our type inference
 system integrates alias analysis, e#ect inference, and ideas
 from linear type systems.
-. We use a flow-insensitive alias analysis to construct a
+. Our use a flow-insensitive alias analysis to construct a
 model of the store. The alias analysis infers an abstract
 location for the result of each program expression; expressions
 that evaluate to the same abstract location
 may be aliased.
-. We use e#ect inference [20] to calculate the set of abstract
+. Our use e#ect inference [20] to calculate the set of abstract
 locations an expression e might use during e's
 evaluation. These e#ects are used in analyzing function
 calls and restrict (see below). E#ect inference
 is done simultaneously with alias analysis.
-. We model the state at a program point as an abstract
+. Our model the state at a program point as an abstract
 store, which is a mapping from abstract locations to
-types. We can use the abstract locations from the flow-insensitive
+types. Our can use the abstract locations from the flow-insensitive
 alias analysis because we allow only the
 type qualifiers, and not the underlying standard types,
 to change during execution. We represent abstract
@@ -106,9 +109,9 @@ the program point represented by store C1 to the program
 point represented by store C2 .
 . We compute a linearity [25] for each abstract location
 at each program point. Informally, an abstract location
-is linear if the type system can prove that it corresponds
+is linear if the type system can prove that the type system corresponds
 to a single concrete location in every execution;
-otherwise, it is non-linear. We perform strong updates
+otherwise, the type system is non-linear. We perform strong updates
 [4] on locations that are linear and weak updates on
 locations that are non-linear. A strong update can
 change the qualifier on a location's type arbitrarily.
@@ -131,7 +134,7 @@ that the location of e does not appear in the e#ect of
 e # .
 . We use e#ects to increase the precision of the analysis.
 If an expression e does not reference location #, which
-we can determine by examining the e#ect of e, then it
+we can determine by examining the e#ect of e, then the e#ect of e
 does not access the value stored at #, and the analysis
 of # can simply flow from the store preceding e to the
 one immediately after e without passing through e. If e
@@ -146,7 +149,7 @@ alias type checking systems designed for low-level programs
 [5, 25, 29]. Two recent language proposals, Vault [7] and
 Cyclone [17], adapt similar ideas for checking high-level pro-
 grams. Both of these languages are based on type checking
-and require programmers to annotate their programs with
+and require programmers to annotate Both of these languages programs with
 types. In contrast, we propose a simpler and less expressive
 monomorphic type system that is designed for e#cient type
 Our system incorporates e#ect inference [20, 32]
@@ -162,7 +165,7 @@ di#erent types.
 Igarashi and Kobayashi [18] propose a general framework
 for resource usage analysis, which associates a trace with
 each object specifying valid accesses to the object and checks
-that the program satisfies the trace specifications. They
+that the program satisfies the trace specifications. Igarashi and Kobayashi
 provide an inference algorithm, although it is unclear how
 e#cient it is in practice since it invokes as a sub-step an
 unspecified algorithm to check that a trace set is valid.
@@ -193,7 +196,7 @@ have been proposed for dataflow-based analysis of programs
 with pointers, among them [3, 8, 31]. Jagannathan
 et al [19] present a system for must-alias analysis of higher-order
 languages. The linearity computation in our system
-corresponds to their singleness computation, and they use
+corresponds to their singleness computation, and their use
 a similar technique to gain polymorphism by flowing some
 bindings around function calls.
 Another recent system for checking typestate properties is
@@ -203,39 +206,40 @@ more directly based on dataflow analysis and incorporates a
 path-sensitive symbolic execution component. ESP has been
 used to check the correctness of C stream library usage in
 gcc.
-Bug-Finding Tools. The AST Toolkit provides a frame-work
+Bug-Finding Tools. Bug-Finding Tools provides a frame-work
 for posing user-specified queries on abstract syntax
-trees annotated with type information. The AST Toolkit
-has been successfully used to uncover many bugs [30].
+trees annotated with type information. Bug-Finding Toolshas been successfully used to uncover many bugs [30].
 Meta-level compilation [9] is a system for finding bugs in
-programs. The programmer specifies a flow-sensitive property
+programs. Bug-Finding Tools specifies a flow-sensitive property
 as an finite state automaton. A program is analyzed by
 traversing control paths and triggering state transitions of
 the automata on particular actions in program statements.
-The system warns of potential errors when an automaton enters
+Our type system warns of potential errors when an automaton enters
 an error state. In [9] an intraprocedural analysis of lock
 usage in the Linux kernel uncovered many local locking bugs.
-Our type-based system found interprocedural locking bugs
+Our type system found interprocedural locking bugs
 that extended across multiple functions or even, in one case,
 across multiple files (Section 5). 1 Newer work on meta-level
 compilation [10] includes some interprocedural dataflow, but
 it is unclear how their interprocedural dataflow analysis handles
 aliasing.
 LCLint [11] is a dataflow-based tool for checking properties
-of programs. To use LCLint, the programmer adds
-extra annotations to their program. LCLint performs flow-sensitive
+of programs. To use LCLint, Bug-Finding Tools adds
+extra annotations to Bug-Finding Tools program. LCLint performs flow-sensitive
 intraprocedural analysis, using the programmer's
-1 The bugs were found in a newer version of the Linux kernel
+1 many bugs [30].
+Meta-level compilation [9] were found in a newer version of the Linux kernel
 than examined by [9], so a direct comparison is not possible,
-though these bugs cannot be found by purely intraprocedural
+though many bugs [30].
+Meta-level compilation [9] cannot be found by purely intraprocedural
 analysis.
 annotations at function calls.
 ESC/Java [14] is a tool for finding errors in Java programs.
-ESC/Java uses sophisticated theorem-proving technology to
-verify program properties, and it includes a rich language for
+Java uses sophisticated theorem-proving technology to
+verify program properties, and Java includes a rich language for
 program annotations.
 3. TYPE SYSTEM
-We describe our type system using a call-by-value lambda
+We describe We using a call-by-value lambda
 calculus extended with pointers and type qualifier annota-
 tions. The source language is
 e ::= x | n | #x.e | e1 e2 | ref e | !e | e1 := e2
@@ -251,8 +255,8 @@ two new forms [16]. The expression assert(e, Q) asserts
 that e's top-level qualifier is Q, and the expression check(e, Q)
 type checks only if e's top-level qualifier is at most Q.
 Our type inference algorithm is divided into two steps.
-First we perform an initial flow-insensitive alias analysis and
-e#ect inference. Second we generate and solve store and
+First Our perform an initial flow-insensitive alias analysis and
+e#ect inference. Second Our generate and solve store and
 qualifier constraints and compute linearities.
 3.1 Alias Analysis and Effect Inference
 We present the flow-insensitive alias analysis and e#ect inference
@@ -270,7 +274,7 @@ unknown set of e#ects that e#ect inference solves for, and
 e#ect constants #, which stands for either a read, write, or
 allocation of location #. For simplicity in this paper we do
 not distinguish which of the three possible e#ects # stands
-for, although we do so in our implementation.
+for, although we do so in we implementation.
 Foreshadowing flow-sensitive analysis, pointer types are
 written ref (#), and we maintain a separate global abstract
 store CI mapping locations # to types; CI (# if location
@@ -282,7 +286,7 @@ Figure
 
 1 gives rules for performing alias analysis and effect
 inference while translating source programs into our
-target language. This translation system proves judgments
+target language. Our type system proves judgments
 meaning that in type environment #, expression
 e translates to expression e # , which has type t, and
 the evaluation of e may have e#ect L.
@@ -337,7 +341,8 @@ variable # on the arrow, which makes e#ect inference
 easier. Notice that creating a function has no e#ect
 (the potential allocation of a closure does not count as
 an e#ect, because a closure cannot be updated).
-. (App) applies a function to an argument. The e#ect
+. (App)
+ applies a function to an argument. The e#ect
 of applying e1 to e2 includes the e#ect # of calling the
 function e1 represents. Notice that e1 's argument type
 is constrained to be equal to the type of e2 . As before,
@@ -345,7 +350,7 @@ this forces possibly-aliased locations to have the same
 abstract location.
 . (Assert) and (Check) are translated unchanged into
 the target language. Qualifiers are flow-sensitive, so
-we do not model them during this first, flow-insensitive
+we do not model Qualifiers during this first, flow-insensitive
 step of the algorithm.
 . (Down) hides e#ects on purely local state. If evaluating
 e produces an e#ect on some location # neither in #
@@ -356,14 +361,16 @@ By intersecting the e#ects L with the set of e#ects
 that may be visible, we increase the precision of e#ect
 inference, which in turn increases the precision of flow-sensitive
 type qualifier inference. Although (Down) is
-not a syntactic rule, it only needs to be applied once
+not a syntactic rule, (Down) is
+not a syntactic rule only needs to be applied once
 per function body [15].
 
 Figure
 
-2 shows an example program and its translation.
+2 shows an example program and (Down) is
+not a syntactic rule translation.
 We use some syntactic sugar; all of these constructs can be
-encoded in our language (e.g., by assuming a primitive Y
+encoded in We language (e.g., by assuming a primitive Y
 combinator of the appropriate type). In this example the
 constant qualifiers qa , q b , and qc are in the discrete partial
 order (the qualifiers are incomparable). Just before f re-
@@ -381,7 +388,8 @@ analysis requires that the types of z and w match, and thus
 w is given the type ref (#z ). Finally, notice that since x and
 y are purely local to the body of f , using the rule (Down)
 our analysis hides all e#ects on #x and #y . The e#ect of f
-is {#z} because f writes to its parameter w, which has type
+is {#z} because f writes to The e#ect of f
+ parameter w, which has type
 ref (#z ). (More precisely, f has e#ect # where {#z} #.)
 Let n be the size of the input program. Applying the
 rules in Figure 1 generates a constraint system of size O(n),
@@ -389,16 +397,15 @@ using a suitable representation of locs(# locs(t) (see [15]).
 Resolving the type equality constraints in the usual way with
 unification takes O(n#(n)) time, where #(-) is the inverse
 Ackerman's function. The remaining constraints are e#ect
-constraints of the form L #. We solve these constraints
-on-demand-in the next step of the algorithm we ask queries
+constraints of the form L #. We solve The remaining constraintson-demand-in the next step of the algorithm we ask queries
 of the form # L. We can answer all such queries for a single
 location # in O(n) time [15].
 3.2 Stores and Qualified Types
-Next we perform flow-sensitive analysis to check the qualifier-
+Next We perform flow-sensitive analysis to check the qualifier-
 related annotations. In this second step of the algorithm we
 take as input a program that has been decorated with types,
 locations, and e#ects by the inference algorithm of Figure 1.
-Throughout this step we treat the abstract locations # and
+Throughout this second step of the algorithm we treat the abstract locations # and
 e#ects L from the first step as constants. We analyze the
 input program using the extended types shown below:
 # | int | ref (#) | (C, # L (C # )
@@ -406,7 +413,7 @@ input program using the extended types shown below:
 Here qualified types # are standard types with qualifiers inserted
 at every level. Qualifiers Q are either qualifier variables
 #, which stand for currently unknown qualifiers, or
-constant qualifiers B, specified by the user. We assume a
+constant qualifiers B, specified by the user. Qualifiers Q assume a
 supplied partial order # among constant qualifiers.
 The flow-sensitive analysis associates a store C with each
 program point. This is in contrast to the flow-insensitive
@@ -422,12 +429,12 @@ linearities form a lattice 0 < 1 < #. Addition on linearities
 is as expected: 0
 A store is a vector
 that assigns a type # i and a linearity # i to every abstract
-location # i computed by the alias analysis. We call such a
-vector a ground store. If G is a ground store, we write G(#)
-for #'s type in G, and we write G lin (#) for #'s linearity in G.
+location # i computed by The flow-sensitive analysis. We call such a
+vector a ground store. If G is a ground store, We write G(#)
+for #'s type in G, and We write G lin (#) for #'s linearity in G.
 Rather than explicitly associating a ground store with every
-program point, we represent stores using a constraint
-formalism. As the base case, we model an unknown store
+program point, We represent stores using a constraint
+formalism. As the base case, We model an unknown store
 using a store variable #. We relate stores at consecutive
 program points either with store constructors (see below),
 which build new stores from old stores, or with store constraints
@@ -452,17 +459,17 @@ Figure
 3, constraints between stores yield constraints
 between linearities and types, which in turn yield constraints
 between qualifiers and between stores. In our constraint
-resolution algorithm, we exploit the fact that we are only
+resolution algorithm, we exploit the fact that our are only
 interested in qualifier relationships to solve as little of the
 expensive store constraints as possible (see Section 3.4).
-In (Ref# ) we require that the locations on the left- and
-right-hand sides of the # are the same. Alias analysis enforces
+In (Ref# ) our require that the locations on the left- and
+right-hand sides of an associated linearity # are the same. Alias analysis enforces
 this property, which corresponds to the standard requirement
 that subtyping becomes equality below a pointer
-constructor. We emphasize that in this step we treat abstract
-locations # as constants, and we will never attempt
+constructor. We emphasize that in this second step of the algorithm We treat abstract
+locations # as constants, and We will never attempt
 (or need) to unify two distinct locations to satisfy (Ref# ).
-In (Fun# ) we require that the e#ects of the constrained
+In (Fun# ) We require that the e#ects of the constrained
 function types match exactly. It would also be sound to
 allow the e#ect of the left-hand function to be a subset of
 the e#ect of the right-hand function.
@@ -473,7 +480,7 @@ Figure
 showing how a solution S behaves on constructed stores.
 The store Alloc(C, #) is the same as store C, except that
 location # has been allocated once more. Allocating location
-# does not a#ect the types in the store but increases the
+# does not a#ect the types in The store but increases the
 linearity of location # by one.
 The store Merge(C, C # , L) combines stores C and C # according
 to e#ect L. If # L, then Merge(C, C # , L) assigns
@@ -483,7 +490,7 @@ The store Filter(C, L) assigns the same types and linearities
 as C for all locations # such that # L. The types of
 all other locations are undefined, and the linearities of all
 other locations are 0.
-Finally, the store Assign(C, # ) is the same as store C,
+Finally, The store Assign(C, # ) is the same as store C,
 except location # has been updated to type # where #
 (we allow a subtyping step here). If # is non-linear in C, then
 in
@@ -492,9 +499,9 @@ Figure
 
 4(c) we require that the type of # in Assign(C, # :
 # ) be at least the type of # in C; this corresponds to a weak
-update. (In our implementation we require equality here.)
-Putting these together, intuitively if # is linear then its type
-in Assign(C, #) is # , otherwise its type is # S(C)(#),
+update. (In our implementation our require equality here.)
+Putting these together, intuitively if # is linear then # type
+in Assign(C, #) is # , otherwise # type is # S(C)(#),
 where # is the least-upper bound.
 3.3 Flow-Sensitive Constraint Generation
 
@@ -517,14 +524,14 @@ Figure
 4: Extending a solution to constructed stores
 evaluating e yields a result of type # and a new store C # .
 We write C(#) for the type associated with # in store C;
-we discuss the computation of C(#) in Section 3.4. We use
+We discuss the computation of C(#) in Section 3.4. We use
 the function sp(t) to decorate a standard type t with fresh
 qualifier and store variables:
 We briefly discuss the rules in Figure 5:
-. (Var) and (Int) are standard. For (Int), we pick a fresh
+. (Var) and (Int) are standard. For (Int), We pick a fresh
 qualifier variable # to annotate n's type.
 . (Ref) adds a location # to the store C # , yielding the
-store Alloc(C #). The type # of e is constrained to be
+store Alloc(C #). n's type # of e is constrained to be
 compatible with #'s type in C # . 2
 . (Deref) looks up the type of e's location # in the current
 store C # . In this rule, any qualifier may appear
@@ -570,7 +577,8 @@ The final store Merge(# , C # , L) joins the store C # before
 the function call with the result store # of the
 function. Intuitively, this rule gives us some low-cost
 polymorphism, in which functions do not act as join
-points for locations they do not use.
+points for locations join
+ do not use.
 . (Assert) adds a qualifier annotation to the program,
 and (Check) checks that the inferred top-level qualifier
 of e is compatible with the expected qualifier Q.
@@ -578,23 +586,23 @@ of e is compatible with the expected qualifier Q.
 Figure
 
 6 shows the stores and store constraints generated
-for our example program. We have slightly simplified the
+for our example program. our have slightly simplified the
 graph for clarity. Here # is f 's initial store and # is f 's final
-store. We use undirected edges for store constructors and a
+store. our use undirected edges for store constructors and a
 directed edge from C1 to C2 for the constraint C1 # C2 .
-We step through constraint generation. We model the allocation
+our step through constraint generation. our model the allocation
 of #x with the store Alloc(#x ). Location #x is initialized
 to 0, which is given the type #0 int for fresh qualifier
 variable #0 . (Ref) generates the constraint #0 int #x)
-to require that the type of 0 be compatible with #x ). We
+to require that the type of 0 be compatible with #x ). our
 model the allocation and initialization of #y and #z sim-
-ilarly. Then we construct three Assign stores to represent
-the assignment statements. We give 3 and 4 the types #3 int
+ilarly. Then our construct three Assign stores to represent
+the assignment statements. our give 3 and 4 the types #3 int
 and #4 int, respectively, where #3 and #4 are fresh qualifier
 variables.
-For the recursive call to f , we construct a Filter and add a
+For the recursive call to f , our construct a Filter and add a
 constraint on #. The Merge store represents the state when
-the recursive call to f returns. We join the two branches of
+the recursive call to f returns. our join the two branches of
 Merge
 Filter
 Assign
@@ -626,11 +634,11 @@ constraint is always a store variable). A set of m type and
 qualifier constraints can be solved in O(m) time using well-known
 techniques [16, 23], so in this section we focus on
 computing a solution S to a set of store constraints.
-Our analysis is most precise if as few locations as possible
+we analysis is most precise if as few locations as possible
 are non-linear. Recall that linearities naturally form
 a partial order 0 < 1 < #. Thus, given a set of constructed
 stores and store constraints, we perform a least
-fixpoint computation to determine S(C) lin (#). We initially
+fixpoint computation to determine S(C) lin (#). we initially
 assume that in every store, location # has linearity 0. Then
 we exhaustively apply the rules in Figure 4(b) and the rule
 S(#) lin we reach a fix-
@@ -659,18 +667,19 @@ Apply the following two closure rules until no more constraints
 are generated:
 lin (# S(C)(# S(Assign(C, #)
 for all stores Assign(C, # )
-Given a program of size n, in the worst case this naive algorithm
-requires at least n 2 space and time to build S(-)
+Given a program of size n, in the worst case this algorithmrequires at least n 2 space and time to build S(-)
 and generate the necessary type constraints. This cost is
-too high for all but small examples. We reduce this cost in
+too high for all but small examples. We reduce This cost in
 practice by taking advantage of several observations.
 Many locations are flow-insensitive. If a location # never
 appears on the left-hand side of an assignment, then #'s type
 cannot change. Thus we can give # one global type instead of
 one type per program point. In imperative languages such as
 C, C++, and Java, function parameters are a major source
-of flow-insensitive locations. In these languages, because
-parameters are l-values, they have an associated memory
+of flow-insensitive locations. In imperative languages such as
+C, C++, and Java, because
+parameters are l-values, imperative languages such as
+C, C++, and Java have an associated memory
 location that is initialized but then often never subsequently
 changed.
 Adding extra store variables trades space for time. To
@@ -687,17 +696,19 @@ map lookup. Of course, we must use space to store # in
 S(#). However, as shown below, we often can avoid this
 cost completely. We apply this transformation to each store
 constructed during constraint inference.
-Not every store needs every location. Rather than assuming
+each store
+ needs every location. Rather than assuming
 S(#) contains all locations, we add needed locations
-lazily. We add a location # to S(#) the first time the analysis
+lazily. we add a location # to S(#) the first time the analysis
 requests #) and whenever there is a constraint C # or
 # C such that # S(C). Stores constructed with Filter
 and Merge will tend to stop propagation of locations, saving
 space (e.g., if Filter(C, L) # S(#), but # L, then we
 do not propagate # to C).
-We can extend this idea further. For each qualifier variable
+we can extend this idea further. For each qualifier variable
 #, inference maintains a set of possible qualifier constants
-that are valid solutions for #. If that set contains
+that are valid solutions for #. If a set of possible qualifier constants
+that are valid solutions for # contains
 every constant qualifier, then # is uninteresting (i.e., # is
 constrained only by other qualifier variables), otherwise #
 is interesting. A type # is interesting if any qualifier in #
@@ -715,9 +726,9 @@ Figure
 
 7 gives an algorithm for lazy location propagation.
 We associate a mark with each # in each S(#) and with #
-in Assign(C, # ). Initially this mark is not set, indicating
+in Assign(C, # ). Initially a mark is not set, indicating
 that location # is bound to an uninteresting type.
-If a qualifier variable # appears in S(#), we associate
+If a qualifier variable # appears in S(#), We associate
 the pair (#) with #, and similarly for Assign stores. If
 during constraint resolution the set of possible solutions of
 # changes, we call Propagate(#,C) to propagate #, and in
@@ -750,7 +761,7 @@ we push #y forward through the graph and stop when we
 reach the store Assign(-, #y : qc int); forward propagation
 assumes that this is a strong update.
 contains an interesting type,
-#y is propagated from this store forward through the graph.
+#y is propagated from The Merge store forward through the graph.
 On one path, propagation stops at the Filter. The other
 paths yield a constraint qc # y . Notice that the constraint
 remains satisfiable.
@@ -767,8 +778,10 @@ uses the Alloc(-) stores, which are not shown.) Thus the
 update to #z is a weak update, which yields a constraint
 #z #4 .
 This example illustrates three kinds of propagation. The
-location #x is never interesting, so it is not propagated through
-the graph. The location #y is propagated, but propagation
+location #x is never interesting, so The
+location is not propagated through
+the graph. The
+location #y is propagated, but propagation
 stops at the strong update to #y and also at the Filter, because
 the (Down) rule in Figure 1 was able to prove that
 #y is purely local to f . The location #z , on the other hand,
@@ -776,7 +789,7 @@ is not purely local to f , and thus all instances of #z are
 conflated, and #z admits only weak updates.
 case C of
 #:
-I (#)) to S(#) if not already in S(#)
+I (#)) to S(#) if not already in S(# )(#)
 if # is not marked in #
 mark # in S(#)
 Forward-prop(C, #, S(#))
@@ -854,7 +867,7 @@ to distinguish dereferences of x from dereferences of other
 aliases of e1 . The constraint # L2 forbids location # from
 being dereferenced in e2 ; notice dereferences of # within
 e2 are allowed. We require that # not escape the scope of
-e2 with # locs(# locs(CI (# locs(t2 ), and we also
+e2 with # locs(# locs(CI (# locs(t2 ), and We also
 add # to the e#ect set. We translate restrict into the
 target language by annotating it with the location # that
 x is bound to. A full discussion of restrict, including a
@@ -876,7 +889,7 @@ contains no accesses to aliases of the lock and does not alias
 the lock to a non-linear location, we can modify the code to
 type check as follows:
 restrict lock = &a->b[c].d->lock in {
-In our flow-sensitive step, we use the following inference
+In our flow-sensitive step, our use the following inference
 rule for restrict:
 #,
 #, C # restrict # x =e1 in e2 : #2 ,
@@ -888,17 +901,18 @@ added to the type environment, we evaluate
 e2 . Finally, the result store is the store C # with a potentially
 update assigning the contents of # to #.
 5. EXPERIMENTS
-To test our ideas in practice we have built a tool Cqual
+To test our ideas in practice our have built a tool Cqual
 that implements our inference algorithm. To use Cqual,
-programmers annotate their C programs with type quali-
+programmers annotate programmers C programs with type quali-
 fiers, which are added to the C syntax in the same way as
-const [16]. The tool Cqual can analyze a single file or a
+const [16]. a tool Cqual
+that implements our inference algorithm can analyze a single file or a
 whole program. As is standard in type-based analysis, when
 analyzing a single file, the programmer supplies type signatures
 for any external functions or variables.
 We have used Cqual to check two program properties:
 locking in the 2.4.9 Linux kernel device drivers and uses
-of the C stream library. Our implementation is sound up
+of the C stream library. We implementation is sound up
 to the unsafe features of C: type casts, variable-argument
 functions, and ill-defined pointer arithmetic. We currently
 make no attempt to track the e#ect of any of these features
@@ -906,13 +920,13 @@ on aliasing, except for the special case of type casting the
 result of malloc-like functions. In combination with a system
 for enforcing memory safety, such as CCured [21], our
 implementation would be sound.
-In our implementation, we do not allow strong updates
+In Our implementation, our do not allow strong updates
 on locations containing functions. This improves e#ciency
 because we never need to recompute S(C) lin (#)-weak updates
 will not add constraints between stores. Additionally,
 observe that allocations a#ect linearities but not types, and
 reads and writes a#ect types but not linearities. Thus in our
-implementation we also improve the precision of the analysis
+implementation our also improve the precision of the analysis
 by distinguishing read, write, and allocation e#ects. We
 omit details due to space constraints.
 The analysis results are presented to the user with an
@@ -939,10 +953,11 @@ where
 unlocked spinlock t
 We omit the function qualifier since it is irrelevant. The type
 of spin lock requires that the lock passed as the argument
-be unlocked (see the where clause) and changes it to locked
+be unlocked (see the where clause) and changes the argument
+be unlocked (see the where clause) to locked
 upon returning. The signature for spin unlock is the same
 with locked and unlocked exchanged.
-In practice we give spin lock this type signature by supplying
+In practice We give spin lock The signature for spin unlock by supplying
 Cqual with the following definition:
 void spin_lock($unlocked spinlock_t *lock) {
 $locked spinlock_t);
@@ -951,9 +966,10 @@ Here change type(x, t) is just like the assignment
 except that rather than give an explicit right-hand side we
 just give the type of the right-hand side. In this case the
 programmer needs to supply the body of spin lock because
-it is inline assembly code.
+the
+programmer is inline assembly code.
 Since our implementation currently lacks parametric poly-
-morphism, we inline calls to spin lock and spin unlock.
+morphism, our inline calls to spin lock and spin unlock.
 Using these type signatures we can check for three kinds
 of errors: deadlocks from acquiring a lock already held by
 the same thread, attempts to release a lock already released
@@ -965,17 +981,17 @@ A module must meet a well-specified kernel interface, which
 we model with a main function that non-deterministically
 calls all possible driver functions registered with the kernel.
 We also separately analyzed each of the 892 driver files
-making up the whole modules. In these experiments we
+making up the whole modules. In these experiments We
 removed the # qualifier so that locked and unlocked are
-incomparable, and we made optimistic assumptions about
+incomparable, and We made optimistic assumptions about
 the environment in which each file is invoked.
 We examined the results for 64 of the 513 whole device
 driver modules and for all of the 892 separately analyzed
 driver files. We found 14 apparently new locking bugs, including
 one which spans multiple files. In five of the apparent
 bugs a function tries to acquire a lock already held by
-a function above it in the call chain, leading to a deadlock.
-For example, the emu10k1 module contains a deadlock (we
+a function above a function in the call chain, leading to a deadlock.
+For example, A module contains a deadlock (we
 omit the void return
 emu10k1_mute_irqhandler(struct emu10k1_card *card) {
 struct patch_manager
@@ -989,7 +1005,7 @@ struct patch_manager
 Note that detecting this error requires interprocedural analysis
 
 One of our goals is to understand how often, and why,
-our system fails to type check real programs. We have categorized
+our system fails to type check real programs. our have categorized
 every type error in the separate file analysis of the
 driver files. In this experiment, of the 52 files that fail
 to type check, 11 files have locking bugs (sometimes more
@@ -1002,11 +1018,11 @@ In many cases the problem is that our alias analysis is not
 strong enough to type check the program. Another common
 class of type errors arises when locks are conditionally
 acquired and released. In this case, a lock is acquired if a
-predicate P is true. Before the lock is released, P is tested
-again to check whether the lock is held. Our system is not
-path sensitive, and our tool signals a type error at the point
-where the path on which the lock is acquired joins with the
-path on which the lock is not acquired (since we did not
+predicate P is true. Before a lock is released, P is tested
+again to check whether a lock is held. our system is not
+path sensitive, and Our tool signals a type error at the point
+where the path on which a lock is acquired joins with the
+path on which a lock is not acquired (since Our did not
 use # in these single file experiments-in the whole module
 analysis, this error is detected later on, when there is an attempt
 to acquire or release the lock in the # state). Most of
@@ -1019,9 +1035,9 @@ correct programs will not type check. As future work,
 we propose the following solution. The qualifier # represents
 an unknown state. We can use the information in the
 constraints to automatically insert coercions to and from #
-where needed. During execution these coercions perform
+where needed. During execution coercions perform
 runtime tests to verify locks are in the correct state. Thus,
-our approach can introduce dynamic type checking in situations
+We approach can introduce dynamic type checking in situations
 where we cannot prove safety statically.
 Of the 513 whole modules, 196 contain type errors, many
 of which are duplicates from shared code. We examined 64
@@ -1031,7 +1047,7 @@ of a location, but only one alias is actually used in the code
 of interest. Not surprisingly, larger programs, such as whole
 modules, have more problems with spurious aliasing than
 the optimistic single-file analysis. We added restrict annotations
-by hand to the 64 modules we looked at, including
+by hand to the 64 modules We looked at, including
 the emu10k1 module, which yielded the largest number of
 such false positives. Using restrict, we eliminated all of
 the false positives in these modules that occurred because
@@ -1064,13 +1080,13 @@ fopen may or may not succeed. The class of C stream
 library usage errors our tool can detect includes files used
 without having been opened and checked against NULL, files
 opened and then accessed in an incompatible mode, and files
-accessed after being closed. We omit the details due to space
+accessed after being closed. our omit the details due to space
 constraints.
-We tried our tool on two application programs, man-1.5h1
-and sendmail-8.11.6. We were primarily interested in the
+our tried our tool on two application programs, man-1.5h1
+and sendmail-8.11.6. our were primarily interested in the
 performance of our tool on a more complex application (see
-below), as we did not expect to find any latent stream library
-usage bugs in such mature programs. However, we did find
+below), as our did not expect to find any latent stream library
+usage bugs in such mature programs. However, our did find
 one minor bug in sendmail, in which an opened log file is
 never closed in some circumstances.
 5.3 Precision and Efficiency
@@ -1089,7 +1105,7 @@ generation and resolution described in Sections 3.3-
 3.4, including the linearity computation. In the graphs, the
 reported time and space for each phase includes the time
 and space for the previous phases.
-The graphs show that the space overhead of flow-sensitive
+the graphs show that the space overhead of flow-sensitive
 analysis is relatively small and appears to scale well to large
 modules. For all modules the space usage for the flow-sensitive
 analysis is within 31% of the space usage for the
@@ -1105,7 +1121,7 @@ e#ciently when checking C stream library usage.
 We have presented a system for extending standard type
 systems with flow-sensitive type qualifiers. We have given
 a lazy constraint resolution algorithm to infer type qualifier
-annotations and have shown that our analysis is e#ective
+annotations and have shown that We analysis is e#ective
 in practice by finding a number of new locking bugs in the
 7.
 
@@ -1159,7 +1175,7 @@ Efficient context-sensitive pointer analysis for C programs
 Better static memory management
 Static detection of dynamic memory errors
 A type system for Java bytecode subroutines
-Single and loving it
+Single and loving A type system for Java
 A simple, comprehensive type system for Java bytecode subroutines
 Typed memory management in a calculus of capabilities
 A theory of type qualifiers
@@ -1199,7 +1215,8 @@ Atsushi Igarashi , Naoki Kobayashi, Resource usage analysis, ACM Transactions on
 Naoki Kobayashi, Time regions and effects for resource usage analysis, ACM SIGPLAN Notices, v.38 n.3, March
 Atsushi Igarashi , Naoki Kobayashi, A generic type system for the Pi-calculus, Theoretical Computer Science, v.311 n.1-3, p.121-163, 23 January 2004
 J. Field , D. Goyal , G. Ramalingam , E. Yahav, Typestate verification: abstraction techniques and complexity results, Science of Computer Programming, v.58 n.1-2, p.57-82, October 2005
-system for resource protocol verification and its correctness proof, Proceedings of the 2004 ACM SIGPLAN symposium on Partial evaluation and semantics-based program manipulation, p.135-146, August 24-25, 2004, Verona, Italy
+system for resource protocol verification and October 2005
+ correctness proof, Proceedings of the 2004 ACM SIGPLAN symposium on Partial evaluation and semantics-based program manipulation, p.135-146, August 24-25, 2004, Verona, Italy
 Yitzhak Mandelbaum , David Walker , Robert Harper, An effective theory of type refinements, ACM SIGPLAN Notices, v.38 n.9, p.213-225, September
 Kevin W. Hamlen , Greg Morrisett , Fred B. Schneider, Certified In-lined Reference Monitoring on .NET, Proceedings of the 2006 workshop on Programming languages and analysis for security, June 10-10, 2006, Ottawa, Ontario, Canada
 Seth Hallem , Benjamin Chelf , Yichen Xie , Dawson Engler, A system and language for building system-specific, static analyses, ACM SIGPLAN Notices, v.37 n.5, May 2002
@@ -1218,8 +1235,8 @@ Polyvios Pratikakis , Jaime Spacco , Michael Hicks, Transparent proxies for java
 Jeffrey Fischer , Ranjit Jhala , Rupak Majumdar, Joining dataflow with predicates, ACM SIGSOFT Software Engineering Notes, v.30 n.5, September 2005
 Karl Chen , David Wagner, Large-scale analysis of format string vulnerabilities in Debian Linux, Proceedings of the 2007 workshop on Programming languages and analysis for security, June 14-14, 2007, San Diego, California, USA
 Matthew S. Tschantz , Michael D. Ernst, Javari: adding reference immutability to Java, ACM SIGPLAN Notices, v.40 n.10, October 2005
-Junfeng Yang , Paul Twohey , Dawson Engler , Madanlal Musuvathi, Using model checking to find serious file system errors, ACM Transactions on Computer Systems (TOCS), v.24 n.4, p.393-423, November 2006
-Madanlal Musuvathi , Dawson R. Engler, Model checking large network protocol implementations, Proceedings of the 1st conference on Symposium on Networked Systems Design and Implementation, p.12-12, March 29-31, 2004, San Francisco, California
+Junfeng Yang , Paul Twohey , Dawson Engler , Madanlal Musuvathi, Using Model checking to find serious file system errors, ACM Transactions on Computer Systems (TOCS), v.24 n.4, p.393-423, November 2006
+Madanlal Musuvathi , Dawson R. Engler, Model checking large network protocol implementations, Proceedings of the 1st conference on Symposium on Networked Systems Design and Implementation, p.12-12, March 29-31, 2004, San Francisco, California, USA
 Manuvir Das , Sorin Lerner , Mark Seigle, ESP: path-sensitive program verification in polynomial time, ACM SIGPLAN Notices, v.37 n.5, May 2002
 Nic Volanschi, Condate: a proto-language at the confluence between checking and compiling, Proceedings of the 8th ACM SIGPLAN symposium on Principles and practice of declarative programming, July 10-12, 2006, Venice, Italy
 Gregor Snelting , Torsten Robschink , Jens Krinke, Efficient path conditions in dependence graphs for software safety analysis, ACM Transactions on Software Engineering and Methodology (TOSEM), v.15 n.4, p.410-457, October 2006

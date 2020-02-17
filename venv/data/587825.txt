@@ -1,18 +1,19 @@
 --T
 A Fully Asynchronous Multifrontal Solver Using Distributed Dynamic Scheduling.
 --A
-In this paper, we analyze the main features and discuss the tuning of the algorithms for the direct solution of sparse linear systems on distributed memory computers developed in the context of a long term European research project. The algorithms use a multifrontal approach and are especially designed to cover a large class of problems. The problems can be symmetric positive definite, general symmetric, or unsymmetric matrices, both possibly rank deficient, and they can be provided by the user in several formats. The algorithms achieve high performance by exploiting parallelism coming from the sparsity in the problem and that available for dense matrices. The algorithms use a dynamic distributed task scheduling technique to accommodate numerical pivoting and to allow the migration of computational tasks to lightly loaded processors. Large computational tasks are divided into subtasks to enhance parallelism. Asynchronous communication is used throughout the solution process to efficiently overlap communication with computation.We illustrate our design choices by experimental results obtained on an SGI Origin 2000 and an IBM SP2 for test matrices provided by industrial partners in the PARASOL project.
+In this paper, we analyze the main features and discuss the tuning of the algorithms for the direct solution of sparse linear systems on distributed memory computers developed in the context of a long term European research project. the algorithms use a multifrontal approach and are especially designed to cover a large class of problems. problems can be symmetric positive definite, general symmetric, or unsymmetric matrices, both possibly rank deficient, and both can be provided by the user in several formats. the algorithms achieve high performance by exploiting parallelism coming from the sparsity in the problem and that available for dense matrices. the algorithms use a dynamic distributed task scheduling technique to accommodate numerical pivoting and to allow the migration of computational tasks to lightly loaded processors. Large computational tasks are divided into subtasks to enhance parallelism. Asynchronous communication is used throughout the solution process to efficiently overlap communication with computation.We illustrate We design choices by experimental results obtained on an SGI Origin 2000 and an IBM SP2 for test matrices provided by industrial partners in the PARASOL project.
 --B
 Introduction
 We consider the direct solution of large sparse linear systems on distributed memory computers.
-The systems are of the form A is an n \Theta n symmetric positive definite, general
+large sparse linear systems on distributed memory computers are of the form A is an n \Theta n symmetric positive definite, general
 symmetric, or unsymmetric sparse matrix that is possibly rank deficient, b is the right-hand
 side vector, and x is the solution vector to be computed.
 The work presented in this article, has been performed as Work Package 2:1 within the
 PARASOL Project. PARASOL is an ESPRIT IV Long Term Research Project (No 20160) for
-"An Integrated Environment for Parallel Sparse Matrix Solvers". The main goal of this Project,
+"An Integrated Environment for Parallel Sparse Matrix Solvers". The main goal of the
+PARASOL Project,
 which started on January 1996 and finishes in June 1999, is to build and test a portable library
-for solving large sparse systems of equations on distributed memory systems. The final library
+for solving large sparse systems of equations on distributed memory systems. a portable library
 will be in the public domain and will contain routines for both the direct and iterative solution
 of symmetric and unsymmetric systems.
 In the context of PARASOL, we have produced a MUltifrontal Massively Parallel Solver [27, 28]
@@ -27,11 +28,12 @@ ffl the capability of solving a wide range of problems, including symmetric, uns
 and rank-deficient systems using either LU or LDL T factorization.
 To address all these factors, we have designed a fully asynchronous algorithm based on a
 multifrontal approach with distributed dynamic scheduling of tasks. The current version of
-our package provides a large range of options, including the possibility of inputting the matrix
+we package provides a large range of options, including the possibility of inputting the matrix
 in assembled format either on a single processor or distributed over the processors. Additionally,
-the matrix can be input in elemental format (currently only on one processor). MUMPS can also
+the matrix
+in assembled format can be input in elemental format (currently only on one processor). MUMPS can also
 determine the rank and a null-space basis for rank-deficient matrices, and can return a Schur
-complement matrix. It contains classical pre- and postprocessing facilities; for example, matrix
+complement matrix. MUMPS contains classical pre- and postprocessing facilities; for example, matrix
 scaling, iterative refinement, and error analysis.
 Among the other work on distributed memory sparse direct solvers of which we are aware
 [7, 10, 12, 22, 23, 24], we do not know of any with the same capabilities as the MUMPS solver.
@@ -43,41 +45,43 @@ definite matrices. For unsymmetric matrices, Duff and Koster [18, 19] have desig
 to permute large entries onto the diagonal and have shown that this can significantly reduce
 numerical pivoting. Demmel and Li [12] have shown that, if one preprocesses the matrix using
 the code of Duff and Koster, static pivoting (with possibly modified diagonal values) followed
-by iterative refinement can normally provide reasonably accurate solutions. They have observed
+by iterative refinement can normally provide reasonably accurate solutions. one preprocesses the matrix using
+the code of Duff and Koster, static pivoting (with possibly modified diagonal values) followed
+by iterative refinement have observed
 that this preprocessing, in combination with an appropriate scaling of the input matrix, is a
-issue for the numerical stability of their approach.
+issue for the numerical stability of one preprocesses the matrix using
+the code of Duff and Koster, static pivoting (with possibly modified diagonal values) followed
+by iterative refinement approach.
 The rest of this paper is organized as follows. We first introduce some of the main terms
-used in a multifrontal approach in Section 2. Throughout this paper, we study the performance
-obtained on the set of test problems that we describe in Section 3. We discuss, in Section 4, the
-main parallel features of our approach. In Section 5, we give initial performance figures and we
+used in a multifrontal approach in Section 2. Throughout this paper, We study the performance
+obtained on the set of test problems that We describe in Section 3. We discuss, in Section 4, the
+main parallel features of We approach. In Section 5, We give initial performance figures and We
 show the influence of the ordering of the variables on the performance of MUMPS. In Section 6,
-we describe our work on accepting the input of matrices in elemental form. Section 7 then
+We describe We work on accepting the input of matrices in elemental form. Section 7 then
 briefly describes the main properties of the algorithms used for distributed assembled matrices.
 In Section 8, we comment on memory scalability issues. In Section 9, we describe and analyse
 the distributed dynamic scheduling strategies that will be further analysed in Section 10 where
-we show how we can modify the assembly tree to introduce more parallelism. We present a
-summary of our results in Section 11.
+we show how we can modify the assembly tree to introduce more parallelism. we present a
+summary of we results in Section 11.
 Most results presented in this paper have been obtained on the 35 processor IBM SP2
 located at GMD (Bonn, Germany). Each node of this computer is a 66 MHertz processor
 with 128 MBytes of physical memory and 512 MBytes of virtual memory. The SGI Cray
 Origin 2000 from Parallab (University of Bergen, Norway) has also been used to run some
-of our largest test problems. The Parallab computer consists of 64 nodes sharing 24 GBytes
+of our largest test problems. this computer consists of 64 nodes sharing 24 GBytes
 of physically distributed memory. Each node has two R10000 MIPS RISC 64-bit processors
 sharing 384 MBytes of local memory. Each processor runs at a frequency of 195 MHertz and
 has a peak performance of a little under 400 Mflops per second.
-All experiments reported in this paper use Version 4:0 of MUMPS. The software is written in
-Fortran 90. It requires MPI for message passing and makes use of BLAS [14, 15], LAPACK
+All experiments reported in this paper use Version 4:0 of MUMPS. this computer is written in
+Fortran 90. this computer requires MPI for message passing and makes use of BLAS [14, 15], LAPACK
 [6], BLACS [13], and ScaLAPACK [9] subroutines. On the IBM SP2, we are currently using a
 non-optimized portable local installation of ScaLAPACK, because the IBM optimized library
 PESSL V2 is not available.
 Multifrontal methods
-It is not our intention to describe the details of a multifrontal method. We rather just define
-terms used later in the paper and refer the reader to our earlier publications for a more detailed
+It is not we intention to describe the details of a multifrontal method. we rather just define
+terms used later in this paper and refer the reader to we earlier publications for a more detailed
 description, for example [3, 17, 20].
 In the multifrontal method, all elimination operations take place within dense submatrices,
-called frontal matrices. A frontal matrix can be partitioned as shown in Figure 1. In this
-matrix, pivots can be chosen from within the block F 11 only. The Schur complement matrix
-computed and used to update later rows and columns of the overall matrix.
+called frontal matrices. A frontal matrix can be partitioned as shown in Figure 1. In A frontal matrix, pivots can be chosen from within the block F 11 only. A frontal matrixcomputed and used to update later rows and columns of the overall matrix.
 We call this update matrix, the contribution block.
 fully summed rows -
 partly summed rows -
@@ -90,21 +94,23 @@ Figure
 The overall factorization of the sparse matrix using a multifrontal scheme can be described
 by an assembly tree, where each node corresponds to the computation of a Schur complement
 as just described, and each edge represents the transfer of the contribution block from the son
-node to the father node in the tree. This father node assembles (or sums) the contribution
-blocks from all its son nodes with entries from the original matrix. If the original matrix is
+node to the father node in the tree. the father node assembles (or sums) the contribution
+blocks from all the contribution
+ son nodes with entries from the original matrix. If the original matrix is
 given in assembled format, complete rows and columns of the input matrix are assembled at
 once, and, to facilitate this, the input matrix is ordered according to the pivot order and stored
-as a collection of arrowheads. That is, if the permuted matrix has entries in, for example,
+as a collection of arrowheads. That is, if the input matrix has entries in, for example,
 columns of row of column
 the arrowhead list associated with variable i is
 g. In the symmetric
-case, only entries from the lower triangular part of the matrix are stored. We say that we
-are storing the matrix in arrowhead form or by arrowheads. For unassembled matrices,
+case, only entries from the lower triangular part of the input matrix are stored. We say that We
+are storing the input matrix in arrowhead form or by arrowheads. For unassembled matrices,
 complete element matrices are assembled into the frontal matrices and the input matrix need
 not be preprocessed.
 In our implementation, the assembly tree is constructed from the symmetrized pattern of
 the matrix and a given sparsity ordering. By symmetrized pattern, we mean the pattern of
-the matrix A+A T where the summation is symbolic. Note that this allows the matrix to be
+the matrix A+A T where the summation is symbolic. Note that this allows the pattern of
+the matrix A+A T where the summation is symbolic to be
 unsymmetric.
 Because of numerical pivoting, it is possible that some variables cannot be eliminated from
 a frontal matrix. The fully summed rows and columns that correspond to such variables are
@@ -117,23 +123,23 @@ structure and in general introduces additional (numerical) fill-in in the factor
 An important aspect of the assembly tree is that operations at a pair of nodes where neither
 is an ancestor of the other are independent. This gives the possibility for obtaining parallelism
 from the tree (so-called tree parallelism). For example, work can commence in parallel on all
-the leaf nodes of the tree. Fortunately, near the root node of the tree, where the tree parallelism
+the leaf nodes of the assembly tree. Fortunately, near the root node of the tree, where the tree parallelism
 is very poor, the frontal matrices are usually much larger and so techniques for exploiting
 parallelism in dense factorizations can be used (for example, blocking and use of higher Level
 BLAS). We call this node parallelism. We discuss further aspects of the parallelism of the
-multifrontal method in later sections of this paper. Our work is based on our experience
+multifrontal method in later sections of this paper. We work is based on We experience
 of designing and implementing a multifrontal scheme on shared and virtual shared memory
 computers (for example, [2, 3, 4]) and on an initial prototype distributed memory multifrontal
-version [21]. We describe the design of our resulting distributed memory multifrontal algorithm
+version [21]. We describe the design of We resulting distributed memory multifrontal algorithm
 in the rest of this paper.
 3 Test problems
-Throughout this paper, we will use a set of test problems to illustrate the performance of our
-algorithms. We describe the set in this section.
+Throughout this paper, We will use a set of test problems to illustrate the performance of our
+algorithms. We describe a set of test problems in this section.
 In
 
 Tables
 
-1 and 2, we list our unassembled and assembled test problems, respectively.
+1 and 2, We list We unassembled and assembled test problems, respectively.
 All except one come from the industrial partners of the PARASOL Project. The remaining
 matrix, bbmat, is from the forthcoming Rutherford-Boeing Sparse Matrix Collection [16]. For
 symmetric matrices, we show the number of entries in the lower triangular part of the matrix.
@@ -141,7 +147,7 @@ Typical PARASOL test cases are from the following major application areas: compu
 fluid dynamics (CFD), structural mechanics, modelling compound devices, modelling ships
 and mobile offshore platforms, industrial processing of complex non-Newtonian liquids, and
 modelling car bodies and engine components. Some test problems are provided in both
-assembled format and elemental format. The suffix (rsa or rse) is used to differentiate them.
+assembled format and elemental format. The suffix (rsa or rse) is used to differentiate Some test problems.
 For those in elemental format, the original matrix is represented as a sum of element matrices
 where each A i has nonzero entries only in those rows and columns that correspond to variables
 in the ith element. Because element matrices may overlap, the number of entries of a matrix
@@ -177,12 +183,13 @@ technique (referred to as ND). These hybrid orderings were generated using ONMET
 or a combination of the graph partitioning tool SCOTCH [29] with a variant of AMD (Halo-
 AMD, see [30]). For matrices available in both assembled and unassembled format, we used
 nested dissection based orderings provided by Det Norske Veritas and denote these by MFR.
-Note that, in this paper, it is not our intention to compare the packages that we used to obtain
+Note that, in this paper, it is not we intention to compare the packages that we used to obtain
 the orderings; we will only discuss the influence of the type of ordering on the performance of
 MUMPS (in Section 5).
-The AMD ordering algorithms are tightly integrated within the MUMPS code; the other
-orderings are passed to MUMPS as an externally computed ordering. Because of this tight
-integration, we observe in Table 3 that the analysis time is smaller using AMD than some
+AMD (Halo-
+AMD ordering algorithms are tightly integrated within the MUMPS code; These hybrid orderings are passed to MUMPS as an externally computed ordering. Because of this tight
+integration, we observe in Table 3 that the analysis time is smaller using AMD (Halo-
+AMD than some
 Real Unsymmetric Assembled (rua)
 Matrix name Order No. of entries Origin
 mixing-tank 29957 1995041 Polyflow S.A.
@@ -247,8 +254,9 @@ and unassembled (rse) formats (MFR ordering).
 4 Parallel implementation issues
 In this paper, we assume a one-to-one mapping between processes and processors in our
 distributed memory environment. A process will thus implicitly refer to a unique processor
-and, when we say for example that a task is allocated to a process, we mean that the task is
-also mapped onto the corresponding processor.
+and, when we say for example that a task is allocated to a process, we mean that a task is
+also mapped onto a unique processor
+.
 As we did before in a shared memory environment [4], we exploit parallelism both arising
 from sparsity (tree parallelism) and from dense factorizations kernels (node parallelism). To
 avoid the limitations due to centralized scheduling, where a host process is in charge of
@@ -256,33 +264,34 @@ scheduling the work of the other processes, we have chosen a distributed schedul
 In our implementation, a pool of work tasks is distributed among the processes that participate
 in the numerical factorization. A host process is still used to perform the analysis phase (and
 identify the pool of work tasks), distribute the right-hand side vector, and collect the solution.
-Our implementation allows this host process to participate in the computations during the
+our implementation allows A host process to participate in the computations during the
 factorization and solution phases. This allows the user to run the code on a single processor
 and avoids one processor being idle during the factorization and solution phases.
 The code solves the system in three main steps:
 1. Analysis. The host performs an approximate minimum degree ordering based on the
 symmetrized matrix pattern A carries out the symbolic factorization. The
 ordering can also be provided by the user. The host also computes a mapping of the nodes
-of the assembly tree to the processors. The mapping is such that it keeps communication
+of the assembly tree to the processors. a mapping of the nodes
+of the assembly tree is such that a mapping of the nodes
+of the assembly tree keeps communication
 costs during factorization and solution to a minimum and balances the memory and
 computation required by the processes. The computational cost is approximated by the
 number of floating-point operations, assuming no pivoting is performed, and the storage
-cost by the number of entries in the factors. After computing the mapping, the host
-sends symbolic information to the other processes. Using this information, each process
-estimates the work space required for its part of the factorization and solution. The
+cost by the number of entries in the factors. After computing the mapping, The hostsends symbolic information to the other processes. Using symbolic information, each process
+estimates the work space required for each process
+ part of the factorization and solution. The
 estimated work space should be large enough to handle the computational tasks that
 were assigned to the process at analysis time plus possible tasks that it may receive
 dynamically during the factorization, assuming that no excessive amount of unexpected
 fill-in occurs due to numerical pivoting.
 2. Factorization. The original matrix is first preprocessed (for example, converted to
-arrowhead format if the matrix is assembled) and distributed to the processes that will
+arrowhead format if The original matrix is assembled) and distributed to the processes that will
 participate in the numerical factorization. Each process allocates an array for contribution
 blocks and factors. The numerical factorization on each frontal matrix is performed by
 a process determined by the analysis phase and potentially one or more other processes
 that are determined dynamically. The factors must be kept for the solution phase.
-3. Solution. The right-hand side vector b is broadcast from the host to the other processes.
-They compute the solution vector x using the distributed factors computed during the
-factorization phase. The solution vector is then assembled on the host.
+3. Solution. The right-hand side vector b is broadcast from The host to the other processes.
+the other processes compute the solution vector x using the distributed factors computed during the solution phase. the solution vector is then assembled on The host.
 4.1 Sources of parallelism
 We consider the condensed assembly tree of Figure 2, where the leaves represent subtrees of the
 assembly tree.
@@ -298,14 +307,15 @@ Figure
 2: Distribution of the computations of a multifrontal assembly tree over the four
 processors P0, P1, P2, and P3.
 If we only consider tree parallelism, then the transfer of the contribution block from a node
-in the assembly tree to its father node requires only local data movement when the nodes
-are assigned to the same process. Communication is required when the nodes are assigned
+in the assembly tree to the assembly tree father node requires only local data movement when the nodes
+are assigned to the same process. Communication is required when the nodes
+ are assigned
 to different processes. To reduce the amount of communication during the factorization and
 solution phases, the mapping computed during the analysis phase assigns a subtree of the
 assembly tree to a single process. In general, the mapping algorithm chooses more leaf subtrees
 than there are processes and, by mapping these subtrees carefully onto the processes, we achieve
 a good overall load balance of the computation at the bottom of the tree. We have described
-this in more detail in [5]. However, if we exploit only tree parallelism, the speedups are very
+this in more detail in [5]. However, if We exploit only tree parallelism, the speedups are very
 disappointing. Obviously it depends on the problem, but typically the maximum speedup is no
 more than 3 to 5 as illustrated in Table 6. This poor performance is caused by the fact that
 the tree parallelism decreases while going towards the root of the tree. Moreover, it has been
@@ -318,11 +328,11 @@ of type 1 and the parallelism of the assembly tree will be referred to as type 1
 Further parallelism is obtained by a one-dimensional (1D) block partitioning of the rows of
 the frontal matrix for nodes with a large contribution block (see Figure 2). Such nodes will
 be referred to as nodes of type 2 and the corresponding parallelism as type 2 parallelism.
-Finally, if the frontal matrix of the root node is large enough, we partition it in a two-dimensional
+Finally, if the frontal matrix of the root node is large enough, we partition the frontal matrix of the root node is large enough in a two-dimensional
 (2D) block cyclic way. The parallel root node will be referred to as a node of type 3 and the
 corresponding parallelism as type 3 parallelism.
 4.2 Type 2 parallelism
-During the analysis phase, a node is determined to be of type 2 if the number of rows in its
+During the analysis phase, a node is determined to be of type 2 if the number of rows in a node
 contribution block is sufficiently large. If a node is of type 2, one process (called the master)
 holds all the fully summed rows and performs the pivoting and the factorization on this block
 while other processes (called slaves) perform the updates on the partly summed rows (see
@@ -340,11 +350,13 @@ scheduling of computational tasks, but requires some extra storage. This is stud
 detail in Section 8. (Note that for a type 1 node, the original matrix entries need only be present
 on the process handling this node.)
 At execution time, the master of a type 2 node first receives symbolic information describing
-the structure of the contribution blocks of its son nodes in the tree. This information is sent
-by the (master) processes handling the sons. Based on this information, the master determines
-the exact structure of its frontal matrix and decides which slave processes will participate in
-the factorization of the node. It then sends information to the processes handling the sons to
-enable them to send the entries in their contribution blocks directly to the appropriate processes
+the structure of the contribution blocks of the master of a type 2 node son nodes in the tree. symbolic information describing
+the structure of the contribution blocks of its son nodes in the tree is sent
+by the (master) processes handling the sons. Based on symbolic information describing
+the structure of the contribution blocks of its son nodes in the tree, the master of a type 2 node determines
+the exact structure of the master of a type 2 node frontal matrix and decides which slave processes will participate in
+the factorization of the node. the node then sends information to the processes handling the sons to
+enable the sons to send the entries in the sons contribution blocks directly to the appropriate processes
 involved in the type 2 node. The assemblies for this node are subsequently performed in parallel.
 The master and slave processes then perform the elimination operations on the frontal matrix
 in parallel. Macro-pipelining based on a blocked factorization of the fully summed rows is used
@@ -359,32 +371,34 @@ we use ScaLAPACK [9] or the vendor equivalent implementation (routine PDGETRF fo
 general matrices and routine PDPOTRF for symmetric positive definite matrices) for the actual
 factorization.
 Currently, a maximum of one root node, chosen during the analysis, is processed in parallel.
-The node chosen will be the largest root provided its size is larger than a computer dependent
-parameter (otherwise it is factorized on only one processor). One process (also called the master)
+The node chosen will be the largest root provided The node chosen size is larger than a computer dependent
+parameter (otherwise The node chosen is factorized on only one processor). One process (also called the master)
 holds all the indices describing the structure of the root frontal matrix.
 We call the root node, as determined by the analysis phase, the estimated root node.
 Before factorization, the structure of the frontal matrix of the estimated root node is statically
-mapped onto a 2D grid of processes. This mapping fully determines to which process an entry
+mapped onto a 2D grid of processes. the mapping fully determines to which process an entry
 of the estimated root node is assigned. Hence, for the assembly of original matrix entries
-and contribution blocks, the processes holding this information can easily compute exactly the
+and contribution blocks, the processes holding symbolic information describing
+the structure of the contribution blocks of its son nodes in the tree can easily compute exactly the
 processes to which they must send data to.
-In the factorization phase, the original matrix entries and the part of the contribution blocks
-from the sons corresponding to the estimated root can be assembled as soon as they are available.
-The master of the root node then collects the index information for all the delayed variables
-(due to numerical pivoting) of its sons and builds the final structure of the root frontal matrix.
-This symbolic information is broadcast to all processes that participate in the factorization. The
-contributions corresponding to delayed variables are then sent by the sons to the appropriate
+In the analysis phase (, the original matrix entries and the part of the contribution blocks
+from the sons corresponding to the estimated root can be assembled as soon as the sons corresponding to the estimated root are available.
+The master of the estimated root node then collects the index information for all the delayed variables
+(due to numerical pivoting) of The master of the root node sons and builds the final structure of the root frontal matrix.
+the index information for all the delayed variables
+(due to numerical pivoting) of its sons is broadcast to all processes that participate in the factorization. The
+contributions corresponding to delayed variables are then sent by its sons to the appropriate
 processes in the 2D grid for assembly (or the contributions can be directly assembled locally if
 the destination is the same process). Note that, because of the requirements of ScaLAPACK,
 local copying of the root node is required since the leading dimension will change if there are
 any delayed pivots.
 4.4 Parallel triangular solution
-The solution phase is also performed in parallel and uses asynchronous communications both
+the analysis phase ( is also performed in parallel and uses asynchronous communications both
 for the forward elimination and the back substitution. In the case of the forward elimination,
 the tree is processed from the leaves to the root, similar to the factorization, while the back
 substitution requires a different algorithm that processes the tree from the root to the leaves.
 A pool of ready-to-be-activated tasks is used. We do not change the distribution of the factors
-as generated in the factorization phase. Hence, type 2 and 3 parallelism are also used in the
+as generated in the analysis phase (. Hence, type 2 and 3 parallelism are also used in the
 solution phase. At the root node, we use ScaLAPACK routine PDGETRS for general matrices
 and routine PDPOTRS for symmetric positive definite matrices.
 5 Basic performance and influence of ordering
@@ -401,8 +415,8 @@ with minimum degree based orderings. We thus gain by using nested dissection bec
 both a reduction in the number of floating-point operations (see Tables 3 and 4) and a better
 balanced assembly tree.
 We now discuss the performance obtained with MUMPS on matrices in assembled format that
-will be used as a reference for this paper. The performance obtained on matrices provided in
-elemental format is discussed in Section 6. In Tables 7 and 8, we show the performance of
+will be used as a reference for this paper. the performance obtained with MUMPS on matrices in assembled format that
+will be used as a reference for this paper is discussed in Section 6. In Tables 7 and 8, we show the performance of
 MUMPS using nested dissection and minimum degree orderings on the IBM SP2 and the SGI
 Origin 2000, respectively. Note that speedups are difficult to compute on the IBM SP2 because
 memory paging often occurs on a small number of processors. Hence, the better performance
@@ -422,7 +436,8 @@ Table
 Influence of the ordering on the time (in seconds) and speedup for the
 factorization phase, using only type 1 parallelism, on 32 processors of the IBM SP2.
 When the memory was not large enough to run on one processor, an estimate of the Megaflop
-rate was used to compute the uniprocessor CPU time. (This estimate was also used, when
+rate was used to compute the uniprocessor CPU time. (an estimate of the Megaflop
+rate was also used, when
 necessary, to compute the speedups in Table 6.) On a small number of processors, there can
 still be a memory paging effect that may significantly increase the elapsed time. However, the
 speedup over the elapsed time on one processor (not given) can be considerable.
@@ -445,7 +460,7 @@ estimated CPU time on one processor; - means not enough memory.
 Table
 
 8 also shows the elapsed time for the solution phase; we observe that the speedups
-for this phase are quite good.
+for the solution phase are quite good.
 In the remainder of this paper, we will use nested dissection based orderings, unless stated
 otherwise.
 Factorization phase
@@ -479,9 +494,10 @@ contains, by definition, all the variables adjacent to any fully summed variable
 a consequence, element matrices need not be split during the assembly process. Note that, for
 classical fan-in and fan-out approaches [7], this property does not hold since the positions of
 the element matrices to be assembled are not restricted to fully summed rows and columns.
-The main modifications that we had to make to our algorithms for assembled matrices to
+The main modifications that we had to make to we algorithms for assembled matrices to
 accommodate unassembled matrices lie in the analysis, the distribution of the matrix, and the
-assembly process. We will describe them in more detail below.
+assembly process. We will describe unassembled matrices lie in the analysis, the distribution of the matrix, and the
+assembly process in more detail below.
 In the analysis phase, we exploit the elemental format of the matrix to detect supervariables.
 We define a supervariable as a set of variables having the same list of adjacent elements. This
 is illustrated in Figure 3 where the matrix is composed of two overlapping elements and has three
@@ -524,8 +540,7 @@ Figure
 Graph size is twice the number of off-diagonal entries in the corresponding assembled matrix.
 The working space required by the analysis phase using the AMD ordering is dominated by
 the space required by the ordering phase and is Graph size plus an overhead that is a small
-multiple of the order of matrix. Since the ordering is performed on a single processor, the space
-required to compute the ordering is the most memory intensive part of the analysis phase. With
+multiple of the order of matrix. Since the ordering is performed on a single processor, The working space required by the analysis phase using the AMD orderingrequired to compute the ordering is the most memory intensive part of the analysis phase. With
 supervariable detection, the complete uncompressed graph need not be built since the ordering
 phase can operate directly on the compressed graph. Table 9 shows that, on large graphs,
 compression can reduce the memory requirements of the analysis phase dramatically.
@@ -550,7 +565,7 @@ x104.rse 6.4 (3.5) 1.5 (0.3)
 Table
 
 10: Impact of supervariable detection on the time (in seconds) for the analysis
-phase on the SGI Origin 2000. The time spent in the AMD ordering is in parentheses.
+phase on the SGI Origin 2000. The time spent in the ordering is in parentheses.
 The overall time spent in the assembly process for matrices in elemental format will differ
 from the overall time spent in the assembly process for the equivalent assembled matrix.
 Obviously, for the matrices in elemental format there is often significantly more data to assemble
@@ -562,7 +577,7 @@ data will be assembled at or near leaf nodes in the assembly tree. This has two 
 The assemblies are performed in a more distributed way and most assemblies of original element
 matrices are done at type 1 nodes. (Hence, less duplication of original matrix data is necessary.)
 A more detailed analysis of the duplication issues linked to matrices in elemental format will be
-addressed in Section 8. In our experiments (not shown here), we have observed that, despite the
+addressed in Section 8. In our experiments (not shown here), our have observed that, despite the
 differences in the assembly process, the performance of MUMPS for assembled and unassembled
 problems is very similar, provided the same ordering is used. The reason for this is that the extra
 amount of assemblies of original data for unassembled problems is relatively small compared to
@@ -597,14 +612,15 @@ Table
 the SGI Origin 2000. MFR ordering is used.
 7 Distributed assembled matrix
 The distribution of the input matrix over the available processors is the main preprocessing
-step in the numerical factorization phase. During this step, the input matrix is organized into
+step in the numerical factorization phase. During the main preprocessing
+step in the numerical factorization phase, Matrix is organized into
 arrowhead format and distributed according to the mapping provided by the analysis phase. In
 the symmetric case, the first arrowhead of each frontal matrix is also sorted to enable efficient
-assembly [5]. If the assembled matrix is initially held centrally on the host, we have observed
+assembly [5]. If Matrix is initially held centrally on the host, we have observed
 that the time to distribute the real entries of the original matrix can sometimes be comparable
 to the time to perform the actual factorization. For example, for matrix oilpan, the time to
-distribute the input matrix on 16 processors of the IBM SP2 is on average 6 seconds whereas
-the time to factorize the matrix is 6.8 seconds (using AMD ordering, see Table 7). Clearly,
+distribute Matrix on 16 processors of the IBM SP2 is on average 6 seconds whereas
+the time to factorize Matrix is 6.8 seconds (using AMD ordering, see Table 7). Clearly,
 for larger problems where more arithmetic is required for the actual factorization, the time for
 factorization will dominate the time for redistribution.
 With a distributed input matrix format we can expect to reduce the time for the
@@ -612,7 +628,7 @@ redistribution phase because we can parallelize the reformatting and sorting tas
 can use asynchronous all-to-all (instead of one-to-all) communications. Furthermore, we can
 expect to solve larger problems since storing the complete matrix on one processor limits the
 size of the problem that can be solved on a distributed memory computer. Thus, to improve
-both the memory and the time scalability of our approach, we should allow the input matrix
+both the memory and the time scalability of our approach, our should allow the input matrix
 to be distributed.
 Based on the static mapping of the tasks to processes that is computed during the analyis
 phase, one can a priori distribute the input data so that no further remapping is required at
@@ -621,18 +637,18 @@ limit the communication to duplications of the original matrix corresponding to 
 (further studied in Section 8).
 To show the influence of the initial matrix distribution on the time for redistribution, we
 compare, in Figure 4, three ways for providing the input matrix:
-1. Centralized mapping: the input matrix is held on one process (the host).
-2. MUMPS mapping: the input matrix is distributed over the processes according to the static
+1. Centralized mapping: Matrix is held on one process (the host).
+2. MUMPS mapping: Matrix is distributed over the processes according to the static
 mapping that is computed during the analysis phase.
-3. Random mapping: the input matrix is uniformly distributed over the processes in a
+3. Random mapping: Matrix is uniformly distributed over the processes in a
 random manner that has no correlation to the mapping computed during the analysis
 phase.
-The figure clearly shows the benefit of using asynchronous all-to-all communications (required
+Figure 4 clearly shows the benefit of using asynchronous all-to-all communications (required
 by the MUMPS and random mappings) compared to using one-to-all communications (for the
 centralized mapping). It is even more interesting to observe that distributing the input matrix
 according to the MUMPS mapping does not significantly reduce the time for redistribution.
 We attribute this to the good overlapping of communication with computation (mainly data
-reformatting and sorting) in our redistribution algorithm.
+reformatting and sorting) in We redistribution algorithm.
 Number of Processors1357
 Distribution
 time
@@ -649,8 +665,9 @@ In this section, we study the memory requirements and memory scalability of our 
 
 Figure
 
-5 illustrates how MUMPS balances the memory load over the processors. The figure
-shows, for two matrices, the maximum memory required on a processor and the average over
+5 illustrates how MUMPS balances the memory load over the processors. Figure
+
+5shows, for two matrices, the maximum memory required on a processor and the average over
 all processors, as a function of the number of processors. We observe that, for varying numbers
 of processors, these values are quite similar.
 Number of Processors50150250
@@ -677,7 +694,8 @@ Figure
 Table
 
 13 shows the average size per processor of the main components of the working space
-used during the factorization of the matrix bmw3 2. These components are:
+used during the factorization of the matrix bmw3 2. the main components of the working space
+used during the factorization of the matrix are:
 ffl Factors: the space reserved for the factors; a processor does not know after the analysis
 phase in which type 2 nodes it will participate, and therefore it reserves enough space to
 be able to participate in all type 2 nodes.
@@ -721,7 +739,7 @@ are split among processors until a minimum granularity is reached. Therefore, wh
 the number of processors, we decrease (until reaching this minimum granularity) the size of the
 contribution blocks sent between processors. Note that on larger problems, the average size
 per processor of the communication buffers will continue to decrease for a larger number of
-processors. We see, as expected, that the line Other does not scale at all since it corresponds
+processors. We see, as expected, that the line Other does not scale at all since the line Other corresponds
 to data arrays of size O(n) that need to be allocated on each process. We see that this space
 significantly affects the difference between Total and ideal, especially for larger numbers of
 processors. However, the relative influence of this fixed size area will be smaller on large matrices
@@ -753,18 +771,18 @@ Table
 14: The amount of duplication due to type 2 nodes. "Total entries" is the sum
 of the number of original matrix entries over all processors (\Theta10 3 ). The number of
 nodes is also given.
-the type 2 node. During the assembly process, the master process would then be in charge
+the type 2 node. During the assembly process, the assembly process would then be in charge
 of redistributing the original data to the slave processes. This strategy introduces extra
 communication costs during the assembly of a type 2 node and thus has not been chosen.
 With the approach based on duplication, the master process responsible for a type 2 node has
 all the flexibility to choose collaborating processes dynamically since this will not involve any
-data migration of the original matrix. However, the extra cost of this strategy is that, based on
+data migration of the original matrix. However, the extra cost of This strategy is that, based on
 the decision during analysis of which nodes will be of type 2, partial duplication of the original
 matrix must be performed.
 In order to keep all the processors busy, we need to have sufficient node parallelism near the
 root of the assembly tree, MUMPS uses a heuristic that increases the number of type 2 nodes with
 the number of processors used. The influence of the number of processors on the amount of
-duplication is shown in Table 14. On a representative subset of our test problems, we show the
+duplication is shown in Table 14. On a representative subset of our test problems, our show the
 total number of type 2 nodes and the sum over all processes of the number of original matrix
 entries and duplicates. If there is only one processor, type 2 nodes are not used and no data
 is duplicated. Figure 6 shows, for four matrices, the number of original matrix entries that are
@@ -798,16 +816,17 @@ type 2 node, we have designed a two-phase assembly process. Let Inode be a node 
 let Pmaster be the process to which Inode is initially mapped. In the first phase, the (master)
 processes to which the sons of Inode are mapped, send symbolic data (integer lists) to Pmaster.
 When the structure of the frontal matrix is determined, Pmaster decides a partitioning of the
-frontal matrix and chooses the slave processes. It is during this phase that Pmaster will collect
-information concerning the load of the other processors to help in its decision process. The
-slave processes are informed that a new task has been allocated to them. Pmaster then sends
+frontal matrix and chooses the slave processes. It is during the first phase that Pmaster will collect
+information concerning the load of the other processors to help in Pmaster decision process. the slave processes are informed that a new task has been allocated to the slave processes. Pmaster then sends
 the description of the distribution of the frontal matrix to all collaborative processes of all
-sons of Inode so that they can send their contribution blocks (real values) in pieces directly
-to the correct processes involved in the computation of Inode. The assembly process is thus
+sons of Inode so that all
+sons of Inode can send all
+sons of Inode contribution blocks (real values) in pieces directly
+to the correct processes involved in the computation of Inode. the assembly process is thus
 fully parallelized and the maximum size of a message sent between processes is reduced (see
 Section 8).
 A pool of tasks private to each process is used to implement dynamic scheduling. All tasks
-ready to be activated on a given process are stored in the pool of tasks local to the process.
+ready to be activated on a given process are stored in the pool of tasks local to a given process.
 Each process executes the following algorithm:
 Algorithm 1
 while ( not all nodes processed )
@@ -821,22 +840,25 @@ endif
 while
 Note that the algorithm gives priority to message reception. The main reasons for this
 choice are first that the message received might be a source of additional work and parallelism
-and second, the sending process might be blocked because its send buffer is full (see [5]). In
+and second, the sending process might be blocked because the sending process send buffer is full (see [5]). In
 the actual implementation, we use the routine MPI IPROBE to check whether a message is
 available.
-We have implemented two scheduling strategies. In the first strategy, referred to as cyclic
+we have implemented two scheduling strategies. In the first strategy, referred to as cyclic
 scheduling, the master of a type 2 node does not take into account the load on the other
-processors and performs a simple cyclic mapping of the tasks to the processors. In the
-second strategy, referred to as (dynamic) flops-based scheduling, the master process uses
-information on the load of the other processors to allocate type 2 tasks to the least loaded
+processors and performs a simple cyclic mapping of the tasks to the other
+processors. In the
+second strategy, referred to as (dynamic) flops-based scheduling, the assembly process uses
+information on the load of the other
+processors to allocate type 2 tasks to the other
 processors. The load of a processor is defined here as the amount of work (flops) associated
 with all the active or ready-to-be-activated tasks. Each process is in charge of maintaining local
-information associated with its current load. With a simple remote memory access procedure,
+information associated with Each process current load. With a simple remote memory access procedure,
 using for example the one-sided communication routine MPI GET included in MPI-2, each
 process has access to the load of all other processors when necessary. However, MPI-2 is not
-available on our target computers. To overcome this, we have designed a module based only
+available on our target computers. To overcome this, our have designed a module based only
 on symmetric communication tools (MPI asynchronous send and receive). Each process is in
-charge of both updating and broadcasting its local load. To control the frequency of these
+charge of both updating and broadcasting 
+ local load. To control the frequency of these
 broadcasts, an updated load is broadcast only if it is significantly different from the last load
 broadcast.
 When the initial static mapping does not balance the work well, we can expect that the
@@ -902,16 +924,19 @@ son
 Figure
 
 7: Tree before and after the subdivision of a frontal matrix with a large pivot block.
-In this figure, we consider an initial node of size NFRONT with NPIV pivots. We replace
-this node by a son node of size NFRONT with NPIV son pivots, and a father node of size
+In Figure 7.3571
+ASSEMBLY TREE
+, we consider an initial node of size NFRONT with NPIV pivots. we replace
+an initial node of size NFRONT with NPIV pivots NFRONT with NPIV son pivots, and a father node of size
 son , with NPIV father = NPIV \GammaNPIV son pivots. Note that by splitting a node,
 we increase the number of operations for factorization, because we add assembly operations.
 Nevertheless, we expect to benefit from splitting because we increase parallelism.
-We experimented with a simple algorithm that postprocesses the tree after the symbolic
-factorization. The algorithm considers only nodes near the root of the tree. Splitting large
+we experimented with a simple algorithm that postprocesses the tree after the symbolic
+factorization. a simple algorithm that postprocesses the tree after the symbolic
+factorization considers only nodes near the root of the tree. Splitting large
 nodes far from the root, where sufficient tree parallelism can already be exploited, would only
 lead to additional assembly and communication costs. A node is considered for splitting only if
-its distance to the root, that is, the number edges between the root and the node, is not more
+A node distance to the root, that is, the number edges between the root and the node, is not more
 than
 Let Inode be a node in the tree, and d(Inode) the distance of Inode to the root. For all
 nodes Inode such that d(Inode)  dmax , we apply the following algorithm.
@@ -927,11 +952,11 @@ endif
 endif
 Algorithm 2 is applied to a node only when NFRONT - NPIV/2 is large enough because
 we want to make sure that the son of the split node is of type 2. (The size of the contribution
-block of the son will be NFRONT - NPIV son .) A node is split only when the amount of
-work for the master (W master ) is large relative to the amount of work for a slave (W slave ). To
+block of the son of the split node will be NFRONT - NPIV son .) A node is split only when the amount of
+work for W master is large relative to the amount of work for a slave (W slave ). To
 reduce the amount of splitting further away from the root, we add, at step 3 of the algorithm,
-a relative factor to W slave . This factor depends on a machine dependent parameter
-and increases with the distance of the node from the root. Parameter p allows us to control
+a relative factor to W slave . a relative factor to W slave depends on a machine dependent parameter
+and increases with the distance of A node from the root. Parameter p allows us to control
 the general amount of splitting. Finally, because the algorithm is recursive, we may divide the
 initial node into more than two new nodes.
 The effect of splitting is illustrated in Table 17 on both the symmetric matrix crankseg 2
@@ -1009,7 +1034,7 @@ dynamic scheduling) and will be developed in the future.
 
 Acknowledgements
 
-We are grateful to Jennifer Scott and John Reid for their comments on an early version of this
+We are grateful to Jennifer Scott and John Reid for Jennifer Scott and John Reid comments on an early version of this
 paper.
 
 

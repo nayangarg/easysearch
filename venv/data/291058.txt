@@ -1,7 +1,7 @@
 --T
 Value speculation scheduling for high performance processors.
 --A
-Recent research in value prediction shows a surprising amount of predictability for the values produced by register-writing instructions. Several hardware based value predictor designs have been proposed to exploit this predictability by eliminating flow dependencies for highly predictable values. This paper proposed a hardware and software based scheme for value speculation scheduling (VSS). Static VLIW scheduling techniques are used to speculate value dependent instructions by scheduling them above the instructions whose results they are dependent on. Prediction hardware is used to provide value predictions for allowing the execution of speculated instructions to continue. In the case of miss-predicted values, control flow is redirected to patch-up code so that execution can proceed with the correct results. In this paper, experiments in VSS for load operations in the SPECint95 benchmarks are performed. Speedup of up to 17% has been shown for using VSS. Empirical results on the value predictability of loads, based on value profiling data, are also provided.
+Recent research in value prediction shows a surprising amount of predictability for the values produced by register-writing instructions. Several hardware based value predictor designs have been proposed to exploit this predictability by eliminating flow dependencies for highly predictable values. This paper proposed a hardware and software based scheme for value speculation scheduling (VSS). Static VLIW scheduling techniques are used to speculate value dependent instructions by scheduling Static VLIW scheduling techniques above the instructions whose results Static VLIW scheduling techniques are dependent on. Prediction hardware is used to provide value predictions for allowing the execution of speculated instructions to continue. In the case of miss-predicted values, control flow is redirected to patch-up code so that execution can proceed with the correct results. In This paper, experiments in VSS for load operations in the SPECint95 benchmarks are performed. Speedup of up to 17% has been shown for using VSS. Empirical results on the value predictability of loads, based on value profiling data, are also provided.
 --B
 INTRODUCTION
 Modern microprocessors extract instruction level
@@ -18,22 +18,24 @@ predictable using various value predictors: last-value,
 stride, context-based, two-level, or hybrid predictors. This
 work illustrates that value speculation in future high
 performance processors will be useful for breaking flow
-dependencies, thereby exposing more ILP. This paper
+dependencies, thereby exposing ILP. This paper
 examines ISA, hardware and compiler synergies for
 exploiting value speculation. Results indicate that this
 synergy enhances performance on difficult, integer
 benchmarks.
 Prior work in value speculation utilizes hardware-only
-schemes (e.g. [2], [3]). In these schemes, the instruction
+schemes (e.g. [2], [3]). In hardware-only
+schemes (e.g. [2], [3]), the instruction
 address (PC) of a register-writing instruction is sent to a
 value predictor to index a prediction table at the beginning
 of the fetch stage. The prediction is generated during the
 fetch and dispatch stages, then forwarded to dependent
-instructions prior to their execution stages. A value-
+instructions prior to dependent
+instructions execution stages. A value-
 speculative dependent instruction must remain in a
-reservation station (even while its own execution
+reservation station (even while speculative dependent instruction own execution
 continues), and be prevented from retiring, until verification
-of its predicted value. The predicted value is compared
+of speculative dependent instruction predicted value. The predicted value is compared
 with the actual result at the state-update stage. If the
 prediction is correct, dependent instructions can then
 release reservation stations, update system states, and retire.
@@ -160,7 +162,9 @@ Figure
 3(b), the value speculation scheduler breaks the
 flow dependence from instruction I3 to I4. Instructions I4,
 I5 and I6 now form a separate dependence chain, allowing
-their execution to be speculated during scheduling. They
+Instructions I4,
+I5 and I6 execution to be speculated during scheduling. Instructions I4,
+I5 and I6
 become instructions I4' I5' and I6', respectively. An
 operand of instruction I4' is modified from R4 to R8.
 Register R8 contains the value prediction for destination
@@ -170,7 +174,7 @@ instruction I3 into register R8. When the prediction is
 incorrect (R8-R4), instruction I9, UDPRED, updates the
 value predictor with the actual result of the predicted
 instruction, from register R4. Note that the resulting
-UDPRED instruction is part of patch-up code and its
+UDPRED instruction is part of patch-up code and patch-up code
 execution is only required when a value is miss-predicted.
 To ensure correct program execution, the compiler inserts
 the branch instruction, I8, after the store instruction, I6', to
@@ -200,11 +204,10 @@ dependence chains suitable for value prediction and
 then re-ordering code aggressively.
 . Value-speculative dependent instructions can execute
 as early as possible before the predicted instruction that
-they depend.
-. The compiler controls the number of predicted values
-and assigns different indices to them for accessing the
-prediction table. Only instructions that the compiler
-deems are good candidates for predictions are then
+Value-speculative dependent instructions depend.
+. the compiler controls the number of predicted values
+and assigns different indices to Value-speculative dependent instructions for accessing the
+prediction table. Only instructions that the compilerdeems are good candidates for predictions are then
 predicted, reducing conflicts for the hardware.
 . Patch-up code is automatically generated, reducing the
 need for elaborate hardware recovery techniques.
@@ -228,7 +231,7 @@ The remainder of this paper is organized as follows: Section
 2 examines the value predictor design for value speculation
 scheduling. Section 3 introduces the VSS algorithm.
 Section 4 presents experimental results of VSS. Section 5
-concludes the paper and mentions future work.
+concludes this paper and mentions future work.
 2. VALUE PREDICTOR DESIGN
 Microarchitectural support for value speculation scheduling
 (VSS) is in the form of special-purpose value predictor
@@ -254,7 +257,7 @@ finite state machines, history information, or machine flags,
 depending on the prediction method employed. The old
 state block hardware is a duplicate of the current state block
 hardware. Predictions are generated by the prediction
-hardware with input from the current state block. Various
+hardware with input from The current state block. Various
 prediction mechanisms can be used. For example,
 generating the prediction as the last value (last value
 predictors [2], [3]). Or, generating the prediction as the
@@ -275,22 +278,21 @@ Both the LDPRED and UDPRED instructions contain an
 immediate operand that specifies the value predictor table
 index. In general (independent of the prediction hardware
 chosen) the LDPRED instruction performs three actions.
-The compiler assigned number indexes each action. First,
+the compiler assigned number indexes each action. First,
 the prediction hardware generates the predicted value by
-using input from the current state block. Second, current
-state information is shifted to the old state block. Last, the
-current state block is updated based on the predicted value
+using input from The current state block. Second, current
+state information is shifted to the old state block. Last, the old state block is updated based on the predicted value
 from the prediction hardware. Information used by the
 prediction hardware is updated simultaneously with the
 current state block update. Note that for the LDPRED
 instruction, the predicted value is used to update the current
 state block speculatively.
-The compiler assigned number also indexes the operation
+the compiler assigned number also indexes the operation
 of the UDPRED instruction. When the value prediction is
 incorrect, the patch-up basic block of Figure 3(b) must be
 executed. The execution of UDPRED instructions only
 occurs in patch-up code, or only when values are miss-
-predicted. The UDPRED instruction causes the update of
+predicted. the UDPRED instruction causes the update of
 both the current state block and the prediction hardware
 with the actual computed value and the old state block.
 If the compiler can ensure that each LDPRED/UDPRED
@@ -353,7 +355,7 @@ incorrect. Both saturating counters and predictors are
 updated for each prediction, regardless of which prediction
 is actually selected. The hybrid predictor selects the
 predictor with the maximum saturating counter value. In
-the event of a tie, the hybrid predictor favors the prediction
+the event of a tie, The hybrid predictor favors the prediction
 from the two-level predictor. Prediction accuracy results
 for the three value predictors will be presented in section 4.
 3. VALUE SPECULATION SCHEDULING
@@ -402,24 +404,29 @@ control and value speculation. A data dependence graph is
 then constructed for each treegion. In step four, a threshold
 of prediction accuracy is used to determine whether or not
 to perform value speculation on each instruction. For each
-instruction, the scheduler queries the value profiling
-information to get the estimate of its predictability. If the
+instruction, The scheduler
+ queries the value profiling
+information to get the estimate of The scheduler
+ predictability. If the
 predictability estimate is greater than the threshold, value
 prediction is performed. For aggressive scheduling, more
 instructions can be speculated by choosing a low threshold.
 Suggested values for the threshold are derived from
 experimental results in section 4.
 When an instruction is selected for value prediction, a
-LDPRED instruction is inserted directly after it. The
+LDPRED instruction is inserted directly after an instruction. a
 LDPRED instruction has an immediate value that is
-assigned by the scheduler to be its chosen index into the
+assigned by The scheduler
+ to be a
+LDPRED instruction chosen index into the
 value predictor. A new register is also assigned as the
 destination of the LDPRED instruction. Once the new
 destination register has been chosen for the LDPRED
 instruction, any dependent instruction(s) need to update
-their source register(s) to reflect the new dependence on the
+their source register(s) to reflect the new dependence on a
 LDPRED instruction. Only the first dependent instruction
-in a chain of dependent instructions needs to update its
+in a chain of dependent instructions needs to update Only the first dependent instruction
+in a chain of dependent instructions
 register source, the remaining dependencies in the chain are
 1. Perform Value Profiling
 2. Perform Region Formation
@@ -444,15 +451,16 @@ prediction.
 In step seven, a branch to patch-up code is inserted for
 repairing miss-predictions. Only one branch per data value
 prediction is required and the scheduler determines where
-this branch is inserted. Once the location of the branch is
+a branch to patch-up code is inserted. Once the location of a branch to patch-up code is
 set, all instructions in all dependence chains between the
-predicted instruction and the branch to patch-up code are
+predicted instruction and a branch to patch-up code to patch-up code are
 candidates for value-speculative execution. It is therefore
 desirable to schedule any of these instructions above the
 predicted instruction. Actual hardware resources will
 restrict the ability to speculatively execute these candidates
 for value speculation. Also, as all candidates for value
-speculation are duplicated in patch-up code, their number
+speculation are duplicated in patch-up code, all candidates for value
+speculation number
 directly affects the penalty for miss-prediction. These
 factors affect the scheduler's decision on where to place the
 branch to patch-up code.
@@ -460,9 +468,10 @@ In step eight, patch-up code is created for repairing miss-
 predictions. The patch-up code contains the UDPRED
 instruction, a copy of each candidate for value-speculative
 execution, and an unconditional jump back to the
-instruction following the branch to patch-up code. The
-UDPRED instruction uses the same immediate value,
-assigned by the scheduler, as its corresponding LDPRED
+instruction following a branch to patch-up code to patch-up code. the
+instruction following the branch to patch-up code uses the same immediate value,
+assigned by the scheduler, as the
+instruction following the branch to patch-up code corresponding LDPRED
 instruction for indexing the value predictor. The other
 source operand for the UDPRED instruction is the
 destination register of the predicted instruction (the actual
@@ -473,7 +482,8 @@ Finally, in steps ten and eleven, the data dependence graph
 is updated to reflect the changes and treegion scheduling is
 performed. Because of the machine resource restrictions
 and dependencies, not all candidates for value speculation
-are speculated above the predicted instruction. Section 4
+are speculated above the
+instruction following the branch to patch-up code. Section 4
 shows the results of using different threshold values for
 determining when to do value speculation.
 4. EXPERIMENTAL RESULTS
@@ -491,7 +501,7 @@ C code. Executing the resultant C code generates value
 profiling data.
 For the experiments in value speculation scheduling (VSS),
 load instructions are filtered as targets for value
-speculation. Load instructions are selected because they are
+speculation. Load instructions are selected because Load instructions are
 usually in critical paths and have long latencies. Value
 profiling for load instructions is performed on all programs.
 
@@ -558,11 +568,12 @@ scope of this paper and left for future work. During value
 profiling, after every execution of a load instruction, the
 simulated prediction is compared with the actual value to
 determine prediction accuracy. The value predictor
-simulators are updated with actual values, as they would be
+simulators are updated with actual values, as The value predictor
+simulators would be
 in hardware, to prepare for the prediction of the next use.
 Each entry for the stride value predictor used has two fields,
 the stride, the current value. The prediction is always the
-current value plus the stride. The stride equals the
+current value plus the stride. the stride equals the
 difference between the most recent current values. The
 stride value predictor always generates a prediction. No
 finite state machine hardware is required to determine if a
@@ -618,7 +629,7 @@ prediction accuracy of 90%. For 124.m88ksim, 45% of the
 static loads have prediction accuracy 90%, representing
 most of the dynamic load instructions. For 129.compress,
 70% of the static loads have prediction accuracy of 90%.
-These loads are excellent candidates for VSS. Such high
+the static loads are excellent candidates for VSS. Such high
 prediction accuracy results in low overhead due to the
 execution of patch-up code. However, for benchmarks
 099.go and 132.ijpeg respectively, only 15% and 25% of
@@ -657,7 +668,7 @@ Load
 134.perl
 147.vortex
 dynamic load instructions have prediction accuracy above
-50%. Therefore, they will not gain much performance
+50%. Therefore, 50% will not gain much performance
 benefit from VSS.
 The VSS algorithm of Figure 7 is performed on the
 programs of SPECint95. Prediction accuracy threshold
@@ -677,14 +688,14 @@ and floating-point divide (three cycles). The LEGO
 compiler statically schedules the programs of SPECint95.
 The scheduler uses treegion formation [10] to increase the
 scheduling scope by including a tree-like structure of basic
-blocks in a single, non-linear region. The compiler
-performs control speculation, which allows operations to be
+blocks in a single, non-linear region. The LEGO
+compilerperforms control speculation, which allows operations to be
 scheduled above branches. Universal functional units that
 execute all operation types are assumed. An eight universal
 unit (8-U) machine model is used. All functional units are
 fully pipelined, with an integer latency of 1 cycle and a load
 latency of 2 cycles. Program execution time is measured by
-using the schedule length of each region and its execution
+using the schedule length of each region and each region execution
 profile weight. The effects of instruction and data cache are
 ignored, and perfect branch prediction is assumed in an
 effort to determine the maximum potential benefits of VSS.
@@ -717,7 +728,8 @@ threshold of 50%. For 129.compress, the step in the
 distribution of dynamic loads from 80% to 70% is reflected
 in a corresponding step in speedup. Performance gains for
 126.gcc are more reflective of the large number of dynamic
-load operations than of their predictability. Penalties for
+load operations than of Performance gains for
+126.gcc predictability. Penalties for
 miss-prediction at the lower thresholds reduce speedup for
 126.gcc. Benchmark 130.li, with a distribution of dynamics
 loads similar to 126.gcc, has lower performance due to
@@ -746,7 +758,9 @@ cycles.
 5. CONCLUSIONS AND FUTURE WORK
 This paper presents value speculation scheduling (VSS), a
 new technique for exploiting the high predictability of
-register-writing instructions. This technique leverages
+register-writing instructions. This paper presents value speculation scheduling (VSS), a
+new technique for exploiting the high predictability of
+register-writing instructions leverages
 advantages of both hardware schemes for value prediction
 and compiler schemes for exposing ILP. Dynamic value
 prediction is used to enable aggressive static schedules in
@@ -761,7 +775,8 @@ operations in critical paths. Available functional unit
 resources and remaining data dependencies affect the
 ability to improve the static schedule and the penalty for
 patch-up code. VSS should also be applied to operations
-other than loads based on their predictability and potential
+other than loads based on operations
+ predictability and potential
 benefit to speedup. How many candidates for value-
 speculative execution (dependent instructions between the
 predicted instruction and the branch to patch-up code) to
@@ -778,7 +793,7 @@ IBM, Intel and the National Science Foundation under
 MIP-9625007.
 We would like to thank Bill Havanki, Sumedh Sathaye,
 Sanjeev Banerjia, and other members in the Tinker group.
-We also thank the anonymous reviewers for their valuable
+We also thank the anonymous reviewers for the anonymous reviewers valuable
 comments.
 7.
 

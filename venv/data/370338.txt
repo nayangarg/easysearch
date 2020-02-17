@@ -1,7 +1,7 @@
 --T
 Partial Evaluation of Views.
 --A
-Many database applications and environments, such as mediation over heterogeneous database sources and data warehousing for decision support, lead to complex queries. Queries are often nested, defined over previously defined views, and may involve unions. There are good reasons why one might want to remove pieces (sub-queries or sub-views) from such queries: some sub-views of a query may be effectively cached from previous queries, or may be materialized views&semi; some may be known to evaluate empty, by reasoning over the integrity constraints&semi; and some may match protected queries, which for security cannot be evaluated for all users.In this paper, we present a new evaluation strategy with respect to queries defined over views, which we call tuple-tagging, that allows for an efficient removal of sub-views from the query. Other approaches to this are to rewrite the query so the sub-views to be removed are effectively gone, then to evaluate the rewritten query. With the tuple tagging evaluation, no rewrite of the original query is necessary.We describe formally a discounted query (a query with sub-views marked that are to be considered as removed), present the tuple tagging algorithm for evaluating discounted queries, provide an analysis of the algorithm's performance, and present some experimental results. These results strongly support the tuple-tagging algorithm both as an efficient means to effectively remove sub-views from a view query during evaluation, and as a viable optimization strategy for certain applications. The experiments also suggest that rewrite techniques for this may perform worse than the evaluation of the original query, and much worse than the tuple tagging approach.
+Many database applications and environments, such as mediation over heterogeneous database sources and data warehousing for decision support, lead to complex queries. Queries are often nested, defined over previously defined views, and may involve unions. There are good reasons why one might want to remove pieces (sub-queries or sub-views) from such queries: some sub-views of a query may be effectively cached from previous queries, or may be materialized views&semi; some may be known to evaluate empty, by reasoning over the integrity constraints&semi; and some may match protected queries, which for security cannot be evaluated for all users.In this paper, we present a new evaluation strategy with respect to queries defined over views, which we call tuple-tagging, that allows for an efficient removal of sub-views from the query. Other approaches to this are to rewrite the query so the sub-views to be removed are effectively gone, then to evaluate the rewritten query. With the tuple tagging evaluation, no rewrite of the original query is necessary.We describe formally a discounted query (a query with sub-views marked that are to be considered as removed), present the tuple tagging algorithm for evaluating discounted queries, provide an analysis of the algorithm's performance, and present some experimental results. some experimental results strongly support the tuple-tagging algorithm both as an efficient means to effectively remove sub-views from a view query during evaluation, and as a viable optimization strategy for certain applications. The experiments also suggest that rewrite techniques for this may perform worse than the evaluation of the original query, and much worse than the tuple tagging approach.
 --B
 Introduction
 1.1 Motivation and Objectives
@@ -28,14 +28,14 @@ e
 Figure
 
 1: The AND/OR tree representation of the original query.
-What does it mean to remove unfoldings from a query? The modified query should not subsume-and thus
+What does it mean to remove unfoldings from a query? a query should not subsume-and thus
 when evaluated should never evaluate-the removed unfoldings, but should subsume "everything" else of
 the original query.
-In case 1, one might want to separate out certain unfoldings, because they can be evaluated much less
+In case 1, one might want to separate out certain unfoldings, because certain unfoldings can be evaluated much less
 expensively, and in a networked, distributed environment be evaluated locally. Then, a "remainder query"
 can be evaluated independently to find the remaining answers [5]. If the remainder query is less expensive
-to evaluate than the original, this is an optimization. In case 2, the unfoldings are free to evaluate, since it
-is known in advance that they must evaluate empty. In case 3, when some unfoldings are protected, it does
+to evaluate than the original, this is an optimization. In case 2, the unfoldings are free to evaluate, since the unfoldings
+is known in advance that they must evaluate empty. In case 3, when some unfoldings are protected, some unfoldings does
 not mean that the "rest" of the query cannot be safely evaluated. In case 4, when a user is asking a series of
 queries, he or she may just be interested in the stream of answers returned. So any previously seen answers
 are no longer of interest. In case 5, except queries might be optimized by this technique.
@@ -57,10 +57,10 @@ from Academic Units A, Employees E, Benefits B
 where A.did=E.did and E.eid=B.eid and B.provider="Blue Cross"
 Query Q can be represented as a parse tree of its relational algebra representation, which is an AND/OR
 tree, as shown in Figure 1 (we ignore for brevity explicit representation of project and select operations).
-Evaluating the query-in the order of operations as specified in its relational algebra representation-is
+Evaluating the query-in the order of operations as specified in operations relational algebra representation-is
 equivalent to materializing all nodes of the query tree. This type of evaluation (and representation) is
 referred to as bottom-up.
-Now assume that the the following query F has been asked before and its result is stored in cache.
+Now assume that the the following query F has been asked before and F result is stored in cache.
 select E.eid
 from Departments D, Faculty F, Life Ins L
 where D.did=F.did and F.eid=L.eid and L.provider="Blue Cross"
@@ -68,10 +68,9 @@ where D.did=F.did and F.eid=L.eid and L.provider="Blue Cross"
 Figure
 
 2: The AND/OR tree representation of the modified query.
-Equivalently, we can assume that this formula represents a materialized view or that it matches a protected
+Equivalently, we can assume that this formula represents a materialized view or that this formula matches a protected
 query whose answers should not be displayed. If F is a protected query, then the join expression
-it computes should not be evaluated. Thus, it has to be eliminated from the query. Otherwise, if F
-is a cached query or a materialized view, it may still be beneficial to "remove" it from the query. We
+it computes should not be evaluated. Thus, it has to be eliminated from the query. Otherwise, if Fis a cached query or a materialized view, it may still be beneficial to "remove" it from the query. We
 call the result of this a discounted query.
 One way to achieve this is to rewrite Q as a union of joins over base tables, then to remove the
 join represented by F (which then is explicitly present), and finally to evaluate the remaining join
@@ -101,16 +100,17 @@ In this paper, we present a new strategy for partial evaluation of queries defin
 tuple-tagging, which offers many advantages over explicit query rewrites.
 ffl Tuple-tagging is easily implemented at the logical level, and can be accomplished by rewriting the SQL
 expression of the query.
-ffl The technique is modular: it can be implemented independently of other optimization stages (in
+ffl The technique is modular: The technique can be implemented independently of other optimization stages (in
 particular, of traditional relational database query optimization) to work in conjunction with the other
 stages.
-ffl Tuple-tagging is not an algebraic rewrite of the query: it preserves the query tree as is, and thus scales
+ffl Tuple-tagging is not an algebraic rewrite of the query: Tuple-tagging preserves the query tree as is, and thus scales
 up for complex queries.
-ffl The tuple-tagging is interleaved with query evaluation. Thus, reliable heuristics can be devised and
+ffl Tuple-tagging is interleaved with query evaluation. Thus, reliable heuristics can be devised and
 employed to decide step-wise whether a given "optimization" step should be applied.
-The paper is organized as follows. Section 2 presents a formal framework for discounted queries (that section
+this paper is organized as follows. Section 2 presents a formal framework for discounted queries (that section
 can be skipped on the first reading). Section 3 presents a tuple-tagging technique for evaluating discounted
-queries. Performance analysis of the technique, and experimental results over a TPC/D benchmark database
+queries. Performance analysis of a tuple-tagging technique for evaluating discounted
+queries, and experimental results over a TPC/D benchmark database
 in DB2, are presented in Section 4. Section 5 concludes with issues and future work.
 1.2 Related Work
 There is a substantial body of research in rewrite based query optimization [4, 6, 7, 19]. However, all of
@@ -120,14 +120,14 @@ query (view) from which an unfolding has been removed. Thus, the resulting query
 original query.
 The problem we address is also different from the problem of answering queries using materialized views [2,
 14, 16, 20]. In the latter problem, the goal is to replace subqueries of a query by views (or other queries)
-to generate a query equivalent or contained in the original query. Our goal, again, is to remove, or more
+to generate a query equivalent or contained in the original query. the goal, again, is to remove, or more
 precisely to avoid evaluating, parts of a query for optimization or security reasons.
-The work that is most closely related to our work here is [15], in which the authors consider queries that
-involve nested union operations. They propose a technique for rewriting such queries, when it is known that
+The work that is most closely related to Our work here is [15], in which the authors consider queries that
+involve nested union operations. the authors propose a technique for rewriting such queries, when a technique for rewriting such queries is known that
 some of the joins evaluated as part of the query are empty. The technique applies, however, only to a simple
 class of queries, and no complexity issues are addressed.
 Another research area related to our problem is multiple query optimization [21]. The goal here is to optimize
-evaluation of a set of queries, rather than a single query. Since the queries in the set are arbitrary, they may
+evaluation of a set of queries, rather than a single query. Since the queries in the set are arbitrary, the queries in the set are arbitrary may
 not be related in any structured way to allow use of the techniques that we propose here. The developed
 techniques for multiple query optimization are focused towards finding and reusing common subexpressions
 across collections of queries and are heuristics-based.
@@ -135,14 +135,14 @@ The problem of query tree rewrites for the purpose of optimization has also been
 of deductive databases with recursion. In [12], the problem of detecting and eliminating redundant subgoal
 occurrences in proof trees generated by programs in the presence of functional dependencies is discussed. In
 [13], the residue method of [1] is extended to recursive queries.
-We investigated the computational complexity of query rewrites in [10]. We showed that the optimal rewrite
-of a query is NP-hard. We also identified a special class of queries and unfoldings for which rewrites result
+our investigated the computational complexity of query rewrites in [10]. We showed that the optimal rewrite
+of a query is NP-hard. our also identified a special class of queries and unfoldings for which rewrites result
 is a simpler query, thus always providing an optimization.
 Discounted Queries
-In this section, we formally define the notion of an unfolding and a discounted query. For preciseness, we use
-the notation of Datalog [24]. We will write a query as a set of atoms, to be interpreted as a conjunction of
+In this section, we formally define the notion of an unfolding and a discounted query. For preciseness, our use
+the notation of Datalog [24]. our will write a query as a set of atoms, to be interpreted as a conjunction of
 the atoms. For instance, fa; e; bg represents the query of Example 1. 1 Some of the atoms may be intensional;
-that is, they are written with view predicates defined over base table predicates and, perhaps, other views.
+that is, Some of the atoms are written with view predicates defined over base table predicates and, perhaps, other views.
 Definition 2. Given query sets Q and U , call U a 1-step unfolding of query set Q with respect to database
 DB iff, given some q i 2 Q and a rule ha / b defining a view for a, such that q i ' j a' (for
 most general unifier ' [17]), then
@@ -201,8 +201,8 @@ We discuss more formally the semantics of discounted queries in [8].
 
 Overview
 
-Our strategy is a bottom-up materialization strategy for the query tree with the union and join operations
-modified to account for the discounted unfoldings. The strategy ensures two things:
+we strategy is a bottom-up materialization strategy for the query tree with the union and join operations
+modified to account for the discounted unfoldings. Our strategy ensures two things:
 ffl that tuples resulting from an unfolding-to-discount do not contribute to the answer set of the discounted
 query; and
 ffl any join represented by an unfolding-to-discount is never fully evaluated.
@@ -213,22 +213,21 @@ evaluation.
 Our proposed method, tuple-tagging, is to keep extra information in the temporary tables created during
 the materialization of the query tree. In essence, each table will have an extra column for each unfolding-to-
 discount. The domain of these tag columns is boolean. The value of a tag column for a given tuple is true
-when that tuple is derived from the corresponding unfolding-to-discount; it is false otherwise. During each
+when a given tuple is derived from the corresponding unfolding-to-discount; a given tuple is false otherwise. During each
 union or join operation (which creates a new temporary table), these tag columns' values must be maintained
 properly.
 Example 6. Consider query Q of Example 1. Query F , which represents the unfolding-to-discount, is a
 join of Departments, Faculty and Life Ins. For each of these tables, a new column CF is added
-and its values initialized to true. Similarly, for tables Institutes, Staff, and Health Ins which are
-unioned with the above tables, the same column is added and its values initialized to false.
+and a new column CF values initialized to true. Similarly, for tables Institutes, Staff, and Health Ins which are
+unioned with the above tables, the same column is added and the same column values initialized to false.
 By keeping this derivation information for each tuple during evaluation, we can easily ensure the first property
 from above: after evaluation of the query, select those tuples which have all false values in the tag columns
 (and also project away the tag columns). We shall be able further to use the tag columns-and ultimately
-satisfy our second property-to determine during a join operation which tuples should be joined, and which
+satisfy We second property-to determine during a join operation which tuples should be joined, and which
 should not be (because the resulting tuple would be "from" an unfolding-to-discount). The computation
 saved will primarily depend on the size of the true section in the table.
 We present the evaluation strategy in two versions. The simpler version ensures only the first property;
-that is, the final answer set contains no tuples that arise solely from unfoldings-to-discount. The strategy
-is useful in the case when unfoldings are removed for security reasons. It does little, however, to optimize
+that is, the final answer set contains no tuples that arise solely from unfoldings-to-discount. the evaluation strategyis useful in the case when unfoldings are removed for security reasons. the evaluation strategy does little, however, to optimize
 query evaluation: gross savings are equal to the difference in the cost of writing back the results of the
 original query versus the cost of writing back the results of the discounted query (which can sometimes be
 new tag columns on a need-by basis.
@@ -251,7 +250,11 @@ in TB to false.
 Union TLN and TRN to create TN .
 Algorithm 1: The Modified Union Operation
 significantly smaller). These savings can only be substantial when query results are sent over a network. The
-second version removes the tuples-to-discount during query evaluation, as soon as is possible. This strategy
+second version removes the tuples-to-discount during query evaluation, as soon as is possible. The Tuple-Tagging Evaluation Strategy
+3.1
+
+Overview
+
 can reduce the cost of query evaluation. Both versions of the algorithm require modifying the union and
 join operations. This is what we define next.
 3.2 The Modified Union Operation
@@ -268,7 +271,7 @@ we introduce new columns, CU i
 as the tag columns corresponding to the unfoldings-to-
 discount (as described in Example 6).
 We assume for any well-formed query tree that the tables to be unioned at any union step are union-
-compatible. With our addition of tag columns, this could now be violated. The two tables to be unioned
+compatible. With We addition of tag columns, this could now be violated. The two tables to be unioned
 may not be union-compatible over the tag columns. Thus, we need to modify the union step first to make
 the tables union-compatible by adding any tag columns that are needed. Algorithm 1 shows this. This is
 the only way in which we need to modify the union step.
@@ -277,18 +280,21 @@ values not before, but during the execution of the union operator. As we show in
 little overhead to the cost of the query execution.
 3.3 The Modified Join Operation
 We must assign the correct values to tag columns of joined tables. If a tuple results from the join of one
-tuple which was derived under a given unfolding-to-discount U (hence the value of its CU is true), and a
-second tuple which was not (hence the value of its CU is false), then the resulting tuple is not in the answer
-set of U . So CU for the resulting tuple should have the value false. Only when both tuples being joined
+tuple which was derived under a given unfolding-to-discount U (hence the value of a tuple results from the join of one
+tuple which was derived under a given unfolding-to-discount U CU is true), and a
+second tuple which was not (hence the value of its CU is false), then a tuple is not in the answer
+set of U . So CU for a tuple should have the value false. Only when both tuples being joined
 were derived under U should the resulting tuple's column CU be set to true. Thus, tags are conjunctively
 combined.
 Let N be a join node in a query tree for which the children are LN and RN and let U be an unfoldings-to-
-discount with the tag column CU in both tables TLN and TRN . The modified join operation executed at
+discount with the tag column CU in both tables TLN and TRN . The Modified Join Operation
+ executed at
 node N is modified by adding the following assignment statement 2 for each unfolding-to-discount U :
 Example 7. Consider the final join of the query of Example 1. The three joined tables, Academic Units,
 Employees, Benefits will each contain an extra column, CF , storing the values for the unfolding-
 to-discount F . This column has been introduced during the execution of the union operations (as
-described in Algorithm 1). The query with the modified join operation is as follows.
+described in Algorithm 1). The query with The Modified Join Operation
+ is as follows.
 select E.eid, (A.CF AND E.CF AND B.CF ) as CF
 from Academic Units A, Employees E, Benefits B
 where A.did=E.did and E.eid=B.eid and B.provider="Blue Cross"
@@ -336,7 +342,7 @@ As stated in Section 3.1, removing tuples-to-discount from the final query answe
 optimization described above does not, in general, improve efficiency of query evaluation. For complex
 queries, however, such removal can be executed during query evaluation; that is, before the final answer set
 is produced. In other words, we can push some of the selects for false over the tag columns further down in
-the query tree. This constitutes the tuple-tagging algorithm in its second version. Consider the following
+the query tree. This constitutes the tuple-tagging algorithm in This second version. Consider the following
 example.
 Example 9. Let the query be as in Example 1 and the unfolding-to-discount be (marked as (2)
 in
@@ -350,7 +356,7 @@ evaluating Academic Units 1 Employees. Some tuples in the result of that join wi
 true for the column C G (see Figure 4). Now, all tuples in the table for Benefits have the value true
 for that column (because the table is a part of the unfolding-to-discount G). Thus, all of the tuples
 marked true in the result of the join Academic Units 1 Employees will remain true after the join
-with Benefits, hence will be removed from the final query answer set. 3 If so, they can be eliminated as
+with Benefits, hence will be removed from the final query answer set. 3 If so, so can be eliminated as
 soon as Academic Units 1 Employees is evaluated. Note that this provides optimization because
 the size of one of the tables in the input to the final join decreases. The gross savings achieved through
 this optimization can be estimated to the cost of the join of the result of Institutes 1 Staff with
@@ -364,7 +370,7 @@ discount G in Example 9. Of course, the root of a query tree is a closing node f
 Next, we prove a theorem that specifies a method of identifying closing nodes in a query tree.
 Theorem 11. Unfolding U is closed by node N with respect to binary query tree QT if every node in U
 that cannot be reached from the root of QT through join nodes only, is in the subtree rooted by N .
-Proof. Consider the nodes of U that do not lie under N . None of these nodes contain a column for U and
+Proof. Consider the nodes of U that do not lie under N . None of the nodes of U that do not lie under N contain a column for U and
 since none of these tables will be used in a union (because there are join nodes only between these
 nodes and the query tree root) such columns will never be created for the tuples from these tables.
 Hence, no tuple in the table represented by the node N could contribute to a change in the value in
@@ -386,8 +392,8 @@ the modification of union and join operations;
 2. to compare the performance of tuple-tagging versus query rewrite techniques in eliminating unfoldings-
 to-discount; and
 3. to evaluate the optimization of query execution through tuple-tagging.
-We used TPC/D benchmark database of size 100MB for our experiments (for details on this benchmark
-see [23]) installed on DB2 in Windows-NT. In order to be able to define views with unions, we modified
+our used TPC/D benchmark database of size 100MB for our experiments (for details on this benchmark
+see [23]) installed on DB2 in Windows-NT. In order to be able to define views with unions, our modified
 slightly the TPC/D schema. Thus, the three tables Supplier, Partsupp, and Lineitem, which are base
 tables in the TPC/D schema, have been partitioned horizontally in half, and new base tables representing
 each of the sub-tables (Supplier1 and Supplier2, and so forth) have been created. Then, views Supplier-
@@ -422,13 +428,13 @@ g.
 Note that Q 2 and Q have exactly the same structure as, respectively, Q and QnfFg of Example 1.
 Similarly, has the same structure as QnfGg of Example 9.
 Since DB2 does not support boolean data types, we used integers (0 and 1) for tags, and we used multiplication
-instead of logical AND for their manipulation. For example, the query Q evaluated under
+instead of logical AND for instead manipulation. For example, the query Q evaluated under
 the tuple-tagging strategy has the following form:
 select *
 from Supplier-v S, Partsupp-v P, Lineitem-v L
 where S.suppkey=P.suppkey and P.partkey=L.partkey and P.suppkey=L.suppkey
 and S.tag1 * P.tag1 *
-Here tag1 and tag2 stand for tags for U 1 and U 3 respectively, and their values have been set up in the
+Here tag1 and tag2 stand for tags for U 1 and U 3 respectively, and tag1 and tag2 values have been set up in the
 definitions of the views Supplier-v, Partsupp-v, and Lineitem-v.
 
 Table
@@ -518,7 +524,7 @@ the above formula for
 2. Assume that the formula holds for n unfoldings-to-discount. We show it holds for
 A tuple is discounted when are considered in one of the following
 cases:
-a. It would have been discounted when only n unfoldings-to-discount were considered.
+a. it would have been discounted when only n unfoldings-to-discount were considered.
 b. It is discounted because it is in the answer set of the n 1-st unfolding-to-discount.
 The probability of 2a is given by the induction hypothesis as:
 Q2 Q2nfU1g Q2nfU2g
@@ -528,17 +534,17 @@ Figure
 Comparison of execution times (s) of the original query and queries evaluated with tuple-tagging.
 The probability of 2b is a conditional probability that the tuple has not been discounted when
 only n unfoldings-to-discount were considered, but is discounted when the 1-st unfolding-to-
-discount is considered. This probability can be expressed as: \Pi n
+discount is considered. The probability of 2b can be expressed as: \Pi n
 Thus, the probability that a tuple is discounted when n+ 1 unfoldings-to-discount are considered
 is equal to the sum of the probabilitues of cases 2a and 2b:
 In the special case when the proportion of tuples marked true in all tables and all tag columns is identical
 and equal to some value P (T ) (that is,
 reduces to:
-We show the application of this result to predict the size of tables for closing nodes in our experiments.
+We show the application of this result to predict the size of tables for closing nodes in We experiments.
 Example 13. For queries g, the root of the query tree is the closing node. The
 proportion of tuples marked true for both U 1 and U 3 is 0.5 for all three tables: Supplier-v, Partsupp-
 v, and Lineitem-v. Thus, for query Q 2 nfU 3 g, Formula 1) has the form
-Since the size of the answer of the original query Q was 73943 rows, reducing it by 12.5% would produce
+Since the size of the answer of the original query Q was 73943 rows, reducing query Q 2 nfU 3 g, Formula 1) by 12.5% would produce
 a table of size 64700. This is very close to the actual size of 65219 rows observed for g.
 Similarly, for query Q has the form 0:234. The predicted
 size of the final query answer set is thus 56566, which again is close to the actual size of 55537 for
@@ -567,10 +573,11 @@ Figure
 
 7: Proportion of discounted tuples in the result of a join with respect to the number of unfoldings-
 to-discount.
-The selected unfoldings may be removed for security reasons, or because their answers are readily available
+The selected unfoldings may be removed for security reasons, or because The selected unfoldings answers are readily available
 (through caching or materialized views). We presented an efficient evaluation strategy for discounted queries
 called tuple-tagging. We showed through experiments that a discounted query can be, in general, evaluated
-more efficiently than the query itself. The experiments also suggested that rewrite techniques, which seem
+more efficiently than the query itself. experiments that a discounted query can be, in general, evaluated
+more efficiently than the query itself also suggested that rewrite techniques, which seem
 to be an intuitive approach to removing unfoldings from a query, may perform worse than the evaluation of
 the original query, and much worse than the tuple tagging approach. Thus the discounting framework and
 the tuple-tagging algorithm offer a viable approach to optimization of queries which employ views.
@@ -617,8 +624,7 @@ Principles of database and knowledge-base systems, Vol. I
 Logic-based approach to semantic query optimization
 Structural query optimizationMYAMPERSANDmdash;a uniform framework for semantic query optimization in deductive databases
 Extensible/rule based query rewrite optimization in Starburst
-Understanding the new SQL
-Answering queries using views (extended abstract)
+Understanding the new the New SQLAnswering queries using views (extended abstract)
 Rule languages and internal algebras for rule-based optimizers
 On the Multiple-Query Optimization Problem
 Constraint Processing in a Multilevel Secure Distributed Database Management System

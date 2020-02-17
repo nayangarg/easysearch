@@ -1,34 +1,34 @@
 --T
 Style-based inverse kinematics.
 --A
-This paper presents an inverse kinematics system based on a learned model of human poses. Given a set of constraints, our system can produce the most likely pose satisfying those constraints, in real-time. Training the model on different input data leads to different styles of IK. The model is represented as a probability distribution over the space of all possible poses. This means that our IK system can generate any pose, but prefers poses that are most similar to the space of poses in the training data. We represent the probability with a novel model called a Scaled Gaussian Process Latent Variable Model. The parameters of the model are all learned automatically; no manual tuning is required for the learning component of the system. We additionally describe a novel procedure for interpolating between styles.Our style-based IK can replace conventional IK, wherever it is used in computer animation and computer vision. We demonstrate our system in the context of a number of applications: interactive character posing, trajectory keyframing, real-time motion capture with missing markers, and posing from a 2D image.
+This paper presents an inverse kinematics system based on a learned model of human poses. Given a set of constraints, our system can produce the most likely pose satisfying those constraints, in real-time. Training the model on different input data leads to different styles of IK. the model is represented as a probability distribution over the space of all possible poses. This means that our IK system can generate any pose, but prefers poses that are most similar to the space of poses in the training data. We represent the probability with a novel model called a Scaled Gaussian Process Latent Variable Model. The parameters of the model are all learned automatically; no manual tuning is required for the learning component of the system. We additionally describe a novel procedure for interpolating between styles.We style-based IK can replace conventional IK, wherever Our style-based IK is used in computer animation and computer vision. We demonstrate We system in the context of a number of applications: interactive character posing, trajectory keyframing, real-time motion capture with missing markers, and posing from a 2D image.
 --B
 Overview
 
 The main idea of our work is to learn a probability distribution function
 (PDF) over character poses from motion data, and then use
-this to select new poses during IK. We represent each pose with
+this to select new poses during IK. our represent each pose with
 a 42-dimensional vector q, which consists of joint angles, and the
-position and orientation of the root of the kinematic chain. Our
+position and orientation of the root of the kinematic chain. our
 approach consists of the following steps:
 Feature vectors. In order to provide meaningful features for
-IK, we convert each pose vector to a feature representation y that
+IK, our convert each pose vector to a feature representation y that
 represents the character pose and velocity in a local coordinate
 frame. Each motion capture pose qi has a corresponding feature
 vector yi, where i is an index over the training poses. These features
 include joint angles, velocity, and vertical orientation, and are
 described in detail in Section 4.
-SGPLVM learning. We model the likelihood of motion capture
+SGPLVM learning. our model the likelihood of motion capture
 poses using a novel model called a Scaled Gaussian Process Latent
 Variable Model (SGPLVM). Given the features {yi} a set of motion
-capture poses, we learn the parameters of an SGPLVM, as described
+capture poses, we learn the parameters of The SGPLVM, as described
 in Section 5. The SGPLVM de?nes a low-dimensional representation
 of the original data: every pose qi has a corresponding vector
 xi, usually in a 3-dimensional space. The low-dimensional space
 of xi values is called the latent space. In the learning process, we
 estimate the {xi} parameters for each input pose, along with the
 parameters of the SGPLVM model (denoted ?, ?, ?, and {wk}).
-This learning process entails numerical optimization of an objective
+the learning process entails numerical optimization of an objective
 function LGP. The likelihood of new poses is then described by
 the original poses and the model parameters. In order to keep the
 model ef?cient, the algorithm selects a subset of the original poses
@@ -41,7 +41,7 @@ pose, we also optimize the low-dimensional vector x. Several different
 applications are supported, as described in Section 7.
 4 Character model
 In this section, we de?ne the parameterization we use for charac-
-ters, as well as the features that we use for learning. We describe
+ters, as well as the features that we use for learning. we describe
 the 3D pose of a character with a vector q that consists of the global
 position and orientation of the root of the kinematic chain, plus all
 of the joint angles in the body. The root orientation is represented
@@ -50,19 +50,25 @@ maps. The joint parameterizations are rotated so that the space of
 natural motions does not include singularities in the parameterization
 
 For each pose, we additionally de?ne a corresponding D-dimensional
-feature vector y. This feature vector selects the features
+feature vector y. a corresponding D-dimensional
+feature vector selects the features
 of character poses that we wish the learning algorithm to be
-sensitive to. This vector includes the following features:
+sensitive to. a corresponding D-dimensional
+feature vector includes the following features:
 Joint angles: All of the joint angles from q are included. We
-omit the global position and orientation, as we do not want
-the learning to be sensitive to them.
+omit the global position and orientation, as We do not want
+the learning to be sensitive to the learning.
 Vertical orientation: We include a feature that measures the
 global orientation of the character with respect to the ?up di-
 rection,? (along the Z-axis) de?ned as follows. Let R be a
 rotation matrix that maps a vector in the character's local co-ordinate
 frame to the world coordinate frame. We take the
 three canonical basis vectors in the local coordinate frame,
-rotate them by this matrix, and take their Z-components, to
+rotate the
+three canonical basis vectors by a
+rotation matrix that maps a vector in the character's local co-ordinate
+frame to the world coordinate frame, and take the
+three canonical basis vectors Z-components, to
 get an estimate to the degree that the character is leaning forward
 and to the side. This reduces to simply taking the third
 row of R.
@@ -75,11 +81,12 @@ respectively.
 The features for a pose may be computed from the current frame
 and the previous frame. We write this as a function y(q). We omit
 the previous frames from the notation, as they are always constant
-in our applications. All vectors in this paper are column vectors.
+in We applications. All vectors in this paper are column vectors.
 5 Learning a model of poses
 In this section, we describe the Scaled Gaussian Process Latent
 Variable Model (SGPLVM), and a procedure for learning the model
-parameters from training poses. The model is based on the Gaussian
+parameters from training poses. the model
+ is based on the Gaussian
 Process (GP) model, which describes the mapping from x values
 to y values. GPs for interpolation were introduced by O'Hagan
 [1978], Neal [1996] and Williams and Rasmussen [1996]. For
@@ -90,7 +97,7 @@ background for GPs is somewhat involved, the implementation is
 straightforward.Kernel function. Before describing the learning algorithm, we
 ?rst de?ne the parameters of the GP model. A GP model describes
 the mapping between x values and y values: given some training
-data {xi,yi}, the GP predicts the likelihood of a new y given a new
+data {xi,yi}, GP predicts the likelihood of a new y given a new
 x. A key ingredient of the GP model is the de?nition of a kernel
 function that measures the similarity between two points x and x in
 the input space:
@@ -108,20 +115,22 @@ The different data dimensions have different intrinsic scales (or,
 equivalently, different levels of variance): a small change in global
 rotation of the character affects the pose much more than a small
 change in the wrist angle; similarly, orientations vary much more
-than their velocities. Hence, we will need to estimate a separate
-scaling wk for each dimension. This scaling is collected in a diagonal
+than the pose velocities. Hence, we will need to estimate a separate
+scaling wk for each dimension. a separate
+scaling wk for each dimension is collected in a diagonal
 this matrix is used to rescale
 features as Wy.
 Learning. We now describe the process of learning an SG-
 PLVM, from a set of N training data points {yi}. We ?rst compute
 the mean of the training set: We then collect the k-th
 component of every feature vector into a vector Yk and subtract
-the means (so that Yk =[y1,k ? ?k,.,yN,k ? ?k]T ). The SGPLVM
+the means (so that Yk [y1,k ? ?k,.,yN,k ? ?k]T ). The SGPLVM
 model parameters are learned by minimizing the following objective
 with respect to the unknowns {xi},?,?,? and {wk}. This objective
 function is derived from the Gaussian Process model (Appendix
 A). Formally, LGP is the negative log-posterior of the model pa-
-rameters. Once we have optimized these parameters, the SGPLVM
+rameters. Once we have optimized The SGPLVM
+model parameters, the SGPLVM
 provides a likelihood function for use in real-time IK, based on the
 training data and the model parameters.
 Intuitively, minimizing this objective function arranges the xi
@@ -132,7 +141,8 @@ parameters so that the kernel matrix K matches the correlations
 in the original y's (Appendix A). Learning in the SGPLVM
 model generalizes conventional PCA [Lawrence 2004], which corresponds
 to ?xing using a linear kernel. As
-described below, the SGPLVM also generalizes Radial Basis Function
+described below, the SGPLVM
+ also generalizes Radial Basis Function
 (RBF) interpolation, providing a method for learning all RBF
 parameters and for constrained pose optimization.
 The simplest way to minimize LGP is with numerical optimization
@@ -151,13 +161,14 @@ Figure
 1: SGPLVM latent spaces learned from different motion capture sequences: a walk cycle, a jump shot, and a baseball pitch. Points:
 The learning process estimates a 2D position x associated with every training pose; plus signs (+) indicate positions of the original training
 points in the 2D space. Red points indicate training poses included in the training set. Poses: Some of the original poses are shown along
-with the plots, connected to their 2D positions by orange lines. Additionally, some novel poses are shown, connected by green lines to their
+with the plots, connected to Some of the original poses 2D positions by orange lines. Additionally, some novel poses are shown, connected by green lines to some novel poses
 positions in the 2D plot. Note that the new poses extrapolate from the original poses in a sensible way, and that the original poses have been
 arranged so that similar poses are nearby in the 2D space. Likelihood plot: The grayscale plot visualizes ?D ln?2(x) ? 1 ||x||2 for each
-position x. This component of the inverse kinematics likelihood LIK measures how ?good? x is. Observe that points are more likely if they
+position x. This component of the inverse kinematics likelihood LIK measures how ?good? x is. Observe that points are more likely if points
 lie near or between similar training poses.
 optimizing the model parameters, optimizing the latent variables,
-and selecting the active set. These algorithms and their tradeoffs are
+and selecting the active set. These algorithms and they
+lie near or between similar training poses tradeoffs are
 described in Appendix B. We require that the user specify the size
 M of the active set, although this could also be speci?ed in terms
 of an error tolerance. Choosing a larger active set yields a better
@@ -228,7 +239,7 @@ that 10D PCA is required to yield a reasonable model, and MoG
 artifacts are much worse in higher dimensions.
 tion, using an MoG requires dimension reduction (such as PCA) as
 a preprocess, both of which have parameters that need to be tuned.
-There are principled ways to estimate these parameters, but they are
+There are principled ways to estimate these parameters, but both of which are
 dif?cult to work with in practice. We have been able to get reason-able
 results using MoGs on small data-sets, but only with the help
 of heuristics and manual tweaking of model parameters.
@@ -240,7 +251,7 @@ in
 Figure
 
 1. There are a number of different scenarios for synthesizing
-poses; we ?rst describe these cases and how to state them as
+poses; we ?rst describe these cases and how to state these cases as
 optimization problems. Optimization techniques are described in
 Section 6.2.
 The general setting for pose synthesis is to optimize q given
@@ -251,25 +262,27 @@ for some constraints C(q)=0.
 The most common case is when only a set of handle constraints
 C(q)=0 are speci?ed; these handle constraints may come from a
 user in an interactive session, or from a mocap system.
-Our system also provides a 2D visualization of the latent space,
+a mocap system also provides a 2D visualization of the latent space,
 and allows the user to drag the mouse in this window, in order to
 view the space of poses in this model. Each point in the window
 corresponds to a speci?c value of x; we compute the corresponding
 pose by maximizing LIK with respect to q. A third case occurs when
 the user speci?es handle constraints and then drags the mouse in
-the latent space. In this case, q is optimized during dragging. This
+the latent space. In A third case, q is optimized during dragging. This
 provides an alternative way for the user to ?nd a point in the space
 that works well with the given constraints.
 6.1.1 Model smoothing
 Our method produces an objective function that is, locally, very
 smooth, and thus well-suited for local optimization methods. How-
 view a single frame of a sequence in isolation. The SHMM's entropic prior
-helps smooth the model, but at the expense of overly-smooth motions.
+helps smooth 6.1.1 Model smoothing
+, but at the expense of overly-smooth motions.
 Figure
 
 3: Annealing SGPLVMs. Top row: The left-most plot shows
 the ?unannealed? original model, trained on the baseball pitch. The
-plot on the right shows the model retrained with noisy data. The
+plot on the right shows 6.1.1 Model smoothing
+ retrained with noisy data. The
 middle plot shows an interpolation between the parameters of the
 outer models. Bottom row: The same plots visualized in 3D.
 ever, distributions over likely poses must necessarily have many
@@ -279,20 +292,22 @@ describe a new procedure for smoothing an SGPLVM model that
 can be used in an annealing-like procedure, in which we search in
 smoother versions of the model before the ?nal optimization. Given
 training data and a learned SGPLVM, our goal is to create smoothed
-(or ?annealed?) versions of this SGPLVM. We have found that the
+(or ?annealed?) versions of this SGPLVM. our have found that the
 simplest annealing strategy of scaling the individual model parameters
 (for example, halving the value of ?) does not work well, since
 the scales of the three ?, ?, and ? parameters are closely intertwined
 
-Instead, we use the following strategy to produce a smoother
-model. We ?rst learn a normal (unannealed) SGPLVM as described
-in Section 5. We then create a noisy version of the training set, by
+Instead, our use the following strategy to produce a smoother
+model. our ?rst learn a normal (unannealed) SGPLVM as described
+in Section 5. our then create a noisy version of the training set, by
 adding zero-mean Gaussian noise to all of the {yi} values in the
-active set. We then learn new values ?, ?, and ? using the same
+active set. our then learn new values ?, ?, and ? using the same
 algorithm as before, but while holding {xi} and {wk} ?xed. This
-gives us new ?annealed? parameters ?, ?, ?. The variance of the
-noise added to data determines how smooth the model becomes.
-Given this annealed model, we can generate a range of models by
+gives our new ?annealed? parameters ?, ?, ?. The variance of the
+noise added to data determines how smooth a smoother
+model becomes.
+Given a smoother
+model, we can generate a range of models by
 linear interpolation between the parameters of the normal SGPLVM
 and the annealed SGPLVM. An example of this range of annealed
 models is shown in Figure 3.
@@ -312,20 +327,20 @@ Because the LIK objective is rarely unimodal, we use an
 annealing-like scheme to prevent the pose synthesis algorithm from
 getting stuck in local minima. During the learning phase, we pre-compute
 an annealed model as described in the previous section. In
-our tests, we set the noise variance to .05 for smaller data sets and
+we tests, we set the noise variance to .05 for smaller data sets and
 for larger data sets. During synthesis, we ?rst run a few steps of
 optimization using the smoothed model (?, ?, ?), as described in
-the previous section. We then run additional steps on an intermediate
+the previous section. we then run additional steps on an intermediate
 model, with parameters interpolated as ?1 ? +(1 ? ?1 )?.
-The same interpolation is applied to ? and ?. We then ?nish the
+The same interpolation is applied to ? and ?. we then ?nish the
 optimization with respect to the original model (?, ?, ?). During
 interactive editing, there may not be enough time to fully optimize
 between dragging steps, in which case the optimization is only up-dated
-with respect to the smoothest model; in this case, the ?ner
+with respect to the smoothest model; in A third case, the ?ner
 models are only used when dragging stops.
 6.3 Style interpolation
 We now describe a simple new approach to interpolating between
-two styles represented by SGPLVMs. Our goal is to generate a new
+two styles represented by SGPLVMs. We goal is to generate a new
 style-speci?c SGPLVM that interpolates two existing SGPLVMs
 LIK0 and LIK1. Given an interpolation parameter s, the new objective
 function is:
@@ -335,7 +350,7 @@ styles).
 We can place this interpolation scheme in the context of the following
 novel method for interpolating style-speci?c PDFs. Given
 two or more pose styles ? represented by PDFs over possible poses
-our goal is to produce a new PDF representing a style that is ?in
+Our goal is to produce a new PDF representing a style that is ?in
 between? the input poses. Given two PDFs over poses p(y|?0) and
 p(y|?1), where ?0 and ?1 describe the parameters of these styles,
 and an interpolation parameter s, we form the interpolated style
@@ -356,8 +371,9 @@ interactively de?ne a character pose by moving handle constraints
 in real-time. In our experience, posing this way is substantially
 faster and more intuitive than posing without an objective function.
 7.2 Trajectory keyframing
-We developed a test animation system aimed at rapid-prototyping
-of character animations. In this system, the animator creates an animation
+our developed a test animation system aimed at rapid-prototyping
+of character animations. In a test animation system aimed at rapid-prototyping
+of character animations, the animator creates an animation
 by constraining a small set of points on the character. Each
 constrained point is controlled by modifying a trajectory curve. The
 animation is played back in realtime so that the animator can immediately
@@ -370,9 +386,10 @@ Figure
 4: Trajectory keyframing, using a style learned from the
 baseball pitch data. Top row: A baseball pitch. Bottom row: A
 side-arm pitch. In each case, the feet and one arm were keyframed;
-no other constraints were used. The side-arm contains poses very
+no other constraints were used. one arm contains poses very
 different from those in the original data.
-parts of the animation, by smoothly blending from one style to an-
+parts of The
+animation, by smoothly blending from one style to an-
 other. An example of creating a motion by keyframing is shown in
 
 Figure
@@ -383,23 +400,22 @@ Figure
 In optical motion capture systems, the tracked markers often disappear
 due to occlusion, resulting in inaccurate reconstructions and
 noticeable glitches. Existing joint reconstruction methods quickly
-fail if several markers go missing, or they are missing for an extended
+fail if several markers go missing, or several markers go missing are missing for an extended
 period of time. Furthermore, once the a set of missing markers
-reappears, it is hard to relabel each one of them so that they
+reappears, it is hard to relabel each one of several markers go missing so that several markers go missing
 correspond to the correct points on the body.
 We designed a real-time motion reconstruction system based on
 style-based IK that ?lls in missing markers. We learn the style from
-the initial portion of the motion capture sequence, and use that style
-to estimate the character pose. In our experiments, this approach
+the initial portion of the motion capture sequence, and use the styleto estimate the character pose. In We experiments, this approach
 can faithfully reconstruct poses even with more than 50% of the
 markers missing.
-We expect that our method could be used to provide a metric
+We expect that We method could be used to provide a metric
 for marker matching as well. Of course, the effectiveness of style-based
 degrades if the new motion diverges from the learned
 style. This could potentially be addressed by incrementally relearning
 the style as the new pose samples are processed.
 7.4 Posing from 2D images
-We can also use our IK system to reconstruct the most likely pose
+We can also use We IK system to reconstruct the most likely pose
 from a 2D image of a person. Given a photograph of a person, a user
 interactively speci?es 2D projections (i.e., image coordinates) of a
 few character handles. For example, the user might specify the location
@@ -412,7 +428,7 @@ constraints. With only three or four established correspondences
 between the 2D image points and character handles, we can reconstruct
 the most likely pose; with a little additional effort, the pose
 can be ?ne-tuned. Several examples are shown in Figure 5. In
-the baseball example (bottom row of the ?gure) the system obtains
+the baseball example (bottom row of the ?gure) our IK system obtains
 a plausible pose from six projection constraints, but the depth of
 from having any feasible solution.
 There are many possible improvements to the SGPLVM learning
@@ -440,8 +456,8 @@ coherence.
 We have presented an inverse kinematics system based on a learned
 probability model of human poses. Given a set of arbitrary algebraic
 constraints, our system can produce the most likely pose satisfying
-those constraints, in real-time. We demonstrated this system
-in the context of several applications, and we expect that style-based
+those constraints, in real-time. We demonstrated an inverse kinematics system based on a learned
+probability model of human posesin the context of several applications, and We expect that style-based
 IK can be used effectively for any problem where it is necessary to
 restrict the space of valid poses, including problems in computer
 vision as well as animation. For example, the SGPLVM could be
@@ -453,12 +469,12 @@ look realistic and satisfy very speci?c constraints (e.g., catching a
 ball or reaching a base) in real-time. This would require not only
 real-time posing, but, potentially, some sort of planning ahead. We
 are encouraged by the fact that a leading game developer licensed
-an early version of our system for the purpose of rapid content development
+an early version of We system for the purpose of rapid content development
 
 There are some limitations in our system that could be addressed
 in future work. For example, our system does not model dynam-
 ics, and does not take into account the constraints that produced the
-original motion capture. It would also be interesting to incorporate
+original motion capture. our system would also be interesting to incorporate
 style-based IK more closely into an animation pipeline. For ex-
 ample, our approach may be thought of as automating the process
 of ?rigging,? i.e., determining high-level controls for a character.
@@ -468,10 +484,11 @@ an automatic procedure for other controls. It would also be useful
 to have a more principled method for balancing hard and soft
 constraints in real-time, perhaps similar to [Yamane and Nakamura
 2003], because too many hard constraints can prevent the problemMany thanks to Neil Lawrence for detailed discussions and for placing
-his source code online. We are indebted to Colin Zheng for
+Neil Lawrence source code online. our are indebted to Colin Zheng for
 creating the 2D posing application, and to Jia-Chu Wu for for last-minute
 image and video production. David Hsu and Eugene Hsu
-implemented the ?rst prototypes of this system. This work was supported
+implemented the ?rst prototypes of a test animation system aimed at rapid-prototyping
+of character animations. This work was supported
 in part by UW Animation Research Labs, NSF grants EIA-
 0121326, CCR-0092970, IIS-0113007, CCR-0098005, an NSERC
 Discovery Grant, the Connaught fund, Alfred P. Sloan Fellowship,
@@ -513,10 +530,10 @@ The complete joint likelihood of all data dimensions is
 p({yi}|{xi},?,?,?,{wk})=?k p({yi,k}|{xi},?,?,?,wk).
 SGPLVMs. The Scaled Gaussian Process Latent Variable Model
 (SGPLVM) is a general technique for learning PDFs, based on recent
-work Lawrence [2004]. Given a set of data points {yi},we
+work Neil Lawrence [2004]. Given a set of data points {yi},we
 model the likelihood of these points with a scaled GP as above,
 in which the corresponding values {xi} are initially unknown ?
-we must now learn the xi as well as the model parameters. We
+we must now learn the xi as well as the model parameters. we
 also place priors on the unknowns: p(x)=N (0;I), p(?,?,?) ?
 ??1??1??1.
 In order to learn the SGPLVM from training data {yi},we
@@ -532,7 +549,8 @@ this would make LGP optimal with respect to all {xi} values and the
 ?, ?, and ? parameters. If we solve Equation 15), we
 obtain a system of equations of the form
 The right-hand side of this expression will be large when the two
-poses are very similar, and negative when they are very different.
+poses are very similar, and negative when the two
+poses are very different.
 This means that we try to arrange the x's so that xi and xj are nearby
 if and only if yi and yj are similar. More generally, the kernel matrix
 sho?uld match the covariance matrix of the original data rescaled
@@ -552,37 +570,40 @@ The second is a heuristic described below. Based on preliminary
 tests, it appears that there are a few tradeoffs between the two al-
 gorithms. The heuristic algorithm is much faster, but more tied to
 the initialization for small data sets, often producing x values that
-are very close to the PCA initialization. The full optimization algorithm
-produces better arrangements of the latent space x values ?
+are very close to the PCA initialization. The heuristic algorithmproduces better arrangements of the latent space x values ?
 especially for larger data sets ? but may require higher latent dimensionality
 (3D instead of 2D in our tests). However, because the
 full optimization optimizes all points, it can get by with less active
 set points, making it more ef?cient at run-time. Nonetheless, both
 algorithms work well, and we used the heuristic algorithm for all
 examples shown in this paper and the video.Active set selection. We ?rst outline the greedy algorithm for
-selecting the active set, given a learned model. The active set initially
-contains one training pose. Then the algorithm repeatedly
+selecting the active set, given a learned model. the active set initially
+contains one training pose. Then The heuristic algorithm repeatedly
 determines which of the points not in the active set has the highest
 prediction variance ?2(x) (Equation 5). This point is added to the
-active set, and the algorithm repeats until there are M points in the
+active set, and The heuristic algorithm repeats until there are M points in the
 active set (where M is a limit predetermined by a user). For ef?-
 ciency, the variances are computed incrementally as described by
 Lawrence et al. [2003].
 Heuristic optimization algorithm. For all examples in this
 paper, we used the following procedure for optimizing LGP, based
-on the one proposed by Lawrence [2004], but modi?ed3 to learn
-{wk}. The algorithm alternates between updating the active set,
-and the following steps: First, the algorithm optimizes the model
+on the one proposed by Neil Lawrence [2004], but modi?ed3 to learn
+{wk}. [2003].
+Heuristic optimization algorithm alternates between updating the active set,
+and the following steps: First, [2003].
+Heuristic optimization algorithm optimizes the model
 parameters, ?, ?, and ? by numerical optimization of LGP (Equa-
 tion 2); however, LGP is modi?ed so that only the active set are
-included in LGP. Next, the algorithm optimizes the latent variables
+included in LGP. Next, [2003].
+Heuristic optimization algorithm optimizes the latent variables
 xi for points that are not included in the active set; this is done by
 numerical optimization of LIK (Equation 3). Finally, the scaling is
 updated by closed-form optimization of LGP with respect to {wk}.
 Numerical optimization is performed using the Scaled Conjugate
 Gradients algorithm, although other search algorithms could also
 be used. After each of these steps, the active set is recomputed.
-The algorithm may be summarized as follows. See [Lawrence
+[2003].
+Heuristic optimization algorithm may be summarized as follows. See [Lawrence
 2004] for further details.
 function LEARNSGPLVM({yi})
 initialize {x} with conventional PCA applied to {yi}
@@ -610,11 +631,11 @@ that, in all cases, a 3D latent space gave as good or better quality
 than a 2D latent space. We use higher dimensionality when multiple
 distinct motions were included in the training set.
 C Style interpolation
-Although we have no formal justi?cation for our interpolation
+Although We have no formal justi?cation for We interpolation
 method in Section 6.3 (e.g., as maximizing a known likelihood
 function), we can motivate it as follows. In general, there is no
 reason to believe the interpolation of two objective functions gives
-a reasonable interpolation of their styles. For example, suppose we
+a reasonable interpolation of two objective functions styles. For example, suppose we
 3We adapted the source code available from
 http://www.dcs.shef.ac.uk/ neil/gplvm/
 represent styles as Gaussian distributions p(y|?0)=N (y|?0;?2)

@@ -1,7 +1,7 @@
 --T
 A Time Redundancy Approach to TMR Failures Using Fault-State Likelihoods.
 --A
-Failure to establish a majority among the processing modules in a triple modular redundant (TMR) system, called a TMR failure, is detected by using two voters and a disagreement detector. Assuming that no more than one module becomes permanently faulty during the execution of a task, Re-execution of the task on the Same HardWare (RSHW) upon detection of a TMR failure becomes a cost-effective recovery method, because 1) the TMR system can mask the effects of one faulty module while RSHW can recover from nonpermanent faults, and 2) system reconfiguration-Replace the faulty HardWare, reload, and Restart (RHWR)-is expensive both in time and hardware. We propose an adaptive recovery method for TMR failures by "optimally" choosing either RSHW or RHWR based on the estimation of the costs involved. We apply the Bayes theorem to update the likelihoods of all possible states in the TMR system with each voting result. Upon detection of a TMR failure, the expected cost of RSHW is derived with these likelihoods and then compared with that of RHWR. RSHW will continue either until it recovers from the TMR failure or until the expected cost of RSHW becomes larger than that of RHWR. As the number of unsuccessful RSHW's increases, the probability of permanent fault(s) having caused the TMR failure will increase, which will, in turn, increase the cost of RSHW. Our simulation results show that the proposed method outperforms the conventional reconfiguration method using only RHWR under various conditions.
+Failure to establish a majority among the processing modules in a triple modular redundant (TMR) system, called a TMR failure, is detected by using two voters and a disagreement detector. Assuming that no more than one module becomes permanently faulty during the execution of a task, Re-execution of a task on the Same HardWare (RSHW) upon detection of a TMR failure becomes a cost-effective recovery method, because 1) the TMR system can mask the effects of one faulty module while RSHW can recover from nonpermanent faults, and 2) system reconfiguration-Replace the faulty HardWare, reload, and Restart (RHWR)-is expensive both in time and hardware. We propose an adaptive recovery method for TMR failures by "optimally" choosing either RSHW or RHWR based on the estimation of the costs involved. We apply the Bayes theorem to update the likelihoods of all possible states in the TMR system with each voting result. Upon detection of a TMR failure, the expected cost of RSHW is derived with the likelihoods of all possible states in the TMR system and then compared with that of RHWR. RSHW will continue either until RSHW recovers from the TMR failure or until the expected cost of RSHW becomes larger than that of RHWR. As the number of unsuccessful RSHW's increases, the probability of permanent fault(s) having caused the TMR failure will increase, which will, in turn, increase the cost of RSHW. Our simulation results show that the proposed method outperforms the conventional reconfiguration method using only RHWR under various conditions.
 --B
 Introduction
 Fault tolerance is generally accomplished by using redundancy in hardware, software,
@@ -28,13 +28,15 @@ serial buses, and its quad-redundant clocks use bit-by-bit voting in hardware on
 over these buses. C.vmp [18] is also a TMR system which traded performance
 for reliability by switching between TMR mode with voting and independent modes under
 program control. In [22], an optimal TMR structure to recover from a transient fault
-was shown to extend significantly the lifetime of a small system in spite of its requirement
+was shown to extend significantly the lifetime of a small system in spite of a small system requirement
 of reliable voter circuits. The authors of [3] proposed a modular TMR multiprocessor to
 increase reliability and availability by using a retry mechanism to recover transient faults,
 and switching between TMR and dual-processor modes to isolate a permanent fault. A
 simple multiple-retry policy (retry a pre-specified number of times) - also used to discriminate
-a permanent fault - was employed there. This policy can tolerate multiple faults
-only by treating them as a sequence of single faults with repair between fault occurrences,
+a permanent fault - was employed there. A
+simple multiple-retry policy ( can tolerate multiple faults
+only by treating multiple faults
+ as a sequence of single faults with repair between fault occurrences,
 thus requiring frequent voting for effective fault detection. A TMR failure caused by near-
 Ccoincident faults in different modules must also be detected and recovered. The effect of
 dependent faults inducing a TMR failure was eliminated by periodic resynchronization at
@@ -54,9 +56,11 @@ The main intent of this paper is to develop an approach of combining time and sp
 redundancy by applying time redundancy to TMR systems. (Note that spatial redundancy
 is already encapsulated in the TMR system.) When a TMR failure - failure to
 establish a majority due to multiple-module faults - is detected at the time of voting,
-or when a faulty module, even if its effects are masked, is identified, the TMR system is
+or when a faulty module, even if a TMR failure - failure to
+ effects are masked, is identified, the TMR system is
 conventionally reconfigured to replace all three or just the faulty module with fault-free
-modules. If the TMR failure had been caused by transient faults, system reconfiguration
+modules. If a TMR failure - failure to
+ had been caused by transient faults, system reconfiguration
 or Replacement of HardWare and Restart (RHWR), upon detection of a TMR failure, may
 not be desirable due to its high cost in both time and hardware. To counter this problem,
 we propose to, upon detection of a TMR failure, Re-execute the corresponding task on
@@ -73,21 +77,22 @@ are caused by permanent faults [14] - simple re-execution may be an effective me
 recover from most TMR failures. This may reduce (i) the hardware cost resulting from the
 hasty elimination of modules with transient faults and (ii) the recovery time that would
 otherwise increase, i.e., as a result of system reconfiguration. Note that system reconfiguration
-is time-consuming because it requires the location and replacement of faulty modules,
+is time-consuming because that system reconfiguration
+ requires the location and replacement of faulty modules,
 program and data reloading, and resuming execution.
 We shall propose two RSHW methods for determining when to reconfigure the system
 instead of re-executing a task without module replacement. The first (non-adaptive) method
 is to determine the maximum number of RSHWs allowable (MNR) before reconfiguring the
-system for a given task according to its nominal execution time without estimating the
+system for a given task according to a given task nominal execution time without estimating the
 system (fault) state - somewhat similar to the multiple-retry policy applied to a general
 rollback recovery scheme in [20]. By contrast, the second (adaptive) method (i) estimates
 the system state with the likelihoods of all possible states and (ii) chooses the better of
-RSHW or RHWR based on their expected costs when the system is in one of the estimated
+RSHW or RHWR based on RSHW or RHWR expected costs when the system is in one of the estimated
 states. RHWR is invoked if either the number of unsuccessful RSHWs exceeds the MNR
 in the first method or the expected cost of RSHW gets larger than that of RHWR in the
 second method. For the second method, we shall develop an algorithm for choosing between
 RSHW and RHWR upon detection of a TMR failure. We shall also show how to calculate
-the likelihoods of all possible states, and how to update them using the RSHW results and
+the likelihoods of all possible states, and how to update all possible states using the RSHW results and
 the Bayes theorem.
 The paper is organized as follows. In the following section, we present a generic methodology
 of handling TMR failures, and introduce the assumptions used. Section 3 derives the
@@ -102,20 +107,22 @@ RHWR. The paper concludes with Section 5.
 Detection and Recovery of a TMR Failure
 Detection and location of, and the subsequent recovery from, faults are crucial to the
 correct operation of a TMR system, because the TMR system fails if either a voter fails at
-the time of voting or faults manifest themselves in multiple modules during the execution of
+the time of voting or faults manifest voting or faults in multiple modules during the execution of
 a task. The fault occurrence rate is usually small enough to ignore coincident faults which
 are not caused by a common cause, but non-coincident fault arrivals at different modules
 are not negligible and may lead to a TMR failure.
 Disagreement detectors which compare the values from the different voters of a TMR
-system can detect single faults, but may themselves become faulty. FTMP [6], JPL-STAR
+system can detect single faults, but may Disagreement detectors which compare the values from the different voters of a TMR
+system become faulty. FTMP [6], JPL-STAR
 [1], and C.vmp [18] are example systems that use disagreement detectors. In FTMP, any
 detected disagreement is stored in error latches which compress fault-state information
 into error words for later identification of the faulty module(s). System reconfiguration
 to resolve the ambiguity in locating the source of a detected error is repeated depending
 on the source of the error and the number of units connected to a faulty bus. Two fault
 detection strategies - hard failure analysis (HFA) and transient failure analysis (TFA)
-are provided according to the number and persistency of probable faulty units. These
-strategies may remove the unit(s) with hard failures or update the fault index (demerit)
+are provided according to the number and persistency of probable faulty units. Two fault
+detection strategies - hard failure analysis (HFA) and transient failure analysis (TFA)
+ may remove the unit(s) with hard failures or update the fault index (demerit)
 of a suspected unit. Frequent voting is required to make this scheme effective, because
 any faulty module must be detected and recovered before the occurrence of a next fault on
 another module within the same TMR system.
@@ -127,11 +134,11 @@ multiple modules are faulty [8]. A TMR failure can then be detected by using two
 voters and a self-checking comparator as shown in Fig. 1. These voters can be implemented
 with conventional combinational logic design [23]. The comparator can be easily made self-checking
 for its usually simple function: for example, a simple structure made of two-rail
-comparators in [11] for each bit can be utilized for its high reliability and functionality. This
-TMR structure can also detect a voter fault. When a TMR failure or a voter fault occurs,
-the comparator can detect the mismatch between the two voters that results from either
+comparators in [11] for each bit can be utilized for its high reliability and functionality. a simple structure made of two-rail
+comparators in [11] can also detect a voter fault. When a TMR failure or a voter fault occurs,
+The comparator can detect the mismatch between the two voters that results from either
 the failure to form a majority among three processing modules, or a voter fault. (Note that
-using three voters, instead of two, would not make much difference in our discussion, so we
+using three voters, instead of two, would not make much difference in our discussion, so our
 processor 3
 processor 2
 processor 1
@@ -176,20 +183,23 @@ respectively.
 Optimal Recovery from a TMR Failure Using RSHW
 3.1 The Optimal Voting Interval
 n) be the nominal task-execution time measured in CPU cycles between
-the (i \Gamma 1)-th and i-th voting, and let X 1 be that between the beginning of the task and the
+the (i \Gamma 1)-th and i-th voting, and let X 1 be that between the beginning of The failed task and the
 first voting, in the absence of any TMR/voter failure. As shown in Fig. 2, for 1  i  n let
-task-execution time from the beginning of the task to the first completion of
+task-execution time from the beginning of The failed task to the first completion of
 the i-th voting possibly in the presence of some module failures, and let W
-E(w is the expected execution time of the task. Upon detection of a TMR failure,
+E(w is the expected execution time of The failed task. Upon detection of a TMR failure,
 let p and q be the probabilities of recoverying a task with RSHW and RHWR, respectively,
 1. Assuming that the time overhead of reconfiguration is constant T c , W n
-is expressed as a recursive equation in terms of W i , 1  i  n. Let F i (t) (2  i  n) be
+is expressed as a recursive equation in terms of W
+ i , 1  i  n. Let F i (t) (2  i  n) be
 the probability of a TMR failure in t units of time from the system state at the time of the
 (j \Gamma 1)-th voting, and let F 1 (t) be that from the beginning of the task. The probability of
 a recovery attempt (i.e., RSHW or RHWR) being successful depends upon F i (t). When a
-TMR failure is detected at the time of first voting (i.e., it occurred during the execution
+TMR failure is detected at the time of first voting (i.e., a
+TMR failure occurred during the execution
 of the task portion corresponding to X 1 ), the system will try RSHW (or RHWR) with
-probability p (or q) to recover from the failure. This process is renewed probabilistically
+probability p (or q) to recover from a
+TMR failure. This process is renewed probabilistically
 for the variable w 1 which is the actual task-execution time corresponding to the nominal
 task-execution time X 1 . Thus,
 where T c is the setup time for system reconfiguration.
@@ -243,7 +253,7 @@ s is monotonically
 decreasing in n:
 Though
 s and R(n) j p n+1
-s depend upon X and fault parameters, it is assumed for
+s depend upon X and fault parameters, s is assumed for
 simplicity that p 1
 s is given a priori as a constant P and R(n) is a constant R for all n.
 modified in terms of P and R:
@@ -252,14 +262,15 @@ The cost of RHWR, denoted by C 2 (X), is derived by using recursive equations:
 Now, km can be determined as the integer that minimizes C 1 (k; X) subject to C 1
 Example values of km for typical values of P and R are shown in Table 2.
 3.3 Adaptive RSHW
-In this method, the system chooses, upon detection of a TMR failure, between RSHW
-and RHWR based on their expected costs. RSHW will continue either until it becomes
-successful or until the expected cost of the next RSHW becomes larger than that of RHWR.
+In this adaptive method, the system chooses, upon detection of a TMR failure, between RSHW
+and RHWR based on their expected costs. RSHW will continue either until RSHW becomes
+successful or until the expected cost of an unsuccessful
+RSHW becomes larger than that of RHWR.
 The system state is characterized by the likelihoods of all possible states because one can
 observe only the time of each TMR failure detection, which is insufficient to accurately
 estimate the system state. The outcome of one RSHW, regardless whether it is successful
 or not, is used to update the likelihoods of states in one of which (called a prior state)
-the RSHW started. The possible states upon detection of a TMR failure can be inferred
+RSHW started. The possible states upon detection of a TMR failure can be inferred
 from the posterior states which are the updated prior states using the RSHW result and
 the Bayes theorem.
 Unlike a simplex model, there are too many possible states and events to analyze a
@@ -271,14 +282,16 @@ to their identical effects in our analysis. In Fig. 3 the transitions over the b
 horizontal lines result from the behavior of non-permanent faults and the transitions over
 the unidirectional vertical lines are caused by the occurrence of permanent faults. Note
 that even occurrences of near-coincident faults can be represented by sequential occurrences
-with slightly different interarrival times. The model, thus, includes only transitions between
+with slightly different interarrival times. The model
+, thus, includes only transitions between
 neighboring states - any transition from a state due to multiple faults occurs in two steps
-through one of its neighboring states.
+through one of The model
+ neighboring states.
 Some faults may disappear without affecting the execution of a task. This happens
-when the latency of a fault is greater than its active duration, i.e., it will not manifest itself.
+when the latency of a fault is greater than This active duration, i.e., This will not manifest This.
 Note that the occurrence of an error in a module during the task execution may produce
-an erroneous output for the task, even if the fault which had induced the error disappeared
-before producing the final output of the task. In other words, a transient fault may have
+an erroneous output for The failed task, even if the fault which had induced the error disappeared
+before producing the final output of The failed task. In other words, a transient fault may have
 permanent effects on task execution. 3
 The optimal recovery algorithm based on the adaptive method in Fig. 4 can be illustrated
 as follows. Upon detection of a TMR failure, the first step is to derive the probabilities
@@ -312,16 +325,17 @@ II, and Type-III failures represent zero, one, and more than one permanent-fault
 respectively, where all possible states of each type are listed in Fig. 3. Let S(x; y) be
 the state with x permanent-fault modules, y non-permanent-fault modules, and 3
 nonfaulty modules.
-Although there are ten different states, we only need to consider six of them by merging
+Although there are ten different states, we only need to consider six of ten different states by merging
 This merger of states simplifies the model of a TMR system without losing model accuracy,
 because:
 ffl By modifying the transition rates, one can make the simplified Markov-chain model
 in Fig. 3 represent a TMR system very accurately, and
-ffl The merger is based on a realistic assumption that simultaneous occurrence of faults
+ffl This merger of states is based on a realistic assumption that simultaneous occurrence of faults
 in different processor modules is highly unlikely.
-Moreover, the merger does not change the analysis of a TMR failure because merged
-states have similar effects on the TMR failure as compared to the original states. For
-example, the merged states induce the same type of TMR failure, where the 'type' is
+Moreover, This merger of states does not change the analysis of a TMR failure because merged
+states have similar effects on a voting
+failure as compared to the original states. For
+example, the original states induce the same type of TMR failure, where the 'type' is
 determined by the number of permanent-fault modules. There are four possible states,
 which led to Type-I failures (i.e., it was S(0; 1),
 &%
@@ -388,7 +402,7 @@ is the set of all paths to all possible fault states evolved from S i , i.e.,
 computed based on the behavior of non-permanent faults, i.e., depending on whether or
 not a non-permanent fault, after having induced some error(s), is still active when a second
 non-permanent fault occurs. Likewise, the probabilities of S 4 and S 5 leading to Type-II
-failure are computed by the behavior of a non-permanent fault, if it had occurred earlier
+failure are computed by the behavior of a non-permanent fault, if the behavior of a non-permanent fault had occurred earlier
 than permanent fault(s). When an intermittent fault is considered, the fault state must
 be divided by fault active and fault benign states as in [15], which makes the problem
 too complicated to be tractable. The numerical examples of F T i
@@ -413,7 +427,7 @@ appearance and disappearance rates of non-permanent faults. Using this observati
 can analyze the behavior of permanent faults separately from that of non-permanent faults.
 The transition probabilities due to the occurrence of permanent faults are represented by
 because of the persistence of permanent faults.
-Although these probabilities depend upon  i
+Although The transition probabilities due to the occurrence of permanent faults depend upon  i
 are approximated
 by using only the prior probabilities of source states,  i
 f ). This approximation causes
@@ -487,7 +501,7 @@ states for the next RSHW. The expected cost of RHWR is obtained similarly to Eq.
 f
 (X)
 When RSHW is unsuccessful or a voting failure occurs again, the (prior) state probabilities
-are updated with the additional information obtained from the RSHW using the
+are updated with the additional information obtained from RSHW using the
 Bayes theorem. The observed information tells us that a TMR failure has occurred again
 during the current execution. (Note that the TMR failure detection time during the current
 execution is X f .) As a result, the prior probabilities of all possible fault states for the
@@ -551,10 +565,10 @@ Table
 A system with three replicated processing modules, two voters, and a comparator is
 simulated to compare the proposed method (called Method 1) with an alternative which
 is based on RHWR (called Method 2). Upon detection of a TMR failure, Method 1 will
-decide between RSHW and RHWR according to their respective costs. Method 2, however,
+decide between RSHW and RHWR according to RSHW and RHWR respective costs. Method 2, however,
 will reconfigure the TMR entirely with a new healthy TMR or partially with healthy spare
 modules following an appropriate diagnosis. If a non-permanent fault does not disappear
-during the diagnosis, it will be treated as a permanent fault and replaced by a new, non-faulty
+during an appropriate diagnosis, a non-permanent fault will be treated as a permanent fault and replaced by a new, non-faulty
 spare. We assume that (A1) an unlimited number of tasks with the same nominal
 task-execution time are available to keep the running module busy, which simplifies the
 description of system workload, and (A2) there are an unlimited number of spares available.
@@ -576,7 +590,7 @@ S 4 are computed from the Markov-chain model and simulations, and are then compa
 The simulation and modeling results are very close to each other. The modeling analyses
 proved to be very effective in determining when and how to choose between RSHW and
 RHWR under various conditions, as shown in Figs. 7-11.
-The results obtained while varying X from 10 to 100 hours with T are plotted
+The simulation and modeling results obtained while varying X from 10 to 100 hours with F T are plotted
 in Figs. 7-9. The OVRs of Methods 1 and 2 with the optimal number of votings are
 compared in Fig. 7. The difference between the OVRs of Method 1 and Method 2 increases
 significantly with X . When X is small, the OVRs of the two methods are too small to
@@ -592,7 +606,7 @@ hardware cost of spares used. The increase in this percentage is much larger in 
 than Method 1, since the number of TMR failures increases with X , and Method 1 can
 recover from most TMR failures with RSHW.
 The second comparison is made while varying T c - the resetting time for system reconfiguration
-- from 2:5 to 12:5 hours for X=50 hours, and the results are plotted in Fig. 10.
+- from 2:5 to 12:5 hours for X=50 hours, and The simulation and modeling results are plotted in Fig. 10.
 A larger resetting time generally results in a larger OVR. Increasing T c greatly affects the
 performance of Method 2. But, it has little influence on the OVR of Method 1, since the
 system recovers from most TMR failures with RSHW which has nothing to do with T c .
@@ -607,17 +621,18 @@ because the probability of successful RSHW increases with n
 We simulated the proposed and other schemes for units of time with the fault
 parameters of Table 3 for each comparison (of the mean overhead ratios of different schemes).
 The fault parameters are assumed not to change during the simulation. Since the estimation
-of system states depends upon the fault parameters, they must be estimated first. This
-problem can be solved by assuming the parameters to be time-varying and estimating them
+of system states depends upon the fault parameters, system states must be estimated first. This
+problem can be solved by assuming the parameters to be time-varying and estimating system states
 on-line with certain adaptive methods which, in turn, require more samples.
 5 Conclusion
 In this paper, we have proposed a strategy for recovering TMR failures using two different
-methods that determine when and how to apply RHWR. Both methods are shown
+methods that determine when and how to apply RHWR. two different
+methods that determine when and how to apply RHWR are shown
 to outperform the conventional method based solely on reconfiguration. This finding is
 consistent with the fact that most faults are non-permanent, so simple re-execution can recover
 from non-permanent faults and the TMR structure can mask the effects of one faulty
 module.
-The distinct characteristic of the proposed strategy is that it uses the estimated state
+The distinct characteristic of the proposed strategy is that the proposed strategy uses the estimated state
 of a TMR system even with incomplete observation of system states. Detection of a TMR
 failure and/or an unsuccessful RSHW does not always call for reconfiguration (RHWR) but
 requires us to derive and compare the expected costs of reconfiguration and one additional
@@ -629,7 +644,8 @@ appropriately can be effective in handling component failures.
 Acknowledgement
 
 The authors would like to thank Allan White, Chuck Meissner, and Felix Pitts of the
-NASA Langley Research Center, and Jim Smith of the Office of Naval Research for their
+NASA Langley Research Center, and Jim Smith of the Office of Naval Research for Allan White, Chuck Meissner, and Felix Pitts of the
+NASA Langley Research Center, and Jim Smith of the Office of Naval Research
 technical and financial assistance.
 
 

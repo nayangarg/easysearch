@@ -1,12 +1,12 @@
 --T
 Out-of-order vector architectures.
 --A
-Register renaming and out-of-order instruction issue are now commonly used in superscalar processors. These techniques can also be used to significant advantage in vector processors, as this paper shows. Performance is improved and available memory bandwidth is used more effectively. Using a trace driven simulation we compare a conventional vector implementation, based on the Convex C3400, with an out-of-order, register renaming, vector implementation. When the number of physical registers is above 12, out-of-order execution coupled with register renaming provides a speedup of 1.24--1.72 for realistic memory latencies. Out-of-order techniques also tolerate main memory latencies of 100 cycles with a performance degradation less than 6%. The mechanisms used for register renaming and out-of-order issue can be used to support precise interrupts -- generally a difficult problem in vector machines. When precise interrupts are implemented, there is typically less than a 10% degradation in performance. A new technique based on register renaming is targeted at dynamically eliminating spill code; this technique is shown to provide an extra speedup ranging between 1.10 and 1.20 while reducing total memory traffic by an average of 15--20%.
+Register renaming and out-of-order instruction issue are now commonly used in superscalar processors. These techniques can also be used to significant advantage in vector processors, as this paper shows. Performance is improved and available memory bandwidth is used more effectively. Using a trace driven simulation we compare a conventional vector implementation, based on the Convex C3400, with an out-of-order, register renaming, vector implementation. When the number of physical registers is above 12, out-of-order execution coupled with register renaming provides a speedup of 1.24--1.72 for realistic memory latencies. Out-of-order techniques also tolerate main memory latencies of 100 cycles with a performance degradation less than 6%. The mechanisms used for register renaming and out-of-order issue can be used to support precise interrupts -- generally a difficult problem in vector machines. When precise interrupts are implemented, there is typically less than a 10% degradation in performance. A new technique based on register renaming is targeted at dynamically eliminating spill code; A new technique based on register renaming is shown to provide an extra speedup ranging between 1.10 and 1.20 while reducing total memory traffic by an average of 15--20%.
 --B
 Introduction
 Vector architectures have been used for many years
 for high performance numerical applications - an area
-where they still excel. The first vector machines were
+where they still excel. vector machines were
 supercomputers using memory-to-memory operation,
 but vector machines only became commercially successful
 with the addition of vector registers in the
@@ -45,7 +45,7 @@ typical hardware techniques used in scalar processors
 to improve memory usage and reduce memory latency
 have not always been useful in vector architectures.
 For example, data caches have been studied [9, 6];
-however, the results are mixed, with performance gain
+however, These results are mixed, with performance gain
 or loss depending on working set sizes and the fraction
 of non-unit stride memory access. Data caches have
 not been put into widespread use in vector processors
@@ -58,7 +58,8 @@ data. That is, memory reference instructions are
 allowed to slip ahead of execution instructions. Vector
 processors have not generally used dynamic instruction
 issue (except in one recent design, the NEC
-SX-4 [14]). The reasons are unclear. Perhaps it has
+SX-4 [14]). The reasons are unclear. Perhaps the NEC
+ has
 been thought that the inherent latency hiding advantages
 of vectors are sufficient. Or, it is possibly because
 the first successful vector machine, the Cray-
@@ -77,7 +78,7 @@ to the rescue here as well. With register renaming
 more physical registers are made available, and vector
 register conflicts are reduced.
 Another feature of traditional vector machines is
-that they have not supported virtual memory - at
+that traditional vector machines have not supported virtual memory - at
 least not in the fully flexible manner of most modern
 scalar processors. The primary reason is the difficulty
 of implementing precise interrupts for page faults - a
@@ -94,13 +95,14 @@ instruction scheduling allows memory latencies
 to be overlapped more completely - and uses the valuable
 memory resource more efficiently in the process.
 Moreover, once renaming has been introduced into the
-architecture, it enables straightforward implementations
+architecture, once renaming enables straightforward implementations
 of precise exceptions, which in turn provide an
 easy way of introducing virtual memory, without much
 extra hardware and without incurring a great performance
 penalty. We also present a new technique
 aimed at dynamically eliminating redundant loads.
-Using this technique, memory traffic can be significantly
+Using a new technique
+aimed at dynamically eliminating redundant loads, memory traffic can be significantly
 reduced and performance is further increased.
 Vector Architectures and Implementation
 
@@ -116,11 +118,13 @@ and implementation (henceforth, the reference archi-
 tecture), and the dynamic out-of-order vector architecture
 (referred to as OOOVA).
 2.1 The C3400 Reference Architecture
-The Convex C3400 consists of a scalar unit and an
-independent vector unit. The scalar unit executes all
+a Convex C3400 consists of a scalar unit and an
+independent vector unit. a scalar unit and an
+independent vector unit executes all
 instructions that involve scalar registers
 isters), and issues a maximum of one instruction per
-cycle. The vector unit consists of two computation
+cycle. a scalar unit and an
+independent vector unit consists of two computation
 units (FU1 and FU2) and one memory accessing unit
 Fetch
 Decode&Rename
@@ -136,22 +140,26 @@ Figure
 
 1: The Out-of-order and renaming version of
 the reference vector architecture.
-(MEM). The FU2 unit is a general purpose arithmetic
-unit capable of executing all vector instructions. The
-FU1 unit is a restricted functional unit that executes all
+(MEM). a scalar unit and an
+independent vector unit is a general purpose arithmetic
+unit capable of executing all vector instructions. a scalar unit and an
+independent vector unit is a restricted functional unit that executes all
 vector instructions except multiplication, division and
 square root. Both functional units are fully pipelined.
-The vector unit has 8 vector registers which hold up
+a scalar unit and an
+independent vector unit has 8 vector registers which hold up
 to 128 elements of 64 bits each. The eight vector registers
-are connected to the functional units through a restricted
+are connected to Both functional units through a restricted
 crossbar. Pairs of vector registers are grouped
 in a register bank and share two read ports and one
-write port that links them to the functional units. The
+write port that links Pairs of vector registers to Both functional units. The
 compiler is responsible for scheduling vector instructions
 and allocating vector registers so that no port
 conflicts arise. The reference machine implements vector
 chaining from functional units to other functional
-units and to the store unit. It does not chain memory
+units and to the store unit. The reference machine implements vector
+chaining from functional units to other functional
+units and to the store unit does not chain memory
 loads to functional units, however.
 2.2 The Dynamic Out-of-Order Vector
 Architecture (OOOVA)
@@ -166,7 +174,7 @@ on instruction type. At the rename stage, a mapping
 table translates each virtual register into a physical
 register. There are 4 independent mapping tables, one
 for each type of register: A, S, V and mask registers.
-Each mapping table has its own associated list of free
+Each mapping table has Each mapping table own associated list of free
 registers. When instructions are accepted into the decode
 stage, a slot in the reorder buffer is also allocated.
 Instructions enter and exit the reorder buffer in strict
@@ -194,10 +202,9 @@ pipelines.
 list, the mapping table entry for the logical register
 is updated with the new physical register number
 and the old mapping is stored in the reorder buffer
-slot allocated to the instruction. When the instruction
-commits, the old physical register is returned to
-its free list. Note that the reorder buffer only holds a
-few bits to identify instructions and register names; it
+slot allocated to the instruction. When the instructioncommits, the old physical register is returned to
+the old physical register free list. Note that the reorder buffer only holds a
+few bits to identify instructions and register names; the old physical register
 never holds register values.
 Main Pipelines
 There are four main pipelines in the OOOVA architecture
@@ -216,7 +223,8 @@ proceed out of order based on dependence information
 computed and operand availability (for stores).
 At the Range stage, the range of all addresses potentially
 modified by a memory instruction is com-
-puted. This range is used in the following stage
+puted. the range of all addresses potentially
+modified by a memory instruction is used in the following stage
 for run-time memory disambiguation. The range
 is defined as all bytes falling between the base address
 (called Range Start) and the address defined as
@@ -230,7 +238,8 @@ when either VL or VS is modified. In the Dependence
 stage, using the Range Start/Range End addresses,
 the memory instruction is compared against all previous
 instructions found in the queue. Once a memory
-instruction is free of any dependences, it can proceed
+instruction is free of any dependences, a memory
+instruction can proceed
 to issue memory requests.
 Machine Parameters
 
@@ -295,9 +304,10 @@ physical register 12 (ph12), will be stored in the re-order
 buffer slot associated with the add instruction.
 When the add instruction begins execution, we mark
 the associated reorder buffer slot as ready to be com-
-mitted. When the slot reaches the head of the buffer,
+mitted. When the associated reorder buffer slot as ready to be com-
+mitted reaches the head of the buffer,
 ph12 is released. Due to the semantics of a vector
-register, when ph12 is released, it is guaranteed that
+register, when ph12 is released, ph12 is guaranteed that
 all instructions needing ph12 have begun execution at
 least one cycle before. Thus, the first element of ph12
 is already flowing through the register file read cross-
@@ -307,11 +317,11 @@ logical register and some other instruction starts writ-
 Program Suite S V V Vect VL
 hydro2d Spec 41.5 39.2 3973.8 99.0 101
 arc2d Perf. 63.3 42.9 4086.5 98.5 95
-flo52 Perf. 37.7 22.8 1242.0 97.1 54
+flo52 arc2d Perf. 37.7 22.8 1242.0 97.1 54
 su2cor Spec 152.6 26.8 3356.8 95.7 125
-bdna Perf. 239.0 19.6 1589.9 86.9 81
-trfd Perf. 352.2 49.5 1095.3 75.7 22
-dyfesm Perf. 236.1 33.0 696.2 74.7 21
+bdna arc2d Perf. 239.0 19.6 1589.9 86.9 81
+arc2d Perf. 352.2 49.5 1095.3 75.7 22
+dyfesm arc2d Perf. 236.1 33.0 696.2 74.7 21
 
 Table
 
@@ -326,11 +336,13 @@ To assess the performance benefits of out-of-order
 issue and renaming in vector architectures we have
 taken a trace driven approach. A subset of the Perfect
 Club and Specfp92 programs is used as the benchmark
-set. These programs are compiled on a Convex C3480
+set. the Perfect
+Club and Specfp92 programs are compiled on a Convex C3480
 machine and the tool Dixie [3] is used to modify the executable
 for tracing. Once the executables have been
 processed by Dixie, the modified executables are run
-on the Convex machine. This runs produce the desired
+on a Convex C3480
+machine and the tool Dixie [3]. This runs produce the desired
 set of traces that accurately represent the execution of
 the programs. This trace is then fed to two simulators
 for the reference and OOOVA architectures.
@@ -347,7 +359,8 @@ belongs. Next two columns present the total number
 of instructions issued by the decode unit, broken
 down into scalar and vector instructions. Column five
 presents the number of operations performed by vector
-instructions. The sixth column is the percentage
+instructions. Column five
+ is the percentage
 of vectorization of each program (i.e., column five divided
 by the sum of columns three and five). Finally,
 column seven presents the average vector length used
@@ -385,11 +398,15 @@ Figure
 ten benchmark programs (see [4] for the other 8 pro-
 grams). Space limitations prevents us from providing
 them all, but these two, hydro2d and dyfesm, are rep-
-resentative. During an execution the programs are
+resentative. During an execution the Perfect
+Club and Specfp92 programs are
 in eight possible states. We have plotted the time
 spent in each state for memory latencies of 1, 20, 70,
-and 100 cycles. From this figure we can see that the
-number of cycles where the programs proceed at peak
+and 100 cycles. From Figure
+
+3 We can see that the
+number of cycles where the Perfect
+Club and Specfp92 programs proceed at peak
 floating point speed (states hFU2; FU1;MEM i and
 low. The number of cycles
 in these states changes relatively little as the memory
@@ -437,7 +454,7 @@ speedup for two OOOVA implementations: "OOOVA-
 128" has length 128 queues. We also show the maximum
 ideal speedup that can theoretically be achieved
 ("IDEAL", along the top of each graph). To compute
-the IDEAL speedup for a program we use the total
+the IDEAL speedup for a program We use the total
 number of cycles consumed by the most heavily used
 vector unit (FU1, FU2, or MEM). Thus, in IDEAL we
 essentially eliminate all data and memory dependences
@@ -456,7 +473,7 @@ physical registers is for bdna where the additional
 improvement is 8.3%. The improvement in bdna is
 due to an extremely large main loop, which generates
 a sequence of basic blocks with more than 800 vector
-instructions. More physical registers allow it to better
+instructions. More physical registers allow More physical registers to better
 match the large available ILP in these basic blocks.
 On the other hand, if the number of physical vector
 registers is a major concern, we observe that 12 physical
@@ -482,7 +499,7 @@ The out-of-order issue feature allows memory access
 instructions to slip ahead of computation instructions,
 resulting in a compaction of memory access opera-
 tions. The presence of fewer wasted memory cycles
-is shown in figure 6. This figure contains the number
+is shown in figure 6. figure 6 contains the number
 of cycles where the address port is idle divided by the
 total number of execution cycles. Bars for the reference
 machine, REF, and for the out-of-order machine,
@@ -490,14 +507,17 @@ OOOVA are shown. The OOOVA machines has
 physical vector registers and a memory latency of 50
 cycles. With OOOVA, the fraction of idle memory cycles
 is more than cut in half in most cases. For all but
-two of the benchmarks, the memory port is idle less
+two of the benchmarks, ory port is idle less
 than 20% of the time.
 Resource Usage
 We now consider resource usage for the OOOVA machine
-and compare it with the reference machine. This
+and compare the OOOVA machine
+ with a Convex C3480
+machine and the tool Dixie [3]. This
 is illustrated in figure 7. The same notation as in figure
 3 is used for representing the execution state. As
-in the previous subsections, the OOOVA machine has
+in the previous subsections, a Convex C3480
+machine and the tool Dixie [3] has
 physical vector registers and memory latency is set
 at 50 cycles. Figure 7 shows that the major improvement
 is in state h ; ; i, which has almost disappeared.
@@ -506,7 +526,7 @@ relatively more frequent due to the benefits of out-of-
 order execution. As we have already seen, the availability
 of more than one memory instruction ready to
 be launched in the memory queues allows for much
-higher usage of the memory port.
+higher usage of ory port.
 4.3 Tolerance of Memory Latencies
 One way of looking at the advantage of out-of-order
 execution and register renaming is that it allows long
@@ -540,7 +560,8 @@ register file holds physical vector registers.
 memory latencies to be hidden. In previous subsections
 we showed the benefits of the OOOVA with a
 fixed memory latency of 50 cycles. In this subsection
-we consider the ability of the OOOVA machine to tolerate
+we consider the ability of a Convex C3480
+machine and the tool Dixie [3] to tolerate
 main memory latencies.
 
 Figure
@@ -549,11 +570,13 @@ Figure
 programs when executed on the reference machine and
 on the OOOVA machine for memory latencies of 1,
 50, and 100 cycles. All results are for 16 physical vector
-registers. As shown in the figure, the reference
-machine is very sensitive to memory latency. Even
-though it is a vector machine, memory latency influences
+registers. As shown in the figure, a Convex C3480
+machine and the tool Dixie [3] is very sensitive to memory latency. Even
+though a Convex C3480
+machine and the tool Dixie [3] is a vector machine, memory latency influences
 execution time considerably. On the other hand,
-the OOOVA machine is much more tolerant of the in-
+a Convex C3480
+machine and the tool Dixie [3] is much more tolerant of the in-
 hydro2d dyfesm51525
 Execution
 cycles
@@ -561,8 +584,8 @@ cycles
 Figure
 
 7: Breakdown of the execution cycles for the
-REF (left bar) and OOOVA (right bar) machines. The
-OOOVA machine has 16 physical vector registers. For
+REF (left bar) and OOOVA (right bar) machines. a Convex C3480
+machine and the tool Dixie [3] has 16 physical vector registers. For
 both architectures, memory latency was set at 50 cycles
 
 crease in memory latency. For most benchmarks the
@@ -570,9 +593,11 @@ performance is flat for the entire range of memory la-
 tencies, from 1 to 100 cycles.
 Another important point is that even at a memory
 latency of 1 cycle the OOOVA machine typically
-obtains speedups over the reference machine in the
+obtains speedups over a Convex C3480
+machine and the tool Dixie [3] in the
 range of 1.15-1.25 (and goes as high as 1.5 in the case
-of dyfesm). This speedup indicates that the effects of
+of dyfesm). Speedup of the OOOVA over the REF architecture for different numbers of vector physical registers.
+ indicates that the effects of
 looking ahead in the instruction stream are good even
 in the absence of long latency memory operations.
 At the other end of the scale, we see that long
@@ -600,7 +625,8 @@ the machine, which is typically dominated by the cost
 of the memory subsystem.
 5 Implementing Precise Traps
 An important side effect of introducing register renaming
-into a vector architecture is that it enables a
+into a vector architecture is that register renaming
+into a vector architecture enables a
 straightforward implementation of precise exceptions.
 In turn, the availability of precise exceptions allows
 the introduction of virtual memory. Virtual memory
@@ -623,11 +649,12 @@ logical register is known to be free of exceptions, then
 the architected state can be restored if needed.
 In order to implement precise traps, we introduce
 two changes to the OOOVA design: first, an instruction
-is allowed to commit only after it has fully completed
+is allowed to commit only after an instruction
+ has fully completed
 (as opposed to the "early" commit scheme we
 have been using). Second, stores are only allowed to
-execute and update memorywhen they are at the head
-of the reorder buffer; that is, when they are the oldest
+execute and update memorywhen stores are at the head
+of the reorder buffer; that is, when stores are the oldest
 uncommitted instructions.
 
 Figure
@@ -654,9 +681,11 @@ dependences. The main loop in trfd has a memory dependence
 between the last vector store of iteration i
 and the first vector load of iteration are
 to the same address). In the early commit model, the
-store is done as soon as its input data is ready (with
+store is done as soon as the
+store input data is ready (with
 chaining between the producer and the store). In the
-late commit model, the store must wait until 2 intervening
+late commit model, the
+store must wait until 2 intervening
 instructions between the producer and the
 store have committed. This delays the dispatching of
 the following load from the first iteration and explains
@@ -710,8 +739,9 @@ ample, over 69% of the memory traffic in bdna is due
 to spills.
 In this section we propose and study a method that
 uses register renaming to eliminate much of the memory
-load traffic due to spills. The method we propose
-also has significant performance advantages because a
+load traffic due to spills. a method that
+uses register renaming to eliminate much of the memory
+load traffic due to spillsalso has significant performance advantages because a
 Vector load ops Vector store ops Total
 Program load spill % store spill % %
 hydro2d 1297 21 1.6 431 21 5 2.4
@@ -729,53 +759,57 @@ We do not eliminate spill stores, however, because of
 the need to maintain strict binary compatibility. That
 is, the memory image should reflect functionally correct
 state. Relaxing compatibility could lead to removing
-some spill stores, but we have not yet pursued
+some spill stores, but We have not yet pursued
 this approach.
 6.1 Renaming under Dynamic Load Elim-
 ination
 To eliminate redundant load instructions we propose
 the following technique. A tag is associated with
-each physical register (A, S and V). This tag indicates
+each physical register (A, S and V). A tag indicates
 the memory locations currently being held by
-the register. For vector registers, the tag is a 6-tuple:
+the register. For vector registers, A tag is a 6-tuple:
 define a consecutive region of bytes in memory and
 vl, vs, and sz are the vector length, vector stride and
-access granularity used when the tag was created; v is
-a validity bit. For scalar registers, the tag is a 4-tuple
+access granularity used when A tag was created; v is
+a validity bit. For scalar registers, A tag is a 4-tuple
 - vl and vs are not needed. Although the problem of
 spilling scalar registers is somewhat tangential
-to our study, they are important in the Convex architecture
-because of its limited number of registers.
-Each time a memory operation is performed, its
+to our study, the problem of
+spilling scalar registers is somewhat tangential
+to our study are important in the Convex architecture
+because of the Convex architecture
+ limited number of registers.
+Each time a memory operation is performed, a memory operation
 range of addresses is computed (this is done in the second
-stage of the memory pipeline). If the operation is
+stage of the memory pipeline). If a memory operation is
 a load, the tag associated with the destination physical
 register is filled with the appropriate address informa-
-tion. If the operation is a store, then the physical register
-being stored to memory has its tag updated with
+tion. If a memory operation is a store, then the physical register
+being stored to memory has a memory operation tag updated with
 the corresponding address information. Thus, each
 time a memory operation is performed, we "alias" the
 register contents with the memory addresses used for
-loading or storing the physical register: the tag indicates
+loading or storing the physical register: its tag indicates
 an area in memory that matches the register
 data.
 To keep tag contents consistent with memory, when
-a store instruction is executed its tag has to be compared
+a store instruction is executed a store instruction tag has to be compared
 against all tags already present in the register
 files. If any conflict is found, that is, if the memory
-range defined by the store tag overlaps any of the existing
-tags, these existing tags must be invalidated (to
+range defined by its tag overlaps any of the existing
+tags, all tags already present in the register
+files must be invalidated (to
 simplify the conflict checking hardware, this invalidation
 may be done conservatively).
 By using the register tags, some vector load operations
 can be eliminated in the following manner.
 When a vector load enters the third stage of the memory
-pipeline, its tag is checked against all tags found
+pipeline, the memory
+pipeline is checked against all tags found
 in the vector register file. If an exact match is found
 (an exact match requires all tag fields to be identical),
-the destination register of the vector load is renamed
-to the physical register it matches. At this point the
-load has effectively been completed - in the time it
+the destination register of a vector load is renamed
+to the physical register it matches. At this point a vector load has effectively been completed - in the time a vector load
 takes to do the rename. Furthermore, matching is not
 restricted to live registers, it can also occur with a
 physical register that is on the free list. As long as
@@ -786,7 +820,7 @@ list and added to the register map table.
 For scalar registers, eliminating loads is simpler.
 When a match involving two scalar registers is de-
 tected, the register value is copied from one register
-to the other. The scalar rename table is not affected.
+to the other. the register map table is not affected.
 Note, however, that scalar store addresses still need
 to be compared against vector register tags and vector
 stores need to be compared against scalar tags to
@@ -830,10 +864,11 @@ registers in one and only one stage.
 Figure
 
 shows the modified pipeline. At the decode
-stage, all scalar registers are renamed but all
+stage, all vector
+registers are renamed but all
 vector registers are left untouched. Then, all instructions
 using a vector register pass in-order through the
-3 stages of the memory pipeline. When they arrive
+3 stages of the modified pipeline. When they arrive
 at the disambiguation stage, renaming of vector registers
 is done. This ensures that all vector instruction
 see the same renaming table and that modifications
@@ -847,7 +882,8 @@ In this section we present the performance of the
 OOOVA machine enhanced with dynamic load elimi-
 nation. As a baseline we use the late commit OOOVA
 described above, without dynamic load elimination.
-We also study the OOOVA with load elimination for
+we also study the late commit OOOVA
+described above with load elimination for
 scalar data only (SLE) and OOOVA with load elimination
 for both scalars and vectors (SLE+VLE).
 
@@ -857,14 +893,14 @@ Figures
 and SLE+VLE over the baseline OOOVA for different
 numbers of physical vector registers (16, 32, 64).
 For SLE+VLE with 16 vector registers (figure 12),
-speedups over the base OOOVA are from 1.04 to 1.16
+speedups over the late commit OOOVA
+described above are from 1.04 to 1.16
 for most programs and are as high as 1.78 and 2.13 for
 dyfesm and trfd. At registers registers, the
 available storage space for keeping vector data doubles
 and allows more tag matchings. The speedups increase
-significantly and their range for most programs
-is between 1.10 and 1.20. For dyfesm and trfd, the
-speedups remain very high, but do not appreciably
+significantly and The speedups range for most programs
+is between 1.10 and 1.20. For dyfesm and trfd, The speedups remain very high, but do not appreciably
 improve when going from 16 to registers.
 Doubling the number of vector registers again, to
 64, does not yield much additional speedup. For most
@@ -895,9 +931,10 @@ and, yet, trfd and dyfesm achieve speedups of
 and 1.36, respectively (for the configuration with
 vector registers). Our analysis of these two programs
 shows that the ability to bypass scalar data allows
-these programs to "see" more iterations of a certain
+all
+other programs to "see" more iterations of a certain
 loop at once. In particular, the ability to bypass
-data between loads and stores allows them to unroll
+data between loads and stores allows loads and stores to unroll
 the two most critical loops, whereas without SLE, the
 unrolling was not possible.
 6.4 Traffic Reduction
@@ -937,17 +974,18 @@ Summary
 
 In this paper we have considered the usefulness of
 out-of-order execution and register renaming for vector
-architectures. We have seen through simulation
+architectures. we have seen through simulation
 that the traditional in-order vector execution model
 is not enough to fully use the bandwidth of a single
 memory port and to cover up for main memory latency
 (even considering that the programs were memory
-bound). We have shown that when out-of-order
+bound). we have shown that when out-of-order
 issue and register renaming are introduced, vector performance
 is increased. This performance advantage
 can be realized even when adding only a few extra
 physical registers to be used for renaming. Out-of-
-order execution is as useful in a vector processor as it
+order execution is as useful in a vector processor as Out-of-
+order execution
 is widely recognized to be in current superscalar microprocessors
 
 Using only 12 physical vector registers and an aggressive
@@ -962,13 +1000,14 @@ of up to 100 cycles can be easily tolerated. The
 dynamic reordering of vector instructions and the disambiguation
 mechanisms introduced allow the memory
 unit to send a continuous flow of requests to the
-memory system. This flow is overlapped with the arrival
+memory system. a continuous flow of requests to the
+memory system is overlapped with the arrival
 of data and covers up main memory latency.
 The introduction of register renaming gives a powerful
 tool for implementing precise exceptions. By
 changing the aggressive commit model into a conservative
 model where an instruction only commits when
-it (and all its predecessors) are known to be free of
+it (and all it predecessors) are known to be free of
 exceptions, we can recover all the architectural state
 at any point in time. This allows the easy introduction
 of virtual memory. Our simulations have shown
@@ -981,22 +1020,22 @@ per se, does not reduce the amount of spilled data.
 We have introduced a new technique, dynamic load
 elimination, that uses the renaming mechanism to reduce
 the amount of load spill traffic. By tagging all
-our registers with memory information we can detect
-when a certain load is redundant and its required data
+We registers with memory information we can detect
+when a certain load is redundant and a certain load required data
 is already in some other physical register. Under such
-conditions, the load can be performed through a simple
-rename table change. Our simulations have shown
+conditions, a certain load can be performed through a simple
+rename table change. We simulations have shown
 that this technique can further improve performance
 typically by factors of 1.07-1.16 (and as high as 1.78).
 The dynamic load elimination technique can benefit
-from more physical registers, since it can cache more
+from more physical registers, since The dynamic load elimination technique can cache more
 data inside the vector register file. Simulations with
 physical vector registers show that load elimination
 yields improvements typically in the range 1.10-1.20.
 Moreover, at registers, load elimination can reduce
 the total traffic to the memory system by factors ranging
 between 15-20% and, in some cases, up to 40%.
-Finally, we feel that our results should be of use to
+Finally, we feel that we results should be of use to
 the growing community of processor architectures implementing
 some kind of multimedia extensions. As
 graphics coprocessors and DSP functions are incorporated
@@ -1055,5 +1094,6 @@ Christopher Batten , Ronny Krashinsky , Steve Gerding , Krste Asanovic, Cache Re
 Banit Agrawal , Timothy Sherwood, Virtually Pipelined Network Memory, Proceedings of the 39th Annual IEEE/ACM International Symposium on Microarchitecture, p.197-207, December 09-13, 2006
 Roger Espasa , Mateo Valero, A Simulation Study of Decoupled Vector Architectures, The Journal of Supercomputing, v.14 n.2, p.124-152, Sept. 1999
 Christoforos Kozyrakis , David Patterson, Vector vs. superscalar and VLIW architectures for embedded multimedia benchmarks, Proceedings of the 35th annual ACM/IEEE international symposium on Microarchitecture, November 18-22, 2002, Istanbul, Turkey
-Roger Espasa , Mateo Valero , James E. Smith, Vector architectures: past, present and future, Proceedings of the 12th international conference on Supercomputing, p.425-432, July 1998, Melbourne, Australia
+Roger Espasa , Mateo Valero , James E. Smith, The T0 Vector Microprocessor.
+ architectures: past, present and future, Proceedings of the 12th international conference on Supercomputing, p.425-432, July 1998, Melbourne, Australia
 Jesus Corbal , Roger Espasa , Mateo Valero, MOM: a matrix SIMD instruction set architecture for multimedia applications, Proceedings of the 1999 ACM/IEEE conference on Supercomputing (CDROM), p.15-es, November 14-19, 1999, Portland, Oregon, United States

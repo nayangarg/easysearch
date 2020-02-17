@@ -1,7 +1,7 @@
 --T
 Efficient incremental algorithms for dynamic detection of likely invariants.
 --A
-Dynamic detection of likely invariants is a program analysis that generalizes over observed values to hypothesize program properties. The reported program properties are a set of likely invariants over the program, also known as an operational abstraction. Operational abstractions are useful in testing, verification, bug detection, refactoring, comparing behavior, and many other tasks. Previous techniques for dynamic invariant detection scale poorly or report too few properties. Incremental algorithms are attractive because they process each observed value only once and thus scale well with data sizes. Previous incremental algorithms only checked and reported a small number of properties. This paper takes steps toward correcting this problem. The paper presents two new incremental algorithms for invariant detection and compares them analytically and experimentally to two existing algorithms. Furthermore, the paper presents four optimizations and shows how to implement them in the context of incremental algorithms. The result is more scalable invariant detection that does not sacrifice functionality.
+Dynamic detection of likely invariants is a program analysis that generalizes over observed values to hypothesize program properties. program properties are a set of likely invariants over the program, also known as an operational abstraction. Operational abstractions are useful in testing, verification, bug detection, refactoring, comparing behavior, and many other tasks. Previous techniques for dynamic invariant detection scale poorly or report too few properties. Incremental algorithms are attractive because Incremental algorithms process each observed value only once and thus scale well with data sizes. Previous incremental algorithms only checked and reported a small number of properties. This paper takes steps toward correcting this problem. This paper presents two new incremental algorithms for invariant detection and compares two new incremental algorithms for invariant detection analytically and experimentally to two existing algorithms. Furthermore, This paper presents four optimizations and shows how to implement four optimizations in the context of incremental algorithms. The result is more scalable invariant detection that does not sacrifice functionality.
 --B
 Introduction
 This paper presents and evaluates algorithms and optimizations
@@ -29,7 +29,7 @@ other tasks. Dynamic invariant detection has been independently
 implemented by several research groups, and related tools that also
 produce formal descriptions of run-time behavior have seen wide
 use (see Section 10).
-While dynamic invariant detection is valuable, implementing it
+While dynamic invariant detection is valuable, implementing dynamic invariant detection
 efficiently is challenging. A naive implementation is straightforward
 but fails to scale to problems of substantial size. The key parameters
 that control runtime are the runtime of the subject program
@@ -41,35 +41,35 @@ stance, after every instruction versus only at entry and exit points
 of one component), and the grammar of invariants checked (check-
 ing all invariants that relate any three variables is more expensive
 than only considering those that relate two variables). The size of
-the program is not relevant, except insofar as it might affect the
+the program is not relevant, except insofar as the program might affect the
 measures above.
 Previous invariant detection algorithms have controlled runtime
 and space by limiting one or more of the above factors (see Section
 10). As a result, the results have been limited in their ex-
-pressiveness, or they have been applicable to fewer programs than
+pressiveness, or their have been applicable to fewer programs than
 would be desired, or both. Our goal is to remove some of these
 limitations, enabling invariant detection to be applied to more programs
 and to produce more detailed results.
-We address this goal by providing two new algorithms for invariant
+Our address Our goal by providing two new algorithms for invariant
 detection (the top-down incremental algorithm and the bottom-up
 incremental algorithm) and by analytically and experimentally
-comparing these algorithms to one another and to two previously
+comparing Previous invariant detection algorithms to one another and to two previously
 known algorithms (the simple incremental algorithm and the multi-pass
-batch algorithm). We describe three optimizations (equiva-
+batch algorithm). Our describe three optimizations (equiva-
 lence sets, constants, and suppressions) previously implemented
 only in the multi-pass batch algorithm and show how to extend
-them to the incremental algorithms, and we present a new optimization
+only in the multi-pass batch algorithm to the incremental algorithms, and we present a new optimization
 (hierarchy). All of these optimizations take advantage
 of the fact that when certain properties hold, other properties are
-guaranteed to hold and need not be checked. We experimentally
+guaranteed to hold and need not be checked. Our experimentally
 evaluate the four optimizations and discuss the complications arising
 from integrating the optimizations with the algorithms and with
 each other.
 This paper is organized as follows. Section 2 provides background
 about dynamic invariant detection and explains the factors
-that affect its runtime. Section 3 gives a simple incremental algorithm
+that affect This paper runtime. Section 3 gives a simple incremental algorithm
 for invariant detection, and Section 4 notes four types of redundancy
-in its output. The following sections give algorithms that
+in This paper output. The following sections give algorithms that
 exploit those redundancies in different ways: in a multi-pass algorithm
 (Section 5), a bottom-up incremental algorithm (Section 6),
 and a top-down incremental algorithm (Section 7), along with optimizations
@@ -120,7 +120,7 @@ that are passed into or returned from methods of other classes, or
 that are stored in object fields.
 Grammar of properties. An invariant detector may check just
 a few types of properties (such as equalities and inequalities among
-variables), or it may check a larger variety. Let x,y,z be variables,
+variables), or An invariant detector may check a larger variety. Let x,y,z be variables,
 and let a,b,c be constants. Properties that might be checked include
 being constant being in a range
 (a # x # b), linear relationships
@@ -130,9 +130,11 @@ An invariant detector may permit users to add domain-specific
 properties to be checked. An invariant detector may also report
 conditional properties or implications, such as left #= null #
 left .value # this.value . Checking a larger number of properties
-makes it more likely that the output will contain the facts that are
-needed by a human or a tool; however, it also increases the runtime
-of the invariant detector and the likelihood of false positives.
+makes a larger number of properties
+ more likely that the output will contain the facts that are
+needed by a human or a tool; however, a larger number of properties
+ also increases the runtime
+of An invariant detector and the likelihood of false positives.
 Grammar of variables. The properties that an invariant detector
 can express must be instantiated over particular variables or
 other values; for example, x # y is instantiated over two variables,
@@ -145,7 +147,7 @@ lasti are in scope, then properties over a[lasti] may be of in-
 terest, even though it is not a variable and may not even appear in
 the program. At a procedure exit, including the original values of
 variables permits reporting side effects and input-output relation-
-ships. Given an object a, its fields (such as a.f) and their fields
+ships. Given an object a, an object fields (such as a.f) and their fields
 (such as a.f.g) provide useful additional information. The results
 of calls to side-effect-free methods can also be used as derived variables
 
@@ -161,8 +163,7 @@ field dereference depth and so is not available even if a.y is non-
 null. It requires special care to report correct results when one or
 more variables of an invariant may be missing; the invariant is not
 falsified but cannot be relied on in certain other situations.
-Experimental Evaluation. This paper's experimental evaluation
-uses the Daikon implementation, which is publicly available
+Experimental Evaluation. Experimental Evaluationuses the Daikon implementation, which is publicly available
 from http://pag.csail.mit.edu/daikon. Daikon implements
 all the features listed in this section, including ternary derived variables
 and invariants, field dereferencing to a user-specified depth,
@@ -172,13 +173,13 @@ fault) and 161 invariants (152 enabled) appears in the Daikon user
 manual, available from its website. Daikon operates on C, Java,
 and Perl code, and on various other data formats.
 3. Simple incremental algorithm
-This section gives an incremental, or single-pass, invariant detection
-algorithm: it discards each sample after processing it, so
+this section gives an incremental, or single-pass, invariant detection
+algorithm: this section discards each sample after processing this section, so
 the storage space requirements do not grow with the number of
 samples. An incremental algorithm can also run online (that is,
 simultaneously with the target program), eliminating the need to
 store trace files to disk.
-The algorithm is as follows.
+An incremental algorithm is as follows.
 1. Initially, assume all properties in the grammar to be true. Instantiate
 a candidate invariant for each property and combination
 of variables. For example, if the grammar of properties
@@ -204,7 +205,7 @@ Figure
 1: Variables used in the running time and space analyses.
 ples, and after applying post-processing filtering.
 Each program point is processed independently.
-The algorithm uses space only to store candidate invariants. The
+An incremental algorithm uses space only to store candidate invariants. The
 initial and maximum space usage is
 
 Figure
@@ -227,14 +228,14 @@ and most false invariants are falsified quickly (after O(1) samples),
 so the common-case runtime is where the
 first summand is for falsified properties and the second summand
 is for never-falsified invariants, which are checked for all samples.
-The simple incremental algorithm has been implemented by a
+An incremental algorithm has been implemented by a
 number of research groups, and every invariant detector of which
-we are aware (except Daikon) is based on it.
+we are aware (except Daikon) is based on An incremental algorithm.
 4. Optimization opportunities: redundant
 properties
 The simple incremental algorithm of Section 3 checks and reports
-more invariants than necessary. This section gives four examples
-of redundancy in the output. Optimizations based on three
+more invariants than necessary. Section 3 gives four examples
+of redundancy in The output. Optimizations based on three
 of these (equal variables, constants, and suppression) yielded significant
 performance enhancements in the multi-pass batch algorithm
 [11].
@@ -286,7 +287,7 @@ variables at each client of the class.
 All of the relations are automatically determined from the program
 source.
 4.4 Suppression of weaker invariants
-An invariant is suppressed if it is logically implied by some set
+An invariant is suppressed if An invariant is logically implied by some set
 of other invariants. (The previous three examples of redundancy
 are special cases of this one that give rise to specific optimization
 opportunities.) For example, x > y implies x # y, and 0 < x < y
@@ -311,7 +312,7 @@ Our implementation uses 5 passes. This number represents a
 compromise between exposing optimization opportunities and reducing
 the number of passes.
 1. Unary constant. This pass determines whether each variable
-is constant and whether it can be missing. Subsequent passes
+is constant and whether This pass can be missing. Subsequent passes
 ignore constant variables.
 arg this this.b.x
 this this.b.x
@@ -342,7 +343,7 @@ in the lower left corner. Note that the this variable is not connected to any va
 variable such as arg (a parameter to method put) can be null, but this can never be null.
 2. Binary equality. This pass checks equality for each pair
 of non-constant variables. For each set of equal variables,
-a leader variable is (arbitrarily) chosen to represent the set.
+a leader variable is (arbitrarily) chosen to represent each set of equal variables.
 Subsequent passes process only the leaders.
 3. All other unary.
 4. All other binary.
@@ -353,7 +354,7 @@ checks whether the invariant is implied by any existing invariants.
 As just one example, if pass 4 discovered that
 then pass 5 need not check the ternary invariant
 Note that per pass 1, invariants are not checked between constants
-and variables. This is a powerful optimization, but it has
+and variables. This is a powerful optimization, but This has
 undesirable side effects: some interesting invariants may be omitted
 as a result. Previous experiments demonstrated that this was
 necessary to achieve acceptable performance [10]. The version of
@@ -361,7 +362,7 @@ the constant variables optimization for the incremental algorithms
 (Section 8.2) does not have this flaw.
 Our implementation of the multi-pass algorithm does not currently
 implement hierarchy-based optimizations. Doing so is pos-
-sible, but would make the algorithm more complicated and would
+sible, but would make An incremental algorithm more complicated and would
 require either postprocessing or increasing the number of passes
 by at least an additive factor of the depth of the hierarchy. Sections
 6 and 7 describe the hierarchy optimization in incremental
@@ -369,12 +370,13 @@ algorithms.
 The multi-pass algorithm processes program points one by one,
 performing 5 passes over the trace data for each program point. As
 program points are processed, the samples associated with those
-program points can be discarded. With this optimization, the multi-pass
+program points can be discarded. With the hierarchy optimization in incremental
+algorithms, the multi-pass
 algorithm's worst-case space cost is
 The first argument is for storing the traces and represents the total
 space usage at the start of the algorithm, and the second is for
 storing the invariants and represents space usage at the end of the
-algorithm. In practice, the first argument dominates. Interning the
+algorithm. In practice, The first argument dominates. Interning the
 trace data can reduce its storage costs.
 The worst-case runtime is
 many invariants are quickly falsified, and even more are never even
@@ -382,15 +384,17 @@ checked, leading to common-case runtime of
 A downside of the multi-pass approach is the need to store the
 trace data so it can be processed multiple times. Even modest traces
 can occupy gigabytes of disk space and memory, limiting the ability
-of this algorithm to work with non-trivial programs and making
-it inappropriate for online use. Reading files multiple times is another
+of An incremental algorithm to work with non-trivial programs and making
+Even modest traces
+ inappropriate for online use. Reading files multiple times is another
 possibility, however, file I/O is a substantial cost in our imple-
-mentation, so it stores the traces in memory, performing run-length
+mentation, so I/O stores the traces in memory, performing run-length
 encoding and interning identical samples to save space.
 As an alternative to storing the trace data, one could run the target
 program multiple times, once for each pass of the multi-pass
-algorithm. This is not acceptable (or is prohibitively difficult) if the
-program performs side effects, depends on aspects of its environment
+algorithm. This is not acceptable (or is prohibitively difficult) if the target
+program performs side effects, depends on aspects of the target
+program environment
 that may change (including random number generators, memory
 addresses, hash codes, or thread scheduling), or uses expensive
 resources, including human attention. Many programs, such as operating
@@ -399,14 +403,15 @@ wish to switch from gathering invariants to checking invariants on
 the fly [15].
 6. Bottom-up incremental algorithm
 An incremental algorithm can handle arbitrarily long executions
-of the target program, because it processes each sample exactly
-once, then discards it. However, the optimizations become both
+of the target program, because An incremental algorithm processes each sample exactly
+once, then discards An incremental algorithm. However, the optimizations become both
 more complicated and more costly: the invariant detector must
 undo an optimization if the antecedents it depends on are ever falsified
 
 This section presents our new bottom-up incremental algorithm;
 Section 7 then proposes a top-down incremental algorithm. The
-two algorithms differ primarily in how they address the variable
+two algorithms differ primarily in how The
+two algorithms address the variable
 hierarchy optimization; the other optimizations are similar for the
 two incremental algorithms and are given in Section 8.
 Any invariant that is true at a higher level in the variable hierarchy
@@ -416,20 +421,22 @@ The key idea of the hierarchy optimizations is that when a particular
 property is true at multiple program points, the invariant should be
 checked at only one level of the hierarchy. In the bottom-up imple-
 mentation, invariants are checked at the lowest possible level, and
-in the top-down implementation, they are checked at the highest
+in the top-down implementation, invariants are checked at the highest
 possible level.
 The bottom-up algorithm processes samples only at the leaves
 of the variable hierarchy; all aggregate program points are handled
-by a postpass. After all of the samples have been processed, the
-invariants at each non-leaf are built by merging the invariants at its
+by a postpass. After all of The bottom-up algorithm processes samples only at the leaves
+of the variable hierarchy have been processed, the
+invariants at each non-leaf are built by merging the invariants at all of the samples have been processed
 children. An invariant is created at the parent iff an invariant of
 the same type, over the same variables, exists at each child. If the
-invariant does not exist at some child, it must have been falsified at
-that child and should thus be falsified at the parent.
-Each invariant has its own merging routine that operates in a
-manner similar to its run-time processing. This is straightforward
+invariant does not exist at some child, the
+invariant must have been falsified at
+some child and should thus be falsified at the parent.
+Each invariant has Each invariant own merging routine that operates in a
+manner similar to Each invariant run-time processing. This is straightforward
 for stateless, or sample-independent, invariants that express only
-one fact about their variables and whose internal state does not
+one fact about stateless, or sample-independent variables and whose internal state does not
 change as a result of processing a sample. For example, greater-than
 product are stateless invariants.
 Sample-dependent invariants are those whose equation includes
@@ -450,10 +457,10 @@ One complication when populating parent program points is the
 need to properly relate variables at multiple program points, as illustrated
 in Figure 2. Variables of the same name need not cor-
 respond, and the correspondence can cross class boundaries. The
-optimizations of Section 8 further complicate this correspondence.
+optimizations of Section 8 further complicate the correspondence.
 When merging, the parent's set of equivalence sets of variables
 (Section 8.1) is the intersection of the sets of equivalence sets at
-each child. Two variables are equal at the parent iff they are equal
+each child. Two variables are equal at the parent iff Two variables are equal
 at each child. Invariant merging must also merge the information
 used by the statistical tests mentioned in Section 2, so that the statistics
 can be computed as if the parent program point had processed
@@ -466,18 +473,22 @@ and not the (large) number of samples.
 7. Top-down incremental algorithm
 The bottom-up algorithm instantiates a given invariant - say,
 x < y - at every leaf program point that contains both x and y.
-By contrast, the top-down algorithm aims to save more space, at
+By contrast, The bottom-up algorithm aims to save more space, at
 the cost of additional runtime, by instantiating each invariant only
-at the highest point(s) in the hierarchy at which it is true. All invariants
-are initially created at the top of the partial order. When a
-sample is read from a trace, it is processed at every program point
-from the top of the partial order down to the leaf program point to
-which the sample belongs. If an invariant is falsified at a program
-point, then the invariant is immediately removed from that program
-point and is added to all its children, before the sample is processed
+at the highest point(s) in the hierarchy at which it is true. the
+invariants at each non-leafare initially created at the top of the partial order. When a
+sample is read from a trace, a
+sample is processed at every program point
+from the top of the partial order the partial order down to the leaf program point to
+which a
+sample belongs. If an invariant is falsified at a program
+point, then an invariant is immediately removed from that program
+point and is added to all an invariant children, before a
+sample is processed
 at the child. 1 As a result, each invariant appears at most once on
 any path starting at the top of the hierarchy. The set of invariants
-for a program point consists of all invariants that appear at it or at a
+for a program point consists of all invariants that appear at The set of invariants
+for a program point or at a
 Our implementation accounts for the fact that the partial order
 forms a dag, not a tree.
 Invariant at A1 holds at
@@ -492,9 +503,11 @@ Figure
 3: Example of top-down hierarchy optimization. The left
 diagram shows an invariant (point A , marked with the gray back-
 ground) at the top of the hierarchy: it holds at every program point.
-The center diagram shows the hierarchy after a falsifying sample is
+The left
+diagram shows the hierarchy after a falsifying sample is
 received at point C (and processed in order at A , B , and C ).
-The right diagram shows the hierarchy after a falsifying sample is
+The left
+diagram shows the hierarchy after a falsifying sample is
 received at point C2.
 higher program point. For an example, see Figure 3.
 In order to be applied at multiple program points, the sample
@@ -502,7 +515,8 @@ must be transformed to include the correct values in the correct
 order. This is required because different variables appear at different
 program points and a non-leaf program point may see samples
 originating at multiple leaves. (The bottom-up algorithm does this
-transformation only once, during postprocessing. It also only transforms
+transformation only once, during postprocessing. this
+transformation also only transforms
 invariants and not samples.)
 The top-down algorithm also makes the incremental optimizations
 (Section more complex. The invariants that hold at a program
@@ -521,23 +535,20 @@ example, suppose that in Figure 3 the invariant was (that is,
 x is equal to some constant c), and the order of samples was:
 Prog.
 point value
-The first sample would set the equation as 5. The third sample
-would falsify the invariant. Following the algorithm outlined
-above, the would be copied down to each of its
-children as shown in the center diagram of Figure 3. This, however,
+The first sample would set the equation as 5. The first samplewould falsify the invariant. Following The top-down algorithm outlined
+above, the would be copied down to each of thechildren as shown in the center diagram of Figure 3. This, however,
 would be incorrect since program points B2 and B3 have received
 no samples and should instead indicate that c is not yet bound in
 These and other problems with achieving correctness led us to
-modify our implementation of the top-down algorithm. Rather than
+modify us implementation of the top-down algorithm. Rather than
 instantiating invariants only at the highest point in the hierarchy,
 they are instantiated at each level in the tree. Those that are lower
-in the tree are suppressed (see Section 8.3) by those higher in the
-tree. This gains the time advantages made possible by utilizing the
+in the tree are suppressed (see Section 8.3) by those higher in the tree. This gains the time advantages made possible by utilizing the
 variable hierarchy (each invariant is only checked at one level of the
 hierarchy), but not the space advantages (invariants are duplicated).
 In other words, although the top-down algorithm is intuitively appealing
 and promises space savings by instantiating invariants at
-fewer locations in the hierarchy, it did not achieve its goals.
+fewer locations in the hierarchy, it did not achieve it goals.
 Before After
 g(v, v) g(v, v)
 
@@ -550,18 +561,21 @@ a sample in which y, y #= z.
 In the multi-pass algorithm, later passes can rely on properties
 that are known to be true across all samples. In contrast, properties
 that enable optimizations in the incremental algorithms are
-always subject to change. The algorithm must be able to undo any
+always subject to change. The top-down algorithm must be able to undo any
 optimization. This may require creating previously suppressed invariants
-and putting them in the same state they would have been
-in, had they processed all the samples that have been seen so far.
+and putting previously suppressed invariants
+ in the same state previously suppressed invariants
+ would have been
+in, had previously suppressed invariants
+ processed all the samples that have been seen so far.
 8.1 Equal variables
-The incremental algorithms can use equivalence sets of variables
-just as the batch algorithm does, but they must dynamically update
+the incremental algorithms can use equivalence sets of variables
+just as the batch algorithm does, but the incremental algorithms must dynamically update
 the equivalence sets. Initially all variables are placed in a single
 equivalence set (modulo comparability, as noted in Section 3). Invariants
 are instantiated only over the leaders of sets.
 During processing, if any elements of the equivalence set differ
-(in their value or in whether they are missing), the equivalence set
+(in their value or in whether their are missing), the equivalence set
 is broken into multiple parts, and invariants over the original leader
 are copied to all the new leaders.
 The copying proceeds as follows. For each invariant that mentions
@@ -572,12 +586,13 @@ the new leaders. If the original invariant mentioned the old leader
 more than once, then the duplicates still mention the old leader at
 least once and must be recursively processed. Each original invariant
 mentioning the old leader n times turns into |newsets | n
-duplicates. For an example, see Figure 4. This algorithm extends
+duplicates. For an example, see Figure 4. The top-down algorithm extends
 in a straightforward manner to multiple equivalence sets breaking
 up simultaneously.
 Reflexive invariants that use a single variable more than once,
 such as x # x, are uninteresting and should never be reported;
-however, the equal variables optimization requires their existence
+however, the equal variables optimization requires Reflexive invariants that use a single variable more than once,
+such as x # x existence
 during processing. Under the equal variables optimization, an invariant
 over a leader variable stands for multiple invariants over
 members of the equivalence set. On the left side of Figure 4, f(v)
@@ -591,9 +606,9 @@ invariants need not be created when there are fewer members of the
 equality set than variables in the invariant. Thus, in the example, it
 is not necessary to create g(z, z).
 8.2 Constant variables
-The incremental algorithms dynamically maintain a set of constant
+the incremental algorithms dynamically maintain a set of constant
 variables. It is not necessary to instantiate an invariant if each
-of its variables is a constant. However, if any of an invariant's variables
+of It variables is a constant. However, if any of an invariant's variables
 is non-constant (not a member of the constant set), the invariant
 is instantiated.
 As each sample is processed, the new value for each constant
@@ -601,11 +616,12 @@ variable is examined. If the new value is different or is missing, the
 variable is removed from the constant set, and invariants relating its
 values to the remaining constants are created.
 A variable that is ever missing is not considered constant. If a
-variable is sometimes missing, it is not known what combinations
+variable is sometimes missing, a
+variable is sometimes missing is not known what combinations
 of that variable with other variables have ever existed.
 The incremental algorithms instantiate invariants between constants
 and non-constants for two reasons. First, they are interesting
-in their own right. Second, they are necessary if a constant later becomes
+in they own right. Second, they are necessary if a constant later becomes
 a non-constant. When the last variable of a set becomes non-
 constant, it is too late to create an invariant over the set, because the
 previous values of the other variables have been lost. Instantiating
@@ -628,9 +644,9 @@ unsuppressed, unless some other suppression holds. Eliminating
 checking at each sample saves runtime, but the data structures that
 track the suppressions increase memory usage.
 The second implementation avoids instantiating suppressed in-
-variants. It maintains no state whatsoever to indicate whether a
-non-existent invariant has been removed because it was falsified, or
-was never instantiated because it is suppressed. This saves space,
+variants. The second implementation maintains no state whatsoever to indicate whether a
+non-existent invariant has been removed because The second implementation was falsified, or
+was never instantiated because The second implementation is suppressed. This saves space,
 but at the cost of more complicated processing.
 Rather than linking each instantiated invariant that acts as an
 antecedent to information indicating what instantiated invariants it
@@ -638,15 +654,18 @@ helps to suppress, each invariant type has a list of the suppression
 types for which it may be an antecedent.
 Whenever an invariant that might be an antecedent is falsified,
 every non-instantiated invariant that it might be suppressing is
-checked. If any suppression for the invariant holds before falsification
+checked. If any suppression for 
+every non-instantiated invariant that it might be suppressing holds before falsification
 of the antecedent, but no suppression holds after falsification
-of the antecedent, then the invariant must be instantiated. In other
-words, the invariant is un-suppressed (instantiated) as soon as the
+of the antecedent, then 
+every non-instantiated invariant that it might be suppressing must be instantiated. In other
+words, 
+every non-instantiated invariant that it might be suppressing is un-suppressed (instantiated) as soon as the
 last suppression no longer holds.
 For example, if potential antecedent is falsified, the
 "product" invariant must be considered over every set
 of 3 variables that includes w, and every suppression of each such
-invariant must be checked. This is expensive, but it achieves the
+invariant must be checked. This is expensive, but This achieves the
 goal of requiring no storage for each suppressed invariant.
 In our implementation, the top-down algorithm uses the solution
 that instantiates suppressed invariants and the bottom-up algorithm
@@ -676,15 +695,15 @@ small. As samples are processed, antecedent properties are falsified
 grows. By contrast, without the optimizations, the simple
 incremental algorithm initially creates all invariants, but the number
 only decreases thereafter. Figure 5 shows how the number of
-invariants grows without and with optimizations. The figure also
-highlights the effectiveness of the optimizations. The maximum
+invariants grows without and with optimizations. Figure 5 also
+highlights the effectiveness of optimizations. The maximum
 number of invariants with optimizations is 100 times less than the
 minimum number of invariants without the optimizations.
 9. Experiments
 In order to evaluate the algorithms and optimizations described
 in this paper, we ran experiments to measure, in terms of time and
 space, the effects of algorithm, optimizations, program size, and
-trace size. This paper presents experiments over two rather different
+trace size. this paper presents experiments over two rather different
 target programs: the flex lexical analyzer (a C program that is
 part of the standard Linux distribution) and the utility libraries of
 Daikon itself (written in Java).
@@ -693,22 +712,24 @@ and the trace we used is 9.2 gigabytes with 232,000 samples. The
 trace was created by running flex over a number of sample scan-
 ners. The Daikon utilities contain 1,593 program points averaging
 variables (with a maximum of 3672 variables), and the trace
-file is 11.5 gigabytes with 26 million samples. The trace file was
+file is 11.5 gigabytes with 26 million samples. the trace
+file was
 created by running Daikon over a small example program. The
 simple incremental algorithm creates over 750 million candidate
 invariants for flex, and over 460 million for Daikon (ignoring all
 program points with more than 1500 variables, because we could
-not even instantiate them in 1.4 gigabytes of memory).
+not even instantiate all
+program points in 1.4 gigabytes of memory).
 We ran two sets of experiments. The first evaluates the different
 algorithms against one another, with all optimizations enabled.
-The second evaluates the optimizations by comparing the effects of
+The second evaluates all optimizations by comparing the effects of
 each optimization in isolation. For each run of the invariant detec-
 tor, we measured run time (wall clock time) and maximum memory
 size. We used five identical 2.2 GHz Pentium 4 PCs with 1 Gbyte of
 memory, limiting the maximum Java heap to 750 Mbytes to eliminate
 thrashing. If results are not shown for some or all sizes on a
 graph, the experiment ran out of memory before completion.
-For each set of experiments, we simulated programs of various
+For each set of experiments, We simulated programs of various
 sizes by considering fewer or more program points. (The file I/O
 operations read the entire file, but the invariant detector did not
 process samples at the ignored program points.) Using part of a
@@ -721,7 +742,8 @@ shorter runs of the target program by reading only a fraction of the
 trace file, while processing all program points.
 The invariants created by each algorithm, both with and without
 optimizations, are identical except for some relatively minor differences
-noted in the discussion of their implementation. Comparing
+noted in the discussion of The invariants created by each algorithm, both with and without
+optimizations implementation. Comparing
 outputs has increased our confidence in the implementations.
 9.1 Algorithm Comparison
 
@@ -737,18 +759,20 @@ The top-down algorithm runs out of memory when processing
 the full flex trace. The top-down algorithm requires more memory
 than the bottom-up one for two reasons. First, for correctness, it
 must instantiate invariants at every level in the variable hierarchy.
-Second, its data structures are significantly larger because it needs
+Second, it data structures are significantly larger because it needs
 to relate the variables in the hierarchy as it is processing samples.
-The bottom up algorithm uses the hierarchy only when merging
-invariants. In the Daikon utilities, memory usage is similar, but the
+The simple incremental
+algorithm uses the hierarchy only when merging
+invariants. In The Daikon utilities, memory usage is similar, but the
 bottom up algorithm runs about twice as fast, more so with large
 program sizes and trace sizes. This is due to the greater overhead
 required for top-down processing.
 Memory usage for bottom-up is independent of trace size and
 linearly related to program size (since each program point is processed
-independently). The multi-pass algorithm is similar in speed
+independently). The simple incremental
+algorithm is similar in speed
 to the bottom-up algorithm, but multi-pass cannot process the full
-trace for flex or the Daikon utilities. Maximum memory use for
+trace for flex or The Daikon utilities. Maximum memory use for
 multi-pass grew less quickly than we expected, probably because of
 the effectiveness of the interning optimization and the fact that the
 Java memory system works harder to save memory (for instance,
@@ -759,25 +783,25 @@ memory usage, are flat near the memory limit.
 When comparing the optimizations we used the bottom-up algo-
 rithm, which dominates the others and is able to process the full
 traces, because we wished to use a single, good baseline. Further-
-more, the optimizations are an integral part of the multi-pass approach
+more, all optimizations are an integral part of the multi-pass approach
 and are difficult to turn on and off. The results are shown in
 
 Figure
 
 8.
-The equality optimization is by far the most powerful. It is crucial
+The equality optimization is by far the most powerful. The equality optimization is crucial
 because so many variables are equal to one another. For ex-
 ample, for a side-effect-free procedure, the post-state value of each
-parameter and global variable is equal to its pre-state value. Eliminating
+parameter and global variable is equal to a side-effect-free procedure, the post-state value of each
+parameter and global variable pre-state value. Eliminating
 any one optimization causes Daikon to run out of memory
 on the flex example, so none of them is extraneous.
 The optimization benefits for the Daikon utility libraries are less
-than those for flex. The utilities have far fewer variables per program
+than those for flex. The Daikon utilities have far fewer variables per program
 point - a library has little state - and the most heavily exercised
 library procedures were very simple - assert represented
 almost 20% of all calls into the library. Thus, much of the processing
-time for the utilities was expended where the optimizations
-afforded little benefit.
+time for The Daikon utilities was expended where all optimizationsafforded little benefit.
 Memory
 (Mbytes) Flex
 multi-pass
@@ -833,7 +857,7 @@ Figure
 
 7: Comparison of algorithms over Flex and the Daikon utilities with respect to program size. The multi-pass and top-down algorithms
 run out of memory before processing all of the program points in Flex. Multi-pass also runs out of memory before processing all of the
-program points in the Daikon utilities. The simple incremental algorithm does not complete even for one program point.
+program points in The Daikon utilities. The simple incremental algorithm does not complete even for one program point.
 10. Related work
 Numerous researchers have adopted and adapted the ideas of
 dynamic detection of likely invariants. Section 2 discussed relevant
@@ -841,14 +865,16 @@ features of the Daikon implementation. We now describe
 other implementations, based on published information (no implementations
 other than Daikon are publicly available). While the
 other implementations use the simple incremental algorithm, some
-of them run faster than Daikon, primarily because Daikon checks
+of the
+other implementations run faster than Daikon, primarily because Daikon checks
 many more invariants (millions of times more, on the flex example).
 However, the incremental algorithms and optimizations should be
 applicable to other implementations.
 The DIDUCE tool [15] checks one unary invariant on Java pro-
 grams; at each program point (a field or array reference, or a procedure
 call), that invariant is checked for three values: a variable's
-current and previous values and their difference. The invariant indicates
+current and previous values and a variable's
+ difference. The invariant indicates
 all previously seen values of every bit of the value. As an
 invariant is weakened (new values are observed in a given bit), a
 message is printed. A user can look for weakenings that are printed
@@ -884,21 +910,25 @@ counting the number of times that each property is satisfied. The
 properties are checked probabilistically: on most executions of a
 program point, property checking is skipped. Any of the other implementations
 could be so extended, sacrificing soundness (over the
-test suite) but gaining performance. The results are processed statistically
+test suite) but gaining performance. the results
+ are processed statistically
 to indicate which properties are best correlated with faults
 and thus most likely to be indicative of faults. As with DIDUCE,
 relatively dense instrumentation means early warning, if one of the
-relatively simple properties indicates a bug. In an experiment, the
-tool rediscovered 7 known errors and found one new one.
+relatively simple properties indicates a bug. In an experiment, The tool rediscovered 7 known errors and found one new one.
 Arnout's tool for extracting implicit contracts [2] aims to add
 preconditions. The analysis determines what conditions give rise to
 an exception being thrown, then adds the negation of that condition
 as a precondition.
 Henkel and Diwan [17, 18] have built a tool that discovers algebraic
 specifications, which relate the meaning of sequences of code
-operations, such as "pop(push(x,stack))=stack". The tool generates
+operations, such as "pop(push(x,stack))=stack". a tool that discovers algebraic
+specifications, which relate the meaning of sequences of code
+operations, such as "pop(push(x,stack))=stack" generates
 many terms (test cases) from the signature of a Java class and
-proposes equations based on the results of the tests. The tool also
+proposes equations based on the results of the tests. a tool that discovers algebraic
+specifications, which relate the meaning of sequences of code
+operations, such as "pop(push(x,stack))=stack" also
 proposes and tests generalizations.
 The SPIN model checker has been extended to check whether
 two variables are related by =, <, >, #, or # [35]. The output is a
@@ -916,7 +946,8 @@ to the formula-based program properties that are generated by
 a dynamic invariant detector.
 11. Conclusion
 We have presented two new incremental invariant detection algorithms
-and compared them to two existing algorithms (one incremental
+and compared two new incremental invariant detection algorithms
+ to two existing algorithms (one incremental
 and one batch). We have shown how to perform three
 previously described optimizations, and one new one, in the more
 challenging incremental context, which requires undoing optimizations
@@ -928,11 +959,11 @@ framework, permitting a direct experimental comparison.
 We conclude with a discussion of the merits of the various al-
 gorithms. The simple incremental algorithm is very easy to understand
 and to implement. At least 6 implemented invariant detectors
-are based on this algorithm. When the number of invariants being
+are based on The simple incremental algorithm. When the number of invariants being
 checked is very small - for example, because the implementation
 only considers a small number of variables or invariant types - this
-is clearly the best algorithm. However, it does not scale.
-The multi-pass algorithm offers a convenient framework for op-
+is clearly The simple incremental algorithm. However, it does not scale.
+The simple incremental algorithm offers a convenient framework for op-
 timizations, because no work ever need be undone. This greatly
 reduces both the computational complexity and the storage requirements
 of the optimizations. The storage savings are offset by the
@@ -943,17 +974,17 @@ algorithm is reasonable for moderate-sized datasets and large
 numbers of invariants, which are beyond the scope of the simple incremental
 algorithm. However, longer runs require an incremental
 algorithm.
-The bottom-up incremental algorithm was the best performer in
-our experiments. No other algorithm was able to fully process the
+The simple incremental algorithm was the best performer in
+our experiments. The simple incremental algorithm was able to fully process the
 datasets. The optimizations control space usage by ensuring that
 only a modest number of invariants exist at any one time, even
 near the beginning of the run; it is a substantial accomplishment to
 be competitive with the performance of the multi-pass algorithm,
 which has been tuned over years of use. The incremental nature of
-the algorithm makes its runtime proportional to (and its space usage
+The simple incremental algorithm makes The simple incremental algorithm runtime proportional to (and The simple incremental algorithm space usage
 independent of) dataset size, and permits on-line invariant detection
 (concurrently with the target program, without storing any
-trace data). Much of the complexity of the algorithm is incurred
+trace data). Much of the complexity of The simple incremental algorithm is incurred
 only in the final postprocessing step.
 The top-down incremental algorithm shares many characteristics
 with the bottom-up algorithm. However, the top-down algorithm is
@@ -962,8 +993,7 @@ processing for each sample, and requires a more difficult search to
 determine whether an invariant is true.
 our algorithms, implementations, and experiments suggest
 how invariant detection can simultaneously scale to both non-trivial
-numbers of invariants, and programs of nontrivial size. The
-incremental algorithms and optimizations are implemented in version
+numbers of invariants, and programs of nontrivial size. our algorithms, implementations, and experiments are implemented in version
 3 of the Daikon invariant detector, which is available at http:
 //pag.csail.mit.edu/daikon.
 
@@ -971,7 +1001,9 @@ Acknowledgments
 
 Jeremy Nimmer and Toh Ne Win wrote a preliminary implementation
 of the top-down incremental algorithm, and discussions with
-them helped to develop many of the ideas. Comments from the
+Acknowledgments
+
+Jeremy Nimmer and Toh Ne Win helped to develop many of the ideas. Comments from the
 anonymous referees helped us to improve the presentation of this
 paper. This research was funded by NSF grants CCR-0133580
 and CCR-0234651, the Oxygen Project, the Deshpande Center for

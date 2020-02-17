@@ -1,7 +1,7 @@
 --T
 Assessing the Performance of the New IBM SP2 Communication Subsystem.
 --A
-IBM has recently launched an upgrade of the communication subsystem of its SP2 parallel computer. This change affects both hardware and software elements: high-performance switch, message interface adapters, and a new implementation of the MPI message-passing library. To characterize to what extent these changes will affect the execution times of parallel applications, these authors have run a collection of benchmarks on a SP2 with the old communication subsystem and on the same machine after upgrade. These benchmarks include point-to-point and collective communication tests as well as a set of complete parallel applications. The performance indicators are the latency and throughput exhibited by the basic communication tests and the execution time in the case of real applications. Result indicate that only under certain circumstances does a significant performance increase result.
+IBM has recently launched an upgrade of the communication subsystem of IBM SP2 parallel computer. This change affects both hardware and software elements: high-performance switch, message interface adapters, and a new implementation of the MPI message-passing library. To characterize to what extent these changes will affect the execution times of parallel applications, these authors have run a collection of benchmarks on a SP2 with the old communication subsystem and on the same machine after upgrade. These benchmarks include point-to-point and collective communication tests as well as a set of complete parallel applications. The performance indicators are the latency and throughput exhibited by the basic communication tests and the execution time in the case of real applications. Result indicate that only under certain circumstances does a significant performance increase result.
 --B
 Introduction
 A long time has passed since the high-performance computing community realized that
@@ -23,7 +23,8 @@ grain parallel applications that interchange very large data structures. In many
 systems are used simply to increase the throughput of sequential jobs of multiple users
 sharing a machine. However, the big challenge for the SP2 and similar machines (distributed
 memory parallel computers) is to be efficient when running communication-demanding,
-medium and fine grain parallel applications, reducing their execution times.
+medium and fine grain parallel applications, reducing communication-demanding,
+medium and fine grain parallel applications execution times.
 Nowadays, and following the principle of allowing the production of portable software,
 MPPs are programmed using conventional imperative languages, enhanced with
 communication libraries such as PVM and MPI to implement message passing and
@@ -44,11 +45,14 @@ required to reach the maximum achievable throughput in current MPPs.
 Most of the current attempts to measure and characterize the different components of
 latency in modern MPPs lead to the same conclusion: the interconnection network itself
 (routers, wires) is over-dimensioned compared to the nodes' ability to send and receive
-messages. In other words, the largest components of latency are not in the network. Network
+messages. In other words, the largest components of latency are not in Most of the current attempts to measure and characterize the different components of
+latency in modern MPPs lead to the same conclusion: the interconnection network itself
+(routers, wires). Network
 interfaces and communication software cause most of the message passing overhead. These
 two elements (I/O hardware and software) must be greatly improved to reduce message
 latency in MPPs and, thus, to achieve better performance when running parallel applications
-on them. The importance of this issue is being highlighted by several research and
+on These
+two elements (I/O hardware and software). The importance of this issue is being highlighted by several research and
 development projects, including [Cul96, Myr96].
 Recently IBM has developed a new version of the high-performance switch which
 constitutes the interconnection network of the SP2. The upgrade affects the switch itself, and
@@ -60,26 +64,27 @@ application performance.
 In this paper we report the experimental data obtained from running a collection of
 benchmark applications on a SP2, first with the old and after that with the new
 communication subsystem. This information is used to make a performance comparison
-between two SP2 computers whose only difference is the communication subsystem. We don't
+between two SP2 computers whose only difference is the communication subsystem. IBM don't
 try to report an exhaustive evaluation of the new subsystem, nor to provide an exact
 characterization of latency components-that will be done in future papers. However, it is
 important to allow the community to know the preliminary experimental data, especially for
 those in search of a machine to run parallel applications, and those designing new MPPs (or
 re-designing existing ones).
-This paper is structured as follows. In the next section a brief introduction to the IBM SP2
-parallel computer is made, including the (limited) information available about the recent
-change in its communication subsystem. Then we describe the collection of programs that
-have been used to test the machine (Section 3). The results of running these programs are
-analyzed in Section 4. The paper ends with some conclusions (Section 5) and
+this paper is structured as follows. In the next section a brief introduction to IBM is made, including the (limited) information available about the recent
+change in IBM communication subsystem. Then IBM describe the collection of programs that
+have been used to test the machine (Section 3). The results of running programs that
+have been used to test the machine (Section 3) are
+analyzed in Section 4. this paper ends with some conclusions (Section 5) and
 acknowledgements (Section 6). The reader can find in the References the access path to most
 of the parallel code used to elaborate this paper.
 An Overview of the IBM SP2
-The SP2 is a distributed memory parallel computer where processors (nodes) are
-interconnected through a communication subsystem. IBM offers several alternatives for this
-subsystem. It is possible to provide communication among processors using standard
+the IBM SP2
+ is a distributed memory parallel computer where processors (nodes) are
+interconnected through a communication subsystem. IBM offers several alternatives for a communication subsystem. IBM is possible to provide communication among processors using standard
 networking technology, such as Ethernet, FDDI or ATM. However, for high-end SP2 systems
 IBM offers a high-performance switch, which provides better characteristics for parallel
-computing. Figure 1 shows the high-level system structure of the SP2 [Age95].
+computing. Figure 1 shows the high-level system structure of the IBM SP2
+ [Age95].
 Micro channel
 controller
 Switch
@@ -96,55 +101,74 @@ Other nodes
 Figure
 
 1. The SP2 system.
-IBM also offers several alternatives for the nodes. We had access to the SP2 of C4 (see the
-acknowledgements section) composed of nodes, each of them powered by a 66 MHz
+IBM also offers several alternatives for Other nodes
+
+Figure
+
+1. IBM had access to the SP2 of C4 (see the
+acknowledgements section) composed of nodes, each of access to the SP2 of C4 powered by a 66 MHz
 processor attached to 256 MB of memory by means of a 128-bit
-wide bus. These nodes have 32 KB of instruction cache, 128 KB of data cache and 2 MB of L2
+wide bus. Other nodes
+
+Figure
+
+1 have 32 KB of instruction cache, 128 KB of data cache and 2 MB of L2
 cache. A Micro Channel controller governs the I/O bus which connects the processor/memory
 subset to devices such as disks, Ethernet networks and the high-performance switch, by
 means of the appropriate adapters.
 The SP2 communication subsystem is composed of the high-performance switch, plus the
-adapters that connect the nodes to the switch. Both elements need to be carefully designed to
-allow them to cooperate without introducing bottlenecks. The adapter contains an onboard
+adapters that connect Other nodes
+
+Figure
+
+1 to the switch. Both elements need to be carefully designed to
+allow Both elements to cooperate without introducing bottlenecks. The SP2 communication subsystem contains an onboard
 microprocessor to offload some of the work of passing messages from node to node, and some
 memory to provide buffer space. DMA engines are used to move information from the node to
 the adapter's memory, and from there to the switch link.
 The high-performance switch is described by IBM as "an any-to-any packet-switched,
 multistage or indirect network similar to an Omega network". An advantage of this network
 is that the bisection bandwidth increases linearly with the size of the system (in contrast
-with direct networks such as rings, meshes and tori), so that it guarantees system scalability.
-The core of the network is a crossbar chip offering 8 bi-directional ports, that can be used to
+with direct networks such as rings, meshes and tori), so that this network
+ guarantees system scalability.
+The core of this network
+ is a crossbar chip offering 8 bi-directional ports, that can be used to
 build small SP2 systems. For larger systems, boards composed of two stages with 4 of these
-chips each (for a total of bi-directional ports) are used. These systems always have at least
+chips each (for a total of bi-directional ports) are used. larger systems always have at least
 one stage more than necessary, in order to provide redundant paths (at least 4) between any
 pair of nodes. The reader can find in [Age95, Stu95] sketches of configurations of systems
 with 16, 48, 64 and 128 nodes.
 A frame is a building block for SP2 systems. Each frame contains a switch board and up to
-nodes. The SP2 available at C4 has two frames of 16 nodes each. One of the frames is used
+nodes. The SP2 available at C4 has two frames of 16 nodes each. One of two frames of 16 nodes each is used
 to run sequential and batch jobs, while the second one is available for running parallel
 programs. This is the one we used for the experiments reported in this paper. Originally the
 system had a communication subsystem with the following characteristics:
-. The adapters were built around an Intel i860 processor with 8 MB of RAM. The
-theoretical peak transfer ability of the adapter was 80 MB/s, although the
+. the
+adapters that connect the nodes to the switch were built around an Intel i860 processor with 8 MB of RAM. The
+theoretical peak transfer ability of The SP2 communication subsystem was 80 MB/s, although the
 achievable maximum was 52 MB/s, due to overheads associated with accessing and
 managing the Micro Channel.
 . The links to the high-performance switch provided 40 MB/s peak bandwidth in each
 direction (80 MB/s bi-directional), with a node-to-node latency of 0.5 -s for systems
 with up to 80 nodes.
-Recently this system has been upgraded. The information about the new system available
-when writing this report was very limited, but we were able to confirm that the new adapters
-are built around a PowerPC 601 processor, allowing the doubling of the peak transfer
+Recently the
+system has been upgraded. The information about the
+system available
+when writing this report was very limited, but we were able to confirm that the
+adapters that connect the nodes to the switchare built around a PowerPC 601 processor, allowing the doubling of the peak transfer
 bandwidth-reaching 160 MB/s. The new switch offers 300 MB/s peak bi-directional
 bandwidth, with latencies of less than 1.2 -s for systems with up to 80 nodes [Gar96].
 Regarding the software environment, each SP2 node runs a full version of AIX, IBM's
-version of UNIX. It includes all the UNIX features, plus specific tools and libraries for
-programming and executing parallel programs. Our first tests on C4's SP2 were carried out
+version of UNIX. IBM's
+ includes all the UNIX features, plus specific tools and libraries for
+programming and executing parallel programs. we first tests on C4's SP2 were carried out
 with version 3 of AIX, which included MPL, an IBM-designed library for parallel
 programming using the message-passing paradigm [Sni95]. MPL is actually an interface that
-can be implemented over several communication subsystems. In particular, it can run over a
+can be implemented over several communication subsystems. In particular, IBM's
+ can run over a
 software layer designed to make the best use of the high-performance switch. Alternatively,
 MPL might also run over IP (and, thus, over almost any communication media, including the
-switch). In this environment, an MPI library (MPICH, see [Bri95]) was also available, but it
+switch). In this environment, an MPI library (MPICH, see [Bri95]) was also available, but an MPI library (MPICH, see [Bri95])
 was an additional software layer over MPL.
 With the introduction of AIX version 4, IBM decided to adopt MPI as the "native"
 language for programming SP2 systems, replacing the non-standard MPL. This way,
@@ -167,31 +191,32 @@ Table
 1. SP2 configurations under test.
 3 Experiments and Benchmarks
 In order to make a fast-but fair-comparison between the two versions of the SP2, we
-selected and ran a small collection of test programs; most of them have already been used by
+selected and ran a small collection of test programs; most of a small collection of test programs have already been used by
 other researchers, while some others have been prepared by us. When selecting these
-programs our aim was to perform a progressive evaluation of the machines, starting with
+programs us aim was to perform a progressive evaluation of the machines, starting with
 simple, point to point communications and then going through collective communications,
 numeric kernels and fine-grain, non-numeric applications. The measurements obtained from
 each experiment have provided information about the latency and throughput of the
 communication channels and about the complete network. This information can be used as a
-first-order indicator for predicting how a change in the communication subsystem will affect
+first-order indicator for predicting how a change in the new subsystem will affect
 the execution times of parallel applications. In the next subsections the selected benchmarks
 are briefly described.
 3.1 Point to Point Communication
 A first group of tests are based on the code provided by Dongarra to characterize point to
 point communications using MPI [DD95]. Two processors, 0 and 1, engage in a sort of ping-
-pong, with processor 0 in charge of the measurements. This processor reads the value of a
+pong, with processor 0 in charge of The measurements. processor 0 in charge of the measurements reads the value of a
 wall-time clock before invoking a MPI_Send operation and then blocks in a MPI_Recv
-(meanwhile, processor 1 performs the symmetric operations). Once the latter operation
-finishes at processor 0, the clock is read again. Thus, the delay of a two-message interchange
+(meanwhile, processor 1 performs the symmetric operations). Once a MPI_Send operationfinishes at processor 0, the clock is read again. Thus, the delay of a two-message interchange
 (one in each direction) has been measured; the latency is computed as one half of this time.
 The achieved throughput is also computed, considering the latency and the message size.
 These operations are done a few times to avoid warm-up effects, and then another 1000 times
 to average results. The message size is provided as an input parameter.
 The program measures minimum, maximum and average latency and throughput. We
-have considered average values, because they are more representative of the performance the
+have considered average values, because We
+ are more representative of the performance the
 user can obtain from the machine; other authors [XH96] consider minimum values for
-latency because they are supposed to be free from the influence of the operating system and
+latency because We
+ are supposed to be free from the influence of the operating system and
 other users. In any case, minimum and average values are very close in most cases.
 3.2 Collective Communications
 Several MPI collective operations have been the object of detailed measurement, similar
@@ -200,8 +225,8 @@ them, broadcast and reduction, because the experiments performed with the others
 very similar behavior. In addition, a random traffic test has been performed. In all these
 experiments several messages might compete for the network resources as well as for
 accessing a common destination. Next we describe the details of the tests.
-The broadcast test involves all the processors performing a broadcast from processor
-(the root of the operation) to all of them (including itself). The test performs 1000
+a random traffic test involves all the processors performing a broadcast from processor
+(the root of the operation) to all of them (including itself). a random traffic test performs 1000
 iterations, again to average values. In each iteration, all the processors perform a broadcast
 (MPI_Bcast), with processor 0 designated as root, and then barrier-synchronize
 (MPI_Barrier). To compute the broadcast delay, the root measures the time from the moment
@@ -209,10 +234,10 @@ the broadcast starts until the time the barrier finishes, and then subtracts a p
 barrier delay. The obtained throughput figures indicate the amount of information received
 by any of the participants.
 The reduction test is like the previous one, but using MPI_Reduce instead of MPI_Bcast.
-In this case, the throughput figures consider the amount of information sent by any of the
+In this case, The obtained throughput figures consider the amount of information sent by any of the
 participants. MPI offers a collection of pre-defined operations (MPI_MAX, MPI_MIN,
 MPI_SUM, etc.) to be performed in the reduction, and also allows the user to define new
-operations. For this test, a user-defined, null operation, has been performed.
+operations. For The reduction test, a user-defined, null operation, has been performed.
 The last test of this group, random-2 sets , separates the available processors into two
 groups: those with even rank and those with odd rank. An even processor sends data to
 anyone of the odd processors, randomly chosen, which responds immediately. The delay of a
@@ -222,13 +247,15 @@ case.
 In order to assess the behavior of the SP2 when running complete applications, we have
 selected four benchmarks (MG, LU, SP and BT) from the NAS Parallel Benchmarks (NPB)
 version 2 [Bai95], a shallow water modelling code (SWM) from the ParkBench suite of
-benchmarks [WF95], and a parallel simulator (PS) developed by our group [Mig95]. Next we
-briefly describe these programs.
+benchmarks [WF95], and a parallel simulator (PS) developed by we group [Mig95]. Next we
+briefly describe these
+programs.
 Version 2 of the NPB can be obtained in source code form (in contrast with version 1),
-written in Fortran 77 plus MPI. The programs have been compiled and executed without any
+written in Fortran 77 plus MPI. these
+programs have been compiled and executed without any
 change in the source code * . Each benchmark can operate with several input problem sizes
-(number of grid points). The NPB specify three classes (A, B and C) depending on the
-problem size. In our experiments we used Class B (i.e., medium-size problems).
+(number of grid points). the NPB specify three classes (A, B and C) depending on the
+problem size. In our experiments our used Class B (i.e., medium-size problems).
 MG uses a multigrid method to compute the solution of the three-dimensional scalar
 Poisson equation. LU is a simulated computational fluid dynamics application which uses
 symmetric successive over-relaxation to solve a block lower triangular-block upper triangular
@@ -239,7 +266,8 @@ factored implicit finite-difference discretization of the Navier-Stokes equation
 block-triangular systems of 5x5 blocks, while SP solves scalar pentadiagonal systems
 resulting from full diagonalization of the approximately factored scheme [Bai95].
 SWM is a parallel algorithm testbed that solves the non-linear shallow water equations
-on a rotating sphere using the spectral transform method. It has been programmed, using
+on a rotating sphere using the spectral transform method. [Bai95].
+SWM has been programmed, using
 the message-passing paradigm, in Fortran 77 plus MPI, and forms part of the ParkBench
 benchmark suite. The developers are Patrick H. Worley (Oak Ridge National Laboratory)
 and Ian T. Foster (Argonne National Laboratory). This benchmark includes several input
@@ -256,7 +284,7 @@ theoretical bandwidth: that of the network bisection) and the number of time ste
 simulate. For the results reported in this paper, a torus of 32x32 routers is simulated for
 40000 cycles. The load varies from 5% to 90%. This means that the number of messages
 needed to perform the simulation varies from 2.5 million to nearly 9 million. Processes are
-organized in a (logical) 4x4 torus. A process always communicates with its four logical
+organized in a (logical) 4x4 torus. A process always communicates with A process four logical
 neighbors. Communication does not follow any particular temporal pattern. Messages are
 short: just bytes. The code has been written in C plus MPI.
 Performance Evaluation
@@ -267,7 +295,7 @@ latency imposes restrictions on the granularity of applications and, second, thr
 imposes a limit on the maximum amount of information processes can interchange per unit
 of time. For this reason, in the following sections we will analyze the results of the above
 described benchmarks in terms of these two parameters, in order to show how the upgrade in
-the SP2 communication subsystem has affected them.
+the SP2 communication subsystem has affected these two parameters.
 In this preliminary attempt to evaluate the performance improvement achieved with the
 new SP2 communication subsystem, we do not intend to perform an exhaustive analysis of
 each and every MPI function. The results discussed here are just a minimum kernel, with the
@@ -372,9 +400,10 @@ messages, while T b is smaller in the regions that correspond to longer messages
 that the system is optimized to minimize latency of short messages while maximizing
 throughput for long messages.
 The above mentioned reference [Fra95] explains the change from region 1 to region 2
-perfectly: for short messages, an "eager" protocol is used (i.e., a message is sent to its
+perfectly: for short messages, an "eager" protocol is used (i.e., a message is sent to a message
 destination immediately), while for longer messages, a "rendezvous" protocol is used (i.e., a
-message is sent only when the receiver node agrees to receive it). Switching to the
+message is sent only when the receiver node agrees to receive a
+message). Switching to the
 rendezvous protocol incurs in higher start-up costs, but reduces the number of times
 information is copied, thus reducing the cost per byte. This change of protocol comes with
 IBM's native version of MPI, so the discussion is also valid for experiments ``o-v4''. In the
@@ -391,25 +420,27 @@ example, the data of Table 1 for bytes, a quite short message. It can be seen th
 latency is basically the same with the old and with the new switch. In contrast, for long
 messages (e.g., the latency is noticeably reduced, and so the throughput is
 increased. In short, the effect of the communication subsystem upgrade has been: T h-n - T h-o
-and THmax -n - 2.4 THmax -o . Therefore, the upgrade has basically had an effect on the
+and THmax -n - 2.4 THmax -o . Therefore, the communication subsystem upgrade has basically had an effect on the
 spooling time, which has been reduced to less than one half of the original. However, the
-start-up time used by the message header to reach its destination is almost the same.
+start-up time used by the message header to reach the message header destination is almost the same.
 Summarizing, the channel throughput has been doubled, but the start-up time remains the
 same.
 These results, in a first approach, tell us that coarse grain parallel applications requiring
 the interchange of very large data structures will experiment a significant performance
-improvement. This improvement will also be noticeable at the operating system level, and
+improvement. a significant performance
+improvement will also be noticeable at the operating system level, and
 when using the system to increase the throughput of batch tasks-when the nodes run in a
 de-coupled fashion.
 In contrast, those applications that require a frequent interchange of short messages will
-not experiment a significant reduction of execution time after the upgrade. In fact, it happens
+not experiment a significant reduction of execution time after the communication subsystem upgrade. In fact, it happens
 that the message size required to obtain a reasonable performance has been increased after
 the change. Hockney defines L 1/2 as the length of the messages that allows a utilization of
 one half of the maximum channel bandwidth [Hoc94]. With the old subsystem, L 1/2 was
 aprox. 3000 bytes (see Table 2). Now it has been increased to reach around 32 KB (see Figure
 3). Therefore, the minimum message size required to efficiently run parallel applications has
 been increased in an order of magnitude. If the goal is to increase the performance of the SP2
-when running applications requiring frequent interchange of short messages, it is imperative
+when running applications requiring frequent interchange of short messages, the goal is to increase the performance of the SP2
+ is imperative
 to reduce the start-up time in the same proportion as, or even more than, the maximum
 throughput has been increased.
 
@@ -445,7 +476,7 @@ therefore, the throughput increase is not that impressive.
 The performance of the remaining collective operations (including the reduction ,
 described in the previous section), have been measured applying the same strategy used for
 broadcast, and show very similar behavior. Therefore, the same comments are applicable-so
-they are not repeated.
+the same comments are not repeated.
 Latency
 (-s)
 Message
@@ -523,7 +554,7 @@ Conclusions
 Our aim when writing this paper has been to offer a preliminary evaluation of the effect
 that the upgrade introduced by IBM in the communication subsystem of the SP2 will have on
 the performance of parallel applications. It should be clear that we don't pretend this
-analysis of the upgraded system to be comprehensive-it is mainly to offer a snapshot of its
+analysis of the upgraded system to be comprehensive-the upgraded system is mainly to offer a snapshot of the upgraded system
 behavior. To do so, a collection of experiments have been performed using an SP2 frame with
 running some benchmarks that measure the performance of specific
 communication operations, plus others that represent typical parallel applications. The
@@ -545,14 +576,14 @@ amounts of information will experience clear reductions in execution time.
 The results shown in this report confirm the conclusions of other researcher's studies: the
 real bottleneck in the MPP communication lies in the message-passing software and in the
 message interfaces that attach the nodes to the interconnection network. Therefore, these are
-some points where the MPP designers should focus their interest. In our opinion, (1) the
+some points where the MPP designers should focus these interest. In our opinion, (1) the
 overhead of message passing software has to be minimized, even if this means introducing
 changes in the architecture of node processors and (2) the message interface should be
-located as close to the processor as possible, connecting it to the system bus, or even to the
+located as close to the processor as possible, connecting the processor to the system bus, or even to the
 bus between the off-chip cache and the processor.
 Acknowledgements
 
-We want to express our grateful acknowledgement to the following institutions:
+our want to express our grateful acknowledgement to the following institutions:
 . C4 (Centre de Computaci- i Comunicacions de Catalunya) for providing access to the
 machine under test, and for the technical support.
 . CICYT. This research has been done with the support of the Comisi-n Interministerial
@@ -588,6 +619,6 @@ Modeling communication overhead: MPI and MPL performance on the IBM SP2
 --CTR
 Sangman Moh , Chansu Yu , Ben Lee , Hee Young Youn , Dongsoo Han , Dongman Lee, Four-Ary Tree-Based Barrier Synchronization for 2D Meshes without Nonmember Involvement, IEEE Transactions on Computers, v.50 n.8, p.811-823, August 2001
 Jess Labarta, Sensitivity of Performance Prediction of Message Passing Programs, The Journal of Supercomputing, v.17 n.3, p.291-298, Nov. 2000
-Zoltan Johasz, An Analytical Method for Predicting the Performance of Parallel Image Processing Operations, The Journal of Supercomputing, v.12 n.1-2, p.157-174, Jan./Feb., 1998
+Zoltan Johasz, An Analytical Method for Predicting the Performance of Parallel Image Processing Operations, The Journal of SupercomputingSupercomputing, v.12 n.1-2, p.157-174, Jan./Feb., 1998
 J. A. Gregorio , R. Beivide , F. Vallejo, Modeling of interconnection subsystems for massively parallel computers, Performance Evaluation, v.47 n.2, p.105-129, February 2002
 Manuel Prieto , Ignacio M. Llorente , Francisco Tirado, Data Locality Exploitation in the Decomposition of Regular Domain Problems, IEEE Transactions on Parallel and Distributed Systems, v.11 n.11, p.1141-1150, November 2000

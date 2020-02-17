@@ -1,7 +1,7 @@
 --T
 A Parallel Algorithm for the Reduction to Tridiagonal Form for Eigendecomposition.
 --A
-One-sided orthogonal transformations which orthogonalize columns of a matrix are related to methods for finding singular values. They have the advantages of lending themselves to parallel and vector implementations and simplifying access to the data by not requiring access to both rows and columns. They can be used to find eigenvalues when the matrix is given in factored form. Here, a finite sequence of transformations leading to a partial orthogonalization of the columns is described. This permits a tridiagonal matrix whose eigenvalues are the squared singular values to be derived. The implementation on the Fujitsu VPP series is discussed and some timing results are presented.
+One-sided orthogonal transformations which orthogonalize columns of a matrix are related to methods for finding singular values. One-sided orthogonal transformations which orthogonalize columns of a matrix have the advantages of lending One-sided orthogonal transformations which orthogonalize columns of a matrix to parallel and vector implementations and simplifying access to the data by not requiring access to both rows and columns. One-sided orthogonal transformations which orthogonalize columns of a matrix can be used to find eigenvalues when the matrix is given in factored form. Here, a finite sequence of transformations leading to a partial orthogonalization of the columns is described. This permits a tridiagonal matrix whose eigenvalues are the squared singular values to be derived. The implementation on the Fujitsu VPP series is discussed and some timing results are presented.
 --B
 Introduction
 Symmetric eigenvalue problems appear in many applications ranging from computational
@@ -11,33 +11,34 @@ in various software packages (e.g. LAPACK [1]). With the broader introduction of
 parallel computers in scientific computing new parallel algorithms have been suggested
 [7, 2]. In the following another new parallel algorithm is suggested which is
 particularly well adapted to vector parallel computers and has low operation counts.
-Eigenvalue problems can only be solved by iterative algorithms in general as they
+Eigenvalue problems can only be solved by iterative algorithms in general as Eigenvalue problems
 are in an algebraic sense equivalent to finding the n zeros of a polynomial. There are,
 however, two main classes of methods to solve the symmetric eigenvalue problem.
 The first class only requires matrix vector products and does not inspect nor alter
-the matrix elements of the matrix. This class includes the Lanczos method [9] and
+the matrix elements of the matrix. The first class includes the Lanczos method [9] and
 Date: November 1995.
 1991 Mathematics Subject Classification. 65Y05,65F30.
 Key words and phrases. Parallel Computing, Reduction Algorithms, One-sided Reductions.
 Computer Sciences Laboratory, Australian National University, Canberra ACT 0200, Australia.
 ANU Supercomputer Facility, Australian National University.
-Centre for Mathematics and its Applications, Australian National University.
+Centre for Mathematics and Mathematics Applications, Australian National University.
 M. HEGLAND   , M. H. KAHN    , M. R. OSBORNE
 has particular advantages for sparse matrices. However, in general, the Lanczos
 method has difficulties in finding all the eigenvalues and eigenvectors.
 A second class of methods iteratively applies similarity transforms
 with A A to the matrix to get a sequence of orthogonally similar matrices which
-converge to a diagonal matrix. This second class of methods consists mainly of two
+converge to a diagonal matrix. A second class of methods consists mainly of two
 subclasses. The first subclass uses Givens matrices for the similarity transforms and
 is Jacobi's method. It has been successfully implemented in parallel [2], [12]. A disadvantage
-of this method is its high operation count. A second subclass of methods
+of Jacobi's method is It high operation count. A second subclass of methods
 first reduces the matrix with an orthogonal similarity transform to tridiagonal form
 and then uses special methods for symmetric tridiagonal matrices. Both parts of
-these algorithms pose major challenges to parallel implementation. For the second
+Both parts of
+ pose major challenges to parallel implementation. For the second
 stage of tridiagonal eigenvalue problem solvers the most popular methods include
 divide and conquer [7] and multisectioning [9]. Here the reduction to tridiagonal
 form is discussed. Earlier algorithms use block matrix algorithms, see [6, 5, 3].
-However, these methods have not achieved optimal performance. One problem is
+However, the most popular methods have not achieved optimal performance. One problem is
 that similarity transforms require multiplications from both sides.
 It was seen [12] that the Jacobi method based on one-sided transformations
 allows better vectorization and requires less communication than the original Jacobi
@@ -45,11 +46,12 @@ algorithms. Assuming that A is positive semi-definite the intermediate matrices 
 can be defined as factors of the A i , that is,
 As will be seen in the following, the one-sided idea can also be used for the reduction
 algorithm.
-The algorithm will form part of the subroutine library for a distributed memory
+the reduction
+algorithm will form part of the subroutine library for a distributed memory
 computer, the Fujitsu VPP 500. Often the application of subroutines from libraries
 allow the user little freedom in the choice of the distribution of the data to the
 local memories of the processors. The one-sided algorithms allow a large range of
-distributions and perform equally well on all of them.
+distributions and perform equally well on all of The one-sided algorithms.
 In the next section the one and two-sided reduction to tridiagonal form is de-
 scribed. Section 3 reinterprets the reduction as an orthogonalisation procedure similar
 to the Gram-Schmidt procedure. This reinterpretation is used to introduce the
@@ -58,7 +60,8 @@ discussed and Section 5 contains timings and comparisons with other algorithms.
 REDUCTION TO TRIDIAGONAL FORM 3
 2. Reduction to tridiagonal form
 A class of methods to solve the eigenvalue problem for symmetric matrices A 2
-R n\Thetan first reduces them to tridiagonal form and in a second step solves the eigenvalue
+R n\Thetan first reduces A 2
+R n\Thetan to tridiagonal form and in a second step solves the eigenvalue
 problem for this tridiagonal matrix. The problem of finding the eigendecomposition
 of the tridiagonal matrix will not be discussed here but that of accumulating
 transformations to be used for finding the eigenvectors of the symmetric matrix is
@@ -104,7 +107,7 @@ For vector and parallel processors the Householder algorithm has some disad-
 vantages. Firstly, as the iterations progress, the length of the vectors used in the
 calculations decreases but for efficient use of a vector processor we prefer long vector
 lengths. Secondly, in a parallel environment, if the input matrix A is partitioned in
-a banded manner across a one-dimensional array of processors, the algorithm will
+a banded manner across a one-dimensional array of processors, the Householder algorithm will
 REDUCTION TO TRIDIAGONAL FORM 5
 be severely load imbalanced. To avoid this various authors have suggested using
 cyclic [5] or torus-wrap mappings of the data [10, 3]. Also, for a parallel imple-
@@ -112,7 +115,7 @@ mentation, the rank two update of A requires copies of both vectors w and q on a
 processors which leads to a heavy communication load.
 2.2. One-sided reduction. A one-sided algorithm is developed to overcome the
 difficulties inherent in a parallel version of the sequential Householder algorithm. In
-addition, it is expected that the one-sided algorithm generates less fill-in for sparse
+addition, A one-sided algorithm is expected that the one-sided algorithm generates less fill-in for sparse
 matrices than the two-sided algorithms if the matrix is given in finite element form.
 Real symmetric matrices A are either given by or can be factored as
 so A can be represented in factored form by D and B. If Cholesky factorization
@@ -127,9 +130,11 @@ with flBw. The computation of p requires multiplications and
 additions, the rank one modification n 2 multiplications and n 2 additions giving
 together 2n 2 +n multiplications and 2n additions. In contrast to the two-sided
 algorithm, the number of additions is approximately the same as the number of
-multiplications in this algorithm. This is advantageous for architectures which can
+multiplications in the reduction
+algorithm. This is advantageous for architectures which can
 do addition and multiplication in parallel as it means better load balancing.
-The computation of w is more costly for this method than for the original Householder
+The computation of w is more costly for the Lanczos
+method than for the Lanczos
 method. As the Householder vector w is computed from the first column a 1
 of A, this column has to be reconstructed first from the factored representation by
 This requires n 2 +n multiplications and additions. Thus the computation of
@@ -137,7 +142,8 @@ the Householder matrix H(v) requires (up to O(1) terms) multiplications
 and n 2 additions.
 6 M. HEGLAND   , M. H. KAHN    , M. R. OSBORNE
 Adding these terms up, one reduction step needs multiplications and
-additions and so the overall costs of this algorithm are
+additions and so the overall costs of the reduction
+algorithm are
 multiplications and
 additions. The total number of operations has increased compared with the original
 algorithm. But the time used on a computer which does additions and multiplications
@@ -151,7 +157,7 @@ End
 In order to develop the parallel version of the algorithm the one-sided reduction is
 interpreted as an orthogonalization procedure like the Gram-Schmidt process. Let
 b i denote the ith column of B, that is,
-Then the matrix A can be interpreted as the Gramian of the b i as follows,
+Then the matrix A A can be interpreted as the Gramian of the b i as follows,
 The one-sided tridiagonalization procedure constructs
 such that As T
 is the Gramian of the c i the tridiagonality is a condition on the orthogonality of
@@ -192,19 +198,22 @@ where c (n)
 tridiagonal and there is an orthogonal
 matrix Q such that
 Proof. The proof is based on the fact mentioned earlier that some orthogonality
-relations are invariant. It uses induction. The proof is very similar to the one given
+relations are invariant. The proof uses induction. The proof is very similar to the one given
 in the next section for the corresponding parallel algorithm.
-Remark. The original Householder algorithm can be formulated in a similar way
+Remark. the reduction
+algorithm can be formulated in a similar way
 treating B as an inner product. Coordinate transformations change the matrix until
 it is tridiagonal.
-3.1. Parallel Algorithm. In the following the single program multiple data model
+3.1. the reduction
+algorithm. In the following the single program multiple data model
 (SPMD) will be used. The basic assumption is that all the processors are programmed
-in the same way although their actions might be slightly different. Thus
+in the same way although all the processors actions might be slightly different. Thus
 an SPMD algorithm is described by the pseudocode denoting what one processor
 has to do. The data in the matrix B is distributed to the processors by columns in a
 cyclic fashion. This means that processor 1 contains columns
 contains and so on where p is the total number of processors. More
 formally, processor q contains b i for
+
 pg. In order
 to simplify notation let N ng where is the processor
 number. Furthermore mod denotes the mod function mapping positive and negative
@@ -221,7 +230,7 @@ orthogonal to the last unmodified one. Thus
 ng " N q ;
 and
 REDUCTION TO TRIDIAGONAL FORM 9
-The coefficients also form orthogonal matrices so it follows that,
+the coefficients also form orthogonal matrices so it follows that,
 and
 ~
 The c (k)
@@ -254,19 +263,23 @@ conditions are empty and the matrix T (1) is a two by two matrix and thus tridia
 The remainder of the proof consists of proving the induction step. Assume that
 the three properties are valid for m. Then it has to be shown that it is
 also valid for
-?From the construction it follows that C for an orthogonal G (m) .
+?From the construction the construction follows that C for an orthogonal G (m) .
 Thus, with Q one retrieves the first property. In particular, the
 existence of G (m) follows from the existence of the constructed Householder matrices.
 Then the linear hull of c (m+1)
 n is a subspace of the linear hull of
 c (m)
 n and thus orthogonal to c (1)
-. Furthermore they have been
+. Furthermore a subspace of the linear hull of
+c (m)
+n and thus orthogonal to c (1)
+ have been
 constructed to be orthogonal to c (m)
 . From this the second property follows.
 M. HEGLAND   , M. H. KAHN    , M. R. OSBORNE
 Finally, T which is tridiagonal
-and it remains to show that the the m+ 2nd column of T
+and T which is tridiagonal
+ remains to show that the the m+ 2nd column of T
 has zeros in the first m rows. But the first m elements of this column are just
 c (m+1)
 m. They are zero because of the second property.
@@ -277,9 +290,9 @@ the products c (k\Gamma1)
 which correspond to individual elements in the up-dated
 version of the symmetric matrix A. Householder transformations are then
 used to zero the relevant off-diagonal elements. At the first stage in each iteration
-these transformations are carried out locally and after the gathering step the transformation
+the symmetric matrix A. Householder transformations are carried out locally and after the gathering step the transformation
 on the (at most) p formed elements of A is replicated on all processors.
-Although Householder transformations are used here, it would also be possible to
+Although Householder transformations are used here, Householder transformations would also be possible to
 use Givens transformations.
 3.2. analysis. When using the one-sided reduction to tridiagonal as one step
 in a complete eigensolver there are several possible components to the error. First
@@ -312,7 +325,7 @@ matrix Q defining the reduction is accumulated. This is achieved by starting wit
 the identity matrix (distributed cyclically over the processors), then updating it by
 multiplying it by the same Householder transformations used to update C. Forming
 Q explicitly is preferable to storing the details of the transformations and then
-applying them to the eigenvectors of the tridiagonal matrix which is the usual procedure
+applying storing the details of the transformations to the eigenvectors of the tridiagonal matrix which is the usual procedure
 for sequential implementations. The reason for this is that the matrix of Q
 is distributed in a way which renders multiplication from the left inefficient. This is
 discussed more fully in the following.
@@ -326,20 +339,23 @@ of eigenvectors. Combining the above two equations gives
 and so the eigenvectors of A are the columns of
 The matrix Q obtained during the rediagonalization procedure is represented by
 the Householder matrices H
-The eigenvector matrix V of the tridiagonal matrix T is represented by its matrix
+The eigenvector matrix V of the tridiagonal matrix T is represented by T matrix
 elements. So in order to get the matrix element representation of U form the product
 M. HEGLAND   , M. H. KAHN    , M. R. OSBORNE
-This product can be done in two different ways. The first method multiplies V
+the product
+M. HEGLAND   , M. H. KAHN    , M. R. OSBORNE
+ can be done in two different ways. The first method multiplies V
 with the H k . Formally, define a sequence U such that
 U
 This method is often used, for example [8],
-where it is called backward transformation.
+where This method is called backward transformation.
 A second method computes the element-wise representation of Q first by the
 recursion
 specifically computes the matrix-vector product
 QV where . This is called forward accumulation in [8].
 The difference between these two methods is that the first one applies the Householder
-transforms H k from the left and the second applies them from the right. In
+transforms H k from the left and the second applies the Householder
+ from the right. In
 addition the second method requires the computation of a product of two matrices
 in element form. For the sequential case when using the two-sided Householder re-
 duction, the first method is preferred as it avoids matrix multiplication. However,
@@ -349,7 +365,7 @@ eigenvectors V are distributed over the processors. In fact, one purpose of the 
 reduction is to avoid this communication in the reduction to tridiagonal form.
 There is certainly communication required for the matrix multiplication QV but
 this is of fewer large blocks of the matrix so will be less demanding.
-4.2. Multi-processor Version. In the multi-processor case there is an added complication
+4.2. Multi-processor Version. In the sequential case there is an added complication
 in that B is assumed to be cyclically distributed (although it is not explicitly
 laid out as such). So use
 ~
@@ -363,9 +379,15 @@ j refers to the transformation using one column of B from each processor
 REDUCTION TO TRIDIAGONAL FORM 13
 which is carried out redundantly on all processors. To find Q start with an identity
 matrix distributed cyclically across the processors to match the implicit layout
-of B. This matrix is then updated by transforming it with the same Householder
+of B. an identity
+matrix distributed cyclically across the processors to match the implicit layout
+of B. is then updated by transforming an identity
+matrix distributed cyclically across the processors to match the implicit layout
+of B. with the same Householder
 transformations that are used to update B to obtain the tridiagonal matrix.
-The matrix of eigenvectors V of the tridiagonal matrix is obtained in block layout
+an identity
+matrix distributed cyclically across the processors to match the implicit layout
+of B. is obtained in block layout
 whilst the matrix Q is in cyclic layout. To find the eigenvectors of the original
 symmetric matrix this must be taken into account so instead of
 we need QPV . The cyclic ordering must then be reversed and finally the eigenvectors
@@ -375,15 +397,14 @@ the eigenvectors which is carried out locally on the processor and does not invo
 any communication.
 5. Timings
 The parallel one-sided reduction to tridiagonal has been implemented and tested
-on the Fujitsu VPP500. The VPP500 is a parallel supercomputer consisting of vector
+on the Fujitsu VPP500. the Fujitsu VPP500 is a parallel supercomputer consisting of vector
 processors connected by a full crossbar network. The theoretical peak performance
 of each PE is 1.6 Gflops and the maximum size of memory for each processor is
-Gbyte. The VPP500 is scalable from 4 to 222 processing elements but access
+Gbyte. the Fujitsu VPP500 is scalable from 4 to 222 processing elements but access
 was available only to a 16 processor machine. Each processor can perform send
 and receive operations simultaneously through the crossbar network at a peak data
 transfer rate of 400 Mbytes/s each.
-The one-sided algorithm is particularly suited to the architecture of the VPP500
-because the calculation of the elements of the updated matrix A from the current
+The one-sided algorithm is particularly suited to the architecture of the Fujitsu VPP500because the calculation of the elements of the updated matrix A from the current
 version of C are vectorisable with loops of length n, the size of the input matrix.
 In the conventional two-sided Householder reduction the vector length decreases at
 each iteration.
@@ -398,7 +419,7 @@ parallel language VPP-Fortran which is basically FORTRAN77 with added compiler
 directives to achieve parallel constructs such as data layout, interprocessor
 communication and so on.
 ?From these performance figures it appears that the algorithm is scalable in so far
-as its performance is maintained as the size of the problem is increased along with the
+as the algorithm performance is maintained as the size of the problem is increased along with the
 14 M. HEGLAND   , M. H. KAHN    , M. R. OSBORNE
 1024 3.8 .846 5.3 1.018
 2048 26 1.000 37 1.164
@@ -437,11 +458,11 @@ can be seen that their times taken for various sized problems are two or three t
 that taken by the one-sided algorithm on the same size problems on a VPP500 of
 comparable peak performance.
 Smith, Hendrickson and Jessup [10] use a square torus-wrap mapping of matrix
-elements to processors and tested their code on an Intel machine corresponding to
-a 12 processor VPP500. Their two-sided algorithm can be inferred to have taken
+elements to processors and tested Smith, Hendrickson and Jessup code on an Intel machine corresponding to
+a 12 processor VPP500. The Smith et al algorithm can be inferred to have taken
 about the same time as a slightly larger problem on a 16 processor VPP500 using
 the one-sided algorithm. The Smith et al algorithm is more sophisticated than the
-other two-sided algorithms as it uses the torus-wrap mapping and Level 3 BLAS.
+other two-sided algorithms as The Smith et al algorithm uses the torus-wrap mapping and Level 3 BLAS.
 6. Conclusion
 A new algorithm for reduction of a symmetric matrix to tridiagonal as the first step
 in finding the eigendecomposition has been developed. Starting with the Cholesky
@@ -450,8 +471,8 @@ reductions are applied to the factor matrix until the tridiagonal form is
 reached. This is referred to as a one-sided reduction and leads to the updating
 of the factor matrix at each iteration being rank one rather than rank two as in
 the conventional Householder reduction to tridiagonal. Transformations can also be
-accumulated to allow for calculation of eigenvectors. This algorithm is suited to
-parallel/vector architectures such as the Fujitsu VPP500 where it has been shown
+accumulated to allow for calculation of eigenvectors. The Smith et al algorithm is suited to
+parallel/vector architectures such as the Fujitsu VPP500 where The Smith et al algorithm has been shown
 to perform well. In a complete calculation of the eigenvalues and eigenvectors of
 a symmetric matrix the extra time for the Cholesky factorization is observed to
 be about one tenth of that required for the reduction to tridiagonal so it is not a
@@ -460,8 +481,8 @@ significant overhead.
 
 Acknowledgement
 
-The authors would like to thank Prof. R. Brent for his helpful comments and Mr.
-Makato Nakanishi of Fujitsu Japan for help with access to the VPP500.
+The authors would like to thank Prof. R. Brent for Prof. R. Brent helpful comments and Mr.
+Makato Nakanishi of Fujitsu Japan for help with access to the Fujitsu VPP500.
 M. HEGLAND   , M. H. KAHN    , M. R. OSBORNE
 
 

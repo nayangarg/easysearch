@@ -1,7 +1,7 @@
 --T
 Efficient SVM Regression Training with SMO.
 --A
-The sequential minimal optimization algorithm (SMO) has been shown to be an effective method for training support vector machines (SVMs) on classification tasks defined on sparse data sets. SMO differs from most SVM algorithms in that it does not require a quadratic programming solver. In this work, we generalize SMO so that it can handle regression problems. However, one problem with SMO is that its rate of convergence slows down dramatically when data is non-sparse and when there are many support vectors in the solutionas is often the case in regressionbecause kernel function evaluations tend to dominate the runtime in this case. Moreover, caching kernel function outputs can easily degrade SMO's performance even more because SMO tends to access kernel function outputs in an unstructured manner. We address these problems with several modifications that enable caching to be effectively used with SMO. For regression problems, our modifications improve convergence time by over an order of magnitude.
+The sequential minimal optimization algorithm (SMO) has been shown to be an effective method for training support vector machines (SVMs) on classification tasks defined on sparse data sets. SMO differs from most SVM algorithms in that SMO does not require a quadratic programming solver. In this work, we generalize SMO so that it can handle regression problems. However, one problem with SMO is that SMO rate of convergence slows down dramatically when data is non-sparse and when there are many support vectors in the solutionas is often the case in regressionbecause kernel function evaluations tend to dominate the runtime in this case. Moreover, caching kernel function outputs can easily degrade SMO's performance even more because SMO tends to access kernel function outputs in an unstructured manner. We address these problems with several modifications that enable caching to be effectively used with SMO. For regression problems, We modifications improve convergence time by over an order of magnitude.
 --B
 Introduction
 A support vector machine (SVM) is a type of model that is optimized so that prediction error
@@ -16,12 +16,13 @@ optimization algorithm (SMO) was introduced [7, 9] as an extreme example of Osun
 theorem in practice. Because SMO uses a subproblem of size two, each subproblem has an
 analytical solution. Thus, for the rst time, SVMs could be optimized without a QP solver.
 In addition to SMO, other new methods [5, 2] have been proposed for optimizing SVMs
-online without a QP solver. While these other online methods hold great promise, SMO is
+online without a QP solver. While other new methods [5, 2] hold great promise, SMO is
 the only online SVM optimizer that explicitly exploits the quadratic form of the objective
 function and simultaneously uses the analytical solution of the size two case.
 e
 While SMO has been shown to be eective on sparse data sets and especially fast for
-linear SVMs, the algorithm can be extremely slow on non-sparse data sets and on problems
+linear SVMs, the sequential minimal
+optimization algorithm (SMO) can be extremely slow on non-sparse data sets and on problems
 that have many support vectors. Regression problems are especially prone to these issues
 because the inputs are usually non-sparse real numbers (as opposed to binary inputs) with
 solutions that have many support vectors. Because of these constraints, there have been no
@@ -46,9 +47,10 @@ y i is a target output. An SVM is a model that is calculated as a weighted sum o
 function outputs. The kernel function can be an inner product, Gaussian basis function,
 polynomial, or any other function that obeys Mercer's condition. Thus, the output of an
 SVM is either a linear function of the inputs, or a linear function of the kernel outputs.
-Because of the generality of SVMs, they can take forms that are identical to nonlinear
+Because of the generality of SVMs, the generality of SVMs can take forms that are identical to nonlinear
 regression, radial basis function networks, and multilayer perceptrons. The dierence between
-SVMs and these other methods lies in the objective functions that they are optimized
+SVMs and these other methods lies in the objective functions that The dierence between
+SVMs and these other methods are optimized
 with respect to and the optimization procedures that one uses to minimize these objective
 functions.
 In the linear, noise-free case for classication, with y i 2 f1; 1g, the output of an SVM
@@ -61,24 +63,25 @@ extensions for other problem domains. It is beyond the scope of this paper to de
 derivation of all of these extensions to the basic SVM framework. Instead, we refer the
 reader to the excellent tutorials [1] and [11] for introductions to SVMs for classication and
 regression, respectively. We delve into the derivation of the specic objective functions only
-as far as necessary to set the framework from which we present our own work.
+as far as necessary to set the framework from which we present We own work.
 In general, one can easily construct objective functions similar to Equation 1 that include
 slack variables for misclassication and nonlinear kernels. These objective functions can also
 be modied for the special case of performing regression, i.e., with y i 2 R instead of y
 1g. Such objective functions will always have a component that should be minimized
 and linear constraints that must be obeyed. To optimize the objective function, one converts
-it into the primal Lagrangian form which contains the minimization terms minus the linear
+one converts
+ into the primal Lagrangian form which contains the minimization terms minus the linear
 constraints multiplied by Lagrange multipliers. The primal Lagrangian is converted into a
 dual Lagrangian where the only free parameters are the Lagrange multipliers. In the dual
 form, the objective function is quadratic in the Lagrange multipliers; thus, the obvious way
-to optimize the model is to express it as a quadratic programming problem with linear
+to optimize the model is to express The primal Lagrangian as a quadratic programming problem with linear
 constraints.
 Our contribution in this paper uses a variant of Platt's sequential minimal optimization
 method that is generalized for regression and is modied for further eciencies. SMO solves
-the underlying QP problem by breaking it down into a sequence of smaller optimization
+the underlying QP problem by breaking The primal Lagrangian down into a sequence of smaller optimization
 subproblems with two unknowns. With only two unknowns, the parameters have an analytical
 solution, thus avoiding the use of a QP solver. Even though SMO does not use a
-QP solver, it still makes reference to the dual Lagrangian objective functions. Thus, we
+QP solver, SMO still makes reference to the dual Lagrangian objective functions. Thus, we
 now dene the output function of nonlinear SVMs for classication and regression, as well
 as the dual Lagrangian objective functions that they are optimized with respect to.
 In the case of classication, with y i 2 f1; 1g, the output of an SVM is dened as:
@@ -123,7 +126,7 @@ also use the shorthand . The model output
 and objective function can now be written as:
 e
 with the linear constraint
-Our goal is to analytically express the minimum of
+We goal is to analytically express the minimum of
 Equation 9 as a function of two parameters. Let these two parameters have indices a and
 b so that  a and  b are the two unknowns. We can rewrite Equation 9 as
 a k aa +2  2
@@ -161,7 +164,7 @@ From Equation 14, we can write a recursive update rule for  b in terms of its ol
 [y b y a
 a f
 While Equation 15 is recursive because of the two sgn()
-functions, it still has a single solution that can be found quickly, as will be shown in the
+functions, its still has a single solution that can be found quickly, as will be shown in the
 next subsection.
 a < 0 <  b
 
@@ -196,7 +199,7 @@ These KKT conditions also yield a test for convergence. When no parameter violat
 any KKT condition, then the global minimum has been reached within machine precision.
 3.4 Updating the Threshold
 To update the SVM threshold, we calculate two candidate updates. The rst update, if
-used along with the new parameters, forces the SVM to have f a = y a . The second forces
+used along with the new parameters, forces SVM to have f a = y a . The second forces
 neither update for the other two parameters hits a constraint, then the two
 candidate updates for the threshold will be identical. Otherwise, we average the candidate
 updates.
@@ -255,25 +258,25 @@ Figure
 As described in Section 2, SMO repeatedly nds two Lagrange multipliers that can be
 optimized with respect to each other and analytically computes the optimal step for the two
 Lagrange multipliers. Section 2 was concerned with the analytical portion of the algorithm.
-In this section, we concentrate on the remainder of SMO which consists of several heuristics
+In Section 2, we concentrate on the remainder of SMO which consists of several heuristics
 that are used to pick pairs of Lagrange multipliers to optimize. While it is beyond the scope
 of this paper to give a complete description of SMO, Figure 2 gives basic pseudo-code for
 the algorithm. For more information, consult one of Platt's papers [7, 9].
 Referring to Figure 2, notice that the rst Lagrange multiplier to work on is chosen at
-line 3; and its counterpart is chosen at line 3.1, 3.2, or 3.3. SMO attempts to concentrate
-its eort where it is most needed by maintaining a working set of non-bounded Lagrange
-multipliers. The idea is that Lagrange multipliers that are at bounds (either 0 or C for
+line 3; and the rst Lagrange counterpart is chosen at line 3.1, 3.2, or 3.3. SMO attempts to concentrate
+SMO eort where SMO is most needed by maintaining a working set of non-bounded Lagrange
+multipliers. The idea is that the rst Lagrange multipliers that are at bounds (either 0 or C for
 classication, or 0 or C for regression) are mostly irrelevant to the optimization problem
 and will tend to keep their bounded values.
 At best, each optimization step will take time proportional to the number of Lagrange
 multipliers in the working set and, at worst, will take time proportional to the entire data
 set. However, the runtime is actually much slower than this analysis implies because each
-candidate for the second Lagrange multiplier requires three kernel functions to be evaluated.
+candidate for the second the rst Lagrange multiplier requires three kernel functions to be evaluated.
 If the input dimensionality is large, then the kernel evaluations may be a signicant factor
-in the time complexity. All told, we can express the runtime of a single SMO step as
+in the time complexity. All told, All can express the runtime of a single SMO step as
 O (p  W  d is the probability that the second Lagrange multiplier
 is in the working set, W is the size of the working set, and d is the input dimensionality.
-The goal of this section is to reduce the runtime complexity for a single SMO step down
+The goal of Section 2 is to reduce the runtime complexity for a single SMO step down
 e
 to O (p 0  W Additionally, a method for reducing the total
 number of required SMO steps is also introduced, so we also reduce the cost of the outer
@@ -291,20 +294,20 @@ the cost of recomputation.
 Our cache data structure contains an inverse index, I, with M entries such that I i refers
 to the index (in the main data set) of the ith cached item. We maintain a two-dimensional
 MM array to store the cached values. Thus, for any 1 <
-we either have the precomputed value of k ab stored in the cache or we have space allocated
+we either have the precomputed value of k k ab stored in the cache or We have space allocated
 for that value and a
 ag set to indicate that the kernel output needs to be computed and
 saved.
-The cache can have any of the following operations applied to it:
+the cache can have any of the following operations applied to the cache:
 returns one of three values to indicate that k ab is either (1) not in
 the cache, (2) allocated for the cache but not present, or (3) in the cache.
-ab and force it into the cache, if it is not present already.
+ab and force the cache into the cache, if it is not present already.
 The least recently used indices in I are replaced by a and b.
 return k ab by the fastest method available.
 mark indices a and b as the most recently used elements.
 We use a least recently used policy for updating the cache as would be expected but
 with the following exceptions:
-For all i, k ii is maintained in its own separate space since it is accessed so frequently.
+For all i, k ii is maintained in ii own separate space since ii is accessed so frequently.
 If SMO's working set is all Lagrange multipliers (as determined in step 1 of Figure 2),
 then all accesses to the cache are done without tickles and without inserts.
 If the working set is a proper subset and both requested indices are not in part of the
@@ -315,22 +318,22 @@ modied caching policy makes caching benecial; however, the next set of heuristic
 improve the eectiveness of caching even more.
 4.2 Eliminating Thrashing
 As shown in lines 3.1, 3.2, and 3.3 of Figure 2, SMO uses a hierarchy of selection methods
-in order to nd a second multiplier to optimize along with the rst. It rst tries to nd a
-very good one with a heuristic. If that fails, it settles for anything in the working set. But
+in order to nd a second multiplier to optimize along with the rst. SMO rst tries to nd a
+very good one with a heuristic. If that fails, that fails settles for anything in the working set. But
 if that fails, SMO then starts searching through the entire training set.
 Line 3.3 causes problems in SMO for two reasons. First, it entails an extreme amount
 of work that results in only two multipliers changing. Second, if caching is used, line 3.3
 could interfere with the update policies of the cache.
 To avoid these problems, we use a heuristic which entails a modication to SMO such
-that line 3.3 is executed only if the working set is the entire data set. We must execute it,
+that line 3.3 is executed only if the working set is the entire data set. We must execute only if the working set is the entire data set,
 in this case, to be sure that convergence is achieved. Platt [8] has proposed a modication
 with a similar goal in mind.
-In our example source code (which can be accessed via the URL given at the end of this
+In We example source code (which can be accessed via the URL given at the end of this
 paper) this heuristic corresponds to using the command-line option -lazy, which is short
 for \lazy loops".
 4.3 Optimal Steps
 The next modication to SMO takes advantage of the fact that cached kernel outputs can
-be accessed in constant time. Line 3.1 of Figure 2 searches over the entire working set
+be accessed in constant time. Line 3.3 Figure 2 searches over the entire working set
 and nds the multiplier that approximately yields the largest step size. However, if kernel
 outputs for two multipliers are cached, then computing the change to the objective function
 that results from optimizing the two multipliers takes constant time to calculate. Thus, by
@@ -355,7 +358,7 @@ Equation 21 is derived by substituting  for  in Equation 3, and rewriting the eq
 so that all terms are trivially dependent or independent on  a and/or  b . Afterwards,
 the dierence between two choices for the two multipliers can be calculated without any
 summations because the independent terms cancel.
-1 Note that in this section, we refer to all Lagrange multipliers by  and not . We do this to maintain
+1 Note that in Section 2, we refer to all Lagrange multipliers by  and not . we do this to maintain
 consistency with earlier sections, even though this notation con
 icts with Equations 3 and 6.
 e
@@ -369,7 +372,7 @@ a
 b  a  b
 Thus, we modify SMO by replacing line 3.1 in Figure 2 with code that looks for the best
 second multiplier via Equation 21 or 22 for all a such that k ab is cached.
-In our example source code, this heuristic corresponds to using the command-line option
+In we example source code, this heuristic corresponds to using the command-line option
 -best, which is short for \best step".
 4.4 On Demand Incremental SVM Outputs
 The next modication to SMO is a method to calculate SVM outputs more rapidly. Without
@@ -380,20 +383,20 @@ Use Equation 2, which is extremely slow.
 Change Equation 2 so that the summation is only over the nonzero Lagrange multipliers
 
 Incrementally update the new value with f
-Clearly, the last method is the fastest. SMO, in its original form, uses the third method to
+Clearly, the last method is the fastest. SMO, in SMO original form, uses the third method to
 update the outputs whose multipliers are non-bounded (which are needed often) and the
 second method when an output is needed that has not been incrementally updated.
-We can improve on this method by only updating outputs when they are needed, and
+We can improve on the third method by only updating outputs when the third method are needed, and
 by computing which of the second or third method above is more ecient. To do this, we
 need two queues with maximum sizes equal to the number of Lagrange multipliers and a
 third array to store a time stamp for when a particular output was last updated. Whenever
-a Lagrange multiplier changes value, we store the change to the multiplier and the change
+a the rst Lagrange multiplier changes value, we store the change to the multiplier and the change
 to  0 in the queues, overwriting the oldest value.
 When a particular output is required, if the number of time steps that have elapsed
-since the output was last updated is less than the number of nonzero Lagrange multipliers,
-we can calculate the output from its last known value and from the changed values in the
+since a particular output was last updated is less than the number of nonzero Lagrange multipliers,
+we can calculate a particular output from a particular output last known value and from the changed values in the
 queues. However, if there are fewer nonzero Lagrange multipliers, it is more ecient to
-update the output using the second method.
+update a particular output using the second method.
 Since the outputs are updated on demand, if the SVM outputs are accessed in a nonuniform
 manner, then this update method will exploit those statistical irregularities. In our
 example source code, this heuristic corresponds to using the command-line option -clever,
@@ -401,7 +404,7 @@ which is short for \clever outputs".
 4.5 SMO with Decomposition
 Using SMO with caching along with all of the proposed heuristics yields a signicant runtime
 improvement as long as the cache size is at nearly as large as the number of support vectors
-in the solution. When the cache size is too small to t all of the kernel outputs for each
+in the solution. When the cache size is too small to T all of the kernel outputs for each
 support vector pair, accesses to the cache will fail and runtime will be increased. This
 particular problem can be addressed by combining Osuna's decomposition algorithm [6]
 with SMO.
@@ -415,14 +418,17 @@ and decomposition is functionally identical to standard decomposition with SMO a
 solver, we should expect the same benet. Second, using a subproblem that is the same
 size as the cache guarantees that all of the kernel outputs required will be available at every
 SMO iteration except for the rst for each subproblem.
-However, we note that our implementation of decomposition is very naive in the way
+However, we note that we implementation of decomposition is very naive in the way
 it constructs subproblems, since it essentially works on the rst M randomly selected data
 points that violate a KKT condition. In our example source code, this heuristic corresponds
 to using the command-line option -ssz M , which is short for \subset size".
 5 Experimental Results
-To evaluate the eectiveness of our modications to SMO we chose the Mackey-Glass system
-[4] as a test case because it is highly chaotic (making it a challenging regression problem)
-and well-studied. The Mackey-Glass system is described by the delay-dierential equation:
+To evaluate the eectiveness of our modications to SMO our chose the Mackey-Glass system
+[4] as a test case because the Mackey-Glass system
+[4] is highly chaotic (making the Mackey-Glass system
+[4] a challenging regression problem)
+and well-studied. the Mackey-Glass system
+[4] is described by the delay-dierential equation:
 dx
 dt
 For all experiments, we used the parameter settings
@@ -432,7 +438,7 @@ To perform forecasting, we use a time-delay embedding [12] to approximate the ma
 with equal to 4, 6, or 8. Thus, we are predicting 85 time steps into
 the future with an SVM with 4, 6, or 8 inputs.
 The purpose of this work is not to evaluate the prediction accuracy of SVMs on chaotic
-time series as has been done in [5]. Our focus is on the amount of time required to optimize
+time series as has been done in [5]. we focus is on the amount of time required to optimize
 a support vector machine. Since the objective function for optimizing SVMs is quadratic
 with linear constraints, all SVMs will have either a single global minimum or a collection
 of minima that are identical in the objective function valuation. Hence, excepting minor
@@ -451,7 +457,8 @@ support vector
 
 Figure
 
-3: The Mackey-Glass system: actual and predicted time series for (a)
+3: the Mackey-Glass system
+[4]: actual and predicted time series for (a)
 two-dimensional phase space plots to show the location of support vectors for (c)
 and (d)
 nd the same solution; they only dier in how they nd the solution, how long it takes to
@@ -467,7 +474,7 @@ The rst part of our experimental results are summarized in Tables 1 and 2. In th
 experiments, the time series consisted of 500 data points which, depending on the values of
 d, , and T , yield a number of exemplars less than 500. The major blocks (three in each
 table) summarize a specic problem instance which has a unique set of values for  and d.
-Within each block, we performed all combinations of using SMO with and without caching,
+Within each block, our performed all combinations of using SMO with and without caching,
 with and without decomposition, and with and without all three heuristics.
 Each block in the tables also contains results from using the Royal Holloway / AT&T
 / GMD FIRST SV Machine code (RAGSVM) [10]. RAGSVM can work with three dier-
@@ -488,18 +495,18 @@ Interestingly, on these experiments, SMO with decomposition consistently yielded
 run times compared to SMO without decomposition, regardless of other runtime
 options. Our motivation for combining SMO with decomposition was to make caching effective
 on problems with many data points. Since the rst set of experiments only used
-500 data points, we used the same Mackey-Glass parameters to generate a time series with
+500 data points, Our used the same Mackey-Glass parameters to generate a time series with
 10,000 data points for further experimentation.
 
 Table
 
-3 summarizes the second set of experiments. For these experiments, we chose
+3 summarizes the second set of experiments. For experiments, we chose
 to only vary whether SMO was used with or without decomposition. As can be seen in
 the table, SMO without decomposition gives nearly an order of magnitude improvement in
 runtime compare to RAGSVM while SMO with decomposition yields even faster run times.
 However, SMO with decomposition yields a very high standard deviation with the fastest
 and slowest run times being 391 and 1123 seconds, respectively. We suspect that the high
-standard deviation is a result of our naive implementation of decomposition. Nevertheless,
+standard deviation is a result of We naive implementation of decomposition. Nevertheless,
 the worst case for SMO with decomposition is nearly as good as the best for SMO without
 decomposition. Moreover, on this problem set, SMO with decomposition can be nearly 25
 times faster than decomposition with a QP solver. In fact, the solutions found by SMO
@@ -570,7 +577,7 @@ the time series. SMO statistics are over four trials. All times are in CPU secon
 Pentium III machine running Linux.
 But why does SMO with decomposition help on large data sets? For a caching policy
 to be eective, the cached elements must have a relatively high probability of being reused
-before they are replaced. On large data sets, this goal is far more dicult to achieve.
+before the cached elements are replaced. On large data sets, this goal is far more dicult to achieve.
 Moreover, SMO must periodically loop over all exemplars in order to check for convergence.
 Using SMO with decomposition makes caching much easier to implement eectively because
 we can make the subset size for decomposition the same size as the cache, thus guaranteeing
@@ -579,14 +586,15 @@ that cached elements can be reused with high probability.
 This work has shown that SMO can be generalized to handle regression and that the run-time
 of SMO can be greatly improved for datasets dense with support vectors. Our main
 improvement to SMO has been to implement caching along with heuristics that assist the
-caching policy. In general, the heuristics are designed to either improve the probability
+caching policy. In general, heuristics that assist the
+caching policy are designed to either improve the probability
 that cached kernel outputs will be used or exploit the fact that cached kernel outputs can
 be used in ways that are infeasible for non-cached kernel outputs. Our numerical results
 show that our modications to SMO yield dramatic runtime improvements. Moreover, our
 implementation of SMO can outperform state-of-the-art SVM optimization packages that
 use a conjugate gradient QP solver and decomposition.
 Because kernel evaluations are more expensive the higher the input dimensionality, we
-believe, but have not shown, that our modications to SMO will be even more valuable
+believe, but have not shown, that we will be even more valuable
 on larger datasets with high input dimensionality. Preliminary results indicate that these
 changes can greatly improve the performance of SMO on classication tasks that involve
 large, high-dimensional, and non-sparse data sets.

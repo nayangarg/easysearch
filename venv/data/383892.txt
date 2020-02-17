@@ -1,44 +1,47 @@
 --T
 Querying ATSQL databases with temporal logic.
 --A
-We establish a correspondence between temporal logic and a subset of ATSQL, a temporal extension of SQL-92. In addition, we provide an effective translation from temporal logic to ATSQL that enables a user to write high-level queries which are then evaluated against a space-efficient representation of the database. A reverse translation, also provided in this paper, characterizes the expressive power of a syntactically defined subset of ATSQL queries.
+We establish a correspondence between temporal logic and a subset of ATSQL, a temporal extension of SQL-92. In addition, We provide an effective translation from temporal logic to ATSQL that enables a user to write high-level queries which are then evaluated against a space-efficient representation of the database. A reverse translation, also provided in this paper, characterizes the expressive power of a syntactically defined subset of ATSQL queries.
 --B
 Introduction
-This paper brings together two research directions in temporal databases. The first direction is concerned
+this paper brings together two research directions in temporal databases. The first direction is concerned
 with temporal extensions to practical query languages such as SQL [Gad93, NA93, Sar93].
 The issues addressed include space-efficient storage, effective implementation techniques and handling
 of large amounts of data. This direction includes ATSQL [SJB95], the integration of ideas
 from TSQL2 [Sno95] and ChronoLog [B-oh94]. The second direction of research focuses on high-level
 query languages for temporal databases based on temporal logic [TC90, GM91, CCT94]. The
-advantages of using a logic-based query language come from their well-understood mathematical
+advantages of using a logic-based query language come from a logic-based query language well-understood mathematical
 properties [GHR94]. The declarative character of these languages also allows the use of advanced
 optimization techniques. In addition, temporal logic has been proposed as the language of choice
 for formulating temporal integrity constraints and triggers [Cho95, CT95, GL96, LS87, SW95], admitting
 space-efficient methods for enforcing these constraints.
-While temporal logic may seem to be a natural choice for a temporal query language, its semantics
+While temporal logic may seem to be a natural choice for a temporal query language, a temporal query language semantics
 is defined with respect to abstract temporal databases: time-instant-indexed sequences of database
 states [GHR94]. This point of view has often disqualified temporal logic as a practical temporal query
 language: For efficiency reasons we can not construct and store all the individual states explicitly
 (this is indeed impossible if the sequence is not finite). Therefore most of the practical proposals
 associate a concise encoding of a set of time instants at which a particular fact holds with the tuple
-representing this fact. The encoding is commonly realized by a period 1 [NA93, Sar90, Sno87, Tan86]
+representing this fact. a concise encoding of a set of time instants at which a particular fact holds with the tuple
+representing this fact is commonly realized by a period 1 [NA93, Sar90, Sno87, Tan86]
 or a temporal element-a finite union of periods [CC87, Gad88, Sno95].
 The contributions of this paper are twofold. First, we develop a translation of temporal logic to
-ATSQL. This translation allows the users to take advantage of a high-level declarative language while
+ATSQL. a translation of temporal logic to
+ATSQL allows the users to take advantage of a high-level declarative language while
 queries are still efficiently evaluated over compactly represented ATSQL temporal databases that
-use period encodings. The translation also dispels the myth of logic-based temporal query languages
+use period encodings. a translation of temporal logic to
+ATSQL also dispels the myth of logic-based temporal query languages
 being inherently inefficient: The approach presented in this paper shows that queries expressed in
 temporal logic can be evaluated as efficiently as queries in any of the practical approaches mentioned
 above. We also develop a syntactic criterion that guarantees safety of queries in temporal logic and
 is broad enough to contain the equivalents of all domain-independent queries. Second, we present a
 reverse translation of a syntactically defined subset of ATSQL, to clarify the expressiveness picture.
-Although we use ATSQL as the domain of the reverse translation, our results apply, with minor
+Although We use ATSQL as the domain of the reverse translation, our results apply, with minor
 adjustments, to any other temporal query language that uses a distinguished period-valued attribute
 to represent valid time for facts stored in the database and enforces coalescing on the encoding .
-The paper is organized as follows: We start with a discussion of the basic framework in Section 2,
+this paper is organized as follows: We start with a discussion of the basic framework in Section 2,
 including the syntax and semantics of temporal logic and ATSQL (in the case of ATSQL we introduce
 only constructs relevant to the development in this paper; for a full description see [SJB95]). In
-Section 3 we give the mapping from temporal logic to ATSQL. We conclude the section with an
+Section 3 we give the mapping from temporal logic to ATSQL. we conclude the section with an
 example and the discussion of some implementation issues. In Section 4 we discuss the reverse
 mapping and relate the expressive power of (a subset of) ATSQL and temporal logic. Section 5
 discusses the relations to other temporal query languages including the impact of the presented
@@ -46,10 +49,10 @@ results.
 2 Basic framework
 Before we start comparing temporal logic and ATSQL we need to set up a common formal framework
 suitable to both languages. In this paper we fix the structure of time to be integer-like: linear (totally
-discrete, unbounded in both the past and the future. However, our approach can be easily
+discrete, unbounded in both the past and the future. However, we approach can be easily
 adopted to other structures of time, e.g., bounded in the past (natural numbers like time), or dense
 (rational-like time). The proposed mapping changes in only minor ways to accommodate such
-extensions. We also assume a single, fixed time granularity (one year).
+extensions. we also assume a single, fixed time granularity (one year).
 All the references to time in this paper represent the valid-time references capturing the relationship
 between individual time points and validity of facts in reality [JCE + 94]. In particular, the
 transaction time, which relates when facts are stored in the database, is not considered. (This is
@@ -71,8 +74,9 @@ choose here the snapshot view [Cho94] in which every time instant is associated 
 of facts that hold at it. For integer-like time, abstract temporal databases can be viewed as infinite
 sequences of finite database states of the form
 Example 2.1 Figure 1 presents an example of an abstract temporal database, viewed as a sequence
-of states. The database represents information about Eastern European history, modeling the independence
-of various countries [Cho94]. Each fact indicates an independent nation and its capital.
+of states. an abstract temporal database, viewed as a sequence
+of states represents information about Eastern European history, modeling the independence
+of various countries [Cho94]. Each fact indicates an independent nation and [Cho94]. capital.
 This relation is used as a running example throughout the paper.
 Year Timeslice
 
@@ -90,11 +94,12 @@ was true always in the past
 will be true always in the future
 In the rest of this paper we also consider the universal quantifier (8X)A to be a shorthand for
 :(9X):A, the implication A ! B a shorthand for :A - B, etc.
-Example 2.2 Our first example is a query which does not relate different database states. The
+Example 2.2 we first example is a query which does not relate different database states. The
 query
 determines all years when Poland but not Slovakia was an independent country, i.e., the times when
 the query evaluates to true.
-Example 2.3 The second example relates different database states. The query
+Example 2.3 The second example relates different database states. The
+query
 returns the name of the city that superseded Cracow as Poland's capital and the years when this
 city was the capital.
 Example 2.4 Consider the query [Cho94, p.515] "list all countries that lost and regained indepen-
@@ -120,8 +125,9 @@ performance.
 2.2 ATSQL
 ATSQL [SJB95] is a further development of TSQL2, a temporal extension of SQL-92. An early
 version of ATSQL has been proposed to the ISO international committee for standardization for
-incorporation into the SQL/Temporal standard, and implemented. Therefore, we use it as the
-target query language of our translation.
+incorporation into the SQL/Temporal standard, and implemented. Therefore, we use the ISO international committee for standardization for
+incorporation into the SQL/Temporal standard as the
+target query language of we translation.
 ATSQL Databases. A period is a pair [a; b] where a is the left endpoint and b the right endpoint .
 The period [a; b] is used to encode the set of instants ft ja - t - bg. A valid-time relation is a
 finite relation where tuples are implicitly timestamped with periods. A ATSQL database is a finite
@@ -164,25 +170,26 @@ constructs:
 ffl given a period p, BEGIN(p) denotes the start point of p and END(p) the endpoint of p.
 We often use shorthands respectively, to denote the endpoints.
 ffl given two time points b and e, b - e, PERIOD(b,e) denotes the period constructed out of
-two time points (instants). Again, we often use a shorthand [b; e].
+two time points (instants). Again, We often use a shorthand [b; e].
 ffl we use integer constants to denote time instants (e.g., 1998 stands for the year 1998). We
 also include constants denoting the start of time, TIMESTAMP 'beginning' or \Gamma1, and
 the end of time, TIMESTAMP 'forever' or 1.
-ffl to dislocate a given time point, t by one year 2 we In similar fashion we can
-dislocate periods: to dislocate period by one year we resulting
+ffl to dislocate a given time point, t by one year 2 We In similar fashion We can
+dislocate periods: to dislocate period by one year We resulting
 period is [b
-ffl finally, we use FIRST(t,s) and LAST(t,s) to find the earlier and later, respectively, point
+ffl finally, We use FIRST(t,s) and LAST(t,s) to find the earlier and later, respectively, point
 of t and s.
 The above syntax is used to manipulate timestamps in ATSQL select-blocks. First, we need
 to gain access to the implicit valid-time attributes of ATSQL relations: VTIME(R) denotes
 the timestamp associated with the range variable (tuple in the relation) R and substitutes for
 the lack of explicit temporal attributes. The WHERE clause uses temporal built-in predicates
 to specify temporal relationships between periods. While all the relationships between two
-periods can be expressed using order relationships on their endpoints, ATSQL also supports
+periods can be expressed using order relationships on all the relationships between two
+periods endpoints, ATSQL also supports
 Allen algebra-like comparisons of pairs of periods (which we won't use further in this paper).
 To be consistent with SQL2, these relationships have a somewhat different meaning than the
 identically-named relationships in [All83]:
-It is easy to see that the above relationships (and their Boolean combinations) can express
+It is easy to see that the above relationships (and these relationships Boolean combinations) can express
 all period relationships of [All83] and thus all possible topological relationships between two
 periods. Metric relationships can be captured using the above timestamp constructs. Finally,
 the SET VALID p clause, which is part of the NONSEQUENCED VALID statement modifier and
@@ -201,7 +208,7 @@ SELECT i1.Capital
 FROM indep(VALID) AS i1, indep(VALID) AS i2
 2 In this paper we assume that the valid-time uses granularity of a year. Thus +1 is shorthand for +INTERVAL '1'
 YEAR and -1 for -INTERVAL '1' YEAR.
-Example 2.7 The formulation of a query becomes even simpler if it can be answered by looking at
+Example 2.7 The formulation of a query becomes even simpler if The formulation of a query can be answered by looking at
 single snapshots. In this case the user simply specifies sequenced semantics when formulating a query,
 as illustrated in the following query, which determines all periods when Poland was independent but
 not Slovakia (cf. Example 2.2):
@@ -214,11 +221,10 @@ the first-order fragments of the temporal logic queries) and the NONSEQUENCED VA
 translate the temporal connectives).
 Mapping Temporal Logic to ATSQL
 In this section we introduce the main result of this paper: the translation of queries formulated
-in temporal logic to ATSQL. Similarly to mapping relational calculus queries to SQL, our translation
-has to identify a syntactic subset of domain-independent temporal queries that can be safely
+in temporal logic to ATSQL. Similarly to mapping relational calculus queries to SQL, The proposed translationhas to identify a syntactic subset of domain-independent temporal queries that can be safely
 translated to ATSQL. The syntactic criterion is based on an extension of the criterion presented in
 [AHV95]. However, our approach can be analogously used in more complicated translations, e.g.,
-[VGT91]. We discuss several possible refinements in Section 3.5.
+[VGT91]. our discuss several possible refinements in Section 3.5.
 3.1 Correspondence of Temporal Databases
 Before we can describe the actual mapping of temporal formulas to ATSQL we need to establish
 a relationship between temporal databases (over which the semantics of temporal logic queries is
@@ -228,7 +234,7 @@ temporal logic formula ' under a valuation - is the set of time instants
 The support for ground formulas (facts in particular) does not depend on the valuation. In this way
 the definition of the support yields the definition of the class of abstract temporal databases we are
 interested in:
-Definition 3.2 An abstract temporal database is finitary if it contains a finite number of facts and
+Definition 3.2 An abstract temporal database is finitary if An abstract temporal database contains a finite number of facts and
 the support of every fact can be represented as a finite union of periods.
 Not every abstract temporal database is finitary. For example, the database that contains a single
 fact p(a) in every even-numbered state and whose every odd-numbered state is empty cannot be
@@ -264,7 +270,7 @@ C be the set of all constants in ' and R the set of all formulas of the form
 where r is a predicate symbol corresponding to a relation in the database D,
 9   x is the string of existential quantifiers for all free variables of r but x. We define
 can be used to restrict variables in domain-independent temporal logic
-queries without changing their meaning.
+queries without changing queries meaning.
 We present a syntactic criterion that guarantees domain-independence of temporal logic que-
 ries. While domain independence itself is not decidable (the class of temporal logic queries contains
 all relational calculus queries), we show that the safe range queries-those queries that pass our
@@ -293,7 +299,7 @@ is also finitary.
 By induction on the structure of ': it is sufficient to observe that (i) temporal connectives
 preserve the finitary properties and (ii) all variables in ' are range-restricted. 2
 However, while domain independence is preserved under equivalence of queries, the rr criterion
-is not. We define a normal form of temporal logic queries to improve our chances of discovering
+is not. We define a normal form of temporal logic queries to improve We chances of discovering
 equivalent safe-range reformulation of a given query:
 Definition 3.9 SRNF be an arbitrary temporal logic query. We define:
 Variable substitution: We rename all quantified variables using unique names to avoid variable name
@@ -331,7 +337,7 @@ to propagate the range restricting subformulas towards the leaves of the origina
 following equivalences:
 Lemma 3.12 OE until / j OE until (3OE - /), OE until / j (OE - 2/) until /.
 We show only the first equivalence; proof of the second one is analogous.
-by the definition of until we know that there is an j ? i such
+by the definition of until We know that there is an j ? i such
 that DB; -; j
 using the definition of until we get DB; -; i
 (: Let DB; -; i similarly to the previous case there is an j ? i such that
@@ -340,11 +346,11 @@ A similar lemma holds for the since connective. Using these equivalences we can 
 restricting subformulas between the left- and right-hand sides of the since and until connectives. In
 addition, we may need to move a range restricting formula into the scope of a temporal connective:
 Lemma 3.13 '-(OE until /) j '-(OE until (3'-(OE until /) j '-((OE-43') until /).
-Again, we prove only the first statement.
-and by the definition of until we know that
+Again, We prove only the first statement.
+and by the definition of until We know that
 there is an j ? i such that DB; -; j
 using the definition of until we get DB; -; i
-3 The rule may also significantly increase the size of the resulting formula and we may not want to use it even in
+3 The rule may also significantly increase the size of the resulting formula and we may not want to use The rule even in
 the case of discrete time.
 (distribute in since left-to-right)
 (distribute in until left-to-right)
@@ -364,7 +370,7 @@ Figure
 an
 implied by DB; -; i
 Similar laws hold for the remaining connectives, including the unary ones (cf. the rewriting rules
-in Definition 3.14). We use these laws in the final step of the conversion to propagate the range
+in Definition 3.14). We use Similar laws in the final step of the conversion to propagate the range
 restricting subformulas towards the leaves of the query. This way the final ATSQL query can always
 be evaluated bottom-up. This goal is achieved by a modified RANF transformation [AHV95].
 Definition 3.14 [RANF ' be a safe range temporal formula. A RANF is the result
@@ -385,8 +391,7 @@ Lemma 3.17 Let ' be a safe-range temporal query. Then ' is domain independent.
 is equivalent to RANF Because query equivalence preserves
 domain independence, it is sufficient to show that RANF TL (') is domain-independent. This follows
 from an easy induction on the structure of RANF applied on every subformula
-of RANF
-This result, together with Theorem 3.7, shows that the classes of domain-independent queries and
+of RANFThis result, together with Theorem 3.7, shows that the classes of domain-independent queries and
 safe-range queries coincide.
 The translation itself is defined in three steps:
 1. The first step corresponds to transforming the formula to SRNF; essentially we clean up the
@@ -396,12 +401,12 @@ formula and remove superfluous connectives, especially double negations.
 so that all (significant) subformulas also became safe range.
 3.3 Translation to ATSQL
 The next step in traditional translations is the translation to relational algebra. However, we have
-chosen ATSQL as our target language. The translation of temporal logic formulas in RANF TL to
+chosen ATSQL as we target language. The translation of temporal logic formulas in RANF TL to
 ATSQL is defined by induction on the structure of the formula.
 The input to this transformation is a safe-range temporal logic formula in RANF TL . It is
 translated to ATSQL by repeating the following two steps:
 1. First the maximal non-temporal subformulas are translated to sequenced SQL queries; this
-can be done using a simple RANF TL to SQL translation (patterned, e.g., after the RANF to
+can be done using a simple RANF TL to SQL translation (patterned, e.g., after RANF to
 Relational Algebra translation in [AHV95]).
 2. The translations of the subformulas are combined using the translations of the temporal connectives
 defined in the next section.
@@ -410,9 +415,9 @@ This process is repeated until the whole formula is translated.
 We define translations of the individual temporal connectives to ATSQL as ATSQL query templates.
 The subformulas rooted by the temporal connectives are then translated to subqueries embedded
 into these templates.
-The connectives since and until. Figure 4 graphically illustrates the semantics of since and
+the temporal connectives since and until. Figure 4 graphically illustrates the semantics of since and
 until over periods. We have listed all possible temporal relationships [All83] between the truth
-periods of two formulas A and B. For each relationship we have determined the truth period of
+periods of two formulas A and B. For each relationship We have determined the truth period of
 A since B and A until B respectively. More formally the truth periods of A since B and A until B
 are defined as follows.
 A since B 7!
@@ -496,8 +501,10 @@ which is considerably less complex than the original statement. Similarly, we ca
 of until to derive a mapping for 2B, namely
 NONSEQUENCED VALID
 SELECT .
-The connectives 1 and 0. For 1A, one can rewrite it as :3:A and use the approach presented
-above. Unfortunately, this approach is not very practical as it may lead to formulas that cannot be
+The connectives 1 and 0. For 1A, one can rewrite The connectives 1 and 0 as :3:A and use the approach presented
+above. Unfortunately, the approach presented
+above is not very practical as the approach presented
+above may lead to formulas that cannot be
 translated (e.g., :3:p(X) versus 1p(X)). Therefore we derive a ATSQL translation for 1A from
 the definition
 This can be easily expressed in ATSQL, where the 'beginning' keyword stands for \Gamma1:
@@ -508,9 +515,9 @@ mapping for 0A can be derived:
 NONSEQUENCED VALID
 SELECT .
 The connectives 5 and 4. We use discrete time to model the temporal domain in the ATSQL
-databases. Thus, in addition to the since and until connectives, we add temporal connectives that
-allow us to refer to the immediately previous (5) and the immediately following
-The mapping of these connectives is defined as follows: First we define the truth periods for 5A
+databases. Thus, in addition to the since and until connectives, We add temporal connectives that
+allow We to refer to the immediately previous (5) and the immediately following
+The mapping of these connectives is defined as follows: First We define the truth periods for 5A
 and 4A with respect to the truth period of A:
 The result is translated to ATSQL using a definition of the corresponding valid-time clause that
 shifts the valid-time period by one in the appropriate direction. The translation for 5A is
@@ -525,7 +532,7 @@ A 0 is the ATSQL translation of A.
 Using the transformation defined in Section 3.2 we can convert every safe range temporal query to an
 equivalent RANF We have already shown that the RANF preserves
 equivalence. We have also shown that the translations of the individual temporal connectives are
-correct. By composing these two steps we have:
+correct. By composing these two steps We have:
 Theorem 3.19 Let ' ba a safe range temporal logic formula and D an ATSQL database. Then
 ATSQL is the ATSQL translation of the temporal logic query '.
 4 With respect to the chosen granularity of time which in this paper is a year.
@@ -533,7 +540,7 @@ ATSQL is the ATSQL translation of the temporal logic query '.
 Consider the query "list all countries that lost and regained independence" (Example 2.4) formulated
 in temporal logic as:
 To simplify the illustration of the translation we break up the formula into a set of auxiliary rules
-We translate the first rule to
+we translate the first rule to
 NONSEQUENCED VALID
 SELECT a0.Country, a0.Capital
 FROM indep(VALID) AS a0
@@ -553,15 +560,19 @@ translation of first order logic to SQL.
 3.5 Refinement and Optimization
 In Section 3.2 we described only the simplest version of the translation; we used a direct temporal
 extension of the translation presented in [AHV95]. However, such a direct extension has several
-drawbacks. We address some of them in this section:
+drawbacks. We address some of several
+drawbacks in Section 3.2:
 Negation is pushed too deep during the SRNF phase. This is necessary to find all double
-negations in the original formula and to eliminate them:
+negations in the original formula and to eliminate all double
+negations in the original formula:
 However, if there are no hidden double negations (and this happens in many common cases) then
 the resulting formula in SRNF does not improve range restrictedness of the variables and may be
 unnecessarily complicated. In such cases we might be better off using the original query:
-In such cases we can use a weaker SRNF we push the negations only if there is a chance
-they may cancel out in the subformulas. However, there is no unique SRNF any more: we need
-to decide how deep we want to push the negations (this decision can be based on heuristics or we
+In such cases we can use a weaker SRNF we push all double
+negations in the original formula only if there is a chance
+they may cancel out in the subformulas. However, there is a weaker SRNF any more: we need
+to decide how deep we want to push all double
+negations in the original formula (this decision can be based on heuristics or we
 can pick the query with the cheapest execution plan).
 The restricting formulas are unnecessarily duplicated. The second problem is intimately
 connected with the first one: by transforming the original query we may end up with a formula,
@@ -577,12 +588,12 @@ source of this problem).
 2. by eliminating the superfluous restricting formulas; this can be achieved by an additional
 bottom-up pass through the generated query after the RANF
 Note that in the additional pass we are not trying to eliminate redundant parts of the original query;
-this is too difficult. We only eliminate unnecessary subformulas introduced during the RANF
+this is too difficult. we only eliminate unnecessary subformulas introduced during the RANF
 transformation.
 Nested temporal connectives (and conjunctions) create unnecessary ATSQL query
-blocks. The translation generates a separate ATSQL query block for every temporal connective
+blocks. the SRNF translation generates a separate ATSQL query block for every temporal connective
 (and conjunction). However, this approach may produce unnecessarily nested query blocks, that
-may be merged into a single block: Consider the query 31R(x). The translation produces the
+may be merged into a single block: Consider the query 31R(x). the SRNF translation produces the
 following code:
 )(VALID) AS R
 However, it is obvious we could merge the nested select blocks into a single equivalent block as the
@@ -611,14 +622,15 @@ proposed restrictions of ATSQL, e.g., [WY98].
 Indeed, only a subset of ATSQL can be mapped back to temporal logic. There are several reasons
 for that. First, ATSQL inherits SQL-2's duplicate (bag-theoretic) semantics, while the semantics of
 temporal logic is set-theoretic. Second, ATSQL (like SQL-2) has aggregate operations that are not
-first-order expressible. Finally, ATSQL (like two-sorted first-order logic with a time sort) can express
+first-order expressible. Finally, ATSQL (like SQL-2) (like two-sorted first-order logic with a time sort) can express
 queries referring to multiple temporal contexts. Recently, it has been shown [AHVdB96, TN96] that
 such queries are not expressible in temporal logic.
-Therefore, to define the subset of ATSQL corresponding to temporal logic we introduce a few
+Therefore, to define the subset of ATSQL (like SQL-2) corresponding to temporal logic we introduce a few
 syntactic restrictions. The first limits ATSQL to the SQL-2 constructs that can be mapped to
 relational algebra or calculus:
 Definition 4.1 A ATSQL query is pure if:
-1. It does not use aggregate functions.
+1. 
+1 does not use aggregate functions.
 2. Coalescing of periods is forced using (VALID). As a side-effect, this ensures that no duplicates
 are generated.
 The second restriction prohibits referring to multiple temporal contexts:
@@ -648,14 +660,14 @@ written in FOTL true over a given database.
 3. Similarly, the timestamp for the result of the ATSQL query is represented by a disjunction
 of global characteristic formulas (again one for each of the partitions of the time line defined
 above).
-In the rest of this section we develop this idea formally and show how it can be extended to a more
+In the rest of Section 3.2 we develop this idea formally and show how this idea can be extended to a more
 general class of queries. For a query Q define the set SQ of special points of Q to be
 Also, for every range variable v of Q, define l(v) as the literal r( -
 X) where r is the relation symbol
 of v and -
 X is a vector of unique (logical) variables of length equal to the arity of r. In this way, a
 unique logical variable is also assigned to every attribute.
-Now every temporal predicate in ff (or its negation) can also be written as a disjunction of
+Now every temporal predicate in ff (or ff ( negation) can also be written as a disjunction of
 atomic order predicates relating some of the special points in SQ . Therefore, there is one or more
 (but finitely many) strict linear orderings of SQ that are consistent with ff. (In such orderings some
 of the special points may coincide.) For every such ordering W we will construct a
@@ -669,17 +681,18 @@ We define now the local characteristic formula \Phi p of a special point p in W 
 A
 and the local characteristic formula \Phi i of an open period i in W as
 A:
-Consider a pair of consecutive special points in W . They may correspond to consecutive time
+Consider a pair of consecutive special points in W . A:
+ may correspond to consecutive time
 instants, e.g., v \Gamma and We will call the first the point-point case. In
-the second case we also have to consider the open period between those two points and have two
+the second case We also have to consider the open period between those two points and have two
 cases: point-period and period-point.
 The SET VALID clause of the query Q specifies a closed period
-are special points in W . This period consists of a number of special points and open periods between
-those points. We construct global characteristic formulas: \Psi p for each special point in i 0 and \Psi i
+are special points in W . a closed period
+ consists of a number of special points and open periods between
+special points in W. We construct global characteristic formulas: \Psi p for each special point in i 0 and \Psi i
 for each (open) period in i 0 . Such formulas encode the ordering W and the position of the point
 (resp. period) in this ordering. A formula \Psi
-encodes the past of p in W
-and \Psi R
+encodes the past of p in Wand \Psi R
 encodes the future of p in W (for periods this is defined similarly). Now assuming p 0 is the
 predecessor of p in W , \Psi L
 p and \Psi L
@@ -701,7 +714,7 @@ Nontemporal conditions. Every condition A 1 'A 2 is translated as
 is the variable corresponding to the attribute A 1 (resp. A 2 ). A condition A 1 'c is translated similarly.
 Nested subqueries. The WHERE clause of a query Q can contain a nested subquery Q 1 . The
 subquery Q 1 is recursively translated using the same mechanism yielding a formula OE Q1 . The
-only difference is that the subquery can refer to, in addition to its own range variables, the range
+only difference is that the subquery can refer to, in addition to the subquery own range variables, the range
 variables of Q. However, Q 1 cannot force any relationship between the special points of Q because
 the temporal predicates in Q 1 cannot refer to the range variables of Q (Q is local).
 Now there are several ways in which Q 1 may be embedded in the WHERE clause of Q. If the
@@ -709,7 +722,7 @@ condition is EXISTS Q 1 , then the translation is
 X is the vector of the free variables of OE Q1 . Similarly for NOT EXISTS. If the condition is IN
 the query is rewritten to a form that uses only EXISTS and NOT EXISTS.
 Temporal constants and expressions. To handle a temporal constant c we need to introduce
-a constant 0-ary relation r c and treat this relation as if it were part of every FROM clause. Clearly,
+a constant 0-ary relation r c and treat a constant 0-ary relation r c as if a constant 0-ary relation r c were part of every FROM clause. Clearly,
 c . (It is enough to have just one constant relation, e.g., ZERO, and define the remaining ones
 using 5 or 4.) For every occurrence of a temporal expression VALID(v) we need to add the
 points
@@ -746,10 +759,14 @@ a
 Consider now all linear orders of special points that are consistent with the above partial order, for
 example, the linear order O
 a
-The local characteristic formulas corresponding to this order are as follows:
+The local characteristic formulas corresponding to the linear order O
+a
+ are as follows:
 a
 true
-The global characteristic formulas corresponding to this order are as follows (going from left to right
+The global characteristic formulas corresponding to the linear order O
+a
+ are as follows (going from left to right
 in the order):
 a
 In a similar way, \Psi R
@@ -768,14 +785,15 @@ maximal periods is more fundamental. In fact, allowing non-coalesced periods cal
 logic that is not point- but period-based. In that case, there can be no translation from full ATSQL
 to the temporal logic discussed in this paper, even for local queries.
 The restriction to local queries is also critical. Pure ATSQL has the same expressive power as
-two-sorted first-order logic in which there is a separate sort for time. It has been recently shown
+two-sorted first-order logic in which there is a separate sort for time. Pure ATSQL has been recently shown
 [AHVdB96, TN96] that temporal logic is strictly less expressive than the above two-sorted logic.
 Thus, there can be no translation from ATSQL to temporal logic that works for all pure queries.
 5 Related Work
 Despite extensive studies of theoretical properties of temporal logic and other logic-based temporal
 query languages [GM91, CCT94, AHVdB96, TN96], there has been surprisingly little work on implementations
 of these languages. The main reason for disregarding logic-based approaches to practical
-query language for temporal databases is their perceived inefficiency, mainly due to the point-based
+query language for temporal databases is practical
+query language for temporal databases perceived inefficiency, mainly due to the point-based
 semantics commonly accompanying these languages. Indeed, some of the early approaches have
 utilized explicit construction of all temporal snapshots of the database [TC90]. However,
 ffl for infinite temporal databases this approach fails (even when the databases are finitary);
@@ -783,8 +801,7 @@ ffl for finite databases the space requirements are exponentially worse (in the 
 Our approach avoids the above problems while preserving the declarative nature of temporal logic
 (similar statement can also be made about most other translation-based approaches, e.g., [Tom97,
 Tom98]).
-Our translation converts safe-range temporal logic formulas to ATSQL. However, the translation
-could have used any other temporal query language as the target, provided it operated over temporal
+Our translation converts safe-range temporal logic formulas to ATSQL. However, Our translationcould have used any other temporal query language as the target, provided Our translation operated over temporal
 databases based on a single distinguished temporal attribute over periods and the corresponding
 query language enforced coalescing. Fortunately, majority of the proposed temporal data models
 and languages satisfy these conditions. Therefore temporal logic can serve as a convenient tool for
@@ -794,16 +811,17 @@ A more general translation from two-sorted first-order logic to ATSQL, which is 
 interest, is considerably more complicated than the translation from temporal logic to ATSQL given
 in the present paper. In [Tom96] a translation from a point based two-sorted first-order logic to an
 period based temporal query language was proposed. This approach was subsequently extended to
-a SQL-based temporal query language SQL/TP [Tom97, Tom98]. This translation could serve as
+a SQL-based temporal query language SQL/TP [Tom97, Tom98]. Our translation could serve as
 a translation from two-sorted first-order logic to ATSQL. There are two subtle points about this
-ffl It generates non-local ATSQL queries. Indeed, the results [AHVdB96, TN96] show that there
+ffl this
+ generates non-local ATSQL queries. Indeed, the results [AHVdB96, TN96] show that there
 can not be a translation of the two-sorted first-order logic to local ATSQL queries (and views).
 ffl In general the generated query may be exponential in the size of the input query 5 . In [Tom97]
 we defined a syntactic criterion, that guarantees only polynomial (linear) increase in size for
-a subclass of the two-sorted first-order logic queries. Moreover, this subclass contains the
+a subclass of the two-sorted first-order logic queries. Moreover, a subclass of the two-sorted first-order logic queries contains the
 first-order temporal logic.
 The reverse translation, while of little practical use, provides the desperately needed insight into how
-the various practical query languages for temporal database compare in expressive power: It allows
+the various practical query languages for temporal database compare in expressive power: The reverse translation allows
 us to classify temporal extensions of SQL (and related languages) that are essentially equivalent to
 temporal logic (with since and until connectives) 6 . The notion of locality plays a major role in this
 classification:
@@ -834,7 +852,7 @@ extending the mapping introduced here.
 
 Acknowledgment
 
-We are grateful to Rick Snodgrass for participating in the preparation of the first version of this paper
+our are grateful to Rick Snodgrass for participating in the preparation of the first version of this paper
 and continued guidance. Jan Chomicki's work was partially supported by NSF grant IRI-9632870.
 
 
@@ -859,18 +877,19 @@ Deriving Optimized Integrity Monitoring Triggers from Dynamic Integrity Constrai
 Temporal Logic and Historical Databases.
 A Glossary of Temporal Database Concepts.
 Equivalence of Relational Algebra and Relational Calculus Query Languages Having Aggregate Functions.
-The Interval-Extended Relational Model and Its Application to Valid-time Databases
+The Interval-Extended Relational Model and The Interval-Extended Relational Model and Its Application to Valid-time Databases
+Monitoring Dynamic Integrity Constraints Based on Temporal Logic Application to Valid-time Databases
 Monitoring Dynamic Integrity Constraints Based on Temporal Logic.
 Understanding the new SQL: A Complete Guide.
-Temporal Extensions to the Relational Model and SQL.
-Extensions to SQL for Historical Databases.
+Temporal Extensions to A Homogenous Relational Model and Query Languages and the new SQL.
+Extensions to the new SQL for Historical Databases.
 HSQL: A Historical Query Language.
-Adding Valid Time to SQL/Temporal.
+Adding Valid Time to the new SQL/Temporal.
 Evaluating and Enhancing the Completeness of TSQL2.
 The Temporal Query Language TQuel.
 The TSQL2 Temporal Query Language.
 Temporal Triggers in Active Databases.
-Adding Time Dimension to Relational Model and Extending Relational Algebra.
+Adding Time Dimension to A Homogenous Relational Model and Query Languages and Extending Relational Algebra.
 A Temporal Relational Algebra as a Basis for Temporal Relational Completeness.
 Temporal Databases: Theory
 
@@ -887,8 +906,7 @@ A homogeneous relational model and query languages for temporal databases
 A temporal relational algebra as a basis for temporal relational completeness
 Safety and translation of relational calculus
 Evaluation of relational algebras incorporating the time dimension in databases
-Understanding the new SQL
-Temporal databases
+Understanding the new the new SQLTemporal databases
 On completeness of historical relational query languages
 A consensus glossary of temporal database concepts
 Temporal logic (vol. 1)
@@ -902,7 +920,7 @@ Maintaining knowledge about temporal intervals
 Temporal statement modifiers
 The TSQL2 Temporal Query Language
 Foundations of Databases
-Extensions to SQL for Historical Databases
+Extensions to the new SQL for Historical Databases
 Temporal Triggers in Active Databases
 Implementing Temporal Integrity Constraints Using an Active DBMS
 First-Order Queries over Temporal Databases Inexpressible in Temporal Logic

@@ -1,7 +1,7 @@
 --T
 Scalable S-To-P Broadcasting on Message-Passing MPPs.
 --A
-AbstractIn s-to-p broadcasting, s processors in a p-processor machine contain a message to be broadcast to all the processors, 1 sp. We present a number of different broadcasting algorithms that handle all ranges of s. We show how the performance of each algorithm is influenced by the distribution of the s source processors and by the relationships between the distribution and the characteristics of the interconnection network. For the Intel Paragon we show that for each algorithm and machine dimension there exist ideal distributions and distributions on which the performance degrades. For the Cray T3D we also demonstrate dependencies between distributions and machine sizes. To reduce the dependence of the performance on the distribution of sources, we propose a repositioning approach. In this approach, the initial distribution is turned into an ideal distribution of the target broadcasting algorithm. We report experimental results for the Intel Paragon and Cray T3D and discuss scalability and performance.
+AbstractIn s-to-p broadcasting, s processors in a p-processor machine contain a message to be broadcast to all the processors, 1 sp. We present a number of different broadcasting algorithms that handle all ranges of s. We show how the performance of each algorithm is influenced by the distribution of the s source processors and by the relationships between the distribution and the characteristics of the interconnection network. For the Intel Paragon We show that for each algorithm and machine dimension there exist ideal distributions and distributions on which the performance degrades. For the Cray T3D we also demonstrate dependencies between distributions and machine sizes. To reduce the dependence of the performance on the distribution of sources, we propose a repositioning approach. In a repositioning approach, the initial distribution is turned into an ideal distribution of the target broadcasting algorithm. We report experimental results for the Cray T3D the Cray T3D and discuss scalability and performance.
 --B
 Introduction
 The broadcasting of messages is a basic communication
@@ -9,7 +9,8 @@ operation on coarse-grained, message passing
 massively parallel processors (MPPs). In the
 standard broadcast operation, one processor broadcasts
 a message to every other processor. Various
-implementations of this operation for architectures
+implementations of the
+standard broadcast operation for architectures
 with different machine characteristics have been proposed
 [5, 9, 12, 13, 14]. Another well-studied broadcasting
 operation is the all-to-all broadcast in which
@@ -22,17 +23,18 @@ we present broadcasting algorithms that handle all
 ranges of s. We report experimental results for s-to-
 Research supported in part by ARPA under contract
 DABT63-92-C-0022ONR. The views and conclusions contained
-in this paper are those of the authors and should not
+in this paper
+ are those of the authors and should not
 be interpreted as representing official policies, expressed or
 implied, of the U.S. government.
 broadcasting algorithms on the Intel Paragon and
-discuss their scalability and performance.
+discuss algorithms scalability and performance.
 In general, quantities influencing scalability, and
 thus the choice of which algorithm gives the best per-
 formance, include the number of processors, the message
 sizes, and the number of source processors [10].
 Our algorithms are scalable with respect to p, s, and
-the message sizes; i.e., they maintain their speedup
+the message sizes; i.e., Our algorithms maintain Our algorithms speedup
 as these parameters change. For s-to-p broadcast-
 ing, other factors influence scalability as well. For
 any fixed s, a particular algorithm exhibits a different
@@ -51,7 +53,8 @@ implies synchronization occurs before the broadcasting
 
 In this paper we describe a number of different
 broadcasting algorithms and investigate for each algorithm
-its good and bad distribution patterns. We
+each algorithm
+ good and bad distribution patterns. We
 characterize features of s-to-p broadcast algorithms
 that perform well on a wide variety of source dis-
 tributions. Some of our algorithms are tailored
@@ -87,7 +90,8 @@ algorithms on the Intel Paragon. Section 6
 concludes.
 Algorithms without Reposi-
 tioning
-In this section we describe s-to-p broadcasting algorithms
+In Section 5
+ we describe s-to-p broadcasting algorithms
 which do not reposition the sources. Our
 first class of broadcast algorithms generalizes an efficient
 1-to-p broadcasting approach. S-to-p broadcasting
@@ -98,22 +102,24 @@ without interaction is inefficient. Our approach is to
 let each processor initiate a broadcast, but whenever
 messages from different sources meet at a proces-
 sor, messages are combined. Further broadcasting
-steps proceed thus with larger messages. We use a
+steps proceed thus with larger messages. Our use a
 Binomial heap broadcasting tree [6, 9] to guide the
 broadcasts.
-In Algorithm Br Lin, we view the processors
+In Algorithm Br Lin, Our view the processors
 of the mesh as forming a linear array (by using
 a snake-like row-major indexing). The existence
 of a linear array is not required and the approach
 is architecture-independent. If processors P i and
 both contain a message to be
-broadcast, they exchange their messages and form
+broadcast, both exchange both messages and form
 a larger message consisting of the original and the
 received message. If only one of the processors contains
-a message, it sends it to the other one. Then,
+a message, only one of the processors contains
+a message sends only one of the processors contains
+a message to the other one. Then,
 Algorithm Br Lin proceeds recursively on the first
 p=2 and the last p=2 processors.
-Algorithms Br Lin behaves differently for different
+Algorithms Algorithm Br Lin behaves differently for different
 machine sizes. Whether the number of processors actively
 involved in the broadcasting process increases,
 depends on where the source processors are located.
@@ -128,7 +134,7 @@ sizes, we introduce Algorithm Br xy. In Algorithm
 Br xy, we first select either rows or columns. Assume
 the rows were selected. We then view each row as
 a linear array and invoke Algorithm Br Lin within
-each row. After this, we invoke Algorithm Br Lin
+each row. After this, We invoke Algorithm Br Lin
 within each column.
 We consider two versions of Algorithm Br xy
 which differ on how dimensions are selected. In Algorithm
@@ -157,7 +163,7 @@ and broadcasts first along longer dimension.
 Assume the mesh consists of r rows and c columns.
 Algorithm Br xy dim selects the rows if r - c and
 the columns if r ! c.
-In the algorithms described so far processors issue
+In Algorithms described so far processors issue
 sends and receives to facilitate communication.
 We do not make use of existing communication
 operations generally available in communication libraries
@@ -175,33 +181,34 @@ processors. combines the s messages and initiates
 an one-to-all broadcast.
 3 Algorithms with Reposi-
 tioning
-On coarse-grained machines like the Paragon, sending
+On coarse-grained machines like the Intel Paragon, sending
 relatively short messages is cheap compared to
 the cost of an entire s-to-p operation. At the same
 time, experimental results show that the performance
 of our s-to-p algorithms can differ by a factor
 up to 2 for the same number of sources, depending
 on where the sources are positioned. Each algorithm
-has its own ideal source distribution. In this section
+has Each algorithm
+ own ideal source distribution. In this section
 we consider the approach of repositioning the
 sources and then invoking an s-to-p algorithm on its
 ideal input distribution.
 Algorithm Repos is invoked with one of the algorithms
 described in the previous section. For the sake
 of an example, assume it is Algorithm Br Lin. The
-first step generates Br Lin's ideal input distribution
-for s sources on the given machine size and machine
+first step generates Algorithm Br Lin ideal input distribution
+for Algorithm Br Lin sources on the given machine size and machine
 dimension. This is achieved by each source processor
-sending its message to a processor determined by the
+sending This message to a processor determined by the
 ideal distribution. We refer to the next section for
 a discussion on ideal distributions. Whether it pays
 to perform the redistribution depends on the quality
 of the initial distribution of sources. We point out
-that our current implementation of Algorithm Repos
+that We current implementation of Algorithm Repos
 does not check whether the initial distribution is
 actually close enough to an ideal distribution. We
 simply perform the repositioning.
-Our second class of repositioning algorithms not
+We second class of repositioning algorithms not
 only repositions the sources, but also makes use
 of the observation that the time for broadcasting
 s=2 sources on a p=2-processor machine is less than
@@ -209,12 +216,13 @@ half of the time for broadcasting s sources on a p-processor
 machine. Assume we partition the p processors
 into a group G 1 consisting of p 1 processors
 and into a group G 2 consisting of p 2 processors. The
-partition of the processors into two groups is independent
+partition of the p processors
+ into two groups is independent
 of the position of the sources, and may depend
 on the choice of the broadcasting algorithm invoked
 on each processor group. After the broadcasting
 within G 1 and G 2 is completed, every processor
-in G 1 (resp. G 2 ) exchanges its data with a processor
+in G 1 (resp. G 2 consisting of p 2 processors exchanges G 2 consisting of p 2 processors data with a processor
 in G 2 (resp. G 1 ). This communication step corresponds
 to a permutation between the processors in
 G 1 and G 2 .
@@ -225,11 +233,12 @@ Part xy source as the algorithm based on this principle
 and using Algorithm Br xy-source within the
 sub-machines.
 4 Source Distributions
-In this section we discuss different patterns of source
-distribution used in our experiments. Some of these
+In this section
+ we discuss different patterns of source
+distribution used in we experiments. Some of these
 distributions exploit the strengths while other highlight
 the weaknesses of the proposed algorithms.
-Some are chosen because we expect them to be difficult
+Some are chosen because we expect Some to be difficult
 distributions for all algorithms. For the sake
 of brevity, distributions may only be explained at an
 intuitive level. Assume the machine is a mesh of size
@@ -260,15 +269,14 @@ The left diagonal distribution Dl(s) has source processors
 on the diagonal from (1; c) to (r; 1) and spaces
 the remaining accordingly.
 ffl Band Distribution: The band distribution B(s) is
-similar to the right diagonal distribution. The right
-diagonal distribution contains i diagonals, each having
+similar to the right diagonal distribution. The band distribution B(s) contains i diagonals, each having
 width 1. The band distribution B(s) contains
 r
 e evenly distributed bands, each having width
 d s
 br
 e.
-ffl Cross Distribution: The cross distribution C(s)
+ffl The band distribution B(s): The cross distribution C(s)
 corresponds to the union of a row and a column dis-
 tribution, with the number of source processors in
 the row distribution being roughly equal to the number
@@ -282,8 +290,9 @@ se.
 Figure
 
 shows three of the above distributions for
-30. The remainder of this section describes how
-the algorithms handle different distributions. The
+30. The remainder of this section
+ describes how
+Algorithms handle different distributions. The
 Row
 l l l l l l l l l l
 l
@@ -337,7 +346,7 @@ performance of the algorithms on these distributions
 is discussed in the next section.
 Consider first Algorithm Br xy source. One expects
 row and column distributions to be ideal source
-distributions. Algorithm Br xy source will choose
+distributions. first Algorithm Br xy source will choose
 the first dimension so that the number of source
 processors is increased as fast as possible, while the
 message length increases as slowly as possible. How-
@@ -347,8 +356,8 @@ the first and the sixth row contain the source processors
 and thus the first iteration does not increase the
 number of source processors. Having the 20 sources
 positioned in the first and the seventh row eliminates
-this. This is an important observation for the
-algorithms generating ideal distributions. It shows
+this. this is an important observation for the
+algorithms generating ideal distributions. this shows
 that the machine dimension effects the ideal distribution
 of sources. The diagonal distribution places
 the same number of sources in each row and col-
@@ -372,7 +381,8 @@ in an iteration occurs between processors
 not in the same column and congestion will increase.
 The equal distribution can turn into a row or a column
 distribution and will thus not be ideal either.
-The behavior of the algorithm on the left and the
+The behavior of This algorithm
+ on the left and the
 right diagonal distribution can differ (no such difference
 exists for Algorithm Br xy source). On a machine
 of size 10 \Theta 10, Dr(10) experiences no increase
@@ -381,7 +391,8 @@ processor P 50 lies on the diagonal). For other machine
 sizes, the right diagonal distribution may not
 experience such disadvantage. The left diagonal distribution
 is least sensitive towards the size of the
-machine and it achieves the desired properties of an
+machine and The left diagonal distribution
+ achieves the desired properties of an
 efficient broadcasting algorithm. The remaining distributions
 appear to be difficult distributions.
 Finally, Algorithm Br xy dim suffers the obvious
@@ -392,16 +403,17 @@ for Algorithm Br xy dim will either be a row
 or a column distribution, depending on the dimensions
 
 5 Experimental Results
-In this section we report performance results for the
+In this section
+ we report performance results for the
 broadcasting algorithms on the Intel Paragon.
-We consider machine sizes from 4 to 256 processors
+we consider machine sizes from 4 to 256 processors
 and message sizes from 32 bytes to 16K bytes.
-We study the performance over a whole spectrum of
+we study the performance over a whole spectrum of
 source numbers ranging from 1 to p and a representative
 selection of source distributions. In this paper
 we report only the performance for the case when
 all source processors broadcast messages of the same
-length. In our experiments, using different length
+length. In we experiments, using different length
 messages did not influence the performance of the
 algorithms. In particular, for a given algorithm a
 good distribution remains a good distribution when
@@ -410,22 +422,27 @@ tion, we use L to denote the size of the messages at
 source processors.
 Most implementation issues follow in a straightforward
 way from the descriptions given in the previous
-sections. We point out that we do not synchronize
+sections. We point out that We do not synchronize
 globally after each iteration or after one dimension
 has been handled. In all our algorithms, as soon as
-a processor has all relevant data, it continues.
+a processor has all relevant data, a processor continues.
 5.1 Performance of Algorithms without
 Repositioning
 In the following we first study the scalability of the
 five algorithms described in Section 2 for standard
 scalability parameters such as machine size, number
-of source processors, and message length. We then
+of source processors, and message length. we then
 consider other relevant parameters, including the distribution
 of the source processors, the dimension of
 the machine, and the interaction of the dimension
+of the
+machine and the source processor distribution
+with respect to a particular algorithm. we show that
+other relevant parameters, including the distribution
+of the source processors, the dimension of
+the machine, and the interaction of the dimension
 of the machine and the source processor distribution
-with respect to a particular algorithm. We show that
-these parameters have a significant impact on the
+with respect to a particular algorithm have a significant impact on the
 performance.
 Xor
 Br_Lin
@@ -455,7 +472,7 @@ within each machine half. We did not expect
 Algorithms Xor and 2-Step to give good per-
 formance. Xor simply exchanges too many messages
 and Algorithm 2-Step creates unnecessary communication
-bottlenecks. However, we did want to see
+bottlenecks. However, We did want to see
 their performance against the other proposed algorithms
 to show the disadvantage of using existing
 communication routines in a brute-force way.
@@ -463,7 +480,9 @@ communication routines in a brute-force way.
 Figure
 
 2 shows the performance of the five algo-
-rithms. From this figure it is apparent that Algorithms
+rithms. From Figure
+
+2 it is apparent that Algorithms
 2-Step and Xor are not efficient. In particu-
 lar, for more than 4 sources, Algorithm 2-Step suffers
 congestion at the node which receives all the
@@ -507,7 +526,7 @@ sources in a right diagonal distribution
 The bandwidth of the network is high enough to
 handle this type of increased communication volume
 better. The performance of the other three algo-
-rithms, Br Lin, Br xy source, and Br xy dim scales
+rithms, Br Lin, Br xy source, and first Algorithm Br xy dim scales
 linearly with the increase in number of sources. Depending
 on the number of sources and how the equal
 distribution places sources in the machine, the performance
@@ -536,7 +555,7 @@ small machine sizes (4 to 16 processors). This feature
 is also observed when the number of sources is close
 to p for small machine sizes.
 The first three figures give the impression that algorithms
-Br Lin, Br xy source, and Br xy dim give
+Br Lin, Br xy source, and first Algorithm Br xy dim give
 the same performance. However, this is not true.
 In the following we show that different distributions
 and different machine sizes effect these algorithms in
@@ -620,7 +639,9 @@ Figure
 
 7 shows the performance of three algorithms
 when the dimensions of the machine
-vary. It demonstrates that performance is related
+vary. Figure
+
+7 demonstrates that performance is related
 to the size the dimensions. For the same number
 of sources, message size, and number of pro-
 cessors, a distribution gives different performance
@@ -646,7 +667,8 @@ machine dimensions. However, each algorithm has
 source distributions which exhibit the algorithm's
 weaknesses. In addition, the relationship between
 source distribution and machine dimension can result
-in a performance loss. The algorithm cannot
+in a performance loss. the algorithm's
+ cannot
 change the machine dimension, but the problems
 arising from the source distribution can be avoided
 by performing a repositioning. In Section 3 we described
@@ -658,8 +680,8 @@ for Br xy source. Similar results hold for the repositioning
 algorithm using Br Lin with the left diagonal
 distribution as the ideal source distribution.
 Let Algorithm Repos xy source be the repositioning
-algorithm invoking Br xy source. In this algorithm
-we first perform a permutation to redistribute
+algorithm invoking Br xy source. In the algorithm's
+We first perform a permutation to redistribute
 source processors according to the row distribution.
 We generate a row distribution that positions the
 rows so that the number of new sources increases as
@@ -716,11 +738,10 @@ algorithms and different source distributions),
 or
 ffl the message length is small (i.e., less that 1K).
 Clearly, if the input distribution is close to an ideal
-distribution, it does not pay to reposition. However,
+distribution, the input distribution does not pay to reposition. However,
 none of our algorithms tries to analyze the input dis-
 tribution. The effect of the message length on the
-repositioning is illustrated in Figure 9. The figure
-shows the percentage difference for the same four
+repositioning is illustrated in Figure 9. Figure 9shows the percentage difference for the same four
 distributions on a 16 \Theta 16 machine and 75 sources
 when the message length increases. For a message
 size of less than 1K, repositioning pays only for the
@@ -729,7 +750,7 @@ benefit of repositioning increases for all distributions.
 Not surprisingly, for large message length, the gain
 tapers off and decreases for some distributions.
 In Section 3 we also proposed to combine the repositioning
-with a partitioning approach. We first generate
+with a partitioning approach. we first generate
 an ideal source distribution and then create two
 Message Length
 Percentage
@@ -763,7 +784,8 @@ conjecture that for other currently available MPPs
 the outcome will be the same.
 6 Conclusions
 We described different s-to-p broadcasting algorithms
-and analyzed their scalability and performance
+and analyzed different s-to-p broadcasting algorithms
+ scalability and performance
 on the Intel Paragon. We showed that the
 performance of each algorithm is influenced by the
 distribution of the source processors and a relationship
@@ -772,10 +794,11 @@ the machine. Each algorithm has ideal distributions
 and distributions on which the performance
 degrades. To reduce the dependence of the performance
 on the input distribution we proposed a repositioning
-approach. In this approach the given distribution
+approach. In a repositioning
+approach the given distribution
 is turned into an ideal distribution of the target
 broadcasting algorithm. We have also compiled
-and run our programs under MPI environment, using
+and run We programs under MPI environment, using
 MPI point-to-point message passing primitives.
 We have observed a performance loss of 2 to 5% in
 every implementation.

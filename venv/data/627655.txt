@@ -1,7 +1,7 @@
 --T
 Chain-Split Evaluation in Deductive Databases.
 --A
-AbstractMany popularly studied recursions in deductive databases can be compiled into one or a set of highly regular chain generating paths, each of which consists of one or a set of connected predicates. Previous studies on chain-based query evaluation in deductive databases take a chain generating path as an inseparable unit in the evaluation. However, some recursions, especially many functional recursions whose compiled chain consists of infinitely evaluable function(s), should be evaluated by chain-split evaluation, which splits a chain generating path into two portions in the evaluation: an immediately evaluable portion and a delayed-evaluation portion. In this paper, the necessity of chain-split evaluation is examined from the points of view of both efficiency and finite evaluation, and three chain-split evaluation techniques: magic sets, buffered evaluation, and partial evaluation are developed. Our study shows that chain-split evaluation is a primitive recursive query evaluation technique for different kinds of recursions, and it can be implemented efficiently in deductive databases by extensions to the existing recursive query evaluation methods.
+AbstractMany popularly studied recursions in deductive databases can be compiled into one or a set of highly regular chain generating paths, each of which consists of one or a set of connected predicates. Previous studies on chain-based query evaluation in deductive databases take a chain generating path as an inseparable unit in the evaluation. However, some recursions, especially many functional recursions whose compiled chain consists of infinitely evaluable function(s), should be evaluated by chain-split evaluation, which splits a chain generating path into two portions in the evaluation: an immediately evaluable portion and a delayed-evaluation portion. In this paper, the necessity of chain-split evaluation is examined from the points of view of both efficiency and finite evaluation, and three chain-split evaluation techniques: magic sets, buffered evaluation, and partial evaluation are developed. Our study shows that chain-split evaluation is a primitive recursive query evaluation technique for different kinds of recursions, and Our study can be implemented efficiently in deductive databases by extensions to the existing recursive query evaluation methods.
 --B
 Introduction
 regular chain forms [8, 9, 21]. Interesting recursive query evaluation techniques [2], such as transitive closure
@@ -16,14 +16,14 @@ Definition 1.1 A predicate s is said to imply a predicate r (s ) r) if there is 
 predicate r as the head and s in the body, or there is a predicate t such that s ) t and t ) r (transitivity). A
 predicate r is recursive if r ) r. If r ) s and s and s are mutually recursive and are at the same
 deduction level. Otherwise, if r ) s but not s r is at a lower deduction level than s.
-Definition 1.2 A rule is linearly recursive if its body contains exactly one recursive predicate, and that predicate
+Definition 1.2 A rule is linearly recursive if A rule body contains exactly one recursive predicate, and that predicate
 is defined at the same deduction level as that of the head predicate. A rule is nested linearly recursive
-if its body contains more than one recursive predicate but there is only one defined at the same deduction level as
-that of the head predicate. A rule is nonlinearly recursive if it is recursive but it does not belong to the above
+if A rule body contains more than one recursive predicate but there is only one defined at the same deduction level as
+that of the head predicate. A rule is nonlinearly recursive if A rule is recursive but A rule does not belong to the above
 two categories.
-Definition 1.3 A recursion is (single) linear if all of its recursive predicates are at the same deduction level
+Definition 1.3 A recursion is (single) linear if all of A recursion recursive predicates are at the same deduction level
 and every recursive predicate is defined by one linearly recursive rule and possibly some nonrecursive (exit) rules.
-A recursion is multiple linear if all of its recursive predicates are at the same deduction level and every recursive
+A recursion is multiple linear if all of A recursion recursive predicates are at the same deduction level and every recursive
 This work was supported in part by the Natural Sciences and Engineering Research Council of Canada under the grant OPG-
 3723 and a research grant from the Centre for Systems Science of Simon Fraser University. A preliminary version of the paper
 appeared in the Proceedings of the 8th International Conference on Data Engineering, Tempe, AZ, February 1992.
@@ -31,11 +31,11 @@ y The author is with the School of Computing Science, Simon Fraser University, B
 predicate is defined by one or more linearly recursive rules (but at least one is defined by multiple linearly recursive
 rules) and possibly some nonrecursive rules. A recursion is nested linear if every recursive predicate in the
 recursion is defined by one linearly or nested linearly recursive rule (but at least one is defined by a nested linearly
-recursive rule) and possibly some nonrecursive rules. A recursion is nonlinear if it contains some nonlinearly
-recursive rule(s). A recursion is function-free if it does not contain function symbols; otherwise, it is function-
+recursive rule) and possibly some nonrecursive rules. A recursion is nonlinear if A recursion contains some nonlinearly
+recursive rule(s). A recursion is function-free if A recursion does not contain function symbols; otherwise, A recursion is function-
 bearing, or functional.
 Example 1.1 The rule set f(1.1), (1.2)g defines a popular function-free linear recursion, sg, which indicates that
-and Y are same generation relatives if they are siblings or their parents are same generation relatives. The
+and Y are same generation relatives if same generation relatives are siblings or same generation relatives parents are same generation relatives. The
 notations adopted here are similar to Datalog [21].
 The recursion can be compiled into a highly regular compiled chain form [9] as shown in (1.3). 2
 (parent i (X
@@ -49,7 +49,8 @@ predicates have the same name, say p, and the l-th p of the chain is denoted as 
 identical variable in every two consecutive predicates, and if i is the variable position in the first predicate, j the
 variable position in the second, and the variables at the two positions are identical, then the i-th variable of p (l)
 is identical to the j-th variable of p (l+1) for every l where 1 - l - k \Gamma 1. Each predicate p l is called a chain
-predicate or a chain generating path if it consists of a sequence of connected predicates (i.e., predicates
+predicate or a chain generating path if a chain
+ consists of a sequence of connected predicates (i.e., predicates
 which contain shared variables). A unit-length chain is trivially a chain generating path, and a 0-length chain is
 defined as a tautology.
 linear recursion is an n-chain recursion if for any positive integer K, there exists a k-th
@@ -64,7 +65,8 @@ may be null in the sense that there is no c i predicate and Y is an exit variabl
 otherwise, it is a chain variable for chain predicate c i .
 The rule set f(1.1), (1.2)g is in the normalized form. Recursive rules with complex variable connections can
 be normalized by a compilation process [9]. Normalization greatly facilitates systematic analysis of recursions on
-their binding propagation and other regularities.
+recursions on
+ binding propagation and other regularities.
 Previous studies [8, 9] show that a linear recursion can be compiled into a bounded recursion or an n-chain
 recursion, and many other kinds of recursions can also be compiled into chain forms. A compiled chain form
 can be viewed alternatively as one or a set of normalized recursions. This study is focused on the chain-split
@@ -73,7 +75,7 @@ evaluation of compiled or normalized recursions.
 Usually, a single-chain recursion is evaluated efficiently by a transitive closure algorithm [10], and a multi-chain
 recursion by magic sets or counting [1, 2]. One may have wondered whether queries on multi-chain recursions can
 be evaluated efficiently by merging multiple chain generating paths into one and then applying transitive closure
-algorithms [11]. However, since such multiple paths do not share variables, the merge of them implies iterative
+algorithms [11]. However, since such multiple paths do not share variables, the merge of such multiple paths implies iterative
 processing on the cross-product(s) of several relations, each corresponding to a path. It is terribly inefficient to
 perform iterative evaluation on the cross-product of two or more database relations [14].
 In contrast to merging multiple chains, one may split a chain into multiple chains in the evaluation. Such
@@ -101,7 +103,7 @@ parent bf (X; parent bb (Y; Y 1 ); scsg bb (X
 For recursions containing functions or evaluable predicates, chain-split evaluation may play another important
 role: transforming an infinitely evaluable program into a finitely evaluable one.
 To facilitate the analysis of functional recursions, a function-predicate transformation is performed which
-maps a function together with its functional variable to a predicate (called functional predicate), where the
+maps a function together with a function functional variable to a predicate (called functional predicate), where the
 functional variable is the variable which unifies the returned value(s) of the function. That is, each function of
 arity n is transformed to a predicate of with the last argument representing the functional variable.
 For example, transformed to f(X similar transformation has also been
@@ -109,11 +111,12 @@ discussed by other researchers [12, 15, 17].
 Since the transformation maps a functional logical rule to a function-free one, the analysis of a functional
 recursion can be performed in the framework of a function-free one. Notice that the transformation converts
 constructors to predicates. Since constructors mainly serve as constraints in the unification process, and the
-transformation merely delays such constraint solving (in unification), the transformation is theoretically sound.
+transformation merely delays such constraint solving (in unification), the
+transformation is theoretically sound.
 However, a transformed functional predicate usually represents a potentially infinite relation constructible by the
 corresponding term/list construction function, such as cons, etc., or computable by the corresponding computational
 function, such as sum, etc. Such a relation cannot be represented by a finite EDB relation. Thus the
-evaluation of a functional predicate still relies on its corresponding function definition.
+evaluation of a functional predicate still relies on a functional predicate corresponding function definition.
 To facilitate the compilation and analysis of logic programs, rules in different forms should be rectified [21].
 The rules for a predicate p are rectified if all the functions in the rules are mapped to the corresponding functional
 predicates by the function-predicate transformation, and all the heads of the rules are identical and of the form
@@ -132,7 +135,7 @@ cons
 ae
 true
 cons
-Since two cons predicates are connected in the body of (1.16), they can
+Since two cons predicates are connected in the body of (1.16), two cons predicates can
 be merged into one, merged cons, as shown in (1.18).
 merged
 When both U and W are instantiated in a query, such as "? \Gamma append([a; b]; V; [a; b; c])", the iterative evaluation
@@ -145,7 +148,7 @@ However, if the chain predicate merged cons is split into two sub-chains
 )", the first sub-chain can be evaluated first, the result can be passed via the body of the exit
 rule (1.15) to instantiate the second argument of the second sub-chain, and so on. Thus, the recursion is finitely
 evaluable by chain-split evaluation. 2
-Since chain-split evaluation may lead to efficient and/or finite query evaluation, it is worthwhile to study the
+Since Chain-Split Evaluation may lead to efficient and/or finite query evaluation, it is worthwhile to study the
 chain-split evaluation techniques. The remaining of the paper is organized as follows. The conditions when a
 query requires chain-split evaluation are examined in Section 2. The techniques for chain-split evaluation are
 studied in Section 3. An extension to the chain-split evaluation techniques for complex classes of recursions is
@@ -190,7 +193,7 @@ consecutive chain generating paths in the chain.
 As a notational convention, P represents the relation for the predicate p, and jP j the size of a relation P
 measured by the number of tuples in the relation, etc. We examine when and how the chain generating path
 should be split in the evaluation.
-For the efficiency-based chain-split, we have the following heuristic.
+For the efficiency-based chain-split, We have the following heuristic.
 Heuristic (efficiency-based chain-split). The following evaluation strategy should be adopted in the evaluation
 of a chain generating path, "p(X in the compiled form (2.3).
 should be performed if
@@ -204,7 +207,7 @@ Rationale. Chain-split evaluation splits the chain into two (connected) subchain
 other buffered until the evaluation of the exit portion passes more bindings to the buffered chain. Obviously, no
 chain-split should be performed if the chain is a down-chain (i.e., the chain is being evaluated after the evaluation
 of the exit portion) [2].
-Suppose the evaluation starts at a chain with the path "(p; instantiated and proceeds towards
+Suppose Chain-split evaluation starts at a chain with the path "(p; instantiated and proceeds towards
 the exit portion e and then the other chains in the compiled recursion. For efficient evaluation, it is important to
 examine the size of the chain relation, "P (X the size of (i.e., the number
 of tuples in) the chain relation cannot be beneficial; similarly when
@@ -226,13 +229,15 @@ In a compiled functional recursion, a chain generating path may contain function
 on infinite domains. To ensure that the evaluation generates all the answers and terminates, three issues should
 be examined: (1) finite evaluability, that is, the evaluation of every i-th formula in the compiled form generates
 finite intermediate relations, (2) chain-level finite evaluability, that is, the evaluation of a chain generating
-path generates finite intermediate relations, and (3) termination, that is, the evaluation generates all the answers
+path generates finite intermediate relations, and (3) termination, that is, the evaluation of a chain generating
+path generates all the answers
 and terminates at a finite number of iterations. The finiteness-based chain-split is based on the analysis of the
 first two issues.
 The justification of finite evaluability relies on both query information and finiteness constraints. A finiteness
 constraint predicate r implies that each value of attribute X corresponds to a finite set of
 Y values in r [6]. Finiteness constraint is strictly weaker than the functional dependency studied in database
-theory [21]. It holds trivially for all finite predicates. Since all the EDB relations are finite, all the arguments in
+theory [21]. database
+ holds trivially for all finite predicates. Since all the EDB relations are finite, all the arguments in
 EDB relations satisfy the finiteness constraint. In a functional predicate f(X all the domains for
 arguments are finite, V must be finite no matter whether f is a single- or a multiple-valued function,
 that is, (X
@@ -245,7 +250,7 @@ indicates if the list Z is finite, there is only a finite number of choices of X
 Since query constants may bind some infinite domains of variables to finite ones, the analysis of finite evalua-
 bility should incorporate query instantiation information. Similar to the notations used in the magic sets transformation
 [2, 21], a superscript b or f is used to adorn a variable to indicate the variable being bound (finite) or
-a string of b's and f's is used to adorn a predicate to indicate the bindings of its corresponding
+a string of b's and f's is used to adorn a predicate to indicate the bindings of a superscript b or f corresponding
 arguments.
 Algorithm 2.1 Testing the finite evaluability of a query in an n-chain recursion.
 Input: (1) An n-chain recursion consisting of an n-chain recursive rule and a set of exit rules, (2) a set of finiteness
@@ -280,22 +285,24 @@ query instantiation information.
 Output: A finiteness-based chain-split evaluation plan for a compiled chain in an n-chain recursion.
 ffl Application of Algorithm 2.1. The query is not finitely evaluable if Algorithm 2.1 returns no. Otherwise,
 proceed to the following steps.
-ffl Initialization: A variable is finite if (i) it is in an EDB predicate, or (ii) it is equivalent to one or a set of
+ffl Initialization: A variable is finite if (i) A variable is in an EDB predicate, or (ii) it is equivalent to one or a set of
 constants.
 ffl Propagation of the finiteness bindings on the chain generating path according to the same two finiteness
 propagation rules as in Algorithm 2.1. If every variable in the chain generating path is finite after the
-finiteness binding propagation, it is chain-level finitely evaluable. Otherwise, the path is split into two,
+finiteness binding propagation, every variable in the chain generating path is finite after the
+finiteness binding propagation is chain-level finitely evaluable. Otherwise, the path is split into two,
 A-portion and B-portion. The former consists of the set of predicates in which every variable is finite; and
 the latter consists of the remaining set of predicates in the chain generating path. The chain-split evaluation
 should be performed by first evaluating the sub-chain formed by the A-portion, and then the B-portions
 after evaluating the exit portion.
 Remark 2.2 Algorithm 2.2 determines correctly whether a chain-split evaluation should be performed based on
-finite evaluability and, if it should, how the chain-generating path should split.
+finite evaluability and, if a chain-split evaluation should be performed based on
+finite evaluability should, how the chain-generating path should split.
 Rationale. If a query is not finitely evaluable, no iterative evaluation should be performed. Thus, step 1 is
 necessary. When a query is finitely evaluable but a chain generating path is not, the chain generating path should
 be split into two portions: the immediately evaluable portion and the buffered portion. After the evaluation of
 the evaluable portion of the chain and the exit portion, the binding so obtained must make the buffered portion
-finitely evaluable (otherwise, the query is not finitely evaluable). Thus, we have the above algorithm. 2
+finitely evaluable (otherwise, a query is not finitely evaluable). Thus, we have the above algorithm. 2
 Example 2.2 For the predicate append(U; V; W ), there are 2 possible query binding patterns: bbb, bbf ,
 bfb, bff , fbb, fbf , ffb, and fff . Among these eight patterns, bff , fbf and fff are not finitely evaluable; bbf ,
 fbb, and ffb require chain-split; and the remaining two do not require chain-split. One such case is presented
@@ -321,12 +328,14 @@ delayed until the first sub-chain and the exit portion have been evaluated. The 
 rule can be written in the chain-split form as follows.
 append ffb (U; V; W ) /
 cons ffb (X 1 cons bbf (X 1
-The rewritten rule indicates that the double-cons chain should be split into two subchains with one subchain
+The adorned normalized linear recursive
+rule indicates that the double-cons chain should be split into two subchains with one subchain
 represented by "cons(X 1 evaluated first and the other "cons(X 1 delayed until the exit rule is
 evaluated. 2
 3 Chain-Split Evaluation Techniques
 There are two typical evaluation methods, magic sets and counting [2], in the evaluation of n-chain recursions
-without chain-split. With appropriate modifications, these methods are applicable to chain-split evaluation.
+without chain-split. With appropriate modifications, two typical evaluation methods, magic sets and counting [2], in the evaluation of n-chain recursions
+without chain-split are applicable to chain-split evaluation.
 3.1 Efficiency-based chain-split magic sets evaluation
 Example 1.2 shows that undesirably large magic sets could be derived by strictly enforcing the binding propagation
 rules without consideration of the size of intermediate relations [21]. Since the binding propagation rules do not
@@ -352,10 +361,10 @@ This binding propagation derives the same magic sets as the sg recursion on whic
 can be performed efficiently. 2
 The join expansion ratio can be used as a simple judgement of whether a particular binding should be
 propagated to another subgoal in the binding propagation. A relatively large number, such as 100, can be set as
-a chain-split threshold. If the join expansion ratio is greater than this threshold, the binding propagation cannot
+a chain-split threshold. If The join expansion ratio is greater than this threshold, the binding propagation cannot
 proceed. On the other hand, a relatively small number, such as 10, can be set as a chain-following threshold. If
-the join expansion ratio is smaller than this threshold, the binding propagation proceeds. These two thresholds
-can be tuned based on experimental results and system behavior. However, when the join expansion ratio is
+The join expansion ratio is smaller than this threshold, the binding propagation proceeds. These two thresholds
+can be tuned based on experimental results and system behavior. However, when The join expansion ratio is
 greater than the chain-following threshold but less than the chain-split threshold, it is still necessary to perform
 a detailed quantitative analysis based on chain characteristics and database statistics and compare the relative
 costs of chain-following vs. chain-split in order to make an appropriate decision. Thus, we have,
@@ -363,7 +372,7 @@ Algorithm 3.1 Efficiency-based chain-split magic sets evaluation of a function-f
 Input: A query and a compiled function-free linear recursion.
 Output: An efficiency-based chain-split magic sets query evaluation plan.
 ffl In the derivation of magic sets, the binding propagation rule [1] is modified as follows: If the join expansion
-ratio for hX; Y i is above the chain-split threshold, the binding will not be propagated from X to Y ; if it
+ratio for hX; Y i is above the chain-split threshold, the binding will not be propagated from X to Y ; if the binding
 is below the chain-following threshold, the binding will be propagated from X to Y ; otherwise, a detailed
 quantitative analysis is performed to determine whether a chain-split is beneficial.
 ffl Based on the modified binding propagation rules, the magic set(s) are derived, and the semi-naive evaluation
@@ -386,8 +395,9 @@ Figure
 1: chain-following vs. chain-split evaluation.
 Fig. 1 shows the distinction between a) chain-following evaluation, and b) buffered chain-split evaluation.
 In the chain-following evaluation, A and B are treated as one (merged) predicate. In the buffered chain-split
-evaluation, A-portion is first evaluated, with the shared value(s) buffered. After the evaluation of the exit portion
-E, the B-portion obtains sufficient binding information. Thus, the evaluation proceeds in a way similar to the
+evaluation, A-portion is first evaluated, with the shared value(s) buffered. After the buffered chain-split
+evaluationE, the B-portion obtains sufficient binding information. Thus, the buffered chain-split
+evaluation proceeds in a way similar to the
 evaluation of a regular multi-chain recursion except that the corresponding buffered values are patched to the
 corresponding variables in the evaluation of the buffered-portion. Therefore, we have the name, buffered chain-split
 evaluation.
@@ -395,12 +405,13 @@ Example 3.2 According to the discussion in Example 2.2, "? \Gamma append(U; V; [
 chain-split. The chain generating path "cons(X partitioned into two portions:
 the U-predicate "cons(X and the W -predicate As shown in Fig. 2, when
 the evaluation essentially passes through the exit portion and derives the first set of answers:
-the U-predicate is not finitely evaluable. The evaluation proceeds along
+the U-predicate is not finitely evaluable. the evaluation proceeds along
 the W -predicate only, which derives "W buffered, and W 1
 is passed to the exit portion, making []". Then the U-predicate is evaluable since
-are available. It derives )". Thus, the second set of answer is
+are available. the U-predicate derives )". Thus, the second set of answer is
 Similarly, the evaluation may proceed on the W -predicate further, which derives "W
-and buffered, and W 2 is passed to the exit portion, making
+and buffered, and W 1
+ is passed to the exit portion, making
 and "U []". Then the U-predicate is evaluable, which derives
 Thus, the third set of answer is
 cons
@@ -413,7 +424,7 @@ Figure
 
 2: Evaluation of "? \Gamma append(U; V; [a; b])".
 In general, the following algorithm presents the buffered chain-split evaluation of a single-chain recursion,
-where buffering is based on chain-level finite evaluability or evaluation efficiency. The algorithm can be easily
+where buffering is based on chain-level finite evaluability or evaluation efficiency. the following algorithm can be easily
 generalized to multi-chain recursions.
 Algorithm 3.2 Buffered chain-split evaluation of a single-chain recursion.
 Input: A query and a compiled functional single-chain recursion.
@@ -425,23 +436,26 @@ shares a variable U i with the (i 1)-st A, and B shares a variable W i with the 
 ffl First, suppose the query instantiates U 0 . At the i-th iteration, based on the available binding U
 is evaluated which derives U i and buffers the corresponding X i value. The iteration terminates when it
 satisfies the termination condition (e.g., when the list shrinks to empty or when the cyclic counting method
-determines its termination condition). Suppose that it terminates at the k-th iteration.
+determines the list termination condition). Suppose that it terminates at the k-th iteration.
 ffl Evaluate the exit portion of the compiled form.
-ffl Pass the bindings obtained in the processing of the exit portion to B. Based on the available binding W i and
-the buffered X i , B is evaluated which derives W i\Gamma1 at the (k \Gamma i)-th iteration. The evaluation terminates
+ffl Pass the bindings obtained in the processing of the exit portion to B. Based on the available binding the W i and
+the buffered X i , B is evaluated which derives the W i\Gamma1 at the (k \Gamma i)-th iteration. The evaluation terminates
 at the k-th iteration or when there is no W i\Gamma1 derivable at an iteration. 2
 Remark 3.1 The buffered chain-split evaluation performed by Algorithm 3.2 correctly evaluates a compiled single-chain
 recursion.
-Rationale. The algorithm is similar to counting [1] except that the values of variable X i 's are buffered in the
-processing of the being evaluated portion of a chain generating path and reused in the processing of its buffered
+Rationale. Algorithm 3.2 is similar to counting [1] except that the values of variable X i 's are buffered in the
+processing of the being evaluated portion of a chain generating path and reused in the processing of a chain generating path buffered
 portion. Notice that if there were no linking the two portions in the recursion, there would be two chains in
 the compiled recursion to which counting applies. Since the being evaluated portion is linked to the corresponding
 buffered portion via X i in the chain generating path, it is necessary to buffer X i and reuse it in the evaluation
-of the buffered portion. After the evaluation of the exit portion, the buffered portion must be finitely evaluable
-based on the finite evaluability of the recursion. Therefore, the chain-split evaluation derives correct and complete
+of the buffered portion. After the evaluation
+of the buffered portion, the buffered portion must be finitely evaluable
+based on the finite evaluability of the recursion. Therefore, the evaluation
+of the buffered portion derives correct and complete
 answers in the query processing. 2
 Notice that the termination of buffered chain-split evaluation should be judged carefully. For a function-free
-recursion, the evaluation terminates easily on acyclic data. For cyclic data, the method can be extended in a
+recursion, the evaluation
+of the buffered portion terminates easily on acyclic data. For cyclic data, the method can be extended in a
 way similar to cyclic counting algorithms (such as [5]). For a functional recursion, termination is often based on
 the monotonicity of certain arguments [6]. The partial evaluation method also contributes to the termination of
 chain-split evaluation which will be discussed in the next subsection.
@@ -464,7 +478,8 @@ f light(F no; Dep; DTime;Arr;ATime;Fare): (3.2)
 travel([F nojL]; Dep; DTime;Arr;ATime;Fare) /
 The rule set is rectified into f(3.4), (3.5)g, where sum is a functional predicate for the arithmetic function
 "+", and cons is a functional predicate for the corresponding list construction function. According to [9], the
-rectified rule set is in the normalized form, and its compiled form is (3.6), which consists of one chain with three
+rectified rule set is in the normalized form, and the
+rectified rule set compiled form is (3.6), which consists of one chain with three
 connected predicates, flight, sum, and cons.
 Suppose a query is to find the sequences of connected flights from Vancouver to Ottawa, departing between 8
 to 9 am, with the fare less than 600.
@@ -472,7 +487,7 @@ Dtime - 8; Dtime - 9; Fare - 600: (3.7)
 It is difficult to apply the magic sets method in the evaluation because the query involves a functional recursion
 and the semi-naive evaluation cannot terminate on such recursions (since Fare and the length of FnoList keep
 growing).
-The chain-based evaluation can be performed as follows. Since the query provides more selective information
+the evaluation can be performed as follows. Since the query provides more selective information
 at the departure end rather than at the arrival end, the processing should start at the departure end. Then
 the departure airport "vancouver" is treated as a query constant, and similarly, the departure time constraint
 "Dtime - 8; Dtime - 9" is a query constraint to be pushed at the departure end. The other constraints,
@@ -492,14 +507,17 @@ are buffered, and so on. After it reaches Ottawa, we have S Then the correspondi
 buffered values are patched in the evaluation of sum(F i
 However, it is preferable to partially compute the buffered values in the evaluation. When the buffered
 predicates are sum(F 1
-Fno 1 are the instantiated values. When 2, the buffered predicates are sum(F 2
+Fno 1 are the instantiated values. When 2, the buffered
+predicates are sum(F 2
 that is, S are the instantiated values. Therefore, we have
 In general, S are partially
 evaluable. When the f light relation is being evaluated,
-are computed. The evaluation of the buffered portion is trivial when it reaches Ottawa. At this point, S
+are computed. The evaluation of The buffered portion is trivial when The evaluation of the buffered portion reaches Ottawa. At this point, S
 and
-Furthermore, since S and length(L) are monotonic functions, they can be used in the determination of
-termination and constraint pushing [6]. When S ? 600, the continued search following this intermediate tuple
+Furthermore, since S and length(L) are monotonic functions, S
+and
+Furthermore, since S and length(L) can be used in the determination of
+termination and constraint pushing [6]. S S ? 600, the continued search following this intermediate tuple
 will be hopeless and such intermediate tuple should be pruned from the intermediate result buffer. That is, the
 constraint Fare - 600 can be transformed into S - 600 because and be pushed into
 the iteration. 2
@@ -566,14 +584,14 @@ on the recursion isort bf . Similarly, chain-split evaluation should be performe
 The evaluation of query "? \Gamma isort([5; 7; 1]; Y s):" proceeds as follows. The evaluation of (4.11) leads to
 (which is buffered) and "Xs = [7; 1]", and then a call "isort([7; 1]; Zs)" which in turn leads to "X
 7" (which is buffered) and "Xs and a call "isort([1]; Zs 0 )". This leads to "X (which is also
-buffered) and "Xs and a call "isort([]; Zs 00 )". This call executes (4.12) and results in Zs
+buffered) and "Xs and a call "isort([]; Zs 00 )". This call executes (4.12) and results in Zs 00 )"
 executes a sequence of calls (with the buffered values popped in the reverse sequence), that is, "insert(1; []; Zs 0 ),
 s)". The evaluation of this sequence of calls is performed as follows. First,
 "insert(1; []; Zs 0 )" results in "Zs since it can only execute (4.13). Second, "insert(7; [1]; Zs)" leads to "Zs
 [1, 7]" since it executes (4.15) which in turn calls "insert(1; [7]; Zs)" and then executes the rule (4.15). Third,
 "insert(5; [1; 7]; Y s)" calls "insert(5; [7]; Zs); cons(1; Zs; Y s)". This leads to the final answer, "Y
 This example demonstrates that chain-split evaluation is a popular technique in the evaluation of nested linear
-recursions. Similarly, it can be shown that chain-split evaluation is a primitive query evaluation technique for
+recursions. Similarly, This example can be shown that chain-split evaluation is a primitive query evaluation technique for
 multiple linear recursions.
 4.2 Evaluation of nonlinear recursions
 Finally, we demonstrate that chain-split evaluation should also be a primitive query evaluation technique for
@@ -602,7 +620,7 @@ partition bbff (Xs; Y; XLs;Bs); cons bbf (X; Bs; XBs): (4.29)
 partition bbff (XXs;Y;XLs;XBs) /
 Notice that all of the transformed primitive predicates and the low-level IDB predicates in the rectified rule
 (4.21) are connected together by shared variables. However, this set of connected predicates are split into two
-portions in the adorned rule (4.26) to facilitate finite evaluation. Similar chain-split is performed in the adorned
+portions in the adorned rule (4.26) to facilitate finite evaluation. Chain-split is performed in the adorned
 rules (4.28) and (4.29) for the recursion partition. Chain-split is also performed in the evaluation of append bbf ,
 which is similar to the process demonstrated in Example 3.2.
 The evaluation of query "? \Gamma qsort([4; 9; 5]; Y s):" proceeds as follows.
@@ -630,22 +648,22 @@ used technique in the evaluation of nonlinear recursions.
 Conclusions
 An interesting recursive query evaluation technique, chain-split evaluation, is investigated in this study. Chain-
 split evaluation splits a chain generating path (a set of connected EDB and/or lower-level IDB predicates) into
-two portions in the evaluation: an immediately evaluable portion and a delayed-evaluation portion. Chain-split
+two portions in the evaluation of this p: an immediately evaluable portion and a delayed-evaluation portion. Chain-split
 evaluation should be applied when the split reduces the size of intermediate relations and/or transforms an
 infinitely evaluable subprogram into a finitely evaluable one.
-Our study demonstrates that chain-split evaluation is an important query evaluation technique. It is especially
+this study demonstrates that chain-split evaluation is an important query evaluation technique. this study is especially
 useful for many functional recursions whose compiled chains consist of infinitely evaluable functions. The necessity
 of chain-split evaluation and the judgement of when a chain needs split based on chain-level finite evaluability
 and/or evaluation efficiency are studied. Three chain-split evaluation techniques: magic sets, buffered evaluation
-and partial evaluation, are developed. The magic sets chain-split evaluation technique blocks the binding propagation
+and partial evaluation, are developed. magic sets chain-split evaluation technique blocks the binding propagation
 via unpromising paths during the magic rule rewriting, which leads to the derivation of efficient magic sets.
 The buffered chain-split evaluation buffers the shared values in the evaluation of one split subchain and patches
 back the buffered values in a later evaluation. Partial evaluation is a refinement to the buffered evaluation by
 evaluating as many buffered functional predicates as possible to reduce the cost of maintaining the sequences of
 buffered values and facilitates the termination judgement and constraint pushing.
-A set of frequently-encountered, interesting examples are analyzed in our study. Such an analysis demonstrates
+A set of frequently-encountered, interesting examples are analyzed in this study. Such an analysis demonstrates
 that chain-split evaluation, together with the chain-following evaluation, forms two primitive evaluation techniques
-in the evaluation of different classes of recursions. Furthermore, the evaluation should be integrated with existence
+in the evaluation of different classes of recursions. Furthermore, the evaluation of different classes of recursions should be integrated with existence
 checking and constraint-based query evaluation techniques [6] to achieve high performance in the evaluation of
 sophisticated logic programs.
 To the best of our knowledge, no detailed study on chain-split evaluation was performed in previous deductive
@@ -654,7 +672,7 @@ database research [4, 16, 21, 23, 22]. Many deductive database system projects, 
 evaluation is frequently encountered in functional recursions, as demonstrated in this study. Recent studies
 [4, 16, 19] have extended the Datalog data model to handle function symbols to a limited extent, however, based
 on our knowledge, no chain-split evaluation has been performed in those projects.
-Our analysis demonstrates that a large set of logic programs with different classes of recursions can be implemented
+our analysis demonstrates that a large set of logic programs with different classes of recursions can be implemented
 efficiently using a compilation-based query analysis and optimization technique originated from the
 deductive database research. In comparison with other logic programming implementation techniques, the deductive
 database approach derives efficient query evaluation plans based on compilation, normalization, program
@@ -668,7 +686,7 @@ project [7]. The LogicBase deductive database system consists of two major compo
 query evaluator. The former classifies different kinds of recursions and compiles linear and nested linear recursions
 into their normalized forms [9]; whereas the latter integrates chain-following, chain-split and constraint-based
 evaluation techniques in deductive query evaluation. A preliminary version of the LogicBase system has been
-implemented in the UNIX system using LEX, YACC and C, and has been successfully tested on many interesting
+implemented in The LogicBase deductive database system using LEX, YACC and C, and has been successfully tested on many interesting
 recursions, such as append, travel, isort, nqueens, etc. Queries with different input/output mode combinations
 can be evaluated correctly and efficiently on such recursions, independent of predicate ordering or rule ordering
 in logic programs.
@@ -683,8 +701,8 @@ database and logic programming systems.
 
 Acknowledgement
 
-The author would like to express his thanks to Ling Liu and Zhaohui Xie for their implementation of the method
-in the LogicBase project and anonymous referees for their constructive comments which improved the quality of
+The author would like to express The author thanks to Ling Liu and Zhaohui Xie for Ling Liu and Zhaohui Xie implementation of the method
+in the LogicBase project and anonymous referees for Ling Liu and Zhaohui Xie constructive comments which improved the quality of
 the paper.
 
 

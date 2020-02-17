@@ -8,7 +8,7 @@ Finite-state analysis tools (e.g., model checkers) can automatically
 detect concurrency errors, which are often subtle
 and difficult to reproduce. Before such tools can be applied
 to software, a finite-state model of the program must be
-constructed. This model must be accurate enough to verify
+constructed. a finite-state model of the program must be accurate enough to verify
 the requirements and yet abstract enough to make the
 analysis tractable. In this paper, we consider the problem
 of constructing such models for concurrent Java programs.
@@ -34,14 +34,15 @@ requires prior specific permission and/or a fee.
 Java programming found that more than half of the students
 wrote programs with nested monitor deadlocks).
 Ideally, an analysis tool could extract a model from a
-program and use the model to verify some property of the
+program and use a model to verify some property of the
 program (e.g., freedom from deadlock). In practice, extracting
 concurrency models is difficult to automate completely.
 In order to obtain a model small enough for a tractable
 analysis, an analyst must assist most existing tools by specifying
-what aspects of the program to model. In particular,
+what aspects of the
+program to model. In particular,
 the representation of certain variables is often necessary to
-make the model sufficiently accurate, but these variables
+make a model sufficiently accurate, but these variables
 must often be abstracted or restricted to make the analysis
 tractable. Although a model that restricts the range of
 a variable does not represent all possible behaviors of the
@@ -64,12 +65,14 @@ impossible (in general) to determine how many threads
 a program will create. Although Ada tasks may be
 created dynamically, many concurrent Ada programs
 contain only statically allocated tasks.
-3. Java has a locking mechanism to synchronize access to
+3. Java
+ has a locking mechanism to synchronize access to
 shared data. This can be exploited to reduce the size
 of the model.
 The main contribution of this paper is to show how static
 pointer analysis can be used to reduce the size of finite-state
-models of concurrent Java programs. The method employs
+models of concurrent Java
+ programs. The method employs
 virtual coarsening [1], a well-known technique for reducing
 the size of concurrency models by collapsing invisible actions
 (e.g., updates to variables that are local or protected by a
@@ -78,25 +81,26 @@ is used to construct an approximation of the run-time
 structure of the heap at each statement. This information
 can be used to identify which heap objects are actually local
 to a thread, and which locks guard access to which variables.
-This paper is organized as follows. We first provide a
-brief overview of Java's concurrency features in Section 2.
-Section 3 defines our formal model (transition systems) and
+this paper is organized as follows. We first provide a
+brief overview of Java
+'s concurrency features in Section 2.
+Section 3 defines We formal model (transition systems) and
 Section 4 explains how the size of such models can be reduced
 with virtual coarsening given certain information on
 run-time heap structure is available. We then explain how
-to collect this information using static pointer analysis in
+to collect This information
+ using static pointer analysis in
 Section 5. Section 6 shows how to use the heap structure
 information to apply the reductions. Finally, Section 7 concludes
 
 Concurrency in Java
 Java's essential concurrency features are illustrated by
-the familiar bounded buffer system shown in Figure 1. In
-Java, threads are instances of the class Thread (or a subclass
+the familiar bounded buffer system shown in Figure 1. InJava, threads are instances of the class Thread (or a subclass
 thereof) and are created using an allocator (i.e., new). The
 constructor for Thread takes as a parameter any object implementing
 the interface Runnable, which essentially means
 the object has a method run(). Once a thread is started by
-calling its start() method, the thread executes the run()
+calling a thread start() method, a thread executes the run()
 method of this object. Although threads may be assigned
 priorities to control scheduling, in this paper we assume all
 (modeled) threads have equal priority and are scheduled ar-
@@ -104,7 +108,7 @@ this captures all possible executions.
 In the example, the program begins with the execution
 of the static method main() by the main thread. This
 creates an instance of an IntBuffer, creates instances of
-Producer and Consumer that point to this IntBuffer, creates
+Producer and Consumer that point to an IntBuffer, creates
 instances of Thread that point to the Producer and
 Consumer, and starts these threads, which then execute
 the run() methods of the producer and consumer. The
@@ -113,11 +117,12 @@ shared buffer.
 There are two types of synchronization in the bounded
 buffer problem. First, access to the buffer should be mutually
 exclusive. Every Java object has an implicit lock.
-When a thread executes a synchronized statement, it must
+When a thread executes a synchronized statement, a thread must
 acquire the lock of the object named by the expression before
 executing the body of the statement, releasing the lock
-when the body is exited. If the lock is unavailable, the
-thread will block until the lock is released. Acquiring the
+when the body of the statement is exited. If the lock
+ is unavailable, a thread will block until the lock
+ is released. Acquiring the
 lock of the current object (this) during a method body is
 a common idiom and may be abbreviated by simply placing
 the keyword synchronized in the method's signature.
@@ -125,17 +130,20 @@ The second type of synchronization involves waiting:
 callers of put() must wait until there is space in the buffer,
 callers of get() must wait until the buffer is nonempty. On
 entry, the precondition for the operation is checked, and, if
-false, the thread blocks itself on the object by executing the
-wait() method, which releases the lock. When a method
+false, a thread blocks a thread on the object by executing the
+wait() method, which releases the
+lock of the current object (this). When a method
 changes the state of the object in such a way that a pre-condition
-might now be true, it executes the notifyAll()
+might now be true, a pre-condition
+ executes the notifyAll()
 method, which wakes up all threads waiting on the object
-(these threads must reacquire the object's lock before returning
+(all threads must reacquire the object's lock before returning
 from wait()).
 3 Formal Model
 We model a concurrent Java program with a finite-state
-transition system. Each state of the transition system is
-an abstraction of the state the Java program and each transition
+transition system. Each state of a finite-state
+transition system is
+an abstraction of the state a concurrent Java program and each transition
 represents the execution of code transforming this abstract
 state. Formally, a transition system is a pair (S; T )
 where
@@ -231,25 +239,30 @@ space can be used to enumerate the reachable states for anal-
 ysis; at each state, a successor is generated for each ready
 thread, representing that thread's execution. The small example
 in Figure 2 gives the flavor of the translation.
-The Java heap must also be represented. We bound the
+The Java
+ heap must also be represented. We bound the
 number of states in the model by limiting the number of
 instances of each class (including Thread) that may exist
 simultaneously. For this paper, we assume these limits are
 provided by the analyst. If class C has instance limit kC ,
 when a program attempts to allocate an instance of class C
-at a point where kC instances are still accessible (Java uses
-garbage collection), the transition system goes to a special
+at a point where kC instances are still accessible (Java
+ uses
+garbage collection), a finite-state
+transition system goes to a special
 trap state-the model does not represent the behavior of the
 program beyond this point. As discussed in the introduc-
 tion, such a restricted model can still be useful for finding
 errors.
 Consider again the bounded buffer example in Figure 1.
-We could generate a restricted model of this program by
-representing all the variables but restricting their ranges.
+We could generate a restricted model of the
+program by
+representing all the variables but restricting all the variables ranges.
 By restricting the variables representing the contents of the
 buffer to f0; 1g and the variables representing the size of
 the buffer to f0; 1; 2g, we would obtain a very restricted but
-interesting model of the program (i.e., one that would likely
+interesting model of the
+program (i.e., one that would likely
 contain any concurrency errors).
 Reductions
 The transition system (S; T ) produced by the method
@@ -284,13 +297,14 @@ system should:
 1. Be equivalent to the original transition system for the
 purpose of verification. Specifically, for all s 2 S
 s
-2. Be constructible directly from the program, without
+2. Be constructible directly from the
+program, without
 first constructing (S; T ).
 Note that the reduced model constructed is specific to the
 thus the reduction must be repeated for each
 property verified.
 We classify a transformation as invisible and compose
-it with its successor transformation(s) only if we can show
+it with it successor transformation(s) only if We can show
 that this cannot change the truth value of f . An
 is constructed by applying temporal operators to state
 predicates, which are boolean combinations of atomic propo-
@@ -310,10 +324,11 @@ system. To satisfy condition 2, we must do this without
 constructing (S; T ); we must classify transformations as vis-
 ible/invisible based on information obtained from the program
 code. Below, we give two cases in which transformations
-representing Java code can be made invisible. In both
-cases, we need information about the structure of the heap
+representing Java code can be made invisible. In two cases in which transformations
+representing Java code can be made invisible, we need information about the structure of the heap
 at run-time to apply the reduction. We show how to collect
-this information in Section 5.
+information about the structure of the heap
+at run-time to apply the reduction in Section 5.
 4.1 Local Variable Reduction
 Some state variables are accessed only when a particular
 thread is running. For example, some program variables are
@@ -324,7 +339,7 @@ that access exclusively such state variables may be made invisible
 provided they are not f-observable.
 To understand why, consider transformation t in Figure
 3. Assume t is not f-observable and accesses only variables
-local to the thread whose code it represents. Let t 0
+local to the thread whose code t represents. Let t 0
 represent code in this same thread that can be executed
 immediately following the code represented by t. We can
 replace t and t 0 with t ffi t 0 (if there are multiple successors
@@ -354,7 +369,7 @@ To use this technique, we would like to determine what
 variables are local to a particular Java thread (i.e., can only
 be referenced by that thread). A program variable is local
 to a thread if:
-1. The variable is stack allocated (i.e., is declared in a
+1. A program variable is stack allocated (i.e., is declared in a
 method body or as a formal parameter).
 2. The variable is statically allocated and referenced by
 at most one thread.
@@ -369,21 +384,25 @@ Figure
 3: Reduce by combining t and t 0
 Producer in Figure 1 is accessible only by the producer
 thread.
-Case 1 is trivial to detect. Case 2 is more difficult due to
+Case 1 is trivial to detect. Case 1 is more difficult due to
 the dynamic nature of thread creation, though the following
 conservative approximation is reasonable: a static variable
 may be considered local if it is accessed only by code
 reachable 1 from main(), or only by code reachable from a
 single run() method of a class that is passed to a Thread
-allocator at most once (the allocator is outside any loop or
+allocator at most once (a Thread
+allocator is outside any loop or
 recursive procedure). For example, if the variable next were
 a static member of class Producer, then since that variable is
-accessed only by code reachable from the Producer's run()
+accessed only by code reachable from class Producer's run()
 method, and since there is only one instance of Producer
 created, this analysis could determine next is local to the
 producer thread. Case 3 is the most difficult. Clearly if the
 object containing the variable is accessible only from stack
+or statically allocated variables that the
+object containing the variable is accessible only from stack
 or statically allocated variables that themselves are local to
+a specific thread (cases 1 and 2) are local to
 a specific thread (cases 1 and 2), then the heap allocated
 variable is also local to that thread, but determining this
 requires information about the accessibility of heap objects
@@ -407,7 +426,7 @@ variables t accesses are those that are protected by locks.
 The thread whose code t represents must hold the locks for
 these variables at s1 . Therefore, although there exist transformations
 representing code in other threads that accesses
-these variables, such transformations cannot be in the sequence
+these variables at s1, such transformations cannot be in the sequence
 since the other thread would block before
 reaching such transformations.
 Assuming f does not reference the state of a shared ob-
@@ -466,7 +485,8 @@ requires information about the structure of the heap
 at run-time. Collecting this information is the topic of the
 next section.
 5 Reference Analysis
-In this section, we describe a static analysis algorithm that
+In the
+next section, we describe a static analysis algorithm that
 constructs an approximation of the run-time heap struc-
 ture, from which we can collect the information needed for
 the reductions. Understanding run-time heap structure is
@@ -484,7 +504,7 @@ given by Chase et al [4], which uses this basic approach. We
 extend Chase's algorithm in three ways. First, we handle
 Chase's algorithm is for sequential code.
 Second, we distinguish current and summary heap nodes;
-this allows us to collect information on one-to-one relationships
+this allows we to collect information on one-to-one relationships
 between objects. Third, we handle arrays.
 5.1 The Program
 For the reference analysis, we represent a multi-threaded
@@ -494,13 +514,13 @@ steps. There is one CFG for each thread: one CFG for
 the main() method and kC identical CFGs for each run()
 method of class C (recall kC is the instance limit for class
 C). In this paper, we do not handle interprocedural anal-
-ysis. We assume all procedure (method) calls have been
+ysis. we assume all procedure (method) calls have been
 inlined; this limits the analysis to programs with statically
 bounded recursion. Polymorphic calls can be inlined using a
 switch statement that branches based on the object's type
 tag; since this tag is not modeled in our analysis, all methods
 to which the call might dispatch will be explored.
-In our algorithm, we require the concept of a loop block.
+In Our algorithm, our require the concept of a loop block.
 For each statement s, let loop(s) be the innermost enclosing
 loop statement s is nested within (or null if s is not in any
 loop). The set fs 0 jloop(s loop(s)g is called the loop block
@@ -587,7 +607,7 @@ class that were allocated by different allocators. This heuristic
 is based on the observation that objects allocated by a
 given allocator tend to be treated similarly. For example,
 both Employee and Meeting objects might contain a nested
-Date object allocated in their respective constructors (i.e.,
+Date object allocated in Employee and Meeting respective constructors (i.e.,
 there are two Date allocators). By distinguishing the two
 kinds of Date objects, the analysis could determine that a
 Date inside of an Employee cannot be affected when the Date
@@ -597,7 +617,7 @@ information about the structure of the heap at run-time:
 1. If there exists an edge from the node for variable X to
 a heap node for allocator A, then after some execution
 path ending at s (i.e., s has just been executed by the
-thread of its CFG), X may point to an object allocated
+thread of s CFG), X may point to an object allocated
 by A. Otherwise, X cannot point to any object
 allocated by A.
 2. If there exists an edge from field F of the current heap
@@ -620,28 +640,30 @@ be to the current instance allocated by A, otherwise
 the reference is to some summarized instance allocated
 by A.
 Note that the useful information is the lack of an edge. One
-graph is more precise than another if it has a strict subset
-of its edges.
+graph is more precise than another if One
+graph has a strict subset
+of One
+graph edges.
 5.3 The Algorithm
 We use a modified dataflow algorithm to compute, for each
 statement, a conservative SSG with as few edges as possi-
 ble. Initially, each statement has an SSG with no edges.
 A worklist is initialized to contain the start statement of
 main(). On each step, a statement is removed from the
-head of the worklist and processed, possibly updating the
-SSGs for that statement and all statements in other CFGs.
-If any edges are added to the statement's SSG, the successors
+head of A worklist and processed, possibly updating the
+SSGs for a statement and all statements in other CFGs.
+If any edges are added to a statement's SSG, the successors
 of the statement in its CFG and any dependent statements
-in other CFGs are added to the tail of the worklist. One
+in other CFGs are added to the tail of A worklist. One
 statement is dependent on another if they may reference the
 same variable at run-time: they select the same static variable
-or instance variable. The algorithm terminates when
+or instance variable. The Algorithm
+ terminates when
 the worklist is empty.
 To process a statement, we employ three operations on
 SSGs: join, step, and summarize. First, we compute the pre-
-SSG for the statement by joining the SSGs of all immediate
-predecessors in its CFG. SSGs are joined by taking the union
-of their edge sets (this is an any-paths analysis). The pre-
+SSG. SSGs are joined by taking the union
+of SSGs edge sets (this is an any-paths analysis). The pre-
 SSG is then updated by the step operation (discussed below)
 in a manner reflecting the semantics of the statement to
 produce the post-SSG. Finally, if the statement is the last
@@ -655,7 +677,7 @@ The step operation uses abstract interpretation to up-date
 the SSG (an abstract representation of the run-time
 heap) according to the statement's semantics. Only assignments
 to reference variables need be considered; other
-statements cannot add edges to the SSG (i.e., the post-SSG
+statements cannot add edges to the post-SSG (i.e., the post-SSG
 equals the pre-SSG). Each pointer expression has an l-value
 and an r-value, defined as follows. The l-value of a variable
 is the variable's node. The l-value of a field selector expression
@@ -712,20 +734,23 @@ node of B, when first added to an SSG by a summarize
 operation, is marked one-to-one. If the field of the summary
 node of A is subsequently updated by a step operation in
 such a way that another edge to the summary node of B
-would have been added, then the edge is no longer marked
+would have been added, then another edge to the summary node of B
+ is no longer marked
 one-to-one.
 This method is based on the observation that nested objects
 are almost always allocated in the same loop block as
-their enclosing object (often in the enclosing object's con-
+objects
+ enclosing object (often in the enclosing object's con-
 structor). Given a constructor or loop body that allocates
 an object, allocates one or more nested objects, and links
 these objects together, the one-to-one relationships between
-the objects are recorded in the SSG as arcs between the
-current nodes of the allocators. When these nodes are summarized
+the objects are recorded in the post-SSG as arcs between the
+current nodes of the allocators. When the
+current nodes of the allocators are summarized
 at the end of the loop block, this information is
 then preserved as annotations on the arcs between the summary
 nodes. In fact, this is the motivation for distinguishing
-3 Technically, the thread is started when its start() method is
+3 Technically, the thread is started when the thread start() method is
 called, but since we are not using any thread scheduling informa-
 tion, assuming the thread starts when allocated produces the same
 SSGs.
@@ -735,22 +760,26 @@ Consider the Java source in Figure 6. The first SSG in
 
 Figure
 
-6 is the post-SSG for statement 6 the first time it
+6 is the post-SSG for statement 6 the first time The first SSG in
+
+Figure
+
+6
 is processed (i.e., before any summary information exists).
-The second SSG is the result of summarizing this SSG. Note
+the post-SSG is the result of summarizing SSG. Note
 that, since nodes 3:B and 5:A are summarized together, the
 arc from field a2 of 3:B* to 5:A* is labeled as one-to-one
 (1-1), but since 2:A is a current node, there is no one-to-one
 relationship between field a1 of 3:B* and 2:A (nor would
 there be if a loop were added around this code and 2:A was
 summarized).
-The last SSG is the final SSG for statement 9 (the end
+SSG SSG is the final SSG for statement 9 (the end
 of the method). After statement 7, the Thread allocated
 there may have access to the A allocated by statement 2,
 while after statement 8, the a1 field of some B may point to
 some A allocated at statement 5. Note that stack variable
 b is out of scope at statement 9 and thus can be removed
-from the SSG. The arc from 2:A to 0:A is added by statement
+from the post-SSG. The arc from 2:A to 0:A is added by statement
 0, which is placed on the worklist when statement 7
 is processed. Although we have not shown the final SSGs
 for statements 1-8, all these SSGs would contain this arc,
@@ -759,7 +788,8 @@ until after statement 7; no thread scheduling information is
 considered.
 5.6 Complexity
 Given a program with S statements and V variables and
-allocators, our algorithm must construct S SSGs each containing
+allocators, The Algorithm
+ must construct S SSGs each containing
 O(V ) nodes and up to O(V 2 ) edges. The running
 time to process a statement is (at worst) proportional to the
 total number of edges in all SSGs, as is the number of times
@@ -775,12 +805,15 @@ believe the average complexity to be much lower. SSGs are
 generally sparse; many edges in a typical SSG would violate
 Java's type system and could not be generated by the
 analysis. Also, very few edges are added to a statement's
-SSG after it has been processed once, thus each statement is
+SSG after a statement's
+SSG has been processed once, thus each statement is
 typically processed only a few times. Second, S and V refer
 to the number of modeled statements and variables-in a
 typical analysis, only a fraction of the program will be mod-
-eled. The reference analysis does not model variables having
-primitive (i.e., non-reference) types, nor need it model
+eled. the
+analysis does not model variables having
+primitive (i.e., non-reference) types, nor need the
+analysis model
 statements manipulating such variables exclusively. Also, a
 program requirement might involve only a small subset of
 the program's classes; the rest of the program need not be
@@ -849,7 +882,8 @@ Reference Analysis Example
 Applying the local variable reduction is straightforward.
 The set of heap nodes in an SSG that are local to a given
 thread are those that are accessible only from stack or static
-variables local to the thread. All heap variables are accessed
+variables local to a given
+thread. All heap variables are accessed
 with expressions of the form ref.id where ref is a reference
 expression and id is the name of the instance variable. The
 variable accessed by such an expression is local to the thread
@@ -881,13 +915,13 @@ variable object, or vice versa, or both are accessible from a
 third object, or the lock and variable are in the same object.
 This pattern can be expressed in terms of three roles:
 the root, the lock, and the variable. The lock object contains
-the lock, the variable object contains the variable, and
+the lock, The lock object contains the variable, and
 from the root object, the other two objects are accessible.
 Each role must be played by exactly one object, but one object
 may play multiple roles. For the expression data[i] in
 the bounded buffer example, the IntBuffer object is both
 the root and the lock object, while the int array referenced
-by data is the variable object. For the expression count,
+by data is The lock object. For the expression count,
 the IntBuffer object plays all three roles. For the expression
 salary in the splitting locks example of Figure 4, the
 Programmer object plays the root and variable roles, while
@@ -917,7 +951,7 @@ analysis. For each expression Ev in Access(v), we
 compute Protect(v; Ev ): the set of locks the thread is holding
 at Ev protecting v. Since a lock must protect a variable
 everywhere:
-If the lock is a summary node, then the variable must be
+If a lock is a summary node, then the variable must be
 a field of a summary node; the interpretation is that each
 variable object is protected by a unique lock object.
 Given an expression Ev accessing v, we compute
@@ -939,8 +973,8 @@ and this pair yields the triple (this; hoursLock; -). Note
 that indicates the lock and root objects are the same,
 while indicates that the variable and root objects are
 the same.
-Given Ev and (Er ; S ' ; Sv ), we identify a candidate lock '
-in the SSG as follows. For an SSG node n and a selector S,
+Given Ev and (Er ; S ; Sv ), we identify a candidate lock '
+in the post-SSG as follows. For an SSG node n and a selector S,
 n:S is the set of nodes reached from n by following S, while
 is a field of an object in n:Sg
 is the set of SSG nodes such that applying selector S to these
@@ -951,7 +985,7 @@ If R contains exactly one node, then this node is the candidate
 root r and we compute the set of possible locks
 in the pre-SSG of E ' . If L contains exactly one node ', then
 this node is the candidate lock.
-We include ' in Protect(v; Ev ) if we can deduce from the
+We include ' in Protect(v; Ev if we can deduce from the
 SSGs that, for each instance of v at run-time, there is a
 unique instance of ' held by the thread. Note that this does
 not follow immediately since r, ', and the SSG nodes on the
@@ -973,11 +1007,13 @@ eter. In addition, a simple propagation analysis can be used to allow
 recognition of the pattern even if multiple selectors are decomposed
 into a series of assignments (e.g., x.f.g expressed as
 holds provided that is a current node, or
-all arcs on the path selected by S ' are one-to-one arcs
+all arcs on the path selected by Ev , S ' ' are one-to-one arcs
 between summary nodes.
 A variable v is protected if Protect(v) is nonempty. A transformation
-may be made invisible if it is not f-observable
-and all variables it might access are protected or local.
+may be made invisible if A transformation
+ is not f-observable
+and all variables A transformation
+ might access are protected or local.
 Note that inaccuracy in the reference analysis leads to
 a larger model, not an incorrect model. If we cannot determine
 that a variable is local or protected by a lock, then
@@ -989,7 +1025,9 @@ Consider the bounded buffer example in Figure 1. The SSGs
 for all statements in the producer and consumer run() methods
 are isomorphic to the heap structure shown at the top of
 the figure (there would also be nodes for the stack variables).
-From these SSGs, we can deduce that variable next in the
+From The SSGs
+for all statements in the producer and consumer run() methods
+, we can deduce that variable next in the
 Producer object is local to the producer thread. Thus, for a
 formula f that does not depend on next, the transformation
 incrementing next may be invisible.
@@ -1012,7 +1050,9 @@ hoursLock.
 7 Conclusion
 We have proposed a method for using static pointer analysis
 to reduce the size of finite-state models of concurrent
-Java programs. Our method exploits two common design
+Java programs. a method for using static pointer analysis
+to reduce the size of finite-state models of concurrent
+Java programs exploits two common design
 patterns in Java code: data accessible by only one thread,
 and encapsulated data protected by a lock.
 The process of extracting models from source code must,
@@ -1022,7 +1062,9 @@ of our method are more widely applicable and could
 be used to reduce finite-state models of programs with heap
 data and/or a monitor-like synchronization primitive (e.g.,
 Ada's protected types).
-The method is currently being implemented as part of a
+a method for using static pointer analysis
+to reduce the size of finite-state models of concurrent
+Java programs is currently being implemented as part of a
 tool intended to provide automated support for extracting
 finite-state models from Java source code. Although we have
 no empirical data on the method's performance at this time,
@@ -1036,7 +1078,8 @@ offers a powerful means to find concurrency errors, which
 are often subtle and difficult to reproduce. Unfortunately,
 extracting the finite-state model of a program required by
 existing verifiers is tedious and error-prone. As a result,
-widespread use of this technology is unlikely until the extraction
+widespread use of Finite-state verification technology
+ is unlikely until the extraction
 of compact mathematical models from real software
 artifacts is largely automated. Methods like the one
 described here will be essential to support such extraction.
@@ -1060,7 +1103,7 @@ Using state space reduction methods for deadlock analysis in Ada tasking.
 Data flow analysis for verifying properties of concurrent programs.
 Elements of style: Analyzing a software design feature with a counterexample detector.
 Concurrent Programming in Java: Design Principles and Patterns.
-Checking that finite state concurrent programs satisfy their linear specifica- tions
+Checking that finite state concurrent programs satisfy finite state concurrent programs linear specifica- tions
 Static infinite wait anomaly detection in polynomial time.
 
 
@@ -1073,7 +1116,7 @@ Data flow analysis for verifying properties of concurrent programs
 Compositional verification by model checking for counter-examples
 Elements of style
 Timing Analysis of Ada Tasking Programs
-Checking that finite state concurrent programs satisfy their linear specification
+Checking that finite state concurrent programs satisfy finite state concurrent programs linear specification
 Concurrent Programming in Java
 Protocol Verification as a Hardware Design Aid
 

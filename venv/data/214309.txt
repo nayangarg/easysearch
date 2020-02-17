@@ -1,7 +1,7 @@
 --T
 A case study in simulating PCS networks using Time Warp.
 --A
-There has been rapid growth in the demand for mobile communications over the past few years. This has led to intensive research and development efforts for complex PCS (personal communication service) networks. Capacity planning and performance modeling is necessary to maintain a high quality of service to the mobile subscriber while minimizing cost to the PCS provider. The need for flexible analysis tools and the high computational requirements of large PCS network simulations make it an excellent candidate for parallel simulation.Here, we describe our experiences in developing two PCS simulation models on a general purpose distributed simulation platform based on the Time Warp mechanism. These models utilize two widely used approaches to simulating PCS networks: (i) the  call-initiated and (ii) the portable-initiated models. We discuss design decisions that were made in mapping these models to the Time Warp executive, and characterize the workloads resulting from these models in terms of factors such as communication locality and computation granularity. We then present performance measurements for their execution on a network of workstations. These measurements indicate that the call-initiated model generally outperforms the portable initiated model, but is not able to capture phenomenon such as the busy line effect. Moreover, these studies indicate that the high locality in large-scale PCS network simulations make them well-suited for execution on general purpose parallel and distributed simulation platforms.
+There has been rapid growth in the demand for mobile communications over the past few years. This has led to intensive research and development efforts for complex PCS (personal communication service) networks. Capacity planning and performance modeling is necessary to maintain a high quality of service to the mobile subscriber while minimizing cost to the PCS provider. The need for flexible analysis tools and the high computational requirements of large PCS network simulations make it an excellent candidate for parallel simulation.Here, we describe we experiences in developing two PCS simulation models on a general purpose distributed simulation platform based on the Time Warp mechanism. two PCS simulation models on a general purpose distributed simulation platform based on the Time Warp mechanism utilize two widely used approaches to simulating PCS networks: (i) the  call-initiated and (ii) the portable-initiated models. We discuss design decisions that were made in mapping two PCS simulation models on a general purpose distributed simulation platform based on the Time Warp mechanism to the Time Warp executive, and characterize the workloads resulting from two PCS simulation models on a general purpose distributed simulation platform based on the Time Warp mechanism in terms of factors such as communication locality and computation granularity. We then present performance measurements for We execution on a network of workstations. performance measurements indicate that the call-initiated model generally outperforms the portable initiated model, but is not able to capture phenomenon such as the busy line effect. Moreover, these studies indicate that the high locality in large-scale PCS network simulations make them well-suited for execution on general purpose parallel and distributed simulation platforms.
 --B
 Introduction
 A personal communication service (PCS) network [3] provides
@@ -21,7 +21,7 @@ is very low (e.g., less than 1%).
 Traditionally, analytic models have been used to understand
 the performance characteristics of these types of networks.
 However, analytic models are often not sufficiently general or
-flexible because they must make simplifying assumptions about
+flexible because analytic models must make simplifying assumptions about
 the system parameters to make the analysis tractable. For ex-
 ample, the blocking probability of a fixed channel assignment
 PCS network can be modeled analytically using the Erlang-B
@@ -69,7 +69,8 @@ phone call arrives, a radio channel is used to connect the cor-
 assignment strategies increase channel availability by "intelligently"
 reallocating channels to cells based on the traffic load within the cell, traffic mobility, and
 co-channel interference.
-responding portable. If all channels are busy, then the call is
+responding portable. If all channels are busy, then a
+phone call is
 blocked (dropped). The output measure is the blocking probability
 b , the probability that a phone call is dropped.
 
@@ -93,7 +94,7 @@ from the simulation are in error because the cell boundaries
 allows a portable at an edge to suddenly move and reappear
 on the other side of the grid of cells. Because of this unnatural
 portable movement, error is introduced in the call statistics.
-This error can be reduced by using a larger network work of
+error can be reduced by using a larger network work of
 cells. The figures suggest that the network size S ? 256 cells
 are required to avoid the wrapping effect.
 Moreover, Figure 1 (c) suggests that T ?
@@ -118,16 +119,16 @@ for a parallel simulation [8]. The impact of varying PCS simulation
 parameters on the Time Warp mechanism is investigated
 in [2]. This paper extends that work and examines our experiences
 in executing PCS simulation models on a distributed
-Time Warp system. In particular, we will discuss our approach
+Time Warp system. In particular, we will discuss we approach
 to mapping the PCS models to the distributed simulator, characteristics
 of the workload model that impact the efficiency of the
 distributed simulator, and the performance of the system that
 was developed.
 Most PCS models fall into two types of models: call-initiated
 [9, 17] or portable-initiate [19, 12]. In this study, we will
-consider both types of models. These models are described in
+consider both types of models. Most PCS models are described in
 section 2. Section 3 describes design decisions that were made
-to map the models to a Time Warp based distributed simulation
+to map Most PCS models to a Time Warp based distributed simulation
 environment. Section 4 characterizes the workload for bothPCS
 models and discusses aspects of the workload that impact the
 distributed simulator. Section 5 describes the implementation
@@ -136,20 +137,20 @@ performance data collected from executing the simulations on a
 collection of workstations. Section 6 concludes by reflecting on
 what was learned from this study about (i) the suitability of PCS
 simulations for parallel simulation, and (ii) what is important
-in the design and implementation of these models to enable
+in the design and implementation of Most PCS models to enable
 efficient execution on a Time Warp system.
 2 Description of the PCS Models
-In this section we describe the call-initiated and portable-
+In Section 5 we describe the call-initiated and portable-
 initiated models. The primary difference between these two
 models is that the call-initiated model only simulates the behavior
 of a portable during phone conversations. The portable-
-initiated model tracks the movement of portables even if they
+initiated model tracks the movement of portables even if the movement of portables
 
 Figure
 
 2: Call-Initiated Model: flowchart for call processing
 within a single cell. A "Call Arrival" denotes a new call arriving
-at this cell or a call hand-off to this cell.
+at a single cell or a call hand-off to a single cell.
 Assign Channel
 Call Complete?
 On Going Call
@@ -164,45 +165,45 @@ Available?
 Call Blocked
 are not in conversations. The implication of these differences
 will be discussed in detail below.
-The call-initiated model is organized around two object
-types: Cell and Call. The Cell represents the area covered by a
+the call-initiated model is organized around two object
+types: Cell and Call. Cell and Call represents the area covered by a
 cellular receiver/transmitter that has a fixed number of channels
-allocated to it. The Call represents an active phone conversation.
+allocated to Cell and Call. Call represents an active phone conversation.
 As depicted in figure 2, when a Call arrives at a Cell, channel
 availability is determined. If no channel is available then that
-Call is counted as being blocked. If a channel is available, it is
-assigned to that Call. When the Call completes, the occupied
-channel is released. If the portable to whom the Call is connected
-is leaving the Cell's area 2 , then the allocated channel is
-released and the Call is handed-off to the destination Cell. The
-hand-off to the destination Cell is realized as a call arrival event
-at that neighboring Cell. If a channel at the neighboring Cell is
-not available, the Call is counted as a hand-off block, which is
+Call is counted as being blocked. If a channel is available, a channel is
+assigned to Call. When the Call completes, the occupied
+channel is released. If the portable to whom Call Call is connected
+is leaving the Cell's area 2 , then the occupied
+channel is
+released and Call is handed-off to the destination Cell. The
+hand-off to the destination Cell Cell is realized as a call arrival event
+at Cell and Call. If a channel at Cell and Call is
+not available, Call is counted as a hand-off block, which is
 also known as a forced termination. If a channel is available,
 the Call reconnects and continues without interruption.
-The portable-initiated model is also organized around two
-object types: Cell and Portable. As in the previous model,
-the Cell represents a cellular receiver/transmitter that has some
-fixed number of channels allocated to it. The Portable represents
-a mobile phone unit that resides within the Cell for a period
+the call-initiated model is also organized around two
+object types: Cell and Portable. As in the call-initiated model,
+Cell and Call represents a cellular receiver/transmitter that has some
+fixed number of channels allocated to Cell and Call. The Portable represents
+a mobile phone unit that resides within Cell and Call for a period
 of time and then moves to one of the four neighboring Cells.
-As shown in figure 3, when a new call arrives at a Cell, the
-Cell first determines the status of the destination Portable. If
-the destination Portable is busy with another call, this call is
+As shown in figure 3, when a new call arrives at a Cell, Cell and Call first determines the status of the destination Portable. If
+the destination Portable is busy with another call, Call is
 counted as a busy line. A busy line occurs when a Portable
 is currently connected in a phone call and another phone call
-arrives for that portable. The call-initiated model has no notion
+arrives for that portable. the call-initiated model has no notion
 of a busy line, which is one of the fundamental differences
 between the two models and has an important effect on the call
-statistics. If the Portable is not busy, the Cell determines channel
-availability. If all channels are busy, the call is counted as a call
-block. If a channel is available, it is allocated for the destination
-use and the call is allowed to connect. While a call is
-in progress, the Portable tracks its location. When the Portable
-determines it is moving out of the current Cell's signal range, it
+statistics. If the Portable is not busy, Cell and Call determines channel
+availability. If all channels are busy, Call is counted as a call
+block. If a channel is available, a channel is allocated for the destination
+use and Call is allowed to connect. While a call is
+in progress, the Portable tracks a call location. When the Portable
+determines a call is moving out of the current Cell's signal range, a call
 drops the currently used channel, and requests a channel from
-the neighbor Cell into which it is moving. If all channels from
-the neighboring destination Cell are busy, this call counts as a
+the neighbor Cell into which a call is moving. If all channels from
+the neighboring destination Cell are busy, Call counts as a
 We assume Portable movement is exponentially distributed.
 
 Figure
@@ -255,18 +256,18 @@ the p b will rise and the impact of busy-lines on p b will decrease.
 Accordingly, the portable-initiated model should be used when
 the number of portables per cell is not large because the busy line
 effect has a significant impact on p b . For a large number portables
-per cell, the call-initiated model is more appropriate. It will
+per cell, the call-initiated model is more appropriate. the call-initiated model will
 be seen later that the call-initiated model is more efficient and
 can be simulated in less time than the portable-initiated model.
 The computational requirements for both models are discussed
 below.
 Implementation
-This section focuses on howwe mapped the simulation model
+Section 5 focuses on howwe mapped the simulation model
 to the distributed simulator, emphasizing design and implementation
 decisions and rationales for these decisions that were
 made along the way.
 3.1 Distributed Simulators
-The distributed simulator consists of a collection of logical
+the distributed simulator consists of a collection of logical
 processes or LPs, each modeling a distinct component of the
 system being modeled. LPs communicate by exchanging timestamped
 event messages. Like most existing distributed simulation
@@ -276,9 +277,11 @@ mechanism must ensure that each LP processes events
 in timestamp order in order to prevent events in the simulated
 future from affecting those in the past. The synchronization
 issue has been widely studied (e.g., see [4, 6, 13, 16]).
-The Time Warp mechanism uses a detection-and-recovery
+The synchronization
+mechanism uses a detection-and-recovery
 protocol to synchronize the computation. For a more detailed
-discussion of the Time Warp mechanism we refer the reader to
+discussion of The synchronization
+mechanism we refer the reader to
 [4, 10].
 3.2 Implementing the PCS Models
 A natural way to map both PCS models to a general purpose,
@@ -289,7 +292,8 @@ creating a Call LP, which would persist until the call completes
 or is forced to terminate during a hand-off to another cell. In
 the portable-initiated model, a call arrival at a cell could be
 simulated by scheduling a "call arrival" event for a particular
-Portable LP. In this model, each Portable LP would persist for
+Portable LP. In 
+the portable-initiated model, each Portable LP would persist for
 the duration of the simulation.
 However, this approach poses a problem in Time Warp exe-
 cution. In the call-initiated model, when a call is handed-off to
@@ -299,13 +303,14 @@ information, in particular that Cell's channel availability. The
 Cell state information must therefore be shared among several
 Call LPs. But, such sharing state information is not allowed in
 Time Warp. A widely used solution to this problem is to implement
-each Cell as an LP. Accesses to the Cell LP's state information
+each Cell as an the Call LP. Accesses to an LP state information
 can be realized by exchanging timestamped messages
 between LPs, that carry the value(s) of requested state vari-
 able(s). However, in these PCS models, whenever a call arrives,
-the Portable/Call LP would need to exchange timestamped messages
+an LP would need to exchange timestamped messages
 with the Cell LP to determine channel availability. The
-overhead associated with these messages becomes large, particularly
+overhead associated with timestamped messages
+ becomes large, particularly
 when a Call or Portable has migrated to a Cell that is
 on a different processor. The cost is prohibitive in a distributed
 environment where communications are very expensive.
@@ -314,7 +319,8 @@ as LPs but Calls/Portables as timestamped messages that travel
 among the Cell LPs. Mapping Cells to LPs is a standard technique
 used in other applications [18]. Mapping Call and Portables
 to timestamped messages is a reasonable approach from a
-modeling perspective when viewed from the model flowcharts
+modeling perspective when viewed from 
+the portable-initiated model flowcharts
 
 Figures
 
@@ -325,9 +331,9 @@ will be processed, the channel availability information is accessible
 by the Call/Portable contained within the call arrival
 message. Moreover, in the portable-initiated model, Portable
 availability (is the Portable engaged in a phone call?) must
-also be determined by the Cell. Since the call arrival message
+also be determined by Cell and Call. Since the call arrival message
 carries the Portable's state information, Portable availability is
-known to the Cell. Using this mapping, a hand-off in both PCS
+known to Cell and Call. Using this mapping, a hand-off in both PCS
 models is realized as a message sent between two Cell LPs.
 The destination Cell LP views the hand-off as a call/portable
 arrival. Accordingly, during all phases of call processing for
@@ -341,7 +347,7 @@ simulations will contain hundreds to thousands of Cells. Thus,
 there are a sufficient number of LPs for the computing platforms
 that were available for this study. Further, the amount of parallelism
 within a cell is limited, to a large extent, by dependencies
-arising from their accesses to the Cell LP's state information.
+arising from a cell accesses to the Cell LPstate information.
 
 Table
 
@@ -355,26 +361,27 @@ at a Cell (i.e. the call was not blocked), (iii) MoveOut, which
 denotes a call moving out of the current Cell, (iv) MoveIn, which
 denotes the arrival of a hand-off call at a Cell.
 To initialize the call-initiated simulation, each Cell sends
-itself an initial event that invokes the StartUp method (event
+each Cell an initial event that invokes the StartUp method (event
 procedure). Upon processing the StartUp method, each Cell
 will initialize and schedule the arrival of the first Call to that
 Cell by scheduling an event into the future that will invoke the
 NextCall method. Each Call contains two independent timestamp
 fields: call completion, and move timestamps. The call
 completion timestamp represents the time at which the phone
-call will complete. The move timestamp represents the time at
+call will complete. The call
+completion timestamp represents the time at
 which the Call will leave the current Cell and reside at one of the
 neighboring Cells. The minimum of these two timestamp fields
 determines the event type and Cell destination of the Call. Call
-arrivals are generated by scheduling the next Call arrival at the
+arrivals are generated by scheduling the next the Call arrival at the
 end of processing the NextCall method. Accordingly, because
-each Cell LP determines its own Call arrivals and sends messages
-to itself, this simulation is self-initiating. This impacts the
+each Cell LP determines Cell LP own Call arrivals and sends messages
+to Cell LP, this simulation is self-initiating. This impacts the
 performance of the distributed simulation, as will be discussed
 later. For a detailed analysis of the performance bounds for
 self-initiating simulations, we refer the reader to [15].
 The portable-initiated simulation is similar to the call-
-initiated Model. During initialization, each Cell sends itself
+initiated Model. During initialization, each Cell sends each Cell
 an initial event that invokes the StartUp method. Upon processing
 the StartUp method, each Cell will initialize and schedule
 some fixed number of messages, each containing a Portable.
@@ -397,7 +404,7 @@ Call/Portable completion times and Call/Portable move times
 are exponentially distributed, though one could trivially substitute
 other distributions into the simulation program.
 4 Workload Characterization
-In this section we characterize the workload for each PCS
+In Section 5 we characterize the workload for each PCS
 model. First we quantify the workload in terms of the PCS
 model application parameters, and then discuss characteristics
 that are relevant to the performance of the distributed simulator.
@@ -410,14 +417,14 @@ Mobility of Calls/Portables determines how frequently
 Calls/Portables move to a different Cell. This, in turn, determines
 how frequently LPs communicate. Recall from the
 previous discussion that the only time Cell LPs communicate
-is in the handoff of a Portable/Call. As LP's communicate
+is in the handoff of a Portable/Call. As an LP's communicate
 more frequently, the number of messages sent between processors
 increases, which increases distributed simulator overheads,
 leading to slower execution times. Section 5 will present performance
 data that supports this hypothesis.
 The call interarrival time determines the amount of work
 available to the simulator over a given period of simulated time.
-For modest size PCS networks, the call interarrival time has
+For modest size PCS networks, The call interarrival time has
 a significant impact on the "rate" the simulation progresses
 through simulated time, which will determine how likely a simulation
 will roll back for a fixed amount of lookahead. The
@@ -447,7 +454,8 @@ Portables per Cell in the call-initiated model, the call interarrival
 time is the call interarrival time of the portable-initiated model
 divided by the number of Portables per Cell. Also, in the call-
 initiated model, a call only persists as long as the conversation
-lasts or until it is forced to terminate. Accordingly, the number
+lasts or until the conversation
+ is forced to terminate. Accordingly, the number
 of pending events is bounded by the number of channels in
 the simulation. For all experiments presented in this study, the
 number of channels per Cell was fixed at 10, making the number
@@ -490,7 +498,8 @@ when no channel is available. This feature could not be easily
 added to the "improved" simulation implementation without
 advanced knowledge of when a call would be interrupted. For
 this reason, techniques for improving lookahead were not exploited
-in this implementation. Thus, the performance that was
+in the "improved" simulation implementation without
+advanced knowledge of when a call would be interrupted. Thus, the performance that was
 obtained is conservative in this regard.
 Event granularity is the average amount of real time to compute
 an event. If the event granularity is small then incorrect
@@ -551,7 +560,7 @@ time (minutes)
 sors, thus eliminating the need for dynamic load management
 mechanisms.
 Performance Results
-In this section we discuss our distributed implementation of
+In Section 5 we discuss we distributed implementation of
 the Time Warp mechanism and then present performance data
 for the two PCS simulation models.
 5.1 Implementation of Distributed Simulator
@@ -560,7 +569,8 @@ a collection of DEC 5000 workstations, Sun Sparc workstations,
 or a mixture of these machines. All performance results presented
 here were performed on DEC machines interconnected
 by an Ethernet. The Time Warp system is written in C++. A
-principal objective of this implementation is to enable efficient
+principal objective of the "improved" simulation implementation without
+advanced knowledge of when a call would be interrupted is to enable efficient
 simulation of thousands of "light weight" LPs (i.e., processes
 that contain a small amount of state and perform little computation
 in each event) in an object-oriented environment on
@@ -583,7 +593,8 @@ to select the next entity to execute. The processor's scheduler
 always selects the entity containing the smallest timestamped
 event as the next one for execution. Each entity includes a
 linear list to hold the unprocessed events (method invocations)
-scheduled for that entity.
+scheduled for the entity containing the smallest timestamped
+event as the next one for execution.
 To avoid unnecessary system overheads from malloc system
 calls and memory fragmentation, the Time Warp kernel allocates
 a single contiguous block of memory from which events
@@ -649,8 +660,7 @@ interarrival times were varied. The completion time for a phone
 call was exponentially distributed with mean 3.0. The number
 of channels per cell was fixed at 10. All experiments were
 conducted on 8 DEC 5000 workstations, with each workstation
-containing 128 cells, for a total of 1024 cells. All experiments
-ran for 2:5 \Theta 10 4 simulated seconds. Each data point represents
+containing 128 cells, for a total of 1024 cells. All experimentsran for 2:5 \Theta 10 4 simulated seconds. Each data point represents
 the average of 6 runs.
 In
 
@@ -663,14 +673,15 @@ simulation outperformed the corresponding portable-initiated
 simulation. This can be attributed to the call-initiated model's
 sending fewer remote messages, which is due to not simulating
 the inactive periods of portables. Remote communications is
-discussed later in this section.
+discussed later in Section 5.
 Combined with fewer remote messages, there were fewer
 events processed in the call-initiated simulation for all cases
 except where the mean call interarrival time was low (6 minutes).
 The reason more events are being processed in this case by the
 call-initiated simulation is because calls that would be counted
 as busy lines in the portable-initiated simulation, due to the
-3 Efficiency is defined as the percentage of the simulation computationthat is committed.
+3 Efficiency is defined as the percentage of the
+call-initiated simulation computationthat is committed.
 
 Figure
 
@@ -722,7 +733,7 @@ simulationhad the shortest of the two simulations with rollbacks
 distances ranging from 2:6 to 6:5. In the portable-initiated sim-
 ulation, rollback distances ranged from 3:5 to 7:8. These results
 are attributed to the self-initiating nature of both simulations.
-Because, LPs schedule many events to themselves, neighboring
+Because, LPs schedule many events to LPs, neighboring
 LPs become "unsynchronized" with respect to simulated time,
 
 Figure
@@ -782,7 +793,7 @@ of secondary rollbacks increases because the workload has de-
 creased, allowing the LPs to become more "unsynchronized".
 We believe these rollbacks tend to be very long and perturb the
 average. However, when increasing the call interarrival time
-mean from 10 minutes to 30 minutes, we believe the frequency
+mean from 10 minutes to 30 minutes, We believe the frequency
 of secondary rollbacks increase again, but become shorter as a
 result of being more frequent, which reduces the average roll-back
 distance.
@@ -859,7 +870,7 @@ In this paper we characterize workloads for call-initiated and
 portable-initiated PCS models in terms of suitability for Time
 Warp execution. Experiments were completed to determine how
 the workload characteristics affect Time Warp execution on a
-collection of networked workstations. From these experiments,
+collection of networked workstations. From Experiments,
 we conclude:
 ffl An important aspect of designing and implementing these
 models (and any simulation model in general) is developing

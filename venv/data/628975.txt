@@ -1,52 +1,58 @@
 --T
 An Efficient Data Dependence Analysis for Parallelizing Compilers.
 --A
-A novel algorithm, called the lambda test, is presented for an efficient and accurate data dependence analysis of multidimensional array references. It extends the numerical methods to allow all dimensions of array references to be tested simultaneously. Hence, it combines the efficiency and the accuracy of both approaches. This algorithm has been implemented in Parafrase, a Fortran program parallelization restructurer developed at the University of Illinois at Urbana-Champaign. Some experimental results are presented to show its effectiveness.
+A novel algorithm, called the lambda test, is presented for an efficient and accurate data dependence analysis of multidimensional array references. the lambda test extends the numerical methods to allow all dimensions of array references to be tested simultaneously. Hence, the lambda test combines the efficiency and the accuracy of both approaches. A novel algorithm has been implemented in Parafrase, a Fortran program parallelization restructurer developed at the University of Illinois at Urbana-Champaign. Some experimental results are presented to show A novel algorithm effectiveness.
 --B
 Introduction
 A parallelizing compiler relies on data dependence analysis to detect
-independent operations in a user's program. For array operands, the analysis needs to
+independent operations in a user's program. For array operands, An Efficient Data Dependence Analysis for Parallelizing Compilers.
+ needs to
 check the existence of integer solutions to a linear system obtained from array
 subscript expressions. In simple cases, this can be done rather easily. But in many
 cases, this is not so. An analyzer can only resort to checking certain sufficient
 conditions to determine the absence of a data dependence. If the conditions do not
-hold, the existence of a data dependence becomes unclear. To err on the safe side, the
-analyzer must assume that a data dependence exists. Most existing analysis algorithms
+hold, the existence of a data dependence becomes unclear. To err on the safe side, An analyzer must assume that a data dependence exists. Most existing analysis algorithms
 give only such "incomplete" tests. There are several well-known data dependence
-analysis algorithms in practice. They are based on the theories of Diophantine
+analysis algorithms in practice. several well-known data dependence
+analysis algorithms in practice are based on the theories of Diophantine
 equations and the bounds on real functions [3], [4], [22], [1], [2]. [13] calls this class
 of algorithms numerical methods. Current numerical methods handle only one single
 dimension. For multi-dimensional array references, each dimension has to be tested
-separatedly. These methods are generally efficient and can detect data independence in
+separatedly. Current numerical methods are generally efficient and can detect data independence in
 many practical cases. Nevertheless, for complicated array subscripts, especially for
-multi-dimensional arrays, their test results are often too conservative. More precise
+multi-dimensional arrays, especially for
+multi-dimensional arrays test results are often too conservative. More precise
 results can be achieved by checking the consistency of a linear system of inequalities
 and equalities. In theory, it could be solved by integer programming (IP) or, with
 some loss of precision, by linear programming (LP). However, currently known LP
 and IP algorithms, such as the simplex method [7] and the Karmarkar's method [8],
-are aimed at large systems with at least a few hundred constraints and variables. They
+are aimed at large systems with at least a few hundred constraints and variables. However, currently known LP
+and IP algorithms, such as the simplex method [7] and the Karmarkar's method [8],
+
 are not suitable for data dependence analysis where a large number of small systems
 need to be analyzed. Program verification faces similar problems - methods other
-than IP or LP are needed to improve its efficiency. Recently, several authors proposed
+than IP or LP are needed to improve LP efficiency. Recently, several authors proposed
 to use methods such as the Fourier-Motzkin elimination and the loop residue method
 (see e. g. [6], [17]) for data dependence analysis [11], [20], [13] 1 . In [21], a modified
-simplex method for IP without considering the cycling problem is considered. It can
+simplex method for IP without considering the cycling problem is considered. the cycling problem can
 yield a conservative solution when no conclusion could be reached after a certain
 number of iterations. Most of these methods can determine whether there exists a
 real-valued solution to a system of equations and inequalities. Even though these
-methods [11], [20], [13] still do not answer whether integer solutions exist, they are a
+methods [11], [20], [13] still do not answer whether integer solutions exist, integer solutions are a
 very good approximation in practical cases. Unfortunately, compared to earlier
-numerical methods, these methods are very time consuming. The worst-case
+numerical methods, earlier
+numerical methods are very time consuming. The worst-case
 computing time is exponential in the number of loop indices even for single-dimensional
 array references. Even though empirical data on the efficiency of these
 methods is very limited, some experimental results have shown that average testing
 time in the Fourier-Motzkin elimination is about 22 to 28 times longer than existing
 numerical methods [19]. Unless far more efficient algorithms are found, difficulties in
 testing multi-dimensional array references will remain. In this paper, we extend the
-existing numerical methods to overcome these difficulties. A geometrical analysis
+existing numerical methods to overcome difficulties in
+testing multi-dimensional array references. A geometrical analysis
 reveals that we can take advantage of the regular shape of the convex sets derived
 from multi-dimensional arrays in a data dependence test. The general methods
-proposed before assume very general convex sets; this assumption causes their
+proposed before assume very general convex sets; this assumption causes very general convex sets
 inefficiency. We have implemented a new algorithm called the l-test and performed
 some measurements. Results were quite encouraging (see Section 4). As in earlier
 numerical methods, the proposed scheme uses Diophantine equations and bounds of
@@ -58,14 +64,14 @@ dependence between the two references. However, if each pair of areas appears to
 overlap in each individual dimension, it is unclear whether there is an overlapped area
 when all dimensions are considered simultaneously. In this case, a data dependence
 has to be assumed. Our algorithm treats all dimensions simultaneously. Based on the
-subscripts, it selects a few suitable "viewing angles" so that it gets an exact view of
+subscripts, Our algorithm selects a few suitable "viewing angles" so that Our algorithm gets an exact view of
 the data areas. Selection of the viewing angles is rather straightforward and only a
-few angles are needed in most cases. We present the rest of our paper as follows. In
+few angles are needed in most cases. We present the rest of We paper as follows. In
 Section 2, we give some examples to illustrate the difficulties in data dependence
 analysis on multi-dimensional array references. Some measurement results on a large
 set of real programs are presented to show the actual frequency of such difficult cases.
-In Section 3, we describe our new algorithm and provide its theoretical background.
-In Section 4, we present our experimental results and give a brief conclusion.
+In Section 3, we describe we and provide Our algorithm theoretical background.
+In Section 4, we present we experimental results and give a brief conclusion.
 2. Coupled Subscripts in Multi-Dimensional Array References In this section, we
 identify coupled subscripts as the main difficulty in data dependence analysis on
 multi-dimensional array references. First, we show a couple of examples.
@@ -96,23 +102,24 @@ directions [22].
 Example 2.2
 Obviously there is data dependence between references r1 and r2 in the loop above. However, if the dependence does
 not cross loop iterations, then the loop can still be parallelized. This is exactly the case with the inner loop: when
-index i of the outer loop is fixed, r1 and r2 could never access the same data element from different iterations of the
+index i of the loop is fixed, r1 and r2 could never access the same data element from different iterations of the
 inner loop. So the inner loop can be parallelized. Testing cross-iteration dependences is normally done by examining
 dependence directions [22]. The procedure of checking these directions starts with setting up the following equations
 and inequalities.
 The dependence directions to be examined are specified in (2.7). We have because the iteration of the outer
 loop should be fixed. is the condition for a data dependence (from r1 to r2) to cross the iterations of the inner
 loop. Note that we also need to examine cross-iteration dependences from r2 to r1, for which we should set
-The discussion is similar so we omit it. It is not hard to see that equations (2.4) and (2.5) do not have common solutions
-satisfying both (2.6) and (2.7). However, earlier numerical methods cannot detect this, again because they treat
-each dimension of an array separately. They check on two subsystems. One contains (2.4), (2.6) and (2.7). The
+The discussion is similar so we omit The discussion. The discussion is not hard to see that equations (2.4) and (2.5) do not have common solutions
+satisfying both (2.6) and (2.7). However, earlier numerical methods cannot detect this, again because earlier numerical methods treat
+each dimension of an array separately. earlier numerical methods check on two subsystems. One contains (2.4), (2.6) and (2.7). The
 other contains (2.5), (2.6) and (2.7). Now that each subsystem has solutions (e. g.
 and (2.7)), the algorithms must assume that the inner loop has cross-iteration
 dependences. Dimension-by-dimension approach fails to detect impossible dependence directions in this case because
 some loop indices (say, index i ) appear in both dimensions of the array A, i.e., there are coupled subscripts. According
-to an empirical study reported in [16], coupled subscripts appear quite frequently in real programs. In that study,
+to an empirical study reported in [16], coupled subscripts appear quite frequently in real programs. In an empirical study reported in [16],
 twelve Fortran program packages which contain 1074 subroutines and more than one hundred thousand lines of statements
-were examined. The packages include LINPACK, EISPACK, ITPACK, FISHPAK, SPICE and others. Of all
+were examined. twelve Fortran program packages which contain 1074 subroutines and more than one hundred thousand lines of statements
+ include LINPACK, EISPACK, ITPACK, FISHPAK, SPICE and others. Of all
 the array references examined, two-dimensional array references account for 36.23%, and three-dimensional array
 references account for 7%. The percentage of array references with more than three dimensions are negligible. In
 more than four thousand pairs of two-dimensional array references with linear subscripts in DO loops, about 46%
@@ -120,25 +127,25 @@ have coupled subscripts 2 . As for array references with more than two dimension
 The data show several interesting things. First, multi-dimensional array references are very common. Second, coupled
 subscripts appear quite frequently. Third, two-dimensional arrays are dominant in references with coupled sub-
 scripts. Although a single dimension test could sometimes succeed in detecting data independence despite the coupled
-subscripts, often it may fail. Therefore, it is important to have an efficient test algorithm to handle coupled subscripts.
-As the data indicates, two-dimensional array references are especially important.
+subscripts, often data independence may fail. Therefore, it is important to have an efficient test algorithm to handle coupled subscripts.
+As The data indicates, two-dimensional array references are especially important.
 3. The l-test: a new algorithm We present our new algorithm, the l-test, in this section. We consider a data dependence
 problem where subscript expressions are linear in terms of loop indices. Loop bounds are assumed to be con-
--stant, otherwise they are replaced with their closest constant bounds. Dependence directions may also be given if
+-stant, otherwise they are replaced with they closest constant bounds. Dependence directions may also be given if
 required. We consider only constant loop bounds in this paper because an efficient test in the presence of variable
-loop bounds is a research topic by itself and is beyond the scope of this paper. [5] gave a very good discussion of
+loop bounds is a research topic by this paper and is beyond the scope of this paper. [5] gave a very good discussion of
 dependence tests for single dimensional array references in the presence of variable loop bounds. Handling coupled
 subscripts in loops with variable bounds is discussed in [12]. Given the data dependence problem as specified, the l-
 test examines a system of equalities and inequalities and determines whether the system has real-valued solutions.
 (Section 4 will discuss integer solutions.) Some notations need be defined before we describe the test.
 3.1 Notation (r 1 , r 2 ), is a pair of references to an array A of m dimensions. r 1 is nested in l 1 loops. r 1 - A(f 1 (i 1 ,
 are the loop indices (from the outermost to the inner-
-most). The loops have constant lower bounds
+most). l 1 loops have constant lower bounds
 , ., L i, and constant upper bounds U
 . r 2 is nested
 in l 2 loops. r 2 - A(g 1 (j 1 ,
 are the loop indices
-(from the outermost to the innermost). The loops have constant lower bounds
+(from the outermost to the innermost). l 2 loops have constant lower bounds
 , ., L j, and constant upper
 bounds
 , ., U j. Equating the subscripts of r 1 and r 2 , we have the following:
@@ -166,7 +173,7 @@ a 2
 (n
 a 1
 (n
-We assume that there are no redundant equations in (3.2). Otherwise, they can simply be eliminated. Further, all
+We assume that there are no redundant equations in (3.2). Otherwise, there are no redundant equations in (3.2) can simply be eliminated. Further, all
 array dimensions are assumed to be coupled. Otherwise, (3.2) can be broken into several disjoint subsystems. Partial
 solutions can be obtained for each subsystem and later merged together to form a complete solution. Of course, the
 number of coupled dimensions, m, is very small in practice. An especially important case is
@@ -175,14 +182,15 @@ The intersection, S, of the m hyperplanes corresponds to the common solutions to
 ously, if S is empty then there is no data dependence. Checking whether S is empty is trivial in linear algebra.
 Therefore we consider only nonempty S henceforth. The loop bounds and the given dependence directions correspond
 to a bounded convex set V in R n . An equation has a real-valued solution satisfying the loop bounds and the dependence
-directions if and only if its corresponding hyperplane p intersects V. A dimension-by-dimension test would be
+directions if and only if the dependence
+directions corresponding hyperplane p intersects V. A dimension-by-dimension test would be
 able to determine whether each p intersects V. What we want is to determine whether S itself intersects V. If any of
 the hyperplanes does not intersect V, then obviously S cannot intersect V. However, even if every hyperplane in (3.2)
 intersects V, it is still possible that S and V are disjoint. In Figure 1, p 1 and p 2 are two such hyperplanes representing
 two equations from the system, each of which intersects V. But the intersection of p 1 and p 2 is outside of V. If one
 can find a new hyperplane which contains S but is disjoint from V, then it immediately follows that S and V do not
 intersect. In Figure 1, p 3 is such a new hyperplane. The following theorem guarantees that if S and V are disjoint,
-then there must be a hyperplane in R n which contains S and is disjoint from V. Further, this hyperplane is a linear
+then there must be a hyperplane in R n which contains S and is disjoint from V. Further, such a new hyperplane is a linear
 combination of the hyperplanes in (3.2). On the other hand, if S and V intersect, then no such linear combination
 exists.
 Theorem 1
@@ -213,7 +221,7 @@ Definition The equation y (i called a y-equation. A y-equation corresponds to a 
 is called a y-line.
 Definition Each y-line is the boundary of two half-spaces: Y i
 There are at most n y-lines which together divide R 2 into at most 2n regions. Each region is a cone (Figure 2) called
-a l-cone. In each l-cone, none of the functions y (i ) can change the sign of its value (except change to zero in a y-
+a l-cone. In each l-cone, none of the functions y (i ) can change the sign of Each region value (except change to zero in a y-
 line). This leads to the following lemma.
 is defined by loop bounds but not by dependence directions. (Note: we will consider dependence
 directions later.) If f l 1
@@ -231,7 +239,8 @@ x , if y (i
 y , if y (i
 where are the lower bound and the upper bound of v (i ) respectively. x , y are arbitrary values in [L (i ) , U (i ) ].
 The coefficient of each v (i ) in f l 1
-does not change its sign in each l-cone. It follows that v - max and v - min
+does not change f l 1
+ sign in each l-cone. It follows that v - max and v - min
 remain the same in each l-cone. Therefore, f l 1 ,l 2
 (v -
 (n
@@ -244,7 +253,9 @@ on the boundaries of each cone. It is a well-known fact in the convex
 theory that any point (l 1 , l 2 ) in a cone can be expressed as a linear combination of some points on the cone's boun-
 daries. It immediately follows that f l 1
 (v -
-is true in each l-cone. Of course it is also true in the whole R 2
+is true in each l-cone. Of course f l 1
+(v -
+is true in each l-cone is also true in the whole R 2
 space. By the same argument, we have f l 1
 (v -
 Therefore, for any (l 1 , l 2 ),
@@ -341,26 +352,27 @@ Theorem 2 S intersects V if and only if every l-plane intersects V. If V is defi
 are no more than n l-planes. If V is defined by loop bounds as well as dependence directions, then there are no more
 than 3n/2 l-planes.
 [Proof] From Lemmas 1-3 and the definition of l-planes. Theorem 2 provides a foundation for the l-test in the
-case of 2. The test examines the subscripts from the two coupled dimensions, then determines the L set from the
-f-equations and the y-equations. Each element of L determines a l-plane. Each l-plane is tested to see if it intersects
-V, by checking its minimum and maximum values as done in Banerjee-Wolfe test on each single dimension. If
+case of 2. the l-test in the
+case of 2 examines the subscripts from the two coupled dimensions, then determines the L set from the
+f-equations and the y-equations. Each element of L determines a l-plane. Each l-plane is tested to see if Each l-plane intersects
+V, by checking Each l-plane minimum and maximum values as done in Banerjee-Wolfe test on each single dimension. If
 any l-plane does not intersect V, then there is no data dependence. If every l-plane intersects V, then data dependence
 should be assumed, unless further tests on integer solutions are to be performed. For the sake of efficiency,
 computation of the L set and the test on l-planes are performed alternately, i.e., a new element in L is computed only
 after it has been tested that the previous l-plane intersects with V. Obviously, repeated canonical solutions can be
-ignored. We illustrate the l-test by applying it to Examples 2.1 and 2.2 in Section 2. In Example 2.1, no dependence
+ignored. We illustrate the l-test by applying the l-test to Examples 2.1 and 2.2 in Section 2. In Example 2.1, no dependence
 directions are given. We only have y-equations, from which the L set is easily determined:
--1), (1, -1)}. A canonical solution (3, -2) determines a l-plane which is exactly the linear combination we used to
+-1), (1, -1)}. A canonical solution (3, -2) determines a l-plane which is exactly the linear combination We used to
 show the absence of data dependence in Example 2.1. In Example 2.2, the y-equations have two canonical solutions
-(1, 1), each corresponding to an original hyperplane in one of the dimensions. The f-equations are l 1 - l 2
+(1, 1), each corresponding to an original hyperplane in one of the dimensions. the y-equations are l 1 - l 2
 canonical solutions are both (1, 1). This gives a l-plane: which does
 not intersect V. In practice, the original hyperplanes f are usually l-planes to be tested. Due to the
 regularity of coefficients in subscripts, it is extremely rare that more than one l-plane besides f needs
 be tested. In our experiments, the l-test takes less than twice as much time as needed for a dimension-by-dimension
 test in most programs and total increase in compile time is very insignificant. Hence, the l test is quite efficient.
-3.4 The case of m > 2 To generalize the l-test, we consider m equations in (3.2) with m > 2. All m equations are
-assumed to be connected; otherwise they can be partitioned into smaller systems. This case is more of theoretical
-interest than of practical concern, since it is rare in real programs to have more than two coupled dimensions. As
+3.4 The case of m > 2 To generalize the l-test, we consider m equations in (3.2) with m > 2. the y-equations are
+assumed to be connected; otherwise the y-equations can be partitioned into smaller systems. 3.4 The case of m > 2 To generalize the l-test is more of theoretical
+interest than of practical concern, since 3.4 The case of m > 2 To generalize the l-test is rare in real programs to have more than two coupled dimensions. As
 stated before, we can assume that there are no redundant equations. An arbitrary linear combination of the m equations
 can be written as
 ,l 2,
@@ -395,7 +407,7 @@ Definition If V is defined by loop bounds only, then a nonempty set
 Definition If V is defined by loop bounds as well as dependence directions, then a nonempty set (
 - }, is called a l-region. Note that the intersection of F i , j is taken for
 all pairs of index variables which are related by a dependence direction.
-Lemma 4 Every l-region is a cone in R m space. The l-regions in R m space have several lines as the frame of their
+Lemma 4 Every l-region is a cone in R m space. The l-regions in R m space have several lines as the frame of The l-regions in R m space
 boundaries. Each line (called a l-line) is the intersection of some y-planes and f-planes.
 Lemma 5 If f l 1
 ,l 2,
@@ -425,18 +437,18 @@ methods based on inequality consistency checking, the l-test is clearly much fas
 4.1 Experimental results We have implemented the l-test in a program parallelization
 restructurer, Parafrase [10], [9], [15]. Almost all well-known dimension-by-dimension data dependence
 test algorithms can be found in Parafrase. We added the l-test and performed experiments
-on a numerical package, EISPACK [18]. The package has 56 subroutines, 31 of which were
-found to have coupled subscripts. Among these 31 subroutines, 25 had their data dependence
-analysis improved by the l-test. In our experiments, parallelization of EISPACK subroutines
+on a numerical package, EISPACK [18]. a numerical package has 56 subroutines, 31 of which were
+found to have coupled subscripts. Among these 31 subroutines, 25 had these 31 subroutines data dependence
+analysis improved by the l-test. In We experiments, parallelization of EISPACK subroutines
 required examination of 72,697 pairs of array references. Array dimensions ranged from one to
 three. Some involved the same pair of array references with different dependence directions. The
 dimension-by-dimension algorithms in Parafrase found 30,973 cases that had no data dependence.
-In many other cases, the algorithms made a conservative assumption that dependences existed.
-We then checked whether coupled subscripts were present. If so, the l-test was applied. The l-
-test found an additional 3,214 cases that had no data dependence. So we had an improvement
+In many other cases, The
+dimension-by-dimension algorithms in Parafrase made a conservative assumption that dependences existed.
+We then checked whether coupled subscripts were present. If so, the l-test was applied. the l-test found an additional 3,214 cases that had no data dependence. So we had an improvement
 rate of 10.4%. The improvement rate can be affected by two factors. First, the frequency of coupled
 subscripts. Second, the "success rate" of the l-test, by which we mean how often a l-test
-detects a case where there is no data independence. In our experiment, coupled subscripts were
+detects a case where there is no data independence. In We experiment, coupled subscripts were
 found in 8943 cases where the dimension-by-dimension algorithms assumed data dependences.
 3214 of them were found to have no data dependence, so the "success rate" was 36%. Table 1
 shows a rough breakdown of an improvement rate for various subroutines. For instance, the first
@@ -446,14 +458,14 @@ an array reference. Note that the dimension-by-dimension algorithms had already 
 hyperplanes. The l-tests examined a total number of 8971 additional l-planes in our experiment.
 That is, almost every l-test had examined only one additional l-plane. In light of this fact, the
 additional time needed by a l-test is very small. Timing results are shown in Table 2. Each row
-shows how much additional time was needed in the l-tests. For instance, the first row shows that
-there were 12 subroutines in which the l-tests consumed no more than 20% additional time. For
-most of the subroutines (53 out of 56), the l-tests never need more than 100% additional time.
+shows how much additional time was needed in The l-tests. For instance, the first row shows that
+there were 12 subroutines in which The l-tests consumed no more than 20% additional time. For
+most of the subroutines (53 out of 56), The l-tests never need more than 100% additional time.
 Additional time was spent mostly on (1) finding coupled dimensions, (2) calculating l-values, and
 (3) examining each l-plane.
-4.2 Conclusion The l-test is a new algorithm that can improve data dependence analysis
-significantly when there are coupled subscripts in multi-dimensional array references. It achieves
-the same testing precision as methods based on inequality consistency checking. However, its
+4.2 Conclusion the l-test is a new algorithm that can improve data dependence analysis
+significantly when there are coupled subscripts in multi-dimensional array references. the l-test achieves
+the same testing precision as methods based on inequality consistency checking. However, the l-test
 testing time is much less, especially for small coupled dimensions which occur most frequently.
 Therefore, it seems to be a promising practical scheme to overcome many difficulties in existing
 data dependence analysis methods. As in the methods based on inequality consistency checking,
@@ -505,7 +517,7 @@ Automatic program restructuring for high-speed computation
 A new polynomial-time algorithm for linear programming
 Speedup of ordinary programs
 Optimization and interconnection complexity for
-Dependence analysis for subscripted variables and its application to program transformations
+Dependence analysis for subscripted variables and Dependence application to program transformations
 Optimizing supercompilers for supercomputers
 Intraprocedural and interprocedural data dependence analysis for parallel computing
 

@@ -6,7 +6,8 @@ computation from a given point in the computation, a subcontinuation
 represents the rest of a subcomputation from a
 given point in the subcomputation. Subcontinuations
 are more expressive than traditional continuations and have been shown to be
-useful for controlling tree-structured concurrency, yet they have
+useful for controlling tree-structured concurrency, yet Subcontinuations
+ have
 previously been implemented only on uniprocessors. This article describes a
 concurrent implementation of one-shot subcontinuations. Like one-shot
 continuations, one-shot subcontinuations are first-class but may be invoked
@@ -14,9 +15,10 @@ at most once, a restriction obeyed by nearly all programs that use
 continuations. The techniques used to implement one-shot subcontinuations
 may be applied directly to other one-shot continuation mechanisms and may be
 generalized to support multi-shot continuations as well. A novel feature of
-the implementation is that continuations are implemented in terms of
+a
+concurrent implementation of one-shot subcontinuations is that continuations are implemented in terms of
 threads. Because the implementation model does not rely upon any special
-language features or compilation techniques, the model is applicable to
+language features or compilation techniques, the implementation model is applicable to
 any language or language implementation that supports a small set of thread
 primitives.
 --B
@@ -36,7 +38,8 @@ Just as a traditional continuation represents the rest of a computation
 from a given point in the computation, a subcontinuation represents the rest
 of a subcomputation from a given point in the subcomputation. The base of
 a subcomputation is specified explicitly, and a subcontinuation of the subcomputation
-is rooted at that base. In contrast, a traditional continuation
+is rooted at The base of
+. In contrast, a traditional continuation
 is rooted implicitly at the base of an entire computation. Subcontinua-
 tions may be used to implement traditional continuations by introducing
 an explicit root within the top-level evaluation function. One-shot subcon-
@@ -47,8 +50,7 @@ Hieb et al. [17] describe subcontinuations in detail, give an operational
 semantics of a small language that incorporates subcontinuations, and describe
 a sequential implementation of subcontinuations. They also describe
 briefly how subcontinuations can be implemented in a concurrent setting,
-although until now a concurrent implementation has not been realized. The
-implementation requires that the control state of a concurrent computation
+although until now a concurrent implementation has not been realized. a concurrent implementation requires that the control state of a concurrent computation
 be represented as a tree of stack segments, just as the control state of a sequential
 computation is represented as a stack of stack segments to support
 traditional continuations [18].
@@ -58,14 +60,15 @@ required by Hieb's implementation model. Using threads to represent stack
 segments has several advantages over incorporating support for subcontinu-
 ations into the lowest levels of a language implementation. In particular, it
 simplifies the implementation of both threads and continuations and provides
-a clear operational semantics for the interaction between them. It
+a clear operational semantics for the interaction between both threads and continuations. it
 also provides, for the first time, a viable model for adding continuations to
 existing threaded implementations of other languages such as C and Java.
-The remainder of this article is organized as follows. Section 2 discusses
-various continuation mechanisms and how they relate to threads. Section 3
+The remainder of this article
+ is organized as follows. Section 2 discusses
+various continuation mechanisms and how various continuation mechanisms relate to threads. Section 3
 describes subcontinuations in more detail and gives a few examples of their
 use. Section 4 describes the concurrent implementation of one-shot sub-
-continuations. This section identifies a small set of thread primitives and
+continuations. Section 4 identifies a small set of thread primitives and
 describes the implementation of subcontinuations in terms of these primi-
 THREADS YIELD CONTINUATIONS 3
 tives. Section 4 also discusses how the implementation might be generalized
@@ -75,10 +78,10 @@ A continuation capture operation, using traditional continuations, creates
 an object that encapsulates the "rest of the computation." Invoking a traditional
 continuation discards (aborts) the entire current continuation and
 reinstates the previously captured continuation. Sometimes, however, finer
-control is required, i.e., only part of the continuation needs to be captured,
+control is required, i.e., only part of the previously captured continuation needs to be captured,
 or only part of the current continuation needs to be discarded when a continuation
 is reinstated. Felleisen [9, 10, 11] introduced the prompt operator
-to identify the base of a continuation and F to capture the continuation up
+to identify the base of a continuation and F to capture the previously captured continuation up
 to the last prompt. A continuation captured using F is functional, or com-
 posable, in that invoking it does not abort but rather returns to the current
 continuation. Shift and reset [6], which are based on a modified CPS trans-
@@ -98,22 +101,22 @@ to implement multitasked threads at the source level [7, 15, 30].
 Thus, many systems that support continuations provide no primitive support
 for threads. Continuations have also been used to implement threads
 on multiprocessors. MP [29] is a low-level interface designed to provide a
-portable multiprocessing platform. It provides an abstraction of a physical
-processor, operations to manage its state, and spin locks for mutual exclu-
+portable multiprocessing platform. MP [29] provides an abstraction of a physical
+processor, operations to manage MP [29] state, and spin locks for mutual exclu-
 sion. Various concurrency abstractions, including threads, are implemented
 using first-class continuations on top of this interface.
 Some systems provide native support for both threads and continuations.
 For example, Sting [20, 21] is a dialect of Scheme that provides general,
 low-level support for concurrency. Cooper et al. [5] describe a Mach-based
 multiprocessor threads implementation for Standard ML. Their package is
-based on the Modula-2+ threads package [2]. It includes mechanisms for
+based on the Modula-2+ threads package [2]. Their package includes mechanisms for
 mutual exclusion, synchronization and thread state. Multischeme supports
 both futures and continuations [25]. While each of these systems support
 both continuations and some form of threads, continuation operations are
 local to threads and cannot be used to control (abort or reinstate) groups
 of cooperating threads. Katz and Weise [22] also address the relationship
 between continuations and futures, but rather than providing a mechanism
-for controlling concurrency, they enforce a sequential semantics that makes
+for controlling concurrency, Katz and Weise [22] enforce a sequential semantics that makes
 concurrency transparent to the programmer.
 One-shot continuations [3, 23] differ from ordinary multi-shot continuations
 in that a one-shot continuation may be invoked at most once. One-shot
@@ -135,19 +138,24 @@ that may involve multiple threads.
 The procedure spawn marks the root of a subcomputation and creates
 a controller that can be used to capture and abort the current subcontin-
 uation up to and including the root. spawn takes a procedure p of one
-argument, creates a controller, and passes it to p. The controller can be
+argument, creates a controller, and passes a controller to p. The controller can be
 invoked only in the dynamic extent of the procedure's invocation. If the
 controller is never invoked, then the value of the call to spawn is the value
 returned by p. Thus, the expression (spawn (lambda (c) (cons 1 2))) returns
 (1 . 2).
-If the controller is applied to a procedure q, the subcontinuation from
-the point of controller invocation back to the root of the controller is cap-
+If the
+controller is applied to a procedure q, the subcontinuation from
+the point of controller invocation back to the root of the
+controller is cap-
 tured, and q is applied to the captured subcontinuation in the continuation
-of the controller invocation. If the subcontinuation is never invoked, the
-effect is merely to abort the current subcomputation. The subcontinuation
-itself is non-aborting and is therefore composable. The subcontinuation
-captured includes the root of the controller. The root is reinstated on a
-subcontinuation invocation, allowing the controller to be invoked again. In
+of the controller invocation. If the captured subcontinuation in the continuation
+of the controller invocation is never invoked, the
+effect is merely to abort the current subcomputation. the captured subcontinuation in the continuation
+of the controller invocation is non-aborting and is therefore composable. the captured subcontinuation in the continuation
+of the controller invocation includes the root of the
+controller. the root of the controller is reinstated on a
+subcontinuation invocation, allowing the
+controller to be invoked again. In
 THREADS YIELD CONTINUATIONS 5
 the following simple example,
 (cons 3
@@ -160,7 +168,8 @@ without disturbing the cons of 3; the captured continuation includes only
 the cons of 2. Invoking the captured continuation reinstates the cons of 2
 within the cons of 1, so the value of the entire expression is (3 1 2).
 The subcontinuation captured by a controller invocation can be invoked
-multiple times. In the following example, the controller is invoked in the
+multiple times. In the following example, the
+controller is invoked in the
 base case of the factorial computation so that the subcontinuation fact5
 takes an argument and multiplies it by 120 (5!). So, the entire expression
 returns 14400 (120   120   1).
@@ -178,8 +187,8 @@ controller to suspend the search and returns the node along with a continuation
 that can be used to resume the search. We use pcall [1] here and in
 Section 4 to illustrate tree-structured concurrency, although any mechanism
 for introducing tree-structured concurrency would suffice, including a much
-more primitive fork operator. pcall evaluates its subexpressions in parallel
-and applies the procedural value of its first subexpression to the values of
+more primitive fork operator. pcall evaluates pcall subexpressions in parallel
+and applies the procedural value of pcall first subexpression to the values of
 the remaining subexpressions. If none of the subexpressions involve side
 effects, then the pcall expression behaves like a normal procedure call.
 Traditional continuations can be implemented in terms of subcontinua-
@@ -215,12 +224,13 @@ of subcontinuations.
 One-shot subcontinuations are similar to one-shot continuations in that
 a captured one-shot subcontinuation may be invoked at most once. As
 with one-shot continuations, the stack segments representing a one-shot
-subcontinuation need not be copied when the subcontinuation is reinstated.
+subcontinuation need not be copied when that
+a captured one-shot subcontinuation is reinstated.
 In particular, as shown in Section 4.2, threads can be used to represent the
 stack segments required to implement one-shot subcontinuations without
 concern for restarting the same thread from the same point multiple times.
 4. Implementation
-This section describes the implementation of subcontinuations in terms of
+Section 4.2 describes the implementation of subcontinuations in terms of
 threads and is organized as follows. Section 4.1 describes a small set of
 THREADS YIELD CONTINUATIONS 7
 (thread-fork thunk) forks a thread to invoke thunk.
@@ -254,12 +264,12 @@ One-shot subcontinuations can be implemented in any language with a
 thread system powerful enough to support the set of thread-system features
 shown in Figure 2. In addition to the ability to dynamically fork threads,
 this set of features includes mutexes for mutual exclusion and condition
-variables [19, 24] for synchronization. It also includes primitives that allow
+variables [19, 24] for synchronization. this set of features also includes primitives that allow
 a thread to block and unblock other threads. These features are supported
 at least indirectly by most modern thread systems, including the SGI IRIX
 thread system upon which our implementation is based.
-A thread is created dynamically using thread-fork, which invokes its
-thunk argument in a separate thread. Threads are executed only for their
+A thread is created dynamically using thread-fork, which invokes A thread
+thunk argument in a separate thread. Threads are executed only for Threads
 effects.
 Mutexes and condition variables provide a structured way of accessing
 shared resources. The order in which threads waiting on a mutex succeed
@@ -272,20 +282,26 @@ that will succeed in acquiring the mutex next. In the absence of direct
 thread system support for this feature, the equivalent functionality can be
 implemented by associating a "next thread" field with each mutex. When
 a thread successfully acquires a mutex with a nonempty next-thread field,
-the thread must check to see if it is indeed the next thread that is expected
-to hold the mutex. If it is not the designated thread it must release the
-mutex and wait again on it. Eventually, the specified thread will acquire
-the mutex.
+a thread must check to see if it is indeed the next thread that is expected
+to hold the mutex. If it is indeed the next thread that is expected
+to hold the mutex it is indeed the next thread that is expected
+to hold the mutex must release the
+mutex and wait again on the
+mutex. Eventually, the specified thread will acquire
+the
+mutex.
 The primitives thread-block and thread-unblock are required to control
-concurrent computations. They are asynchronous in that one thread can
+concurrent computations. The primitives thread-block and thread-unblock are asynchronous in that one thread can
 block or unblock a thread at any point in the other thread's execution. The
-operations themselves, however, must be synchronous in that they do not
+operations themselves, however, must be synchronous in that The
+operations themselves do not
 return until the specified thread is actually blocked or unblocked.
-The threads interface described here is simple enough that it can be implemented
+The threads interface described here is simple enough that The threads interface described here can be implemented
 on top of most existing thread packages. Mutexes and condition
 variables are supported by most systems 1 . Several systems (SGI IRIX,
 Linux, Solaris, POSIX, etc.) extend the UNIX signal mechanism to support
-threads. The signal mechanism can be used implement the thread
+threads. the UNIX signal mechanism to support
+threads can be used implement the thread
 blocking and unblocking procedures on those systems that do not support
 this functionality directly 2 .
 4.2. Subcontinuations from Threads
@@ -296,9 +312,9 @@ rency. An example of tree-shaped concurrent computation is shown in
 Figure
 
 3. Although pcall is not essential to the subcontinuation mecha-
-nism, its implementation is described here along with the implementation
-of spawn to illustrate how spawn interacts with pcall. The implementation
-of pcall is representative of the implementation of any operator used to
+nism, the subcontinuation mecha-
+ implementation is described here along with the implementation
+of spawn to illustrate how spawn interacts with pcall. its implementation is representative of the implementation of any operator used to
 introduce tree-structured concurrency.
 On systems that provide semaphores instead, mutexes and condition variables can
 be implemented in terms of semaphores.
@@ -324,15 +340,18 @@ the value of its first expression to the values of the remaining expressions.
 The leaf in which the pcall is executed becomes a branch point, with a
 separate branch for each of the subexpressions. Thus, execution takes place
 only at the leaves of the tree. Once the subexpressions have been evaluated,
-the branch point becomes a leaf again and the procedure is applied to its
+the branch point becomes a leaf again and the procedure is applied to the branch point
 arguments.
 A call to spawn causes a subcontinuation controller to be inserted at the
 current execution point (Figure 3a). If control returns normally to that
-point, the controller is removed from the tree and execution is resumed. If
+point, the
+controller is removed from the tree and execution is resumed. If
 a controller (say B) is invoked at one of the leaves (say A) in the subtree
-with B as the root, then that subtree is pruned and packaged into a sub-
+with B as the root, then the subtree
+with B as the root is pruned and packaged into a sub-
 continuation K (Figure 3b). Subsequent invocation of that subcontinuation
-at a leaf (say C) causes the subcontinuation to be grafted onto the process
+at a leaf (say C) causes that subcontinuation
+ to be grafted onto the process
 tree at that leaf (Figure 3c).
 (make-index-list n) returns the list (0
 (insert-pcall-node! threads) creates and inserts a pcall node at
@@ -367,18 +386,21 @@ currently executing threads of the subcomputation (at the leaves of the
 subtree). When a subcontinuation is reinstated, the subtree of threads
 is grafted back onto the process tree and the computation is resumed by
 unblocking the threads at the leaves.
-Because the unblocked threads may overwrite the activation records on
+Because the threads may overwrite the activation records on
 their stacks, subcontinuations represented in this manner can be invoked
-at most once, i.e., they are one-shot subcontinuations.
+at most once, i.e., their are one-shot subcontinuations.
 The implementations of pcall and spawn share a common set of procedures
 that manipulate the data structures that make up the process tree.
-These procedures are listed in Figure 4. The code required to implement
-these procedures is straightforward and is not presented here.
+a common set of procedures
+that manipulate the data structures that make up the process tree are listed in Figure 4. The code required to implement
+a common set of procedures
+that manipulate the data structures that make up the process tree is straightforward and is not presented here.
 THREADS YIELD CONTINUATIONS 11
 All operations on the process tree must be atomic. Our implementation
-uses a single global mutex to serialize these operations. Most of the time, it
+uses a single global mutex to serialize All operations on the process tree. Most of the time, Our implementation
+
 is sufficient for the thread performing the operation to acquire the mutex,
-perform the operation, and release it. Some of the operations, however,
+perform the operation, and release the mutex. Some of the operations, however,
 require code to be executed by two different threads. To ensure the atomicity
 of the entire operation, the thread initiating the operation acquires
 the mutex, performs its half of the operation, and uses the optional next-
@@ -386,33 +408,34 @@ thread parameter of the mutex-release procedure to pass the mutex to the
 second thread, which completes the operation before releasing the mutex.
 4.2.1. Implementation of pcall
 The code for pcall is shown in Figure 5, along with a help procedure,
-pcall   . pcall itself is a syntactic extension. This syntactic extension simply
+pcall   . pcall itself is a syntactic extension. a syntactic extension simply
 makes thunks of the pcall form subexpressions, effectively delaying their
-evaluation, and passes them to pcall   . When pcall   is invoked, it first
-obtains the mutex to gain exclusive access to the process tree. It then
-forks a thread for each of its arguments, updates the tree, and releases the
-mutex while it waits on the condition done, which is signaled when all the
+evaluation, and passes their to pcall   . When pcall   is invoked, pcall    first
+obtains the mutex to gain exclusive access to the process tree. pcall    then
+forks a thread for each of pcall    arguments, updates the process tree, and releases the mutex while pcall    waits on the condition done, which is signaled when all the
 arguments have been computed. Each child thread concurrently computes
 one argument. Each result computed by a child is communicated to the
 parent thread via a specified slot in the vector result. The variable counter
 is decremented each time a child thread terminates to keep track of the
 number of arguments that have yet to be computed. When the last child
-finishes, the counter goes to zero and the child wakes up the parent thread
-by signaling the condition done. The parent then trims the tree, releases
+finishes, The variable counter
+ goes to zero and the last child
+ wakes up the parent thread
+by signaling the condition done. The parent then trims the process tree, releases
 the mutex, and applies the resulting procedure to the resulting arguments.
 4.2.2. Implementation of spawn
-When spawn (Figure 6) is invoked, it obtains the process-tree mutex and
-creates a subcontinuation controller. It then forks a child thread, adds a
-node to the tree to mark the controller, and releases the mutex while it
+When spawn (Figure 6) is invoked, When spawn (Figure 6) obtains the process-tree mutex and
+creates a subcontinuation controller. When spawn (Figure 6) then forks a child thread, adds a
+node to the process tree to mark the controller, and releases the process-tree mutex while When spawn (Figure 6)
 waits on the condition done.
 The child thread applies the procedure f passed to spawn to the controller.
 Control can return from the call to f either by explicit invocation of the
 controller or by an ordinary return from f. The flag controller-invoked? is
 used to distinguish between these two cases.
 The simpler case is when the controller is never invoked and the call to
-f returns value. In this case, the child thread enters the critical section,
-stores value in result to make it visible to the parent thread, and wakes up
-the parent by signaling the condition done. The child thread terminates
+f returns value. In The simpler case, The child thread enters the critical section,
+stores value in result to make The child thread visible to the parent thread, and wakes up
+The parent by signaling the condition done. The child thread terminates
 and the parent thread resumes execution with result as the value returned
 by spawn.
 (define-syntax pcall
@@ -519,28 +542,30 @@ thread that invokes the controller determines the thread root-thread that is
 waiting at the subcontinuation controller, packages the work to be done by
 that thread into a thunk controller-invocation-thunk, updates the variable
 controller-invoked? to inform it that the controller was invoked, and wakes
-up the controller by signaling the condition done. It then waits on condition
+up the controller by signaling the condition done. it then waits on condition
 continue while handing the mutex to root-thread.
 When root-thread starts executing, the controller-invoked? flag indicates
 THREADS YIELD CONTINUATIONS 15
-that the controller was called explicitly, so it invokes controller-invocation-
-thunk to capture the subcontinuation. This causes the tree rooted at the
-controller to be pruned and the threads executing at its leaves to be blocked.
-Then, after leaving the critical section, it creates a subcontinuation k and
-applies the controller argument g to this subcontinuation.
-Later, if the subcontinuation k is invoked by a thread executing at a
+that the controller was called explicitly, so the controller invokes controller-invocation-
+thunk to capture the subcontinuation. This causes the process tree rooted at the controller to be pruned and the threads executing at the process tree leaves to be blocked.
+Then, after leaving the critical section, This creates a subcontinuation k and
+applies the controller argument g to a subcontinuation.
+Later, if a subcontinuation is invoked by a thread executing at a
 leaf, the thread obtains the process-tree mutex, grafts the process subtree
 captured as part of the subcontinuation onto the current leaf, and unblocks
 all the threads at the leaves of the grafted subtree (Figure 3c). It then stores
 the value v to be returned to the point where the controller was invoked in
 val, signals the condition continue to the thread that invoked the controller,
-and waits for the condition done. The signaled thread returns the value
+and waits for the condition done. the thread returns the value
 now stored in val to the point where the controller was invoked.
 To avoid deadlock, a thread is never blocked while holding the mutex. To
 maintain this invariant, the blocking thread always holds the mutex until
 after the (synchronous) blocking operation has succeeded.
 4.3. Multi-shot subcontinuations
-The implementation described in the preceding section can be extended
+Figure
+
+Implementation of spawn.
+ described in the preceding section can be extended
 to support multi-shot subcontinuations. This requires a thread cloning
 operator thread-dup that allows the threads captured in a subcontinuation
 to be cloned. The clones are used to restart the subcomputation captured in
@@ -550,22 +575,24 @@ Three complications arise in this method for extending the implementation
 to support multi-shot subcontinuation. First, a single controller or
 pcall node can now exist at multiple locations in the process tree. There-
 fore, the data structures used to communicate between parent threads and
-their children must be moved from the procedures where they are currently
-encapsulated into the process-tree data structure, and they must be cloned
-whenever the corresponding node in the tree is cloned. At the start of each
-operation, the correct node in the tree must be located and the corresponding
+the data structures children must be moved from the procedures where the data structures are currently
+encapsulated into the process-tree data structure, and the data structures must be cloned
+whenever the corresponding node in the process tree is cloned. At the start of each
+operation, the correct node in the process tree must be located and the corresponding
 data structures used.
 Second, condition variables are also used on a per-node basis. Each
-condition variable has at most one thread waiting on it, and that thread is
+condition variable has at most one thread waiting on Each
+condition variable, and that thread is
 awakened by signaling that condition. Simple replication of the condition
 variables, however, in order to retain the property that only one thread
 can wait on a condition variable at a time, does not work. This is because
-some of the threads are waiting on the condition variables when they are
+some of the threads are waiting on the condition variables when some of the threads are
 cloned, which therefore cannot be replaced. One solution to this problem
 is to accept the fact that multiple threads might be waiting on a condition
 variable and wake all of them up using a condition-broadcast primitive.
 Each thread, when awakened, would have to check to see if it is the intended
-target of the wakeup message. If it is not, it must again wait on the
+target of the wakeup message. If it is the intended
+target of the wakeup message is not, it is not must again wait on the
 condition variable.
 Third, compiler support is required to allow the stack encapsulated
 within a thread to be copied. In particular, mutable variables and data
@@ -573,21 +600,26 @@ structures must be stored outside of the stack or accessed from the original
 stack via an extra level of indirection. In contrast, no compiler support is
 required to implement one-shot subcontinuations.
 5. Conclusions
-It has long been known that continuations can be used to implement
+Conclusions
+ has long been known that continuations can be used to implement
 threads. In this article, we have shown that threads can be used to implement
 continuations. In so doing, we have provided the first detailed implementation
 model for subcontinuations in a concurrent setting, furthered
 the understanding of the relationship between continuations and threads,
 and provided a straightforward operational semantics for the interaction
 between threads and subcontinuations.
-We have implemented a complete thread package that supports the primitives
+we have implemented a complete thread package that supports the primitives
 described in Section 4.1 as part of Chez Scheme on an SGI Power
 Challenge multiprocessor and used this package to implement one-shot sub-
 continuations (available via http://www.cs.princeton.edu/~skumar/subK).
-We have not yet extended the implementation with support for multi-shot
+we have not yet extended Figure
+
+Implementation of spawn.
+ with support for multi-shot
 subcontinuations.
 Although the subcontinuation mechanism as described uses higher-order
-procedures, they are not essential to the mechanism or to its implementa-
+procedures, higher-order
+ are not essential to the mechanism or to the mechanism implementa-
 tion. Because the implementation of one-shot subcontinuations does not
 rely upon higher-order procedures or on any special compilation techniques,
 the model is applicable to any language or language implementation that

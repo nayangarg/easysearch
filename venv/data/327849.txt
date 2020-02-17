@@ -1,7 +1,7 @@
 --T
 The Design and Use of Algorithms for Permuting Large Entries to the Diagonal of Sparse Matrices.
 --A
-We consider techniques for permuting a sparse matrix so that the diagonal of the permuted matrix has entries of large absolute value.  We discuss various criteria for this and consider their implementation as computer codes. We then indicate several cases where such a permutation can be useful.  These include the solution of sparse equations by a direct method and by an iterative technique.  We also consider its use in generating a preconditioner for an iterative method. We see that the effect of these reorderings can be dramatic although the best a priori strategy is by no means clear.
+We consider techniques for permuting a sparse matrix so that the diagonal of the permuted matrix has entries of large absolute value.  We discuss various criteria for this and consider various criteria implementation as computer codes. We then indicate several cases where such a permutation can be useful.  These include the solution of sparse equations by a direct method and by an iterative technique.  We also consider its use in generating a preconditioner for an iterative method. We see that the effect of these reorderings can be dramatic although the best a priori strategy is by no means clear.
 --B
 Introduction
 We study algorithms for the permutation of a square unsymmetric sparse matrix A
@@ -23,11 +23,11 @@ column and techniques like block iterative methods can benefit if the entries in
 diagonal blocks are large. Additionally, for preconditioning techniques, for example
 for diagonal preconditioning or incomplete LU preconditioning, it is intuitively
 evident that large diagonals should be beneficial.
-We consider more precisely what we mean by such permutations in Section 2, and
-we discuss algorithms for performing them and implementation issues in Section 3.
+We consider more precisely what We mean by such permutations in Section 2, and
+We discuss algorithms for performing algorithms and implementation issues in Section 3.
 We consider the effect of these permutations when using direct methods of solution
-in Section 4 and their use with iterative methods in Sections 5 and 6, discussing
-the effect on preconditioning in the latter section. Finally, we consider some of the
+in Section 4 and these permutations use with iterative methods in Sections 5 and 6, discussing
+the effect on preconditioning in the latter section. Finally, We consider some of the
 implications of this current work in Section 7.
 Throughout, the symbols jxj should be interpreted in context. If x is a scalar,
 the modulus is intended; if x is a set, then the cardinality, or number of entries in
@@ -40,7 +40,8 @@ its row and column. We will be concerned with permuting the rows and columns
 of the matrix so the resulting diagonal of the permuted matrix has this property.
 That is, for the permuted matrix, we would like the ratio
 to be large for all j, 1 - j - n. Of course, it is not even possible to ensure that
-this ratio is greater than 1.0 for all j as the simple example
+the ratio
+ is greater than 1.0 for all j, 1 - j - n. as the simple example
 shows. It
 is thus necessary to first scale the matrix before computing the permutation. An
 appropriate scaling would be to scale the columns so that the largest entry in each
@@ -54,12 +55,12 @@ which we now define more rigorously.
 We let T denote a set of (at most n) ordered index pairs (i; j), 1 -
 which each row index i and each column index j appears at most once. T is called
 a transversal for matrix A, if a ij 6= 0 for each (i; . T is called a maximum
-transversal if it has largest possible cardinality. jT j is equal to n if the matrix is
+transversal if T has largest possible cardinality. jT j is equal to n if the matrix is
 nonsingular. If indeed jT defines an n \Theta n permutation matrix P with
 so that P T A is the matrix with the transversal entries on the diagonal.
 In sparse system solution, a major use of transversal algorithms is in the
 first stage of permuting matrices to block triangular form. The matrix is first
-permuted by an unsymmetric permutation to make its diagonal zero-free after which
+permuted by an unsymmetric permutation to make The matrix diagonal zero-free after which
 a symmetric permutation is used to obtain the block triangular form. An important
 feature of this approach is that the block triangular form does not depend on which
 transversal is found in the first stage (Duff 1977). A maximum transversal is also
@@ -78,7 +79,7 @@ T , is called the bottleneck value of A. Equivalently, if jT smallest value
 on the diagonal of P T A is maximized, over all permutations P, and equals the
 bottleneck value of A.
 An outline of an algorithm that computes a bottleneck transversal T 0 for a matrix
-A is given below. We assume that we already have an algorithm for obtaining a
+A is given below. We assume that We already have an algorithm for obtaining a
 maximum transversal and denote by MT routine that returns a maximum
 transversal for a matrix A, starting with the initial "guess" transversal T . We let
 A ffl denote the matrix that is obtained by setting to zero in A all entries ja ij j for
@@ -111,56 +112,69 @@ the computed bottleneck transversal and ffl the corresponding bottleneck value. 
 value for ffl is unique. The bottleneck transversal T 0 is not usually unique.
 Algorithm BT makes use of algorithms for finding a maximum transversal. The
 currently known algorithm with best asymptotic bound for finding a maximum
-transversal is by Hopcroft and Karp (1973). It has a worst-case complexity of
+transversal is by Hopcroft and Karp (1973). The
+currently known algorithm with best asymptotic bound for finding a maximum
+transversal has a worst-case complexity of
 O(
 n- ), where - is the number of entries in the matrix. An efficient implementation
-of this algorithm can be found in Duff and Wiberg (1988). The depth-first search
+of The
+currently known algorithm with best asymptotic bound for finding a maximum
+transversal can be found in Duff and Wiberg (1988). The depth-first search
 algorithm implemented by Duff (1981) in the Harwell Subroutine Library code MC21
-has a theoretically worst-case behaviour of O(n- ), but in practice it behaves more
-like O(n Because this latter algorithm is far simpler, we concentrate on this
+has a theoretically worst-case behaviour of O(n- ), but in practice The depth-first search
+algorithm implemented by Duff (1981) in the Harwell Subroutine Library code MC21
+ behaves more
+like O(n Because The depth-first search
+algorithm implemented by Duff (1981) in the Harwell Subroutine Library code MC21
+ is far simpler, we concentrate on this
 in the following although we note that it is relatively straightforward to modify and
 use the algorithm of Hopcroft and Karp (1973) in a similar way.
-A limitation of algorithm BT is that it only maximizes the smallest value on
+A limitation of Algorithm BT is that Algorithm BT only maximizes the smallest value on
 the diagonal of the permuted matrix. Although this means that the other diagonal
-values are no smaller, they may not be maximal. Consider, for example, the 3 \Theta 3
+values are no smaller, the other diagonal
+values may not be maximal. Consider, for example, the 3 \Theta 3
 ffiC A (2.2)
 with ffi close to zero. Algorithm BT applied to this matrix returns
 either the transversal f(1; 1); (2; 2); (3; 3)g or f(2; 1); (1; 2); (3; 3)g. Clearly, the latter
 transversal is preferable. The modifications that we propose help to do this by
 choosing large entries when possible for the early transversal entries.
 It is beneficial to first permute the matrix to block triangular form and then to
-use BT on only the blocks on the diagonal. This can be done since all entries in any
+use Algorithm BT on only the blocks on the diagonal. This can be done since all entries in any
 maximum transversal must lie in these blocks. Furthermore, not only does this mean
-that BT operates on smaller matrices, but we also usually obtain a transversal of
+that Algorithm BT operates on smaller matrices, but we also usually obtain a transversal of
 better quality inasmuch as not only is the minimum diagonal entry maximized but
 this is true for each block on the diagonal. Thus for matrix (2.2), the combination
-of an ordering to block triangular form followed by BT would yield the preferred
+of an ordering to block triangular form followed by Algorithm BT would yield the preferred
 transversal f(2; 1); (1; 2); (3; 3)g.
 There are other possibilities for improving the diagonal values of the permuted
 matrix which are not the smallest. One is to apply a row scaling subsequent to an
 initial column scaling of the matrix A. This will increase the numerical values of all
 the nonzero entries in those rows for which the maximum absolute numerical value
 is less than one. A row scaling applied to the matrix (2.2) changes the coefficient
-a 33 from ffi to 1:0, and now algorithm BT will compute f(2; 1); (1; 2); (3; 3)g as the
+a 33 from ffi to 1:0, and now Algorithm BT will compute f(2; 1); (1; 2); (3; 3)g as the
 bottleneck transversal of the matrix (2.2). Unfortunately, such a row scaling does
 not always help, as can be seen by the matrixB @
 1:0 ffiC A
 with the maximum transversals
-all legitimate bottleneck transversals. Indeed the BT algorithm is very dependent on
+all legitimate bottleneck transversals. Indeed The depth-first search
+algorithm implemented by Duff (1981) in the Harwell Subroutine Library code MC21
+ is very dependent on
 scaling. For example, the matrix
 has bottleneck transversal f(2; 1); (1; 2)g
 whereas, if it is row scaled to
 , the bottleneck transversal is f(1; 1); (2; 2)g.
 Another possibility for improving the size of the diagonal values is to apply
-algorithm BT repeatedly. Without loss of generality, suppose that, after application
+Algorithm BT Algorithm BT repeatedly. Without loss of generality, suppose that, after application
 of BT, entry a nn has the smallest diagonal value. Algorithm BT can then be
 applied to the (n \Gamma 1) \Theta (n \Gamma 1) leading principal submatrix of A, and this could be
 repeated until (after k steps) the (n \Gamma leading principal submatrix of
 A only contains ones (on assumption original matrix was row and column scaled).
-Obviously, this can be quite expensive, since algorithm BT is applied O(n) times
-although we have a good starting point for the BT algorithm at each stage. We call
+Obviously, this can be quite expensive, since Algorithm BT Algorithm BT is applied O(n) times
+although we have a good starting point for The depth-first search
+algorithm implemented by Duff (1981) in the Harwell Subroutine Library code MC21
+ at each stage. We call
 this algorithm the successive bottleneck transversal algorithm. Because of this and
-the fact that we have found that it usually gives little improvement over BT, we do
+the fact that we have found that it usually gives little improvement over Algorithm BT, we do
 not consider it further in this paper.
 2.3 Maximum Product transversals
 An algorithm yielding the same transversal independent of scaling is to maximize
@@ -171,8 +185,10 @@ a ioe i j (2.3)
 is maximized. This is the strategy used for pivoting in full Gaussian elimination by
 Olschowka and Neumaier (1996) and corresponds to obtaining a weighted bipartite
 matching. Olschowka and Neumaier (1996) combine a permutation and scaling
-strategy. The permutation, as in (2.3), maximizes the product of the diagonal entries
-of the permuted matrix. (Clearly the product is zero if and only if the matrix is
+strategy. a permutation and scaling
+strategy, as in (2.3), maximizes the product of the diagonal entries
+of the permuted matrix. (Clearly the product of the diagonal entries
+of the permuted matrix is zero if and only if the matrix is
 structurally singular.) The scaling transforms the matrix into a so-called I-matrix,
 whose diagonal entries are all one and whose off-diagonal entries are all less than or
 equal to one.
@@ -188,24 +204,24 @@ algorithm is used to solve this problem. Applying this algorithm to C produces
 vectors u, v and a transversal T , all of length n, such that
 If we define
 then, the scaled matrix is an I-matrix. We do not do this scaling
-in our experiments but, unlike Olschowka and Neumaier, we use a sparse bipartite
+in We experiments but, unlike Olschowka and Neumaier, We use a sparse bipartite
 weighted matching whereas they only considered full matrices.
-The worst case complexity of this algorithm is O(n- log n). This is similar to BT,
-although in practice it sometimes requires more work than BT. We have programmed
-this algorithm, without the final scaling. We have called it algorithm MPD (for
-Maximum Product on Diagonal) and compare it with BT and MC21 in the later
+The worst case complexity of this algorithm is O(n- log n). This is similar to Algorithm BT,
+although in practice it sometimes requires more work than Algorithm BT. We have programmed
+this algorithm, without the final scaling. We have called this algorithm algorithm MPD (for
+Maximum Product on Diagonal) and compare this algorithm with Algorithm BT and MC21 in the later
 sections of this paper. Note that on the matrixB @
 the MPD algorithm obtains the transversal f(1; 1); (2; 2); (3; 3)g whereas,
 for example for Gaussian elimination down the diagonal, the transversal
 would be better. Additionally, the fact that scaling does
 influence the choice of bottleneck transversal could be deemed a useful characteristic.
 3 Implementation of the BT algorithm
-We now consider implementation details of algorithm BT from the previous section.
+We now consider implementation details of Algorithm BT from the previous section.
 We will also illustrate its performance on some matrices from the Harwell-Boeing
 Collection (Duff, Grimes and Lewis 1989) and the collection of Davis (1997). A code
 implementing the BT algorithm will be included in a future release of the Harwell
 Subroutine Library (HSL 1996).
-When we are updating the transversal at stage (?) of algorithm BT, we can
+When We are updating the transversal at stage (?) of Algorithm BT, we can
 easily accelerate the algorithm described in Section 2 by computing the value of the
 minimum entry of the transversal, viz.
 min
@@ -225,12 +241,12 @@ exists that only a few nonzero values are discarded and the algorithm again will
 proceed slowly. To avoid this, ffl should be chosen as the median of the nonzero
 values between fflmin and fflmax.
 We now consider how a transversal algorithm like MC21 can be modified to
-implement algorithm BT efficiently. Before doing this, it is useful to describe briefly
+implement Algorithm BT Algorithm BT efficiently. Before doing this, it is useful to describe briefly
 how MC21 works. Each column of the matrix is searched in turn (called an original
 column) and either an entry in a row with no transversal entry presently in the row
 is found and this is made a transversal entry (a cheap assignment) or there is no
 such entry and so the search moves to a previous column whose transversal entry is
-in one of the rows with an entry in the original column. This new column is then
+in one of the rows with an entry in the original column. Each column of the matrix is then
 checked for a cheap assignment. If one exists, then this cheap assignment and the
 entry in the original column in the row of the old transversal entry, replace that as
 transversal entries thereby extending the length of the transversal by 1. If there is
@@ -242,10 +258,10 @@ extended by 1 by replacing all transversal entries in the augmenting path with t
 even members of this path.
 Transversal selection algorithms like MC21 do not take into account the numerical
 values of the nonzero entries. However, it is clear that the algorithm BT will
-converge faster if T is chosen so that the value of its minimum entry is large. We
+converge faster if T is chosen so that the value of T minimum entry is large. We
 do this by noting that, when constructing an augmenting path, there are often
 several candidates for a cheap assignment or for extending the path. MC21 makes an
-arbitrary choice and we have modified it so the candidate with largest absolute value
+arbitrary choice and we have modified MC21 so the candidate with largest absolute value
 is chosen. Note that this is a local strategy and does not guarantee that augmenting
 paths with the highest values will be found.
 The second modification aims at exploiting information obtained from previous
@@ -273,18 +289,19 @@ element of the second part of PTR, ffl will divide the interval (ffl min
 of close-to-equal size. Both alternatives have the advantage of being able to choose
 the new ffl quickly, but require O(-) extra memory and (repeated) permutations of
 the pointers.
-We prefer an approach that is less expensive in memory and that matches our
+We prefer an approach that is less expensive in memory and that matches We
 transversal algorithm better. Since MC21 always searches the columns in order, we
 facilitate the construction of the matrices A ffl , by first sorting the entries in each
 column of the matrix A by decreasing absolute value. For a sparse matrix with
 a well bounded number of entries in each column, this can be done in O(n) time.
-The matrix A ffl is then implicitly defined by an array LEN of length n with LEN[j]
+a sparse matrix with
+a well bounded number of entries in each column A ffl is then implicitly defined by an array LEN of length n with LEN[j]
 pointing to the first entry in column j of matrix A whose value is smaller than ffl,
 which is the position immediately after the end of column j of matrix A ffl . Since the
 entries of a column of A ffl are contiguous, the repeated modification of ffl by algorithm
 BT, which redefines matrix A ffl , corresponds to simply changing the pointers in the
 array LEN.
-The actual choice of ffl at phase (?) in algorithm BT is done by selecting in
+The actual choice of ffl at phase (?) in algorithm Algorithm BT is done by selecting in
 matrix A ffl min an entry that has an absolute value X such that ffl min
 The columns of A ffl min
 are searched until such an entry is found and ffl is set to its
@@ -294,9 +311,10 @@ array LEN.
 As mentioned before, by choosing ffl carefully, we can speed up algorithm BT
 considerably. Therefore, instead of choosing an arbitrary entry from the matrix to
 define ffl, we can choose a number (k say) of entries lying between ffl min and ffl max at
-random, sort them by absolute value, and then set ffl to the absolute value of the
-median element. 2 In our implementation we used
-The set of matrices that we used for our experiments are unsymmetric matrices
+random, sort a number (k say) of entries lying between ffl min and ffl max at
+random by absolute value, and then set ffl to the absolute value of the
+median element. 2 In our implementation our used
+The set of matrices that our used for our experiments are unsymmetric matrices
 taken from the sparse matrix collections Duff, Grimes and Lewis (1992) and Davis
 (1997).
 
@@ -306,8 +324,8 @@ Table
 bottleneck transversal for each matrix. All matrices are initially row and column
 scaled. By this we mean that the matrix is scaled so that the maximum entry in
 each row and in each column is one.
-The machine used for the experiments in this and the following sections is a 166
-MHz SUN ULTRA-2. The algorithms are implemented in Fortran 77.
+this used for the experiments in this and the following sections is a 166
+MHz SUN ULTRA-2. Transversal selection algorithms like MC21 are implemented in Fortran 77.
 Matrix n - Time in secs
 GOODWIN 7320 324784 0.27 2.26 1.82
 ONETONE2 36057 227628 2.63 0.53 0.42
@@ -323,8 +341,7 @@ Gallivan, Marsolf and Wijshoff (1996), uses a reordering to identify a priori la
 medium grain parallelism and to reorder the matrix to bordered block triangular
 form. Their ordering uses an initial nonsymmetric ordering that enhances the
 numerical properties of the factorization, and subsequent symmetric orderings
-are used to obtain a bordered block triangular matrix (Wijshoff 1989). The
-nonsymmetric ordering is effectively a modified version of MC21. During each search
+are used to obtain a bordered block triangular matrix (Wijshoff 1989). Their ordering is effectively a modified version of MC21. During each search
 phase, for both a cheap assignment and an augmenting path, an entry a ij is selected
 only if its absolute value is within a bound ff, 0 - ff - 1, of the largest entry in
 column j. Instead of taking the first entry that is found by the search that satisfies
@@ -334,8 +351,8 @@ The algorithm starts off with an initial bound ff = 0:1. If a maximum transversa
 cannot be found, then the values in each column are examined to determine the
 maximum value of the bound that would have allowed an assignment to take place
 for that column. The new bound is then set to the minimum of the bound estimates
-from all the failed columns and the algorithm is restarted. If a bound less than a
-preset limit is tried and a transversal is still not found, then the bound is ignored
+from all the failed columns and The algorithm is restarted. If a bound less than a
+preset limit is tried and a transversal is still not found, then The new bound is ignored
 and the code finds any transversal. In our terminology (assuming an initial column
 scaling of the matrix) this means that a maximum transversal of size n is computed
 for the matrix A ff .
@@ -343,17 +360,18 @@ In the multifrontal approach of Duff and Reid (1983), later developed by Amestoy
 and Duff (1989), an analysis is performed on the structure of A A T to obtain
 an ordering that reduces fill-in under the assumption that all diagonal entries will
 be numerically suitable for pivoting. The numerical factorization is guided by an
-assembly tree. At each node of the tree, some steps of Gaussian elimination are
+assembly tree. At each node of an
+assembly tree, some steps of Gaussian elimination are
 performed on a dense submatrix whose Schur complement is then passed to the
 parent node in the tree where it is assembled (or summed) with Schur complements
 from the other children and original entries of the matrix. If, however, numerical
-considerations prevent us from choosing a pivot then the algorithm can proceed, but
+considerations prevent us from choosing a pivot then The algorithm can proceed, but
 now the Schur complement that is passed to the parent is larger and usually more
-work and storage will be needed to effect the factorization.
+work and storage will be needed to effect The numerical factorization.
 The logic of first permuting the matrix so that there are large entries on the
 diagonal, before computing the ordering to reduce fill-in, is to try and reduce the
 number of pivots that are delayed in this way thereby reducing storage and work for
-the factorization. We show the effect of this in Table 4.1 where we can see that even
+The numerical factorization. We show the effect of this in Table 4.1 where we can see that even
 using MC21 can be very beneficial although the BT algorithm can show significant
 further gains and sometimes the use of MPD can cause further significant reduction
 in the number of delayed pivots. We should add that the numerical accuracy of
@@ -390,8 +408,8 @@ resulting reordered matrix. This is particularly apparent when we have a very sp
 system with many zeros on the diagonal. In that case, the reduction in number of off-diagonal
 entries in the reordered matrix has an influence on the symmetry. Notice
 that, in this respect, the more sophisticated transversal algorithms may actually
-cause problems since they could reorder a symmetrically structured matrix with a
-zero-free diagonal, whereas MC21 will leave it unchanged.
+cause problems since the more sophisticated transversal algorithms could reorder a symmetrically structured matrix with a
+zero-free diagonal, whereas MC21 will leave MC21 unchanged.
 Matrix Transversal algorithm used
 None MC21 BT MPD
 GOODWIN 3.64 14.63 6.00 3.56
@@ -412,14 +430,14 @@ entries in M large and those in N small should be beneficial.
 The most simple method of this type is the Jacobi method, corresponding to the
 splitting denotes the diagonal, L the strictly
 lower triangular part, and U the strictly upper triangular part of the matrix A.
-However, this is not a particularly current or powerful method so we conduct our
+However, this is not a particularly current or powerful method so we conduct we
 experiments using the block Cimmino implementation of Arioli, Duff, Noailles and
 Ruiz (1992), which is equivalent to using a block Jacobi algorithm on the normal
 equations. In this implementation, the subproblems corresponding to blocks of rows
 from the matrix are solved by a direct method similar to that considered in the
 previous section. For similar reasons, it can be beneficial to increase the magnitude
 of the diagonal entries through unsymmetric permutations.
-We show the effect of this in Table 5.1, where we see that the number of iterations
+We show the effect of this in Table 5.1, where We see that the number of iterations
 for the solution of the problem MAHINDAS 7682). The convergence
 tolerance was set to 10 \Gamma12 . The transversal selection algorithm was followed by a
 reverse Cuthill McKee algorithm to obtain a block tridiagonal form. The matrix
@@ -445,34 +463,37 @@ methods GMRES(20), BiCGSTAB, and QMR. We refer the reader to a standard
 text like that of Saad (1996) for a description and discussion of these methods. Since
 the diagonal of the permuted matrix is "more dominant" than the diagonal of the
 original matrix, we would hope that such permutations would enhance convergence.
-We show the results of some of our runs in Table 6.1. The maximum number
+we show the results of some of we runs in Table 6.1. The maximum number
 of iterations was set to 1000 and the convergence tolerance to 10 \Gamma9 . It is quite
 clear that the reorderings can have a significant effect on the convergence of the
-preconditioned iterative method. In some cases, the method will only converge after
-the permutation, in others it greatly improves the convergence. It would appear
+preconditioned iterative method. In some cases, the
+preconditioned iterative method will only converge after
+the permutation, in others the
+preconditioned iterative method greatly improves the convergence. the
+preconditioned iterative method would appear
 from the results in Table 6.1 and other experiments that we have performed, that
 the more sophisticated MPD transversal algorithm generally results in the greatest
 reduction in the number of iterations, although the best method will depend on the
 overall solution time including the transversal selection algorithm.
 7 Conclusions and future work
 We have described algorithms for obtaining transversals with large entries and have
-indicated how they can be implemented showing that resulting programmes can be
+indicated how algorithms can be implemented showing that resulting programmes can be
 written for efficient performance.
 While it is clear that reordering matrices so that the permuted matrix has a
 large diagonal can have a very significant effect on solving sparse systems by a wide
 range of techniques, it is somewhat less clear that there is a universal strategy that is
 best in all cases. We have thus started experimenting with combining the strategies
 mentioned in this paper and, particularly for the block Cimmino approach, with
-combining our unsymmetric ordering with a symmetric ordering. One example that
-we plan to study is a combination with the symmetric TPABLO ordering (Benzi,
+combining We unsymmetric ordering with a symmetric ordering. One example that
+We plan to study is a combination with the symmetric TPABLO ordering (Benzi,
 Choi and Szyld 1997).
-It is possible to extend our techniques to orderings that try to increase the size
+It is possible to extend We techniques to orderings that try to increase the size
 of not just the diagonal but also the immediate sub and super diagonals and then
 use the resulting tridiagonal part of the matrix as a preconditioner.
 One can also build other criteria into the weighting for obtaining a bipartite
 matching, for example, to incorporate a Markowitz count so that sparsity would
 also be preserved by the choice of the resulting diagonal as a pivot.
-Finally, we noticed in our experiments with MA41 that one effect of transversal
+Finally, we noticed in we experiments with MA41 that one effect of transversal
 selection was to increase the structural symmetry of unsymmetric matrices. We are
 thus exploring further the use of ordering techniques that more directly attempt to
 increase structural symmetry.
@@ -480,7 +501,8 @@ increase structural symmetry.
 Acknowledgments
 
 We are grateful to Patrick Amestoy of ENSEEIHT, Michele Benzi of CERFACS, and
-Daniel Ruiz of ENSEEIHT for their assistance with the experiments on the direct
+Daniel Ruiz of ENSEEIHT for Patrick Amestoy of ENSEEIHT, Michele Benzi of CERFACS, and
+Daniel Ruiz of ENSEEIHT assistance with the experiments on the direct
 methods, the preconditioned iterative methods, and the block iterative methods
 respectively. We would also like to thank Alex Pothen for some early discussions on
 bottleneck transversals, and John Reid and Jennifer Scott for comments on a draft

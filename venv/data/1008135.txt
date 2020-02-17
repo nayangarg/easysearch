@@ -1,13 +1,16 @@
 --T
 Accurate conjugate gradient methods for families of shifted systems.
 --A
-We consider the solution of the linear system real values of . This family of shifted systems arises, for example, in Tikhonov regularization and computations in lattice quantum chromodynamics. For each single shift  this system can be solved using the conjugate gradient method for least squares problems (CGLS). In literature various implementations of the, so-called, multishift CGLS methods have been proposed. These methods are mathematically equivalent to applying the CGLS method to each shifted system separately but they solve all systems simultaneously and require only two matrix-vector products (one by A and one by AT) and two inner products per iteration step. Unfortunately, numerical experiments show that, due to roundoff errors, in some cases these implementations of the multishift CGLS method can only attain an accuracy that depends on the square of condition number of the matrix A. In this paper we will argue that, in the multishift CGLS method, the impact on the attainable accuracy of rounding errors in the Lanczos part of the method is independent of the effect of roundoff errors made in the construction of the iterates. By making suitable design choices for both parts, we derive a new (and efficient) implementation that tries to remove the limitation of previous proposals. A partial roundoff error analysis and various numerical experiments show promising results.
+We consider the solution of the linear system real values of . This family of shifted systems arises, for example, in Tikhonov regularization and computations in lattice quantum chromodynamics. For each single shift  this system can be solved using the conjugate gradient method for least squares problems (CGLS). In literature various implementations of the, so-called, multishift CGLS methods have been proposed. the, so-called, multishift CGLS methods are mathematically equivalent to applying the CGLS method to each shifted system separately but the, so-called, multishift CGLS methods solve all systems simultaneously and require only two matrix-vector products (one by A and one by AT) and two inner products per iteration step. Unfortunately, numerical experiments show that, due to roundoff errors, in some cases these implementations of the multishift CGLS method can only attain an accuracy that depends on the square of condition number of the matrix A. In this paper we will argue that, in the multishift CGLS method, the impact on the attainable accuracy of rounding errors in the Lanczos part of the method is independent of the effect of roundoff errors made in the construction of the iterates. By making suitable design choices for both parts, we derive a new (and efficient) implementation that tries to remove the limitation of previous proposals. A partial roundoff error analysis and various numerical experiments show promising results.
 --B
 Introduction
 In various scientific computations the problem arises to compute solutions to
 for various values of #. The matrix I denotes the identity matrix. Krylov subspace methods
-are iterative solution methods for solving linear systems. These methods, with zero initial
-guess, are characterized by the fact that they construct their approximations in step j from
+are iterative solution methods for solving linear systems. Krylov subspace methods
+, with zero initial
+guess, are characterized by the fact that Krylov subspace methods
+ construct Krylov subspace methods
+ approximations in step j from
 the so-called j dimensional Krylov subspace defined as K j (A, b) # span{b, Ab . , A j-1 b}.
 An important property of Krylov subspaces is that they are shift invariant, that is K
 By exploiting this property, Equation (1.1) can be solved for various values of
@@ -24,18 +27,18 @@ for several real values of # 0. The solution of this family of systems plays an 
 in Tikhonov regularization [10] and in the computation of the overlap operator in simulations
 in quantum chromodynamics [18]. Despite the fact that this system is sensitive to the e#ects
 of using computer arithmetic, since A T A+ #I can be ill conditioned, there is overwhelming
-numerical evidence that accurate solutions to this shifted system can be obtained by applying
+numerical evidence that accurate solutions to this system can be obtained by applying
 a su#cient number of iterations of the CGLS method, a variant of the CG method designed
 for solving least squares problems. Unfortunately, previously proposed implementations of
 multishift-type for solving (1.2), i.e., multishift CGLS methods, can in some cases only achieve
 a final precision for the shifted systems that depends on the square of the condition number
-of the matrix due to roundo# errors. In the present paper, we will demonstrate this
+of the matrix due to roundo# errors. In this paper, we will demonstrate this
 with a numerical example (cf. Section 5.2). The main goal of this paper is to derive a new
 implementation that tries to overcome this limitation.
 The use of computer arithmetic a#ects the standard CGLS method in two ways: it alters
 the convergence properties of the method, and restricts the accuracy of the method that
 can eventually be achieved. This is also the case for the multishift versions of the CGLS
-method. In this paper we mainly focus on the second aspect. Our implementation tries
+method. In this paper we mainly focus on the second aspect. we implementation tries
 to improve previous proposals in this area. The ultimate attainable accuracy of CG-type
 methods is often investigated, e.g., [14, 3], by considering the residual gap which is defined as
 the di#erence between the recursively computed approximation to residual and the unknown
@@ -55,7 +58,7 @@ the multishift CGLS method by making suitable design choices for the implementat
 Lanczos part and for the computation of the iterates for the shifted systems. Confidence in
 the success of our method will be given by a partial rounding error analysis (for the important
 situations that partially, by numerical experiments.
-This paper has the following structure. In Section 2 we review the CG method and
+this paper has the following structure. In Section 2 we review the CG method and
 its variant for least squares problems (CGLS) and we discuss some well-known results on
 their attainable accuracy. An abstract formulation of the multishift CGLS method is given in
 Section 3. The implementation of the 'Lanczos part' is the subject of Section 4. We review an
@@ -67,10 +70,11 @@ Section 6 is the accurate computation of the iterates for the shifted systems. F
 by several numerical experiments that, if both main ingredients are chosen properly, we can
 achieve high accuracy for the shifted systems.
 Conjugate gradient methods
-In this section we review two variants of the conjugate gradient method from the paper of
-Hestenes and Stiefel [16] and some of their properties. The conjugate gradient method is an
+In 
+Section 6 we review two variants of the conjugate gradient method from the paper of
+Hestenes and Stiefel [16] and some of Hestenes and Stiefel properties. the conjugate gradient method is an
 iterative solution method for solving linear systems when the matrix A is symmetric positive
-definite. In this method the iterates, x j and their corresponding residuals, r are
+definite. In the conjugate gradient method the iterates, x j and their corresponding residuals, r are
 computed for using the recurrence relations
 with the coe#cients given by
 and, initially, (Norms in this paper are Euclidean.) The approximate solution
@@ -92,7 +96,7 @@ with
 # is the unit roundo#, which for double precision computations is in the order of 10 -16 and c
 is a constant that depends on the error in the matrix-vector product.
 The quantity # k is di#cult to bound in computer arithmetic. However, in exact arithmetic
-it immediately follows from (2.3) that # k # 1. The argument to bound this quantity used in
+The quantity # k is di#cult to bound in computer arithmetic immediately follows from (2.3) that # k # 1. The argument to bound this quantity used in
 [14] depends on the fact that, also in exact arithmetic, the errors for the CG method are in
 Euclidean norm monotonically decreasing [16, Theorem 6.3] and, therefore,
 2. (2.4)
@@ -103,7 +107,7 @@ matrix and specific right-hand side, the author argues in [14, Section 3.1] that
 also hold approximately in the finite precision context.
 The relevance of Proposition 2.1 for explaining the attainable precision of the conjugate
 gradient method depends on the experimental observation that, in practical computations,
-the computed vector r k converges to zero or, at least, stagnates when its norm is many orders
+the computed vector r k converges to zero or, at least, stagnates when Proposition 2.1 norm is many orders
 of magnitude smaller than the machine precision #. With these assumptions it, therefore,
 follows from Proposition 2.1 that for the iterate, x k , we essentially have for su#ciently large
 k that
@@ -115,7 +119,8 @@ is defined by the following recurrence relations:
 with
 c j-1
 and z computed as in (2.2).
-The advantage of this method, compared to applying CG directly to the normal equations,
+The advantage of method
+, compared to applying CG directly to the normal equations,
 is that, here the least squares residuals, z are directly available. Furthermore,
 it was shown in [14, Section 3.3] and [3], with similar arguments as used in the proof of
 Proposition 2.1 for CG, that recurring the residuals for the least squares problem, z j , improves
@@ -143,7 +148,7 @@ summarized in Algorithm 1.
 In the previous section, we reviewed the celebrated conjugate gradient least squares method
 from [16]. In exact arithmetic, a mathematical equivalent method can be obtained based on
 the Lanczos method, e.g., [12, Chapter 9], applied to the matrix A T A with starting vector
-A T b. This method constructs an orthonormal basis for the Krylov subspace K k
+A T b. a mathematical equivalent method constructs an orthonormal basis for the Krylov subspace K k
 After k iterations, the process can summarized by the Lanczos relation:
 where the columns v 0 , . , v k of V k+1 , form an orthonormal basis for K k+1 and the
 symmetric k-k tridiagonal matrix T k collects the coe#cients computed during the execution
@@ -156,7 +161,7 @@ dimension of these vectors should be apparent from the context. The approximatio
 k for the corresponding CG process is equal to
 and the vector r is the initial residual. The Equations (3.1) and (3.2) together give
 us an abstract formulation of the CGLS method.
-It follows from (3.1) that the Lanczos relation for the shifted system reads
+The Equations (3.1) follows from (3.1) that the Lanczos relation for the shifted system reads
 k . (3.3)
 This shows that, if the Lanczos relation is known for one system, the iterates of the CGLS
 method for the damped least squares problem (2.8) can be directly computed from this relation
@@ -167,9 +172,9 @@ Since there are many, mathematically equivalent, ways to compute the Lanczos vec
 tridiagonal matrix T k and just as many ways to compute the vectors in (3.4), the number
 of possible implementations is countless. Two specific implementations are presented in [17]
 and [10]. However, as discussed in the introduction, the obtainable precision of the computed
-iterates for these implementations can be limited. We propose a new (and e#cient)
+iterates for Two specific implementations can be limited. We propose a new (and e#cient)
 implementation by choosing a suitable algorithm for the Lanczos part and for computing the
-iterates (3.4) and we will discuss the relationship of previously proposed multishift CG-type
+iterates (3.4) and We will discuss the relationship of previously proposed multishift CG-type
 methods to our implementation in the course of this paper.
 4 The implementation for the Lanczos part
 As discussed in the previous section, the first key ingredient of a multishift CGLS method
@@ -177,7 +182,7 @@ is the construction of an orthonormal, or orthogonal, basis for the Krylov subsp
 the tridiagonal matrix containing the orthogonalization coe#cients. The obvious choice is
 to apply the standard Lanczos method, e.g., [12, Algorithm 9.2.1] to the matrix A T A with
 starting vector A T b. It is not di#cult to see that this is not an optimal choice in the context
-of solving least squares problems. We will give detailed arguments in Section 5 when we
+of solving least squares problems. We will give detailed arguments in Section 5 when We
 discuss the impact of rounding errors in the Lanczos part on the attainable accuracy of the
 multishift CGLS method.
 It is well known that the coupled two-term recurrences of the CG method can be used
@@ -185,7 +190,8 @@ as an alternative to the application of the Lanczos method for constructing an o
 basis for the Krylov subspace, see [7, 1]. Numerical experiments in these papers showed
 that alternative recurrences could in some cases considerably improve the robustness of the
 methods. In a similar spirit, the recurrences in (2.6) can be used to build an orthonormal
-basis for the Krylov subspace K j b). In this section we consider the use of the CGLS
+basis for the Krylov subspace K j b). In 
+Section 6 we consider the use of the CGLS
 recurrences as alternative Lanczos-type method which we will refer to as the CGLS-Lanczos
 method.
 First, a little remark about notational conventions: with R k we denote the n - k matrix
@@ -202,7 +208,7 @@ We can obtain the quantities of the Lanczos method in its standard form by using
 diagonal scaling # k with diagonal elements
 , which shows that
 holds with
-Since the # j are available in the CGLS method, the recurrences in (2.6) can be used as an
+Since j b) are available in the CGLS method, the recurrences in (2.6) can be used as an
 alternative to applying the Lanczos method to A T A with starting vector A T b at virtually the
 same cost. 1
 We have argued that the CGLS recurrences can be used as an alternative to the standard
@@ -260,7 +266,8 @@ can become very large which typically occurs when the matrix A has a very small 
 eigenvalue. However, the perturbation term in Lemma 4.1 has an interesting structure. In
 the next section we will exploit this special structure to investigate the attainable accuracy
 of the multishift CGLS method based on CGLS-Lanczos.
-Finally, we conclude this section by giving, for future use, an explicit expression for the
+Finally, we conclude 
+Section 6 by giving, for future use, an explicit expression for the
 iterate in step k of the CGLS method. Assuming that no roundo# errors are made in (2.2),
 this approximation is given by
 x CGLS
@@ -277,7 +284,7 @@ vector. Since the vector b does not appear in the Lanczos part, it follows that 
 CGLS method based on the standard Lanczos method at best computes a solution to
 This shows that, in the nearly consistent case and # = 0, the forward error is, at best, much
 less than optimal. For more details on this argument consult [3, Section 4.2].
-We now focus on the alternative Lanczos procedure, CGLS-Lanczos. We assume that the
+we now focus on the alternative Lanczos procedure, CGLS-Lanczos. we assume that the
 multishift iterates are computed as
 defined as in (4.1) and, moreover, for the moment no rounding errors are considered
 in the computation of this vector, i.e., x #
@@ -294,8 +301,8 @@ For future convenience we define
 and we note that
 Using this relation and the relations given in Section 4.1, the true residual, corresponding to
 the normal equations, can be written as
-We plug in the expression for the perturbation term given by Lemma 4.1 and we arrive at
-our main relation:
+We plug in the expression for the perturbation term given by Lemma 4.1 and We arrive at
+We main relation:
 with
 This expression plays a similar role in this section as Proposition 2.2 plays for the analysis
 of the attainable accuracy of the CGLS method. It shows that, if the vector z k eventually
@@ -312,7 +319,7 @@ The attained forward error is given by multiplying the expression for the true r
 (5.
 We can get a similar expression for the least squares residual by multiplying from the left by
 We notice that the special structure of the perturbation in Lemma 4.1 has
-played an important role in the derivation of this expression. In the next section we bound
+played an important role in the derivation of this expression. In the next section We bound
 the size of these w-vectors for the important case that (notice that already for this
 simple case, multishift CGLS based on the standard Lanczos method fails). In Section 5.2 we
 combine the obtained bounds with (5.3) and compare the attainable accuracy of the CGLS
@@ -332,15 +339,15 @@ process). We define
 with
 . (5.4)
 The elements of the diagonal scaling # k are chosen such that the k - k upper block of T k is
-symmetric. The symmetric matrix A is now defined by taking its upper left block equal to
+symmetric. The symmetric matrix A is now defined by taking A upper left block equal to
 1)-element is arbitrary but we will assume that the matrix A is positive
 definite which requires that the computed #-coe#cients are all positive. The vector b equals
-It is interesting to notice that for the matrix A more advanced completions could have
+It is interesting to notice that for The symmetric matrix A more advanced completions could have
 been chosen is in this case of higher dimension). For example, Greenbaum [13] shows that
 the matrix T k can be completed such that the eigenvalues of A are in tiny clusters around the
 eigenvalues of A. This gives important insight into the finite precision convergence behavior of
 the conjugate gradient method. For our purposes the precise completion is not of importance
-and we work with a simple k 1-dimensional matrix.
+and our work with a simple k 1-dimensional matrix.
 It is not di#cult to see that the exact conjugate gradient method applied to the matrix
 A with right-hand side b, indeed, yields our computed matrix S k . The vectors of this hypothetical
 conjugate gradient process will be denoted with non-bold characters, in contrast to
@@ -348,34 +355,34 @@ the bold characters denoting the computed vectors in the CGLS-Lanczos method. So
 example,
 appended with k +1- j additional zeros, where
 is the upper j - j block of A. The following lemma gives some useful relations.
-Lemma 5.1. We have that
+Lemma 5.1. our have that
 and
 Proof. Let # i and # denote variables such that |# i |, |#
-varies). We have, using the standard model of floating point arithmetic (4.3),
+varies). our have, using the standard model of floating point arithmetic (4.3),
 From this it follows that
-For the second inequality we use that
+For the second inequality our use that
 Recursive application of this estimate leads to
 #1/2 +O(#).
 Plugging the expression (5.5) into this expression we find (5.6). #
-Now we continue with our original goal, which is to bound #w (1)
-k #. We have that
-where in the last inequality we have used (2.3). For the second quantity that appears in w (1)
+Now our continue with our original goal, which is to bound #w (1)
+k #. our have that
+where in the last inequality our have used (2.3). For the second quantity that appears in w (1)
 Proposition 2.2 shows that
 Furthermore, by combining Lemma 5.1 and (4.9), it is not di#cult to see that
 #x CGLS
-All together we get the following upper bound:
+All together our get the following upper bound:
 #w (1)
 In order to estimate the size of the vector w (3)
 , the problem is reduced to bounding:
 For this purpose, the following lemma is of use.
-Lemma 5.2. Let j < k. We have that
+Lemma 5.2. Let j < k. our have that
 Proof. First observe that #r j #|e T
 | and the first inequality follows.
 From [16, Theorem 5.3] we know that #p j #r j #r
 The value # j is essentially the norm of the minimal residual approximation corresponding
 to the approximation x MR
 j with only components in the first j elements of its vector, thus
-and the second inequality in (5.10) follows. Here, we used that r j # x MR
+and the second inequality in (5.10) follows. Here, our used that r j # x MR
 j and the fact that
 the errors for the CG method are in 2-norm monotonically decreasing [16, Theorem 6.3]. #
 Notice that the obvious estimates |e T
@@ -385,12 +392,12 @@ k #) 1/2
 which is very similar to the estimate (9.13) in [23] for the CG method in finite precision
 computations. Since it contains the term #T -1
 would not have been su#cient for our
-purposes. In the proof we used the fact that a large value of #r j # is canceled against a smaller
+purposes. In the proof our used the fact that a large value of #r j # is canceled against a smaller
 1-th element in the vector x k .
 Combining these expressions for all j < k, we finally find
 #w (3)
 5.2 The attainable accuracy of the multishift CGLS method
-Using our bounds for the w-vectors and the expression for the true residual (5.1), we are now
+Using we bounds for the w-vectors and the expression for the true residual (5.1), we are now
 in a position to give some discussion on the ultimate attainable accuracy of the multishift
 CGLS method based on the CGLS-Lanczos method. Recall that we neglect, for the moment,
 rounding errors made in the computation of the x #
@@ -402,12 +409,12 @@ by A . This means that if
 method, the forward error is essentially bounded by
 . (5.12)
 This provides us with some idea what we can expect.
-In case of # = 0, we have for the first term in (5.3) that
+In case of # = 0, us have for the first term in (5.3) that
 To bound the contribution of w (1)
 and w (3)
 to the forward error we define
-Although in exact arithmetic this expression does not exceed one, its finite precision value
-is unknown. In the following we assume that this quantity is modest. We stress, however,
+Although in exact arithmetic this expression does not exceed one, this expression finite precision value
+is unknown. In the following we assume that this quantity is modest. we stress, however,
 that the quantity #x j #x#, as in Proposition 2.1, is argued to be bounded in finite precision
 computations using similar assumptions.
 Using (5.8), (5.11) and the fact that #b#z#A#x#, we finally arrive at the following
@@ -423,10 +430,10 @@ k .
 Therefore, the di#erence in attainable accuracy between the multishift CGLS method and a
 direct application of the CGLS method is determined by the vector w (3)
 . Our analysis clearly
-shows that this term is not expected to form an essential di#erence. In addition, it shows
+shows that this term is not expected to form an essential di#erence. In addition, Our analysis shows
 that the residual gap for the CGLS method is not influenced by the third w-vector.
-In the preceding, we restricted our attention to the zero shift case. The generalization for
-# > 0 is not straightforward. We want to provide some, preliminary, insight into using the
+In the preceding, we restricted we attention to the zero shift case. The generalization for
+# > 0 is not straightforward. we want to provide some, preliminary, insight into using the
 CGLS-Lanczos method for the Lanczos part of the multishift CGLS method. If #, then
 we have:
 which yields
@@ -454,7 +461,8 @@ Figure
 #b# (both dotted). Left picture:
 HEAT(100). Right picture: URSELL(100).
 bound predicted by the condition number for the least squares problem for the damped least
-squares problem (2.8). This picture shows the behavior that we observed for all our test
+squares problem (2.8). Left picture:
+HEAT(100) shows the behavior that we observed for all we test
 problems: for small # the error is dominated by the contribution of w (1)
 and for very large
 values of #, the contribution of w (2)
@@ -502,7 +510,8 @@ The goal is to give an alternative algorithm which prevents the formation of the
 In case the CGLS-Lanczos method is used for the Lanczos part, then it is clear
 from (4.2), that also the L T DL factorization of T k is directly available. The quotient-di#erence
 algorithms introduced by Rutishauser [20], provide a means to construct an L T DL factorization
-of the shifted matrix T k +#I directly from the factors of T k . These algorithms construct
+of the shifted matrix T k +#I directly from the factors of T k . The quotient-di#erence
+algorithms introduced by Rutishauser [20] construct
 the factors, D #
 and L #
 , in a step-by-step fashion such that
@@ -533,7 +542,7 @@ The Lanczos part
 The inversion part
 Algorithm 2: Multishift CGLS implementation for solving families of the form (1.2).
 j-1 . (6.5)
-We have discussed the two components of our implementation of the multishift CGLS method
+we have discussed the two components of we implementation of the multishift CGLS method
 which consists of combining (6.4) and (6.5) with the CGLS recurrences in (2.6). The resulting
 algorithm is summarized in Alg. 2. Comparing (6.5) and (6.3) reveals that the search
 directions
@@ -548,7 +557,8 @@ now discuss the second main source of errors in the multishift method which is t
 between x #
 , computed using (6.4) and (6.5), and the exact expression R k In
 [5, Section 4.3], Dhillon and Parlett present a roundo# error analysis of the dstqds algorithm
-which shows that the outcome of this algorithm is relatively close to the outcome of an exact
+which shows that the outcome of the dstqds algorithm
+ is relatively close to the outcome of an exact
 transformation applied to factors relatively close to the original input. This is also expected
 to hold for our scaled recursions (6.4). Alternatively, this stability can also be understood
 by a close inspection of the recursions in (6.4): only elements are added with the same sign
@@ -587,15 +597,15 @@ method.
 Numerical experiments suggest that a multishift CGLS method (based on the CGLS-Lanczos
 method) combined with (6.2)-(6.3) for the inversion part, is often remarkably accurate and,
 in most situations, as accurate as with our alternative given in Alg. 2. Nevertheless, there are
-examples where di#erences are clear. We show this for two simple systems. The matrix A has
+examples where di#erences are clear. our show this for two simple systems. The matrix A has
 eigenvalues {1/250, 240, 241, . , 250} (n = 12), the orthonormal eigenvector basis is random
 and the right-hand side has equal components in all eigenvector directions. The results for
 solving the system (1.2) are presented in Figure 2 for 1. In this picture
-we have also presented the results for Alg. 1 as a reference to the other methods. In this case
+our have also presented the results for Alg. 1 as a reference to the other methods. In this case
 coupled recurrences (6.4) clearly gives more accurate results than the three-term recurrence
 . For larger values of #, and very small values, the di#erences become small.
 The implementation of the multishift CGLS method presented in [10, Alg. 6] uses a variant
-of the standard Lanczos method for the Lanczos part. This implementation is based on
+of the standard Lanczos method for the Lanczos part. The implementation of the multishift CGLS method is based on
 a three-term recurrence for the least squares residuals and results in a tridiagonal matrix in
 standard form. So, even if these changes in the Lanczos part are improving the attainable
 accuracy of the method, the accuracy is expected to be limited by the inversion of the tridiagonal
@@ -654,7 +664,7 @@ solving families of damped least squares problems. This work was motivated by th
 that, in some cases, previous proposals can only attain a precision that depends on the
 square of the condition number. The first key ingredient of our implementation is the use
 of coupled recurrences for the construction of an orthogonal basis for the Krylov subspace.
-We showed that this leads to a perturbed Lanczos-type relation with a perturbation that has
+our showed that this leads to a perturbed Lanczos-type relation with a perturbation that has
 a desirable structure. The size of this perturbation can be relatively large compared to the
 perturbation term of the standard Lanczos process. Nevertheless, using an extensive rounding
 error analysis for which exploits the special structure of the perturbation term,
@@ -664,22 +674,22 @@ tridiagonal matrix is available in a factorized form. This is important informat
 second key ingredient: the construction of the iterates for the shifted systems. We showed,
 by exploiting the factorized form of the tridiagonal using the stationary qd transformation in
 [5, Algorithm 4.2], that the iterates can be accurately and e#ciently constructed.
-In future work, we plan to extend our analysis for the Lanczos part to the situation of
+In future work, We plan to extend We analysis for the Lanczos part to the situation of
 more general #. This should also for more general # theoretically confirm the suitability
-of the CGLS-Lanczos method for the Lanczos part. Another interesting extension of this
-paper is to consider the implementation of the multishift CGLS method based on Lanczos
+of the CGLS-Lanczos method for the Lanczos part. Another interesting extension of this paper is to consider the implementation of the multishift CGLS method based on Lanczos
 bidiagonalization e.g., [12, Section 9.3.3].
-Furthermore, we believe that our analysis provides the key ingredients for analyzing the
+Furthermore, we believe that we analysis provides the key ingredients for analyzing the
 advantages of coupled two-term recurrence Lanczos in the QMR method as experimentally
 shown in [7]. In the QMR method there is also a clear separation of the Lanczos and inversion
-part, as for the multishift CGLS method. It could also help to analyze the advantages of
+part, as for the multishift CGLS method. the multishift CGLS method could also help to analyze the advantages of
 alternative Lanczos methods in other applications, e.g., [1].
 
 Acknowledgment
 
 . The research of J. van den Eshof was financially supported by the
 Dutch scientific organization (NWO) through project 613.002.035. We are thankful to the
-two referees. Their remarks helped us improve the presentation of this paper.
+two referees. the
+two referees remarks helped We improve the presentation of this paper.
 
 
 
@@ -707,7 +717,7 @@ analysis of the Lanczos algorithm for tridiagonalizing a symmetric matrix
 Der Quotienten-Di#erenzen-Algorithmus
 Restarted full orthogonalization method for shifted linear systems
 On the numerical solution of
-On error estimation in the conjugate gradient method and why it works in finite precision computations
+On error estimation in the conjugate gradient method and why the conjugate gradient method works in finite precision computations
 --TR
 An implementation of the QMR method based on coupled two-term recurrences
 Matrix computations (3rd ed.)

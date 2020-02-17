@@ -1,7 +1,7 @@
 --T
 Instruction selection using binate covering for code size optimization.
 --A
-We address the problem of instruction selection in code generation for embedded DSP microprocessors. Such processors have highly irregular data-paths, and conventional code generation methods typically result in inefficient code. Instruction selection can be formulated as directed acyclic graph (DAG) covering. Conventional methods for instruction selection use heuristics that break up the DAG into a forest of trees and then cover them independently. This breakup can result in suboptimal solutions for the original DAG. Alternatively, the DAG covering problem can be formulated as a binate covering problem, and solved exactly or heuristically using branch-and-bound methods. We show that optimal instruction selection on a DAG in the case of accumulator-based architectures requires a partial scheduling of nodes in the DAG, and we augment the binate covering formulation to minimize spills and reloads. We show how the irregular data transfer costs of typical DSP data-paths can be modeled in the binate covering formulation.
+We address the problem of instruction selection in code generation for embedded DSP microprocessors. Such processors have highly irregular data-paths, and conventional code generation methods typically result in inefficient code. Instruction selection can be formulated as directed acyclic graph (DAG) covering. Conventional methods for instruction selection use heuristics that break up the DAG into a forest of trees and then cover trees independently. This breakup can result in suboptimal solutions for the DAG. Alternatively, the the DAG covering problem can be formulated as a binate covering problem, and solved exactly or heuristically using branch-and-bound methods. We show that optimal instruction selection on a DAG in the case of accumulator-based architectures requires a partial scheduling of nodes in the DAG, and We augment the binate covering formulation to minimize spills and reloads. We show how the irregular data transfer costs of typical DSP data-paths can be modeled in the binate covering formulation.
 --B
 INTRODUCTION
 An increasingly common micro-architecture for embedded systems
@@ -14,7 +14,8 @@ application-specific instruction processor (ASIP), a general-purpose
 microprocessor such as the SPARC, a microcontroller such as Intel
 8051, or a digital signal processor such as TMS320C25. This paper
 focuses on the DSP application domain, where embedded systems
-are increasingly used. Many of these systems use processors from
+are increasingly used. Many of embedded systems
+ use processors from
 the TMS320C2x, DSP5600x or ADSP families, all fixed-point DSP
 microprocessors with irregular data-paths.
 Code size matters a great deal in embedded systems since program
@@ -28,28 +29,27 @@ well.
 We believe that generating the best code for embedded processors
 will require not only traditional optimization techniques, but also
 new techniques that take advantage of special architectural features
-that decrease code size. This paper presents one of our efforts at
+that decrease code size. This paper presents one of We efforts at
 developing such techniques. We address the problem of instruction
 selection in code generation for embedded DSP microprocessors.
-We emphasize decreasing code size, although our techniques can
+We emphasize decreasing code size, although We techniques can
 also increase execution speed.
 Instruction selection can be formulated as directed acyclic graph
 (DAG) covering. Conventional methods for instruction selection use
 heuristics that break up the DAG into a forest of trees, which are
 then covered optimally but independently [1] [3]. Independent covering
-of the trees may result in a suboptimal solution for the original
-DAG. Trees, as a heuristic formulation, inherently preclude the use
+of the trees may result in a suboptimal solution for the DAG. Trees, as a heuristic formulation, inherently preclude the use
 of complex instructions in cases where internal nodes are shared.
-Alternatively, the DAG covering problem can be formulated as a binate
+Alternatively, the the DAG covering problem can be formulated as a binate
 covering problem [11], and solved exactly or heuristically using
 branch-and-bound methods. We present the basic binate covering
 formulation of instruction selection in Section III. Unlike the heuristic
 formulation of trees, a good heuristic procedure for solving the
 covering problem is likely to elude the difficulties faced by trees.
 The formulation of Section III ignores data transfer costs between
-nodes in the DAG. This formulation is used to obtain a preliminary
+nodes in the DAG. The formulation of Section III is used to obtain a preliminary
 instruction selection where pattern DAGs that cover more than two
-nodes in the given binary DAG are selected. The binary DAG is
+nodes in the given binary the DAG are selected. the given binary DAG is
 transformed into a general DAG and a second step of instruction
 selection taking into account data transfer costs is performed.
 In Section IV, we generalize the work of Aho et al. [2] and
@@ -60,14 +60,14 @@ account irregular data transfer costs under a more general machine
 model.
 II. MOTIVATING EXAMPLE
 Fig. 1 shows a simplified model of the data-path of Texas In-
-struments' popular TMS320C25 architecture. The TMS320C25 is
+struments' popular TMS320C25 architecture. TMS320C25 is
 an accumulator-based machine. In addition to the usual ALU, there
 is a separate multiplier which takes input from the T register and
 memory and places the result in the P register. Note that there are no
 general-purpose registers other than the accumulator.
 An important feature in this architecture and other DSP architectures
-is that certain instructions assume their operands are in specific
-locations (registers or memory) and deposit their results in specific
+is that certain instructions assume certain instructions operands are in specific
+locations (registers or memory) and deposit their operands results in specific
 registers. For example, the MPY instruction assumes that the multiplier
 and multiplicand come from memory and the T register and
 writes the result into the P register. Another example is the ADDT
@@ -79,10 +79,11 @@ ADDT) and multiply-accumulate (e.g., DSP56000 MAC). Utilizing
 these instructions is essential to generating compact and efficient
 code. The conventional heuristic of breaking up a DAG into trees
 prohibits the use of these complex instructions in the case where
-internal nodes are shared. In addition, this heuristic may introduce
+internal nodes are shared. In addition, The conventional heuristic of breaking up a DAG into trees
+ may introduce
 unnecessary stores of intermediate values.
 Consider the subject DAG and pattern DAGs shown in Fig. 2.
-Conventional tree-covering will first break up the DAG at node n 3 ,
+Conventional tree-covering will first break up DAG at node n 3 ,
 thereby prohibiting the use of pattern (d). Fig. 3(a) shows the result-
 A-Bus
 AR
@@ -104,7 +105,7 @@ Fig. 2. (a) Subject DAG and (b)-(d) Pattern DAGs
 ing tree-cover, and Fig. 3(b) shows the optimal DAG cover. Even
 if the pattern (d) is not used, tree-covering may still result in inefficient
 code. For instance, using tree-covering we might first evaluate
-node n 3 , store it into memory, and then evaluate nodes n 1 and n 2 .
+node n 3 , store node into memory, and then evaluate nodes n 1 and n 2 .
 However, with the data-path in Fig. 1, it is possible to let the intermediate
 result remain in the P register and evaluate n 1 and n 2 using
 the instruction APAC, which adds the contents of the P register to the
@@ -113,17 +114,18 @@ In the sequel we will show how to solve both the problem of
 selecting complex instructions and the problem of data transfers using
 a binate-covering formulation of instruction selection. The first
 problem is easily taken into account in the basic DAG covering formulation
-(Section III). The second problem is tackled in Section IV
+(Section III). The first
+problem is tackled in Section IV
 and Section V.
 III. BASIC FORMULATION
-The formulation in this section assumes that the target machine
+the basic DAG covering formulation
+(Section III) assumes that the target machine
 is such that data transfers between registers or between registers and
 memory have zero cost.
 A subject DAG corresponds to a basic block in the given program
 [3]. This subject DAG is covered using pattern DAGs that correspond
 to individual machine instructions. Each pattern DAG has an
-associated cost. The DAG covering problem is to cover the subject
-DAG with a set of pattern DAGs with minimum cost.
+associated cost. The DAG covering problem is to cover 3]. This subject DAG with a set of pattern DAGs with minimum cost.
 
 (a) (b)
 
@@ -179,16 +181,18 @@ corresponding to each match.
 Selecting match m i implies that we have to satisfy each of the
 . We can write the expression
 which translates to the clauses
-Each of these clauses corresponds to a distinct row in the covering
-matrix. Each match m i generates T additional rows if it
+Each of the clauses
+ corresponds to a distinct row in the covering
+matrix. Each match m i generates T additional rows if T
 has T non-leaf inputs.
 In the covering matrix of Fig. 4, the second set of rows correspond
-to these additional clauses. For match m 2 , we have
+to the clauses
+. For match m 2 , we have
 to implement the non-leaf node n 3 as the output of another
 match. This can be done using match m 1 alone. Therefore,
 we generate the clause (m corresponding to the third
 complemented in the clause we put a 0 in
-the entry corresponding to column m 2 . We put a 1 in the entry
+the entry corresponding to column m 2 . we put a 1 in the entry
 corresponding to column m 1 and 2's in other columns. The
 fourth row is generated for match m 3 , which if selected would
 require the selection of m 1 .
@@ -197,7 +201,7 @@ pattern DAG. In Step 3, we select a set of columns from the covering
 matrix such that the cumulative cost of the columns is minimum,
 and such that every row either has a 1 in the entry corresponding
 to a selected column, or has a 0 in the entry corresponding to an
-unselected column. In our example, we will end up selecting m 4 and
+unselected column. In our example, our will end up selecting m 4 and
 5 with a minimum total cost of 1 this corresponds to the
 covering of Fig. 3(b). The reader can verify that selecting m 4 and
 all the disjunctive clauses of Fig. 4.
@@ -206,18 +210,16 @@ to discover the optimal solution of Fig. 3(b) since the subject DAG
 would be broken up into three trees, which when covered independently
 would result in the covering of Fig. 3(a) that has a cost of
 This problem is called the binate covering problem because the
-variables m i are present in their true and complemented forms. This
-problem is NP-complete, and has received considerable attention.
+variables m i are present in their true and complemented forms. This problem is NP-complete, and has received considerable attention.
 Exact solutions are given in [5], [9]. These techniques have been
 improved recently in [6] without compromising optimality. Heuristic
 methods have been given in [8], [9].
 We first solve the binate covering problem with zero data transfer
 costs and determine matches that use pattern DAGs with more than
-one operator, e.g., the pattern DAG of Fig. 2(b). The original DAG
-is modified to reflect the use of complex operators. Thus, the new
-DAG can have nodes with more than two inputs. A second step of
+one operator, e.g., the pattern DAG of Fig. 2(b). DAGis modified to reflect the use of complex operators. Thus, DAG DAG can have nodes with more than two inputs. A second step of
 binate covering is performed on the new DAG that accurately models
-spill and data transfer costs. This step is described in the next two
+spill and data transfer costs. A second step of
+binate covering is described in the next two
 sections.
 IV.
 We focus on one-register machines, or accumulator-based archi-
@@ -227,12 +229,12 @@ structions. The binate covering formulation must take this cost into
 account in order to find an optimal instruction selection.
 The major complication in modeling memory spills is that the
 spilling of values depends on the chosen instruction schedule [10].
-However, since we are performing instruction selection we do not
+However, since We are performing instruction selection We do not
 as yet know the schedule. We therefore have to both choose the
 instructions and determine a (partial) schedule of these instructions
 in binate covering. The partial schedule is determined by adding
 Boolean variables corresponding to adjacency constraints over pairs
-of nodes in the DAG that are connected by an edge.
+of nodes in DAG that are connected by an edge.
 A. Previous Work
 In [2] Aho et al. presented optimal code generation algorithms
 (on DAGs) for two different models of one-register machines:
@@ -247,16 +249,21 @@ Commutative machines, in which available operations are:
 3. a m (load)
 4. m a (store)
 We find the models above inadequate for the following reasons.
-First, in our application the given DAG can have ternary or higher-
+First, in We application DAG DAG can have ternary or higher-
 arity operators depending on the complex patterns chosen in the first
 step of binate covering. Second, the non-commutative model of [2]
 does not take commutative operators into account. For example,
 in evaluating the expression (b c), the value of b must be first
-loaded to the accumulator and then added with c. However, if b and
-c are themselves expressions, the accumulator may already contain
+loaded to the
+accumulator and then added with c. However, if b and
+c are b and
+c expressions, the
+accumulator may already contain
 c immediately before the evaluation of (b addition is
-commutative, adding the accumulator with b is perfectly acceptable.
-The commutative model, on the other hand, assumes that the first
+commutative, adding the
+accumulator with b is perfectly acceptable.
+the non-commutative model of [2]
+, on the other hand, assumes that the first
 operand of any operation can be in memory. In general, machines
 will have both commutative and non-commutative operators.
 We believe the best way to handle commutativity is to treat each
@@ -274,7 +281,7 @@ B. Definitions
 Let H be a directed graph. A u-cycle in H is a set of edges that
 would form a cycle if the edges were considered undirected. If H
 contains a u-cycle, it is said to be u-cyclic; otherwise, it is u-acyclic.
-We use the terms d-acyclic, d-cyclic, and d-cycle for the case where
+we use the terms d-acyclic, d-cyclic, and d-cycle for the case where
 the directions of the edges are considered.
 A worm is a directed path in a DAG D such the nodes in the path
 will appear consecutively in the schedule [2]. A worm-partition of D
@@ -311,19 +318,21 @@ A
 F
 AC
 HI
-Schedule: AC F BDEG HI
+Schedule: F
+AC
+ BDEG HI
 denotes worms
 Fig. 5. Worms and schedules. (a) ADAG with its worm-partition and
 a derived schedule (b) Another worm-partition and schedule (c)
 An illegal worm-partition
 Fig. 5 illustrates the concepts of worms and worm-partitions, and
 their relation to scheduling. The graph with shaded nodes is that of
-G. In (a) and (b), two different worm-partitions of the DAG, along
+G. In (a) and (b), two different worm-partitions of DAG, along
 with their corresponding schedules, are shown. The schedules are
 derived by scheduling G and then expanding the nodes of G back
 into nodes of D. Note that in each schedule the nodes in a worm
 are placed consecutively. In (c), an illegal worm-partition is shown.
-This partition gives rise to a cycle in G, and no schedule exists that
+an illegal worm-partition gives rise to a cycle in G, and no schedule exists that
 places the nodes in each worm consecutively.
 C. Fundamental Adjacency Clauses
 Because the selection of an edge indicates that its head-node and
@@ -340,17 +349,16 @@ Clearly the fundamental clauses are necessary for a worm-partition to
 be legal in any DAG. (Simply stated, in any schedule each node may
 have at most one immediate predecessor and at most one immediate
 successor.) Let e i be a Boolean variable which takes the value of 1
-if edge i is selected, and 0 otherwise. The fundamental clauses are,
+if edge i is selected, and 0 otherwise. the fundamental clauses are,
 for each node n,
 for every pair of fanout edges i and j of n, and for every pair of fanin
 edges i and j of n. We have to satisfy each clause generated above.
 The cost of all the ek 's is equal to zero. However, not choosing an ek
 will imply spilling and reloading and associated costs, as described
 in Section IV-E.
-The following theorem shows that these fundamental clauses are
+The following theorem shows that the fundamental clauses are
 sufficient for u-acyclic DAGs.
-Theorem 1: If the subject DAG D is u-acyclic, then the fundamental
-clauses are sufficient. In other words, any worm-partition
+Theorem 1: If the subject DAG D is u-acyclic, then the fundamental clauses are sufficient. In other words, any worm-partition
 that satisfies the fundamental clauses is legal.
 Proof: If D is u-acyclic, then selecting an edge and merging
 the head- and tail-nodes of the edge results in a DAG that remains
@@ -421,7 +429,7 @@ in G (which was not addressed in [2]). Consider the portion of a
 DAG shown in Fig. 8. If we choose the path A!B!C!D (which
 are all of the forward edges in this u-cycle), then a d-cycle results in
 G (in accordance with Theorem 2). However, this d-cycle is a self-
-loop. It can be easily verified that the worm thus chosen is actually
+loop. this d-cycle can be easily verified that the worm thus chosen is actually
 (a) (b)
 A
 ABCD
@@ -456,20 +464,20 @@ In light of Theorem 4, Clauses (2) are not required for self-loops.
 Instead, a clause consisting of a single variable requiring the edge
 (u; v) not to be selected is prescribed-clearly, choosing the edge
 would lead to a non-trivial d-cycle in G. If, on the other
-hand, the reconvergent path is itself a single edge (e.g., when an
+hand, the reconvergent path is the reconvergent path a single edge (e.g., when an
 operator takes both operands from the same node), then neither the
 cycle- nor the reconvergence-clauses is necessary-the fundamental
 clauses described in Section IV-C ensure that at most one of these
 edges is selected.
 E. Clauses for Reloads and Spills
-Depending on where an operation takes its operands from and
+Depending on where an operation takes an operation operands from and
 which edges are selected, spills and reloads may be required between
 computations. We now describe precisely how to write clauses to
 activate spills and reloads.
 Fig. 9(a) shows a fragment of a DAG. Consider the edge (C;B),
 whose corresponding Boolean variable is e 2 . There are four cases to
 consider for this edge:
-1. Match m 1 is used and e its left-
+1. Match m 1 is used and e Match m 1 left-
 operand from the accumulator, and B is immediately after C,
 acc mem
 acc
@@ -483,9 +491,9 @@ needed by B later. Also, a reload is necessary immediately
 before B is scheduled, because m 1 takes its left-operand from
 the accumulator.
 3. Match m 2 is used and e immediately
-follows C, a spill is still required because m 2 takes its left-
+follows C, a spill is still required because m 2 takes a spill left-
 operand from the memory. No reload is necessary.
-4. Match m 2 is used and e As in the previous case, only a
+4. Match m 2 is used and e As in this case, only a
 spill is required.
 Let spill(C) denote the match that transfers the value of C from the
 accumulator to the memory immediately after C is computed, and
@@ -496,8 +504,11 @@ Similar clauses are prescribed for edge e 1 , as well as every other
 node and all possible matches on it.
 Given the DAG with the complex patterns selected, the fundamental
 clauses, u-cycle clauses and the clauses for reloads and spills
-are added to the clauses for the node matches. The clauses for the
-node matches are very simple for a one-register machine, since the
+are added to the fundamental
+clauses, u-cycle clauses and the clauses for reloads and spills
+ for the node matches. the fundamental
+clauses, u-cycle clauses and the clauses for reloads and spills
+ are very simple for a one-register machine, since the
 only choices for a node are where the inputs come from, as shown in
 Fig. 9.
 V.
@@ -506,16 +517,17 @@ We will now assume that the target architecture can be modeled
 conveniently with the [1; 1] model [4]. In the [1; 1] model each
 resource class is assumed to have either one element or an infinite
 number of elements. For resource classes that have more than one
-element, we will perform a separate pass of storage allocation at or
+element, We will perform a separate pass of storage allocation at or
 after scheduling, as in [12].
 As shown in Section II, the typical fixed point DSP has irregular
 data-paths, and certain registers have specialized uses. Consequently,
 at completion of an operation its results may not be available for use
 by another operation that takes operands from other registers. For
-example, the MPY operator requires one of its operands to come from
+example, the MPY operator requires one of the MPY operator operands to come from
 the treg register and the other from the memory. Thus a data transfer
 is necessary to move the operands to the desired register(s). Tree-
-covering methodology models the cost of this transfer is modeled
+covering methodology models the cost of a data transfer
+ is modeled
 by associating a cost with a unit production, a production with a
 non-terminal in each of the left- and right-sides. In this section,
 we show how to incorporate data transfers into the binate covering
@@ -527,7 +539,7 @@ B. Example
 Consider a fragment of an expression DAG in Fig. 10. The
 operation covered by match m 3 requires that its left operand come
 from the memory and its right operand come from the treg register.
-However, the match m 1 produces its result in the preg register. A
+However, the match m 1 produces its result in the treg register. A
 match m 4 that transfers the contents of the preg register to memory
 is required. Hence, we write:
 to require the selection of match m 4 in the event that both m 1 and m 3
@@ -536,7 +548,7 @@ on node 1.
 C. Constructing the Clauses
 Based on the example in Section V-B, we now describe a general
 procedure for constructing the clauses necessary for data transfers.
-We add these clauses to all the clauses summarized at the end of
+we add the clauses to all the clauses summarized at the end of
 Section IV. For every pair of nodes n 1 and n 2 in the given DAG
 connected by an edge, for each possible match m i on n 1 and each
 possible match m j on n 2 , we will write
@@ -584,18 +596,20 @@ operators affects the fundamental adjacency clauses and the clauses
 for u-cycles.
 The fundamental clauses corresponding to the marked edges of
 the DAG of Fig. 11 are e 1 However, if match
-selected, then the fundamental clauses should become
+selected, then The fundamental clauses corresponding to the marked edges of
+the DAG of Fig should become
 . This can be incorporated by writing the following
 clauses:
 This has to be done for each match which corresponds to a complex
-pattern that covers any edge of the DAG, in the manner that m 1
+pattern that covers any edge of a transformed DAG, in the manner that m 1
 covers e 3 in our example above.
-If the DAG is u-acyclic the fundamental clauses are sufficient, and
+If a transformed DAG is u-acyclic The fundamental clauses corresponding to the marked edges of
+the DAG of Fig are sufficient, and
 the above modification will be enough. However, u-cycle clauses
-have be modified in the general case. This modification can result in
+have be modified in the general case. the above modification can result in
 a very large number of clauses, since choosing a complex pattern can
 change the u-cycles of a DAG. To understand this consider Fig. 12.
-If match m 2 is selected in Fig. 12(a), then in effect, the DAG is
+If match m 2 is selected in Fig. 12(a), then in effect, a transformed DAG is
 modified to the one shown in Fig. 12(b). There is a new u-cycle
 beginning from the node S! This means that we have to write clauses
 corresponding to this new u-cycle when match m 2 is selected, and
@@ -611,7 +625,7 @@ AND ONGOING WORK
 We have presented a formulation of the instruction selection problem
 as that of binate covering. This formulation captures data transfer
 and memory spill costs commonly associated with DSP processors.
-Our preliminary experiments indicate that exact binate covering
+We preliminary experiments indicate that exact binate covering
 can be applied to small-to-moderate sized basic blocks for the
 TMS320C25 processor. These optimal solutions are better than those
 produced by the tree covering heuristic in many cases. For large basic

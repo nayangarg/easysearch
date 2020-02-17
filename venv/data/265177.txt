@@ -1,20 +1,20 @@
 --T
 On Parallelization of Static Scheduling Algorithms.
 --A
-AbstractMost static algorithms that schedule parallel programs represented by macro dataflow graphs are sequential. This paper discusses the essential issues pertaining to parallelization of static scheduling and presents two efficient parallel scheduling algorithms. The proposed algorithms have been implemented on an Intel Paragon machine and their performances have been evaluated. These algorithms produce high-quality scheduling and are much faster than existing sequential and parallel algorithms.
+AbstractMost static algorithms that schedule parallel programs represented by macro dataflow graphs are sequential. This paper discusses the essential issues pertaining to parallelization of static scheduling and presents two efficient parallel scheduling algorithms. two efficient parallel scheduling algorithms have been implemented on an Intel Paragon machine and two efficient parallel scheduling algorithms performances have been evaluated. two efficient parallel scheduling algorithms produce high-quality scheduling and are much faster than existing sequential and parallel algorithms.
 --B
 Introduction
 Static scheduling utilizes the knowledge of problem characteristics to reach a global optimal, or
-near optimal, solution. Although many people have conducted their research in various manners,
+near optimal, solution. Although many people have conducted many people research in various manners,
 they all share a similar underlying idea: take a directed acyclic graph representing the parallel
-program as input and schedule it onto processors of a target machine to minimize the completion
-time. This is an NP-complete problem in its general form [7]. Therefore, many hueristic algorithms
+program as input and schedule the parallel
+program onto processors of a target machine to minimize the completion
+time. This is an NP-complete problem in NP general form [7]. Therefore, many hueristic algorithms
 that produce satisfactory performance have been proposed [11, 13, 5, 14, 12, 4, 9].
-Although these scheduling algorithms apply to parallel programs, the algorithms themselves
-are sequential, and are executed on a single processor system. A sequential algorithm is slow.
+Although two efficient parallel scheduling algorithms apply to parallel programs, two efficient parallel scheduling algorithmsare sequential, and are executed on a single processor system. A sequential algorithm is slow.
 Scalability of static scheduling is restricted since a large memory space is required to store the
 task graph. A natural solution to this problem is using multiprocessors to schedule tasks to
-multiprocessors. In fact, without parallelizing the scheduling algorithm and running it on a
+multiprocessors. In fact, without parallelizing the scheduling algorithm and running the scheduling algorithm on a
 parallel computer, a scalable scheduler is not feasible.
 A parallel scheduling algorithm should have the following features:
 ffl High quality - it is able to minimize the completion time of a parallel program.
@@ -22,7 +22,7 @@ ffl Low complexity - it is able to minimize the time for scheduling a parallel p
 These two requirements contradict each other in general. Usually, a high-quality scheduling algorithm
 is of a high complexity. The Modified Critical-Path (MCP) algorithm was introduced [13],
 which offered a good quality with relatively low complexity. In this paper, we propose two parallelized
-versions of MCP. We will describe the MCP algorithm in the next section. Then, we
+versions of MCP. we will describe the MCP algorithm in the next section. Then, we
 will discuss different approaches for parallel scheduling, as well as existing parallel algorithms in
 section 3. In sections 4 and 5, we will present the VPMCP and HPMCP algorithms, respectively.
 A comparison of the two algorithms will be presented in section 6.
@@ -30,11 +30,12 @@ A comparison of the two algorithms will be presented in section 6.
 A macro dataflow graph is a directed acyclic graph with a starting point and an end point [13]. A
 macro dataflow graph consists of a set of nodes fn 1 connected by a set of edges, each
 of which is denoted by e(n Each node represents a task, and the weight of a node is the
-execution time of the task. Each edge represents a message transferred from one node to another
+execution time of a task. Each edge represents a message transferred from one node to another
 node, and the weight of the edge is equal to the transmission time of the message. When two
-nodes are scheduled to the same processing element (PE), the weight of the edge connecting them
-becomes zero.
-To define this scheduling algorithm succinctly, we will first define the as-late-as-possible
+nodes are scheduled to the same processing element (PE), the weight of the edge connecting two
+nodesbecomes zero.
+To define The MCP Algorithm
+ succinctly, we will first define the as-late-as-possible
 time of a node. The ALAP time is defined as
 T critical is the length of the critical path, and level(n i ) is the length of the longest path from node
 n i to the end point, including node n i [6]. In fact, high-quality scheduling algorithms more or less
@@ -47,15 +48,18 @@ The MCP Algorithm
 ALAP time of the successor nodes, the successors of the successor nodes, and so on.
 3. Schedule the first node in the list to the PE that allows the earliest start time, considering
 idle time slots. Delete the node from the list and repeat Step 3 until the list is empty. 2
-In step 3, when determining the start time, idle time slots created by communication delays
+In Step 3, when determining the start time, idle time slots created by communication delays
 are also considered. A node can be inserted to the first feasible idle time slot. This method is
-called an insertion algorithm. The MCP algorithm has been compared to four other well-known
+called an insertion algorithm. The MCP Algorithm
+1 has been compared to four other well-known
 scheduling algorithms under the same assumption, that are, ISH [10], ETF [8], DLS [12], and
-LAST [3]. It has been shown that MCP performed the best [2].
-The complexity of the MCP algorithm is O(n 2 logn), where n is the number of nodes in a graph.
-In the second step, the ties can be broken randomly to have a simplified version of MCP. The
+LAST [3]. The MCP Algorithm
+1 has been shown that MCP performed the best [2].
+The complexity of The MCP Algorithm
+1 is O(n 2 logn), where n is the number of nodes in a graph.
+In the second step, Ties can be broken randomly to have a simplified version of MCP. The
 scheduling quality only varies a little, but the complexity is reduced to O(n 2 ). In the following,
-we will use this simplified version of MCP.
+we will use a simplified version of MCP.
 3 Approaches for Parallelization of Scheduling Algorithms
 The basic idea behind parallel scheduling algorithms is that instead of identifying one node to be
 scheduled each time, we identify a set of nodes that can be scheduled in parallel. In the following,
@@ -66,19 +70,27 @@ two major data domains in a scheduling algorithm, the source domain and the targ
 The source domain is the macro-dataflow graph and the target domain is the schedule for target
 processors. We consider two approaches for parallel scheduling. The first one is called the vertical
 scheme. Each PPE is assigned a set of graph nodes using space domain partitioning. Also, each
-maintains schedules for one or more TPEs. The second one is called the horizontal scheme.
+maintains schedules for one or more TPEs. The first one is called the vertical
+scheme.
 Each PPE is assigned a set of graph nodes using time domain partitioning. The resultant schedule
-is also partitioned so that each PPE maintains a portion of the schedule of every TPE. Each PPE
-schedules its own portion of the graph before all PPEs exchange information with each other to
+is also partitioned so that Each PPE maintains a portion of the schedule of every TPE. Each PPE
+schedules Each PPE
+ own portion of the graph before all PPEs exchange information with each other to
 determine the final schedule. The vertical and horizontal schemes are illustrated in Figure 1. The
 task graph is mapped to the time-space domain. Here, we assume that three PPEs schedule the
-graph to six TPEs. Thus, in the vertical scheme, each PPE holds schedules of two TPEs. In the
-horizontal scheme, each PPE holds a portion of schedules of six TPEs.
-The vertical scheme and the horizontal scheme are outlined in Figure 2 and 3, respectively.
-In the vertical scheme, PPEs exchange information and schedule graph nodes to TPEs. Frequent
+graph to six TPEs. Thus, in the vertical
+scheme, Each PPE
+ holds schedules of two TPEs. In the vertical
+scheme, Each PPE
+ holds a portion of schedules of six TPEs.
+The vertical scheme and the vertical
+scheme are outlined in Figure 2 and 3, respectively.
+In the vertical
+scheme, PPEs exchange information and schedule graph nodes to TPEs. Frequent
 information exchange results in large communication overhead. With horizontal partitioning, each
-PPE can schedule its graph partition without exchanging information with another PPE. In the
-last step, PPEs exchange information of their sub-schedules and concatenate them to obtain the
+PPE can schedule each
+PPE graph partition without exchanging information with another PPE. In the
+last step, PPEs exchange information of PPEs sub-schedules and concatenate PPEs to obtain the
 final schedule. The problem with this method is that the start times of all partitions other than
 the first one are unknown. The time needs to be estimated, and scheduling quality depends on
 the estimation.
@@ -108,7 +120,7 @@ Figure
 
 2: The Vertical Scheme for Parallel Scheduling.
 1. Partition the graph into P equal sized sets using time domain partitioning.
-2. Each PPE schedules its graph partition to generate a sub-schedule.
+2. each PPE schedules each PPE graph partition to generate a sub-schedule.
 3. PPEs exchange information to concatenate sub-schedules.
 
 Figure
@@ -116,103 +128,115 @@ Figure
 3: The Horizontal Scheme for Parallel Scheduling.
 scheme, which is the parallel BSA (PBSA) algorithm [1]. The BSA algorithm takes into account
 link contention and communication routing strategy. A PE list is constructed in a breadth-first
-order from the PE having the highest degree (pivot PE). This algorithm constructs a schedule
-incrementally by first injecting all the nodes to the pivot PE. Then, it tries to improve the start
-time of each node by migrating it to the adjacent PEs of the pivot PE only if the migration will
-improve the start time of the node. After a node is migrated to another PE, its successors are
-also moved with it. Then, the next PE in the PE list is selected to be the new pivot PE. This
+order from the PE having the highest degree (pivot PE). The BSA algorithm constructs a schedule
+incrementally by first injecting all the nodes to the pivot PE. Then, The BSA algorithm tries to improve the start
+time of each node by migrating each node to the adjacent PEs of the pivot PE only if the migration will
+improve the start time of the node. After a node is migrated to another PE, a node successors are
+also moved with a node. Then, the next the pivot PE in the PE list is selected to be the pivot PE. This
 process is repeated until all the PEs in the PE list have been considered. The complexity of the
 BSA algorithm is O(p 2 en), where p is the number of TPEs, n the number of nodes, and e the
 number of edges in a graph.
 The PBSA algorithm parallelizes the BSA algorithm in the horizontal scheme. The nodes
 in the graph are sorted in a topological order and partitioned into P equal sized blocks. Each
-partition of the graph is then scheduled to the target system independently. The PBSA algorithm
-resolves the dependencies between the nodes of partitions by calculating an estimated start time
+partition of the graph is then scheduled to the target system independently. The PBSA algorithmresolves the dependencies between the nodes of partitions by calculating an estimated start time
 of each parent node belonging to another partition, called the remote parent node (RPN). This
 time is estimated to be between the earliest possible start time and the latest possible start time.
 After all the partitions are scheduled, the independently developed schedules are concatenated.
 The complexity of the PBSA algorithm is O(p 2 en=P 2 ), where P is the number of PPEs.
-4 The VPMCP Algorithm
-MCP is a list scheduling algorithm. In a list scheduling, nodes are ordered in a list according to
+4 The MCP Algorithm
+1MCP is a list scheduling algorithm. In a list scheduling, nodes are ordered in a list according to
 priority. A node at the front of the list is always scheduled first. Scheduling a node depends on the
-nodes that were scheduled before this node. Therefore, it is basically a sequential algorithm. Its
+nodes that were scheduled before A node at the front of the list. Therefore, a node is basically a sequential algorithm. a node
 heavy dependences make parallelization of MCP very difficult. In MCP, nodes must be scheduled
-one by one. However, when scheduling a node, the start times of the node on different TPEs can
+one by one. However, when scheduling a node, the start times of A node at the front of the list on different TPEs can
 be calculated simultaneously. This parallelism can be exploited in the vertical scheme.
 If multiple nodes are scheduled simultaneously, the resultant schedule may not be the same as
 the one produced by MCP. The scheduling length will vary, and, in general, will be longer than
-that produced by the sequential MCP. Exploiting more parallelism may lower scheduling quality.
+that produced by MCPMCP. Exploiting more parallelism may lower scheduling quality.
 We will study the degree of quality degradation when increasing parallelism.
 In the vertical scheme, multiple nodes may be selected to be scheduled at the same time.
-This way, parallelism can be increased and overhead reduced. In the horizontal scheme, different
+This way, parallelism can be increased and overhead reduced. In the vertical scheme, different
 partitions must be scheduled simultaneously for a parallel execution. Therefore, the resultant
 schedule cannot be the same as the sequential one. We call the vertical version of parallel MCP
-the VPMCP algorithm and the horizontal version the HPMCP algorithm. The VPMCP algorithm
-is described in this section and the HPMCP algorithm will be presented in the next section.
+the VPMCP algorithm and the horizontal version the HPMCP algorithm. The BSA algorithmis described in this section and the HPMCP algorithm will be presented in the next section.
 Before describing the VPMCP algorithm, we present a simple parallel version of the MCP
-algorithm. This version schedules one node each time so that it produces the same schedule as
-the sequential MCP algorithm. Each PPE maintains schedules for one or more TPEs. Therefore,
-it is a vertical scheme. We call this algorithm VPMCP1, which is shown in Figure 4. The nodes
+algorithm. a simple parallel version of the MCP
+algorithm schedules one node each time so that a simple parallel version of the MCP
+algorithm produces the same schedule as
+the sequential MCP algorithm. each PPE maintains schedules for one or more TPEs. Therefore,
+it is a vertical scheme. We call The BSA algorithm VPMCP1, which is shown in Figure 4. The nodes
 are first sorted by the ALAP time and cyclicly divided into P partitions. That is, the nodes in
-places of the sorted list are assigned to PPE i. The nodes are scheduled one by
-one. Each node is broadcast to all PPEs along with its parent information including the scheduled
+places of the sorted list are assigned to PPE i. The nodes
+ are scheduled one by
+one. Each node is broadcast to all PPEs along with Each node parent information including the scheduled
 TPE number and time. Then, the start times of each node on different TPEs can be calculated
-in parallel. The node is scheduled to the TPE that allows the earliest start time. Consequently,
+in parallel. Each node is scheduled to the TPE that allows the earliest start time. Consequently,
 if a PPE has any node that is a child of the newly scheduled node, the corresponding parent
-information of the node is updated.
+information of Each node is updated.
 1. (a) Compute the ALAP time of each node and sort the node list in an increasing ALAP
 order. Ties are broken randomly.
 (b) Divide the node list with cyclic partitioning into equal sized partitions, and each partition
 is assigned to a PPE.
-2. (a) The PPE that has the first node in the list broadcasts the node, along with its parent
+2. (a) The PPE that has the first node in the list broadcasts Each node, along with The PPE that has the first node in the list parent
 information, to all PPEs.
-(b) Each PPE obtains a start time for the node on each of its TPEs. The earliest
+(b) Each PPE
+ obtains a start time for the node on each of Each PPE
+ TPEs. The earliest
 start time is obtained by parallel reduction of minimum.
-(c) The node is scheduled to the TPE that allows the earliest start time.
+(c) the node on each of its TPEs is scheduled to the TPE that allows the earliest start time.
 (d) The parent information of children of the scheduled node is updated. Delete the node
 from the list and repeat this step until the list is empty.
 
 Figure
 
 4: The VPMCP1 Algorithm.
-The VPMCP1 algorithm parallelizes the MCP algorithm directly. It produces exactly the
+The MCP Algorithm
+1 parallelizes the MCP algorithm directly. The MCP Algorithm
+1 produces exactly the
 same schedules as MCP. However, since each time only one node is scheduled, parallelism is
 limited and granularity is too fine. To solve this problem, a number of nodes could be scheduled
 simultaneously to increase granularity and to reduce communication. When some nodes are
-scheduled simultaneously, they may conflict with each other. Conflict may result in degradation
+scheduled simultaneously, some nodes may conflict with each other. Conflict may result in degradation
 of scheduling quality. The following lemma states the condition that allows some nodes to be
 scheduled in parallel without reducing scheduling quality.
-Lemma 1: When a node is scheduled to its earliest start time without conflicting with its former
-nodes, it is scheduled to the same place as it would be scheduled by sequential MCP.
-Proof: In the MCP scheduling sequence, a node obtains its earliest start time after all of
-its former nodes in the list have been scheduled. When a set of nodes are scheduled in parallel,
-each node obtains its earliest start time independently. A node may obtain its earliest start time
-which is earlier than the one in MCP scheduling when some of its former nodes in the set have
-not been scheduled. In this case, it must conflict with one of its former nodes. Therefore, if a
-node is scheduled a place that does not conflict with its former nodes, it obtains the same earliest
-start time and is scheduled to the same place as it would be in the MCP scheduling sequence. 2
-With this lemma, a set of nodes can obtain their earliest start time simultaneously and be
-scheduled accordingly. When a node conflicts with its former nodes, then this node and the rest
-of the nodes will not be scheduled before they obtain their new earliest start times. In this way,
+Lemma 1: When a node is scheduled to a node earliest start time without conflicting with a node former
+nodes, a node is scheduled to the same place as a node would be scheduled by sequential MCP.
+Proof: In the MCP scheduling sequence, a node obtains a node earliest start time after all of
+all of
+ former nodes in the list have been scheduled. When a set of nodes are scheduled in parallel,
+each node obtains a set of nodes earliest start time independently. A node may obtain A node earliest start time
+which is earlier than the one in MCP scheduling when some of A node former nodes in a set of nodes have
+not been scheduled. In this case, this case must conflict with one of this case former nodes. Therefore, if a
+node is scheduled a place that does not conflict with a
+node former nodes, a
+node obtains the same earliest
+start time and is scheduled to the same place as a
+node would be in the MCP scheduling sequence. 2
+With this lemma, a set of nodes can obtain a set of nodes earliest start time simultaneously and be
+scheduled accordingly. When a node conflicts with a node , then A node at the front of the list and the rest
+of its former nodes will not be scheduled before its former nodes obtain its former nodes new earliest start times. In this way,
 more than one node can be scheduled each time. However, many nodes may have the same earliest
-start time in the same TPE. Therefore, there could be many conflicts. In most cases, only one
+start time in the TPEthe TPE. Therefore, there could be many conflicts. In most cases, only one
 or two nodes can be scheduled each time.
 To increase the number of nodes to be scheduled in parallel, we may allow a conflict node
-to be scheduled to its sub-optimal place. Therefore, when a node is found to be in conflict with
-its former nodes, it will be scheduled to the next non-conflict place. With this strategy, p nodes
-can be scheduled each time, where p is the number of TPEs. We use this strategy in our vertical
-version of parallel MCP, which is called the VPMCP algorithm. The details of this algorithm is
+to be scheduled to a conflict node
+ sub-optimal place. Therefore, when a node is found to be in conflict with
+a node , a node will be scheduled to its sub-optimal place. With this strategy, p nodes
+can be scheduled each time, where p is the number of TPEs. We use this strategy in We vertical
+version of parallel MCP, which is called the VPMCP algorithm. The details of The BSA algorithm is
 shown in Figure 5. Besides the sorted node list, a ready list is constructed and sorted by ALAP
 times. A set of nodes selected from the ready list are broadcast to all PPEs. The start time of
 each node is calculated independently. Then, the start times are made available to every PPE
-by another parallel concatenation. Some nodes may compete for the same time slot in a TPE.
+by another parallel concatenation. Some nodes may compete for the same time slot in the TPE.
 This conflict is resolved by the smallest-ALAP-time-first rule. A node that does not get the best
-time slot will try its second best place, and so on, until it is scheduled to a non-conflict place.
+time slot will try A node that does not get the best
+time slot second best place, and so on, until A node that does not get the best
+time slot is scheduled to a non-conflict place.
 The time for calculation of the ALAP time and sorting is O(e+n log n). The parallel scheduling
 step is of O(n 2 =P ). Therefore, the complexity of the VPMCP algorithm is O(e+n log n+n 2 =P ),
 where n is the number of nodes, e the number of edges, and P the number of PPEs. The number
 of communications is 2n for VPMCP1 and 2n=p for VPMCP, where p is the number of TPEs.
-The VPMCP algorithm is compared to VPMCP1 in Table I. The workload for testing consists
+The BSA algorithm is compared to VPMCP1 in Table I. The workload for testing consists
 of random graphs of various sizes. We use the same random graph generator in [1]. Three values
 of communication-computation-ratio (CCR) were selected to be 0.1, 1, and 10. The weights on
 the nodes and edges were generated randomly such that the average value of CCR corresponded
@@ -225,12 +249,12 @@ order. Ties are broken randomly.
 is assigned to a PPE. Initialize a ready list consisting of all nodes with no parent.
 Sort the list in an increasing ALAP order.
 2. (a) The first p nodes in the ready list are broadcast to all PPEs by using the parallel
-concatenation operation, along with their parent information. If there are less than p
+concatenation operation, along with all PPEs parent information. If there are less than p
 nodes in the ready list, broadcast the entire ready list.
-(b) Each PPE obtains a start time for each node on each of its TPEs. The start times of
+(b) Each PPE obtains a start time for each node on each of Each PPE TPEs. The start times of
 each node are made available to every PPE by parallel concatenation.
 (c) A node is scheduled to the TPE that allows the earliest start time. If more than one
-node competes for the same time slot in a TPE, the node with smaller ALAP time
+node competes for the same time slot in the TPE, the node with smaller ALAP time
 gets the time slot. The node that does not get the time slot is then scheduled to the
 time slot that allows the second earliest start time, ans so on.
 (d) The parent information is updated for the children of the scheduled node. Delete these
@@ -246,8 +270,8 @@ Table
 I: Comparison of Vertical Strategies
 Number Scheduling length Running time (second)
 CCR of PPEs VPMCP1 VPMCP VPMCP1 VPMCP
-each TPE must be maintained in a single PPE. It can be seen from the table that VPMCP1
-produces a better scheduling quality. However, its heavy communication results in low speedup
+the TPE the TPE must be maintained in a single PPE. It can be seen from the table that VPMCP1
+produces a better scheduling quality. However, It heavy communication results in low speedup
 or no speedup. VPMCP reduces running times and still provides an acceptable scheduling quality.
 The scheduling lengths are between 0.3% and 1.2% longer than that produced by VPMCP1.
 5 The HPMCP Algorithm
@@ -260,43 +284,44 @@ Figure
 1. (a) Compute the ALAP time of each node and sort the node list in an increasing ALAP
 order. Ties are broken randomly.
 (b) Partition the node list into equal sized blocks and each partition is assigned to a PPE.
-2. Each PPE applies the MCP algorithm to its partition to produce a sub-schedule. Edges
+2. Each PPE applies the MCP algorithm to Each PPE partition to produce a sub-schedule. Edges
 between a node and its RPNs are ignored.
-3. Concatenate each pair of adjacent sub-schedules. Walk through the schedule to determine
+3. Concatenate each pair of adjacent sub-schedules. Walk through a sub-schedule to determine
 the actual start time of each node.
 
 Figure
 
 The HPMCP Algorithm.
-In the HPMCP algorithm, the nodes are first sorted by the ALAP time. Therefore, the node
+In The MCP Algorithm
+1, The nodes
+ are first sorted by the ALAP time. Therefore, the node
 list is in a topological order and is then partitioned into P equal sized blocks to be assigned to P
 PPEs. In this way, the graph is partitioned horizontally.
-When the graph is partitioned, each PPE will schedule its partition to produce its sub-schedule.
-Then, these sub-schedules will be concatenated to form the final schedule. Three problems are to
+When the graph is partitioned, Each PPE will schedule the graph partition to produce the graph sub-schedule.
+Then, these sub-schedules will be concatenated to form its sub-schedule. Three problems are to
 be addressed for scheduling and concatenation: information estimation, concatenation permuta-
 tion, and post-insertion.
 Information estimation
 The major problem in the horizontal scheme is how to resolve the dependences between par-
-titions. In general, a latter partition depends on its former partitions. To schedule partitions in
-parallel, each PPE needs schedule information of its former partitions. Since it is impossible to
+titions. In general, a latter partition depends on a latter partition former partitions. To schedule partitions in
+parallel, each PPE needs schedule information of each PPE . Since it is impossible to
 obtain such information before the schedules of former partitions have been produced, an estimation
-is necessary. Although the latter PPE does not know the exact schedules of its former
-partitions, an estimation can help a node to determine its earliest start time in the latter partition.
+is necessary. Although the latter PPE does not know the exact schedules of the latter PPE former
+partitions, an estimation can help a node to determine a node earliest start time in the latter partition.
 In the PBSA algorithm [1], the start time of each RPN (remote parent node) is estimated.
 It is done by calculating two parameters: the earliest possible start time (EPST), and the latest
 possible start time (LPST). The EPST of a node is the largest sum of computation times from the
-start point to the node, excluding the node itself. The LPST of a node is the sum of computation
-times of all nodes scheduled before the node, excluding the node itself. The estimated start time
-(EST) of an RPN is defined as ffEPST is equal to 1 if the RPN is on
+start point to a node, excluding the node itself. The LPST of a node is the sum of computation
+times of all nodes scheduled before the node itself, excluding the node itself. The estimated start time
+(EST) of an RPN is defined as ffEPST is equal to 1 if an RPN is on
 the critical path. Otherwise, it is equal to the length of the longest path from the start point
-through the RPN to the end point, divided by the length of the critical path. Given the estimated
-start time of an RPN, it is still necessary to estimate to which TPE the RPN is scheduled. If the
-RPN is a critical path node, then it is assumed that it will be scheduled to the same TPE as the
-highest level critical path node in the local partition. Otherwise, a TPE is randomly picked to
-be the one to which the RPN is scheduled. We call this estimation the PBSA estimation. This
+through an RPN to the end point, divided by the length of the critical path. Given the estimated
+start time of an RPN, it is still necessary to estimate to which the TPE an RPN is scheduled. If an RPN is a critical path node, then an RPN is assumed that an RPN will be scheduled to the TPE the TPE as the
+highest level critical path node in the local partition. Otherwise, the TPE the TPE is randomly picked to
+be the one to which an RPN is scheduled. We call this estimation the PBSA estimation. This
 estimation is not necessarily accurate or better than a simpler estimation used in HPMCP.
-In HPMCP, we simply ignore all dependences between partitions. Therefore, all entry nodes
-in its partition can start at the same time. Furthermore, we assume all schedules of the former
+In HPMCP, We simply ignore all dependences between partitions. Therefore, all entry nodes
+in all dependences between partitions partition can start at the same time. Furthermore, we assume all schedules of the former
 PE end at the same time. We call this estimation the HPMCP estimation.
 
 Table
@@ -306,7 +331,7 @@ Number Scheduling length Running time (second)
 CCR of PPEs HPMCP est. PBSA est. HPMCP est. PBSA est.
 Now, we will compare the two approaches of estimation. In this section, the number of nodes
 in a graph is 2,000 and each graph is scheduled to four TPEs. The comparison is shown in Table II.
-The column "HPMCP est." shows the performance of HPMCP. The column "PBSA est." shows
+The column "HPMCP est." shows the performance of HPMCP. The column "HPMCP est." shows
 the performance of HPMCP with PBSA estimation. The scheduling lengths and running times
 are compared. The running time of PBSA estimation is longer. Notice that more PPEs produce
 longer scheduling lengths. That shows the trade-off between scheduling quality and parallelism.
@@ -317,29 +342,33 @@ scheduling and a simpler algorithm may be better. However, that is not to say th
 the simplest one in the future. It is still possible to find a good estimation to improve performance.
 The simple estimation used in HPMCP sets a baseline for future estimation algorithms.
 Concatenation permutation
-After each PPE produces its sub-schedule, the final schedule is constructed by concatenating
+After each PPE produces PPE sub-schedule, the final schedule is constructed by concatenating
 these sub-schedules. Because there is no accurate information of former sub-schedules, it is not
 easy to determine the optimal permutation of TPEs between adjacent sub-schedules, that is,
-to determine which latter TPE should be concatenated to which former TPE. A hueristics is
+to determine which latter the TPE should be concatenated the TPEthe TPE. A hueristics is
 necessary. In the PBSA algorithm, a TPE with the earliest node is concatenated to the TPE of
 the former sub-schedule that allows the earliest execution. Then, other TPEs are concatenated
 to the TPEs in the former sub-schedule in a breadth-first order [1]. In the HPMCP algorithm,
-we assume that the start time of each node within its partition is the same. Therefore, the
+we assume that the start time of each node within each node partition is the same. Therefore, the
 above algorithm cannot be applied. We simply do not perform permutation of TPEs in HPMCP.
-That is, a TPE in the latter sub-schedule is concatenated to the same TPE in the former sub-
-schedule. An alternative hueristics can be described as follows: each PPE finds out within its
-sub-schedule which TPE has most critical-path nodes and permutes this TPE with TPE 0. With
-this permutation, as many critical path nodes as possible are scheduled to the same TPE, and
-the critical path length could be reduced. This permutation algorithm is compared to the non-
-permutation algorithm in Table III. The time spent on the permutation step causes this algorithm
+That is, a the TPE in the latter sub-schedule is concatenated to the same TPE in the former sub-
+schedule. An alternative hueristics can be described as follows: each PPE finds out within each PPE
+sub-schedule which the TPE has most critical-path nodes and permutes this TPE with the TPE. With
+this permutation, as many critical path nodes as possible are scheduled to the TPE, and
+the critical path length could be reduced. The HPMCP Algorithm
+ is compared to the non-
+permutation algorithm in Table III. The time spent on the permutation step causes The HPMCP Algorithm
 to be slower since extra time is spent on determine weather a node is on the critical path. In
-terms of the scheduling length, the permutation algorithm makes four of the test cases better
-than the non-permutation algorithm, and two cases worse. This permutation algorithm does not
-improve performance much. Therefore, no permutation is performed in the HPMCP algorithm.
+terms of the scheduling length, The HPMCP Algorithm
+ makes four of the test cases better
+than the non-permutation algorithm, and two cases worse. The HPMCP Algorithm
+ does not
+improve performance much. Therefore, no permutation is performed in The HPMCP Algorithm
+.
 Post-insertion
 Finally, we walk through the entire concatenated schedule to determine the actual start time of
 each node. Some refinement can be performed in this step. In a horizontal scheme, the latter PPE
-is not able to insert nodes to former sub-schedules due to lack of their information. This leads to
+is not able to insert nodes to former sub-schedules due to lack of former sub-schedules information. This leads to
 
 Table
 
@@ -347,7 +376,7 @@ III: Comparison of Permutation Algorithms
 Number Scheduling length Running time (second)
 CCR of PPEs No permut. Permut. No permut. Permut.
 some performance loss. It can be partially corrected at the concatenation time by inserting the
-nodes of a latter sub-schedule into its former sub-schedules. Improvement of this post-insertion
+nodes of a latter sub-schedule into It former sub-schedules. Improvement of this post-insertion
 algorithm is shown in Table III. Compared to non-insertion, the post-insertion algorithm reduces
 scheduling length in eight test cases and increases it in four cases. Overall, this post-insertion
 algorithm can improve scheduling quality. However, it spends much more time for post-insertion.
@@ -365,13 +394,13 @@ Table
 
 IV: Comparison of Post-insertion Algorithms
 Number Scheduling length Running time (second)
-CCR of PPEs No insert. Insert. No insert. Insert.
+CCR of PPEs Insert. Insert. Insert. Insert.
 First, performance of the VPMCP algorithm is to be presented. In Tables V and VI, graphs of
 1,000, 2,000, 3,000, and 4,000 nodes are scheduled to four TPEs. The scheduling length provides
 a measure of scheduling quality. The results shown in Table V are the scheduling lengths and
 the ratios of the scheduling lengths produced by the VPMCP algorithm to the scheduling lengths
 produced by the MCP algorithm. The ratio was obtained by running the VPMCP algorithm on
-2 and 4 PPEs on Paragon and taking the ratios of the scheduling lengths produced by it to those
+2 and 4 PPEs on Intel Paragon and taking the ratios of the scheduling lengths produced by Intel Paragon to those
 of MCP running on one PPE. As one can see from this table, there was almost no effect of graph
 size on scheduling quality. In most cases, the scheduling lengths of VPMCP are not more than
 1% longer than that produced by MCP.
@@ -380,13 +409,13 @@ by is the sequential execution time of the optimal sequential algorithm and
 T P is the parallel execution time. The running times of VPMCP on more than one PPE are
 compared with MCP running time on one PPE. The MCP running time on a single processor is
 a sequential version without parallelization overhead. The low speedup of VPMCP is caused by
-its large number of communications.
+VPMCP large number of communications.
 The next experiment is to study VPMCP performance of different numbers of TPEs. Tables
 VII and VIII show the scheduling lengths and running times of graphs of 4,000 nodes for 2, 4,
 
 Table
 
-V: The scheduling lengths produced by VPMCP and their ratios to those of MCP
+V: The scheduling lengths produced by VPMCP and VPMCP ratios to those of MCP
 Graph size (number of nodes)
 CCR Number 1000 2000 3000 4000
 of PPEs length ratio length ratio length ratio length ratio
@@ -406,7 +435,7 @@ Next, we study performance of the HPMCP algorithm. The number of TPEs is four in
 Tables
 
 IX and X. In Table IX, the ratio was obtained by running the HPMCP algorithm on 2,
-4, 8, and 16 PPEs on Paragon and taking the ratios of the scheduling lengths produced by it
+4, 8, and 16 PPEs on Intel Paragon and taking the ratios of the scheduling lengths produced by the ratio
 to those of MCP running on one PPE. The deterioration in performance of HPMCP is due to
 estimation of the start time of RPNs and concatenation. Out of the 48 test cases shown in the
 table, there is only one case in which HPMCP performed more than 10% worse than MCP, 31
@@ -426,7 +455,8 @@ CCR Number 2
 of PPEs time S time S time S time S
 of them are within 1%, and 16 of them are between 1% to 10%. It is of interest that in two
 cases, HPMCP produced even better results than MCP. Since MCP is a heuristic algorithm, this
-is possible. Sometimes, a parallel version could produce a better result than its corresponding
+is possible. Sometimes, a parallel version could produce a better result than this
+ corresponding
 sequential one.
 Running time and speedup of the HPMCP algorithm are shown in Table X. There are some
 superlinear speedup cases in the table. That is because HPMCP has lower complexity than MCP.
@@ -440,7 +470,7 @@ XI and XII show the HPMCP scheduling lengths and running times of graphs of 4,00
 nodes for 2, 4, 8, and 16 TPEs. The speedups decrease with the number of TPEs. That is caused
 by increasing dependences between TPEs.
 Now, we compare performance of VPMCP and HPMCP. Performance shown in Figures 7
-and 8 is for graphs of 4,000 nodes. The number of TPEs is the same as the number of PPEs.
+and 8 is for graphs of 4,000 nodes. the number of TPEs is the same as the number of PPEs.
 
 Figure
 
@@ -450,7 +480,7 @@ by MCP. For 2 or 4 PPEs, HPMCP produces shorter scheduling lengths. However, for
 PPEs, VPMCP produces better scheduling quality than that produced by HPMCP. In general,
 VPMCP provides a more stable scheduling quality. Figure 8 compares the speedups of VPMCP
 and HPMCP algorithms. HPMCP is faster than VPMCP with a higher speedup.
-After scheduling, the nodes are not in the PPEs where they are to be executed in the horizontal
+After scheduling, the nodes are not in the PPEs where the nodes are to be executed in the horizontal
 scheme. A major communication step is necessary to move nodes. However, when the number
 of PPEs is equal to the number of TPEs, the vertical scheme can avoid this communication step
 because the nodes reside in the PPEs where they are to be executed. It becomes more important
@@ -460,7 +490,7 @@ takes into account link contention and communication routing strategy, but HPMCP
 not consider these factors. Therefore, the edge weights in PBSA vary with different topologies,
 whereas in HPMCP they are constant. For comparison purposes, we have implemented a simplified
 version of PBSA, which assumes that the edge weights are constant. PBSA is much slower
-than HPMCP, because its complexity is much higher. The complexity of PBSA is O(p 2 en=P 2 )
+than HPMCP, because PBSA complexity is much higher. The complexity of PBSA is O(p 2 en=P 2 )
 and that of HPMCP is O(e about 50 to 120 times faster than
 PBSA for this set of graphs. Then, we compare the scheduling lengths produced by HPMCP
 and PBSA. The results are shown in Table XIII. In this table, the scheduling lengths produced
@@ -468,7 +498,7 @@ by the sequential MCP and BSA algorithms running on a single processor are also 
 
 Table
 
-IX: The scheduling lengths produced by HPMCP and their ratios to those of MCP
+IX: The scheduling lengths produced by HPMCP and HPMCP ratios to those of MCP
 Graph size (number of nodes)
 CCR Number 1000 2000 3000 4000
 of PPEs length ratio length ratio length ratio length ratio
@@ -541,11 +571,12 @@ of PPEs HPMCP PBSA HPMCP PBSA HPMCP PBSA HPMCP PBSA
 7 Concluding Remarks
 Parallel scheduling is faster and is able to schedule large macro dataflow graphs. Parallel scheduling
 is a new approach and is still under development. Many open problems need to be solved.
-High-quality parallel scheduling algorithms with low complexity will be developed. It can be
+High-quality parallel scheduling algorithms with low complexity will be developed. High-quality parallel scheduling algorithms with low complexity can be
 achieved by parallelizing the existing sequential scheduling algorithms or by designing new parallel
 scheduling algorithms. We have developed the VPMCP and HPMCP algorithms by parallelizing
 the sequential MCP algorithm. Performance of this approach has been studied. Both VPMCP
-and HPMCP algorithms are much faster then PBSA. They produce high-quality scheduling in
+and HPMCP algorithms are much faster then PBSA. Both VPMCP
+and HPMCP algorithms produce high-quality scheduling in
 terms of the scheduling length.
 30,000.0
 Scheduling
@@ -570,7 +601,7 @@ Figure
 
 Acknowledgments
 
-We are very grateful to Yu-Kwong Kwok and Ishfaq Ahmad for providing their PBSA program
+We are very grateful to Yu-Kwong Kwok and Ishfaq Ahmad for providing Yu-Kwong Kwok and Ishfaq Ahmad PBSA program
 and random graph generator for testing.
 
 

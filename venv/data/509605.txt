@@ -1,7 +1,7 @@
 --T
 Compiling stencils in high performance Fortran.
 --A
-For many Fortran90 and HPF programs performing dense matrix computations, the main computational portion of the program belongs to a class of kernels known as stencils. Stencil computations are commonly used in solving partial differential equations, image processing, and geometric modeling. The efficient handling of such stencils is critical for achieving high performance on distributed-memory machines. Compiling stencils into efficient code is viewed as so important that some companies have built special-purpose compilers for handling them and others have added stencil-recognizers to existing compilers.In this paper we present a general compilation strategy for stencils written using Fortran90 array constructs. Our strategy is capable of optimizing single or multi-statement stencils and is applicable to stencils specified with shift intrinsics or with array-syntax all equally well. The strategy eliminates the need for pattern-recognition algorithms by orchestrating a set of optimizations that address the overhead of both intraprocessor and interprocessor data movement that results from the translation of Fortran90 array constructs. Our experimental results show that code produced by this strategy beats or matches the best code produced by the special-purpose compilers or pattern-recognition schemes that are known to us. In addition, our strategy produces highly optimized code in situations where the others fail, producing several orders of magnitude performance improvement, and thus provides a stencil compilation strategy that is more robust than its predecessors.
+For many Fortran90 and HPF programs performing dense matrix computations, the main computational portion of the program belongs to a class of kernels known as stencils. Stencil computations are commonly used in solving partial differential equations, image processing, and geometric modeling. The efficient handling of such stencils is critical for achieving high performance on distributed-memory machines. Compiling stencils into efficient code is viewed as so important that some companies have built special-purpose compilers for handling some companies and others have added stencil-recognizers to existing compilers.In this paper we present a general compilation strategy for stencils written using Fortran90 array constructs. we strategy is capable of optimizing single or multi-statement stencils and is applicable to stencils specified with shift intrinsics or with array-syntax all equally well. Our strategy eliminates the need for pattern-recognition algorithms by orchestrating a set of optimizations that address the overhead of both intraprocessor and interprocessor data movement that results from the translation of Fortran90 array constructs. Our experimental results show that code produced by this strategy beats or matches the best code produced by the special-purpose compilers or pattern-recognition schemes that are known to us. In addition, us produces highly optimized code in situations where the others fail, producing several orders of magnitude performance improvement, and thus provides a stencil compilation strategy that is more robust than its predecessors.
 --B
 Introduction
 High-Performance Fortran (HPF)[14], an extension of Fortran90, has attracted considerable
@@ -12,30 +12,33 @@ operations and use data layout directives to direct partitioning of the data and
 among the processors of a parallel machine.
 In many programs performing dense matrix computations, the main computational portion
 of the program belongs to a class of kernels known as stencils. For HPF to gain acceptance
-as a vehicle for parallel scientific programming, it must achieve high performance on
+as a vehicle for parallel scientific programming, HPF must achieve high performance on
 this important class of problems. Compiling stencils into efficient code is viewed as so important
-that some companies have built special-purpose compilers for handling them [4, 5, 6]
+that some companies have built special-purpose compilers for handling some companies [4, 5, 6]
 and others have added stencil-recognizers to existing HPF compilers [1, 2]. Each of these
 previous approaches to stencil compilation had significant limitations that restricted the
-types of stencils that they could handle.
+types of stencils that Each of these
+previous approaches to stencil compilation could handle.
 In this paper, we focus on the problem of optimizing stencil computations, no matter
 how they are instantiated by the programmer, for execution on distributed-memory archi-
 tectures. Our strategy orchestrates a set of optimizations that address the overhead of both
 intraprocessor and interprocessor data movement that results from the translation of For-
 array constructs. Additional optimizations address the issues of scalarizing array
 assignment statements, loop fusion, and data locality.
-In the next section we briefly discuss stencil computations and their execution cost on
-distributed-memory machines. In Section 3 we give an overview of our compilation strategy,
-and then discuss the individual optimizations. In Section 4 we present an extended example
-to show how our strategy handles a difficult case. Experimental results are given in Section 5,
-and in Section 6 we compare this strategy with other known efforts.
+In the next section we briefly discuss stencil computations and the issues of scalarizing array
+assignment statements, loop fusion, and data locality execution cost on
+distributed-memory machines. In Section 3 we give an overview of we compilation strategy,
+and then discuss Additional optimizations. In Section 4 we present an extended example
+to show how we handles a difficult case. Experimental results are given in Section 5,
+and in Section 6 we compare Our strategy with other known efforts.
 Computations
-In this section we introduce stencil computations and give an overview of their execution
-cost on distributed-memory machines. We also introduce the normalized intermediate form
-which our compiler uses for all stencils.
+In the next section we introduce stencil computations and give an overview of their execution
+cost on distributed-memory machines. we also introduce the normalized intermediate form
+which we compiler uses for all stencils.
 2.1 Stencils
 A stencil is a stylized matrix computation in which a group of neighboring data elements
-are combined to calculate a new value. They are typically combined in the form of a sum
+are combined to calculate a new value. a group of neighboring data elements
+ are typically combined in the form of a sum
 of products. This type of computation is common in solving partial differential equations,
 image processing, and geometric modeling. The Fortran90 array assignment statement in
 
@@ -60,11 +63,11 @@ elements of src on the North, West, South, and East. A 9-point stencil that comp
 grid elements by exploiting the cshift intrinsic might be specified as shown in Figure 2.
 In the previous two examples the stencils were specified as a single array assignment
 statement, but this need not always be the case. Consider again the 9-point stencil above.
-If the programmer attempted to optimize the program by hand, or if the stencil was pre-processed
+If the programmer attempted to optimize the program by hand, or if the 9-point stencil was pre-processed
 by other optimization phases of the compiler, we might be presented with the code
 shown in Figure 3 1 .
 A goal of our work is to generate the same, highly-optimized code for all stencil computa-
-tions, regardless of how they have been written in HPF. For this reason, we have designed our
+tions, regardless of how they have been written in HPF. For this reason, our have designed our
 optimizer to target the most general, normalized input form. All stencil and stencil-like computations
 can be translated into this normal form by factoring expressions and introducing
 temporary arrays. In fact, this is the intermediate form used by several distributed-memory
@@ -82,7 +85,8 @@ assignment statement and is only applied to whole arrays.
 ffl The expression that actually computes the stencil operates on operands that are perfectly
 aligned, and thus no communication operations are required.
 For example, given the 5-point stencil computation presented in Figure 1, the CM Fortran
-compiler would translate it into the sequence of statements shown in Figure 4.
+compiler would translate the CM Fortran
+compiler into the sequence of statements shown in Figure 4.
 For the rest of this paper we assume that all stencil computations have been normalized
 into this form, and that all arrays are distributed in a block fashion. And although we
 concentrate on stencils expressed using the cshift intrinsic, the techniques presented can
@@ -104,7 +108,7 @@ Figure
 
 5, the dashed lines represent this type of data movement, in this case the
 transfer of a column of data between neighboring processors.
-2. Data elements shifted within a PE are copied to the appropriate locations in the
+2. Data elements shifted within a the appropriate neighboring PE are copied to the appropriate locations in the
 destination array. This is the intraprocessor component of the shift. The solid lines in
 
 Figure
@@ -118,22 +122,25 @@ Figure
 5:
 constructed during compilation in two steps. First the compiler applies scalarization [24] to
 replace Fortran 90 array operations with a serial loop nest that operates on individual data
-elements. Next, the compiler transforms this loop nest into SPMD code [8]. The SPMD
+elements. Next, the compiler transforms a serial loop nest that operates on individual data
+elements into SPMD code [8]. The SPMD
 code is synthesized by reducing the loop bounds so that each PE computes values only for
 the data it owns. A copy of this transformed loop nest, known as the subgrid loop nest,
 executes on each PE of the parallel machine.
 Due to the nature of stencils which make many distinct array references, these subgrid
-loops can easily become memory bound. In such loops, the CPU must often sit idle while it
+loops can easily become memory bound. In such loops, the CPU must often sit idle while the CPU
 waits for the array elements to be fetched from memory.
 3 Compilation Strategy
-In this section we start with an overview of our compilation strategy, and then present the
+In this section we start with an overview of we compilation strategy, and then present the
 individual component optimizations.
 Given a stencil computation in normal form (as described in Section 2.1), we optimize
 it by applying a sequence of four optimizations. The first addresses the intraprocessor data
-movement associated with the cshift operations, eliminating it when possible. The second
+movement associated with the cshift operations, eliminating the intraprocessor data
+movement associated with the cshift operations when possible. The second
 rearranges the statements into separate blocks of computation operations and communication
 operations. This optimizes the stencil by promoting loop fusion for the computation
-operations and it prepares the communication operations for further optimization by the
+operations and the computation
+ prepares the communication operations for further optimization by the
 following phase. Next, the interprocessor data movement of the cshift operations is optimized
 by eliminating redundant and partially-redundant communication. Finally, loop-level
 transformations are applied to optimize the computation.
@@ -147,17 +154,20 @@ processors. After this has been accomplished, appropriate references to the dest
 array can be rewritten to refer to the source array with indices offset by the shift amount.
 The principal challenge then is to determine when the source and destination arrays can
 share storage. We have established a set of criteria to determine when it is safe and profitable
-to create an offset array. These criteria, and an algorithm used to verify them are described
-in detail elsewhere [15, 22]. In general, our approach allows the source and destination arrays
+to create an offset array. a set of criteria to determine when it is safe and profitable
+to create an offset array, and an algorithm used to verify a set of criteria to determine when it is safe and profitable
+to create an offset array are described
+in detail elsewhere [15, 22]. In general, We approach allows the source and destination arrays
 of a shift operation to share storage between destructive updates to either array when the
 shift offset is a small constant.
 Once we have determined that the destination array of an assignment statement
 CSHIFT(SRC,SHIFT,DIM) may be an offset array, we perform the following transformations
-on the code. These transformations take advantage of the data that may be shared between
+on the code. the following transformations
+on the code take advantage of the data that may be shared between
 the source array src and destination array dst and move only the required data between
 the PEs.
 First we replace the shift operation with a call to a routine that moves the off-processor
-data of SRC into an overlap area: CALL OVERLAP SHIFT(SRC,SHIFT,DIM). We then replace
+data of SRC into an overlap area: CALL OVERLAP SHIFT(SRC,SHIFT,DIM). we then replace
 all uses of the array dst, that are reached from this definition, with a use of the array src.
 The newly created references to src carry along special annotations representing the values
 of shift and dim. Finally, when creating subgrid loops during the scalarization phase, we
@@ -169,17 +179,18 @@ above transformations is based upon the static single assignment (SSA) intermedi
 [9]. The algorithm, after validating the use of an offset array at a shift operation,
 transforms the program and propagates that information in an optimistic manner. The propagation
 continues until there are no more references to transform or one of the criteria has
-been violated. When a criterion has been violated, it may be necessary to insert an array copy
-statement into the program to maintain its original semantics. The inserted copy statement
-performs the intraprocessor data movement that was avoided with the overlap shift.
+been violated. When a criterion has been violated, a criterion may be necessary to insert an array copy
+statement into the program to maintain the program original semantics. an array copy
+statementperforms the intraprocessor data movement that was avoided with the overlap shift.
 Due to the offset array algorithm's optimistic nature, it is able to eliminate intraprocessor
 data movement associated with shift operations in many difficult situations. In particular,
-it can determine when offset arrays can be exploited even when their definition and uses are
+it can determine when offset arrays can be exploited even when offset arrays definition and uses are
 separated by program control flow. This allows our stencil compilation strategy to eliminate
 intraprocessor data movement in situations where other strategies fail.
 3.2 Statement Reordering
-We follow the offset array optimization with our context partitioning optimization [17].
-This optimization partitions a set of Fortran90 statements into groups of congruent array
+We follow the offset array optimization with We context partitioning optimization [17].
+the offset array optimization with our context partitioning optimization [17].
+ partitions a set of Fortran90 statements into groups of congruent array
 statements 2 , scalar expressions, and communication operations. This assists the compilation
 of stencils in the following two ways:
 1. First, by grouping congruent array statements together, we ensure that as subgrid
@@ -194,10 +205,14 @@ locality.
 the amount of interprocessor data movement, which we discuss in the next
 subsection.
 To accomplish context partitioning, we use an algorithm proposed by Kennedy and
-M c Kinley [16]. While this algorithm was developed to partition parallel and serial loops
-into fusible groups, we use it to partition Fortran90 statements into congruence classes.
-The algorithm works on the data dependence graph (ddg)which must be acyclic. Since we
-apply it to a set of statements within a basic block, our dependence graph contains only
+M c Kinley [16]. While an algorithm proposed by Kennedy and
+M c Kinley was developed to partition parallel and serial loops
+into fusible groups, we use an algorithm proposed by Kennedy and
+M c Kinley to partition Fortran90 statements into congruence classes.
+an algorithm proposed by Kennedy and
+M c Kinley works on the data dependence graph (ddg)which must be acyclic. Since we
+apply an algorithm proposed by Kennedy and
+M c Kinley to a set of statements within a basic block, our dependence graph contains only
 loop-independent dependences and thus is acyclic. A complete description of our context
 partitioning algorithm is available elsewhere [17, 22], along with a discussion of its advantages
 for both SIMD and MIMD machines.
@@ -205,7 +220,7 @@ Context partitioning is key to our ability to optimize multi-statement stencils 
 single-statement stencils. No other stencil compilation strategy has this capability.
 3.3 Minimizing Interprocessor Data Movement
 Once intraprocessor data movement has been eliminated and we have partitioned the statements
-into groups of congruent operations, we focus our attention on the interprocessor data
+into groups of congruent operations, we focus we attention on the interprocessor data
 movement that occurs during the calls to cshift. Due to the nature of offset arrays, we
 are presented with many opportunities to eliminate redundant and partially redundant data
 movement. We call this optimization communication unioning [22], since it combines a set
@@ -213,7 +228,9 @@ of communication operations to produce a smaller set of operations.
 There are two key observations that allow us to find and eliminate redundant inter-processor
 data movement. First, shift operations, including overlap shift, are commutative
 
-Array statements are congruent if they operate on arrays with identical distributions and cover the same
+Array statements are congruent if commutative
+
+Array statements operate on arrays with identical distributions and cover the same
 iteration space.
 Thus, for arrays that are shifted more than once, we can order the shift operations in any
 manner we like without affecting the result. Second, since all overlap shifts move data
@@ -222,11 +239,11 @@ dimension may subsume all shifts of smaller amounts in the same direction and di
 More formally, an overlap shift of amount i in dimension k is redundant if there exists
 an overlap shift of amount j in dimension k such that jjj - jij and
 Since we have already applied our context partitioning optimization to the program, we can
-restrict our focus to the individual groups of calls to overlap shift.
+restrict we focus to the individual groups of calls to overlap shift.
 To eliminate redundant data movement using communication unioning, we first use the
 commutative property to rewrite all the shifts for multi-offset arrays such that the overlap
 shifts for the lower dimensions occur first and are used as input to the overlap shifts
-for higher dimensions. We then reorder all the calls to overlap shift, sorting them by
+for higher dimensions. We then reorder all the calls to overlap shift, sorting all the calls by
 the shifted dimension, lowest to highest. We now scan the overlap shifts for the lowest
 dimension and keep only the largest shift amount in each direction. All others can be
 eliminated as redundant.
@@ -235,19 +252,21 @@ dimension in ascending order by performing the following three actions:
 1. We scan the overlap shifts for the given dimension to determine the largest shift
 amount in each direction.
 2. We look for source arrays that are already offset arrays, indicating a multi-offset array.
-For these, we use the annotations associated with the source array to create an RSD to
+For source arrays that are already offset arrays, We use the annotations associated with the source array to create an RSD to
 be used as an optional fourth argument in the call to overlap shift. The argument
 indicates those data elements from the adjacent overlap areas that should also be moved
 during the shift operation. Mapping the annotations to the RSD is simply a matter of
 adding the annotations to the corresponding RSD dimension; the annotation is added
-to the lower bound of the RSD if the shift amount is negative, otherwise it is added to
+to the lower bound of the RSD if the shift amount is negative, otherwise the shift amount is added to
 the upper bound. As with shift amounts, larger RSDs subsume smaller RSDs.
 3. We generate a single overlap shift in each direction, using the largest shift amount
 and including the RSD as needed - all other overlap shifts for that dimension can
 be eliminated.
 This procedure eliminates all redundant offset-shift communication, including partially redundant
 data movement associated with accessing "corner elements" of stencils.
-This algorithm is unique in that it is based upon the understanding and analysis of the
+an algorithm proposed by Kennedy and
+M c Kinley is unique in that an algorithm proposed by Kennedy and
+M c Kinley is based upon the understanding and analysis of the
 shift intrinsics, rather than being based upon pattern-matching as is done in many stencil
 compilers. This optimization eliminates all communication for a shifted array, except for a
 single message in each direction of each dimension. The number of messages for the stencil
@@ -262,8 +281,12 @@ required.
 
 Figures
 
-7-10 display the data movement that results from these calls. The figures contain
-a 5 \Theta 5 subgrid (solid lines) surrounded by its overlap area (dashed lines). Portions of the
+7-10 display the data movement that results from these calls. Figures
+
+ contain
+a 5 \Theta 5 subgrid (solid lines) surrounded by Figures
+
+ overlap area (dashed lines). Portions of the
 
 Figure
 
@@ -282,7 +305,7 @@ adjacent subgrids are also shown. Figure 7 depicts the data movement specified b
 two calls. The result of that data movement is shown in Figure 8, where the overlap areas
 have been properly filled in. The data movement of the last two calls is shown in Figure 9.
 Notice how the last two calls pick up data from the overlap areas that were filled in by the
-first two calls, and thus they populate all overlap area elements needed for the subsequent
+first two calls, and thus the last two calls populate all overlap area elements needed for the subsequent
 computation, as shown in Figure 10.
 
 Figure
@@ -302,9 +325,10 @@ ences, and loop permutation, which addresses cache references. Each of these opt
 program by exploiting reuse of data values. These optimizations are described in detail
 elsewhere [7, 19] and are not addressed in this paper.
 4 An Extended Example
-In this section, we trace our compilation strategy through an extended example. This detailed
-examination shows how our strategy is able to produce code that matches or beats hand-optimized
-code. It also demonstrates how we are able to handle stencil computations that
+In this section, we trace we compilation strategy through an extended example. This detailed
+examination shows how our compilation strategy is able to produce code that matches or beats hand-optimized
+code. This detailed
+examination also demonstrates how we are able to handle stencil computations that
 cause other methods to fail.
 For this exercise, we have chosen to use Problem 9 of the Purdue Set [21], as adapted for
 Fortran D benchmarking by Thomas Haupt of NPAC [20, 13]. The program kernel is shown
@@ -313,7 +337,7 @@ in
 Figure
 
 3. The arrays T, U, RIP, and RIN are all two-dimensional and have been distributed
-in a (block,block) fashion. This kernel computes a standard 9-point stencil, identical to
+in a (block,block) fashion. The program kernel computes a standard 9-point stencil, identical to
 that computed by the single-statement stencil shown in Figure 2. The reason it has been
 written in this fashion is to reduce memory requirements. Given the single-statement 9-point
 stencil, most Fortran90 compilers will generate 12 temporary arrays, one for each cshift.
@@ -341,8 +365,8 @@ presented in this paper. Figure 12 shows the stencil code after normalization. T
 cshifts that are subexpressions in the assignment statements to array T are hoisted from
 the statements and assigned to compiler-generated temporary arrays. Since the live ranges
 of the temporary arrays do not overlap, a single temporary can be shared among all the
-statements. Alternatively, each cshift could receive its own temporary array - that would
-not affect the results of our stencil compilation strategy.
+statements. Alternatively, each cshift could receive each cshift own temporary array - that would
+not affect the results of We stencil compilation strategy.
 Execution
 time
 (ms)
@@ -360,8 +384,8 @@ Figure
 
 Problem 9 after normalization.
 4.2 Offset Array Optimization
-Once all shift operations have been identified and hoisted into their own assignment state-
-ments, we apply our offset array optimization. For this example, our algorithm determines
+Once all shift operations have been identified and hoisted into all shift operations own assignment state-
+ments, we apply we offset array optimization. For this example, our algorithm determines
 that all the shifted arrays can be made into offset arrays. As can be seen in Figure 13, all
 the cshift operations have been changed into overlap shift operations, and references
 to the assigned arrays have been replaced with offset references to the source array U. All
@@ -376,7 +400,8 @@ Figure
 
 14: Problem 9 after context partitioning optimization.
 and the user-defined RIP and RIN, are no longer needed to compute the stencil. If there are
-no other uses of these arrays in the routine, they need not be allocated. This reduction in
+no other uses of these arrays in the routine, there are
+no other uses of these arrays in the routine need not be allocated. This reduction in
 storage requirements allows for larger problems to be solved on a given machine.
 4.3 Context Partitioning Optimization
 After offset array optimization, we apply our context partitioning algorithm. This algorithm
@@ -391,14 +416,18 @@ Figure
 
 15: Problem 9 after communication unioning optimization.
 dependences between the two classes are from statements in the communication class to
-statements in the congruent array class, the context partitioning algorithm is able to partition
+statements in the congruent array class, This algorithm
+ is able to partition
 the statements perfectly into two groups. The result is shown in Figure 14. Since the
-array statements are now adjacent, scalarization will be able to fuse them into a single loop
-nest. Similarly, the communication statements are adjacent and communication unioning
-will be successful at its task.
+array statements are now adjacent, scalarization will be able to fuse the
+array statements are now adjacent into a single loop
+nest. Similarly, the
+array statements are adjacent and communication unioning
+will be successful at communication unioning
+ task.
 4.4 Communication Unioning Optimization
-We now turn our attention to the interprocessor data movement specified in the overlap
-shift operations. As described in Section 3.3, we first exploit the commutativity
+We now turn We attention to the interprocessor data movement specified in the overlap
+shift operations. As described in Section 3.3, We first exploit the commutativity
 of overlap shift operations and rewrite multi-dimensional overlap shifts so that the
 lower dimensions are shifted first. No rewriting is necessary for this example since all the
 dimension 1 shifts occur first, as can be seen in Figure 14.
@@ -415,10 +444,10 @@ dimension in each direction.
 
 Figure
 
-shows the code after scalarization. The code now contains only 4 interprocessor
+shows the code after scalarization. the code now contains only 4 interprocessor
 communication operations, and no intraproceesor data movement is performed. Final transformations
 refine the loop bounds to generate a node program that only accesses the subgrids
-local to each PE. Our strategy has generated a single loop nest which, due to the nature
+local to each PE. We strategy has generated a single loop nest which, due to the nature
 of stencil computations, is ripe with opportunities for memory hierarchy optimization. We
 hand the final code to an optimizing node compiler that performs loop-level transformations
 such as scalar replacement and unroll-and-jam.
@@ -428,19 +457,19 @@ ENDDO
 Figure
 
 Problem 9 after scalarization.
-It is important to note that our strategy also produces the exact same code when given
-the single-statement 9-point stencil from Figure 2. This example shows how our stencil compilation
-algorithm is capable of fully optimizing stencils, no matter how they are instantiated
+It is important to note that We strategy also produces the exact same code when given
+the single-statement 9-point stencil from Figure 2. This example shows how We stencil compilation
+algorithm is capable of fully optimizing stencils, no matter how fully optimizing stencils are instantiated
 by the programmer.
 5 Experimental Results
-To measure the performance boost supplied by each step of our stencil compilation strategy,
-we ran a set of tests on a 4-processor IBM SP-2. We started by generating a naive translation
-of the Problem 9 test case into Fortran77+MPI. This is considered our "original" version.
+To measure the performance boost supplied by each step of We stencil compilation strategy,
+We ran a set of tests on a 4-processor IBM SP-2. We started by generating a naive translation
+of the Problem 9 test case into Fortran77+MPI. This is considered We "original" version.
 We then successively applied the transformations as outlined in the preceding section and
 measured the execution time. The results are shown in Figure 17.
-Before analyzing the results in Figure 17, it is worthwhile to compare them to the results
+Before analyzing The results in Figure 17, it is worthwhile to compare analyzing the results in Figure 17 to the results
 shown in Figure 11 for the Problem 9 code. The performance of our "original" MPI version
-of the code for this example is already an order of magnitude faster than the code produced
+of the code for This example is already an order of magnitude faster than the code produced
 by IBM's xlhpf compiler: 0.475 seconds versus 4.77 seconds for the largest problem size.
 After applying our offset array optimization to the Fortran77+MPI test case as shown
 in
@@ -458,8 +487,8 @@ context-optimized version. Applying memory optimizations such as scalar replacem
 unroll-and-jam further reduce the execution time another 14%. The execution time of the
 original program has been trimmed by 81%, equivalent to a speedup of 5.19. Comparing our
 code to the code produced by IBM's xlhpf compiler shows a speedup by a factor of 52!
-Lest someone think that we have chosen IBM's xlhpf compiler as a straw man, we have
-collected some additional performance numbers. We generated a third version of a 9-point
+Lest someone think that Lest have chosen IBM's xlhpf compiler as a straw man, Lest have
+collected some additional performance numbers. Lest generated a third version of a 9-point
 Execution
 time
 (ms)
@@ -481,23 +510,22 @@ Figure
 1. This 9-point stencil computation only computes the interior elements of the matrix;
 that is, elements 2:N-1 in each dimension. A graph comparing its execution time to the other
 two 9-point stencil specifications is given in Figure 18. The IBM xlhpf compiler was used
-in all cases. It is interesting to note that for the array syntax stencil the xlhpf compiler
-produced performance numbers that tracked our best performance numbers for all problem
+in all cases. The IBM xlhpf compiler is interesting to note that for the array syntax stencil The IBM xlhpf compilerproduced performance numbers that tracked our best performance numbers for all problem
 sizes except the largest, where we had a 10% advantage.
 It is important to note that the stencil compilation strategy that we have presented
 handles all three specifications of the 9-point stencil equally well. That is because our
 algorithm is based upon the analysis and optimization of the base constructs upon which
-stencils are built. Our algorithm is designed to handle the lowest common denominator - a
-form into which our compiler can transform all stencil computations.
+stencils are built. This algorithm
+ is designed to handle the lowest common denominator - a
+form into which The IBM xlhpf compiler can transform all stencil computations.
 6 Related Work
 One of the first major efforts to specifically address the compilation of stencil computations
 for a distributed-memory machine was the stencil compiler for the CM-2, also known as the
-convolution compiler [4, 5, 6]. The compiler eliminated intraprocessor data movement and
+convolution compiler [4, 5, 6]. The IBM xlhpf compiler eliminated intraprocessor data movement and
 optimized the interprocessor data movement by exploiting the CM-2's polyshift communication
 [10]. The final computation was performed by hand-optimized library microcode that
 took advantage of several loop transformations and a specialized register allocation scheme.
-Our general compilation methodology produces the same style code as this specialized
-compiler. We both eliminate intraprocessor data movement and minimize interprocessor
+Our general compilation methodology produces the same style code as The IBM xlhpf compiler. Our both eliminate intraprocessor data movement and minimize interprocessor
 Execution
 time
 (ms)
@@ -511,21 +539,22 @@ Array syntax
 Figure
 
 18: Comparison of three 9-point stencil specifications.
-data movement. Finally, our use of a loop-level optimizer to perform the unroll-and-jam
+data movement. Finally, Our use of a loop-level optimizer to perform the unroll-and-jam
 optimization accomplish the same data reuse as the stencil compiler's ``multi-stencil swath''.
-The CM-2 stencil compiler had many limitations however. It could only handle single-
-statement stencils. The stencil had to be specified using the cshift intrinsic; no array-syntax
-stencils would be accepted. Since the compiler relied upon pattern matching, the stencil had
+The IBM xlhpf compiler had many limitations however. The IBM xlhpf compiler could only handle single-
+statement stencils. The IBM xlhpf compiler had to be specified using the cshift intrinsic; no array-syntax
+stencils would be accepted. Since The IBM xlhpf compiler relied upon pattern matching, the stencil had
 to be in a very specific form: a sum of terms, each of which is a coefficient multiplying a
 shift expression. No variations were possible. And finally, the programmer had to recognize
-the stencil computation, extract it from the program and place it in its own subroutine to
-be compiled by the stencil compiler.
+the stencil computation, extract the programmer from the
+original program and place the programmer in the programmer own subroutine to
+be compiled by The IBM xlhpf compiler.
 Our compilation scheme handles a strict superset of patterns handled by the CM-2 stencil
-compiler. In their own words, they "avoid the general problem by restricting the domain
-of applicability." [6] We have placed no such restrictions upon our work. Our strategy
+compiler. In their own words, their "avoid the general problem by restricting the domain
+of applicability." [6] We have placed no such restrictions upon We work. We strategy
 optimizes single-statement stencils, multi-statement stencils, cshift intrinsic stencils, and
-array-syntax stencils all equally well. And since our optimizations were designed to be incorporated
-into an HPF compiler, they benefit those computations that only slightly resemble
+array-syntax stencils all equally well. And since We optimizations were designed to be incorporated
+into an HPF compiler, our optimizations benefit those computations that only slightly resemble
 stencils.
 There are also some other commercially available compilers that can handle certain styl-
 ized, single-statement stencils. The MasPar Fortran compiler avoids intraprocessor data
@@ -533,34 +562,36 @@ movement for single-statement stencils written using array notation. This is acc
 by scalarizing the Fortran90 expression (avoiding the generation of cshifts) and then using
 dependence analysis to find loop-carried dependences that indicate interprocessor data
 movement. Only the interprocessor data is moved, and no local copying is required. How-
-ever, the compiler still performs all the data movement for single-statement stencils written
-using shift intrinsics. This strategy is shared by many Fortran90/HPF compilers that focus
-on handling scalarized code. As with the CM-2 stencil compiler, our methodology is a strict
-superset of this strategy.
-Gupta, et al. [12], in describing IBM's xlhpf compiler, state that they are able to reduce
+ever, The IBM xlhpf compiler still performs all the data movement for single-statement stencils written
+using shift intrinsics. Our strategy
+ is shared by many Fortran90/HPF compilers that focus
+on handling scalarized code. As with the CM-2 stencil compiler, Our general compilation methodology is a strict
+superset of Our strategy
+.
+Gupta, et al. [12], in describing IBM's xlhpf compiler, state that Gupta, et al are able to reduce
 the number of messages for multi-dimensional shifts by exploiting methods similar to ours.
-However, they do not describe their algorithm for accomplishing this, and it is unknown
-whether they would be able to eliminate the redundant communication that arises from
+However, Gupta, et al do not describe Gupta, et al algorithm for accomplishing this, and it is unknown
+whether Gupta, et al would be able to eliminate the redundant communication that arises from
 shifts over the same dimension and direction but of different distances.
 The Portland Group's pghpf compiler, as described by Bozkus, et al. [1, 2], performs
 stencil recognition and optimizes the computation by using overlap shift communication.
-They also perform a subset of our communication unioning optimization. However, they are
+The Portland Group's pghpf compiler, as described by Bozkus, et al also perform a subset of our communication unioning optimization. However, The Portland Group's pghpf compiler, as described by Bozkus, et al are
 limited to single-statement expressions in both cases.
 In general, there have been several different methods for handling specific forms of stencil
 computations. Our strategy handles a more general form of stencil computations than these
 earlier methods.
 7 Conclusion
-In this paper, we presented a general compilation scheme for compiling HPF stencil computations
-for distributed-memory architectures. The strategy optimizes such computations
-by orchestrating a unique set of optimizations. These optimizations eliminate unnecessary
+In this paper, Our presented a general compilation scheme for compiling HPF stencil computations
+for distributed-memory architectures. Our strategy optimizes such computations
+by orchestrating a unique set of optimizations. optimizations eliminate unnecessary
 intraprocessor data movement resulting from cshift intrinsics, rearrange the array statements
 to promote profitable loop-fusion, eliminate redundant interprocessor data movement,
-and optimize memory accesses via loop-level transformations. The optimizations are general
-enough to be included in a general-purpose HPF/Fortran90 compiler as they will benefit
+and optimize memory accesses via loop-level transformations. optimizations are general
+enough to be included in a general-purpose HPF/Fortran90 compiler as optimizations will benefit
 many computations, not just those that fit a stencil pattern.
-The strength of these optimizations is that they operate on a normal form into which
+The strength of optimizations is that optimizations operate on a normal form into which
 all stencil computations can readily be translated. This enables us to optimize all stencil
-computations regardless of whether they are written using array syntax or explicit shift in-
+computations regardless of whether optimizations are written using array syntax or explicit shift in-
 trinsics, or whether the stencil is computed by a single statement or multiple statements.
 This approach is significantly more general than stencil compilation approaches in previous
 compilers. Even though we focused on the compilation of stencils for distributed-memory

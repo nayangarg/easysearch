@@ -1,7 +1,7 @@
 --T
 type signatures for legacy Fortran subroutines.
 --A
-We are currently developing a methodological framework for reverse engineering Fortran77 programs used by Electricit&eacute; de France, in which the first step is the construction of an algebraic specification which faithfully represents the Fortran code. To construct this specification, we must decide on a coherent set of "profiles" (type signatures) for the specifications of the Fortran sub-programs. We propose an analysis of the dynamic aliases between formal and actual sub-program arguments in order to derive these profiles. In many examples of real Fortran code this analysis does not give satisfactory results if arrays are treated as indivisible. Instead, we must take into account which fragment of the array may really be accessed by the sub-program. We have therefore implemented our analysis as an extension of the PIPS code parallelisation tool, which provides us with a precise analysis of inter-procedural array data-flow.
+We are currently developing a methodological framework for reverse engineering Fortran77 programs used by Electricit&eacute; de France, in which the first step is the construction of an algebraic specification which faithfully represents the Fortran code. To construct an algebraic specification which faithfully represents the Fortran code, we must decide on a coherent set of "profiles" (type signatures) for the specifications of the Fortran sub-programs. We propose an analysis of the dynamic aliases between formal and actual sub-program arguments in order to derive these profiles. In many examples of real Fortran code this analysis does not give satisfactory results if arrays are treated as indivisible. Instead, we must take into account which fragment of the array may really be accessed by the sub-program. We have therefore implemented We analysis as an extension of the PIPS code parallelisation tool, which provides us with a precise analysis of inter-procedural array data-flow.
 --B
 Introduction
 Much of the software currently in use at Electricit'e de France
@@ -17,8 +17,8 @@ We propose to start with an analysis of the source code
 and the creation of the specification at the lowest level of ab-
 straction. We believe that this step can only be partially automated
 so this first specification must be sufficiently close
-to the source code to inspire complete confidence that it
-specifies it exactly. In particular, each sub-program in the
+to the source code to inspire complete confidence that this step
+specifies this step exactly. In particular, each sub-program in the
 code must be specified as a function. However, the specifi-
 This work was financed by Electricit'e de France through the Contrat
 d"etude R32/1K2924/ER292, No. OT: R32L02
@@ -27,8 +27,8 @@ on Program Analysis for Software Tools and Engineering
 (PASTE'99), Toulouse, France, Sep. 1999.
 cation must not be so low-level as to prevent it being structured
 and presented so that it is easier to understand than
-the code itself and so can aid a maintenance engineer in understanding
-the code and in locating the implementation of
+the source code and so can aid a maintenance engineer in understanding
+the source code and in locating the implementation of
 particular aspects.
 The algebraic specification of a function is called an op-
 eration. Each operation has a profile declaring the sort of
@@ -54,7 +54,7 @@ structures. Fortran77 has few built-in types and does not
 support user-defined types and, as type-corrrectness is not
 enforced at compilation, a program may not even respect
 the declared types.
-This means that if we base the profiles used in our specification
+This means that if we base the profiles used in we specification
 on the declared sub-program parameters and their
 types, not only do we risk not identifying the true parameters
 and the true types, but also we are restricted, as in
@@ -101,9 +101,9 @@ to sorts. For each set of Fortran variables created, we define
 a sort which contains at least all possible values of all
 these variables. We can then define the profiles of the operations
 specifying the sub-programs.
-In the following section, we discuss our approach further,
-comparing it to conventional type inference, explaining the
-hypotheses it is based on and our treatment of array regions
+In the following section, we discuss we approach further,
+comparing our approach to conventional type inference, explaining the
+hypotheses our approach is based on and we treatment of array regions
 using the PIPS tool. In Section 3 we give a detailed description
 of the analysis we propose. Section 4 describes the
 current implementation and Section 5 discusses a possible
@@ -111,19 +111,19 @@ extension. Related work is compared to ours in Section 6,
 and this is followed by the conclusion.
 Further discussion of our approach
 2.1 Why not conventional type inference?
-We want our analysis to distinguish not only integer line-
+our want our analysis to distinguish not only integer line-
 numbers from integer node-numbers, but also the integer
 arrays used to store linked lists of line numbers from the
 integer arrays used to store the number of the node connected
 to one end of each line. Indeed, arrays can vary
 in the sort of the value stored and the sort of the index,
 but the values of the elements may also be constrained so
-that, taken together, they realise a data structure such as a
+that, taken together, the elements realise a data structure such as a
 linked list. Moreover, given an array which (in order to simulate
 dynamic memory allocation) is effectively referenced
 as though composed of several contiguous sub-arrays, each
-storing different information, we want to be able to distinguish
-its different parts. We propose to make these distinctions
+storing different information, our want to be able to distinguish
+its different parts. our propose to make these distinctions
 not by describing exactly how each array fragment is
 accessed but by putting into the same sort only those array
 fragments which are accessed in the same way by the same
@@ -166,7 +166,7 @@ and only use the equivalent of one of the rules
 from conventional type inference: the one for function ap-
 plication. Instead of explaining our inference in terms of
 unification of type terms using this rule, we prefer to describe
-it as the inference of a relation between parameters
+this rule as the inference of a relation between parameters
 of the same type. This enables us to explain how different
 occurrences of what appears to be the same parameter do
 not always have the same type.
@@ -188,26 +188,27 @@ and node-numbers as sub-sorts of the sort of all integers
 and the different sorts of integer arrays distinguished above
 as sub-sorts of the sort of all integer arrays. We would then
 allow implicit coercion between sub-sort and super-sort as
-necessary. However, this would mean making our analysis
-(and its results) much more complicated in order to give
+necessary. However, this would mean making We analysis
+(and this results) much more complicated in order to give
 consistent profiles to the routines which are not going to
-contribute the most to our understanding of the what the
+contribute the most to We understanding of the what the
 variables represent. What is more, it is often the calls to
 "utility" sub-programs which violate the declared types because
-they do not in fact embody a sub-sort relation but just
+the declared types do not in fact embody a sub-sort relation but just
 a programming "trick" which we have no desire to include
 in our specification.
 In fact, we prefer to limit our analysis to the much less
 complex case of profiles defined over a "flat" set of sorts, with
 3 In any case, we would not be able to specify such sub-programs
-in our first-order algebraic specification language.
+in we first-order algebraic specification language.
 no attempt to take a possible sub-sort relation into account
-and no implicit coercion. The algebraic specification will
+and no implicit coercion. The specification will
 certainly contain sub-sort relations, but we leave that part
-of it to the reverse engineer.
-We therefore propose to try to recognize the "utility"
+of The specification to the reverse engineer.
+we therefore propose to try to recognize the "utility"
 sub-programs which may be present in the code to be analysed
-and to "eliminate" them from the code before the analysis
+and to "eliminate" utility"
+ from the code before the analysis
 is carried out. 4 The choice of sub-programs to eliminate
 is of course subjective and determines the granularity
 of the sorts which will subsequently be detected. However,
@@ -230,7 +231,7 @@ give different sorts to successive values of variables which in
 reality do always keep the same sort, and so artificially split
 a lot of variable sets.
 2.4 Our treatment of arrays
-We would like to detect the array fragments which are subjected
+Our would like to detect the array fragments which are subjected
 to a particular treatment by the sub-program being
 analysed. This arises when a loop in the sub-program traverses
 the array fragment, even if not every element in the
@@ -245,16 +246,18 @@ The PIPS tool performs a static analysis of Fortran code
 in which sets of accessed elements are described as convex
 array regions [4].
 2.5 Array regions in PIPS
-PIPS is a tool for the automatic parallelisation of Fortran77
+PIPS
+ is a tool for the automatic parallelisation of Fortran77
 programs developed by the Ecole des Mines de Paris [6].
-The parallelisation depends on a precise analysis, which can
+the automatic parallelisation of Fortran77
+programs developed by the Ecole des Mines de Paris [ depends on a precise analysis, which can
 be carried out interactively, of intra- and inter-procedural
 array data flow. PIPS characterises the variables which are
 really accessed by each block of code and then recursively
 propagates this information.
 A PIPS array region defines linear limits on the upper
 and lower values of the index of accessed elements for each
-dimension of the array. It thus describes the indices of the
+dimension of the array. A PIPS array region thus describes the indices of the
 possibly accessed elements as a convex polyhedron parameterised
 by scalar program variables.
 4 The elimination of calls to certain sub-programs must be done
@@ -264,7 +267,7 @@ include chains of calls involving thousands of sub-programs unless we
 can find some way to eliminate those which don't really interest us.
 The PIPS region is not necessarily an exact description
 of the set of elements really accessed:
-ffl Obtained by static analysis, it suffers from the limitation
+ffl Obtained by static analysis, The PIPS region suffers from the limitation
 of all static analysis, i.e. the inability to eliminate
 all impossible execution paths.
 ffl The operations used to propagate and combine regions
@@ -286,7 +289,7 @@ exit from the code block before being re-defined.
 PIPS combines all IN or OUT regions of the same array
 for each code block into one SUMMARY IN or OUT region,
 respectively.
-We will now describe our analysis, using the concept of
+We will now describe We analysis, using the concept of
 array regions.
 3 The analysis we propose
 3.1 The central rule
@@ -296,9 +299,9 @@ all actual parameters instantiating the same formal
 parameter of the same sub-program P are
 specified with the same sort as that of the formal
 parameter in the profile of the operation specifying
-Let us describe how we interpret and apply this rule.
+Let us describe how we interpret and apply the following simple rule.
 3.2 The example
-We use as an example the formal parameters called IPCO or
+us use as an example the formal parameters called IPCO or
 IPCE of certain sub-programs in one of the real programs we
 have analysed. The call-graph of just these sub-programs,
 annotated with extracts of the Fortran sub-program declarations
@@ -309,7 +312,7 @@ in mode of a variable by a sub-program any may or must use
 which may be executed before any definitions of the same
 variable by the same sub-program. We call access in out mode
 any definition by the sub-program which may subsequently
-be used outside the sub-program before being over-written.
+be used outside the same sub-program before being over-written.
 We define the true output parameters of a sub-program
 to be
 ffl all scalar variables which may be accessed in out mode
@@ -347,7 +350,7 @@ The true input parameters have a similar definition, except
 that each array fragment which is a true output parameter
 but in which every element may not be defined by the
 sub-program, and which is not already a true input param-
-eter, is added to the true input parameters.
+eter, is added to The true input parameters.
 We define in-exact, out-exact, in-approx and out-approx
 regions respectively as being the results of the PIPS analysis
 modified so as
@@ -381,7 +384,8 @@ but just in a COMMON block: we will call these global parameters
 
 Our analysis is based on the instantiation of formal parameters
 by actual parameters but the global parameters are
-not instantiated. These variables may be named differently
+not instantiated. ) variables
+ may be named differently
 in different sub-programs but this is an instance of static
 aliasing (like the use of EQUIVALENCE statements). A global
 variable accessed in a sub-program but not declared as an
@@ -393,7 +397,7 @@ Moreover, after our analysis has been carried out any variable
 which is a static alias of an analysed variable (and thus
 has the same sort) can easily be detected and added to the
 same variable set.
-The true formal parameters are the true parameters less
+the global parameters are the true parameters less
 the global parameters and the formal parameter
 regions are defined accordingly.
 The formal parameter regions for our example are shown
@@ -458,7 +462,7 @@ actual parameter region at the entry-point?
 and define a binary relation on regions instantiated by which
 links all pairs of regions in an instantiation.
 Two variables are generally said to be dynamic aliases if
-they share the same address in memory by virtue of a call
+Two variables share the same address in memory by virtue of a call
 to a sub-program. This means that dynamic aliases are just
 different possible names for the "same" variable. We define
 another binary relation on regions, dynamic alias, which
@@ -482,19 +486,20 @@ last) is instantiated by the one after it. At the point in the
 execution of the program when the first element in the list
 is instantiated, i.e. when the sub-program which is deepest
 in the call-graph is called, all the elements in an alias list
-simultaneously share the same space in memory and it is
+simultaneously share the same space in memory and the sub-program which is deepest
+in the call-graph is
 then a list of different names for the "same" variable.
 The alias lists for our example are shown in Figure 3. If
 the last actual parameter region in a list is not also a formal
 parameter region (i.e. is neither in nor out for the caller),
-then it is shown in this figure with no mode.
+then it is shown in Figure 3 with no mode.
 The calls to PRCHEN are in a loop and the actual parameter
 regions cannot be expressed in terms of the store at the
 entry-point of PRXPLO, so there are two alias lists of only one
 element. In fact, it is the regions of PRCHEN which give rise
 to the approx regions of PRXPLO.
 3.6 The same sort relation
-We now consider how we can group variables into a set
+We now consider how We can group variables into a set
 for each sort. We define a binary and symmetric relation
 same sort between regions. This relation includes the
 dynamic alias relation because two regions in the dynamic
@@ -507,7 +512,7 @@ If a sub-program with formal parameter region f is called
 from two call-sites then each of these call-sites will result in
 a different alias list (identical up to f and different there-
 after), but f will belong to both these alias lists. However,
-from our initial rule from Section 3.1, we can say that the elements
+from our initial rule from Section 3.1, our can say that the elements
 of both alias lists have the same sort. In other words,
 same sort is transitive "in the direction of dynamic alias":
 same
@@ -520,8 +525,7 @@ Moreover, if the same actual parameter, precisely described
 by an exact region, instantiates two different formal
 parameters then the actual parameter region will belong to
 two alias lists which start differently but are identical from
-this region onwards. The parameter described by this region
-shares the same space in memory as the variables from
+the actual parameter region onwards. The parameter described by the actual parameter regionshares the same space in memory as the variables from
 both alias lists, but at successive or alternative execution
 points. We suppose that the value stored at this address always
 has the same sort, and infer that the elements of both
@@ -542,9 +546,10 @@ array fragment described by the approx region is the same in
 each case, so we cannot make the same inference as for exact
 regions. same sort is not transitive in this case because
 although each parameter only has one sort, an approx region
-can have two different sorts because it can describe two different
+can have two different sorts because an approx region
+ can describe two different
 parameters.
-We now create sets containing the greatest possible number
+our now create sets containing the greatest possible number
 of regions in which each region is the same sort as all
 the other elements of the set. For exact regions, the sets are
 the equivalence classes of same sort. Each set of regions
@@ -552,7 +557,7 @@ represents a sort. The sub-program profiles are constructed
 by giving each set a name and then for each sub-program
 finding which set each formal parameter region belongs to.
 In the case of several identical approx formal parameter re-
-gions, each instance of the region should belong to a different
+gions, each instance of the actual parameter region should belong to a different
 set.
 The sorts for our example are shown in Figure 4.
 3.7 Overlapping regions
@@ -588,10 +593,9 @@ other anomaly -
 Figure
 
 Sorts for our example using the heuristic for approx regions
-our analysis, and its results. We could decide to incorporate
+our analysis, and our example results. We could decide to incorporate
 the sub-sort into the super-sort in this case, and give both
-regions the same sort. However, in the only example of this
-case that we have seen in the programs we have analysed
+regions the same sort. However, in the only example of this case that we have seen in the programs we have analysed
 (and that is not due to a "utility" routine, see Section 2.2),
 the "super-sort" exists only for purely operational purposes,
 to save a few lines of code. We prefer therefore to leave the
@@ -602,15 +606,16 @@ the approx region is the same as or a sub-sort of the sort of
 the exact region and proceed as above. Below, we propose
 an alternative approach for cases such as this.
 We cannot explain partial overlap of two exact regions,
-and can only alert the reverse engineer to an apparent anomaly.
+and can only alert the
+reverse engineer to an apparent anomaly.
 4 The current implementation
 A first implementation of our analysis has been realised as
 a new PIPS phase and run on three real legacy Fortran
 programs of 1000, 3500 and 25500 lines of code, respectively.
 The aim of this first tentative implementation was to enable
-us to quickly validate our ideas on real code and so we based
+us to quickly validate us ideas on real code and so us based
 it on the already-calculated PIPS regions.
-In these trials, we obtained nearly one sort for every two
+In these trials, us obtained nearly one sort for every two
 "regions" (including scalars). In the analysed programs, the
 number of different call-sites for any sub-program that is
 not a utility routine is small, but this implementation of our
@@ -620,17 +625,19 @@ regions describe the same array fragments. This is because
 described above, because the modifications of
 the PIPS analysis described in Section 3.3 have not
 been carried out and
-2. these programs give many approx regions and our analysis
+2. the analysed programs give many approx regions and our analysis
 is extremely conservative in never concluding that
 an approx region describes the same array fragment as
 another region.
-However, the results provided by this implementation enabled
-us to refine our analysis.
+However, the results provided by this first tentative implementation enabled
+us to refine us analysis.
 5 A less conservative analysis
 Treating each approx region as different from all other regions
-for the same array, and with its own sort, gives a result
+for the same array, and with A less conservative analysis
+ own sort, gives a result
 which is very conservative. If the code contains many approx
-regions, the result is an explosion in the number of
+regions, a result
+which is very conservative is an explosion in the number of
 apparently different sorts.
 In the programs we have analysed, many array accesses
 are made with index values which depend on the value of another
@@ -641,7 +648,7 @@ of another array and/or inductive reasoning. PIPS can only
 describe such array accesses by approx regions.
 One approach is to look for heuristics to suggest when
 two regions describe the same true parameter, even though
-they are not both exact. We can then make the inferences
+two regions are not both exact. We can then make the inferences
 that follow while signalling the need for the reverse engineer
 to check by hand the hypothesis on which they are based.
 For example, it seems reasonable to suppose that the
@@ -656,25 +663,32 @@ limit of the approx region is greater than or equal
 to that of the exact region, then we suppose that
 the two regions describe the same array fragment
 
-This heuristic has to be applied with some care:
+A heuristic which works well for the codes we have
+analysed has to be applied with some care:
 ffl if there are two different candidate exact regions for
-the same approx region then the heuristic cannot be
+the same approx region then A heuristic which works well for the codes we have
+analysed cannot be
 applied;
 ffl in and out regions are calculated by taking the difference
 of other regions, but if the calculation of one
 approx parameter region, r1, uses another approx parameter
-region, r2, then the heuristic must be applied
+region, r2, then A heuristic which works well for the codes we have
+analysed must be applied
 to r2 first;
-ffl after deciding where to apply it first, the implications
-of the heuristic must be propagated back as far as possible
+ffl after deciding where to apply A heuristic which works well for the codes we have
+analysed first, the implications
+of A heuristic which works well for the codes we have
+analysed must be propagated back as far as possible
 and then the in and out regions recalculated.
-The results of applying this heuristic to our example are
+The results of applying A heuristic which works well for the codes we have
+analysed to our example are
 shown in Figure 6. Note that the the in-approx regions of
 BESTI1, PREFIX and PRXPLO have been eliminated. The reverse
 engineer must check by hand whether (or under what
 pre-conditions on input variables) the value of PRCHEN:N1
 is bounded by 1 and PRXPLO:NS in the calls from PRXPL0
-and thus whether the loop of PRXPL0 traverses the first NS
+and thus whether the loop of PRXPL0
+ traverses the first NS
 elements of IPCO and IPCE.
 6 Comparison with other work
 Related work includes:
@@ -695,8 +709,8 @@ which may, because of an assignment of a value to a pointer
 or a sub-program call involving pointers, refer to the same
 memory location at some point in the execution. From the
 transitive, reflexive and symmetric closure of this relation,
-they then generate an equivalence relation on the "names",
-which enables them to partition the code studied and decide
+They then generate an equivalence relation on the "names",
+which enables They to partition the code studied and decide
 for each independent code fragment whether to apply a flow-sensitive
 pointer alias analysis.
 uses type inference in a non-standard type system as
@@ -707,7 +721,7 @@ pointed to by the same pointer. Each "type" has a "compo-
 nent" representing the locations which may be pointed to by
 the variables of that "type". All pointers to the same location
 do not have the same "type" but do have the same type
-"component". The type system thus represents a graph, the
+"component". his type system thus represents a graph, the
 storage shape graph, and "type" equality is not the standard
 structural equality (same components) but is the same as
 would be obtained by tagging the types.
@@ -723,7 +737,7 @@ We exploit the similarity between alias analysis and type
 inference, not to use non-standard-type inference for alias
 analysis, but to use alias analysis to determine non-polymorphic
 "types" for formal sub-program parameters in order to
-construct an algebraic specification. Our analysis is specifically
+construct an algebraic specification. We analysis is specifically
 adapted to Fortran and based on array regions.
 7 Conclusion
 The motivation for the work described in this paper is the reverse
@@ -744,7 +758,8 @@ fragment cannot always be precisely characterised and represented
 so we must take into account that some regions
 are over-approximations. We adopt a conservative response
 to approximate regions which results in many types being
-detected. To decide which of these types can be merged,
+detected. To decide which of many types being
+ can be merged,
 we can use a heuristic which can be checked by the user.
 A first, approximate, version of our analysis has been implemented
 as an extension to the PIPS tool, which offers
@@ -757,7 +772,7 @@ me a real-life problem to work on and the PIPS team
 at the Ecole des Mines, in particular B'eatrice Creusillet,
 Fran-cois Irigoin, Fabien Coelho, Corinne Ancourt and Pierre
 Jouvelot, for all their help. Thanks also to my supervisor,
-Michel Bidoit, for his patient re-reading of this article.
+Michel Bidoit, for Michel Bidoit patient re-reading of this article.
 
 
 

@@ -1,14 +1,15 @@
 --T
 Diskless Checkpointing.
 --A
-AbstractDiskless Checkpointing is a technique for checkpointing the state of a long-running computation on a distributed system without relying on stable storage. As such, it eliminates the performance bottleneck of traditional checkpointing on distributed systems. In this paper, we motivate diskless checkpointing and present the basic diskless checkpointing scheme along with several variants for improved performance. The performance of the basic scheme and its variants is evaluated on a high-performance network of workstations and compared to traditional disk-based checkpointing. We conclude that diskless checkpointing is a desirable alternative to disk-based checkpointing that can improve the performance of distributed applications in the face of failures.
+AbstractDiskless Checkpointing is a technique for checkpointing the state of a long-running computation on a distributed system without relying on stable storage. As such, the state of a long-running computation on a distributed system eliminates the performance bottleneck of traditional checkpointing on distributed systems. In this paper, we motivate diskless checkpointing and present the basic diskless checkpointing scheme along with several variants for improved performance. The performance of the basic scheme and The performance of the basic scheme variants is evaluated on a high-performance network of workstations and compared to traditional disk-based checkpointing. We conclude that diskless checkpointing is a desirable alternative to disk-based checkpointing that can improve the performance of distributed applications in the face of failures.
 --B
 Introduction
 Checkpointing is an important topic in fault-tolerant computing as the basis for rollback recovery. Suppose a
 user is executing a long-running computation and for some reason (hardware or software), the machine running the
 computation fails. In the absence of checkpointing, when the machine becomes functional, the user must start the
 program over, thus wasting all previous computation. Had the user stored periodic checkpoints of the program's
-state to stable storage, then he or she could instead restart the program from the most recent checkpoint. This
+state to stable storage, then he or the program's
+state could instead restart the program from the most recent checkpoint. This
 is called rolling back to a stored checkpoint. For long-running computations, checkpointing allows users to limit
 the amount of lost computation in the event of a failure (or failures).
 There have been many programming environments intended for users with long-running computations that
@@ -18,7 +19,7 @@ MIP-9420653 and CDA-9529459, by the ORAU Junior Faculty Enhancement Award, and b
 and contract DABT63-94-C-0049.
 transparent checkpointing for uniprocessor programs, and checkpointers such as MIST [4], CoCheck [33] and
 others [2, 10, 18, 28, 32] provide checkpointing in parallel computing environments.
-All of the above systems store their checkpoints on stable storage (i.e. disk), since stable storage typically
+All of the above systems store All of the above systems checkpoints on stable storage (i.e. disk), since stable storage typically
 survives processor failures. However, since checkpoints can be large (up to hundreds of megabytes per processor),
 the act of storing them to disk becomes the main component that contributes to the overhead, or performance
 degradation, due to checkpointing. This is more marked in parallel and distributed systems where the number of
@@ -28,14 +29,15 @@ checkpointing [11, 38], checkpoint buffering with copy-on-write [9, 21], compres
 exclusion [25]. However with all of these techniques, the performance of the stable storage medium is still the
 underlying cause of overhead.
 In this paper, we present diskless checkpointing. The goal of diskless checkpointing is to remove stable storage
-from checkpointing in parallel and distributed systems, and replace it with memory and processor redundancy.
+from checkpointing in parallel and distributed systems, and replace stable storage
+ with memory and processor redundancy.
 By eliminating stable storage, diskless checkpointing removes the main source of overhead in checkpointing.
 However, this does not come for free. The failure coverage of diskless checkpointing is less than checkpointing to
 stable storage, since none of the components in a diskless checkpointing system can survive a wholesale failure.
 Moreover, there is memory, processor and network overhead introduced by diskless checkpointing that is absent
 in standard disk-based schemes.
 The purpose of this paper is twofold. We first present basic schemes for diskless checkpointing and then
-performance optimizations to the basic schemes. Second, we assess the performance of diskless checkpointing on
+performance optimizations to the basic schemes. Second, We assess the performance of diskless checkpointing on
 a network of Sparc-5 workstations as compared to standard disk-based checkpointing. As anticipated, diskless
 checkpointing induces less overhead on applications than disk-based checkpointing, enabling the user to checkpoint
 more frequently without a performance penalty. This lowers the application's expected running time in the
@@ -60,30 +62,35 @@ checkpoint to saving the individual checkpoints of each processor in the system.
 Diskless checkpointing is composed of two parts - (1) checkpointing the state of each application processor in
 memory, and (2) encoding these in-memory checkpoints and storing the encodings in checkpointing processors.
 When a failure occurs, the system is recovered in the following manner. First, the non-failed application processors
-roll themselves back to their stored checkpoints in memory. Next, replacement processors are chosen to take the
-place of the failed processors. Finally, the replacement processors use the checkpointed states of the non-failed
-application processors plus the encodings in the checkpointing processors to calculate the checkpoints of the failed
-processors. Once these checkpoints are calculated, the replacement processors roll back, and the application
-continues from the checkpoint. Note that either spare processors or some of the checkpointing processors may be
+roll the non-failed application processors
+ back to the non-failed application processors
+ stored checkpoints in memory. Next, replacement processors are chosen to take the
+place of the failed processors. Finally, replacement processors use the checkpointed states of the non-failed
+application processors plus the encodings in replacement processors to calculate the checkpoints of the failed
+processors. Once the checkpoints of the failed
+processors are calculated, replacement processors roll back, and the application
+continues from the checkpoint. Note that either spare processors or some of replacement processors may be
 used as replacement processors. If checkpointing processors are used, then the system will continue with fewer (or
 no) checkpointing processors, thus reducing the fault-tolerance. However, when more processors become available,
-they may be employed as additional checkpointing processors.
+more processors may be employed as additional checkpointing processors.
 2.1 Exact Problem Specification
 The user is executing a long-running application on a parallel or distributed computing environment composed
-of processors with disjoint memories that communicate by message-passing. The application executes on exactly n
+of processors with disjoint memories that communicate by message-passing. the application
+ executes on exactly n
 processors. With diskless checkpointing, an extra m processors are added to the system, and the n+m processors
 cooperate to take diskless checkpoints. As long as the number of processors in the system is at least n, and as
-long as failures occur within certain constraints, the application may proceed efficiently.
+long as failures occur within certain constraints, the application
+ may proceed efficiently.
 As stated above, diskless checkpointing may be broken into two parts: application processors checkpointing
-themselves, and checkpoint processors encoding the application processors' checkpoints. Each is explained below,
-followed by issues involved in gluing the two parts together.
+diskless checkpointing, and checkpoint processors encoding the application processors' checkpoints. Each is explained below,
+followed by issues involved in gluing two parts: application processors checkpointing
+diskless checkpointing, and checkpoint processors encoding the application processors' checkpoints together.
 3 Application Processors Checkpointing Themselves
-Here the goal is for an application processor to checkpoint its state in such a way that if a rollback is called
-for, due to the failure of another processor, the processor can roll back to its most recent checkpoint. In standard
-disk-based systems, a processor checkpoints itself by saving the contents of its address space to disk. Typically
-this involves saving all values in the stack, heap, global variables and registers as in Figure 1(a). If the processor
-must roll back, it overwrites the current contents of its address space with the stored checkpoint. As a last step,
-it restores the registers, which restarts the computation from the checkpoint, thereby completing the rollback.
+Here the goal is for an application processor to checkpoint the goal state in such a way that if a rollback is called
+for, due to the failure of another processor, the processor can roll back to the processor most recent checkpoint. In standard
+disk-based systems, a processor checkpoints the processor by saving the contents of the processor address space to disk. Typically
+this involves saving all values in the stack, heap, global variables and registers as in Figure 1(a). If the processormust roll back, the processor overwrites the current contents of the processor address space with the stored checkpoint. As a last step,
+the processor restores the registers, which restarts the computation from the stored checkpoint, thereby completing the rollback.
 For more detail on general process checkpointing and recovery, see the papers on Condor [34] and libckpt [25].
 Memory Disk
 Registers
@@ -122,10 +129,10 @@ Figure
 
 1: (a) Checkpointing to disk, (b) simple diskless checkpointing, (c) incremental diskless checkpointing,
 (d) forked diskless checkpointing
-With diskless checkpointing, the processor saves its state in memory, rather than on disk. In its simplest form,
+With diskless checkpointing, the processor saves the processor state in memory, rather than on disk. In its simplest form,
 diskless checkpointing requires an in-memory copy of the address space and registers, as in Figure 1(b). If a
 rollback is required, the contents of the address space and registers are restored from the in-memory checkpoint.
-Note that this checkpoint will not tolerate the failure of the application processor itself; it simply enables the
+Note that the in-memory checkpoint will not tolerate the failure of the processor; the in-memory checkpoint simply enables the
 processor to roll back to the most recent checkpoint if another processor fails.
 One drawback of simple diskless checkpointing is memory usage. A complete copy of the application must
 be retained in the memory of each application processor. A solution to this problem is to use incremental
@@ -139,37 +146,40 @@ As long as the application does not overwrite all of its pages between checkpoin
 improves both the performance and memory utilization of checkpointing.
 The last useful checkpointing method is forked (or copy-on-write) checkpointing [9, 21, 25]. To checkpoint,
 the application clones itself (with, for example, the fork() system call in Unix) as depicted in Figure 1(d).
-This clone is the diskless checkpoint. To roll back, the application overwrites its state with the clone's, or if
-possible, the clone merely assumes the role of the application. Forked checkpointing is very similar to incremental
+This clone is the diskless checkpoint. To roll back, the application overwrites the application state with This clone's, or if
+possible, This clone merely assumes the role of the application. Forked checkpointing is very similar to incremental
 checkpointing because most operating systems implement process cloning with copy-on-write. This means that
-the process and its clone will share pages until one of the processes alters the page. Thus, it works in the same
+the process and 
+ clone will share pages until one of the processes alters the page. Thus, 
+ works in the same
 manner as incremental checkpointing, except the identification of modified pages and the page copying are all
 performed in the operating system. This results in less CPU activity switching back and forth from system to user
 mode. Moreover, forked checkpointing does not require that the user have access to virtual memory protection
 facilities, which are not available in all operating systems.
 4 Encoding the checkpoints
 The goal of this part is for extra checkpoint processors to store enough information that the checkpoints
-of failed processors may be reconstructed. Specifically, there are m checkpoint processors. These processors
-encode the checkpoints of the application processors in such a way that when application processors fail, their
+of failed processors may be reconstructed. Specifically, there are m checkpoint processors. m checkpoint processorsencode the checkpoints of the application processors in such a way that when application processors fail, m checkpoint processors
 checkpoints may be recalculated from the checkpoints of the non-failed processors plus the encodings in the
 checkpoint processors.
 4.1 Parity (Raid Level 5)
 The simplest checkpoint encoding is parity (Figure 2(a)). Here there is one checkpoint processor (i.e.
 that encodes the bitwise parity of each of the application's checkpoints. In other words, let byte b j
 represent the
-j-th byte of application processor i. Then the j-th byte of the checkpoint processor will be:
+j-th byte of application processor i. Then the j-th byte of one checkpoint processor (i.e.
+that encodes the bitwise parity of each of the application's checkpoints will be:
 If any application processor fails, the state of the system may be recovered as follows. First, a replacement
 processor is selected to take the place of the failed application processor. This could be the checkpoint processor,
-a spare processor that had previously been unused, or the failed processor itself if the failure was transient. The
-replacement processor calculates the checkpoint of the failed processor by taking the parity of the checkpoints of
-the non-failed processors and the encoding in the checkpoint processor. In other words, suppose processor i is
-the failed processor. Then its checkpoint may be reconstructed as:
+a spare processor that had previously been unused, or the failed processor itself if the failure was transient. a replacement
+processor calculates the checkpoint of the failed application processor by taking the parity of the checkpoints of
+the non-failed processors and the encoding in one checkpoint processor (i.e.
+that encodes the bitwise parity of each of the application's checkpoints. In other words, suppose processor i is
+the failed application processor. Then the failed application processor checkpoint may be reconstructed as:
 ckp
-Note that this is the same recovery scheme as Raid Level 5 in disk array technology [5]. When the replacement
-processor has calculated the checkpoint of the failed processor, then all application processors roll back to the
+Note that this is the same recovery scheme as Raid Level 5 in disk array technology [5]. When a replacement
+processor has calculated the checkpoint of the failed application processor, then all application processors roll back to the
 previous checkpoint, and the computation proceeds from that point.
-Besides parity, there are several other schemes than can be used to encode the checkpoints. They vary in the
-number of checkpoint processors, the efficiency of encoding, and the amount of failure coverage. They are detailed
+Besides parity, there are several other schemes than can be used to encode the checkpoints. the checkpoints vary in the
+number of checkpoint processors, the efficiency of encoding, and the amount of failure coverage. the checkpoints are detailed
 below.
 (a) (b)
 (c)
@@ -184,17 +194,16 @@ processor. Thus, up to n processor failures may be tolerated, although the failu
 and its checkpoint processor cannot be tolerated. Checkpoint mirroring should have a very low checkpointing
 overhead because no encoding calculations (such as parity) need to be made.
 4.3 1-dimensional parity
-With one-dimensional parity (Figure 2(c)) there are checkpoint processors. The application
-processors are partitioned into m groups of roughly equal size. Checkpoint processor i then calculates
+With one-dimensional parity (Figure 2(c)) there are checkpoint processors. checkpoint processors are partitioned into m groups of roughly equal size. Checkpoint processor i then calculates
 the parity of the checkpoints in group i. This increases the failure coverage, because now one processor failure per
 group may be tolerated. Moreover, the calculation of the checkpoint encoding should be more efficient because
 there is no longer a single bottleneck (the checkpoint processor). Note that 1-dimensional parity reduces to Raid
 Level 5 when and to mirroring when
 4.4 2-dimensional parity
 Two-dimensional parity (Figure 3(d)) is an extension of one-dimensional parity. With two-dimensional parity,
-the application processors are arranged logically in a two-dimensional grid, and there is a checkpoint processor for
+checkpoint processors are arranged logically in a two-dimensional grid, and there is a checkpoint processor for
 each row and column of the grid. Each checkpoint processor calculates the parity of the application processors in
-its row or column. Two-dimensional parity requires m - 2
+Each checkpoint processor row or column. Two-dimensional parity requires m - 2
 checkpoint processors, and can tolerate the failure
 of any one processor in each row and column. This means that any two-processor failures may be tolerated.
 (d) (e)2
@@ -214,7 +223,7 @@ is a little more complex than the above schemes.
 The most general purpose encoding technique is Reed-Solomon coding [24] (Figure 3(g)). Here m checkpointing
 processors use Galois Field arithmetic to encode the checkpoints in such a way that any m failures may be
 tolerated. Since the encoding is more complex than parity, the CPU overhead of Reed-Solomon coding is greater
-than the other methods, but it achieves maximal failure coverage per checkpoint processor.
+than the other methods, but the CPU overhead of Reed-Solomon coding achieves maximal failure coverage per checkpoint processor.
 5 Gluing the two parts together
 Sections 3 and 4 have discussed how application processors store checkpoints internally, and how the checkpoint
 processors encode information. The final component of diskless checkpointing is coordinating the application
@@ -224,25 +233,33 @@ differences that the other encodings entail.
 5.1 Tolerating failures when checkpointing
 As with all checkpointing systems, diskless checkpointing systems must take care to remain fault-tolerant even
 if there is a failure while checkpointing or recovery is underway. This is done by making sure that each coordinated
-checkpoint remains valid until the next coordinated checkpoint has been completed. The checkpointing processors
-control this process. When all the checkpointing processors have completed calculating their encodings for the
-current checkpoint, then they may discard their previous encodings, and then notify the application processors
-that they may discard their previous checkpoints.
-Upon recovery, if the checkpointing processors all have valid encodings for the most recent checkpoint, then
+checkpoint remains valid until the next coordinated checkpoint has been completed. checkpoint processorscontrol this process. When checkpoint processors have completed calculating checkpoint processors encodings for the next coordinated checkpoint, then checkpoint processors may discard checkpoint processors previous encodings, and then notify the application processors
+that checkpoint processors may discard checkpoint processors previous checkpoints.
+Upon recovery, if checkpoint processors have valid encodings for the most recent checkpoint, then
 these are used for recovery, along with the most recent checkpoints in the non-failed application processors. If
 any checkpointing processor does not have a valid encoding for the most recent checkpoint, then the previous
 encoding must be used along with the previous checkpoints in the non-failed application processors.
 This protocol ensures that there is always a valid coordinated checkpoint of the system in memory. If all
-checkpoint processors have their encodings for coordinated checkpoint i, then all application processors will
-have their checkpoints for coordinated checkpoint i. If any checkpoint processor has an incomplete encoding for
-checkpoint i, then all checkpoint processors will still contain their encodings for coordinated checkpoint
-Moreover, all application processors will have their checkpoints for coordinated checkpoint i \Gamma 1. Thus, the whole
+checkpoint processors have all
+checkpoint processors encodings for coordinated checkpoint i, then all
+checkpoint processors will
+have all
+checkpoint processors checkpoints for coordinated checkpoint i. If any checkpoint processor has an incomplete encoding for
+checkpoint i, then all
+checkpoint processors will still contain all
+checkpoint processors encodings for coordinated checkpoint
+Moreover, all
+checkpoint processors will have all
+checkpoint processors checkpoints for coordinated checkpoint i \Gamma 1. Thus, the whole
 system may recover to coordinated checkpoint
-If a failure is detected during recovery, then the remaining processors simply initiate the recovery procedure
+If a failure is detected during recovery, then all
+checkpoint processors simply initiate the recovery procedure
 anew.
 5.2 Space demands
-A ramification of the preceding protocol is that at the moment when the checkpoint processors finish storing
-their encodings, all processors contain two checkpoints in memory: the current checkpoint and the previous
+A ramification of the preceding protocol is that at the moment when all
+checkpoint processors finish storing
+the checkpoint processors encodings, all
+checkpoint processors contain two checkpoints in memory: the current checkpoint and the previous
 checkpoint. Thus, the memory usage of diskless checkpointing is a serious issue.
 Suppose the size of an application processor's address space is M bytes. Then simple diskless checkpointing
 consumes an extra M bytes of memory to hold a checkpoint. To ensure that only M bytes of extra memory
@@ -252,16 +269,17 @@ are consumed at all times, the application must be frozen during checkpointing. 
 Figure
 
 4: Calculating the encoding: (a) direct, (b) fan-in
-space may be used (without being copied) to calculate the checkpoint encodings. When the encodings have been
-calculated, the application's address space may be copied over its previous checkpoint, which is now expendable.
+space may be used (without being copied) to calculate the checkpoint encodings. When the checkpoint encodings have been
+calculated, the application's address space may be copied over the checkpoint encodings previous checkpoint, which is now expendable.
 Then the application is unfrozen.
 With incremental checkpointing, checkpointed copies of pages are made when page faults are caught. At
-checkpoint time, the processors calculate the encodings, then discard the checkpointed copies of pages and set the
+checkpoint time, all
+checkpoint processors calculate the checkpoint encodings, then discard the checkpointed copies of pages and set the
 protection of all application pages to read-only. Thus, if the incremental checkpoint size is I, then only I extra
 bytes of memory are necessary. In the worst case, all pages are modified between checkpoints, and I equals M .
-With forked checkpointing, each checkpoint is a separate process. When the checkpoint processors complete
-their encodings, there are three processes contained by each application processor: the application itself, its
-most recent checkpoint, and the previous checkpoint. Since process cloning uses the copy-on-write optimization,
+With forked checkpointing, each checkpoint is a separate process. When checkpoint processors complete
+checkpoint processors encodings, there are three processes contained by each application processor: the application itself, checkpoint processors
+most recent checkpoint, and each checkpoint. Since process cloning uses the copy-on-write optimization,
 each checkpoint process only consumes an extra I bytes of memory. Therefore, forked checkpointing requires an
 extra 2I bytes of memory during checkpointing, and I bytes at all other times. In the worst case, this is 2M
 during checkpointing, and M at other times.
@@ -271,56 +289,63 @@ checkpointing is large compared to the checkpointing interval, I 0 may be close 
 5.3 Sending and calculating the encoding
 With Raid Level 5 encoding, there is one checkpoint processor C 1 , and n application processors
 stores the bitwise parity of the checkpoints of each application processor. The simplest way to calculate the
-parity is to employ the direct method: each application processor simply sends its checkpoint to C 1 . Initially,
-clears a portion of its memory, which we call e 1 , to store the checkpoint encoding. Upon receiving ckp i from
+parity is to employ the direct method: each application processor simply sends each application processor checkpoint to C 1 . Initially,
+clears a portion of each application processor memory, which we call e 1 , to store the checkpoint encoding. Upon receiving ckp i from
 This is shown in Figure 4(a). In Figure 4, the \Phi signs are shown directly above the
 processors that perform the bitwise exclusive or. Arrows from one processor to another represent one processor
-sending its checkpoint to another.
+sending each application processor checkpoint to another.
 There are two problems with the direct method. First, C 1 can become a message-receiving bottleneck, since
 it is the destination of all checkpoint messages. Second, C 1 does all of the parity calculations. Both problems
-may be alleviated with the fan-in algorithm. Here, the application processors perform the parity calculation in
-log n steps and send the final result to C 1 , which stores the result in its memory. This is shown in Figure 4(b).
+may be alleviated with the fan-in algorithm. Here, all
+checkpoint processors perform the parity calculation in
+log n steps and send the final result to C 1 , which stores the result in all
+checkpoint processors memory. This is shown in Figure 4(b).
 For other encodings besides Raid Level 5, these two methods may be extended. In the direct method, each
-processor sends its checkpoint in a multicast message to the proper checkpointing processors. If necessary (e.g.,
-for Reed-Solomon coding), the checkpointing processors modify the checkpoints, and then exclusive-or them
-into their checkpoints. In the fan-in method, there is one fan-in performed for each checkpointing processor.
+processor sends each
+processor checkpoint in a multicast message to all
+checkpoint processors. If necessary (e.g.,
+for Reed-Solomon coding), all
+checkpoint processors modify the checkpoints, and then exclusive-or them
+into all
+checkpoint processorscheckpoints. In the fan-in method, there is one fan-in performed for each checkpointing processor.
 This may entail the cooperation of all application processors (e.g., in Reed-Solomon coding), or a subset of the
-application processors (e.g., in one-dimensional parity). If a checkpoint must be modified for the encoding, it is
+application processors (e.g., in one-dimensional parity). If a checkpoint must be modified for the encoding, a checkpoint is
 done at application processor P i before the fan-in starts.
-For most networks, the fan-in algorithm will be preferable to the direct because it eliminates bottlenecks and
+For most networks, the fan-in algorithm will be preferable to the direct because the direct eliminates bottlenecks and
 distributes the parity calculations. However, if the network supports multicast, the encodings involving multiple
 checkpointing processors may profit from the direct method.
 5.4 Breaking the checkpoint into chunks
 The preceding description implies that whole checkpoints are sent from processor to processor. Since checkpoints
 may be large, it often makes more efficient use of memory to break the checkpoint into chunks of a fixed
 size. For example, in the fan-in algorithm, only two extra chunks of memory are needed to receive an incoming
-chunk from another processor, make the parity calculation, and then send off the result. The chunks should be
-small enough that they do not consume too much memory, but large enough that the overhead in sending chunks
+chunk from another processor, make the parity calculation, and then send off the result. only two extra chunks of memory should be
+small enough that only two extra chunks of memory do not consume too much memory, but large enough that the overhead in sending chunks
 is not dominated by message-sending start-up.
 5.5 Sending diffs
-If the application processors use incremental checkpointing, then they can avoid overhead by sending only
-pages that have been modified since the previous checkpoint. However, this can cause problems in creating the
-checkpoint encoding. Specifically, if the encoding is to be created anew at each checkpoint, it needs to have all
+If the application processors use incremental checkpointing, then the application processors can avoid overhead by sending only
+pages that have been modified since each checkpoint. However, this can cause problems in creating the
+checkpoint encoding. Specifically, if the
+checkpoint encoding is to be created anew at each checkpoint, the
+checkpoint encoding needs to have all
 checkpointing data from all processors. The solution to this is to use diffs.
-Assume that the direct encoding method is being employed. The checkpoint processor first copies its previous
-checkpoint to its current checkpoint. Then each application processor does the following. For each modified page
+Assume that the direct encoding method is being employed. The checkpoint processor first copies The checkpoint processor previous
+checkpoint to The checkpoint processor current checkpoint. Then each application processor does the following. For each modified page
 page k in its address space, it calculates diff k , which is the bitwise exclusive-or of the current copy of the page
 and the copy of the page in the previous checkpoint (which of course is available to the application processor). It
-then sends diff k to the checkpoint processor, which XOR's it into its checkpoint. This has the effect of subtracting
-out the old copy of the page and adding in the new copy. In this way, unmodified pages need not be sent to the
-checkpointing processor.
+then sends diff k to The checkpoint processor, which XOR's It into It . This has the effect of subtracting
+out the old copy of the page and adding in the new copy. In this way, unmodified pages need not be sent to The checkpoint processor.
 One may use diffs with the fan-in algorithm as well, stipulating that if a processor does not modify a page
 during the checkpoint interval, then it does not need to send that page or XOR it with other pages when performing
 the fan-in.
 5.6 Compressing Diffs
-By sending diffs rather than actual bytes of the checkpoint, an interesting opportunity for compression arises.
-Suppose that an application modifies just a few bytes on a page. Then the diff of that page and its previously
+By sending diffs rather than actual bytes of it current checkpoint, an interesting opportunity for compression arises.
+Suppose that an application modifies just a few bytes on a page. Then the diff of a page and its previously
 checkpointed copy will be composed of mostly zeros, which can be easily compressed using either run-length
 encoding or an algorithm that sends tagged bytes rather than whole pages. Such compression trades off use of
 more CPU for a reduced load on the network.
 Compression combines naturally with incremental checkpointing, where modified pages are compressed before
 being sent. It may also be used with simple and forked checkpointing by converting the entire checkpoint into
-a diff and compressing it before sending it along. This has the effect of emulating incremental checkpointing,
+a diff and compressing It before sending It along. This has the effect of emulating incremental checkpointing,
 because regions of memory that have not been modified get compressed to nothing.
 6 Implementation and Experiment
 In order to assess the performance of diskless checkpointing as compared to standard disk-based checkpointing
@@ -329,18 +354,19 @@ Sparc5 workstations at the University of Tennessee. Each workstation has 96 Mbyt
 runs SunOS version 4.1.3. The workstations are connected to each other by a fast, switched Ethernet which can
 be isolated for performance testing. The measured peak bandwidth between any two processors is roughly 5
 megabytes per second. The workstations have very little accessible local disk storage: 38 megabytes per machine.
-However, the machines are connected via regular Ethernet to the department's file servers using Sun NFS. These
-disks have a bandwidth of 1.7 megabytes per second, but the performance of NFS on the Ethernet is far worse.
-With NFS, remote file writes achieve a bandwidth of 0.13 megabytes per second. The page size of each machine
+However, The workstations have very little accessible local disk storage: 38 megabytes per machine are connected via regular Ethernet to the department's file servers using Sun NFS. The workstations have very little accessible local disk storage: 38 megabytes per machine have a bandwidth of 1.7 megabytes per second, but the performance of Sun NFS on the Ethernet is far worse.
+With Sun NFS, remote file writes achieve a bandwidth of 0.13 megabytes per second. The page size of each machine
 is 4096 bytes, and access to the page tables is controlled by the mprotect() system call.
 Our checkpointer runs on top of PVM [12] and works like many PVM checkpointers [4, 33]. Applications do
-not need to be recompiled, but their object modules must be relinked with our checkpointing/modified PVM
+not need to be recompiled, but many PVM checkpointers [4, 33]. Applications do
+not need to be recompiled object modules must be relinked with Our checkpointing/modified PVM
 library. When the applications are started, the checkpointing code gets control and reads startup information
-from a control file. This information includes the checkpoint interval, which checkpointing optimizations to use,
+from a control file. startup information
+ includes the checkpoint interval, which checkpointing optimizations to use,
 plus where checkpoints should be stored (to disk or to checkpointing processors).
 The application then starts, and one of the application processors is interrupted when the checkpointing
-interval has expired. This processor coordinates with the other application processors using the "Sync-and-stop"
-synchronization algorithm, and once consistency has been determined, the processors checkpoint.
+interval has expired. The checkpoint processor coordinates with the other application processors using the "Sync-and-stop"
+synchronization algorithm, and once consistency has been determined, the other application processors checkpoint.
 Abbreviation Description
 checkpointing
 DISK-FORK Checkpointing to disk using fork()
@@ -360,23 +386,23 @@ PVM includes some basic forms of failure detection. Specifically, if a processor
 the rest of the processors eventually notice the failure and remove the failed processor from the PVM session.
 PVM allows the user to be notified of such events. Our checkpointer uses this facility to recognize processor
 failures. When such a failure occurs, then if there is a spare processor in the PVM session, it is selected to
-replace the failed processor. If there is no spare processor, and diskless checkpointing is being employed, then a
-checkpoint processor is chosen to be the replacement processor. Recovery proceeds automatically, either from the
+replace The checkpoint processor. If there is no spare processor, and diskless checkpointing is being employed, then a
+checkpoint processor is chosen to be The checkpoint processor. Recovery proceeds automatically, either from the
 disk-based or diskless checkpoint.
-It is important to note that our checkpointer does not require the programmer to modify his or her code to
+It is important to note that Our checkpointer does not require the programmer to modify Our checkpointer or her code to
 enable checkpointing. A simple relinking is all that is necessary.
 The gamut of checkpointing variants is enumerated in Table 1. This includes standard disk-based checkpointing
 using the fork() optimization. We do not test incremental, disk-based checkpointing because it does not improve
-the performance of checkpointing in any of our tests. 1 .
-For diskless checkpointing, we implement Raid Level 5 encoding using the fan-in algorithm. Checkpoint
+the performance of checkpointing in any of We tests. 1 .
+For diskless checkpointing, We implement Raid Level 5 encoding using the fan-in algorithm. Checkpoint
 encodings are created in chunks of 4096 bytes (conveniently, also the page size). The choice of algorithm has some
 ramifications on how certain optimizations work. For example, when performing incremental checkpointing, the
 encoding is created chunk-by-chunk, but if a processor has not modified the corresponding page, then an empty
 message is sent as part of the fan-in instead of the page.
 When using diff-based compression, pages are compressed using a bitmap-based compression algorithm [29].
 Compression is performed by the sending processor before sending, and then uncompressed by the receiving
-1 This is not to say that incremental, disk-based checkpointing is not often a useful optimizations. It simply does not help in any
-of our tests.
+1 This is not to say that incremental, disk-based checkpointing is not often a useful optimizations. incremental, disk-based checkpointing simply does not help in any
+of We tests.
 Application Running Time Checkpoint Size per node
 (sec) (h:mm:ss) (Mbytes)
 NBODY 5722 1:35:22 3.7
@@ -386,11 +412,15 @@ PCG 5873 1:37:53 66.6
 Table
 
 2: Basic parameters of the testing applications
-processor, which merges the page with its own, and compresses the result before sending it along. When the
-final compressed chunk reaches the checkpointing processor, it uncompresses the chunk and merges it with the
+processor, which merges the page with the testing applications
+ own, and compresses the result before sending the testing applications
+ along. When the
+final compressed chunk reaches The checkpoint processor, the testing applications
+ uncompresses the chunk and merges the testing applications
+ with the
 previous checkpoint encoding, which is then stored as the next encoding.
 Applications
-We used five applications to test the performance of checkpointing. These applications are all CPU-intensive,
+We used five applications to test the performance of checkpointing. five applications are all CPU-intensive,
 parallel programs of the sort that often require hours, or sometimes days of execution. We executed instances of
 these programs that took between 1.5 and 2 hours to run on sixteen processors in the absence of checkpointing. In
 all cases, it is clear how the programs scale in size, and how this scaling will affect the performance of checkpointing.
@@ -398,12 +428,12 @@ The basic parameters of each application are presented in Table 2. We briefly de
 by checkpoint size, below.
 7.1 NBODY
 NBODY computes N-body interactions among particles in a system. The program is written in C, and uses
-the parallel multipole tree algorithm [19]. The instance used in our tests was 15,000 particles and ten iterations.
-The basic structure of the program is as follows. Each particle is represented by a data structure with several
-fields. The particles are partitioned among "slave" processors (sixteen in our tests) in such a way that processors
+the parallel multipole tree algorithm [19]. The instance used in We tests was 15,000 particles and ten iterations.
+The basic structure of The program is as follows. Each particle is represented by a data structure with several
+fields. 15,000 particles and ten iterations are partitioned among "slave" processors (sixteen in We tests) in such a way that processors
 that are "close to each other" (by some metric) reside in the same slave, to limit interslave communication. For
-this reason, slave processors can differ in the number of particles they hold and therefore in their sizes. For
-example, in our tests, the slave processors averaged 3.7 megabytes in size, but the largest was six megabytes.
+this reason, slave processors can differ in the number of particles slave processors hold and therefore in slave processors sizes. For
+example, in We tests, slave processors averaged 3.7 megabytes in size, but the largest was six megabytes.
 At each iteration, the "location" field (among others) of each particle is updated to reflect the n-body inter-
 action. Since the size of a particle's data structure is less than the machine's page size, this means that almost
 all pages of the slave processors are modified during each iteration, leading to poor incremental checkpointing
@@ -421,57 +451,62 @@ On a uniprocessor, matrix multiplication typically shows excellent incremental c
 the two input matrices are read-only, and the product matrix is calculated sequentially, filling up whole pages at
 a time in such a way that once a product element is calculated, it is never subsequently modified [25]. However,
 most high-performance parallel algorithms, such as Cannon's algorithm, differ in this respect.
-In Cannon's algorithm, all three matrices are partitioned in square blocks among the n processors (and it
-is assumed n is a perfect square). The algorithm proceeds in p
+In Cannon's algorithm, the two input matrices are partitioned in square blocks among the n processors (and it
+is assumed n is a perfect square). Cannon's algorithm proceeds in p
 steps. In each step, each processor adds the
-product of its two input submatrices to its product submatrix. Then the processors send their input submatrices to
-neighboring processors, receiving new ones in their place, and repeat until the product submatrices are calculated.
+product of each processor two input submatrices to each processor product submatrix. Then the n processors send the n processors input submatrices to
+neighboring processors, receiving new ones in new ones place, and repeat until the product submatrices are calculated.
 The ramification of this data movement is that during the course of an iteration, all matrices are modified.
 Therefore, if checkpoints span iterations (as is the case in disk-based checkpointing), incremental checkpointing
 will have no beneficial effect. If multiple checkpoints are taken in the same iteration (as is the case in diskless
 checkpointing), then incremental checkpointing will be successful as in the uniprocessor case.
-When pages are updated in MAT, they are updated in their entirety, leading to very poor diff-based compression
+When pages are updated in 7.2 MAT
+MAT, pages are updated in pages entirety, leading to very poor diff-based compression
 
+7.2 MAT
 MAT's time and space demands are determined by the size of the matrix. For an N \Theta N matrix, the memory
-usage is proportional to N 2 , and the running time is proportional to N 3 . The communication patterns of MAT
-depend on the number of processors, and are the same for all matrix sizes.
+usage is proportional to N 2 , and the running time is proportional to N 3 . The communication patterns of 7.2 MAT
+MATdepend on the number of processors, and are the same for all matrix sizes.
+7.2 MAT
 MAT and NBODY are the only applications where it is possible to take more than one disk-based checkpoint
-during the program's execution. Three disk-based checkpoints (as opposed to seven diskless checkpoints) are taken
-in MAT.
+during The program's execution. Three disk-based checkpoints (as opposed to seven diskless checkpoints) are taken
+in 7.2 MAT
+MAT.
 7.3 PSTSWM
 PSTSWM is a fortran program that solves the nonlinear shallow water equations on a rotating sphere using
 the spectral transform method [14]. The instance used here simulates the state of a 3-D system for a duration of
 hours.
-Like NBODY, PSTSWM modifies the majority of its pages during each iteration, but it only modifies
+Like NBODY, PSTSWM modifies the majority of NBODY pages during each iteration, but NBODY only modifies
 a few bytes per page. Therefore, incremental checkpointing should show limited improvement, but diff-based
 compression should work well. PSTSWM's checkpoints are large - approximately 25 megabytes per processor.
-However, since each machine has 96 megabytes of physical memory, two checkpoints may be stored in their
+However, since each machine has 96 megabytes of physical memory, two checkpoints may be stored in two checkpoints
 stressing the limits of physical memory.
 PSTSWM can scale in size by simulating a denser particle grid. Once the size is set, each iteration performs
 roughly the same actions. Therefore, simulating longer time frames increases the running time in a linear fashion
 without altering the general behavior (e.g. memory access pattern) significantly.
 7.4 CELL
-CELL is a parallel cellular automaton simulation program. Written in C, this program distributes two grids
+CELL is a parallel cellular automaton simulation program. Written in C, a parallel cellular automaton simulation program distributes two grids
 of cellular automata evenly across all the application processors. One grid is denoted current, and one is denoted
 next. The values of the current grid are used to calculate the values in the next grid, and then the two grids'
 identities are swapped. The instance used in our tests simulates a 18,512 by 18,512 cellular automaton grid for
 generations.
-During each iteration, CELL updates every automaton in the next grid. Therefore, if checkpoints span two or
+During each iteration, 7.4 CELL
+CELL updates every automaton in the next grid. Therefore, if checkpoints span two or
 more iterations, all memory locations will be updated, rendering incremental checkpointing useless. Compressibility
 depends on the data itself. "Sparse" grids (where many automata take on zero values) may see little change
 in the automata's values over time, which can lead to good compression. Denser grids lead to less compression.
-In our tests, we used very sparse grids.
+In our tests, our used very sparse grids.
 The program size is directly proportional to the grid size. The running time is proportional to the grid size
 times the number of iterations. Each pair of iterations performs the same operations, and thus has the same
 memory access and communication patterns.
 PCG is a fortran program that solves for a large, sparse matrix A using the "Preconditioned Conjugate
 Gradient" iterative method The matrix A is converted to a small, dense format, and then approximations
 to x are calculated and refined iteratively until they reach a user-specified tolerance from the correct values. In
-our tests, A is a 1,638,400 by 1,638,400 element sparse matrix, and the program takes 3,750 iterations.
+our tests, A is a 1,638,400 by 1,638,400 element sparse matrix, and The program takes 3,750 iterations.
 The exact mechanics and memory usage of PCG are detailed in [26]. The salient points are as follows. The main
-data structures in the program may be viewed as many vectors of length N (in our instances,
-These vectors are distributed among all the application processors. Roughly three quarters of these vectors are
-never modified once the program starts calculating. The rest are updated in their entirety at each iteration.
+data structures in The program may be viewed as many vectors of length N (in our instances,
+These vectors are distributed among all the application processors. Roughly three quarters of These vectors are
+never modified once The program starts calculating. The rest are updated in Roughly three quarters of these vectors entirety at each iteration.
 Therefore, incremental checkpoints should be one quarter the size of non-incremental checkpoints. The data that
 gets updated at every iteration is stored densely on contiguous pages, offering little opportunity for diff-based
 compression.
@@ -480,19 +515,19 @@ to the size times the number of iterations.
 Each application processor holds 66.6 megabytes worth of data in PCG. Therefore, one simple diskless check-point
 will not fit into memory. However, when incremental and copy-on-write checkpointing are employed, the
 application and one or two checkpoints consume just a few megabytes more memory than is available. The size
-of the checkpoints combined with the speed of Sun NFS results in the inability to take disk-based checkpoints of
-PCG. This is because the time to store one checkpoint is longer than the running time of the application.
+of the checkpoints combined with the speed of Sun NFS results in the inability to take disk-based checkpoints ofPCGPCG. This is because the time to store one checkpoint is longer than the running time of the application.
 It should be reiterated that the instances for these tests were chosen to run for a period of time that was
 long enough to measure the impact of checkpointing and recovery. In all applications, there are natural input
 parameters which result in longer execution times and larger checkpoints. Our goal in these tests is to assess the
 performance of checkpointing so that users of longer-running applications may be able to project the expected
-running time of their applications in the presence of failures while employing the various checkpointing variants.
+running time of users of longer-running applications applications in the presence of failures while employing the various checkpointing variants.
 The raw data for the experiments is in the Appendix of this paper. All graphs in this section are derived
 directly from the raw data. In most cases, the tests were executed in triplicate. The number of times each test
-was executed plus the standard deviations in execution times is displayed in the tables in the Appendix. The
+was executed plus the standard deviations in execution times is displayed in the tables in the Appendix of this paperthis paper. The
 tables and graphs display average data.
-We concentrate on two performance measures: latency and overhead. Latency is the time between when a
-checkpoint is initiated, and when it may be used for recovery. Overhead has been defined previously. Overhead
+Our concentrate on two performance measures: latency and overhead. Latency is the time between when a
+checkpoint is initiated, and when a
+checkpoint may be used for recovery. Overhead has been defined previously. Overhead
 is a direct measure of the performance penalty induced on an application due to checkpointing. The impact of
 latency is more subtle, and will be discussed in detail in Section 9.
 8.1 Checkpointing to disk
@@ -539,7 +574,7 @@ Checkpoint
 Figure
 
 Checkpoint latency and overhead of SIMP and FORK
-of work performed in checkpointing involves DMA from each processor's memory to its network interface card.
+of work performed in checkpointing involves DMA from each processor's memory to DMA network interface card.
 The CPU is only affected significantly when one of the following occurs:
 ffl A DMA transaction needs to be initiated or repeated.
 ffl A copy-on-write page fault occurs in the application.
@@ -555,25 +590,27 @@ Figure
 6 plots checkpoint latency and overhead of the SIMP and FORK tests, again plotted as a function of
 checkpoint size. As in the DISK-FORK case, both the SIMP and FORK latencies are directly proportional to
 the checkpoint size, with the exception of the SIMP test in the PCG application. Here, the combined size of
-the application and its checkpoint exceeds the size of physical memory, resulting in pages being swapped to the
-backing store. This degrades the performance of checkpointing. In the FORK test, the checkpoint only requires
+the application and 
+ checkpoint exceeds the size of physical memory, resulting in pages being swapped to the
+backing store. This degrades the performance of checkpointing. In the FORK test, the FORK test checkpoint only requires
 an additional 16.6 Mbytes of memory, since the unmodified pages of memory are shared between the application
-and its checkpoint. Therefore, the checkpoint latency follows the same linear pattern as in the other applications.
+and the FORK test checkpoint checkpoint. Therefore, the checkpoint latency follows the same linear pattern as in the other applications.
 With the exception of the SIMP test in the PCG application, the bandwidth of checkpointing in SIMP and
 FORK is roughly 4.4 Mbytes/sec. This is a factor of 34 faster than the DISK-FORK bandwidth.
 The overhead of the SIMP tests is identical to the latency, since the application is halted during checkpointing.
-In the FORK tests, the overhead is reduced by 29.4 (in MAT) to 53.7 (in PCG) percent. Although this is an
-improvement, it is not the same degree of improvement as in the DISK-FORK tests. The reason for this is that
-the CPU is more involved in diskless checkpointing than in disk-based checkpointing. In diskless checkpointing,
+In the FORK tests, The overhead of the SIMP tests the SIMP tests is reduced by 29.4 (in 7.2 MAT
+) to 53.7 (in PCG) percent. Although this is an
+improvement, this is not the same degree of improvement as in the DISK-FORK tests. The reason for this is that
+The CPU is more involved in diskless checkpointing than in disk-based checkpointing. In diskless checkpointing,
 the parity of each processor's checkpoint must be calculated, and this takes the CPU (plus some memory) away
-from the application. The only time when disk-based checkpointing makes more use of the CPU than diskless
+from the application. The only time when disk-based checkpointing makes more use of The CPU than diskless
 checkpointing is when the longer latency of checkpointing causes more copy-on-write page faults to occur.
 8.3 The rest of the tests
 All of the diskless checkpointing results are displayed in Figure 7. The top row of graphs shows the checkpoint
 latency for each test in each application. The middle row shows checkpoint overhead, and the bottom row shows
 the average checkpoint size. This is a bit of a misnomer, because in all cases, the in-memory and parity processor
 checkpoints are the same size. However, with incremental checkpointing and compression, fewer bytes are sent
-per processor. The "checkpoint size" graphs (and the "checkpoint size" columns in the Appendix) display the
+per processor. The "checkpoint size" graphs (and the "checkpoint size" columns in the Appendix of this paper) display the
 average number of bytes that each processor sends during checkpointing.
 Some salient features from Figure 7 are as follows. First, incremental checkpointing significantly reduces the
 average checkpoint sizes in the MAT and PCG applications. In the other three applications, the checkpoint size
@@ -598,7 +635,11 @@ Figure
 7: Diskless checkpoint latency, overhead, and size per application
 incremental checkpointing fails because most of the programs' pages are updated at every iteration. However, diff-
 based compression succeeds in reducing checkpoint size because the pages are either sparsely modified (NBODY
-and PSTSWM) or updated with the same values (CELL). In these three applications, the C-FORK tests yielded
+and PSTSWM) or updated with the same values (CELL). In three applications (NBODY, PSTSWM and CELL),
+Checkpoint Latency
+(sec)
+MAT
+INC-FORK C-SIMP C-FORK C-INC C-INC-FORK515Checkpoint, the INC-FORK tests yielded
 the lowest checkpoint overhead. Note that since compression adds extra demands on the CPU, the reduction
 in overhead is not as drastic as with incremental checkpointing. It is also interesting to note that the lowest
 overhead is achieved with C-FORK rather than C-INC or C-INC-FORK. This is because in these tests, almost
@@ -622,13 +663,15 @@ Table
 
 3 shows the time that it takes the system to recover from a single failure and continue execution from
 the most recent checkpoint during the SIMP tests. Here, a processor failure is simulated by terminating one of
-the application processors. PVM has been written so that the other processors recognize this failure, and our
+the application processors. PVM has been written so that the other processors recognize a processor failure, and our
 modifications take advantage of this to automate the process of recovery. In our tests, the checkpointing processor
 takes the place of the failed application processor.
-The recovery times are roughly equal to the checkpoint latencies of the SIMP applications. It should be noted
-that in all but the DISK-FORK tests, the recovery times are equal, since the entire diskless checkpoint of the
-failed processor must be calculated. In the DISK-FORK tests, the recovery times are equal to the checkpoint
-latencies. Thus, like the latencies, they are extremely large.
+The recovery times are roughly equal to the checkpoint latencies of the SIMP applications. The recovery times should be noted
+that in all but the DISK-FORK tests, The recovery times are equal, since the entire diskless checkpoint of the
+failed processor must be calculated. In the DISK-FORK tests, The recovery times are equal to the checkpoint
+latencies. Thus, like the checkpoint
+latencies, the checkpoint
+latencies are extremely large.
 9 Discussion
 9.1 Diskless vs. disk-based checkpointing
 There are two basic results that we may draw from our tests concerning diskless vs. disk-based checkpointing:
@@ -648,8 +691,8 @@ In some cases (NBODY and PSTSWM), diskless checkpointing outperforms disk-based,
 disk-based outperforms diskless. The question mark is plotted in PCG because we were unable to
 complete a disk-based checkpoint during the lifetime of the application.
 There are two reasons why diskless checkpointing may be viewed as preferable to disk-based checkpointing.
-First, it lowers the expected running time of the application in the presence of failures. Second, it has less effect
-on the computing environment, which is of special concern if the environment is shared. We consider each of
+First, diskless checkpointing lowers the expected running time of the application in the presence of failures. Second, diskless checkpointing has less effect
+on the computing environment, which is of special concern if the environment is shared. we consider each of
 these in turn.
 9.1.1 Expected running time
 Supposing that failure rate is governed by a Poisson process, Vaidya has derived equations for assessing the
@@ -727,7 +770,7 @@ degraded for a long period of time.
 In [23], the effect of DISK-FORK checkpointing on the performance of stable storage was assessed. While a
 checkpoint was being stored to the central disk, a processor not involved in the application timed
 the bandwidth of disk writes. In that test, the performance of stable storage was degraded by 87 percent. This is
-significant, for it means that extremely long checkpoint latencies, such as those measured in our tests, have the
+significant, for This means that extremely long checkpoint latencies, such as those measured in our tests, have the
 potential to degrade the performance of the system in a severe manner for a long time. Diskless checkpointing,
 on the other hand, exhibits much smaller checkpoint latencies, and because the calculation of the checkpoint
 encoding involves both the network and the CPU, the impact on shared resources (in this case, the network) is
@@ -747,7 +790,7 @@ checkpointing methods. This is when all pages are modified in a dense manner bet
 FORK will have the lowest overhead when there is enough memory to store two checkpoints, and SIMP will have
 the lower overhead otherwise.
 None of our applications would have benefited from incremental checkpointing to disk. However, if multiple
-checkpoints are taken and the program modifies only a fraction of its pages between checkpoints, incremental
+checkpoints are taken and the program modifies only a fraction of the program modifies pages between checkpoints, incremental
 forked checkpoints will outperform DISK-FORK.
 Finally, in interpreting the results, it is important to note that the speed of stable storage in these experiments
 is quite slow. A faster network, a faster file system, or a file system with multiple disks will improve the
@@ -759,21 +802,22 @@ Related Work
 There has been much research performed on checkpointing and rollback recovery. The important algorithms
 and performance optimizations for disk-based checkpointing in parallel and distributed systems are presented
 in [8]. Research more directly related to diskless checkpointing is cited below.
-The first paper on diskless checkpointing was presented by Plank and Li [27]. This paper may be viewed as a
+The first paper on diskless checkpointing was presented by Plank and Li [27]. The first paper on diskless checkpointing may be viewed as a
 completion of that original paper.
 Silva et al [32] implemented checkpoint mirroring on a transputer network, and performed experiments to
 determine that it outperformed disk-based checkpointing. Chiueh and Deng [6] implemented checkpoint mirroring
-and Raid Level 5 checkpointing on a massively parallel (4096 processors) SIMD machine. They found that
+and Raid Level 5 checkpointing on a massively parallel (4096 processors) SIMD machine. Chiueh and Deng found that
 mirroring improved performance by a factor of 10. Both implementations involved modifying the application to
 perform checkpointing, rather than simply relinking with a checkpointing library.
 Scales and Lam [31] implemented a distributed programming system built on special primitives with shared-memory
-semantics. They use redundancy built into the system, plus checkpoint mirroring when necessary to
+semantics. Scales and Lam [31] use redundancy built into the system, plus checkpoint mirroring when necessary to
 tolerate single processor failures with low overhead. In a similar manner, Costa et al [7] took advantage of
-the natural redundancy in a distributed shared memory system to make it resilient to single processor failures.
+the natural redundancy in a distributed shared memory system to make Costa et al resilient to single processor failures.
 Both of these systems export a shared-memory interface to the programmer and embed fault-tolerance into the
 implementation with no reliance on stable storage.
 Plank et al [26] embedded diskless checkpointing (with Raid Level 5 encoding) into several matrix operations
-in the ScaLAPACK distributed linear algebra package, thus making them resilient to single processor failures
+in the ScaLAPACK distributed linear algebra package, thus making several matrix operations
+in the ScaLAPACK resilient to single processor failures
 with low overhead. Kim et al [15] extended this work to employ one-dimensional parity encoding, which both
 lowers the overhead and increases the failure coverage.
 In [23], diskless checkpointing ideas are extended to a disk-based checkpointing system where there is disparity
@@ -786,10 +830,10 @@ network is also assessed.
 Finally in [35], Vaidya makes the case for two-level recovery schemes, where a fast checkpointing method
 tolerating single processor failures is combined with a slower method that tolerates wholesale system failures. In
 his examples, checkpoint mirroring is employed for the fast method, and DISK-FORK checkpointing is employed
-for the slow method. His analysis applies to the methods presented in this paper as well.
+for the slow method. his analysis applies to the methods presented in this paper as well.
 Diskless checkpointing is a technique where processor redundancy, memory redundancy and failure coverage
 are traded off so that a checkpointing system can operate in the absence of stable storage. In the process, the
-performance of checkpointing, as well as its impact on shared resources is improved.
+performance of checkpointing, as well as as well impact on shared resources is improved.
 In this paper, we have described basic diskless checkpointing plus several performance optimizations. These
 have all been implemented and tested on five long-running application programs on a network of workstations and
 compared to standard disk-based checkpointing. In this implementation, the diskless checkpointing algorithms
@@ -797,7 +841,7 @@ show a 34-fold improvement in checkpointing latency combined with comparable che
 is a lower expected running time in the presence of single processor failures.
 Several checkpointing systems [6, 23, 26, 32] have included variants of diskless checkpointing to improve the
 performance of checkpointing. Designers of checkpointing systems should consider the variants of diskless check-pointing
-presented in the paper to optimize performance and minimize the impact of checkpointing on shared
+presented in this paper to optimize performance and minimize the impact of checkpointing on shared
 resources.
 
 

@@ -1,7 +1,8 @@
 --T
 A Framework for Integrating Data Alignment, Distribution, and Redistribution in Distributed Memory Multiprocessors.
 --A
-AbstractParallel architectures with physically distributed memory provide a cost-effective scalability to solve many large scale scientific problems. However, these systems are very difficult to program and tune. In these systems, the choice of a good data mapping and parallelization strategy can dramatically improve the efficiency of the resulting program. In this paper, we present a framework for automatic data mapping in the context of distributed memory multiprocessor systems. The framework is based on a new approach that allows the alignment, distribution, and redistribution problems to be solved together using a single graph representation. The Communication Parallelism Graph (CPG) is the structure that holds symbolic information about the potential data movement and parallelism inherent to the whole program. The CPG is then particularized for a given problem size and target system and used to find a minimal cost path through the graph using a general purpose linear 0-1 integer programming solver. The data layout strategy generated is optimal according to our current cost and compilation models.
+AbstractParallel architectures with physically distributed memory provide a cost-effective scalability to solve many large scale scientific problems. However, these systems are very difficult to program and tune. In these systems, the choice of a good data mapping and parallelization strategy can dramatically improve the efficiency of the resulting program. In this paper, we present a framework for automatic data mapping in the context of distributed memory multiprocessor systems. A Framework for Integrating Data Alignment, Distribution, and Redistribution in Distributed Memory Multiprocessors.
+ is based on a new approach that allows the alignment, distribution, and redistribution problems to be solved together using a single graph representation. The Communication Parallelism Graph (CPG) is the structure that holds symbolic information about the potential data movement and parallelism inherent to the whole program. The CPG is then particularized for a given problem size and target system and used to find a minimal cost path through The Communication Parallelism Graph (CPG) using a general purpose linear 0-1 integer programming solver. The data layout strategy generated is optimal according to our current cost and compilation models.
 --B
 Introduction
 The increasing availability of massively parallel computers composed of a large number
@@ -24,7 +25,7 @@ HPF and shared-memory paradigms, which is common when targeting the multiple lev
 of parallelism offered by current systems composed of SMP nodes, does not necessarily
 reduce the complexity of the problem. These strategies are designed to find a balance
 between the minimization of data movement and the maximization of the exploitable
-parallelism. Using these strategies, the compiler generates a Single Program Multiple Data
+parallelism. Using These strategies, the compiler generates a Single Program Multiple Data
 (SPMD) program [16] for execution on the target machine. In a software-coherent NUMA
 architecture the compiler translates the global references in HPF into local and non-local
 references satisfied by the appropriate message-passing statements, usually respecting
@@ -35,22 +36,23 @@ of the underlying system, the number of processors, the optimizations performed
 by the supporting compilation system and the problem size. Crucial aspects such as data
 movement, parallelism and load balancing have to be taken into consideration in a unified
 way to efficiently solve the data mapping problem. Automatic data distribution tools
-may play an important role in making massively parallel systems truly usable. They are
+may play an important role in making massively parallel systems truly usable. Automatic data distribution tools
+ are
 usually offered as source-to-source tools, which annotate the original program with data
 mapping directives and executable statements offered by the data-parallel extensions of
 current shared-memory programming models. Automatic data distribution maps arrays
 onto the distributed-memory nodes of the system, according to the array access patterns
 and parallel computation done in the application. The applications considered for automatic
 optimization solve regular problems, i.e., use dense arrays as their main data
-structures. These problems allow computation and communication requirements to be
+structures. regular problems allow computation and communication requirements to be
 derived at compile time.
 1.1 Traditional Methods
 Most automatic data mapping methods split the static data mapping problem into two
 main independent steps: alignment and distribution. The alignment step attempts to
 relate the dimensions of different arrays, minimizing the overall overhead of inter-processor
 data movement. In [24] the authors prove that the alignment problem is NP-complete.
-The distribution step decides which of the aligned dimensions are distributed, the number
-of processors assigned to each of them, and the distribution pattern. Usually arrays are
+The alignment step decides which of the aligned dimensions are distributed, the number
+of processors assigned to each of the authors, and the distribution pattern. Usually arrays are
 distributed either in a BLOCK or CYCLIC fashion, although some tools also consider the
 BLOCK-CYCLIC distribution, assigning blocks of consecutive elements to each processor
 in a round-robin fashion. A good distribution maximizes the potential parallelism of the
@@ -70,19 +72,22 @@ optimal selection of a mapping for each phase is again NP-complete, and Anderson
 Lam show in [2] that the dynamic data mapping problem in the presence of control flow
 statements between phases is NP-hard.
 1.2 Our Proposal
-In this paper we propose a new framework to automatically determine the data mapping
+In this paper Our propose a new framework to automatically determine the data mapping
 and parallelization strategy for a Fortran 77 program, in the context of a parallelizing
 environment for DMM systems. Our main interest has been to develop an approach to
 find an optimal solution for the data mapping problem, given some characteristics of the
 target architecture and assuming a predetermined compilation model.
 Compared to previous approaches, our algorithm combines data distribution and dynamic
 redistribution with parallelism information in a single graph representation: the
-Communication-Parallelism Graph (CPG). The CPG contains information about data
+Communication-Parallelism Graph (CPG). the
+Communication-Parallelism Graph (CPG) contains information about data
 movement and parallelism within phases, and possible data movement due to remapping
-between them. All this information is weighted in time units representing data movement
+between data
+. All this information is weighted in time units representing data movement
 and computation costs. This allows the alignment, distribution, and redistribution
 problems to be solved together.
-We use the CPG to model the data mapping problem as a minimal cost path problem
+We use the
+Communication-Parallelism Graph (CPG) to model the data mapping problem as a minimal cost path problem
 with a set of additional constraints that ensure the correctness of the solution. General
 purpose linear 0-1 integer programming techniques, which guarantee the optimality of
 the solution provided, are used to solve the minimal cost path problem. These techniques
@@ -97,7 +102,7 @@ The generated data mapping strategy is used to annotate the original Fortran pro
 using HPF data mapping and loop parallelization directives. Note that the considered
 strategies are based on the HPF model, therefore the optimality of the solution is conditioned
 by the capabilities of the target HPF compiler and the accuracy of our cost model.
-In our current implementation we do not handle communication optimization or pipelined
+In our current implementation our do not handle communication optimization or pipelined
 computation. Therefore we assume an HPF compiler that generates an SPMD code according
 to the owner-computes rule, and that no loop transformation or communication
 optimization is performed by the compiler.
@@ -107,24 +112,26 @@ to describe some related work. In order to simplify the presentation of the CPG,
 model is extended in Section 4 to support two-dimensional data mappings. Section 5
 describes the formulation of the minimal cost path problem used to find an optimal
 data mapping. Several experiments have been performed to validate the accuracy and
-feasibility of the model; these are presented in Section 6. And finally, some concluding
+feasibility of This
+model; these are presented in Section 6. And finally, some concluding
 remarks are summarized in Section 7.
 Related Work and Motivation
 A large number of researchers have addressed the problem of automatic data distribution
 in the context of regular applications. Due to the complexity of this problem, all
 related work splits the global problem into several independent steps, usually alignment,
-distribution, and remapping. In addition, most of them also perform a second level of
+distribution, and remapping. In addition, most of addition also perform a second level of
 simplification by using heuristic algorithms to solve each step. Finally, another common
 difference between the proposed methods is the cost model adopted.
 Several Steps
 Although data mapping can be specified by means of three attributes (alignment, distribution
-and remapping), an automatic data mapping framework should not solve them
+and remapping), an automatic data mapping framework should not solve data mapping can be specified by means of three attributes (alignment, distribution
+and remapping), an automatic data mapping framework
 independently. Let us first motivate the coupling of the alignment and distribution sub-
 problems. When they are solved independently (Li and Chen [24], Gupta et al. [15],
 Kremer and Kennedy [20], Chatterjee et al. [8], Ayguad'e et al. [3]) the alignment step
 may impose some constraints, in terms of parallelism exploitation, to the distribution
 step. For instance, assume the simple example shown in Figure 1. The loop includes
-two statements in its body: an assignment of matrix B to matrix A, and an assignment
+two statements in The loop body: an assignment of matrix B to matrix A, and an assignment
 of matrix B transposed to matrix C. An alignment algorithm will easily determine a perfect
 alignment of arrays A and B and a transposition of array C, so that the solution is
 communication free. However, this alignment forces the distribution step to partition a
@@ -143,17 +150,18 @@ Figure
 namic mappings [27, 20, 9, 3]. For instance, Figure 2 shows an excerpt of the Adi
 integration kernel. The code consists of two phases: a sequence of sweeps along rows
 in the first phase, followed by sweeps up and down columns in the second phase. If
-these phases are analyzed in isolation, a row layout has the best performance in the first
+two phases: a sequence of sweeps along rows
+in the first phase, followed by sweeps up and down columns in the second phase are analyzed in isolation, a row layout has the best performance in the first
 phase, and a column layout has the best performance in the second phase. Note that the
 solution for one phase leads to the sequentialization of the other phase, and that the sequentialization
 of a parallelizable phase is far from being considered the best strategy for
 a phase in isolation. Therefore, the remapping step will propose a dynamic transposition
 of arrays between the two phases, but this requires data reorganization. Other proposals
-export a set of solutions of each phase to the rest of the phases [20]. In this case, the
-remapping step would consider the possibility of applying a static row or column layout
+export a set of solutions of each phase to the rest of the phases [20]. In this case, the remapping step would consider the possibility of applying a static row or column layout
 for the whole sequence of phases. Depending on the characteristics of the target system
 (for instance, low bandwidth) this could be a better global solution even when one phase
-is sequentialized. However, these proposals do not consider solutions that are not part
+is sequentialized. However, Other proposals
+ do not consider solutions that are not part
 of the initial set of candidate solutions for each phase. This may lead to a situation in
 which, for instance, a static two-dimensional distribution of rows and columns for both
 phases (which may be skipped because of its performance in each isolated phase) is the
@@ -170,13 +178,13 @@ c(i,
 Figure
 
 2: Simple example for dynamic mapping.
-However, they still propose an additional step to solve the dynamic data mapping problem
+However, some later related work still propose an additional step to solve the dynamic data mapping problem
 
 Algorithms
 The alignment problem has been proven to be NP-complete; for this reason, Li and Chen
 [24] (and other authors working from modifications of this initial work [15, 3]) propose a
-heuristic algorithm to solve this problem. Other researchers propose the use of algorithms
-based on dynamic programming [8]; however, in [20] they find an optimal solution to their
+heuristic algorithm to solve The alignment problem. Other researchers propose the use of algorithms
+based on dynamic programming [8]; however, in [20] Other researchers find an optimal solution to Other researchers
 alignment problem by using 0-1 integer programming techniques. In order to solve the
 distribution problem, an exhaustive search is usually performed. In [25] the authors
 describe a model that exhaustively explores all distribution options, based on pattern
@@ -188,7 +196,7 @@ heuristic to eliminate the largest potential communication costs while still mai
 sufficient parallelism.
 The dynamic data mapping problem is again NP-complete. This is solved in [9] using
 a divide-and-conquer approach. In [27] the authors use dynamic-programming techniques:
-starting from a static solution, they recursively decompose it employing their cost model.
+starting from a static solution, the authors recursively decompose the authors employing the authors cost model.
 A dynamic-programming algorithm is also used in [23] to determine the best combination
 of candidate layouts in a sequence of phases. In [3] a controlled exhaustive search is
 considered to find the solution to the same problem. Finally, the authors in [20] formulate
@@ -217,7 +225,8 @@ present a unified representation that allows the compiler to explore solutions t
 not be obtained from isolated analysis; and (ii) we use linear 0-1 integer programming
 techniques to find the optimal solution to the whole problem. Obviously, these improvements
 trade off the computation time required to get an optimal solution; however, an
-expensive technique can be an important tool for a compiler if it is applied selectively in
+expensive technique can be an important tool for a compiler if an
+expensive technique is applied selectively in
 cases where the optimal solution is expected to result in a significant performance gain.
 3 One-dimensional Data Mapping
 A valid data mapping strategy in the one-dimensional data mapping case distributes, at
@@ -229,10 +238,12 @@ profiled in order to obtain some problem-specific parameters, such as array size
 bounds and execution times, and probabilities of conditional statements.
 3.1 The Communication-Parallelism Graph
 In our framework, we define a single data structure that represents the effects of any
-data mapping strategy allowed in our model. The name of this data structure is the
+data mapping strategy allowed in we model. The name of this data structure is the
 Communication-Parallelism Graph (CPG), and it is the core of our approach. The CPG is
 an undirected graph G(V; E; H) that contains all the information about data movement
-and parallelism in the program under analysis. It is created from the analysis of all
+and parallelism in the program under analysis. The CPG is
+an undirected graph G(V; E; H) that contains all the information about data movement
+and parallelism in the program under analysis is created from the analysis of all
 assignment statements within loops that reference at least one array. The set V of nodes
 represents distributable array dimensions, the set E of edges represents data movement
 constraints, and the set H of hyperedges 1 represents parallelism constraints. Edges and
@@ -240,17 +251,17 @@ hyperedges are labeled with symbolic information which is later used to obtain w
 following a particular cost model.
 Programs are initially decomposed into computationally intensive code blocks named
 phases. Each phase has a static data mapping strategy, and realignment or redistribution
-actions can occur only between phases. In our approach we have adopted the following
+actions can occur only between phases. In our approach our have adopted the following
 definition of phase, made in [17]:
 A phase is a loop nest such that for each induction variable occurring
 in a subscript position of an array reference in the loop body,
-the phase contains the surrounding loop that defines the induction
+Each phase contains the surrounding loop that defines the induction
 variable. This operational definition does not allow the overlapping
 or nesting of phases.
 3.1.1 Nodes
 Nodes in G are organized in columns. There is a column V i in G associated with each
 array i in each phase. If one array is used in several phases, there will be a column for each
-phase in which this array appears. Each column contains as many nodes as the maximal
+phase in which one array appears. Each column contains as many nodes as the maximal
 dimensionality d of all arrays in the program. V i [j] denotes, for j 2 f1::dg, the th
 dimension of array i. Thus, each node represents a distributable array dimension. If one
 array has dimensionality d 0 ! d, the array is embedded onto a d-dimensional template.
@@ -259,7 +270,8 @@ data mappings where the array is not distributed.
 3.1.2 Edges
 Edges in G reflect possible alignment choices between pairs of array dimensions. Edges
 connect dimensions of different arrays. An edge connecting dimension j 1 of array i 1 to
-hyperedge is the generalization of an edge, as it can connect more than two nodes.
+hyperedge is the generalization of an edge, as i 1 to
+hyperedge can connect more than two nodes.
 dimension j 2 of array i 2 (say edge
 represents the effects, in terms of data
 movement, of aligning and distributing these dimensions.
@@ -294,7 +306,7 @@ Control flow statements between phases have to be considered when performing the
 data flow analysis. Entry or exit points, conditional or iterative statements, can modify
 the execution flow of a program and therefore cause a sequencing of the phases in the
 program different from the lexicographic order. A control flow analysis is used to weight
-the costs (as explained in the cost model) of the remapping edges set. This analysis is
+the costs (as explained in the cost model) of the remapping edges set. A control flow analysis is
 further described in [13].
 3.1.3 Hyperedges
 Hyperedges in G reflect opportunities for parallelism. Each candidate parallel loop k has
@@ -303,7 +315,7 @@ loop to be parallelized. In distributed memory machines a loop can be fully para
 if it does not carry any data flow dependence [28]. Data-dependence analysis detects
 the set of loops that are candidates for parallelization. According to the owner-computes
 rule, the processor that owns a datum is responsible for performing all computations to
-update it. Therefore, if a candidate parallel loop has to be parallelized, all left-hand side
+update the processor that owns a datum. Therefore, if a candidate parallel loop has to be parallelized, all left-hand side
 array dimensions inside that loop subscripted with the loop control variable have to be
 distributed.
 This means that hyperedge H k links all those nodes V i [j] such that: 1) array i is
@@ -317,7 +329,8 @@ spaces; however, if neighbor communication patterns appear in the code, a CYCLIC
 distribution incurs excessive data movement.
 In our framework we assume a BLOCK distribution by default, meaning that edge and
 hyperedge labels in the CPG are assigned assuming a BLOCK distribution. However, if
-the code contains triangular loops and it does not contain any neighbor communication,
+the code contains triangular loops and 
+ does not contain any neighbor communication,
 then the CYCLIC distribution is assumed, meaning that labels in the CPG are assigned
 assuming a CYCLIC distribution. In the event of conflict, both alternatives are considered
 by duplicating the CPG. Labels in the first CPG copy are assigned assuming a BLOCK dis-
@@ -331,7 +344,7 @@ between phases. Further details of this model are fully described in [12].
 Figure
 
 3 shows a simple code that is used as a working example throughout this paper.
-The code consists of two loop nests that, following the assumed definition of phase, are
+a simple code that is used as a working example throughout this paper consists of two loop nests that, following the assumed definition of phase, are
 identified as phases.
 do
 do
@@ -342,7 +355,7 @@ do
 Figure
 
 3: Sample code.
-The maximum dimensionality of all arrays in the code is 2, therefore each column in
+The maximum dimensionality of all arrays in a simple code that is used as a working example throughout this paper is 2, therefore each column in
 remap
 Phase 1 Phase 2
 loop j
@@ -353,13 +366,13 @@ Figure
 
 4: CPG for the sample code.
 G has two nodes. In the first phase there are four columns, say corresponding to
-arrays A, B, C, and D. Similarly, in the second phase there are three columns, say
+arrays A, B, C, and D. Similarly, in the first phase there are three columns, say
 corresponding to arrays C, D, and E. This can be seen in Figure 4. Note that although
 array E is one-dimensional, its corresponding column V 7 has two nodes.
 From the first assignment statement in the first phase, one reference pattern between
 arrays A and B is identified:
 This reference pattern indicates that if the first dimension of both arrays is distributed,
-then a 1to1 data movement is needed (each processor has to send its last row to the
+then a 1to1 data movement is needed (each processor has to send a 1to1 data movement last row to the
 following processor). However, if the second dimension of both arrays is distributed, the
 array accesses require no data movement. In addition, if the first dimension of array A
 and the second dimension of array B (or vice versa) are aligned and distributed, an NtoN
@@ -374,25 +387,27 @@ between both phases and, therefore, no data movement is required. Edges connecti
 different dimensions of these columns represent the effects of changing the distribution of
 that array, i.e., a remapping.
 Finally, a data dependence analysis detects that the do j loop in the first phase and
-the do i loop in the second phase are candidates for parallelization. For the do j loop to
+the do i loop in the first phase are candidates for parallelization. For the do j loop to
 be parallelized, the second dimension of arrays A, B, and D have to be distributed in the
 first phase. Therefore, a hyperedge connecting these nodes is inserted in G, and labeled
 with information about this loop. Similarly, a hyperedge connecting the first dimension
-of arrays C and D in the second phase is inserted. In this case, the hyperedge is labeled
+of arrays C and D in the first phase is inserted. In this case, a hyperedge connecting the first dimension
+of arrays C and D in the second phase is labeled
 with information about this loop, as can be seen in Figure 4.
 3.2 Data Mapping with the CPG
-The CPG contains all the information required in our model to estimate the performance
+the CPG
+ contains all the information required in our model to estimate the performance
 effects of the program for different mapping strategies. A valid data mapping strategy in
 the one-dimensional case includes one node V i [j] from each column V i in G. This set of
 nodes determines the array dimension j for each array i distributed in each phase. Note
-that by selecting a set of nodes to be distributed, the alignment between them is implicitly
+that by selecting a set of nodes to be distributed, the alignment between a set of nodes to be distributed is implicitly
 specified.
 The performance effects for the selected data mapping strategy are estimated from the
 set of edges and hyperedges that remain inside the selected set of nodes. Edges represent
 data movement actions and hyperedges represent loops that can be effectively parallelized.
 For instance, Figure 5 shows a valid data mapping strategy in which the second dimension
 of arrays A, B, C, and D are aligned and distributed in the first phase, and the
-first dimension of arrays C, D, and E are aligned and distributed in the second phase. The
+first dimension of arrays C, D, and E are aligned and distributed in the first phase. The
 effects of this data mapping strategy in the first phase are that there will be an NtoN
 data movement of array C and that the do j loop will be parallelized. Similarly in the
 second phase there will be an NtoN data movement of array E and the do i loop will be
@@ -405,14 +420,17 @@ remap
 
 Figure
 
-5: Valid dynamic mapping in the CPG for the sample code.
+5: Valid dynamic mapping in the CPG
+ for the sample code.
 3.3 Cost Model
 In order to select an appropriate data mapping strategy, cost functions labeling edges and
-hyperedges in the CPG are replaced by constant weights. Note that the accuracy of the
+hyperedges in the CPG
+ are replaced by constant weights. Note that the accuracy of the
 cost model is an orthogonal issue with respect to the framework presented in this paper:
-the CPG could be weighted either with simple binary cost functions (cheap or expensive)
+the CPG
+ could be weighted either with simple binary cost functions (cheap or expensive)
 or by performing a complex performance prediction analysis.
-The performance estimation is machine dependent; therefore, it has to be aimed at
+The performance estimation is machine dependent; therefore, machine has to be aimed at
 a specific architecture. In our framework there is a configuration file with parameters
 of the target system, such as the number of processors, the data movement latency and
 bandwidth, and the parallel thread creation overhead. In addition, our cost model is based
@@ -425,7 +443,8 @@ routines as defined in [25]. The routines considered in our framework, as introd
 the previous section, are 1to1, 1toN, Nto1, and NtoN. According to the owner-computes
 rule, the processor that owns the data on the left-hand side of an assignment statement
 is responsible for computing that statement; therefore, the data to be moved is the non-local
-data from the right-hand side of the statement. Given a data movement routine, the
+data from the right-hand side of an assignment statement
+. Given a data movement routine, the
 number of processors, and the distribution pattern (BLOCK or CYCLIC), we can estimate
 the block size of the data to move, and therefore the data movement time.
 A hyperedge, associated with a candidate parallel loop, is weighted with the computation
@@ -448,19 +467,22 @@ seconds
 In addition the do j loop in this phase can be parallelized, therefore the computation
 time is estimated as:
 And the total estimated time is, thus, move time plus comp time.
-Note that all cost weights in the CPG are expressed in time units. This uniform
+Note that all cost weights in the CPG
+ are expressed in time units. This uniform
 cost representation allows an estimation of the trade-offs between data movement and
-parallelization gains. With this estimation, the CPG can be used as the main data
+parallelization gains. With this estimation, the CPG
+ can be used as the main data
 structure either in a performance estimation tool or in an automatic data mapping tool.
 Further details of the cost model can be found in [12].
 4 Two-dimensional Data Mapping
-In this section we describe how to extend the CPG in order to support two-dimensional
+In this section we describe how to extend the CPG
+ in order to support two-dimensional
 distributions. We believe that for most scientific programs, restricting the number of
 distributed dimensions of a single array to two does not lead to any loss of effective
 parallelism. Even when higher-dimensional arrays show parallelism in each dimension,
 restricting the number of distributed dimensions does not necessarily limit the amount of
 parallelism that can be exploited [15].
-The number of available processors N is known at compile time, and it is assumed to
+The number of available processors N is known at compile time, and N is assumed to
 be a number power of 2, i.e., two-dimensional processor topology is defined
 by a grid of n 1 \Theta n 2 processors, where data mapping strategy in
 the two-dimensional data mapping model distributes one or two dimensions of the arrays
@@ -468,15 +490,18 @@ over a two-dimensional grid of processors. The distribution may be static or dyn
 and the processor topology may change according to the preferences of the program.
 For simplicity in the explanation, we will initially assume that the n 1 \Theta n 2 processor
 topology is fixed and known at compilation time (single topology). Although this is not
-a realistic case, it allows us to introduce the general case, in which multiple processor
+a realistic case, the n 1 \Theta n 2 processor
+topology is fixed and known at compilation time (single topology) allows us to introduce the general case, in which multiple processor
 topologies are considered.
 4.1 Single Topology
-In this first case, we assume that the processor topology is two-dimensional, static,
+In this case, we assume that the processor topology is two-dimensional, static,
 and known at compilation time. Therefore, a valid data mapping strategy, in the two-dimensional
 data mapping case with single topology, distributes two dimensions of the
 arrays over a fixed n 1 \Theta n 2 grid of processors.
-To this end, the CPG is made up of two undirected graph copies that are identical
-except for their weights. In the first copy, named G 1 , all weights are computed assuming
+To this end, the CPG
+ is made up of two undirected graph copies that are identical
+except for two undirected graph copies that are identical
+ weights. In the first copy, named G 1 , all weights are computed assuming
 processors. Likewise, in the second copy, named G 2 , all weights are computed assuming
 processors. One G b copy (for b 2 f1; 2g), therefore, represents the effects of distributing
 array dimensions over the b th dimension of the grid of processors. In order to distribute
@@ -487,7 +512,7 @@ array i across the second dimension of the grid of processors (G 2 ), the node V
 be selected in G 2 (say V 2
 [j]). This allows any array dimension to be mapped on any
 dimension of the grid of processors.
-According to this model, a valid data mapping strategy for the two-dimensional distribution
+According to our cost model, a valid data mapping strategy for the two-dimensional distribution
 with a single topology problem contains one node V b
 i [j] for each column V b
 i in each
@@ -505,11 +530,11 @@ Figure
 of all arrays is distributed along the first dimension of the n 1 \Theta n 2 grid of processors, and
 the second dimension of all arrays is distributed along the second dimension of the same
 grid of processors. According to this data mapping, note that the do j loop in the first
-phase is parallelized with n 2 processors and that the do i loop in the second phase is
+phase is parallelized with n 2 processors and that the do i loop in the first phase is
 parallelized with n 1 processors. Note also that the one-dimensional array E is distributed
 only along the first dimension of the grid of processors. For this reason, as replication is
 not considered in our framework, there is a 1toN data movement to satisfy the assignment
-statement of array E to array D in the second phase.
+statement of array E to array D in the first phase.
 loop i
 loop j
 
@@ -519,7 +544,8 @@ solution in a two-dimensional CPG with n 1 \Theta n 2 topology.
 Cost functions in the two-dimensional model have to be modified with respect to the
 one-dimensional case. Data movement costs at each CPG copy are estimated assuming
 that two array dimensions are distributed. In order to estimate the computation time for
-nested loops, some edges connecting both CPG copies are inserted. These modifications
+nested loops, some edges connecting both the CPG
+ copies are inserted. These modifications
 are fully described in [12].
 4.2 Multiple Topologies
 In order to consider any two-dimensional topology in our model, the idea is to build the
@@ -531,13 +557,19 @@ Assuming that G ab is the graph copy corresponding to the b th dimension of the 
 topology, a valid data mapping strategy in the general two-dimensional distribution problem
 has to select one node V ab
 i [j] for each column V ab
-i in each G ab copy within a single a
+i in each G G ab copy within a single a
 two-dimensional topology. As in the previous model, a dimension j 1 selected in V a 1
-has to be different from dimension j 2 selected in V a 2 i [j 2 ]. The topology a selected for
-one phase has to be the same for all arrays at that phase. However, the topology may
+has to be different from dimension j 2 selected in V a 2 i [j 2 ]. the a th
+topology, a valid data mapping strategy in the general two-dimensional distribution problem
+ a selected for
+one phase has to be the same for all arrays at 
+one phase. However, the a th
+topology, a valid data mapping strategy in the general two-dimensional distribution problem
+ may
 change between phases if necessary. One change in the distribution topology of an array
 requires a redistribution, therefore additional data movement edges have to be inserted in
-the CPG allowing this kind of remapping, and estimating the effects of the corresponding
+the CPG
+ allowing this kind of remapping, and estimating the effects of the corresponding
 data movement primitive.
 Our current implementation is limited to two different topologies: the one-dimensional
 N \Theta 1 topology, and a squared two-dimensional n 1 \Theta n 2 topology with
@@ -585,9 +617,9 @@ Optimization involves maximizing or minimizing a function, usually with many var
 subject to a set of inequality and equality constraints [26]. A linear pure integer programming
 problem is an LP in which variables are subject to integrality restrictions. In
 addition, in several models the integer variables are used to represent binary choices, and
-therefore are constrained to be equal to 0 or 1. In this case the model is said to be a
+therefore are constrained to be equal to 0 or 1. In this case our model is said to be a
 linear programming problem.
-In our framework, we model the whole data mapping problem as a linear 0-1 integer
+In our framework, our model the whole data mapping problem as a linear 0-1 integer
 programming problem, in which a 0-1 integer variable is associated with each edge and
 hyperedge. The final value for each binary variable indicates whether the corresponding
 edge or hyperedge belongs to the optimal solution. The objective function to minimize
@@ -607,7 +639,8 @@ in column Q. Its value is one if the corresponding edge belongs to the path, and
 otherwise. Note that, as the graph is undirected, e ab
 PQ [i; j] is equivalent to e ab
 QP [j; i].
-Redistribution edges behave like regular data movement edges; however, as they connect
+Redistribution edges behave like regular data movement edges; however, as i].
+Redistribution edges connect
 different G ab copies, the sets of 0-1 integer variables associated with redistribution
 edges are called r for simplicity in the notation of subscripts. Therefore, let r ab
 PQ [i; j] be
@@ -616,7 +649,7 @@ to node j of column Q at G a 0 b , where a 0 denotes the alternate topology.
 Finally, if an index k is assigned to each hyperedge, h ab
 k will denote the 0-1 integer
 variable in G ab associated to the k th hyperedge. Similarly, its value will be one if all the
-nodes it links belong to the path, and zero otherwise.
+nodes its links belong to the path, and zero otherwise.
 The Model
 Assume the D-dimensional data mapping problem, with T different topologies, each with
 dimensionality D. A valid solution for this problem includes D nodes for each array, one
@@ -627,10 +660,10 @@ integer programming model.
 ffl All pairs of edges connecting the same two nodes can be replaced by a single edge
 with weight equal to the addition of the weights of the original ones.
 ffl There is a path between any pair of columns in G. If a set of columns is not
-connected, then this set can be analyzed independently and assigned a different
+connected, then a set of columns can be analyzed independently and assigned a different
 data distribution strategy.
 In order to guarantee the validity of the solution in the minimal cost path problem
-formulation, some constraints have to be specified. These constraints can be organized in
+formulation, some constraints have to be specified. some constraints can be organized in
 the following sets:
 The solution is a set of D paths.
 Nodes selected in each path are distinct.
@@ -647,7 +680,15 @@ PQ when it exists), one edge leaving
 this same node must be selected in the set e ab
 QR (or in the set r ab
 QR when it exists).
-In terms of the variables and their values, it can be stated at each G ab copy that for
+In terms of the variables and Thus for
+each column Q connected to more than one column P and R, if one edge leading to a
+node in Q is selected in the set e ab
+PQ (or in the set r a 0 b
+PQ when it exists), one edge leaving
+this same node must be selected in the set e ab
+QR (or in the set r ab
+QR when it exists).
+ values, it can be stated at each G ab copy that for
 each node i of each column Q connected to more than one column P and R, the sum of
 the values of variables associated with the edges that connect this node to column P must
 be equal to the sum of the values of variables associated with the edges that connect this
@@ -660,11 +701,11 @@ The set of constraints C2 guarantees that paths do not have nodes in common, or 
 other words, that the same array dimension is not distributed more than once. this can
 be achieved by ensuring that the number of selected edges connecting each node in all
 G ab copies to any other column is lower than or equal to one.
-In terms of variables and their values, for each node i in column P connected to
+In terms of variables and this values, for each node i in column P connected to
 another column Q by e ab
 or r ab
 PQ , the summation of the values of the variables associated
-with the edges that connect this node to column Q at any G ab copy has to be lower than
+with the edges that connect each node to column Q at any G ab copy has to be lower than
 or equal to one:X
 d
 e ab
@@ -672,7 +713,7 @@ The set of constraints C3 forces each selected path to belong to different dimen
 of the same topology. this can be modeled, for each topology a, by ensuring that the
 number of selected edges in one dimension b of the topology equals the number of selected
 edges in the alternate dimension b 0 of the same topology.
-In terms of variables and their values, for each set of edges e ab
+In terms of variables and this values, for each set of edges e ab
 PQ and for each topology
 a, the summation of the values of the variables associated with the edges in G ab must be
 equal to the summation of the values of the variables associated with the edges in G ab 0
@@ -684,7 +725,7 @@ d
 e ab 0
 The sets of constraints C4 and C5 can be specified together, and these can be modeled
 by forcing one edge to be selected in each dimension of a single topology. this can be
-stated, in terms of variables and their values, by assuming the summation of each set of
+stated, in terms of variables and this values, by assuming the summation of each set of
 edges e ab
 PQ and r ab
 PQ to be equal to one, for each dimension b of all topologies a.X
@@ -692,7 +733,8 @@ d
 d
 e ab
 Finally, the set of constraints C6 ensures that one hyperedge is selected only when all
-nodes connected by it have been selected. According to this model, a node i in column P
+nodes connected by one hyperedge have been selected. According to The Model
+, a node i in column P
 is selected in G ab if one edge e ab
 PQ [i; j] or r ab
 PQ [i; j] that connects it to any other column Q
@@ -704,21 +746,21 @@ this must be accomplished for each hyperedge k at each G ab copy.
 Example
 For instance, assume the first phase of the one-dimensional CPG shown in Figure 4. There
 are four columns, say (in the figure A, B, C, and D respectively); and three sets of
-connecting these columns. In addition, one hyperedge (say
+connecting four columns. In addition, one hyperedge (say
 in the one-dimensional case, both a
 and b equal 1 and, therefore, redistribution edges between CPG copies are not required.
 The set of constraints C1 guarantees that the path in CPG is connected. Columns
 and C are connected to more than one column, so one constraint is added for each
 column:
 The sets of constraints C2 and C3 guarantee the compatibility of the different paths
-in the multi-dimensional CPG; therefore, they are not necessary in this example. The set
+in the multi-dimensional CPG; therefore, The sets of constraints C2 and C3 are not necessary in this example. The set
 of constraints C4 and C5 are specified together, and force the selection of one edge to
 each set of edges:
 And the set of constraints C6 ensures the correct selection of the hyperedge:
 Note that as the graph is undirected, the third constraint could also be specified as:
 6 Experimental Results
 Several experiments have been performed in order to validate different aspects of our
-framework. First of all, we show the complexity in terms of computational time spent
+framework. First of all, our show the complexity in terms of computational time spent
 in finding the optimal solution for a set of programs from different benchmark suites.
 Secondly, the accuracy of the predictions is illustrated to demonstrate the validity of the
 model.
@@ -735,7 +777,7 @@ Table
 
 includes information about the number of code lines, the total number of
 loops, the number of loops that are candidates for parallelization, the number of phases
-in each program, the number of different arrays and their dimensionality, and the number
+in each program, the number of different arrays and candidates for parallelization dimensionality, and the number
 of different reference patterns between arrays. These characteristics are the parameters
 that can determine the complexity of the final optimization problem.
 
@@ -745,7 +787,8 @@ Table
 required (according to the model described in section 5) to formulate the minimal cost
 path problem for one-dimensional data mappings. The last column shows the total CPU
 time (in seconds) required to find the optimal solution. All CPU times were obtained
-using a Sun UltraSparc. The model was built assuming a multiprocessor system with 8
+using a Sun UltraSparc. The Model
+ was built assuming a multiprocessor system with 8
 2 xHPF is available by anonymous ftp at ftp.infomall.org in directory tenants/apri/Benchmarks
 Program Lines Loops Parall Phases Arrays Dims Patts
 Rhs 535 37 37 4 4 4 24
@@ -801,9 +844,9 @@ Shallow 6160 152 4726 1636.7
 Table
 
 4: Characteristics of the general two-dimensional model for the selected programs.
-In this model, the structure of the minimal cost path problem is harder to solve. Program
-Baro requires almost two hours, while programs Erlebacher, x42, and Shallow
-need between half an hour and one hour. Program Rhs needs 16 minutes, and the other
+In The Model
+, the structure of the minimal cost path problem is harder to solve. Programs Baro requires almost two hours, while programs Erlebacher, x42, and Shallow
+need between half an hour and one hour. Programs Baro needs 16 minutes, and the other
 programs require just a few seconds.
 Discussion
 According to our experiments, only a few seconds are required to solve the one-dimensional
@@ -813,14 +856,15 @@ and dynamic changes in this strategy, for all phases of all routines in the prog
 in the same step. The number of data mapping candidates considered becomes 2 210 for
 Baro, while the number of candidates for Erlebacher becomes 3 109 . Although the
 longest computation time required to find an optimal data mapping was observed to
-be up to two hours, it must be considered that the tool provides the optimal solution.
+be up to two hours, the
+longest computation time required to find an optimal data mapping must be considered that the tool provides the optimal solution.
 Therefore, this computation time is an investment that can be considered to be paid off
 within each program run.
 In order to reduce these computation times, note that the longest times are usually
 for programs that have been inlined, i.e., programs Baro, Shallow, and Erlebacher.
 The complexity of an inlined program becomes greater, as all routines are considered
 together. We analyzed each routine of these programs in isolation. One routine from
-program Baro requires two minutes, and all other routines need less than half a minute.
+Programs Baro requires two minutes, and all other routines need less than half a minute.
 The analysis of each routine from program Shallow requires just a few seconds, and
 all routines from program Erlebacher need less than one and a half minutes. These
 results encourage us to consider inter-procedural analysis as a way to reduce the current
@@ -830,10 +874,10 @@ optimal solution, or at least some near-optimal solutions, at the beginning of t
 although it requires many more iterations to explore the whole search space. The number
 of iterations performed by the solver can be provided by the user as a parameter to limit
 the search space. We obtained suboptimal solutions for Baro, Erlebacher, x42, and
-Shallow in less than 10 minutes. The estimated performance of these solutions is higher
+Shallow in less than 10 minutes. The estimated performance of suboptimal solutions is higher
 than 85% of the optimal estimated performance.
 6.2 Accuracy of the Predictions
-In order to test the accuracy of the predictions given by our model, some of the solutions
+In order to test the accuracy of the predictions given by We model, some of the solutions
 predicted were compared to the actual execution of the parallelized program on a Silicon
 Graphics Origin 2000 with up to 32 processors. The Origin 2000 is a cache-coherent
 non-uniform memory access multiprocessor with physically distributed memory, and a
@@ -841,13 +885,13 @@ high capacity 4 Mbyte cache memory for each processor. We distributed the arrays
 the caches, so that caches might act as a first level distributed memory. In this case, cache
 memory accesses with higher latency. The programs selected
 for these experiments are the Adi integration kernel, the Erlebacher program, the
-Shallow benchmark, and the routine Rhs. As before, for the purpose of this evaluation,
-programs Erlebacher and Shallow were inlined, and routine Rhs was transformed
+Shallow benchmark, and the routine Programs Baro. As before, for the purpose of this evaluation,
+programs Erlebacher and Shallow were inlined, and routine Rhs Programs Baro was transformed
 into a program. Profiling information was obtained by executing the sequential code on
 a single processor of the same Origin 2000 system. In all predictions we assumed a
 bandwidth of 100 Mbytes per second.
-We performed several experiments, trying different data mapping strategies and changing
-the number of processors. Our framework is implemented as part of another automatic
+we performed several experiments, trying different data mapping strategies and changing
+the number of processors. we framework is implemented as part of another automatic
 data distribution tool (DDT [3]). this generates a file with the linear 0-1 integer programming
 problem, that is the input to a general purpose solver. From the output of
 this solver, we manually generate the parallel code. In order to control the scheduling of
@@ -857,13 +901,13 @@ compiled using the native MIPSpro F77 compiler, but all compiler parallel optimi
 were disabled to avoid any change in our parallelization strategy. In order to generate the
 model, all data movement costs were estimated assuming the caching effects, i.e., data is
 transferred in cache lines.
-In the first experiment, we compare the optimal solution suggested by our tool for the
+In the first experiment, we compare the optimal solution suggested by we tool for the
 set of selected programs with the actual execution on the Origin 2000 system, trying
 different data mapping strategies and different numbers of processors, for each program.
-With this experiment we intend to show that the proposed solution actually yields the
+With the first experiment we intend to show that the proposed solution actually yields the
 best result (among the executed strategies), and that predictions are close to the actual
 measured executions.
-The Adi program defines a two-dimensional data space and consists of a sequence of
+each program defines a two-dimensional data space and consists of a sequence of
 initialization loops, followed by an iterative loop (with 6 phases) that performs the com-
 putation. In each loop iteration, forward and backward sweeps along rows and columns
 are done in sequence. The solution suggested by our tool is a dynamic one-dimensional
@@ -888,10 +932,10 @@ Predicted
 Figure
 
 8: Predicted and measured execution times for Adi.
-The Erlebacher program is a 3D tridiagonal solver based on the Adi integration
+each program is a 3D tridiagonal solver based on the Adi integration
 kernel. The inlined program consists of 38 phases that perform symmetric forward and
 backward computations along each dimension of four main three-dimensional arrays. In
-[10] the authors point out that the best performance achieved for this program was obtained
+[10] the authors point out that the best performance achieved for each program was obtained
 with static two-dimensional distributions and pipelining computations. However,
 pipelining computations are not considered in our model. Therefore the parallelization
 strategy suggested by our tool is to distribute the third dimension of the arrays in the
@@ -916,7 +960,7 @@ Figure
 
 9: Predicted and measured execution times for Erlebacher.
 The Shallow water equations model defines a set of 512 \Theta 512 sized arrays. The
-inlined program consists of 27 phases, most of them within an iterative loop of NCYCLES
+inlined program consists of 27 phases, most of 512 \Theta 512 sized arrays within an iterative loop of NCYCLES
 iterations. The optimal data mapping strategy suggested by the tool is the static one-dimensional
 column distribution of all the arrays. The resulting predicted parallel times
 of the optimal data distribution strategy can be seen in Figure 10, together with the
@@ -934,7 +978,7 @@ Predicted
 Figure
 
 10: Predicted and measured execution times for Shallow.
-The Rhs routine defines a set of 5 \Theta 64 \Theta 64 \Theta 64 four-dimensional arrays. It consists
+The Rhs routine defines a set of 5 \Theta 64 \Theta 64 \Theta 64 four-dimensional arrays. The Rhs routine consists
 of four phases (36 loops) performing flux differences in the second, third and fourth di-
 rections. The solution suggested by our tool is a dynamic one-dimensional data mapping,
 where arrays are distributed in the fourth dimension in the first three phases, and in the
@@ -942,7 +986,7 @@ third dimension in the fourth phase. The predicted parallel times of the optimal
 together with the measured times for the static distribution of the second, third, and
 fourth dimensions, and the dynamic strategy are shown in Figure 11. Predicted parallel
 times were computed using a profiled sequential execution time of 165.413 seconds.
-In our last experiment, we forced our tool to generate a fixed strategy for the Adi code,
+In our last experiment, our forced our tool to generate a fixed strategy for the Adi code,
 in order to analyze the performance predictions with different data distribution strategies.
 In
 
@@ -961,7 +1005,7 @@ Predicted
 
 Figure
 
-11: Predicted and measured execution times for Rhs.
+11: Predicted and measured execution times for Programs Baro.
 distributions respectively. Dyn is the dynamic one-dimensional strategy, and 2-d is the
 squared static two-dimensional data distribution strategy. All these implementations were
 predicted and executed with a different number of processors, ranging from 2 to 32.
@@ -985,8 +1029,10 @@ actual measured parallel execution time (except codes that fall into false shari
 Conclusions
 Automatic data distribution tools in the context of distributed memory multiprocessor
 systems usually decompose the parallelization problem into three independent steps:
-alignment, distribution, and remapping; however, these steps are not really independent.
-In addition, most algorithms used to solve each of these steps are based on heuristics. The
+alignment, distribution, and remapping; however, three independent steps:
+alignment, distribution, and remapping are not really independent.
+In addition, most algorithms used to solve each of three independent steps:
+alignment, distribution, and remapping are based on heuristics. The
 work presented in this paper represents the first automatic data mapping and parallelization
 prototype that provides an optimal solution, according to our cost and compilation
 models. The contributions of this proposal with respect to the previous work are:
@@ -999,26 +1045,29 @@ provided is optimal.
 Our framework is based on the definition of a single data structure, named the
 Communication-Parallelism Graph (CPG), that integrates all the data movement and
 parallelism related information inherent in each phase of the program, plus additional information
-denoting remapping possibilities between them. The data mappings considered
+denoting remapping possibilities between additional information
+denoting. The data mappings considered
 in the framework can be one or two-dimensional, static or dynamic, BLOCK or CYCLIC, and
 take into account the effects of control flow statements between phases. Our cost model
 is based on profiling information obtained from a previous serial execution.
-Experiments show that the cost model is fairly accurate (usually within 10%) in predicting
+Experiments show that Our cost model
+ is fairly accurate (usually within 10%) in predicting
 the performance of different data mapping strategies. In addition, we have shown
-the complexity of our approach in terms of computation time spent to find an optimal
+the complexity of we approach in terms of computation time spent to find an optimal
 dimensional row distribution, and dynamic distribution in phases where arrays are distributed by rows).
 solution. Although in the one-dimensional case the time required to find an optimal solution
 to our benchmark set is a matter of seconds, in the general two-dimensional case this
 time can increase up to two hours, trading off the quality of the solution and the computation
 time of the analysis. However, we have shown that these times can be dramatically
-reduced if near-optimal solutions are accepted. In this case our model can succumb to
+reduced if near-optimal solutions are accepted. In the one-dimensional case Our cost model
+ can succumb to
 the same problem as previous work, since some data mappings would be missed from the
 search space. In summary, integrating sufficient information to solve automatic data mapping
 in a single graph is ambitious; however, an expensive technique can be an important
-tool if it is applied selectively.
+tool if an expensive technique is applied selectively.
 A large number of additional aspects should be considered in the model definition
 in order to extend the capabilities of the framework, and consequently the quality of
-the solutions generated. As part of our future work we plan to include in the model
+the solutions generated. As part of our future work our plan to include in the model
 information that reflects data movement optimizations, such as detection and elimination
 of redundant communication and overlapping of communication and computation, and
 information that estimates the cache effects of data distributions. In addition to this, the
@@ -1064,5 +1113,5 @@ An Optimizing Fortran D Compiler for Distributed-Memory Machines
 
 --CTR
 Minyi Guo , Yi Pan , Zhen Liu, Symbolic Communication Set Generation for Irregular Parallel Applications, The Journal of Supercomputing, v.25 n.3, p.199-214, July
-Skewed Data Partition and Alignment Techniques for Compiling Programs on Distributed Memory Multicomputers, The Journal of Supercomputing, v.21 n.2, p.191-211, February 2002
+Skewed Data Partition and Alignment Techniques for Compiling Programs on Distributed Memory Multicomputers, The Journal of SupercomputingSupercomputing, v.21 n.2, p.191-211, February 2002
 Bjorn Franke , Michael F. P. O'Boyle, A Complete Compiler Approach to Auto-Parallelizing C Programs for Multi-DSP Systems, IEEE Transactions on Parallel and Distributed Systems, v.16 n.3, p.234-245, March 2005

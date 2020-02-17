@@ -1,7 +1,7 @@
 --T
 Main-memory index structures with fixed-size partial keys.
 --A
-The performance of main-memory index structures is increasingly determined by the number of CPU cache misses incurred when traversing the index. When keys are stored indirectly, as is standard in main-memory databases, the cost of key retrieval in terms of cache misses can dominate the cost of an index traversal. Yet it is inefficient in both time and space to store even moderate sized keys directly in index nodes. In this paper, we investigate the performance of tree structures suitable for OLTP workloads in the face of expensive cache misses and non-trivial key sizes. We propose two index structures, pkT-trees and pkB-trees, which significantly reduce cache misses by storing partial-key information in the index. We show that a small, fixed amount of key information allows most cache misses to be avoided, allowing for a simple node structure and efficient implementation. Finally, we study the performance and cache behavior of partial-key trees by comparing them with other main-memory tree structures for a wide variety of key sizes and key value distributions.
+The performance of main-memory index structures is increasingly determined by the number of CPU cache misses incurred when traversing the index. When keys are stored indirectly, as is standard in main-memory databases, the cost of key retrieval in terms of cache misses can dominate the cost of an index traversal. Yet it is inefficient in both time and space to store even moderate sized keys directly in index nodes. In this paper, we investigate the performance of tree structures suitable for OLTP workloads in the face of expensive cache misses and non-trivial key sizes. We propose two index structures, pkT-trees and pkB-trees, which significantly reduce cache misses by storing partial-key information in the index. We show that a small, fixed amount of key information allows most cache misses to be avoided, allowing for a simple node structure and efficient implementation. Finally, We study the performance and cache behavior of partial-key trees by comparing partial-key trees with other main-memory tree structures for a wide variety of key sizes and key value distributions.
 --B
 INTRODUCTION
 Following recent dramatic reductions, random access memory
@@ -14,7 +14,8 @@ not be a concern. For these reasons, and spurred by the stringent
 performance demands of advanced business, networking and internet
 applications, a number of main-memory database and main-memory
 database cache products have appeared in the market [2,
-22, 29]. These products essentially fulfill the expectations of re-search
+22, 29]. main-memory
+database cache products essentially fulfill the expectations of re-search
 on main-memory databases of the last fifteen years (see, for
 Permission to make digital or hard copies of all or part of this work for
 personal or classroom use is granted without fee provided that copies are
@@ -43,7 +44,7 @@ Consequently, main-memory index structures should
 be designed to minimize cache misses during index traversal, while
 keeping CPU costs and space overhead low. Intuitively, cache-miss
 costs are minimized with small node sizes and high branching fac-
-tors. For example, [6] found that optimal node sizes for their B-tree
+tors. For example, [6] found that optimal node sizes for example B-tree
 implementation was slightly larger than 1 cache block (so that
 the average number of keys present in a node would fill a cache
 block). Low CPU costs for index traversal are important since
@@ -73,7 +74,7 @@ of one) stored in each node.
 variable-length fields, country-specific sort values, etc. Further, key
 size and key storage strategy directly affect the branching factor for
 -trees. Since branching factors are small already for node
-sizes based on cache blocks, the height of the tree can vary substantially
+sizes based on cache blocks, the height of The T-tree can vary substantially
 as key size changes. Thus an initial motivation for our
 research was the further examination of T-tree and B-tree performance
 in a main-memory OLTP environment, in order to consider
@@ -85,7 +86,8 @@ key-storage approach has the advantage of optimizing storage
 by eliminating duplication of key values in the index, improving
 the branching factor of nodes and simplifying search by avoiding
 the complexity of storing long or variable-length keys in index
-nodes. However, this approach must be re-examined due to
+nodes. However, This indirect
+key-storage approach must be re-examined due to
 the additional cache misses caused by retrieval of indirect keys.
 A second approach to dealing with large, complex keys is to use
 key compression to allow more keys to fit in cache blocks. The
@@ -106,7 +108,8 @@ a partial-key tree by a pointer to the data record containing the key
 value for the key, and a partial key. For a given key in the index,
 which we refer to as the index key for the purposes of discussion, the
 partial key consists of (1) the offset of the first bit at which the index
-key differs from its base key, and (2) l bits of the index key value
+key differs from the index
+ base key, and (2) l bits of the index key value
 following that offset (l is an input parameter). Intuitively, the base
 key for a given index key is the most recent key encountered during
 the search prior to comparing with the index key. The partial-key
@@ -118,13 +121,14 @@ Using the idea of partial keys, we develop the pkT-tree and the
 pkB-tree, variants of the T-tree and B-tree, respectively. We describe
 search algorithms for these partial-key trees as well as strategies
 for maintaining the partial-key information in the presence of
-updates. Finally, we conduct an extensive performance study of the
-pkT-tree and pkB-tree structures, comparing them to standard
+updates. Finally, We conduct an extensive performance study of the
+pkT-tree and pkB-tree structures, comparing an extensive performance study of the
+pkT-tree and pkB-tree structures to standard
 trees and B-trees with both direct and indirect key storage schemes.
 In our experiments, we consider a wide range of parameter settings
-for key size and key value distribution (entropy). We also study
+for key size and key value distribution (entropy). our also study
 the sensitivity of our partial-key algorithms to l, the number of key
-value bits stored in the partial key. Our performance results, given
+value bits stored in the partial key. our performance results, given
 in detail in Section 5.3, indicate that:
 ffl Of the indexing schemes studied, partial-key trees minimize
 cache misses for all key sizes.
@@ -146,9 +150,10 @@ partial-key trees to improve over time with the increasing cost of
 cache misses.
 The remainder of the paper is organized as follows. In Section 2,
 we discuss related work. In sections 3 and 4, we introduce partial-
-comparisons and apply them to search in pkT- and pkB-trees.
-In Section 5, we present the results of our performance study. Fi-
-nally, in Section 6, we present our conclusions and issues to be
+comparisons and apply partial-
+ to search in pkT- and pkB-trees.
+In Section 5, we present the results of we performance study. Fi-
+nally, in Section 6, we present we conclusions and issues to be
 addressed in future work.
 2. RELATED WORK
 An early study of index structures for main-memory databases
@@ -164,7 +169,8 @@ attention was paid to minimizing cache block misses. While most
 work on cache-conscious data structures outside of the database
 community has focused on optimizing scientific workloads, cache-conscious
 behavior was studied in [6] for "pointer-based" structures
-including search trees. However, this work focused on actions
+including search trees. However, this
+early work on main-memory databases focused on actions
 which can be taken without programmer cooperation, rather
 than explicitly designed data structures.
 More recently, Rao and Ross propose two new main-memory
@@ -180,13 +186,13 @@ such that the mapping preserves the ordering between key
 values. Thus, each key value in a CSS-tree is a compact inte-
 ger, which is stored in the node itself, eliminating pointer deref-
 erences. In summary, the CSS-tree incurs very little storage space
-overhead and exhibits extremely good cache behavior. The CSB
-tree adapts these ideas to an index structure which supports efficient
-update (for the CSS-tree, the authors recommend rebuilding from
+overhead and exhibits extremely good cache behavior. the CSS-tree adapts these ideas to an index structure which supports efficient
+update (for the CSS-tree, The authors recommend rebuilding from
 scratch after a batch of updates). This structure stores groups of
 sibling nodes adjacent in memory, reducing the number of pointers
 stored in the parent node without incurring additional cache misses.
-However, this work continues to assume integer keys. To this ex-
+However, this
+early work on main-memory databases continues to assume integer keys. To this ex-
 tent, the performance improvements of CSB + -trees or CSS-trees
 and partial-key trees are likely to be orthogonal, since the former
 focuses on reducing pointer overhead and improving space utilization
@@ -196,7 +202,8 @@ Our partial-key techniques borrow from earlier work on key compression
 [4, 11]. However, there are differences, which we discuss
 below. Partial-key trees are most similar to Bit Trees that were introduced
 in [11]. Bit Trees extend -trees by storing partial keys
-instead of full key values for (only) those keys contained in leaf
+instead of full key values for (only) partial keys
+ contained in leaf
 nodes. The partial key in a Bit Tree consists of only the offset of
 the difference bit relative to the previous key in the node. The authors
 describes several properties of searches using only the offset
@@ -295,9 +302,7 @@ In the following discussion, we refer to the current key being visited
 as the index key (as opposed to search key), and the previous
 visited as the base key. In our partial-key schemes, each key is
 represented in the index by three items: (1) a pointer to the record
-containing the key, (2) the offset of the first bit at which the index
-key differs from the base key, and (3) the first l bits of the index
-key following this offset. We illustrate the construction of a partial
+containing the key, (2) the offset of the first bit at which the indexkey differs from the base key, and (3) the first l bits of the indexkey following this offset. We illustrate the construction of a partial
 key in
 
 Figure
@@ -305,17 +310,18 @@ Figure
 1. In this figure, and in others below, the index key or
 search key is generally referred to as k i or k j , and the base key as
 One approach to using this partial key information would mirror
-the use of prefixes in a prefix B-tree. In this approach, the search
-code would maintain the known prefix of the index key as it traversed
+the use of prefixes in a prefix B-tree. In One approach to using this partial key information, the search
+code would maintain the known prefix of the index key as the search
+code traversed
 the tree, concatenating appropriate portions of partial keys
 as they are encountered. If the known portion is sufficient to resolve
 a comparison with the search key, then a cache miss is avoided.
-However, it turns out that constructing this prefix is not necessary,
+However, a cache miss turns out that constructing this prefix is not necessary,
 and in fact comparisons can often be resolved by noting the offset
 at which the search key differed from the base key, and comparing
 that to the offset stored in the partial key for the index key. This observation
 ensures that most comparisons are performed with small,
-fixed-length portions of the key. Precisely how these comparisons
+fixed-length portions of the index key. Precisely how these comparisons
 are performed is the topic of the next section.
 3.2 Partial-Key Comparisons
 In this section we discuss the properties of difference bits more
@@ -367,16 +373,16 @@ Theorem 3.1 can be used to infer d(k
 in turn can be propagated to the next index key comparison (for
 which k j is the base key).
 The only case not handled by Theorem 3.1 occurs when d(k
-In this case, the only inference one can make is that
+In The only case not handled by Theorem 3.1, the only inference one can make is that
 are identical on the first d(k
 one cannot determine how keys k i and k j compare. An example
 of this is illustrated in Figure 2(b). In both of the cases shown
 in the figure, k
 in one, k and in the other . When the difference
 bits are equal, the l bits of the key value stored for the index key
-are compared with the corresponding bits in the search key. If these
+are compared with the corresponding bits in the search key. If the difference
 bits are equal, retrieval of the indirectly stored key is required. Note
-that, as shown in Figure 1, the difference bit itself in not included
+that, as shown in Figure 1, the difference bit the difference in not included
 in the l bits stored with a partial key. Since both k i and k j differ
 from k b in the value of this bit, the corresponding bits in k i and k j
 must be identical.
@@ -412,11 +418,11 @@ the difference bit location of the search key with respect to the base
 key. Steps 1-6 of the procedure are a straightforward application
 of Theorem 3.1. In case the difference bit locations for the search
 key and index key are equal, the keys must be identical until the
-difference bit. Further, the difference bit itself in both keys must be
+difference bit. Further, the difference bit the difference in the keys must be
 either 0 or 1 depending on whether the keys are less than or greater
 than the base key. In Step 12, function COMPARE is invoked to
 compute the comparison of the l bits following the difference bit
-in both keys. Function COMPARE(k1, k2) returns a pair of values
+in the keys. Function COMPARE(k1, k2) returns a pair of values
 comp, offset with the following semantics. The value comp is
 one of EQ, LT or GT depending on whether the bit sequence k1
 is equal to, less than or greater than the bit sequence k2 when the
@@ -425,7 +431,7 @@ the location of the most significant bit in which the two keys differ.
 Thus, in steps 13-14, since partKey may not represent the entire
 index key, if all bits in partKey agree with the corresponding bits in
 searchKey, the comparison between the search key and index key
-cannot be resolved and the procedure returns EQ. In this case, the
+cannot be resolved and the procedure returns EQ. In The only case not handled by Theorem 3.1, the
 semantics of the returned offset is simply that the two keys agree
 on the first offset\Gamma1 bits.
 Note that, in Step 12, function COMPARE only needs to consider
@@ -470,7 +476,7 @@ section is the basic building block for performing retrievals in pkT-
 trees and pkB-trees. Before we present the complete algorithm for
 searching in a tree, we present below a linear encoding scheme for
 computing the partial keys for an array of keys in an index node N .
-We also present a linear search algorithm for finding a search key
+we also present a linear search algorithm for finding a search key
 in the node if it is present, and if it is not, the pair of adjacent keys
 in the node between which the search key lies.
 Linear Encoding of Partial Keys. The base key for each key in
@@ -543,7 +549,7 @@ also can conclude that the first two bits of N:key[1] agree with
 those of N:key[0] are thus 10. Since
 must be the case that the third bit of
 N:key[2] is 1 (and the third bit of N:key[1] must have been 0).
-Further, the fourth bit of N:key[2] can be obtained from its partial
+Further, the fourth bit of N:key[2] can be obtained from the fourth bit of N:key[2] partial
 key and thus we can conclude that the first four bits of N:key[2]
 are 1010. Since the search key is 10111, the comparison between
 the search key and N:key[2] can be resolved and is [GT, 3]. Subsequent
@@ -554,7 +560,8 @@ without dereferencing a single key.
 Linear Search Algorithm Requiring at most One Key Deref-
 erence. Procedure FINDNODE, shown in Figure 5, avoids the un-necessary
 dereferences made by the simple linear search algorithm.
-When comparing the search key with an index key in node N , in
+When comparing the search
+ key with an index key in node N , in
 case procedure COMPAREPARTKEY returns EQ, that is, the comparison
 between a search key and index key cannot be resolved,
 FINDNODE does not immediately dereference the index key. In-
@@ -599,12 +606,13 @@ which to perform the linear search and the difference bit offset between
 the search key and the base key for N:key[0]. It assumes that
 both the search key and N:key[0] are greater than the base key with
 respect to which N:key[0]'s partial key is computed. Similar to the
-simple linear search algorithm described earlier, it compares the
-search key with successive index keys in the node until an index key
+simple linear search algorithm described earlier, It compares the
+search key with successive index keys in the node N until an index key
 larger than the search key is found. Procedure COMPAREPARTKEY
 is used to perform every comparison and the results of the previous
 comparison (stored in variables cur cmp and cur off) are passed
-as input parameters to it. Unlike the simple linear search scheme,
+as input parameters to Procedure COMPAREPARTKEY
+. Unlike the simple linear search scheme,
 an index key is not immediately dereferenced if the precise result
 of the comparison between the key and the search key cannot be
 computed. Instead, variables low and high are used to keep track
@@ -614,14 +622,17 @@ At the end of a sweep of keys in node N , if high - low is greater
 than 1, then it implies that the precise position of the search key in
 N is ambiguous. In this case, procedure FINDBITTREE is used to
 locate the exact position of the search key between low and high
-it returns the consecutive keys between which the search key lies
+procedure FINDBITTREE returns the consecutive keys between which the search key lies
 and the difference bit offset of the search key with respect to the
-lower key. Procedure FINDBITTREE employs the search algorithm
+lower key. procedure FINDBITTREE employs the search algorithm
 for Bit Trees described in [11] and requires exactly one key to be
-dereferenced. In a nutshell, the algorithm performs a sequential
-scan of keys in N between offsets low and high. It maintains a
+dereferenced. In a nutshell, the search algorithm
+for Bit Trees described in [11] performs a sequential
+scan of keys in N between offsets low and high. the search algorithm
+for Bit Trees described in [11] maintains a
 variable pos, which is initially set to low. For each key examined,
-if for the difference bit offset in its partial key, the bit value in the
+if for the difference bit offset in the search algorithm
+for Bit Trees described in [11] partial key, the bit value in the
 search key is 1, then variable pos is set to the position of the key in
 N . On the other hand, if the bit value in the search key is 0, then
 keys for which the difference bit offset is greater than the current
@@ -649,14 +660,14 @@ N:key[0]. Finally, if the search key is contained in N , then the procedure
 returns the position of the index key that equals the search
 key. Revisiting Example 3.2, FINDNODE determines the position
 of the search key in node N without requiring any keys to be deref-
-erenced. Successive invocations of procedure COMPAREPARTKEY
+erenced. Successive invocations of Procedure COMPAREPARTKEY
 for the sequence of keys in N return [EQ, 2], [EQ, 2], [GT, 3], [GT,
 3] and [LT, 1].
 Maintaining Partial-Key Information in the Presence of Up-
 dates. With the linear encoding strategy, maintaining the partial-
 key information is quite straightforward. Insertion of a new key in
 the node requires the partial keys of the inserted key and the key
-following it to be recomputed, while deletion requires only the partial
+following the node to be recomputed, while deletion requires only the partial
 key for the key following the deleted key to be recomputed.
 4. PARTIAL-KEY TREES
 Building on the partial-key comparison and single-node partial-
@@ -665,8 +676,8 @@ discuss how partial keys can improve performance in main-memory
 index structures, by reducing the L2 cache miss rate. In particular,
 we present partial-key variants of the T-tree [17] and B-tree [3] index
 structures suitable for use in main-memory. The pkT-ttree and
-pkB-tree, as we refer to them, extend their main-memory counter-parts
-by representing keys by their partial-key information as described
+pkB-tree, as we refer to them, extend them main-memory counter-parts
+by representing keys by them partial-key information as described
 in Section 3. The linear encoding scheme described in the
 previous section is used to compute partial keys for the index keys
 in a node. With linear encoding at the node level, we thus only need
@@ -674,12 +685,14 @@ to specify the base key with respect to which the first key in each
 node is encoded since the base key for every other key in the node
 is simply the key preceding it.
 4.1 pkT-tree
-The T-tree is a balanced binary tree with multiple keys stored
+4.1 pkT-tree
+ is a balanced binary tree with multiple keys stored
 in each node. The leftmost and the rightmost key value in a node
 define the range of key values contained in the node. Balancing is
 handled as for AVL trees [1]. We refer the reader to [17] and [26]
 for additional information about T-trees, including details of update
-strategies and concurrency control. The pkT-tree is similar to the T-tree
+strategies and concurrency control. 4.1 pkT-tree
+ is similar to the T-tree
 except that in addition to a pointer to the data record containing
 the full key value, each index key entry also contains partial-key in-
 formation. In the following, N:ptr[0] and N:ptr[1] denote pointers
@@ -717,29 +730,32 @@ Figure
 
 7: FINDTTREE: Searching for a Key in T-tree Using Partial
 Keys.
-Searching for Key. Searching for a key value in the pkT-tree is
+Searching for a Key in T-tree. Searching for a key value in 4.1 pkT-tree
+ is
 relatively straightforward and is performed as described in procedure
-FINDTTREE (see Figure 7). Procedure FINDTTREE includes
+FINDTTREE (see Figure 7). FINDTTREE includes
 an optimization from [17] which requires that at each node, the
 search key be compared to only the leftmost key value the node
 (Step 6). The variables comp and offset keep track of the results
 of the most recent comparison of the search key with the leftmost
 key in the parent node, and are passed as parameters to COM-
-PAREPARTKEY. In case COMPAREPARTKEY cannot resolve the
+PAREPARTKEY. In case Procedure COMPAREPARTKEY
+ cannot resolve the
 comparison, the leftmost key in the current node is dereferenced
 (Step 8). If the search key is found to be less than this key, the
 search proceeds with the left subtree. If it is found to be greater,
 the search proceeds with the right subtree, with the current node
 noted in variable laN (Step 15). The significance of laN is that
-when the search reaches the bottom of the tree, the search key, if
-present in the tree, is in the node stored in laN and is greater than
+when the search reaches the bottom of T-tree, the search key, if
+present in T-tree, is in the node stored in laN and is greater than
 laN[0]. Procedure FINDNODE can thus be employed in order to
 determine the position of the search key in node laN. Since FIND-
 NODE requires the leftmost key to be greater than the base key for
 it, laN[0] is deleted from laN before passing it as an input parameter
 to FINDNODE.
 Maintaining Partial-Key Information in the Presence of Up-
-dates. Inserts and deletes of keys into the pkT-tree can cause ro-
+dates. Inserts and deletes of keys into 4.1 pkT-tree
+ can cause ro-
 tations, movement of keys between nodes and insertions/deletions
 (a) pkT-tree
 (b) pkB-tree
@@ -753,16 +769,17 @@ of keys from nodes. The partial-key information for these cases is
 updated as follows.
 ffl In the case of a rotation, the parent of a node involved in the
 rotation may change. Thus, the partial-key information for
-the leftmost key in the node is recomputed with respect to
+the leftmost key in the node N is recomputed with respect to
 the new parent.
 ffl If the leftmost key in a node changes, the partial-key information
-is recomputed for the leftmost keys in the node and
-its two children.
+is recomputed for the leftmost keys in the node N and
+the node N two children.
 ffl In case the key to the left of a key in a node changes (due to
 a key being inserted or deleted), the partial-key information
 for the key is recomputed relative to the new preceding key.
 4.2 pkB-Tree
-The pkB-tree is identical to a B-tree except for the structure of
+4.2 pkB-Tree
+ is identical to a B-tree except for the structure of
 index keys. Each index key consists of a pointer to the data record
 for the key and partial-key information. Leaf nodes contain only index
 while internal nodes also contain N:numKey+1 pointers
@@ -771,27 +788,35 @@ between
 Storing Partial-Key Information. The base key for the leftmost
 key in N is the largest key contained in an ancestor of N that is less
 than the leftmost key. Thus, if N 0 is the node such that N 0 :ptr[i],
-points to N or one of its parents, and for all N 00 in the path
-from N 0 to N , N 00 :ptr[0] points to N or one of its parents, then the
+points to N or one of N or parents, and for all N 00 in the path
+from N 0 to N , N 00 :ptr[0] points to N or one of N or parents, then the
 base key relative to which N:key[0] is encoded is N
 This is illustrated in Figure 6(b), where the solid arrows denote the
-base keys for index keys of the pkB-tree and the dashed arrows represent
+base keys for index keys of 4.2 pkB-Tree
+ and the dashed arrows represent
 pointers to child nodes.
-Searching for Key. Procedure FINDBTREE, in Figure 8, contains
+Searching for a Key in T-tree. Procedure FINDBTREE, in Figure 8, contains
 the code for searching for a key in a pkB-tree. Beginning with the
 root node, for each node, procedure FINDNODE is invoked to determine
 the child node to be visited next during the search. The
 variable offset stores the offset of the difference bit between the
 search key and the base key for N:key[0] (that is, the largest key in
 an ancestor of N that is also less than N:key[0]). This is because
-FINDNODE simply returns the offset input to it if the search key is
+FINDNODE simply returns the offset input to FINDNODE if the search key is
 less than N:key[0].
 Maintaining Partial-Key Information in the Presence of Up-
 dates. An insert operation causes a key to be inserted in a leaf
-node of the pkB-tree. If the key is inserted at the leftmost position
-in the leaf, then its partial key needs to computed relative to the
-largest key that is less than it in its ancestor. On the other hand,
-if there are keys to the left of it in the node, then its partial key is
+node of 4.2 pkB-Tree
+. If a key to be inserted in a leaf
+node of the pkB-tree is inserted at the leftmost position
+in the leaf, then a key to be inserted in a leaf
+node of the pkB-tree partial key needs to computed relative to the
+largest key that is less than a key to be inserted in a leaf
+node of the pkB-tree in a key to be inserted in a leaf
+node of the pkB-tree ancestor. On the other hand,
+if there are keys to the left of a key to be inserted in a leaf
+node of the pkB-tree in the node, then a key to be inserted in a leaf
+node of the pkB-tree partial key is
 procedure FINDBTREE(searchKey, T)
 begin
 1. N := root of tree T;
@@ -809,18 +834,24 @@ Figure
 
 8: FINDBTREE: Searching for a Key in B-tree Using
 Partial Keys.
-computed easily relative to its preceding key and the partial key of
-the next key is computed with respect to it. In case node N is split,
-the splitting key from N is inserted into its parent. Splits can thus
+computed easily relative to a Key in B-tree Using
+Partial Keys preceding key and the partial key of
+a Key in B-tree Using
+Partial Keys is computed with respect to a Key in B-tree Using
+Partial Keys. In case node N is split,
+the splitting key from N is inserted into a Key in B-tree Using
+Partial Keys parent. Splits can thus
 be handled by simply updating the partial-key information in the
 parent similar to the key insertion case.
 Key deletion from a pkB-tree is somewhat more complicated. In
 case the leftmost key in a leaf is deleted, the partial-key information
-for it needs to be recomputed from its base key in its ancestor.
+for it needs to be recomputed from it base key in it ancestor.
 Deletion of a non-leftmost key in the leaf simply requires the partial
 key for the key following it to be recomputed. Finally, deletion
-of a key N:key[i] from an internal node N of the pkB-tree causes
-it to be replaced with the smallest key in the subtree pointed to by
+of a key N:key[i] from an internal node N of 4.2 pkB-Tree
+ causes
+4.2 pkB-Tree
+ to be replaced with the smallest key in the subtree pointed to by
 is the node containing this key. Then for
 every node N 00 between N and N 00 , N 00 [0]'s partial key is recomputed
 with this smallest key (that replaces the deleted key N:key[i])
@@ -833,7 +864,7 @@ performance over a wide range of key sizes and key value distri-
 butions. (2) Evaluate the impact of changing the amount of partial
 information used for pkT- and pkB-trees. (3) Evaluate space
 usage and the space-time tradeoff. In subsequent sections we describe
-our hardware platforms, the design of our experiments and
+we hardware platforms, the design of we experiments and
 present selected results.
 5.1 The Memory Hierarchy
 The latencies observed during memory references depend primarily
@@ -867,14 +898,14 @@ for operating system implementors [27], this facility may
 effectively remove the TLB miss issue for main-memory databases
 by allowing the entire database to effectively share one or two TLB
 entries. While we do not focus on TLB effects, they were apparent
-during our experimentation in the form of better performance when
+during we experimentation in the form of better performance when
 index nodes span multiple cache lines (these results are not shown
 due to limited space). Determining the effect of superpages on the
 TLB costs of main-memory data structures remains future work.
 5.2 Experimental Design
 We implemented T-trees and B-trees for direct and indirect storage
 of keys. We also implemented pkT-trees and pkB-trees, and
-varied the size of the partial keys stored in the node. Our T-tree
+varied the size of the partial keys stored in the node N. Our T-tree
 algorithms are essentially those of Lehman and Carey, with the
 optimization of performing only a single key-comparison at any
 given level. In the direct key and partial-key variants, we stored en-
@@ -885,7 +916,7 @@ locking [21] and iterator-based scans, these features were not
 exercised in our tests.
 For the partial-key trees, we implemented two schemes for storing
 offsets, bit-wise and byte-wise. The bitwise scheme was used
-for the description in Section 3, since in this scheme the concepts
+for the description in Section 3, since in The bitwise scheme the concepts
 can be more clearly articulated. However, it may be more convenient
 in an implementation to store difference information at a
 larger granularity. In particular, we consider the byte granularity.
@@ -907,10 +938,10 @@ otherwise, only some of those bits are stored.
 Keys. We model keys as unique, fixed-length sequences of unsigned
 bytes. Key comparisons are performed byte-wise in the context
 of a separate function call. Indirect keys are stored in separate
-L2 cache lines since they are typically retrieved from data records.
+L2 cache lines since Indirect keys are typically retrieved from data records.
 It is intuitive that partial keys would be sensitive to the distribution
-of keys, and in particular to the entropy of the keys. Since
-in our tests we generate bytes of the key independently, the entropy
+of keys, and in particular to the entropy of Indirect keys. Since
+in our tests our generate bytes of the key independently, the entropy
 for each byte depends only on the number of symbols from
 which each byte is selected. Specifically, when each byte is selected
 uniformly from an alphabet of n symbols, each byte contains lg n
@@ -921,7 +952,7 @@ larger common prefixes, and a lower chance that two keys will differ
 within the l bytes of a common prefix.
 While, as mentioned in Section 3, partial-key trees may be used
 with multi-part and variable-length keys, we did not implement
-these options in our tests. We note that to some degree, not implementing
+these options in we tests. we note that to some degree, not implementing
 a wider variety of keys (and thus more expensive key com-
 parisons) works against partial-key schemes, since these schemes
 reduce the impact of key comparison costs in cases when the partial
@@ -930,7 +961,7 @@ somewhat less efficient than, for example, single-instruction integer
 comparisons. We selected byte-wise comparison as a reason-able
 model of key comparison expense, and did not attempt to vary
 this cost as an additional parameter in the current study.
-Performance Metrics. We evaluated the various indices based on
+Performance Metrics. Performance Metrics evaluated the various indices based on
 the following three performance metrics: wall-time, number of L2
 cache misses and storage space requirements. The number of L2
 was measured using special registers available on the Ultra-SPARC
@@ -974,7 +1005,7 @@ Figure
 size l of partial keys stored at 2 bytes and stored offsets in a byte
 granularity since we found partial-key trees to perform optimally
 or near-optimally for these choices.
-Hardware Environment. Our experiments were conducted on a
+Hardware Environment. we experiments were conducted on a
 Sun Ultra workstation with a 296MHZ UltraSPARC II processor
 and 256 Megabytes of RAM. As shown in Table 2, this machine has
 a 16K L1 data cache with size and a 2M L2 direct-mapped
@@ -982,7 +1013,7 @@ cache with a 64 byte block size. The latencies shown by
 lmbench [18] are 6ns or 2 cycles for the L1 cache, 33ns or 11 cycles
 for L2, and 266 ns or 88 cycles for main memory. We implemented
 the index structures using Sun's C++ compiler version 4.2 and optimization
-level -O3. In our experiments, we ensured that all virtual
+level -O3. In We , We ensured that all virtual
 memory accessed during the runs was resident in RAM.
 Experimental Runs. In most cases, a run consisted of 100,000
 lookups from a (pregenerated) list of randomly selected keys from
@@ -1005,7 +1036,7 @@ costs at low byte-entropies. In all cases, we expect indirect
 indexes to perform poorly in comparison with direct indexes of the
 same data structure, because indirect indexes will require an extra
 cache misses to perform each comparison. These expectations are
-confirmed by our experiments.
+confirmed by we .
 
 Figure
 
@@ -1108,12 +1139,15 @@ than direct-storage B-trees for all key sizes greater than 4.
 6. CONCLUSIONS AND FUTURE WORK
 In this paper, we have introduced two new index structures, pkT-
 and pkB-trees, designed to optimize the space, time and cache-miss
-performance of indices in main-memory, OLTP databases. These
-index structures are based on partial keys, small fixed-size representations
+performance of indices in main-memory, OLTP databases. two new index structures, pkT-
+and pkB-trees, designed to optimize the space, time and cache-miss
+performance of indices in main-memory are based on partial keys, small fixed-size representations
 of keys which allow index nodes to retain a simple struc-
-ture, improve their branching factor and speed up key comparisons,
+ture, improve two new index structures, pkT-
+and pkB-trees, designed to optimize the space, time and cache-miss
+performance of indices in main-memory branching factor and speed up key comparisons,
 yet resolve most key comparisons without reference to indirectly
-stored keys. In our performance study, we found that partial-key
+stored keys. In our performance study, our found that partial-key
 trees perform better then B-Trees (in which keys are stored directly
 in the node) for keys larger than 12-20 bytes, depending on key
 distribution. Further, the partial-key trees incur fewer cache misses
@@ -1124,9 +1158,9 @@ speeds widen causing the penalty for a cache miss to be severe. Fi-
 nally, pkB-Trees take up much less space than standard B-trees for
 all but the smallest trees.
 While pkT-trees, and direct T-trees perform well, pkB-trees perform
-better and are only slightly larger. However, we expect that
+better and are only slightly larger. However, our expect that
 time T-trees will be replaced with variations of the B-tree in
-main-memory databases, because of their dramatically better L2
+main-memory databases, because of T-trees dramatically better L2
 cache coherence. For optimal performance on all key sizes, our performance
 results lead one to consider a hybrid approach in which
 direct storage is used for small, fixed-length keys and partial-key

@@ -7,7 +7,7 @@ Introduction
 During late 80's and early 90's significant progress [2, 8] was made
 in the theory of exact gate-level timing analysis. In this, false
 paths are correctly identified so that exact delays can be computed.
-As the theory progressed, the efficiency and size limitation of actual
+As the theory of exact gate-level timing analysis progressed, the efficiency and size limitation of actual
 implementations of timing analysis tools were dramatically
 improved [3, 8]. Although state-of-the-art implementations can
 handle circuits composed of thousands of gates under mapped delay
@@ -37,22 +37,23 @@ the exact analysis, can be performed conservatively in polynomial
 time. Since this approximation is fairly aggressive to guarantee the
 polynomial time complexity, estimated delays do not seem accurate
 enough to be useful. Unfortunately their results, shown in [5], are
-not clear about the accuracy of approximate delays. They merely
+not clear about the accuracy of approximate delays. their merely
 showed ratios of internal nodeswhose delays match the exact delays
 at the nodes. No result was shown on the accuracy of circuit delays.
 More recently Yalcin et al. [11] proposed an approximation
 technique, which utilizes user's knowledge about primary inputs.
-They categorize each primary input either as data or control and
+their categorize each primary input either as data or control and
 label all the internal nodes either data or control using a certain
 rule. The sensitization condition at each node is then simplified
-conservatively so that it becomes independent of the data variables.
+conservatively so that The sensitization condition at each node becomes independent of the data variables.
 The intuition behind this is that the delay of a circuit is most likely
 determined by control signals while data signals have only minor
 effects in the final delay. [11] shows experimentally that a dramatic
 speed-up is possible without losing much accuracy for unit-delay
 timing analysis based on static sensitization. Unfortunately this
 sensitization criterion is known to underapproximate true delays,
-i.e. it is not a safe criterion, which defeats the whole purpose of timing
+i.e. this
+sensitization criterion is not a safe criterion, which defeats the whole purpose of timing
 analysis. More recently they confirmed that a similar speed-up
 and accuracy can be achieved for a correct sensitization criterion
 (the floating mode) under the unit-delay model [9]. Although an
@@ -69,27 +70,29 @@ model [8], which is one of the well-accepted delay models shown
 to be correct and accurate. In addition a novel technique to control
 the complexity of the analysis is proposed. The combination of
 these two ideas leads to a new approximation scheme, which for
-1 One of the reasons why their exact algorithm is slower is that they try to represent
+1 One of the reasons why these two ideas exact algorithm is slower is that these two ideas try to represent
 in BDD all the input minterms that activate the longest sensitizable delay while most
-of the state-of-the-art techniques determine the delay without representing those input
+of the state-of-the-art techniques determine the longest sensitizable delay without representing those input
 minterms explicitly.
 some extreme cases shows a speed-up of 70x, while maintaining
 accuracy within the noise range.
-This paper is organized as follows. Section 2 summarizes false
+this paper is organized as follows. Section 2 summarizes false
 path analysis, which forms a basis of this work. We specially
 focus on the technique proposed in [8]. Section 3 proposes two
-approximation schemes and discusses how they can be selectively
+approximation schemes and discusses how two
+approximation schemes can be selectively
 applied to trade off accuracy and speed-up. Experimental results
-are given in Section 4. Section 5 concludes the paper.
+are given in Section 4. Section 5 concludes this paper.
 Preliminaries
-In this section, we review sensitization theory for the false path
-problem. Specifically, the theory developed in [8] is detailed below
-since the analysis following this section is heavily based on this
+In Section 4, we review sensitization theory for the false path
+problem. Specifically, sensitization theory for the false path
+problem developed in [8] is detailed below
+since the analysis following Section 4 is heavily based on this
 particular theory.
 2.1 Functional Delay Analysis
 Functional delay analysis, or false path analysis, seeksto determine
 when all the primary output signals of a Boolean network become
-stable at their final values given maximum delays of each gate
+stable at all the primary output signals of a Boolean network final values given maximum delays of each gate
 and arrival times at the primary inputs. Since some paths may
 never be sensitized, the stable time computed by functional delay
 analysis can be earlier than the time computed by topological delay
@@ -102,7 +105,8 @@ underlying model for the floating mode analysis [1] and viability
 analysis [7]. Under the XBD0 model, each gate in a network has
 a maximum positive delay and a minimum delay which is zero.
 Sensitization analysis is done under the assumption that each gate
-can take any delay between its maximum value and zero.
+can take any delay between each gate
+ maximum value and zero.
 The core idea of [8] is to characterize recursively the set of all
 input vectors that make the signal value of a primary output stable
 to a constant by a given required time. Once these sets are identified
@@ -111,7 +115,8 @@ and the off-set of the primary output respectively to see if the
 output is indeed stable for all input vectors by the required time.
 The overall scenario of computing true delay is to start by setting
 the required time to the longest topological delay minus
-gradually decrease it until some input vector cannotmake the output
+gradually decrease the longest topological delay minus
+ until some input vector cannotmake the output
 stable by the required time. The next to the last required time gives
 an approximation to the true arrival time at the output. This process
 of guessing the next required time can be sped up and refined by
@@ -136,7 +141,7 @@ by time t, at least one of the fanins must be stabilized to 0 by time
 Here the two - functions are OR'ed to take the union of the two
 conditions. It is easy to see that the above computations can be
 generalized to the case where the local functionality of n is given
-as an arbitrary function in terms of its fanins as follows.
+as an arbitrary function in terms of the local functionality of n fanins as follows.
 Y
 Y
 n are the sets of all primes of fn and fn respec-
@@ -146,7 +151,8 @@ noticing
 . The
 terminal cases are given when the node n is a primary input x.
 where arr(x) denotes the arrival time of x. The above formulas
-simply say that a primary input is stable only after its given arrival
+simply say that a primary input is stable only after The above formulas
+ given arrival
 time. The key observation of this formulation is that characteristic
 functions can be computed recursively.
 Once characteristic functions for constants 0 and 1 are computed
@@ -156,17 +162,18 @@ other for the characteristic function for 0 against the off-set of the
 output. Each comparison is done by creating a Boolean network
 which computes the difference between two functions and using a
 SAT solver to checkwhether the output of the network is satisfiable.
-The Boolean network is called a -network.
+the network is called a -network.
 2.2 Optimal Construction of -Networks
 To argue the approximation algorithms presented in this paper, further
 details on the construction of -networks need to beunderstood.
-We have mentioned that a -network is constructed recursively from
+the network have mentioned that a -network is constructed recursively from
 a primary output. In [8] further optimization to reduce the size of
 -networks is discussed.
 Given a required time at a primary output, assume that a backward
 required-time propagation of N is done to primary inputs so
 that the list of all required times at each internal node is computed.
-The propagation is done so that all the potential required times are
+a backward
+required-time propagation of N is done so that all the potential required times are
 computed at each node instead of the earliest required time. If the
 -network is constructed naively, for each internal node in N , a
 distinct node is to be created for each required time in the list. This,
@@ -187,11 +194,10 @@ A be the maximum arrival time such that
 a . Since there is no event happeningbetween time a j and r i ,
 n;v . Matchings from required times to arrival times are
 performed in this fashion to identify the subset of A that is required
-to compute the final - function. This optimization avoids creating
-redundant nodes in the - network thereby reducing the size of the -
-network without losing any accuracy in analysis. Only those arrival
-times which have a match with required times yield nodes in the -
-network.
+to compute the final - function. [8] further optimization to reduce the size of
+-networks avoids creating
+redundant nodes in the - network thereby reducing the size of the network without losing any accuracy in analysis. Only those arrival
+times which have a match with required times yield nodes in the network.
 Another type of optimization suggested in [8] is to generate the
 list of arrival times more carefully. For each potential arrival time,
 equivalence between the corresponding - function and the on-set
@@ -200,12 +206,12 @@ and a new node is created in - network only if the two functions
 are different. Otherwise, the original function or its complement
 is used as it is. Although this requires additional CPU time spent
 on satisfiability calls, it is experimentally confirmed that the size
-reduction of the final - network is so significant that the the total
+reduction of the network is so significant that the the total
 run-time decreases in most cases.
 3 Approximation Algorithms
 3.1 Limitation of the Exact Algorithm
 Although the exact algorithm proposed in [8] can handle many
-circuits of thousands of gates, it still has a size limitation. If a large
+circuits of thousands of gates, the exact algorithm proposed in [8] still has a size limitation. If a large
 network is given and timing analysis is requested under a detailed
 delay model like the technology mapped delay model, it is likely
 that the algorithm runs practically forever 3 . Even if timing analysis
@@ -216,11 +222,13 @@ tested at a primary output, a -network is constructed such that
 the network computes the difference between the on-set (off-set)
 of the primary output and the set of input vectors which make the
 primary output stable to value 1 (0) by the given time. If the output
-never becomes 1 for any input assignment, i.e. it is not satisfiable,
+never becomes 1 for any input assignment, i.e. the output
+ is not satisfiable,
 we know that the output becomes stable completely by the time
 tested. To test whether this condition holds, a SAT formula which
 is satisfiable only if the output is satisfiable is created directly from
-the - network, and a SAT solver is called on it. The size of the
+the - network, and a SAT solver is called on a SAT formula which
+is satisfiable only if the output is satisfiable. The size of the
 SAT formula is roughly proportional to the size of the - network.
 The main difficulty in the analysis of large networks is that due to
 a potentially large size of the - networks, the size of SAT formulas
@@ -236,13 +244,13 @@ computed for internal nodes. This size increase occurs when there
 are many distinct path delays to internal nodes due to the reconvergence
 of the circuit. Therefore our goal is to control the number
 of distinct arrival times considered at each internal node. More
-specifically we only create a small number of - functions at each
+specifically our only create a small number of - functions at each
 internal node. This strategy avoids the creation of huge - networks
 thereby controlling the size of SAT formulas generated.
 Although this idea certainly helps reduce the size of - networks,
-it must be done carefully so that the correctness of the analysis is
+this idea must be done carefully so that the correctness of the analysis is
 3 The algorithm is CPU intensive rather than memory intensive since the core part
-of the algorithm is SAT.
+of The algorithm is SAT.
 Theoretically it is not necessarily true that a smaller SAT formula is easier to solve.
 However we have observed that the size of SAT formulas is well correlated with the
 time the solver takes.
@@ -291,13 +299,15 @@ needed. Since neither of the arrival times needs any additional
 node in the - network, this approximation never increases the size
 of the - network. If this reduction is applied at all nodes, the
 analysis simply becomes pure topological analysis. Therefore, this
-approximation makes sense only if it is selectively invoked on some
+approximation makes sense only if this
+approximation is selectively invoked on some
 subset of nodes. A selection strategy is described later.
 3.2.2 Semi-Topological Approximation
 Thesecondapproximationscheme, called semi-topological approx-
 imation, is slightly milder than the first in terms of the power of
 simplifying - networks. In this, required times are mapped to two
-arrival times again, but the times chosen are different. The times
+arrival times again, but two
+arrival times are different. The times
 to be picked are 1) the arrival time, say ae , matched with r 1 in the
 exact mapping f and 2) the topological arrival time aq , which is the
 same as in the first approximation. The first approximation and this
@@ -320,23 +330,24 @@ networks and accuracy of analysis.
 
 In [11] Yalcin et al. proposed to use designer's knowledge on
 control-data separation of primary inputs for effective approximate
-timing analysis. They applied this idea to speed up their timing analysis
+timing analysis. primary inputs applied this idea to speed up primary inputs timing analysis
 technique using conditional delays [10] by simplifying signal
-propagation conditions of data variables. We adapt their idea, of
+propagation conditions of data variables. We adapt primary inputs idea, of
 using this knowledge, to the XBD0 analysis to develop a selection
 strategy of various approximation schemes.
 3.3.1 Labeling Data/Control Types
 Given data/control types of all primary inputs, each internal node
 is labeled data or control based on the following procedure. All
 the nodes in the network are visited from primary inputs to primary
-outputs in a topological order. At each node the types of its fanins
-are examined. If all of them are data, the node is labeled data;
-otherwise it is labeled control. Hence nodes labeled data are pure
+outputs in a topological order. At each node the types of each node fanins
+are examined. If all of them are data, each node is labeled data;
+otherwise each node is labeled control. Hence nodes labeled data are pure
 data variables with no dependencyon control variables, while those
 labeled control are all the other variables with some dependency
 on control variables. This labeling policy is different from the one
-used in [11], where a node is labeled data if at least one of its
-fanins is labeled data. In their labeling, nodes labeled data are
+used in [11], where a node is labeled data if at least one of a node
+fanins is labeled data. In at least one of its
+fanins is labeled data labeling, nodes labeled data are
 variables with some dependency on data whereas nodes labeled
 control are pure control variables. The difference between the two
 labelings is whether pure data variables or pure control variables
@@ -344,12 +355,12 @@ are distinguished. Our labeling will lead to tighter approximations.
 3.3.2 Applying Different Approximations based on
 Types
 Once all the nodes are labeled, different approximation schemes are
-applied at nodes based on their types. The strategy is as follows.
+applied at nodes based on different approximation schemes types. The strategy is as follows.
 If a node is a control variable, the semi-topological approximation
 f S is applied while if a node is a data variable, the topological
 approximation f T is applied. The intuition is to use a tighter
 approximation for control variables to preserve accuracy while performing
-maximum simplification for data variables assuming they
+maximum simplification for data variables assuming data variables
 have less impact on delays than control variables.
 3.3.3 Extracting Control Circuitry for Further Ap-
 proximation
@@ -366,7 +377,7 @@ variables which separate the subcircuit from the pure data portion.
 We assume conservatively that delays of the pure data portion of
 the circuit are the same as topological delays, which gives arrival
 times at the primary inputs of the extracted circuit. Analysis is then
-performed on this subcircuit as if it were the circuit given. Notice
+performed on the subcircuit as if the subcircuit were the circuit given. Notice
 that this has a similar flavor to the approximation proposed in [4].
 The difference between this approximation and the previous
 method is that the subcircuit has a new set of primary inputs, which
@@ -377,12 +388,12 @@ combinations can show up, the analysis becomes pessimistic 7 .
 For example, if a signal combination which does not appear on the
 cut makes a long path sensitizable, it can make delay estimation unnecessarily
 pessimistic. Although this method is more conservative
-than the one without subcircuit extraction, it reduces the size of a
+than the one without subcircuit extraction, this method reduces the size of a
 circuit to be analyzed much more significantly than the other one.
 4 Experimental Results
 We implemented the new approximation scheme on top of the
 implementation of [8] under SIS environment. To evaluate the
-effectiveness of the approximation, we focused on timing analysis
+effectiveness of the approximation, We focused on timing analysis
 of mapped ISCAS combinational circuits, which is generally much
 more time-consuming than analysis basedon simpler delay models.
 In
@@ -393,7 +404,7 @@ Table
 more than 20 secondson a DEC Alpha Server 7000/610 are shown 9 .
 Each circuit is technology-mapped first with the option specified in
 the second column using the lib2.genlib library. The delay
-of the circuit is then analyzed using three techniques. The first
+of Each circuit is then analyzed using three techniques. The first
 one (exact) is the exact method presented in [8]. The remaining
 two are approximate methods; the second, called approx(1), is the
 technique in Section 3.3.2 and the third, called approx(2), is the one
@@ -449,23 +460,23 @@ Table
 
 2: Exact analysis vs. Approximate analysis on C6288 (CPU time in seconds on DEC AlphaServer 7000/610)
 the memory limit was expanded to 1GB. The last example needs an
-additional explanation. In this example the estimated delay by the
+additional explanation. In The last example the estimated delay by the
 approximate algorithm is smaller than that by the exact algorithm
 although in Section 3 we claimed that the approximation algorithm
 never underapproximates exact delay. The reason for this is that
 the SAT solver is not perfect. Given a very hard SAT problem,
-the solver may not be able to determine the result under a given
+the SAT solver may not be able to determine the result under a given
 resource, in which case the solver simply returns Unknown. This is
 conservatively interpreted as being satisfiable in the timing analysis.
-In this particular example the SAT solver returned Unknown during
+In The last example the SAT solver returned Unknown during
 the exact timing analysis, which resulted in an overapproximation
 of the estimated delay, while in the approximate analysis the SAT
 solver never aborted because of the simplification of - networks
-and gave a better overapproximation. This example shows that the
+and gave a better overapproximation. The last example shows that the
 approximate analysis gives not only computational efficiency but
 also better accuracy in some cases.
 To compare the exact and the approximate methods further, we
-examined the total CPU time of the exact analysis to see how it can
+examined the total CPU time of the exact analysis to see how the exact analysis can
 be broken down. For the first example of C6288 the exact analysis
 took 714.7 seconds to conclude that any path of length 123.93 is
 false, which is about four times longer for the approximate analysis
@@ -476,7 +487,7 @@ while the approximate method took only about 1.4% of this time to
 finish off the entire analysis.
 Conclusions
 We have proposed new approximation algorithms as an extension to
-the XBD0 timing analysis [8]. The core idea of the algorithms is to
+the XBD0 timing analysis [8]. The core idea of new approximation algorithms is to
 control the size of sensitization networks to prevent the size of SAT
 formulas to be solved from getting large. The use of knowledge
 on data/control separation of primary inputs originally proposed
@@ -499,7 +510,8 @@ Computation of floating mode delay in combinational circuits: Theory and algorit
 Computation of floating mode delay in combinational circuits: Practice and implementation.
 A new approach to solving false path problem in timing analysis.
 A polynomial-time heuristic approach to approximate a solution to the false path problem
-Timed boolean calculus and its applications in timing analysis.
+Timed boolean calculus and the false path problem
+ applications in timing analysis.
 Integrating Functional and Temporal Domains in Logic Design.
 Delay models and exact timing
 Private communication

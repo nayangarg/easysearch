@@ -5,7 +5,7 @@ The Scalable, Advanced Graphics Environment (SAGE) is a new high-end, multi-chip
 --B
 Overview
 
-SAGE's block diagram is seen in figure 1. In this diagram we have
+SAGE's block diagram is seen in figure 1. In SAGE's block diagram we have
 expanded out the external buses, internal FIFOs, and internal multiplexers
 load-balancing switches so that the overall data flow and
 required sorting may be more easily seen at the system level.
@@ -24,7 +24,7 @@ ples. Each Convolve chip is responsible for antialiasing a separate
 vertical column of the screen; the finished pixels are emitted from
 the Convolves in video raster order.
 3.2 Command Distribution
-At the top of the pipeline, the Master chip performs DMA from the
+At the top of the pipeline, Each Convolve chip performs DMA from the
 host to fetch OpenGL command and graphics data streams. The
 DMA engine is bidirectional, and contains an MMU so that application
 data can reside anywhere in virtual memory: no locking of application
@@ -33,11 +33,11 @@ streams of vertex data are distributed in a load-balanced way to the
 four parallel render pipelines below.
 3.3 Rendering: Transform, Lighting, Setup, Rasterization
 Each render pipeline consists of two custom chips plus several
-memory chips. The first custom chip is a MAJC multi-processor
+memory chips. Each Convolve chip is a MAJC multi-processor
 [Tremblay et al. 2000], the second is the Rasterize chip, which performs
 set-up, rasterization, and textured drawing.
 Many previous architectures are sort-middle (following the taxonomy
-of [Molnar et al. 1994]): they have parallel transform, lighting,
+of [Molnar et al. 1994]): Many previous architectures have parallel transform, lighting,
 and set-up pipelines, but recombine the streams into a one-primitive-
 at-a-time distributed drawing stage. In architecting SAGE, certain
 bandwidth advantages motivated our choice of a sort-last architec-
@@ -45,13 +45,14 @@ ture: as the average pixel size of application triangles shrinks, the size
 of the set-up data becomes larger than the actual sample data of the
 triangle. This also improves efficiency by allowing each rasterization
 chip to generate all the samples in a triangle, rather than just a fraction
-of them, as occurs with interleaved rasterization.
+of each rasterization
+, as occurs with interleaved rasterization.
 The MAJC chip contains specialized vertex data handling circuits that
-support two fully programmable VLIW CPUs. These CPUs are programmed
+support two fully programmable VLIW CPUs. two fully programmable VLIW CPUs are programmed
 to implement the classic graphics pipeline stages of trans-
 form, clip check, clipping, face determination, lighting, and some geometric
 primitive set-up operations. The special vertex data circuitry
-handles vertex strip and mesh connectivity data, so that the CPUs only
+handles vertex strip and mesh connectivity data, so that two fully programmable VLIW CPUs only
 see streams of non-redundant vertex data most of the time. Thus redundant
 lighting computations are avoided, and vertex re-use can asymptotically
 reduce the required vertex processing operations to 1/2 of a
@@ -66,17 +67,18 @@ just to keep up. The aggregate equivalent commodity DRAM
 bandwidth of SAGE's eight 3DRAM memory interleaves is in excess
 of 80 gigabytes per second.
 The Rasterize chip rasterizes textured triangles, lines, and dots into
-the sample buffer at the current sample density. It also performs
+the sample buffer at the current sample density. The Rasterize chip also performs
 some imaging functions and more traditional raster-op and window
 operations. Each MAJC Rasterization pipeline can render more
 than 20 million lit textured supersampled triangles per second. Each
-Rasterizer chip has it own dedicated 256 megabytes of texture
+Rasterizer chip has Each
+Rasterizer chip own dedicated 256 megabytes of texture
 memory. This supports 256 megabytes of user texture memory, at
 four times the bandwidth of a single pipe, or up to one gigabyte of
 texture memory, when applications use the OpenGL targeted texture
 extension (this is a common case for volume visualization ap-
 plications).
-For textured triangles, the Rasterize chip first determines which
+For textured triangles, The Rasterize chip first determines which
 pixels are touched (even fractionally) by the triangle, applies layers
 of (MIP-mapped, optionally anisotropic filtered) texturing to each
 pixel, determines which (irregular) sample positions are within the
@@ -89,12 +91,12 @@ data to sample memory is performed before the samples leave the
 Rasterize chip.
 3.4 Sort-Last
 Below the Rasterize chips lies a network comprising two Sched
-chips to route samples produced by any of the Rasterize outputs to
+chips to route samples produced by any of Rasterize outputs to
 any pixel interleave of the sample buffer below. As samples arrive
 in the Sched chip input FIFO from Rasterize chips, they are routed
-into the appropriate second stage FIFO based on their destination
+into the appropriate second stage FIFO based on they destination
 memory interleave. The output of each second stage FIFO is controlled
-by the load balancing switch for its memory interleave. Each
+by the load balancing switch for FIFO memory interleave. Each
 switch acts like a traffic light at a busy intersection; traffic from one
 source is allowed to flow unimpeded for a time while the other
 sources are blocked. This (programmable) hysteresis in the flow of
@@ -143,7 +145,8 @@ within the 3DRAM memories below.
 The third layer of FIFOs in the Sched chip is a final sample pre-write
 queue in front of a single memory interleave. (An interleave is a
 group of 4 3DRAM chips connected to the same pre-write queue.
-The Sched chips snoop this queue to perform 3DRAM cache
+The Sched chips snoop a final sample pre-write
+queue in front of a single memory interleave to perform 3DRAM cache
 prefetches, before scheduling the sample writes into the sample
 buffer.
 Because the parallel rasterized sample streams merge together here,
@@ -164,12 +167,12 @@ primitives that entered the SAGE system before the synchronization
 token have been processed (the first pass in our example), and now
 it is okay to allow the pending samples that entered the system after
 the synchronizing token to proceed. The OpenGL driver knows to
-generate this ordering token when it is in unordered rendering mode,
+generate this ordering token when The OpenGL driver is in unordered rendering mode,
 and then sees a command to transition to ordered rendering mode
 immediately followed by a command to change back to unordered
 rendering mode. Other more complex situations are supported by
 more complex special token generation by the driver.
-As controllers of the 3DRAM chips, the Sched chips also respond to
+As controllers of the 3DRAM chips, The Sched chips also respond to
 requests from the Convolve chips for streams of samples to be sent
 out over the 3DRAM video output pins to the parallel Convolve chips
 to generate the video output.
@@ -181,7 +184,7 @@ of four sets of memory interleave pins on a Sched chip. On the output
 side, each 3DRAM outputs 40-bit samples by double pumping 20
 video output pins. Each of these pins has an individual wire to a
 Route chip, for a total of 640 wires entering the lower route network.
-Logically, the sample buffer is organized as a two dimensional raster
+Logically, The sample buffer is organized as a two dimensional raster
 of lists of samples. All lists are the same length, because all pixels
 on the screen have the same number of samples. The list-order
 of a sample implies its sub-pixel location; the Rasterize and Convolve
@@ -202,8 +205,8 @@ high render bandwidth into the sample buffer. This was achieved by a
 new generation of 3DRAM [Deering et al. 1994]. Because 3DRAM performs
 z-buffer compare and alpha buffer blending internally, the traditional
 z-buffer read-modify-write operation is simplified into just a
-operation. The important operation of clearing the sample buffer
-for a new frame of rendering is also potentially adversely affected by
+operation. the traditional
+z-buffer read-modify-write operation is also potentially adversely affected by
 the high sample density, but this too is greatly accelerated by the
 3DRAM chips; initializing all samples in a 1280x1024x8 sample raster
 takes less than 200 usec. (less than 2% of a 76-hz frame time).
@@ -211,22 +214,21 @@ takes less than 200 usec. (less than 2% of a 76-hz frame time).
 The 640 outputs of the sample buffer feed into an array of 10 Route
 chips. Each Route chip is a 2-bit slice of a router function. Each Route
 chip connects to 2 output data pins from each of the 32 3DRAMs, and
-can redirect this data to any of the four Convolve chips attached to it
+can redirect this data to any of the four Convolve chips attached to this data
 below. Because of the need for the Convolve chips to be fed a contiguous
 vertical swath of the pixel interleaved sample buffer, samples
 are read from the sample buffers in quarter scan line wide, one pixel
 high bursts directed at one of the four Convolve chips. (More details
 will be discussed in the Convolve section.) It is the job of the Route
 chip to absorb these bursts into internal FIFOs, and then dribble them
-back out to their destination Convolve chip.
+back out to them destination Convolve chip.
 3.7 Convolution, CLUT, Video Timing
 Finally, the four Convolve chips perform the reconstruction and
 band limiting filtering of the raster stream of samples, producing
 pixels that are fed into the next Convolve chip before final video
-output. The Convolve chips replace the digital portion of the RAM-
-DAC; they contain color look-up and gamma tables, as well as the
-video timing generator, cursor logic, and genlock interface. The
-Convolve chips do not contain D/A converters. Instead, the Convolve
+output. the four Convolve chips replace the digital portion of the RAM-
+DAC; the four Convolve chips contain color look-up and gamma tables, as well as the
+video timing generator, cursor logic, and genlock interface. the four Convolve chips do not contain D/A converters. Instead, the Convolve
 video outputs are digital, to support various existing and
 emerging digital video interfaces. Two high quality external D/A
 converters and an S-video interface are on the SAGE video daughter
@@ -243,7 +245,11 @@ software have been able to obtain high quality antialiased imag-
 ery, usually by means of various supersampling algorithms. How-
 ever, for real-time hardware systems, cost constraints have precluded
 the deployment of all but the most simplistic approximations to
-these algorithms. Fill rate limitations make real-time generation of
+example, most algorithms that
+make use of the stencil buffer require at least two passes-one to
+prepare the stencil buffer with a special pattern, and then another
+pass with sample writes conditionally enabled by the presence of
+that special stencil pattern. Fill rate limitations make real-time generation of
 enough samples challenging. Restrictions in hardware polygon fill
 algorithms can preclude sub-pixel spatially variant sampling. Memory
 costs and bandwidth limits have prohibited use of double-buffered
@@ -285,7 +291,11 @@ Real-time antialiasing has been a requirement of flight simulation
 hardware for several decades. However, most of the early work in
 the field took advantage of known scene structure, usually the ability
 to constrain the rendering of primitives to back-to-front. But
-these algorithms do not scale well as the average scene complexity
+example, most algorithms that
+make use of the stencil buffer require at least two passes-one to
+prepare the stencil buffer with a special pattern, and then another
+pass with sample writes conditionally enabled by the presence of
+that special stencil pattern do not scale well as the average scene complexity
 grows from a few hundred to millions of polygons per frame.
 5.3 Percentage Coverage Algorithms
 Some systems, for example [Akeley 1993][Winner et al. 1997],
@@ -300,7 +310,7 @@ about a limited number of polygon fragments within each pixel. For
 scenes consisting of small numbers of large polygons, most polygons
 are very much greater in area than a pixel, and the vast majority
 of pixels are either completely covered by just one or two poly-
-gons. Occlusion edges and silhouettes would then have their jaggies
+gons. Occlusion edges and silhouettes would then have Occlusion edges and silhouettes jaggies
 removed. With care, even corner cases when more than two polygons
 of one continuous surface land within one pixel can often be
 merged back into the single polygon case.
@@ -319,7 +329,7 @@ the overhead of filtering and image copying reduced the performance
 of the systems by an order of magnitude or more, while still
 adding substantial cost for the (deeper pixel) accumulation buffer.
 As a result, while the technique has been supported by multiple
-vendors, it has never found much use in interactive applications.
+vendors, the technique has never found much use in interactive applications.
 Also, because the sub-pixel sample positions correlate between pix-
 els, the final quality does not match that of software systems.
 Supersampling
@@ -363,21 +373,23 @@ tries. However, the effective non-repeating size of this pattern is extended
 to 128x128 pixels by the use of a 2D hardware hash function
 that permutes access to the pattern entries. The effectiveness of this
 hash function can be seen in Figure 5, where each large colored dot
-corresponds to a sample. Because the table is so small, it is easily
+corresponds to a sample. Because the table is so small, the table is easily
 changeable in real-time on a frame-by-frame basis, supporting temporal
 perturbation of the sample pattern.
 Note that in the SAGE system the sample tables for the frame currently
 being displayed are stored in the Convolve chips, while the
 sample tables for the frame currently being rendered are stored in
-the Rasterizer chips. If the tables are not static, system software
-must ensure that they are updated at the appropriate time boundaries
+the Rasterizer chips. If the
+sample tables for the frame currently being rendered are not static, system software
+must ensure that the
+sample tables for the frame currently being rendered are updated at the appropriate time boundaries
 
 7 CONVOLVE CHIP ARCHITECTURE DETAILS
 One of the primary ways in which our architecture differs from previous
 systems is that there is no attempt to compute the antialiased
 pixels on the render side of the frame buffer. As far as the sample
 buffer is concerned, the output display device is capable of displaying
-supersamples; it is up to the back end reconstruction filter pipe-line
+supersamples; the output display device is up to the back end reconstruction filter pipe-line
 to convert streams of supersamples into antialiased pixels on
 the fly at full high-resolution video rates.
 The peak data rates required to support this are impressive: the
@@ -389,18 +401,19 @@ processing of this fire-hose of data across multiple chips.
 As seen in Figure 1, our convolution pipeline is split up into four
 chips. Each chip is assigned a different vertical swath of the
 screen's samples. Because reconstruction filters of up to 5.5 are
-supported, each of these vertical swaths must overlap their horizontal
+supported, each of these vertical swaths must overlap reconstruction filters of up to 5.5 are
+supported horizontal
 neighbors by up to 2 pixels (half the filter width). The final video
 stream is assembled as video is passed from chip to chip; each chip
-inserts its portion of each scan line into the aggregate stream. The
-last chip delivers the complete video stream. (An optional second
-video stream also emerges from this last chip.)
+inserts The final video
+ portion of each scan line into the aggregate stream. Each chip delivers the complete video stream. (An optional second
+video stream also emerges from Each chip.)
 The 5.5 filter size also implies that each sample will potentially be
 used in up to 25 different pixel computations. To avoid re-fetching
 samples from off-chip, 6 swath-lines worth of sample data is
 cached on each Convolve chip. (This RAM consumes half the active
-area of the chip.)
-The internal architecture of the chip is shown in Figure 2. The video
+area of Each chip.)
+The internal architecture of Each chip is shown in Figure 2. The video
 generation process for each chip starts with the generation of a raster of
 convolution center (output pixel center) locations across and down
 each swath. As the convolution center location moves, sample data is
@@ -409,7 +422,7 @@ A schematic of a filter processor is shown in Figure 3. Each filter
 processor is responsible for all the samples from one pixel from the
 sample buffer; the 5.5 array has access to all the samples that may
 contribute to a single output pixel. The filter processor computes
-the contribution of its samples to the total convolution; the partial
+the contribution of The filter processor samples to the total convolution; the partial
 results from all 25 filter processors are then summed to form the un-normalized
 convolution result. Because of the nonuniform, non-locally
 repeating properties of good sample patterns, it is not feasible
@@ -456,8 +469,14 @@ filter
 coeff-
 icient
 sum-coeff
-tom filter coefficients for arbitrary sample locations. It also contains
-the multiplier-accumulator that actually weights its samples.
+tom filter coefficients for arbitrary sample locations. coeff-
+icient
+sum-coeff
+tom filter coefficients for arbitrary sample locations also contains
+the multiplier-accumulator that actually weights coeff-
+icient
+sum-coeff
+tom filter coefficients for arbitrary sample locations samples.
 This filter coefficient computation proceeds as follows. First, the
 sample location relative to the convolution center is computed by
 subtracting the sample xy location (generated by the sample pattern
@@ -480,7 +499,7 @@ multiplied result is converted back into a 27-bit fixed-point number,
 and directed into a set of summing trees. A separate running sum of
 applied filter coefficients is similarly calculated.
 Thus our hardware places only two restrictions on the reconstruction
-filter: it must be radially symmetric in the convolution space,
+filter: our hardware must be radially symmetric in the convolution space,
 and the filter radial cross section has to be quantized to 256 values.
 Note that through non-uniform video and/or screen space scalings,
 elliptical filters in physical display space can be supported. Separable
@@ -495,10 +514,11 @@ to the exact solution came out well below expectations. This is because
 slight errors in coefficient generation produce a similar bias
 in the normalization value and are mostly canceled out. Remaining
 numeric errors in coefficient generation have less perceptual effect
-because they are equivalent to a correct coefficient at an incorrect
+because Remaining
+numeric errors in coefficient generation are equivalent to a correct coefficient at an incorrect
 estimation of the sample distance from the center of the filter (error
 in sample position). But samples should be quite representative of
-the true underlying image in their vicinity. Most visible errors in antialiased
+the true underlying image in samples vicinity. Most visible errors in antialiased
 output are due to a sample just missing a significant
 change in the underlying image (e.g. from black to white). The contribution
 to image output errors due to errors in computing filter co-efficient
@@ -527,7 +547,7 @@ in
 
 Figure
 
-allows each Convolve chip to add its results to either of
+allows each Convolve chip to add Convolve results to either of
 the incoming streams, and pass the other through unmodified.
 (There is also a post-processing swap not shown.)
 One use for this second channel is to be able to read the antialiased
@@ -535,7 +555,7 @@ image back into the computer, through the outer ring bus shown in
 
 Figure
 
-1. Without this option, the host computer would have no way
+1. Without this option, the computer would have no way
 to get a copy of the antialiased image! This is useful when performing
 antialiased rendering intended for later reuse as reflection maps, etc.
 The Convolve video timing circuit can run as either a sync master
@@ -550,7 +570,7 @@ A key benefit of the SAGE architecture is that video resolution is determined
 by the convolution hardware, not by rendering hardware.
 Thus the same hardware used for antialiasing also provides an extremely
 high quality video rescaler, with better filtering quality than
-is possible with an external scaler because it operates on the original
+is possible with an external scaler because an external scaler operates on the original
 samples, not pixels, and SAGE correctly performs the filtering in
 linear light space. One use of this is to generate NTSC video of arbitrary
 zoomed and panned sub-regions of a higher resolution display,
@@ -588,7 +608,7 @@ of special imaging devices.
 One of the prices that must be paid for the use of high quality reconstruction
 filters is occasional artifacts (ringing or fringing) due
 to the presence of negative lobes. Our filter hardware clamps negative
-color components to zero, and it also keeps a histogram of the
+color components to zero, and zero also keeps a histogram of the
 frequency and extent of such occurrences. This histogram data can
 be used to dynamically reduce the negative lobes of the reconstruction
 filter if artifacts are too severe.
@@ -599,7 +619,8 @@ window ID tags that are part of each sample.
 One example is support for applications that were programmed assuming
 a non-linear light space and/or a pseudo color space. The
 non-linear light space is typically a particular gamma space. SAGE
-supports these applications by providing pseudo color, direct color,
+supports applications that were programmed assuming
+a non-linear light space and/or a pseudo color space by providing pseudo color, direct color,
 and non-linear true color LUTs as specified by window ID properties
 of samples. In SAGE, these LUTs are applied to samples before
 the convolution. Of course, most 3D rendering is performed in linear
@@ -617,7 +638,7 @@ pixels of such windows. Instead, when so tagged, a sample (typical-
 ly the one closest to the convolution center) is chosen to be output
 in place of the convolution result. Thus it is possible for the screen
 to simultaneously support antialiased and non-antialiased windows.
-Because our filter has a 5.5 extent, care must be taken to ensure
+Because Our filter has a 5.5 extent, care must be taken to ensure
 that such unfiltered pixels do not contribute any samples to nearby
 filtered pixels. This is the case, for example, when a non-antialiased
 window occludes an antialiased window. Once again the dynamic
@@ -636,7 +657,7 @@ full scene antialiased operation with minimal source code changes.
 Figure
 
 5 is an image from the SAGE debugging simulator, and
-shows the details of our sampling pattern for sample density
+shows the details of Our sampling pattern for sample density
 dering. The intensity of each dot corresponds to the computed sample
 value for rgb; the green lines are triangle tesselation boundaries;
 the faint red grid lines are the pixel boundaries. 11 triangles are
@@ -665,7 +686,7 @@ because of the different sample patterns used, as well as the
 different numeric accuracies employed. (PRMAN uses full 32-bit
 IEEE floating-point arithmetic internally.) So as a control, we also
 ran PRMAN at a sample density of 256. Numerically, comparing
-our hardware 16 sample rendering with that of PRMAN, fewer than
+we hardware 16 sample rendering with that of PRMAN, fewer than
 1% of the pixels differed in value by more than 6% (the contribution
 of a single sample). However, about the same variance was
 seen between the 16-sample and 256 sample PRMAN images. This
@@ -709,18 +730,18 @@ stores, and that already performs high quality supersampled anti-aliasing
 SAGE is a complex multi-chip machine. Details of textured render-
 ing, lighting, picking, texture read-back, context switching, etc.
 were re-implemented for SAGE, often somewhat differently than
-has been done before. In this short paper, we chose to focus on the
+has been done before. In this paper, we chose to focus on the
 major effects that the antialiasing algorithm had on the architecture;
 this is not to detract from other areas of 3D graphics hardware
 where the implementers pushed the envelope as well.
 Complete SAGE prototype hardware is up and running, with
 OpenGL rendering and full scene antialiasing with arbitrary filters
-as described in this paper. The board is shown in Figure 11.
+as described in this paper. each current SAGE board is shown in Figure 11.
 13 CONCLUSIONS
 A new high end architecture and implementation for 3D graphics
 rendering, SAGE, has been described. The performance goal of
 over 80 million lit, textured, antialiased triangles per second has
-been met. We have also achieved our goal of producing a hardware
+been met. We have also achieved We goal of producing a hardware
 antialiasing system whose images are numerically and perceptually
 indistinguishable from images generated by the antialiasing portion
 of leading software renderers. This is achieved through the use of a

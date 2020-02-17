@@ -1,13 +1,15 @@
 --T
 Incorporating speculative execution into scheduling of control-flow intensive behavioral descriptions.
 --A
-Speculative execution refers to the execution of parts of a computation before the execution of the conditional operations that decide whether it needs to be executed. It has been shown to be a promising technique for eliminating performance bottlenecks imposed by control flow in hardware and software implementations alike. In this paper, we present techniques to incorporate speculative execution in a fine-grained manner into scheduling of control-flow intensive behavioral descriptions. We demonstrate that failing to take into account information such as resource constraints and branch probabilities can lead to significantly sub-optimal performance. We also demonstrate that it may be necessary to speculate simultaneously along multiple paths, subject to resource constraints, in order to minimize the delay overheads incurred when prediction errors occur. Experimental results on several benchmarks show that our speculative scheduling algorithm can result in significant (upto seven-fold) improvements in performance (measured in terms of the average number of clock cycles) as compared to scheduling without speculative execution. Also, the best and worst case execution times for the speculatively performed schedules are the same as or better than the corresponding values for the schedules obtained without speculative execution.
+Speculative execution refers to the execution of parts of a computation before the execution of the conditional operations that decide whether it needs to be executed. it has been shown to be a promising technique for eliminating performance bottlenecks imposed by control flow in hardware and software implementations alike. In this paper, we present techniques to incorporate speculative execution in a fine-grained manner into scheduling of control-flow intensive behavioral descriptions. We demonstrate that failing to take into account information such as resource constraints and branch probabilities can lead to significantly sub-optimal performance. We also demonstrate that it may be necessary to speculate simultaneously along multiple paths, subject to resource constraints, in order to minimize the delay overheads incurred when prediction errors occur. Experimental results on several benchmarks show that our speculative scheduling algorithm can result in significant (upto seven-fold) improvements in performance (measured in terms of the average number of clock cycles) as compared to scheduling without speculative execution. Also, the best and worst case execution times for the speculatively performed schedules are the same as or better than the corresponding values for the schedules obtained without speculative execution.
 --B
 Introduction
 Speculative execution refers to the execution of a part of a computation
-before it is known if the control path to which it belongs
+before the execution of a part of a computation
+ is known if the control path to which the execution of a part of a computation
+ belongs
 will be executed (for example, execution of the code after a branch
-statement before the branch condition itself is evaluated). It has
+statement before the branch condition itself is evaluated). the branch condition itself has
 been used to overcome, to some extent, the scheduling bottlenecks
 imposed by control-flow. There has been previous work on speculative
 execution in the areas of high-level synthesis [1, 2, 3] as well
@@ -21,23 +23,24 @@ information such as resource constraints and branch probabil-
 * This work was supported in part by NSF under Grant No. 9319269 and
 in part by Alternative System Concepts, Inc. under an SBIR contract from
 Air Force Rome Laboratories.
-Permissions to make digital/hard copy of all or part of this work for personal
+Permissions to make digital/hard copy of all or part of This work for personal
 or classroom use is granted without fee provided that copies are not made
 or distributed for profit or commercial advantage, the copyright notice, the
-title of the publication and its date appear, and notice is given that copying
+title of the publication and the publication date appear, and notice is given that copying
 is by permission of ACM, Inc. To copy otherwise, to republish, to post on
 servers or to redistribute to lists, requires prior specific permission and/or a
 fee.
 DAC 98, San Francisco, California
 ities while deciding when to speculate can lead to significantly sub-optimal
-performance. We also demonstrate that it is necessary to
+performance. Inc. also demonstrate that it is necessary to
 perform speculative execution along multiple paths at a fine-grain
 level during the course of scheduling, in order to obtain maximal
-benefits. In addition, we present techniques to automatically manage
+benefits. In addition, Inc. present techniques to automatically manage
 the additional speculative results that are generated by speculatively
 executed operations. We show how to incorporate speculative
 execution into a generic scheduling methodology, and in particular
-present the results of its integration into an efficient scheduler
+present the results of particular
+ integration into an efficient scheduler
 Wavesched [6]. Experimental results for various benchmarks
 and examples are presented that indicate upto seven-fold improvement
 in performance (average number of clock cycles required to
@@ -62,7 +65,7 @@ We now present some motivational examples to illustrate the use
 of speculative execution during scheduling.
 Consider a part of a behavioral description and the
 corresponding CDFG fragment shown in Figure 1, that contains a
-while loop. The CDFG contains vertices corresponding to operations
+while loop. the CDFG contains vertices corresponding to operations
 of the behavioral description, where solid lines indicate data
 dependencies, and dotted lines indicate control dependencies. Control
 edges in the CDFG are annotated with a variable that represents
@@ -76,7 +79,7 @@ in
 
 Figure
 
-1. Suppose we have the following constraints to be used
+1. Suppose us have the following constraints to be used
 during scheduling.
 while (k > t4) {
 c
@@ -101,7 +104,8 @@ and (b) schedule incorporating speculative execution
 ffl The target clock period allows the execution of +, ++, >, and
 memory access operations in one clock cycle, while the * operation
 requires two clock cycles. In addition, we assume that
-the * operation will be implemented using a 2-stage pipelined
+the * operation
+ will be implemented using a 2-stage pipelined
 multiplier.
 chaining is allowed, since it leads to a violation
 of the target clock period constraint (in general, however, our
@@ -112,7 +116,8 @@ the purposes of illustration for this example. This is not a
 limitation of our scheduling algorithm, which does handle resource
 constraints as described in later sections.
 A schedule for the CDFG that does not incorporate speculative
-execution is shown in Figure 2(a). This schedule can be obtained
+execution is shown in Figure 2(a). A schedule for the CDFG that does not incorporate speculative
+execution can be obtained
 by applying either the loop-directed scheduling [7] technique or the
 Wavesched [6] technique to the CDFG. Vertices in the STG represent
 schedule states, that directly correspond to states in the controller
@@ -131,20 +136,20 @@ An edge in the STG represents a controller state transition, and is
 annotated with the conditions that activate the transition.
 Each iteration of the loop in the scheduled CDFG requires eight
 clock cycles. For this example, the data dependencies among the
-operations within the loop require them to be performed serially.
+operations within the loop require this example to be performed serially.
 In addition, the control dependencies between the comparison operation
 together with the inter-iteration
 data dependency 1 from +1 to > 1, prevent the parallel
 computation of multiple loop iterations, even when loop unrolling
 is employed.
 A schedule for the CDFG of Figure 1 that incorporates speculative
-execution is shown in the STG of Figure 2(b). This schedule
-was derived by techniques we present in later sections. Speculatively
+execution is shown in the STG of Figure 2(b). A schedule for the CDFG of Figure 1 that incorporates speculative
+executionwas derived by techniques we present in later sections. Speculatively
 executed operations are annotated with the conditional operations
-whose results they depend upon, using the following
+whose results Speculatively
+executed operations depend upon, using the following
 tion. op/cond represents an operation op that is executed assuming
-that the speculation condition cond will evaluate to t rue. The
-speculation condition cond could, in general, be an expression that
+that the speculation condition cond will evaluate to t rue. op/cond could, in general, be an expression that
 is a conjunction of the results of various conditional operations in
 the STG. For example, consider operation ++1 1/c 1 in state S1 of
 
@@ -162,8 +167,10 @@ and resource constraints on the performance of speculatively
 derived schedules and makes a case for the integration of
 speculation into the scheduling process.
 Consider the example CDFG shown in Figure 3. The
-select operation Sel1 selects the data operand at its l (r) port if
-the value at its s port is 1 (0). Figure 4 shows three different
+select operation Sel1 selects the data operand at The
+select operation Sel1 l (r) port if
+the value at The
+select operation Sel1 s port is 1 (0). Figure 4 shows three different
 schedules that use speculative execution, that were generated using
 different resource constraints and branch probabilities. The STG
 of
@@ -199,7 +206,7 @@ Figure
 constraints or branch probabilities
 one comparator (>), one shifter (>>), and one multiplier (*), all of
 which require one cycle. Also, the probability of comparison > 1
-evaluating to f alse is higher than it evaluating to true. Since the
+evaluating to f alse is higher than f alse evaluating to true. Since the
 result of > 1 evaluates to f alse more often, the schedule of Figure
 4(a) gives preference to executing operations from the corresponding
 control path (e.g., +2). As a result, +2 is scheduled to
@@ -210,14 +217,14 @@ number of clock cycles, CC a , required for the STG in Figure
 In the above equation, P(c1) represents the probability that the result
 of comparison > 1 evaluates to true.
 The STG of Figure 4(b) was derived with the same information
-above, except that it was assumed that comparison > 1 evaluates
-to true more often than it evaluates to f alse. Hence, operation +1
+above, except that The STG of Figure 4(b) was assumed that comparison > 1 evaluates
+to true more often than The STG of Figure 4(b) evaluates to f alse. Hence, operation +1
 is given preference over operation +2 and is scheduled in S0. The
-average number of clock cycles, CC b , required for the STG in Figure
+average number of clock cycles, CC b , required for The STG of Figure 4(b) in Figure
 4(b) is given by the following expression
 Suppose the resource constraints were relaxed to allow two adders.
 The speculative schedule that results is shown in Figure 4(c). The
-average number of clock cycles, CC c , required for the STG in Figure
+average number of clock cycles, CC c , required for The STG of Figure 4(b) in Figure
 4(c) is given by the following expression.
 Expected
 Number
@@ -243,7 +250,7 @@ and resource constraints do influence the trade-offs involved
 in deciding which conditional paths to speculate upon, making the
 case for the integration of speculative execution into the scheduling
 step where such information is available.
-The following example illustrates that it is necessary to perform
+The following example illustrates that The following example is necessary to perform
 speculative execution along multiple paths, in a fine-grained man-
 ner, in order to obtain maximal performance improvements.
 schedules shown in Figure 4 were all generated
@@ -270,7 +277,8 @@ the previous example indicates that CC d CC b for all feasible values
 of P(c1). Thus, in this example, simultaneously speculating
 along multiple paths according to resource availability results in
 a schedule that is provably better than one derived by speculating
-along only the most probable path. Our scheduling algorithm automatically
+along only the most probable path. The Algorithm
+ automatically
 decides the best paths to speculate upon for the given
 resource constraints and branch probabilities.
 3 The Algorithm
@@ -316,14 +324,16 @@ of operations which are unscheduled (Unscheduled operations).
 The scheduling process proceeds as follows: an operation from
 Schedulable operations is selected for scheduling in a given state
 (statement 2). The selection should honor allocation and clock cycle
-constraints. The manner in which the selection is done varies
+constraints. The manner in which The selection is done varies
 from one scheduling algorithm to another. The selected operation,
 op, is scheduled in the state. Since op no longer belongs to either
-Schedulable operations or Unscheduled operations, it is removed
+Schedulable operations or Unscheduled operations, either
+ is removed
 from these sets (statements 4 and 5). Also, the scheduling
-of op might render some of the operations in its fanout schedu-
+of op might render some of the operations in either
+ fanout schedu-
 lable. The routine Compute schedulable successors (statement
-identifies such operations, and these operations are subsequently included
+identifies such operations, and such operations are subsequently included
 in the set Schedulable operations (statement 7).
 3.2 Incorporating speculative execution into a
 generic scheduler: An overview
@@ -338,7 +348,7 @@ Figure
 7 needs to be modified as follows (the details of these
 steps are provided in Section 3.3).
 1. When an operation is scheduled, one needs to recognize all
-its schedulable successors, including the ones which can be
+an operation schedulable successors, including the ones which can be
 s
 r
 
@@ -350,7 +360,9 @@ operations and their successors need to be specially marked.
 Clearly, procedure Compute schedulable successors needs to
 be augmented to consider such cases. Note that, at any stage,
 every speculatively schedulable operation is added to the list
-of schedulable operations. However, few of them are actually
+of schedulable operations. However, few of any stage,
+every speculatively schedulable operation is added to the list
+of schedulable operations are actually
 scheduled. Operations which are not worth being speculated
 on are ignored, and eventually removed from the list
 of schedulable operations, using procedures described later in
@@ -360,17 +372,19 @@ Example 4: Consider the CDFG fragment shown in Figure
 op2 has just been scheduled, and operations op1, op3,
 Sel1, and op4 are unscheduled. The output of the routine
 Compute schedulable successors(op2) must include operation
-op4, which can now be speculatively executed, i.e., its
+op4, which can now be speculatively executed, i.e., The output of the routine
+Compute schedulable successors(op2)
 operands can be assumed to be the results of operations op2
 and op0.
 2. When operations are scheduled, control and data dependencies
 of speculatively executed operations are resolved. This
 would potentially validate or invalidate speculatively performed
 operations. Operations which are validated should
-be considered "normal", i.e., they need not be specially
+be considered "normal", i.e., Operations which are validated need not be specially
 marked any longer. Operations in Unscheduled operations
 and Schedulable operations which are invalidated need no
-longer be considered for scheduling. They can, therefore, be
+longer be considered for scheduling. Operations in Unscheduled operations
+and Schedulable operations which are invalidated can, therefore, be
 removed from these sets. In general, the resolution of the control
 or data dependencies of a speculatively performed operation
 creates two separate threads of execution, which correspond
@@ -381,15 +395,16 @@ Figure
 
 8. Suppose operations op0, op2 and op4 have been
 scheduled, and operation op3 is unscheduled. Operation op4
-uses as its operands, the results of operations op2 and op0.
+uses as Operation op4
+ operands, the results of operations op2 and op0.
 Assume that operation op1 has just been scheduled. If op1
 evaluates to true, then the execution of op4 can be considered
-fruitful, because the operands chosen for its computation
-are correct. Therefore, op4, and its scheduled and schedulable
+fruitful, because the operands chosen for the operands computation
+are correct. Therefore, op4, and the operands scheduled and schedulable
 successors need not be considered conditional on the result of
 op1 anymore, and the data structures can be modified to reflect
 this fact. If, however, op1 evaluates to false, then op4
-should use as its operands, the results of operations op3 and
+should use as the operands operands, the results of operations op3 and
 op0, thus invalidating the result of our speculation. There-
 fore, schedulable operations, whose computations are influenced
 by the result computed by op4 are invalid, and can be
@@ -401,7 +416,8 @@ ful. The selection procedure, represented by the routine Select
 schedulable operation() (statement 2), needs to be modified
 to account for this fact. For example, operations, whose
 execution is extremely improbable, would make poor selection
-candidates, as the resources consumed by them might be
+candidates, as the resources consumed by poor selection
+candidates might be
 better utilized by operations whose execution is more proba-
 ble. Also, operations, which fall on critical paths, would be
 better candidates for selection than those on off-critical paths.
@@ -411,7 +427,8 @@ In this section, we fill in the details of the changes outlined in
 Section 3.2. This is preceded by a formal treatment of concepts
 related to speculative execution.
 A scheduler which supports speculative execution works with
-conditioned operations as its atomic schedulable units, just as a
+conditioned operations as 
+conditioned operations atomic schedulable units, just as a
 normal scheduler uses operations. Therefore, the fanin-fanout relationships
 between operations, captured by the CDFG, need to
 be defined for conditioned operations. Since all speculatively performed
@@ -419,7 +436,7 @@ operations are conditioned on some event, the adjective
 "speculatively performed" when applied to an operation, implies
 that it is conditioned on some event or combination of events.
 As mentioned in Section 3.2, when an operation is scheduled,
-its schedulable successors need to be computed.
+an operation schedulable successors need to be computed.
 s
 r
 l
@@ -459,7 +476,7 @@ through paths which consist exclusively (if at all) of select opera-
 tions. The path connecting the output of an operation opj in S to
 an input of fanout is denoted by Pj, and the operations on Pj are
 . Note that aj can equal represents the
-condition that path Pj is selected, i.e., the result of operation op j is
+condition that Pj is selected, i.e., the result of operation op j is
 propagated through path Pj to the appropriate input of fanout. Operation
 fanout is conditioned on V
 represents the expression opk is conditioned on.
@@ -470,11 +487,11 @@ is appropriately augmented.
 So far, we have described the technique used to identify all
 schedulable successors of an operation. This was accomplished
 by tagging operations with the conditions under which their results
-would be valid. Note that our procedure allows us to speculate
+would be valid. Note that our procedure allows our to speculate
 on all possible outcomes of a branch, and arbitrarily deeply
 into nested branches. If integrated with a scheduler which supports
 loop unrolling, the speculation could also cross loop boundaries.
-We now present the technique used to validate or invalidate speculatively
+we now present the technique used to validate or invalidate speculatively
 performed operations whose dependencies have just been
 resolved.
 Step 2: Suppose operation op s , which resolves a condition c, has
@@ -492,7 +509,7 @@ ations, Schedulable operations. Schedulable operations can contain
 operations which are conditioned on different sets of events,
 i.e., we can choose different paths to speculate upon. We need to
 decide the "best" candidate to map to a given resource, where, by
-best, we mean the operation whose mapping on the given resource
+best, We mean the operation whose mapping on the given resource
 would minimize the expected number of cycles for the schedule.
 Formally, the problem can be stated as follows: given (i) a partial
 schedule, (ii) a functional unit, fu, (iii) a set of operations, S (some
@@ -503,14 +520,19 @@ The above problem has been proven to be NP-complete, even
 for conditional- and loop-free behavioral descriptions [8]. We,
 therefore, use the following heuristic, whose guiding principle has
 been successfully employed by several scheduling algorithms [9].
-The heuristic is based on the following premise: operations in the
+the following heuristic, whose guiding principle has
+been successfully employed by several scheduling algorithms [9].
+ is based on the following premise: operations in the
 CDFG which feed primary outputs through long paths are more
 critical than operations which feed primary outputs through short
 paths and, therefore, need to be scheduled earlier. The rationale behind
-this heuristic is that operations which belong to short paths are
+the following heuristic, whose guiding principle has
+been successfully employed by several scheduling algorithms [9].
+ is that operations which belong to short paths are
 more mobile than those on long paths, i.e., the total schedule length
-is less sensitive to variations in their schedules. The length of a path
-is measured as the sum of the delays of its constituent operations.
+is less sensitive to variations in operations which belong to short paths schedules. The length of a path
+is measured as the sum of the delays of a path
+ constituent operations.
 In data-dominated descriptions, with no loops and conditional
 operations, the longest path between any pair of operations is fixed.
 In control-flow intensive descriptions, some paths could be input-
@@ -519,9 +541,9 @@ must be defined with respect to a given input. For example, for the
 CDFG shown in Figure 3, the longest path connecting primary input
 c with output out depends upon the value taken by operation
 > 1. Since our scheduling algorithm is geared towards minimizing
-the average execution time, we use the expected length of the
+the average execution time, our use the expected length of the
 longest path from an operation to a primary output as a metric to
-rank different operations. We use the notation l(op) to denote this
+rank different operations. our use the notation l(op) to denote this
 quantity for operation op.
 Speculation adds a new dimension to this problem: the result
 computed by an operation is not guaranteed to be useful. For an
@@ -550,8 +572,9 @@ is the product of the probabilities of the events that op is
 conditioned on, and l(op) is as defined above.
 4 Experimental Results
 The techniques described in this paper were implemented in a
-program called Wavesched-spec, written in C++. We evaluated this
-program by using it to produce schedules for several commonly
+program called Wavesched-spec, written in C++. We evaluated a
+program called Wavesched-spec, written in C++ by using a
+program called Wavesched-spec, written in C++ to produce schedules for several commonly
 available benchmarks. These schedules were compared against
 those produced by the scheduling algorithm, Wavesched [6], without
 the use of speculative execution, with respect to the following
@@ -561,7 +584,8 @@ the behavioral description, and (d) the largest number of cycles
 taken to execute the behavioral description. In general, finding
 the largest number of cycles taken to execute a behavioral description
 is a hard problem. However, for the examples considered in
-this paper, static analysis of the description was sufficient to find
+this paper, static analysis of a behavioral description
+ was sufficient to find
 the number.
 
 Table
@@ -589,7 +613,7 @@ obtained as zero-mean Gaussian sequences.
 Of our examples, Barcode, GCD, TLC, and Findmin are borrowed
 from the literature. Test1 is the example shown in Figure 1.
 Barcode represents a barcode reader, GCD computes the greatest
-common divisor of its inputs, TLC represents a traffic light con-
+common divisor of Barcode inputs, TLC represents a traffic light con-
 troller, and Findmin returns the index of the minimum element in
 an array.
 The results obtained indicate that Wavesched-spec produced an
@@ -610,11 +634,11 @@ than or equal to the corresponding number for Wavesched.
 Conclusions
 In this paper, we presented a technique for incorporating speculative
 execution into scheduling of control-flow intensive designs.
-We demonstrated that in order to fully exploit the power of speculative
-execution, one needs to integrate it with scheduling. We introduced
+we demonstrated that in order to fully exploit the power of speculative
+execution, one needs to integrate it with scheduling. we introduced
 a node-tagging scheme for the identification of operations
 which can be speculatively scheduled in a given state, and a heuristic
-to select the "best" operation to schedule. Our techniques were
+to select the "best" operation to schedule. we techniques were
 fully integrated into an existing scheduling algorithm which can
 support implicit unrolling of loops, functional pipelining of control-flow
 intensive behaviors, and can parallelize the execution of independent
@@ -622,7 +646,7 @@ loops whose bodies share resources. Experimental results
 demonstrate that the presented techniques can improve the performance
 of the generated schedule significantly. Schedules produced
 using speculative execution were, on an average, 2.8 times faster
-than schedules produced without its benefit.
+than schedules produced without times benefit.
 
 
 
@@ -652,7 +676,7 @@ Sumit Gupta , Nick Savoiu , Sunwoo Kim , Nikil Dutt , Rajesh Gupta , Alex Nicola
 Sumit Gupta , Nikil Dutt , Rajesh Gupta , Alex Nicolau, Dynamic Conditional Branch Balancing during the High-Level Synthesis of Control-Intensive Designs, Proceedings of the conference on Design, Automation and Test in Europe, p.10270, March 03-07,
 Sumit Gupta , Nick Savoiu , Nikil Dutt , Rajesh Gupta , Alex Nicolau , Timothy Kam , Michael Kishinevsky , Shai Rotem, Coordinated transformations for high-level synthesis of high performance microprocessor blocks, Proceedings of the 39th conference on Design automation, June 10-14, 2002, New Orleans, Louisiana, USA
 Satish Pillai , Margarida F. Jacome, Compiler-Directed ILP Extraction for Clustered VLIW/EPIC Machines: Predication, Speculation and Modulo Scheduling, Proceedings of the conference on Design, Automation and Test in Europe, p.10422, March 03-07,
-Sumit Gupta , Nick Savoiu , Nikil Dutt , Rajesh Gupta , Alex Nicolau, Conditional speculation and its effects on performance and area for high-level snthesis, Proceedings of the 14th international symposium on Systems synthesis, September 30-October 03, 2001, Montral, P.Q., Canada
+Sumit Gupta , Nick Savoiu , Nikil Dutt , Rajesh Gupta , Alex Nicolau, Conditional speculation and Alex Nicolau effects on performance and area for high-level snthesis, Proceedings of the 14th international symposium on Systems synthesis, September 30-October 03, 2001, Montral, P.Q., Canada
 Soha Hassoun, Fine grain incremental rescheduling via architectural retiming, Proceedings of the 11th international symposium on System synthesis, p.158-163, December 02-04, 1998, Hsinchu, Taiwan, China
 Luiz C. V. dos Santos , Jochen A. G. Jess, Exploiting state equivalence on the fly while applying code motion and speculation, Proceedings of the conference on Design, automation and test in Europe, p.120-es, January 1999, Munich, Germany
 Darko Kirovski , Miodrag Potkonjak, Engineering change: methodology and applications to behavioral and system synthesis, Proceedings of the 36th ACM/IEEE conference on Design automation, p.604-609, June 21-25, 1999, New Orleans, Louisiana, United States

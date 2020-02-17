@@ -1,7 +1,7 @@
 --T
 Space/time-efficient scheduling and execution of parallel irregular computations.
 --A
-In this article we investigate the trade-off between time and space efficiency in scheduling and executing parallel irregular computations on distributed-memory machines. We employ acyclic task dependence graphs to model irregular parallelism with mixed granularity, and we use direct remote memory access to support fast communication. We propose new scheduling techniques and a run-time active memory management scheme to improve memory utilization while retaining good time efficiency, and we provide a theoretical analysis on correctness and performance. This work is implemented in the context of the RAPID system which uses an inspector/executor approach to parallelize irregular computations at run-ti me. We demostrate the effectiveness of the proposed techniques on several irregular applications such as sparse matrix code and the fast multipole method for particle simulation. Our  experimental results on Cray-T3E show that problems large sizes can be solved under limited space capacity, and that the loss of execution efficiency caused by the extra memory management overhead is reasonable.
+In this article we investigate the trade-off between time and space efficiency in scheduling and executing parallel irregular computations on distributed-memory machines. We employ acyclic task dependence graphs to model irregular parallelism with mixed granularity, and We use direct remote memory access to support fast communication. We propose new scheduling techniques and a run-time active memory management scheme to improve memory utilization while retaining good time efficiency, and We provide a theoretical analysis on correctness and performance. This work is implemented in the context of the RAPID system which uses an inspector/executor approach to parallelize irregular computations at run-ti me. We demostrate the effectiveness of the proposed techniques on several irregular applications such as sparse matrix code and the fast multipole method for particle simulation. We  experimental results on Cray-T3E show that problems large sizes can be solved under limited space capacity, and that the loss of execution efficiency caused by the extra memory management overhead is reasonable.
 --B
 INTRODUCTION
 Considerable effort in parallel system research has been spent on time-efficient par-
@@ -23,7 +23,8 @@ article appeared in the 6th ACM Symposium on Principles & Practice of Parallel P
 (PPoPP'97).
 Yang and C. Fu
 et al. 1995; Fink et al. 1996].
-This article addresses scheduling issues for parallelism that can be modeled as
+this
+article addresses scheduling issues for parallelism that can be modeled as
 directed acyclic dependence graphs (DAGs) [Sarkar 1989] with mixed granularity.
 This model has been found useful in performance prediction and code optimization
 for parallel applications which have static or slowly changing dependence patterns,
@@ -31,23 +32,24 @@ such as sparse matrix problems and particle simulations [Chong et al. 1995; Fu a
 Yang 1996b; Gerasoulis et al. 1995; Jiao 1996]. In these problems, communication
 and computation are irregularly interleaved with varying granularity. Asynchronous
 scheduling and fast communication techniques are needed for exploiting
-data locality and balancing loads with low synchronization costs. However, these
-techniques may impose extra space requirements. For example, direct memory access
+data locality and balancing loads with low synchronization costs. However, Asynchronous
+scheduling and fast communication techniques may impose extra space requirements. For example, direct memory access
 normally has much lower software overhead than high-level message-passing
 primitives. Remote addresses however need to be known at the time of performing
 data accesses, and thus accessible remote space must be allocated in advance.
 A scheduling optimization technique may prefetch or presend some data objects
-to overlap computation and communication, but it may require extra temporary
+to overlap computation and communication, but A scheduling optimization technique may require extra temporary
 space to hold these data objects. Therefore, using advanced optimization techniques
 adds difficulties in designing software support to achieve high utilization of
 both processor and memory resources.
 In this article, we present two DAG scheduling algorithms that minimize space
 usage while retaining good parallel time efficiency. The basic idea is to use volatile
-objects as early as possible so that their space can be released for reuse. We
+objects as early as possible so that volatile
+objects space can be released for reuse. We
 have designed an active memory management scheme that incrementally allocates
 necessary space on each processor and efficiently executes a DAG schedule using
 direct remote memory access. We provide an analysis on the performance and
-correctness of our techniques.
+correctness of We techniques.
 The proposed techniques are implemented in the RAPID programming tool [Fu
 and Yang 1996a] which parallelizes irregular applications at run-time. The original
 schedule execution scheme in RAPID does not support incremental memory allo-
@@ -66,7 +68,7 @@ motivates us to study space optimization.
 It should be noted that other forms of space overhead exist, such as space for
 the operating system kernel, hash tables for indexing irregular objects, and task
 graphs. This article focuses on the optimization of space usage dedicated to storing
-the content of data objects. The rest of the article is organized as follows. Section 2
+the content of data objects. The rest of This article is organized as follows. Section 2
 summarizes related work. Section 3 describes our computation and memory model.
 Section 4 presents space-efficient scheduling algorithms. Section 5 discusses the use
 T. Yang and C. Fu \Delta 3
@@ -74,26 +76,30 @@ of scheduling algorithms in the RAPID and the active memory management scheme
 for executing schedules. Section 6 gives experimental results.
 2. RELATED WORK
 Most of the previous research on static DAG scheduling [Sarkar 1989; Wolski and
-Feo 1993; Yang and Gerasoulis 1992; 1994] does not address memory issues. A
+Feo 1993; T. Yang and Gerasoulis 1992; 1994] does not address memory issues. A
 scheduling algorithm for dynamic DAGs proposed Blelloch et al. [1995] requires
 space usage on each processor, where S 1 is the sequential space re-
-quirement, p is the total number of processors, and D is the depth of a DAG. This
-work provides a solid theoretical ground for space-efficient scheduling. Their space
-model is different from ours, since it assumes a globally shared memory pool. In
+quirement, p is the total number of processors, and D is the depth of a DAG. RELATED WORK
+ provides a solid theoretical ground for space-efficient scheduling. RELATED WORK
+ space
+model is different from RELATED WORK
+, since Their space
+model assumes a globally shared memory pool. In
 our model, a space upper bound is imposed to each individual processor, which is
 a stronger constraint. The Cilk run-time system [Blumofe et al. 1995] addresses
-space efficiency issues, and its space complexity is O(S 1 ) per processor, which is
+space efficiency issues, and The Cilk run-time system [Blumofe et al. 1995] space complexity is O(S 1 ) per processor, which is
 good in general, but too high for solving large problems if space is limited. The
 memory-optimizing techniques proposed in this article has space usage close to S 1 =p
 per processor. Another distinct difference between our work and that of Blelloch et
 al. [1995] and Blumofe et al. [1995] is that for RAPID, a DAG is obtained at the run-time
-inspector stage before its execution, thus making our scheduling scheme static.
+inspector stage before run-time
+ execution, thus making our scheduling scheme static.
 In the other models, DAGs grow on-the-fly as computation proceeds, and dynamic
 scheduling is preferred. There are two reasons why we use static scheduling: (1) in
 practice it is difficult to minimize the run-time control overhead of dynamic scheduling
 when parallelizing sparse code with mixed granularity on distributed memory
 machines; (2) the application problems we consider all have an iterative nature, so
-optimized static schedules can be used for many iterations. Our work uses hardware
+optimized static schedules can be used for many iterations. we work uses hardware
 support for directly accessing remote memory, which is available in several modern
 parallel architectures and workstation clusters [Ibel et al. 1996; Stricker et al. 1995;
 Schauser and Scheiman 1995]. Advantages of direct remote memory access have
@@ -101,17 +107,16 @@ been identified in fast communication research such as active messages [von Eick
 et al. 1992]. Thus, we expect that other researchers can benefit from our results
 when using fast communication support to design software layers.
 3. THE COMPUTATION AND MEMORY MODEL
-Our computation model consists of a set of tasks and a set of distinct data objects.
+we computation model consists of a set of tasks and a set of distinct data objects.
 Each task reads and writes a subset of data objects. Data dependence graphs
 (DDG) derived from partitioned code normally have three types of dependence
 between tasks: true dependence, antidependence, and output dependence [Poly-
 chronopoulos 1988]. In a DDG, some anti- or output dependence edges may be
-redundant if they are subsumed by other true data dependence edges. Other
-anti/output dependence edges can be eliminated by program transformation. This
-article deals with a transformed dependence graph that contains only acyclic true
+redundant if some anti- or output dependence edges are subsumed by other true data dependence edges. Other
+anti/output dependence edges can be eliminated by program transformation. This article deals with a transformed dependence graph that contains only acyclic true
 dependencies. An extension to the classical task graph model is that commuting
 tasks can be marked in a task graph to capture parallelism arising from commutative
-operations. The details on this parallelism model are described in Fu and
+operations. The details on Our computation model are described in Fu and
 Yang [1996a;1997].
 We define some terms used in our task model as follows:
 Yang and C. Fu
@@ -119,19 +124,18 @@ Yang and C. Fu
 data objects accessed by each task. Let R(T x ) be a set of objects that task T x
 reads and W (T x ) be a set of objects that task T x writes.
 -Each data object is assigned to a unique owner processor. Each processor may
-allocate temporary space for objects which it does not own. If a processor P x
+allocate temporary space for objects which Each processor does not own. If a processor P x
 owns m, then m is called a permanent object of P x is called a
 volatile object of P x . Define PERM(P x ) as the set of permanent data objects
 on processor P x and V OLAT ILE(P x ) as the set of volatile data objects on
-processor P x . A permanent object will stay allocated during execution on its
+processor P x . A permanent object will stay allocated during execution on A permanent object
 owner processor.
 -A static schedule gives a processor assignment of all tasks and an execution
 order of tasks on each processor. Define TA(P x ) as the set of tasks executed
 on processor P x . Let term "T x
 
 executed before
-T y on the same processor in a schedule, and let "T x ! T y " denote that task T x
-is executed immediately before T y . Given a DAG G and a static schedule for
+T y on the same processor in a schedule, and let "T x ! T y " denote that task Tis executed immediately before T y . Given a DAG G and a static schedule for
 G, a scheduled graph is derived by marking execution edges in G (e.g., add an
 edge from T x to T y in G if T x ! T y ). A schedule is legal if the corresponding
 scheduled graph is acyclic and T x
@@ -144,7 +148,7 @@ two processors. Using weight information, a static scheduling algorithm can
 optimize the expected parallel time of execution.3711158T 1
 (a)
 (b) (c)
-Fig. 1. (a) A DAG. (b) A schedule for the DAG on 2 processors. (c) Another schedule.
+Fig. 1. (a) A DAG. (b) A schedule for (a) A DAG on 2 processors. (c) Another schedule.
 T. Yang and C. Fu \Delta 5
 
 Figure
@@ -156,7 +160,7 @@ reads and writes d j . Table I lists read and write sets of a few tasks. Parts (
 
 Figure
 
-are two schedules for the DAG in (a). Permanent objects are evenly
+are two schedules for (a) A DAG in (a). Permanent objects are evenly
 distributed between two processors.
 g.
 g. The "owner computes" rule is used to assign tasks to processors.
@@ -179,11 +183,11 @@ for volatile data will be necessary. The following two strategies can be used to
 the space of a volatile data object at a certain execution point: (1) the value
 of this object is no longer used; (2) this object is no longer accessed. As we discuss
 in Section 5, the second strategy reduces the overhead of data management, and
-we therefore choose it in our approach. For such a strategy, the space requirement
+we therefore choose the second strategy in we approach. For such a strategy, the space requirement
 is estimated as follows.
 Definition 1. Given a task execution order (!) on each processor, a volatile
-object m on a processor is called live at some task T y if it is accessed at this task
-or it has been accessed before and will still be accessed in the future. Formally, if
+object m on a processor is called live at some task T y if m on a processor is accessed at this task
+or m on a processor has been accessed before and will still be accessed in the future. Formally, if
 the following holds, then m is live:
 9T x 9T z ((T x
 
@@ -204,7 +208,8 @@ size, it is easy to calculate that MEM 9. However, for the schedule in
 Figure
 
 1(c), MEM REQ is 8. This is because the lifetime of volatile objects d 7
-and d 3 are disjoint on P 1 , and space sharing between them is possible.
+and d 3 are disjoint on P 1 , and space sharing between the lifetime of volatile objects d 7
+and d 3 is possible.
 4. SPACE- AND TIME- EFFICIENT SCHEDULING
 Given a DAG and p processors, our scheduling approach contains two stages:
 -The "owner computes" rule is used to assign tasks to processors. Tasks that
@@ -215,21 +220,22 @@ g, and the set of tasks for processor P 1 is fT
 g. Based on the above task assign-
 ment, we can determine permanent and volatile data objects on each processor
 -Tasks at each processor are ordered, following DAG dependence edges.
-We focus on the optimization of task ordering. Previously, an ordering algorithm
-called [Yang and Gerasoulis 1992] has been proposed. It is time efficient, but
-it may require extra space to hold volatile objects in order to aggressively execute
+We focus on the optimization of task ordering. Previously, The RCP Algorithm
+ has been proposed. It is time efficient, but
+It may require extra space to hold volatile objects in order to aggressively execute
 time-critical tasks. In this section, we propose two new ordering algorithms called
 MPO and DTS. The idea is to have volatile objects referenced as early as possible
 once they are available in the local memory. This shortens the lifetime of volatile
 objects and potentially reduces the memory requirement on each processor.
 4.1 The RCP Algorithm
-We briefly discuss this algorithm; a detailed description can be found in Yang and
+We briefly discuss The RCP Algorithm
+; a detailed description can be found in T. Yang and
 Gerasoulis [1992]. This heuristic orders tasks by simulating the execution of tasks.
 Let an exit task be a task with no children in a given DAG. The time priority of a
-task T x , called TP (T x ), is the length of the longest path from this task to an exit
+task T x , called TP (T x ), is the length of the longest path from an exit task to an exit
 task. Namely, TP (T x ) is - x if it is an exit task. Otherwise,
 Ty is a child of
-During simulated execution a task is called ready if its parents have been selected
+During simulated execution a task is called ready if a task parents have been selected
 for execution and the needed data objects can be received at this point. At each
 scheduling cycle, each processor selects the ready task with the highest time priority.
 T. Yang and C. Fu \Delta 7
@@ -239,13 +245,14 @@ T. Yang and C. Fu \Delta 7
 Update the ready task list on each processor;
 end-while
 Fig. 2. The RCP algorithm.
-The RCP algorithm is summarized in Figure 2. Lines (4) and (5) do not exist in this
+The RCP Algorithm
+ is summarized in Figure 2. Lines (4) and (5) do not exist in this
 description, because we want to illustrate the difference between RCP and MPO.
 4.2 MPO: Memory-Priority-Guided Ordering
-The MPO ordering algorithm is listed in Figure 3. The difference between MPO
-and RCP is (1) the priority used in MPO for selecting a ready task is the size of
+The MPO ordering algorithm is listed in Figure 3. The difference between The MPO ordering algorithm
+and RCP is (1) the priority used in The MPO ordering algorithm for selecting a ready task is the size of
 total object space that has been allocated divided by the size of total object space
-needed to execute this task (if there is a tie, the RCP time priority (TP ()) is used
+needed to execute a ready task (if there is a tie, the RCP time priority (TP ()) is used
 to break the tie); (2) MPO needs to estimate the total object space allocated at
 each scheduling cycle and update the memory priority of tasks (lines (4) and (5)).
 (1) while there is at least one un-scheduled task
@@ -257,12 +264,12 @@ allocated yet on processor Px;
 Update the ready task list on each processor;
 end-while
 Fig. 3. The MPO algorithm.
-Example. Figure 1(c) shows a schedule produced by MPO while (b) is produced
+Example. Figure 1(c) shows a schedule produced by The MPO ordering algorithm while (b) is produced
 by RCP. The ordering difference between Figure 1(b) and (c) starts from time 6 on
 processor 1. At that time, T 7;8 is selected by RCP while T 3;10 is chosen by MPO.
 As illustrated in Figure 4, there are three ready tasks on processor 1 at time
 selects T 7;8 because it has the longest path to an exit
-task (the path is T length 4). For MPO, T 3;10 has the highest space
+task (the path is T length 4). For The MPO ordering algorithm, T 3;10 has the highest space
 priority (1) because d 3 and d 10 are available locally at time 6. T 7;8 's space priority
 is 0.5 because the space for d 7 has not been allocated before time 6, and we assume
 each object has a unit size. As a result, the MPO schedule requires less memory,
@@ -273,7 +280,7 @@ priorities of the children and the siblings of the newly scheduled task, because
 those tasks are possible candidates for ready tasks in the next round. The space
 priorities of the children of these candidate tasks will be updated later after the
 candidate tasks are scheduled. We use e in (x) and e out (x) to denote the number
-Yang and C. Fu
+T. Yang and C. Fu
 (0.5,
 Ready task list on Proc 1:
 (a) (b)
@@ -288,17 +295,21 @@ to bound the number of children that any parent of T x may have. Additionally,
 the complexities for lines (2), (3), (4), and (6) are v log p, v log v, m, and vp log v,
 respectively. Here, p is the total number of processors, and m is the total number
 of data objects. Since p is usually small compared to v, the total time complexity
-of MPO is O(ve
+of The MPO ordering algorithm is O(ve
 4.3 DTS: Data-Access-Directed Time Slicing
-DTS is more aggressive in space optimization and is thus intended for cases when
-memory usage is of primary importance. Its design is based on the fact that memory
+4.3 DTS: Data-Access-Directed Time Slicing
+ is more aggressive in space optimization and is thus intended for cases when
+memory usage is of primary importance. 4.3 DTS: Data-Access-Directed Time Slicing
+ design is based on the fact that memory
 usage of a processor can be improved if each volatile object has a short life
 span. In other words, the time period from allocation to deallocation is short. The
-basic idea of DTS is to slice computation based on data access patterns of tasks, so
+basic idea of 4.3 DTS: Data-Access-Directed Time Slicing
+ is to slice computation based on data access patterns of tasks, so
 that all tasks within the same slice access a small group of volatile objects. Tasks
 are scheduled on physical processors slice by slice, and tasks within each slice are
 ordered using dependence and critical-path information.
-Algorithm. For a given DAG in which a set of tasks operates
+The RCP Algorithm
+. For a given DAG in which a set of tasks operates
 on a set of data objects we describe the steps of the
 DTS algorithm as follows.
 1: Construct a data connection graph (DCG). Each node of a DCG represents
@@ -310,11 +321,11 @@ following rules are applied based on the original DAG.
 -If a task T x 2 V uses but does not modify data object d i , T x is associated with
 data object node d i .
 T. Yang and C. Fu \Delta 9
--If T x modifies more than one objects, it may use those objects during compu-
-tation, and it does not use other objects, then T x is associated with each of
+-If T x modifies more than one objects, T may use those objects during compu-
+tation, and T does not use other objects, then T x is associated with each of
 those modified objects.
 -It is possible that a task is associated with multiple data nodes. In that case,
-doubly directed edges are added among those data nodes to make them strongly
+doubly directed edges are added among those data nodes to make those data nodes strongly
 connected.
 -A directed edge is added from data node d i to data node d j if there exists a
 task dependence edge (T x ; T y ) such that T x is associated with data node d i
@@ -329,25 +340,29 @@ tasks slice by slice, following a topological order of slices imposed by depende
 among corresponding strongly connected components. It should be noted that a
 topological order of slices only imposes a constraint on task ordering. A processor
 assignment of tasks following the "owner computes" rule must be supplied before
-using DTS to produce an actual schedule.
+using 4.3 DTS: Data-Access-Directed Time Slicing
+ to produce an actual schedule.
 -Step 3: Use a priority based precedence scheduling approach to generate a DTS
 schedule from the slices derived at Step 2. Priorities are assigned to tasks based
-on the slices they belong to. For two ready tasks in the same slice, the task with
+on the slices Priorities belong to. For two ready tasks in the same slice, the task with
 a higher critical-path priority is scheduled first. If there is a ready task that has
 a slice priority lower than some other unscheduled tasks on the same processor,
-this task will not be scheduled until all the tasks that have higher slice priorities
-on this processor are scheduled. Using such a priority can guarantee that tasks
+the task with
+a higher critical-path priority will not be scheduled until all the tasks that have higher slice priorities
+on the same processor are scheduled. Using such a priority can guarantee that tasks
 are executed according to the derived slice order.
-Example. Figure 5 shows an example of DTS ordering for the DAG in Figure 1(a).
+Example. Figure 5 shows an example of 4.3 DTS: Data-Access-Directed Time Slicing
+ ordering for a given DAG in Figure 1(a).
 Part (a) is the DCG, and we mark each node with the corresponding data name.
 Tasks within a rectangle are associated with a corresponding data object. Since
-this DCG is acyclic, each data node is a maximal strongly connected component
+the DCG is acyclic, each data node is a maximal strongly connected component
 and is treated as one slice. A topological ordering of these nodes produces a slice
 Each processor will execute tasks following this slice
 order, as shown in part (b), where slices are marked numerically to illustrate their
 execution order. The memory requirement MEM REQ is 7, compared to 9 in Figure
 1(b) produced by RCP and 8 in Figure 1(c) by MPO. On the other hand, the
-schedule length increases from RCP through MPO to DTS, because less and less
+schedule length increases from RCP through The MPO ordering algorithm to 4.3 DTS: Data-Access-Directed Time Slicing
+, because less and less
 critical path information is used.
 Algorithm Complexity. For Step 1, the complexity of deriving the access pattern
 of each task (i.e., read and/or write access to each data object) is O(e log v);
@@ -355,7 +370,7 @@ the complexity of mapping tasks to data nodes is O(v); and the complexity of
 generating edges between data nodes is O(e log m), because a check is needed to
 prevent duplicate edges from being added. Thus, the total complexity for Step 1 is
 v). For Step 2, deriving strongly connected components costs
-Yang and C. Fu3711158t1416
+T. Yang and C. Fu3711158t1416
 d
 d
 d
@@ -376,14 +391,16 @@ slice 6
 slice 7
 (b)
 (a)
-Fig. 5. (a) A sample DCG derived from a DAG. (b) A DTS schedule for the DAG on 2 processors.
+Fig. 5. (a) A sample DCG derived from a DAG. (b) A DTS schedule for a given DAG on 2 processors.
 generating precedence edges among slices costs O(m log m); and the
 topological sorting of slices costs O(m+ e). Therefore, the total complexity of Step
 2 is O(m m). The cost of Step 3 is O(v log v + e). This gives an overall
 complexity for DTS O(e(log v is the number of tasks, e
 is the number of edges, and m is the number of data objects in the original DAG.
-Space Efficiency. DTS can lead to good memory utilization; the following theorem
-gives a memory bound for DTS. First a definition is introduced.
+Space Efficiency. 4.3 DTS: Data-Access-Directed Time Slicing
+ can lead to good memory utilization; the following theorem
+gives a memory bound for 4.3 DTS: Data-Access-Directed Time Slicing
+. First a definition is introduced.
 Definition 3. Given any processor assignment R for tasks, the volatile space
 requirement of slice L on processor P x , denoted as VPx (R; L), is defined as the
 amount of space needed to allocate for the volatile objects used in executing tasks
@@ -412,16 +429,18 @@ there is contradiction. 2
 If a DCG is acyclic, then each data node in the DCG constitutes a strongly
 connected component. Therefore, each slice is associated with only one data object,
 and this implies that the h defined in Theorem 1 will be the size of the largest data
-object. Thus, we have the following corollary.
+object. Thus, we have Corollary 1.
 Corollary 1. If the DCG of a task graph is acyclic and the maximum size
-of an object is of unit 1, the DTS produces a schedule which can be executed on
+of an object is of unit 1, 4.3 DTS: Data-Access-Directed Time Slicing
+ produces a schedule which can be executed on
 processors using S 1 per processor, where S 1 is the sequential space
 complexity.
 We can apply Theorem 1 and Corollary 1 to some important application graphs.
 For the 1D column-block-based sparse LU DAGs in Fu and Yang [1996b], a matrix
 is partitioned into a set of sparse column blocks, and each task T k;j uses one sparse
 column block k to modify column block j. Figure 1 is actually a sparse LU graph.
-DTS produces an acyclic DCG for a 1D column-block-based sparse LU task graph
+4.3 DTS: Data-Access-Directed Time Slicing
+ produces an acyclic DCG for a 1D column-block-based sparse LU task graph
 as illustrated in Figure 5(a). Let w be the maximum space needed for storing a
 column block. According to Corollary 1, each processor will at most need w volatile
 space to execute a DTS schedule for sparse LU.
@@ -447,7 +466,7 @@ Yang and C. Fu
 space
 1 be
 for i=2 to k do
-Merge L i to L 0
+L i to L 0
 space
 else
 space
@@ -471,7 +490,8 @@ produced by the algorithm in Figure 6 be
 be an optimal sequence where t ? u. Each E or F slice contains a set of
 consecutive L slices from L 1 . The merging algorithm in Figure 6 groups
 as many of the first L slices as possible, H(R;E 1 We can take some
-of original L slices from slice F 2 , add them to F 1 so that the new F 1 is identical
+of original L slices from slice F 2 , add some
+of original L slices to F 1 so that the new F 1 is identical
 to E 1 . Let new F 2 be called
 2 . Thus we can produce an optimal sequence
 We can apply the same transformation to F 0
@@ -487,7 +507,7 @@ shown [Tang 1998] that a heuristic using bin-packing techniques can be developed
 and the number of slices is within a factor of two of the optimum.
 T. Yang and C. Fu \Delta 13
 5. MEMORY MANAGEMENT FOR SCHEDULE EXECUTION
-In this section, we first briefly describe the RAPID run-time system to which our
+In this section, we first briefly describe the RAPID run-time system to which we
 scheduling techniques are applied. Then, we discuss the necessary run-time support
 for efficiently executing DAG schedules derived from the proposed scheduling
 algorithms.
@@ -543,10 +563,9 @@ execute a schedule derived at the inspector stage. RMA is available in modern
 multiprocessor architectures such as Cray-T3E (SHMEM), Meiko CS-2 (DMA),
 and SCI clusters (memory mapping). With RMA, a processor can write to the
 memory of any other processor, given a remote address. RMA allows data transfer
-directly from source to destination location without buffering, and it imposes much
-lower overhead than a higher-level communication layer such as MPI. The use of
-RMA complicates the design of our run-time execution control for data consistency.
-Yang and C. Fu
+directly from source to destination location without buffering, and destination location imposes much
+lower overhead than a higher-level communication layer such as MPI. The use ofRMA complicates the design of our run-time execution control for data consistency.
+T. Yang and C. Fu
 However, we find that a DAG generated in RAPID satisfies the following properties,
 which simplifies our design.
 (Distinct data objects): A task T x does not receive data objects with the same
@@ -556,7 +575,7 @@ path either from T x to T y or from T y to T x .
 there is a dependence
 path either from T x to T y or from T y to T x .
 -D4 (DAG sequentialization): Tasks can be executed consistently during sequential
-execution following a topological sort of this DAG. Namely, if m 2 R(T x ),
+execution following a topological sort of DAG. Namely, if m 2 R(T x ),
 the value of m that T x reads from memory during execution is produced by one
 of T x 's parents. In general, a DAG that satisfies D1, D2, and D3 may not always
 be sequentializable [Yang 1993].
@@ -577,7 +596,7 @@ taken a simple approach in which a volatile object is considered dead only if
 the object with the same name will not be accessed any more on that processor.
 In this way, a volatile object with the same name will only be allocated once at
 each processor. This strategy can lead to a slightly larger memory requirement,
-but it reduces the complexity of maintaining address consistency. The memory
+but This strategy reduces the complexity of maintaining address consistency. The memory
 requirement estimated in Section 3 follows this design strategy.
 (2) Address buffering: We also use RMA to transfer addresses. Since address packages
 are sent infrequently, we do not use address buffering, so a processor
@@ -585,14 +604,14 @@ cannot send new address information unless the destination processor has read
 the previous address package. This reduces management overhead.
 The execution model using the active memory management scheme is presented
 below. A MAP (memory allocation point) is inserted dynamically between two
-consecutive tasks executed on a processor. The first MAP is always at the beginning
-of execution on each processor. Each MAP does the following:
+consecutive tasks executed on a processor. A MAP (memory allocation point) is always at the beginning
+of execution on each processor. A MAP (memory allocation point) does the following:
 -Deallocate space for dead volatile objects. The dead information can be statically
 calculated by performing a data flow analysis on a given DAG, with a complexity
 proportional to the size of the graph.
 T. Yang and C. Fu \Delta 15
 MAP
-allocate d8 MAP allocate d1,
+allocate A MAP (memory allocation point) allocate d1,
 d3 and d5
 addrs. for d1
 d3 and d5
@@ -636,27 +655,28 @@ Figure
 
 1(c). If the available amount of memory is 8 for each processor, then
 there are 2 units of memory for volatile objects on P 1 . In addition to the MAPs
-at the beginning of each task chain, there is another MAP right after task T 5;10 on
+at the beginning of each task chain, there is another The next MAP right after task T 5;10 on
 1 , at which space for d 3 and d 5 will be freed and space for d 7 will be allocated.
 The address for d 7 on P 1 is then sent to P 0 . P 0 will send the content of d 7 to P 1
-after it receives the address of d 7 .
+after the content of d 7 to P 1
+ receives the address of d 7 .
 
 Figure
 
 8(b) shows the control flow in our execution scheme. The system has five
 different states of execution:
 (1) REC. Waiting to receive desired data objects. If a processor is in the REC
-state, it cannot proceed until all the objects the current task needs are available
+state, a processor cannot proceed until all the objects the current task needs are available
 locally.
 (2) EXE. Executing a task.
 (3) SND. Sending messages. If the remote address of a message is not available,
-this message is enqueued.
-MAP. A processor could be blocked in the MAP state when it attempts to
+a message is enqueued.
+A MAP (memory allocation point). A processor could be blocked in the MAP state when A processor attempts to
 send out address packages to other processors but a previous address package
 has not been consumed by a destination processor.
-END. At this state, the processor has executed all tasks, but it still needs
+END. At the MAP state, A processor has executed all tasks, but A processor still needs
 to clear the send queue, which might be blocked if addresses for suspended
-Yang and C. Fu
+T. Yang and C. Fu
 messages are still unavailable.
 For the three blocking states (i.e., the states with self-cycles in Figure 8(b)), the
 following two operations must be conducted frequently in order to avoid deadlock
@@ -664,10 +684,10 @@ and make the execution evolve quickly: RA (Read any new address package ) and
 (Deliver suspended messages when addresses are available).
 5.3 An Analysis on Deadlock and Consistency
 Theorem 3. Given a DAG G and a legal schedule, execution with the active
-memory management is deadlock free. Namely, the system eventually executes all
+memory management is deadlock free. Namely, The system eventually executes all
 tasks.
-PROOF: We assume that communication between processors is reliable, and we
-prove this theorem by induction. We will use the following two facts in our proof.
+PROOF: We assume that communication between processors is reliable, and We
+prove this theorem by induction. We will use the following two facts in We proof.
 -Fact 1. If a deadlock situation happens, there are a few processors blocked in a
 waiting cycle (e.g., a circular chain) in state REC, MAP, or END. Eventually,
 all processors in this circular chain only do two things (RA and CQ). The space
@@ -680,40 +700,46 @@ Let G 0 be the scheduled graph of G; G 0 is acyclic because the given schedule i
 legal. Without loss of generality, we assume that a topological sort of G 0 produces
 a linear task order our induction follows this order.
 Induction Base. T 1 must be an entry task in G 0 , i.e., a task without parents.
-Before the execution of T 1 on some processor called a MAP is executed. After
+Before the execution of T 1 on some processor called a A MAP (memory allocation point) is executed. After
 completing space allocation, P x only has to send out the newly created addresses.
 If a deadlock occurs, there are a few processors involved in a circular waiting chain.
-When P x is blocked in state MAP, awaiting the availability of address buffers of
-some destination processors, it will just do RA and CQ. Since the destination processors
-must be in the circular chain and they are also doing RA and CQ (according
-to Fact 1), their address buffers should eventually be free. Then the newly created
+When P x is blocked in A MAP (memory allocation point), awaiting the availability of address buffers of
+some destination processors, P x will just do RA and CQ. Since the destination processors
+must be in the circular chain and the destination processors
+ are also doing RA and CQ (according
+to Fact 1), the destination processors
+ address buffers should eventually be free. Then the newly created
 on P x can be sent out, and P x should be able to leave the MAP state.
 does not have any parent, all data that T 1 needs is available locally. Hence,
 T 1 can complete successfully.
 Induction Assumption. Assume that all tasks T x for 1 - x
-execution. Then if T k has parents in G 0 , all of them have completed execution. We
+execution. Then if T k has parents in G 0 , all of parents in G 0 have completed execution. We
 show that T k will be executed successfully.
 Suppose not, i.e., a deadlock occurs. Let P x be T k 's processor. The state of P x
-can be either MAP or REC; it cannot be state END. We discuss the following two
+can be either MAP or REC; The state of P x
+ cannot be state END. We discuss the following two
 cases.
 Case 1. If P x is in state REC, under the induction assumption, the only reason
 that P x cannot receive a data object for T k is that this object has not been sent
 T. Yang and C. Fu \Delta 17
 out from a remote processor P y . Since all T k 's parents are finished, the only cause
-for P y not to send a data object out is the unavailability of its remote address
+for P y not to send a data object out is the unavailability of all T k 's parents are finished, the only cause
+for P y not to send a data object out remote address
 on P x . According to Fact 2, the address must be already sent out to P y if P x is
-waiting to receive the object. Hence P y will eventually read that address through
+waiting to receive a data object. Hence P y will eventually read the address through
 operation RA (Fact 1) and deliver the message to P x . Therefore, P x can execute T k .
-Case 2. If P x is in state MAP, the situation is the same as the one discussed for
-the induction base. This processor should be able to leave the MAP state. 2
+Case 2. If P x is in A MAP (memory allocation point), the situation is the same as the one discussed for
+the induction base. a processor
+ should be able to leave the MAP state. 2
 Theorem 4. Given a dependence-complete DAG G and a legal schedule, execution
 with the active memory management is consistent. Namely, each task reads
-data objects produced by its parents specified by G.
+data objects produced by a dependence-complete DAG G and a legal schedule, execution
+with the active memory management parents specified by G.
 PROOF: By Theorem 3, all tasks are executed by our run-time scheme. For each
 dependence edge (T x ; T y ), we check if T y indeed reads object m produced by T x
 during execution. As illustrated in Figure 9, there are two cases in which T y could
 read an inconsistent copy of m, and we prove by contradiction that both of them
-are impossible. We assume that T y is scheduled on processor P y and T x is scheduled
+are impossible. we assume that T y is scheduled on processor P y and T x is scheduled
 on P x .
 Time
 Time
@@ -725,14 +751,14 @@ Fig. 9. An illustration of the two cases in proving Theorem 4.
 -Case 1 (Sender-side inconsistency): If P y 6= P x , after execution of T x , P x tries to
 send m to P y . This message may be suspended because the destination address
 may not be available. Since buffering is not used, content of m on P x may be
-modified before it is actually sent out to P y at time t.
+modified before This message is actually sent out to P y at time t.
 Assume that this case is true. Let T u be the task that overwrites m on processor
 sent out to P y . Then T u must intend to produce m for another
 task T v on P x . Since execution of T u and T x happens before T v and T y , according
 to Property D2, there must exist a dependence path from T x to T v and from T u
 to T y . According to Property D3, there must exist a dependence path between
 T u and T x .
-Yang and C. Fu
+T. Yang and C. Fu
 If there exists a dependence path from T x to T u , the order among T x ; T u , and T y
 during sequential execution must be T x
 
@@ -753,18 +779,20 @@ a contradiction. 2
 6. EXPERIMENTAL RESULTS
 We have implemented the proposed scheduling heuristics and active memory management
 scheme in RAPID on Cray-T3D/T3E and Meiko CS-2. In this section we
-report the performance of our approach on T3E for three irregular programs:
+report the performance of We approach on T3E for three irregular programs:
 -Sparse Cholesky factorization with 2D block data mapping [Rothberg 1992; Rothberg
 and Schreiber 1994; Fu and Yang 1997]. The task graph has a static dependence
 structure as long as the nonzero pattern of a sparse matrix is given at the
 run-time preprocessing stage.
 -Sparse Gaussian Elimination (LU factorization) with partial pivoting. This problem
 has unpredictable dependence and storage structures due to dynamic piv-
-oting. Its parallelization on shared-memory platforms is addressed in Li [1996].
-However, its efficient parallelization on distributed-memory machines still remains
+oting. This problem
+ parallelization on shared-memory platforms is addressed in Li [1996].
+However, This problem
+ efficient parallelization on distributed-memory machines still remains
 an open problem in the scientific computing literature. We have used a static
 factorization approach to estimate the worst-case dependence structure
-and storage need. In Fu and Yang [1996b], we show that this approach does not
+and storage need. In Fu and Yang [1996b], We show that this approach does not
 overestimate the space too much for most of the tested matrices, and the RAPID
 code can deliver breakthrough performance on T3D/T3E. 1
 -Fast Multipole Method (FMM) for simulating the movement of nonuniformly
@@ -776,7 +804,7 @@ this tree. At the end of an iteration, a particle may move from one leaf to anot
 and the computation and communication weights of the DAG which represents
 the FMM computation may change slightly. Since the particle movement is
 normally slow, the DAG representing the FMM computation can be reused for
-many iterations. It has been found [Jiao 1996] that static scheduling can be reused
+many iterations. the particle movement has been found [Jiao 1996] that static scheduling can be reused
 for approximately 100 iterations without too much performance degradation. A
 We have recently further optimized the code by using a special scheduling mechanism and eliminating
 RAPID control overhead, and set a new performance record [Shen et al. 1998].
@@ -787,16 +815,16 @@ We first examine how the memory-managing scheme impacts parallel performance
 when space is limited. We then study the effectiveness of scheduling heuristics
 in reducing memory requirements. The reason for this presentation order is
 that the proposed scheduling algorithms will not be effective without proper run-time
-memory management. This presentation order also allows us to separate the
+memory management. this presentation order also allows us to separate the
 impact of run-time memory management and new scheduling algorithms.
-The T3E machine we use has 128MB memory per node, and the BLAS-3 GEMM
+The T3E machine We use has 128MB memory per node, and the BLAS-3 GEMM
 routine [Dongarra et al. 1988] can achieve 388 megaflops. The RMA primitive
 SHMEM PUT can achieve 0.5-2-s overhead with 500MB/sec. peak bandwidth.
 The test matrices used in this article are Harwell-Boeing matrix BCSSTK29 arising
 from structural engineering analysis for sparse Cholesky, and the "goodwin" matrix
-from a fluid mechanics problem for sparse LU. These matrices are of medium size 2
+from a fluid mechanics problem for sparse LU. The test matrices used in this article are of medium size 2
 and solvable with any one of the three scheduling heuristics so that we can compare
-their performance. For FMM, we have used a distribution of 64K particles.
+The test matrices used in this article performance. For FMM, we have used a distribution of 64K particles.
 Experiments with other test cases reach similar conclusions.
 In reporting parallel time under different memory constraints, we manually control
 the available memory space on each processor to be 75%, 50%, 40%, or 25%
@@ -813,7 +841,7 @@ maximum value among all processors.
 Fig. 10. Speedups without memory optimization. (a) Sparse Cholesky. (b) FMM.
 2 BCSSTK29 is of dimension 13,992 and has 1.8 million nonzeros including fill-ins; goodwin is of
 dimension 7320 and has 3.5 million nonzeros including fill-ins.
-Yang and C. Fu
+T. Yang and C. Fu
 
 Table
 
@@ -825,17 +853,17 @@ performance of RAPID on T3E without using any memory optimization for the
 three test programs. This version of RAPID does not recycle space at the executor
 stage. The results serve as a comparison basis when assessing the performance
 of our memory management scheme. Note that the speedups for Cholesky and
-FMM are compared with high-quality sequential code, and the results are consistent
+FMM are compared with high-quality sequential code, and The results are consistent
 with the previous work [Rothberg 1992; Jiao 1996]. The speedup for Cholesky
 is reasonable, since we deal with sparse matrices. The speedup for FMM is high, because
 leaf nodes of an FMM hierarchical tree are normally computation-intensive
-and have sufficient parallelism. For sparse LU, since our approach uses a static
-symbolic factorization which overestimates computation, we only list the megaflops
-performance. In calculating megaflops, we use more accurate operation counts from
+and have sufficient parallelism. For Sparse LU, since our approach uses a static
+symbolic factorization which overestimates computation, our only list the megaflops
+performance. In calculating megaflops, our use more accurate operation counts from
 SuperLU [Li 1996] and divide them by corresponding numerical factorization time.
 RAPID with Active Memory Management. Table III examines performance
 degradation after using active memory management. RCP is still used for task
-ordering, and we show later on how much improvement on space efficiency can be
+ordering, and RCP show later on how much improvement on space efficiency can be
 obtained by using DTS and MPO. The results in this table are for sparse Cholesky
 (BCSSTK29), sparse LU (goodwin), and FMM under different space constraints.
 Column "PT inc." is the ratio of parallel time increase after using our memory management
@@ -847,7 +875,8 @@ degradation increases as the number of processors increases and the available me
 space decreases, because more overhead is contributed by address notification
 and space recycling. However, degradation is reasonable considering the amount
 of memory saved. For example, the memory management scheme can save 60% of
-space for Cholesky, while the parallel time is degraded by 64-93%. Observe that
+space for Cholesky
+, while the parallel time is degraded by 64-93%. Observe that
 a schedule is more likely to be executable under reduced memory capacity when
 the number of processors increases. This is because more processors lead to more
 volatile objects on each processor, which gives the memory management scheme
@@ -874,15 +903,16 @@ FMM 75% 50% 40%
 P=32 2.00 -11.5% 3.00 11.5% 5.00 18.5%
 is that although computation associated with leaf nodes of a particle partitioning
 tree is intensive, it does not mix much with intensive communication incurred in
-the downward and upward passes. Compared with Cholesky and LU, there are
+the downward and upward passes. Compared with Cholesky
+ and LU, there are
 more interprocessor messages in FMM during the downward and upward passes,
 and the insertion of memory-managing activities enlarges gaps between consecutive
 communication messages, which leads to less network contention.
-Overhead of MAP. There are three types of memory management activities that
+Overhead of #MAP PT. There are three types of memory management activities that
 result in time increase: RA, CQ, and MAP. Through the experiments we have
-found that the delivery of address packages by an MAP has never been hindered
+found that the delivery of address packages by an #MAP PT has never been hindered
 by waiting for the previous content of address buffers to be consumed. Table IV
-reports the overhead imposed by MAPs. It is clear that the overhead is insignificant
+reports the overhead imposed by MAPs. It is clear that Overhead of MAP is insignificant
 compared with the total time increase studied in Table III. However, this activity
 and frequent address checking/delivering operations prolong message sending and
 cause the execution delay of tasks on critical paths.
@@ -931,12 +961,15 @@ Figure
 
 11 shows the memory reduction ratios of the three scheduling algorithms for
 Cholesky, LU, and FMM. The uppermost curve in each graph is for S 1 =p, which is
-the perfect memory scalability. The figure shows that both MPO and DTS significantly
+the perfect memory scalability. Figure
+
+11 shows that both MPO and DTS significantly
 reduce the memory requirement while DTS has a memory requirement close
 to the optimum in the Cholesky and LU cases. This is consistent with Corollaries 1
 and 2. On the other hand, RCP is very time efficient, but not memory scalable,
-particularly for sparse LU. For FMM, we find that the DTS algorithm results in a
-single slice, i.e., all tasks belong to the same slice. The reason is that there are a lot
+particularly for Sparse LU. For FMM, we find that the DTS algorithm results in a
+single slice, i.e., all tasks belong to a
+single slice. The reason is that there are a lot
 T. Yang and C. Fu \Delta 23
 of dependencies among tasks, so DTS is actually reduced to RCP. Thus, this experiment
 shows that if we allow the complexity to increase from O(e(log(vm))+v log v)
@@ -958,22 +991,23 @@ FMM 100% 75% 50% 40% 25%
 
 Table
 
-shows actual parallel time increase when switching from RCP to MPO.
-The average increase is reasonable. Sometimes MPO schedules outperform RCP
-schedules even though the predicted parallel time of RCP is shorter. This is because
+shows actual parallel time increase when switching from RCP to MPO (RCP vs. MPO).
+Table
+
+V. Increase of Parallel Time from RCP to MPO (RCP vs. MPO) is reasonable. Sometimes MPO (RCP vs. MPO) schedules outperform RCPschedules even though the predicted parallel time of RCP is shorter. This is because
 although MPO does not use as much critical-path information as RCP does, it
 reduces the number of MAPs needed, and this can improve execution efficiency.
 Furthermore, reusing an object as soon as possible potentially improves caching
 performance. These factors are mixed together, making actual execution time of
 MPO schedules competitive to RCP.
-DTS is aggressive in memory saving, but it does not utilize the critical-path information
+DTS is aggressive in memory saving, but DTS does not utilize the critical-path information
 in computation slicing. Table VI shows time slowdown using DTS instead
 of MPO. It is clear that MPO substantially outperforms DTS in terms of execution
 time, even though DTS is more efficient in memory usage. The difference is especially
 significant for a large number of processors. This is because MPO optimizes
 both memory usage and parallel time. However, there are times when we need
 DTS. For instance, in the LU case with 25% available memory, the DTS schedule
-Yang and C. Fu
+T. Yang and C. Fu
 
 Table
 
@@ -1010,7 +1044,7 @@ T. Yang and C. Fu \Delta 25
 using the RAPID LU code was e40r0100, which contains 9.58 million nonzeros
 with fill-ins. Using the run-time active memory management and DTS scheduling
 algorithm, RAPID is able to solve a larger matrix called ex11 with 26.8 million
-nonzeros, and it achieves 978.5 megaflops on 64 T3E nodes. In terms of single-node
+nonzeros, and RAPID achieves 978.5 megaflops on 64 T3E nodes. In terms of single-node
 performance, we get 38.7 megaflops per node on 16 nodes and 13.7 megaflops per
 node on 64 nodes. Considering that the code has been parallelized by a software
 tool, these numbers are very good for T3E.
@@ -1025,12 +1059,12 @@ run-time system achieve good time and space efficiency. The theoretical analysis
 on correctness and memory performance corroborates the design of our techniques.
 Experiments with sparse matrix and FMM code show that the overhead introduced
 by memory management activities is reasonable. The MPO heuristic is competitive
-to the critical-path scheduling algorithm, and it delivers good memory and time
-efficiency. The DTS is more aggressive in memory saving; it achieves competitive
-time efficiency when slice merging is conducted, and its space efficiency can be
+to the critical-path scheduling algorithm, and The MPO heuristic delivers good memory and time
+efficiency. DTS DTS is more aggressive in memory saving; DTS achieves competitive
+time efficiency when slice merging is conducted, and DTS space efficiency can be
 further improved by incorporating MPO for slice scheduling.
-It should be noted that the proposed techniques are useful for semiautomatic programming
-tools such as RAPID. It is still challenging to develop a fully automatic
+DTS should be noted that the proposed techniques are useful for semiautomatic programming
+tools such as RAPID. DTS is still challenging to develop a fully automatic
 system. In the future, it is interesting to study automatic generation of coarse-grained
 DAGs from sequential code [Cosnard and Loi 1995], extend our results
 for more complicated dependence structures [Chakrabarti et al. 1995; Girkar and
@@ -1045,11 +1079,12 @@ memory hierarchies needs further study.
 ACKNOWLEDGEMENTS
 
 We would like to thank Apostolos Gerasoulis, Keshav Pingali, Ed Rothberg, Vivek
-Sarkar, Rob Schreiber, and Kathy Yelick for their comments on this work, the
-anonymous referees, and Siddhartha Chatterjee, and Vegard Holmedahl for their
+Sarkar, Rob Schreiber, and Kathy Yelick for Rob Schreiber, and Kathy Yelick comments on this work, the
+anonymous referees, and Siddhartha Chatterjee, and Vegard Holmedahl for the
+anonymous referees, and Siddhartha Chatterjee, and Vegard Holmedahl
 valuable feedbacks to improve the presentation. Theorem 2 was pointed out by one
-of the referees. We also thank Xiangmin Jiao for his help in implementing RAPID,
-Jia Jiao for providing us the FMM code and test cases, and Xiaoye Li for providing
+of the referees. We also thank Xiangmin Jiao for Xiangmin Jiao help in implementing RAPID,
+Jia Jiao for providing We the FMM code and test cases, and Xiaoye Li for providing
 the LU test matrices.
 
 
@@ -1132,4 +1167,4 @@ Scheduling and run-time support for parallel irregular computations
 --CTR
 Roxane Adle , Marc Aiguier , Franck Delaplace, Toward an automatic parallelization of sparse matrix computations, Journal of Parallel and Distributed Computing, v.65 n.3, p.313-330, March 2005
 Heejo Lee , Jong Kim , Sung Je Hong , Sunggu Lee, Task scheduling using a block dependency DAG for block-oriented sparse Cholesky factorization, Proceedings of the 2000 ACM symposium on Applied computing, p.641-648, March 2000, Como, Italy
-Heejo Lee , Jong Kim , Sung Je Hong , Sunggu Lee, Task scheduling using a block dependency DAG for block-oriented sparse Cholesky factorization, Parallel Computing, v.29 n.1, p.135-159, January
+Heejo Lee , Jong Kim , Sung Je Hong , Sunggu Lee, Task scheduling using a block dependency DAG DAG for block-oriented sparse Cholesky factorization, Parallel Computing, v.29 n.1, p.135-159, January

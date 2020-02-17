@@ -1,22 +1,23 @@
 --T
 Fast priority queues for cached memory.
 --A
-The cache hierarchy prevalent in todays high performance processors has to be taken into account in order to design algorithms that perform well in practice. This paper advocates the adaption of external memory algorithms to this purpose. This idea and the practical issues involved are exemplified by engineering a fast priority queue suited to external memory and cached memory that is based on <i>k</i>-way merging. It improves previous external memory algorithms by constant factors crucial for transferring it to cached memory. Running in the cache hierarchy of a workstation the algorithm is at least two times faster than an optimized implementation of binary heaps and 4-ary heaps for large inputs.
+The cache hierarchy prevalent in todays high performance processors has to be taken into account in order to design algorithms that perform well in practice. This paper advocates the adaption of external memory algorithms to this purpose. This idea and the practical issues involved are exemplified by engineering a fast priority queue suited to external memory and cached memory that is based on <i>k</i>-way merging. This idea improves previous external memory algorithms by constant factors crucial for transferring This idea to cached memory. Running in the cache hierarchy of a workstation the algorithm is at least two times faster than an optimized implementation of binary heaps and 4-ary heaps for large inputs.
 --B
 Introduction
 The mainstream model of computation used by algorithm designers in the last
 half century [18] assumes a sequential processor with unit memory access cost.
 However, the mainstream computers sitting on our desktops have increasingly
-deviated from this model in the last decade [10, 11, 13, 17, 19]. In particular, we
+deviated from The mainstream model of computation used by algorithm designers in the last
+half century in the last decade [10, 11, 13, 17, 19]. In particular, we
 usually distinguish at least four levels of memory hierarchy: A file of multi-ported
 registers, can be accessed in parallel in every clock-cycle. The first-level cache can
-still be accessed every one or two clock-cycles but it has only few parallel ports
+still be accessed every one or two clock-cycles but The first-level cache has only few parallel ports
 and only achieves the high throughput by pipelining. Therefore, the instruction
 level parallelism of super-scalar processors works best if most instructions use
 registers only. Currently, most first-level caches are quite small (8-64KB) in order
-to be able to keep them on chip and close to the execution unit. The second-level
+to be able to keep most first-level caches on chip and close to the execution unit. The second-level
 cache is considerably larger but also has an order of magnitude higher latency.
-If it is off-chip, its size is mainly constrained by the high cost of fast static RAM.
+If it is off-chip, it size is mainly constrained by the high cost of fast static RAM.
 The main memory is build of high density, low cost dynamic RAM. Including
 all overheads for cache miss, memory latency and translation from logical over
 virtual to physical memory addresses, a main memory access can be two orders
@@ -48,7 +49,8 @@ will prefer algorithms which use the cache as economically as possible. Finally,
 we also discuss the remaining levels of the memory hierarchy but only do that
 informally in order to keep the analysis focussed on the most important aspects.
 In Section 2 we present the basic algorithm for our sequence heaps data
-structure for priority queues 1 . The algorithm is then analyzed in Section 3 using
+structure for priority queues 1 . the basic algorithm for our sequence heaps data
+structure for priority queues 1 is then analyzed in Section 3 using
 the external memory model. For some m in \Theta(M ), k in \Theta(M=B), any constant
 I
 can perform I insertions and up to I
@@ -59,7 +61,8 @@ In Section 4 we present refinements which take the other levels of the memory
 hierarchy into account, ensure almost optimal memory efficiency and where the
 amortized work performed for an operation depends only on the current queue
 size rather than the total number of operations. Section 5 discusses an implementation
-of the algorithm on several architectures and compares the results to
+of the basic algorithm for our sequence heaps data
+structure for priority queues 1 on several architectures and compares the results to
 other priority queue data structures previously found to be efficient in practice,
 namely binary heaps and 4-ary heaps.
 Related Work
@@ -73,7 +76,7 @@ queue to reduce the number of I/Os by another factor of \Theta(log M
 the lower bound of O((I=B) log M=B I=M) I/Os for I operations (amortized).
 But using a full-fledged search tree for implementing priority queues may be
 considered wasteful. The heap-like data structures by Brodal and Katajainen,
-Crauser et. al. and Fadel et. al. [3, 7, 8] are more directly geared to priority queues
+Crauser et. al. al. [3, 7, 8] are more directly geared to priority queues
 and achieve the same asymptotic bounds, one [3] even per operation and not in
 an amortized sense. Our sequence heap is very similar. In particular, it can be
 considered a simplification and reengineering of the "improved array-heap" [7].
@@ -92,7 +95,9 @@ next m deletions can then be served from a buffer in constant time.
 To allow an arbitrary mix of insertions and deletions, we maintain a separate
 binary heap of size up to m which holds the recently inserted elements. Deletions
 have to check whether the smallest element has to come from this insertion
-buffer. When this buffer is full, it is sorted and the resulting sequence becomes
+buffer. When this insertion
+buffer is full, this insertion
+buffer is sorted and the resulting sequence becomes
 one of sequences for the k-way merge.
 Up to this point, sequence heaps and the earlier data structures [3, 7, 8] are
 almost identical. Most differences are related to the question how to handle
@@ -104,14 +109,14 @@ sequence of size up to km [3, 7].
 Now the question arises how to handle the larger sequences. We adopt the approach
 used for improved array-heaps [7] to employ R merge groups G
 holds up to k sequences of size up to mk i\Gamma1 . When group G i overflows,
-all its sequences are merged and the resulting sequence is put into group G i+1 .
+all When group G sequences are merged and the resulting sequence is put into group G i+1 .
 Each group is equipped with a group buffer of size m to allow batched deletion
 from the sequences. The smallest elements of these buffers are deleted in batches
-of size m 0 - m. They are stored in the deletion Buffer. Fig. 1 summarizes the
+of size m 0 - m. The smallest elements of these buffers are stored in the deletion Buffer. Fig. 1 summarizes the
 data structure. We now have enough information to explain how deletion works:
 DeleteMin: The smallest elements of the deletion buffer and insertion buffer
 are compared and the smaller one is deleted and returned. If this empties the
-deletion buffer, it is refilled from the group buffers using an R-way merge. Before
+deletion buffer, this is refilled from the group buffers using an R-way merge. Before
 k-merge k-merge k-merge
 R-merge
 insert heap
@@ -125,7 +130,7 @@ buffer 2
 deletion buffer
 Fig. 1. Overview of the data structure for sequence heaps for
 the refill, group buffers with less than m 0 elements are refilled from the sequences
-in their group (if the group is nonempty).
+in the refill, group buffers with less than m 0 elements group (if the group is nonempty).
 DeleteMin works correctly provided the data structure fulfills the heap prop-
 erty, i.e., elements in the group buffers are not smaller than elements in the
 deletion buffer, and, in turn, elements in a sorted sequence are not smaller than
@@ -135,9 +140,9 @@ Insert: New elements are inserted into the insert heap. When its size reaches m
 its elements are sorted (e.g. using merge sort or heap sort). The result is then
 merged with the concatenation of the deletion buffer and the group buffer 1.
 The smallest resulting elements replace the deletion buffer and group buffer 1.
-The remaining elements form a new sequence of length at most m. The new
+The smallest resulting elements form a new sequence of length at most m. The new
 sequence is finally inserted into a free slot of group G 1 . If there is no free slot
-initially, G 1 is emptied by merging all its sequences into a single sequence of size
+initially, G 1 is emptied by merging all G 1 sequences into a single sequence of size
 at most km which is then put into G 2 . The same strategy is used recursively to
 necessary. When group GR overflows, R is incremented
 and a new group is created. When a sequence is moved from one group
@@ -145,14 +150,15 @@ to the other, the heap property may be violated. Therefore, when G 1 through G i
 have been emptied, the group buffers 1 through i+1 are merged, and put into G 1 .
 The latter measure is one of the few differences to the improved array heap
 where the invariant is maintained by merging the new sequence and the group
-buffer. This measure almost halves the number of required I/Os.
-For cached memory, where the speed of internal computation matters, it s
+buffer. The latter measure almost halves the number of required I/Os.
+For cached memory, where the speed of internal computation matters, The latter measure s
 also crucial how to implement the operation of k-way merging. We propose to
 use the "loser tree" variant of the selection tree data structure described by
-Knuth [14, Section 5.4.1]: When there are k 0 nonempty sequences, it consists
+Knuth [14, Section 5.4.1]: When there are k 0 nonempty sequences, The latter measure consists
 of a binary tree with k 0 leaves. Leaf i stores a pointer to the current element
 of sequence i. The current keys of each sequence perform a tournament. The
-winner is passed up the tree and the key of the loser and the index of its leaf
+winner is passed up the tree and the key of the loser and the index of The
+winner leaf
 are stored in the inner node. The overall winner is stored in an additional node
 above the root. Using this data structure, the smallest element can be identified
 and replaced by the next element in its sequence using dlog comparisons.
@@ -173,7 +179,7 @@ for memory efficiency and many accesses to relatively small queues are
 postponed to Section 4.
 We need the following observation on the minimum intervals between tree
 emptying operations in several places:
-Lemma 1. Group G i can overflow at most every m(k
+Lemma 1. When group G i can overflow at most every m(k
 Proof. The only complication is the slot in group G 1 used for invalid group
 buffers. Nevertheless, when groups G 1 through G i contain k sequences each, this
 can only happen if
@@ -199,30 +205,34 @@ log k
 I/Os suffice to perform any sequence of I inserts and up to I deleteMins on
 a sequence heap.
 Proof. Let us first consider the I/Os performed for an element moving on the
-following canonical data path: It is first inserted into the insert buffer and then
-written to a sequence in group G 1 in a batched manner, i.e, we charge 1=B I/Os
-to the insertion of this element. Then it is involved in emptying groups until it
-arrives in group GR . For each emptying operation it is involved into one batched
-read and one batched write, i.e., we charge 2(R \Gamma 1)=B I/Os for tree emptying
-operations. Eventually, it is read into group buffer R. We charge 1=B I/Os for
-this. All in all, we get a charge of 2R=B I/Os for each insertion.
+following canonical data path: the I/Os is first inserted into the insert buffer and then
+written to a sequence in group G 1 in a batched manner, i.e, us charge 1=B I/Os
+to the insertion of this element. Then I/Os
+to the insertion of this element is involved in emptying groups until I/Os
+to the insertion of this element
+arrives in group GR . For each emptying operation I/Os
+to the insertion of this element is involved into one batched
+read and one batched write, i.e., us charge 2(R \Gamma 1)=B I/Os for tree emptying
+operations. Eventually, I/Os for tree emptying
+operations is read into group buffer R. us charge 1=B I/Os for
+this. All in all, us get a charge of 2R=B I/Os for each insertion.
 What remains to be shown is that the remaining I/Os only contribute lower
 order terms or replace I/Os done on the canonical path. When an element travels
-through group GR\Gamma1 then 2=B I/Os must be charged for writing it to group
-buffer later reading it when refilling the deletion buffer. However, the
-2=B I/Os saved because the element is not moved to group GR can pay for this
+through group GR\Gamma1 then 2=B I/Os must be charged for writing I/Os to group
+buffer later reading I/Os when refilling the deletion buffer. However, I/Os saved because the element is not moved to group GR can pay for this
 charge. When an element travels through group buffer i - R \Gamma 2, the additional
 saved compared to the canonical path can also pay for the cost
 of swapping loser tree data for group G i . The latter costs 2k(B
 which can be divided among at least removed in
 one batch.
-When group buffer i - 2 becomes invalid so that it must be merged with
+When group buffer i - 2 becomes invalid so that When group buffer i - 2 must be merged with
 other group buffers and put back into group G 1 , this causes a direct cost of
 O(m=B) I/Os and we must charge a cost of O(im=B) I/Os because these elements
-are thrown back O(i) steps on their path to the deletion buffer. Although
+are thrown back O(i) steps on these elements
+ path to the deletion buffer. Although
 an element may move through all the R groups we do not need to charge
 O(Rm=B) I/Os for small i since this only means that the shortcut originally
-taken by this element compared to the canonical path is missed. The remaining
+taken by an element compared to the canonical path is missed. The remaining
 overhead can be charged to the m(k \Gamma 1)k j \Gamma2 insertions which have filled
 group G i\Gamma1 . Summing over all groups, each insertions gets an additional charge
 of
@@ -238,11 +248,12 @@ element moving on the canonical path, we get an overall charge of O(log k=m)+
 Overall we get a charge of 2R=B+O(1=k+logk=m). per insertion.
 We now estimate the number of key comparisons performed. We believe this
 is a good measure for the internal work since in efficient implementations of
-priority queues for the comparison model, this number is close to the number
+priority queues for the comparison model, the number of key comparisons is close to the number
 of unpredictable branch instructions (whereas loop control branches are usually
 well predictable by the hardware or the compiler) and the number of key comparisons
 is also proportional to the number of memory accesses. These two types
-of operations often have the largest impact on the execution time since they are
+of operations often have the largest impact on the execution time since These two types
+of operations are
 the most severe limit to instruction parallelism in a super-scalar processor. In
 order to avoid notational overhead by rounding, we also assume that k and m
 are powers of two and that I is divisible by mk R\Gamma1 . A more general bound would
@@ -262,7 +273,7 @@ per element. Elements removed from the insertion buffer take up to
 log m comparisons. But those need not be counted since we save all further
 comparisons on them. Similarly, refills of group buffers other than R have already
 been accounted for by our conservative estimate on group emptying cost.
-Group GR only has degree I=(mk me comparisons
+group GR only has degree I=(mk me comparisons
 per element suffice. Using similar arguments as in the proof of Theorem 1
 it can be shown that inserting sequences into the loser trees leads to a charge
 of O((log k)=m) comparisons per insertion and invalidating group buffers costs
@@ -282,9 +293,8 @@ to be about a factor R larger however.
 Refinements
 Memory Management: A sequence heap can be implemented in a memory efficient
 way by representing sequences in the groups as singly linked lists of memory
-pages. Whenever a page runs empty, it is pushed on a stack of free pages. When
-a new page needs to be allocated, it is popped from the stack. If necessary, the
-stack can be maintained externally except for a single buffer block. Using pages of
+pages. Whenever a page runs empty, a page is pushed on a stack of free pages. When
+a new page needs to be allocated, a page is popped from a stack of free pages. If necessary, a stack of free pages can be maintained externally except for a single buffer block. Using pages of
 size p, the external sequences of a sequence heap with R groups and N elements
 occupy at most N + kpR memory cells. Together with the measures described
 above for keeping the number of groups small, this becomes N +kp log k N=m. A
@@ -299,18 +309,20 @@ i-I log k N i =m
 can be considerably less than I log k I=m. However, we believe that for most applications
 which require large queues at all, the difference will not be large enough
 to warrant significant constant factor overheads or algorithmic complications.
-We have therefore chosen to give a detailed analysis of the basic algorithm first
+we have therefore chosen to give a detailed analysis of the basic algorithm first
 and to outline an adaption yielding the refined asymptotic bound here: Similar
 to [7], when a new sequence is to be inserted into group G i and there is no free
 slot, we first look for two sequences in G i whose sizes sum to less than mk
-elements. If found, these sequences are merged, yielding a free slot. The merging
-cost can be charged to the deleteMins which caused the sequences to get so
-small. Now G i is only emptied when it contains at least mk i =2 elements and
+elements. If found, two sequences in G i whose sizes sum to less than mk
+elements are merged, yielding a free slot. The merging
+cost can be charged to the deleteMins which caused two sequences in G i whose sizes sum to less than mk
+elements to get so
+small. Now G i\Gamma1 i is only emptied when G i\Gamma1 contains at least mk i =2 elements and
 the I/Os involved can be charged to elements which have been inserted when G i
 had at least size mk i\Gamma1 =4. Similarly, we can "tidy up" a shrinking queue: When
 there are R groups and the total size of the queue falls below mk
 group GR and insert the resulting sequence into group GR\Gamma1 (if there is no free
-slot in group GR\Gamma1 merge any two of its sequences first).
+slot in group GR\Gamma1 merge any two of GR\Gamma1 sequences first).
 Registers and Instruction Cache: In all realistic cases we have R - 4 groups.
 Therefore, instruction cache and register file are likely to be large enough to
 efficiently support a fast R-way merge routine for refilling the deletion buffer
@@ -318,13 +330,15 @@ which keeps the current keys of each stream in registers.
 Second Level Cache: So far, our analysis assumes only a single cache level. Still,
 if we assume this level to be the first level cache, the second level cache may have
 some influence. First, note that the group buffers and the loser trees with their
-group buffers are likely to fit in second level cache. The second level cache may
+group buffers are likely to fit in second level cache. the second level cache may
 also be large enough to accommodate all of group G 1 reducing the costs for 2=B
 I/Os per insert. We get a more interesting use for the second level cache if we
-assume its bandwidth to be sufficiently high to be no bottleneck and then look
+assume we
+ bandwidth to be sufficiently high to be no bottleneck and then look
 at inputs where deletions from the insertion buffer are rare (e.g. sorting). Then
 we can choose is the size of the second level cache. Insertions
-have high locality if the log m cache lines currently accessed by them fit into first
+have high locality if the log m cache lines currently accessed by Insertions
+ fit into first
 level cache and no operations on deletion buffers and group buffers use random
 access.
 High Bandwidth Disks: When the sequence heap data structure is viewed as
@@ -360,7 +374,7 @@ turned out to be (roughly in this order): Making live for the compiler
 use of sentinels, i.e., dummy elements at the ends of sequences and heaps
 which save special case tests; loop unrolling.
 5.1 Choosing Competitors
-When an author of a new code wants to demonstrate its usefulness experimen-
+When an author of a new code wants to demonstrate an author of a new code usefulness experimen-
 tally, great care must be taken to choose a competing code which uses one of
 the best known algorithms and is at least equally well tuned. We have chosen
 implicit binary heaps and aligned 4-ary heaps. In a recent study [15], these two
@@ -370,7 +384,7 @@ older study [12]. Not least because we need the same code for the insertion
 buffer, binary heaps were coded perhaps even more carefully than the remaining
 components - binary heaps are the only part of the code for which we took care
 that the assembler code contains no unnecessary memory accesses, redundant
-computations and a reasonable instruction schedule. We also use the bottom
+computations and a reasonable instruction schedule. we also use the bottom
 up heuristics for deleteMin: Elements are first lifted up on a min-path from
 the root to a leaf, the leftmost element is then put into the freed leaf and is
 finally bubbled up. Note that binary heaps with this heuristics perform only
@@ -456,17 +470,17 @@ The measurements in figures 2 through 5 largely agree with the most important
 observation of LaMarca and Ladner [15]: since the number of cache faults is about
 halved compared to binary heaps, 4-ary heaps have a more robust behavior for
 large queues. Still, sequence heaps are another factor between 2:5 and 2:9 faster
-for very large heaps since they reduce the number of cache faults even more.
+for very large heaps since sequence heaps reduce the number of cache faults even more.
 However, the relative performance of our binary heaps and 4-ary heaps seems to
 be a more complicated issue than in [15]. Although this is not the main concern
-of this paper we would like to offer an explanation:
+of this paper our would like to offer an explanation:
 Although the bottom up heuristics improves both binary heaps and 4-ary
 heaps, binary heaps profit much more. Now, binary heaps need less instead of
 more comparisons than 4-ary heaps. Concerning other instruction counts, 4-ary
 5 For example, in older studies, heaps and loser trees may have looked bad compared
 to pointer based data structures if the compiler generates integer division operations
 for halving an index or integer multiplications for array indexing.
-heaps only save on memory write instructions while they need more complicated
+heaps only save on memory write instructions while heaps need more complicated
 index computations.
 Apparently, on the Alpha which has the highest clock speed of the machines
 considered, the saved write instructions shorten the critical path while the index
@@ -482,7 +496,7 @@ well beyond the size of the second level cache. We suspect some problems with
 virtual address translation which also haunted the binary heaps in an earlier
 version.
 5.4 Long Operation Sequences
-Our worst case analysis predicts a certain performance degradation if the number
+We worst case analysis predicts a certain performance degradation if the number
 of insertions I is much larger than the size of the heap N . However, in Fig. 6 it
 can be seen that the contrary can be true for random keys.2060100
 T(insert))/log
@@ -492,15 +506,16 @@ s
 (deleteMin (insert deleteMin)
 16g. For essentially
 get heap-sort with some overhead for maintaining useless group and deletion
-buffers. In Fig. 2 we used
+buffers. In Fig. 2 We used
 For a family of instances with I = 33N where the heap grows and shrinks
-very slowly, we are almost two times faster than for I = N . The reason is that
+very slowly, We are almost two times faster than for I = N . The reason is that
 new elements tend to be smaller than most old elements (the smallest of the old
 elements have long been removed before). Therefore, many elements never make
-it into group G 1 let alone the groups for larger sequences. Since most work is
-performed while emptying groups, this work is saved. A similar locality effect has
+many elements into group G 1 let alone the groups for larger sequences. Since most work is
+performed while emptying groups, most work is saved. A similar locality effect has
 been observed and analyzed for the Fishspear data structure [9]. Binary heaps or
-4-ary heaps do not have this property. (They even seem to get slightly slower.)
+4-ary heaps do not have this property. (the Fishspear data structure [9]. Binary heaps or
+4-ary heaps even seem to get slightly slower.)
 For locality effect cannot work. So that these instances should come
 close to the worst case.
 6 Discussion
@@ -516,7 +531,7 @@ which algorithm is best. For example, for monotonic queues with integer keys,
 radix heaps look promising. Either in a simplified, average case efficient form
 known as calendar queues [4] or by adapting external memory radix heaps [6] to
 cached memory in order to reduce cache faults.
-We have outlined how the algorithm can be adapted to multiple levels of
+Our have outlined how the algorithm can be adapted to multiple levels of
 memory and parallel disks. On a shared memory multiprocessor, it should also be
 possible to achieve some moderate speedup by parallelization (e.g. one processor
 for the insertion and deletion buffer and one for each group when refilling group
@@ -526,7 +541,8 @@ Acknowledgements
 
 I would like to thank Gerth Brodal, Andreas Crauser, Jyrki Katajainen and Ulrich
 Meyer for valuable suggestions. Ulrich R-ude from the University of Augsburg
-provided access to an Alpha processor.
+provided access to an Alpha
+ processor.
 
 
 

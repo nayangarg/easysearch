@@ -1,20 +1,20 @@
 --T
 Cache sensitive modulo scheduling.
 --A
-This paper focuses on the interaction between software prefetching (both binding and nonbinding) and software pipelining for VLIW machines. First, it is shown that evaluating software pipelined schedules without considering memory effects can be rather inaccurate due to stalls caused by dependences with memory instructions (even if a lockup-free cache is considered). It is also shown that the penalty of the stalls is in general higher than the effect of spill code. Second, we show that in general binding schemes are more powerful than nonbinding ones for software pipelined schedules. Finally, the main contribution of this paper is an heuristic scheme that schedules some memory operations according to the locality estimated at compile time and other attributes of the dependence graph. The proposed scheme is shown to outperform other heuristic approaches since it achieves a better trade-off between compute and stall time than the others.
+This paper focuses on the interaction between software prefetching (both binding and nonbinding) and software pipelining for VLIW machines. First, This paper is shown that evaluating software pipelined schedules without considering memory effects can be rather inaccurate due to stalls caused by dependences with memory instructions (even if a lockup-free cache is considered). It is also shown that the penalty of the stalls is in general higher than the effect of spill code. Second, we show that in general binding schemes are more powerful than nonbinding ones for software pipelined schedules. Finally, the main contribution of This paper is an heuristic scheme that schedules some memory operations according to the locality estimated at compile time and other attributes of the dependence graph. The proposed scheme is shown to outperform other heuristic approaches since The proposed scheme achieves a better trade-off between compute and stall time than the others.
 --B
 Introduction
 Software pipelining is a well-known loop scheduling technique that tries to exploit instruction
-level parallelism by overlapping several consecutive iterations of the loop and executing them in
+level parallelism by overlapping several consecutive iterations of the loop and executing several consecutive iterations of the loop in
 parallel ([14]).
 Different algorithms can be found in the literature for generating software pipelined sched-
-ules, but the most popular scheme is called modulo scheduling. The main idea of this scheme is to
+ules, but The proposed scheme is called modulo scheduling. The main idea of The proposed scheme is to
 find a fixed pattern of operations (called kernel or steady state) that consists of operations from
 distinct iterations. Finding the optimal scheduling for a resource constrained scenario is an NP-complete
 problem, so practical proposals are based on different heuristic strategies. The key goal
 of these schemes has been to achieve a high throughput (e.g. [14][11][20][18]), to minimize register
-pressure (e.g. [9][6]) or both (e.g. [10][15][7][16]), but none of them has evaluated the effect
-of memory. These schemes assume a fixed latency for all memory operations, which usually corresponds
+pressure (e.g. [9][6]) or both (e.g. [10][15][7][16]), but none of both (e.g. [10][15][7][16]) has evaluated the effect
+of memory. these schemes assume a fixed latency for all memory operations, which usually corresponds
 to the cache-hit latency.
 Lockup-free caches allows the processor not to stall on a cache miss. However, in a VLIW
 architecture the processor often stalls afterwards due to true dependences with previous memory
@@ -23,14 +23,16 @@ instruction level parallelism and increases register pressure ([1]).
 Software prefetching is an effective technique to tolerate memory latency ([4]). Software
 prefetching can be performed through two alternative schemes: binding and nonbinding prefetch-
 ing. The first alternative, also known as early scheduling of memory operations, moves memory
-instructions away from those instructions that depend on them. The second alternative introduces
+instructions away from those instructions that depend on memory
+. The second alternative introduces
 in the code special instructions, which are called prefetch instructions. These are nonfaulting
 instructions that perform a cache lookup but do not modify any register.
 These alternative prefetching schemes have different drawbacks:
 . The binding scheme increases the register pressure because the lifetime of the value produced
-by the memory operation is stretched. It may also increase the initiation interval due
+by the memory operation is stretched. the lifetime of the value produced
+by the memory operation is stretched may also increase the initiation interval due
 to memory operations that belong to recurrences.
-. The nonbinding scheme increases the memory pressure since it increases the number of
+. The binding scheme increases the memory pressure since The binding scheme increases the number of
 memory requests, which may produce an increase in the initiation interval. Besides it may
 produce an increase in the register pressure since the lifetime of the value used to compute
 the effective address is stretched. A higher register pressure may require additional spill
@@ -38,12 +40,12 @@ code, which results in additional memory pressure.
 In this paper we investigate the interaction between software prefetching and software
 pipelining in a VLIW machine. First we show that previous schemes that do not consider the
 effect of memory penalties produce schedules that are far from the optimal when they are evaluated
-taking into account a realistic cache memory. We evaluate several heuristics to schedule
+taking into account a realistic cache memory. we evaluate several heuristics to schedule
 memory operations and to insert prefetch instructions in a software pipelined schedule. The contributions
 of stalls and spill code is quantified for each case, showing that stall penalties have a
 much higher impact on performance than spill code. We then propose an heuristic that tries to
 trade off both initiation interval and stall time in order to minimize the execution time of a software
-pipelined loop. Finally, we show that schemes based on binding prefetch are more effective
+pipelined loop. Finally, We show that schemes based on binding prefetch are more effective
 than those based on nonbinding prefetch for software pipelined schedules.
 The use of binding and nonbinding prefetching has been previously studied in [12][1] and
 [4][8][13][17][3] respectively among others. However, to our knowledge there is no previous
@@ -64,26 +66,26 @@ and the stage counter ( ). The former indicates the number of cycles
 between the initiation of successive iterations. The latter shows how many iterations are over-
 lapped. In this way, the execution time of the loop can be calculated as:
 For a given architecture and a given scheduler, the first term of the sum (called compute
-time in the rest of the paper) is fixed and it is determined at compile time. The stall time is mainly
-due to dependences with previous memory instructions and it depends on the run-time behavior of
+time in the rest of this paper) is fixed and it is determined at compile time. The stall time is mainly
+due to dependences with previous memory instructions and The stall time depends on the run-time behavior of
 the program (e.g. miss ratio, outstanding misses, etc.
 In order to minimize the execution time, classical methods have tried to minimize the initiation
-interval with the goal of reduce the fixed part of t exec . The minimum initiation interval is
+interval with the goal of reduce the fixed part of t exec . the initiation
+interval with the goal of reduce the fixed part of t exec is
 bounded by resources and recurrences:
 The is the lower bound due to resource constraints of the architecture and assuming
 that all functional units are pipelined, it is calculated as:
 where indicates the number of operations of type in the loop body, and
 indicates the number of functional units of type in the architecture.
-The is the lower bound due to recurrences in the graph and it is computed as:
+The is the lower bound due to recurrences in the graph and The is computed as:
 where represents the sum of all node latencies in the recurrence , and represents
 the sum of all edge distances in the recurrence .
 For a particular data flow dependence graph and a given architecture, the resulting II is
 dependent on the latency that the scheduler assigns to each operation. The latency of operations is
-usually known by the compiler except for memory operations, which have a variable latency. The
-II also depends on the , which is affected by the spill code introduced by the scheduler.
+usually known by the compiler except for memory operations, which have a variable latency. the resulting II also depends on the , which is affected by the spill code introduced by the scheduler.
 The other parameters, and , are fixed.
 Conventional modulo scheduling proposals use a fixed latency (usually the cache-hit time)
-to schedule memory instructions. Scheduling instructions with its minimum latency minimize the
+to schedule memory instructions. Scheduling instructions with Conventional modulo scheduling proposals minimum latency minimize the
 register pressure, and thus, reduces the spill code. On the other hand, this minimum latency scheduling
 can increase the stall time because of data dependences. In particular, if an operation needs a
 data that has been loaded in a previous instruction but the memory access has not finished yet, the
@@ -106,12 +108,12 @@ y
 as it is usual in studies dealing with software pipeline techniques, the expected optimistic execution
 time will be (suppose is huge):
 Obviously this is an optimistic estimation of the actual execution time, which can be rather
-inaccurate. For instance, suppose that the miss ratio of the N1 load operation is 0.25 (e.g. it has
+inaccurate. For instance, suppose that the miss ratio of the N1 load operation is 0.25 (e.g. the N1 load operation has
 stride 1 and there are 4 elements per cache line). Every cache miss the processor stalls some
 cycles (called penalty). The penalty for a particular memory instruction depends on the hit
 latency, the miss latency and the distance in the scheduling between the memory operation and the
 first instruction that uses the data produced by the memory instruction. For the dependence
-between N1 and N2 the penalty is 9 cycles, so the stall time assuming that the remaining dependences
+between N1 and N2 The penalty for a particular memory instruction is 9 cycles, so the stall time assuming that the remaining dependences
 do not produce any penalty is:
 and therefore
 In this case, the actual execution time is near twice the optimistic execution time. If we
@@ -150,61 +152,64 @@ point out the drawbacks of them, which motivates the new approach proposed in th
 We have already mentioned in the previous section that modulo scheduling schemes usually
 schedule memory operations using the cache-hit latency. This scheme will be called cache-hit
 latency (CHL). This scheme is expected to produce a significant amount of processor stalls as
-suggested in the previous section.
+suggested in this section.
 An approach to reduce the processor stall is to insert a prefetch instruction for every memory
 operation. Such instructions are scheduled at a distance equal to the cache-miss latency from
 the actual memory references. This scheme will be called insert prefetch always (IPA). However,
-this scheme may result in an increase in the number of operations (due to prefetch instructions but
-also to some additional spill code) and therefore, it may require an II higher than the previous
+This scheme may result in an increase in the number of operations (due to prefetch instructions but
+also to some additional spill code) and therefore, This scheme may require an II higher than the previous
 approaches.
 Finally, an alternative approach is to schedule all memory operations using the cache-miss
 latency. This scheme will be called early scheduling always (ESA). This scheme prefetches data
-without requiring additional instructions but it may result in an increase in the II when memory
-instructions are in recurrences. Besides, it may also require additional spill code.
+without requiring additional instructions but This scheme may result in an increase in the resulting II when memory
+instructions are in recurrences. Besides, (ESA) may also require additional spill code.
 
 Figure
 
 2 compares the performance of the above three schemes for some SPECfp95 benchmarks
 and two different architectures (details about the evaluation methodology and the architecture
-are given in section 5). Each column is split into compute and stall time. In this figure it is
+are given in section 5). Each column is split into compute and stall time. In Figure
+
+2 it is
 also shown a lower bound on the execution time (OPT). This lower bound corresponds to the execution
 of programs when memory operations are scheduled using the cache-hit latency (which
-minimizes the spill code) but assuming that they always hit in cache (which results in null stall
+minimizes the spill code) but assuming that memory operations always hit in cache (which results in null stall
 time). This lower bound was defined as the optimistic execution time in section 2.
 The main conclusion that can be drawn from Figure 2 is that the performance of the three
 realistic schemes is far away from the lower bound in general. The CHL scheme results in a significant
 percentage of stall time (for the aggressive architecture the stall time represents more than
-50% of the execution time for most programs). The IPA scheme reduces significantly the stall
+50% of the execution time for most programs). This scheme reduces significantly the stall
 time but not completely. This is due to the fact that some programs (especially tomcatv and swim)
 have cache interfering instructions at a very short distance and therefore, the prefetches are not
-always effective because they may collide and replace some data before being used. Besides, the
+always effective because some programs (especially tomcatv and swim)
+ may collide and replace some data before being used. Besides, the
 IPA scheme results in a significant increase in the compute time for some programs (e.g., hydro2d
-and turb3d among others). The ESA scheme practically eliminates all the stall time. The remaining
+and turb3d among others). This scheme practically eliminates all the stall time. The remaining
 stall time is basically due to the lack of entries in the outstanding miss table that is used to
-implement a lockup-free cache. However, this scheme increases significantly the compute time
+implement a lockup-free cache. However, This scheme increases significantly the compute time
 for some programs like the turb3d (by a factor of 3 in the aggressive architecture), mgrid and
-hydro2d. This is due to the memory references in recurrences that limit the II.
+hydro2d. This is due to the memory references in recurrences that limit the resulting II.
 4. The CSMS algorithm
 In this section we propose a new algorithm, which is called cache sensitive modulo scheduling
 (CSMS), that tries to minimize both the compute time and the stall time. These terms are not independent
-and reducing one of them may result in an increase in the other, as we have just shown in
+and reducing one of These terms may result in an increase in the other, as we have just shown in
 the previous section. The proposed algorithm tries to find the best trade-off between the two
 terms.
-The CSMS algorithm is based on early scheduling of some selectively chosen memory
+The proposed algorithm is based on early scheduling of some selectively chosen memory
 operations. Scheduling a memory operation using the cache-miss latency can hide almost all
 memory latency as we have shown in the previous section without increasing much the number of
 instructions (as opposed to the use of prefetch instructions). However, it can increase the execution
 time in three ways:
-. It may increase the register pressure, and therefore, it may increase the due to spill code
+. it may increase the register pressure, and therefore, it may increase the due to spill code
 if the performance of the loop is bounded by memory operations.
-. It may increase because the latency of memory operations is augmented.
-. It may increase the because the length of individual loop iterations may be increased.
+. it may increase because the latency of memory operations is augmented.
+. it may increase the because the length of individual loop iterations may be increased.
 This augments the cost of the prolog and the epilog.
 
 Figure
 
 2. Basic schemes performance
-CHL IPA ESA OPT CHL IPA ESA OPT CHL IPA ESA OPT CHL IPA ESA OPT CHL IPA ESA OPT CHL IPA ESA OPT0.20.61.0
+CHL IPA ESA OPT CHL IPA ESA OPT CHL IPA ESA OPT CHL IPA ESA OPT CHL IPA ESA OPT CHL IPA ESA OPT CHL IPA ESA OPT0.20.61.0
 Normalized
 Loop
 Execution
@@ -221,15 +226,15 @@ a) Simple architecture b) Aggressive architecture
 II
 II rec
 Two of the main issues of the CSMS algorithm is the reduction of the impact of recurrences
-on the II and the minimization of the stall time. The problem of the cost of the prolog and epilog
+on the resulting II and the minimization of the stall time. The problem of the cost of the prolog and epilog
 is handled by computing two alternative schedules. Both focus on minimizing the stall time and
-the II. However, one of them reduces the impact of the prolog and the epilog at the expense of an
+the resulting II. However, one of Both reduces the impact of the prolog and the epilog at the expense of an
 increase in the stall time whereas the other does not care about the prolog and epilog cost. Then,
 depending on the number of iterations of the loop, the most effective one is chosen.
-The core of the CSMS algorithm is shown in Figure 3. The algorithm makes use of a static
+The core of the CSMS algorithm is shown in Figure 3. the CSMS algorithm makes use of a static
 locality analysis in addition to other issues in order to determine the latency to be considered
 when scheduling each individual instruction.
-The locality analysis is based on the analysis presented in [19]. It is divided into three steps:
+The locality analysis is based on the analysis presented in [19]. The locality analysis is divided into three steps:
 . Reuse analysis: computes the intrinsic reuse property of each memory instruction as proposed
 in [21]. The goal is to determine the kind of reuse that is exploited by a reference in
 each loop. Five types of reuse can be determined: none, self-temporal, self-spatial, group-
@@ -272,30 +277,32 @@ endfunction
 Figure
 
 4. Scheduling a loop with recurrences
-ences are considered not to have any type of locality even if they exhibit some type of
+ences are considered not to have any type of locality even if ences exhibit some type of
 reuse.
-. Volume analysis: determines which references cannot exploit its reuse because they have
-been displaced from cache. It is based on computing the amount of data that is used by
+. Volume analysis: determines which references cannot exploit its reuse because its reuse have
+been displaced from cache. Volume analysis: determines which references cannot exploit its reuse because they have
+been displaced from cache is based on computing the amount of data that is used by
 each reference in each loop.
-The analysis concludes that a reference is expected to exhibit locality if it has reuse, it does
-not interfere with any other (including itself) and the volume of data between to consecutive
+Volume analysis: determines which references cannot exploit its reuse because they have
+been displaced from cache concludes that a reference is expected to exhibit locality if a reference has reuse, a reference does
+not interfere with any other (including a reference) and the volume of data between to consecutive
 reuses is lower than the cache size.
 Initially, two data dependence graphs with the same nodes and edges are generated. The difference
 is just the latency assigned to each node. In grph1, each memory node is tagged according
-to the locality analysis: it is tagged with the cache-hit latency if it exhibits any type of locality or
+to the locality analysis: each memory node is tagged with the cache-hit latency if each memory node exhibits any type of locality or
 with the cache-miss latency otherwise. In grph2, all memory nodes are tagged with the cache-miss
-latency. Then, a schedule that minimizes the impact of recurrences on the II is computed for
+latency. Then, a schedule that minimizes the impact of recurrences on the resulting II the resulting II is computed for
 each graph using the function ComputeSchedMinRecEffect that is shown in Figure 4. The first
 step of this function is to change the latency of those memory operations inside recurrences that
-limit the II from cache-miss to cache-hit until the II is limited by resources or by a more constraining
+limit the resulting II II from cache-miss to cache-hit until the resulting II II is limited by resources or by a more constraining
 recurrence. Nodes to be modified are chosen according to a locality priority order, starting
 from the ones that exhibit most locality. Then, the second step is to compute the actual scheduling
-using the modified graph. This step can be performed through any of the software pipelined
+using the modified graph. the second step can be performed through any of the software pipelined
 schedulers proposed in the literature.
 Finally, the minimum number of iterations (UpperBound) that ensures that sch2 is better
 than sch1 is computed. A main difference between these two schedules is the cost of the prolog
 and epilog parts, which is lower for the sch1. This bound depends on the computed schedules and
-the results of the locality analysis and it is calculated through an estimation of the execution time
+the results of the locality analysis and This bound is calculated through an estimation of the execution time
 of each schedule. The sch1 is chosen if . The execution time of a given
 schedule is estimated as .
 The stall time is estimated as
@@ -305,7 +312,7 @@ We use a scheduling according to the locality a not the CHL (which achieves the 
 SC) in order to take into account the possible poor locality of some loops.
 5. Performance evaluation of the CSMS
 In this section we present a performance evaluation of the CSMS algorithm. We compare its performance
-to that of the basic schemes evaluated in section 3. It is also compared with some alter-
+to that of the basic schemes evaluated in section 3. its is also compared with some alter-
 est
 est
 t stall est
@@ -319,9 +326,9 @@ schemes.
 A VLIW machine has been considered to evaluate the performance of the different scheduling
 algorithms. We have modeled two architectures in order to evaluate different aspects of the produced
 schedulings such as execution time, stall time, spill code, etc.
-The first architecture is called simple and it is composed of four functional units: integer,
+The first architecture is called simple and The first architecture is composed of four functional units: integer,
 floating point, branch and memory. The cache-miss latency for the first level cache is 10 cycles.
-The second architecture is called aggressive and it has two functional units of each type and the
+The first architecture is called aggressive and The first architecture has two functional units of each type and the
 cache-miss latency is 20 cycles. All functional units are fully pipelined except divide and square
 root operations. In both models the first memory level corresponds to a 8Kb lockup-free, direct-mapped
 cache with lines of 32 bytes and 8 outstanding misses. Other features of the modeled
@@ -358,24 +365,25 @@ experiments reported here is the HRMS [15], which has been shown to be very effe
 both the II and the register pressure.
 The resulting code is instrumented to generate a trace that feeds a simulator of the architec-
 ture. Each program was run for the first 100 million of memory references. The performance figures
-shown in this section refer to the innermost loops contained in this part of the program. We
+shown in this section refer to the innermost loops contained in this part of Each program. We
 have measured that memory references inside innermost loops represent about 95% of all the
 memory instructions considered for each benchmark, so the statistics for innermost loops are
-quite representative of the whole section of the program.
+quite representative of the whole section of Each program.
 The different prefetching algorithms have been evaluated for the following SPECfp95
 benchmarks: tomcatv, swim, su2cor, hydro2d, mgrid and turb3d. We have restricted the evaluation
 to Fortran programs since currently the ICTINEO tool can only process Fortran codes.
 5.3. Early scheduling
 In this section we compare the CSMS algorithm with other schemes based on early scheduling of
-memory operations. These schemes are: (i) use always cache-hit latency (CHL), (ii) use always
+memory operations. other schemes are: (i) use always cache-hit latency (CHL), (ii) use always
 cache-miss latency (ESA), and (iii) schedule instructions that have some type of locality using the
 cache-hit latency and schedule the remaining ones using the cache-miss latency. This later scheme
 will be called early scheduling according to locality (ESL).
 The different algorithms have been evaluated in terms of execution time, which is split into
 compute and stall time. The stall time is due to dependences or to the lack of entries in the outstanding
 miss table. In Figure 5 we can see the results for both the simple and the aggressive
-architectures. For each benchmark all columns are normalized to the CHL execution time. It can
-be seen that the CSMS algorithm achieves a compute time very close to the CHL scheme whereas
+architectures. For each benchmark all columns are normalized to the CHL execution time. the CHL execution time can
+be seen that the CSMS algorithm achieves a compute time very close to This later scheme
+ whereas
 CHL ESA ESL CSMS CHL ESA ESL CSMS CHL ESA ESL CSMS CHL ESA ESL CSMS CHL ESA ESL CSMS CHL ESA ESL CSMS0.20.61.0
 Normalized
 Loop
@@ -394,7 +402,7 @@ a) Simple architecture b) Aggressive architecture
 Figure
 
 5. CSMS algorithm compared with early scheduling
-it has a stall time very close to the ESA scheme. That is, it results in the best trade-off between
+CSMS algorithm has a stall time very close to the ESA scheme. That is, CSMS algorithm results in the best trade-off between
 compute and stall time. In programs where recurrences limit the initiation interval, and therefore
 the ESA scheme increases the compute time (for instance in hydro2d and turb3d benchmarks) the
 CSMS method minimize this effect at the expense of a slight increase in the stall time.
@@ -404,16 +412,17 @@ Table
 2 shows the relative speed-up of the different schedulers with respect the CHL
 scheme. On average all alternative schedulers outperform the CHL scheme (which is usually the
 one used by software pipelining schedulers). However, for some programs (mainly for turb3d) the
-ESA and ESL schedulers perform worse than the CHL due to the increase in the II caused by
-recurrences. The CSMS algorithm achieves the best performance for all benchmarks. For the simple
-architecture the average speed-up is 1.61, and for the aggressive architecture it is 2.47.
+ESA and ESL schedulers perform worse than CHL CHL due to the increase in the resulting II the resulting II caused by
+recurrences. CSMS algorithm achieves the best performance for all benchmarks. For the simple
+architecture the average speed-up is 1.61, and for the aggressive architecture the simple
+architecture is 2.47.
 
 Table
 
-3 compares the CSMS algorithm with an optimistic execution time (OPT) as defined
+3 compares CSMS algorithm with an optimistic execution time (OPT) as defined
 in section 3 that is used as a lower bound of the execution time. It also shows the percentage of the
-execution time that the processor is stalled. It can be seen that for the simple architecture the
-CSMS algorithm is close to the optimistic bound and it does not cause almost any stall. For the
+execution time that the processor is stalled. the processor can be seen that for the simple architecture the
+CSMS algorithm is close to the optimistic bound and the processor does not cause almost any stall. For the
 aggressive architecture, the performance of the CSMS is worse than that of OPT and the stall time
 represents about 10% of the total execution time. Notice however, that the optimistic bound could
 be quite below the actual minimum execution time.
@@ -428,9 +437,9 @@ denoted as DCompute represents the increment in compute time compared with the C
 For any scheme s, it is calculated as:
 The stall time due to dependences can be eliminated by scheduling memory instructions
 using the cache-miss latency. By default, spill code is scheduled using the cache-hit latency and
-therefore it may cause some stalls, although it is unlikely because the spill code usually is a store
+therefore spill code may cause some stalls, although it is unlikely because the spill code usually is a store
 followed by a load to the same address. Since usually they are not close (otherwise the spill code
-hardly reduces the register pressure), the load will cause a stall only if it interferes with a memory
+hardly reduces the register pressure), a load to the same address will cause a stall only if a load to the same address interferes with a memory
 ESA ESL CSMS ESA ESL CSMS
 tomcatv 2.34 2.28 2.57 3.92 3.41 5.56
 su2cor
@@ -453,8 +462,8 @@ best one to reduce the stall time but at the expense of a large increment in com
 5.4. Inserting prefetch instructions
 In order to reduce the penalties caused by memory operations, an alternative to early scheduling
 of memory instructions is inserting prefetch instructions, which are provided by many current
-instruction set architectures (e.g. the touch instruction of the PowerPC [5]). This new scheme can
-introduce additional spill code since it increases the register pressure. In particular, the lifetime of
+instruction set architectures (e.g. the touch instruction of the PowerPC [5]). The ESA scheme can
+introduce additional spill code since The ESA scheme increases the register pressure. In particular, the lifetime of
 values that are used to compute the effective address is increased since they are used by both the
 OPT/CSMS %Stall OPT/CSMS %Stall
 su2cor 0.972 1.92 0.873 11.17
@@ -483,27 +492,24 @@ prefetch and ordinary memory instructions. It can also increase the initiation i
 memory instructions.
 We have evaluated three alternative schemes to introduce prefetch instructions: (i) insert
 prefetch always (IPA), (ii) insert prefetch for those references without temporal locality even if
-they exhibit spatial locality, according to the static locality analysis (IPT), and (iii) insert prefetch
-for those instructions without any type of locality (IPL). The first scheme is expected to result in a
-very few stalls but it requires many additional instructions, which may increase the II. The IPT
-scheme is more selective when adding prefetch instruction. However, it adds unnecessary
+
+ exhibit spatial locality, according to the static locality analysis (IPT), and (iii) insert prefetch
+for those instructions without any type of locality (IPL). The ESA scheme is expected to result in a
+very few stalls but The ESA scheme requires many additional instructions, which may increase the resulting II. The ESA scheme is more selective when adding prefetch instruction. However, The ESA scheme adds unnecessary
 prefetch instructions for some references with just spatial locality. Instructions with only spatial
-locality will cause a cache miss only when a new cache line is accessed if it is not in cache. The
-IPL scheme is the most conservative in the sense that it adds the less number of prefetch instructions
+locality will cause a cache miss only when a new cache line is accessed if a new cache line is not in cache. The ESA scheme is the most conservative in the sense that The ESA scheme adds the less number of prefetch instructions
 
 In
 
 Figure
 
 6 it is compared the total execution time of the CSMS scheduling against the
-above-mentioned prefetching schemes. The figures are normalized to the CHL scheduling. The
-CSMS scheme always performs better than the schemes based on inserting prefetch instructions
-except for the mgrid benchmark in the aggressive architecture. In this latter case, the IPA scheme
-is the best one but the performance of the CSMS is very close to it.
-Among the schemes that insert prefetch instructions, none of them outperforms the others in
-general. Depending on the particular program and architecture, the best one among them is a different
+above-mentioned prefetching schemes. The figures are normalized to the CHL scheduling. The ESA scheme always performs better than the schemes based on inserting prefetch instructions
+except for the mgrid benchmark in the aggressive architecture. In this latter case, The ESA schemeis the best one but the performance of the CSMS is very close to The ESA scheme.
+Among the schemes that insert prefetch instructions, none of the schemes that insert prefetch instructions outperforms the others in
+general. Depending on the particular program and architecture, the best one among the schemes that insert prefetch instructions is a different
 one. The prefetch schemes outperform the CHL scheme in general (i.e. the performance
-figures in Figure 6 are in general lower than 1) but in some cases they may be even worse than the
+figures in Figure 6 are in general lower than 1) but in some cases some cases may be even worse than the
 CHL, which is in general worse than the schemes that are based on early scheduling.
 Comparing binding (Figure 5) with nonbinding (Figure schemes, it can be observed that
 binding prefetch is always better for the three first benchmarks. Both schemes have similar per-
@@ -530,7 +536,8 @@ To understand the reasons for the behavior of the prefetch schemes, we present b
 additional statistics for the aggressive architecture. Table 5 shows the percentage of additional
 memory instructions that are executed for the CSMS algorithm and for those schemes based on
 inserting prefetch instructions. In the CSMS algorithm, additional instructions are only due to
-spill code whereas in the other schemes they are due to spill code and prefetch instructions. We
+spill code whereas in the other schemes 
+spill code are due to spill code and prefetch instructions. We
 can see in this table that, except for the IPL scheme for the mgrid benchmark, the prefetch
 schemes require much higher number of additional memory instructions. As expected, the
 increase in number of memory instructions of the IPA scheme is the highest, followed by IPT,
@@ -542,7 +549,7 @@ Table
 based on inserting prefetch instructions in relation to the CHL scheme. Negative numbers indicate
 that the stall time is increased instead of decreased.
 We can see in Table 6 that the compute time is increased by prefetching schemes since the
-large number of additional instructions may imply a significant increase in the II for those loops
+large number of additional instructions may imply a significant increase in the resulting II for those loops
 that are memory bound. The stall time is in general reduced but the reduction is less than that of
 the CSMS scheme (see Table 4). The program mgrid is the only one for which there is a prefetch
 based scheme (IPA) that outperforms the CSMS algorithm. However, the difference is very slight
@@ -570,18 +577,22 @@ Table
 5. Percentage of additional memory references
 the prefetched data is used. This is quite common in the programs tomcatv and swim. For
 instance, if two memory references that interfere in the cache are very close in the code, it is likely
-that the two prefetches corresponding to them are scheduled before both memory references. In
+that the two prefetches corresponding to two memory references that interfere in the cache are very close in the code are scheduled before both memory references. In
 this case, at least one of the two memory references will miss in spite of the prefetch. Besides, if
 the prefetches and memory instructions are scheduled in reverse order (i.e., instruction A is
 scheduled before B but the prefetch of B is scheduled before the prefetch of A), both memory
 instructions will miss.
 To summarize, there are two main reasons for the bad performance of the schemes based on
 inserting prefetch instructions when compared with the CSMS scheme:
-. They increase the compute time due to the additional prefetch instructions and spill code.
-. They are not always effective in removing stalls caused by cache misses due to interferences
+. two main reasons for the bad performance of the schemes based on
+inserting prefetch instructions when compared with the CSMS scheme:
+ increase the compute time due to the additional prefetch instructions and spill code.
+. two main reasons for the bad performance of the schemes based on
+inserting prefetch instructions when compared with the CSMS scheme:
+ are not always effective in removing stalls caused by cache misses due to interferences
 between the prefetch instructions.
 IPA IPT IPL
-DCompute -Stall(%) DCompute -Stall(%) DCompute -Stall(%)
+DCompute -Stall(%) DCompute -Stall(%) DCompute -Stall(%) -Stall(%)
 tomcatv 1.396 23.28 1.060 67.14 1.073 19.42
 su2cor 1.454 74.48 1.269 82.20 1.090 -3.25
 hydro2d 1.608 84.87 1.086 86.81 1.003 4.16
@@ -615,14 +626,15 @@ early scheduling of memory instructions (binding prefetch) or inserting prefetch
 (nonbinding prefetch). We have seen that both provide a significant improvement in general.
 However, methods based on early scheduling outperform those based on inserting prefetches. The
 main reasons for the worse performance of the latter methods are the increase in memory pressure
-due to prefetch instructions and additional spill code, and their limitation to remove short-distance
+due to prefetch instructions and additional spill code, and prefetch instructions and additional spill code limitation to remove short-distance
 conflict misses.
 We have proposed an heuristic scheduling algorithm (CSMS), which is based on early
-scheduling, that tries to minimize both the compute and the stall time. The algorithm makes use of
+scheduling, that tries to minimize both the compute and the stall time. an heuristic scheduling algorithm (CSMS), which is based on early
+scheduling, that tries to minimize both the compute and the stall time makes use of
 a static locality analysis to schedule instructions in recurrences. We have shown that it outperforms
 the rest of strategies. For instance, when compared with the approach based on scheduling
 memory instructions using the cache-hit latency, the produced code is 1.6 times faster for a simple
-architecture, and 2.5 times faster for an aggressive architecture. In the former case, we have also
+architecture, and 2.5 times faster for an aggressive architecture. In the former case, We have also
 shown that the execution time is very close to an optimistic lower bound.
 
 

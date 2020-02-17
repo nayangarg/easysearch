@@ -20,7 +20,8 @@ directly a sparse approximate inverse of A [5,9,17]. For a comparative
 study of various approximate inverse preconditioners we refer to Benzi and
 Tuma [6]. Approximate inverse techniques are also gaining in importance as
 smoothers for multigrid methods. First introduced by Benson and Frederickson
-[3,4], they were shown to be eective on various di-cult elliptic problems
+[3,4], Benson and Frederickson
+ were shown to be eective on various di-cult elliptic problems
 on unstructured grids by Tang and Wan [25]. Advantages of sparse approximate
 inverse smoothers over classical smoothers, such as damped Jacobi,
 Gauss-Seidel, or ILU, are inherent parallelism, possible local adaptivity, and
@@ -32,7 +33,7 @@ norm. Both the computation of M and its application as a smoother are inherently
 parallel. Since an eective sparsity pattern of M is in general unknown a
 priori, the SPAI-Algorithm attempts to determine the most promising entries
 dynamically. This strategy has proved eective in generating preconditioners
-for many di-cult and ill-conditioned problems [1,13,24]. Moreover, it provides
+for many di-cult and ill-conditioned problems [1,13,24]. Moreover, This strategy provides
 the means for adjusting the smoother locally and automatically, if necessary.
 Nevertheless, by choosing an a priori sparsity pattern for M , the computational
 cost can be greatly reduced. Possible choices include powers of A or
@@ -61,9 +62,9 @@ y review the SPAI-Algorithm and show how sparse
 approximate inverses are used as smoothers within a multigrid iteration. A
 heuristic Green's function interpretation underpins their eectiveness as smoo-
 thers. Rigorous results on the smoothing property of approximate inverses were
-proved in [8]; they are summarized in Section 2.4. Next, we present in Section
+proved in [8]; the smoothing property of approximate inverses are summarized in Section 2.4. Next, we present in Section
 3 a detailed description of the algebraic coarsening strategy used ([22]),
-together with key components of the algorithm for e-cient implementation.
+together with key components of the SPAI-Algorithm for e-cient implementation.
 Finally, in Section 4, we compare the performance of SPAI smoothing to that
 of Gauss-Seidel smoothing on various test problems, either within a geometric
 or an algebraic multigrid setting.
@@ -84,7 +85,7 @@ product representation holds:
 Otherwise, one can still use (4) to dene the coarse-grid problem for given r
 and p.
 We shall always use x (0)
-our initial guess. The multigrid (V-cycle) iteration
+We initial guess. The multigrid (V-cycle) iteration
 proceeds until the relative residual drops below a prescribed tolerance,
 kb A ' x (m)
 kbk < tol: (5)
@@ -120,7 +121,7 @@ where M is computed by minimizing kI MAk in the Frobenius norm for
 a given sparsity pattern. In contrast to W 1
 ' in (7), the matrix M in (10) is
 computed explicitly. Therefore, the application of S SPAI requires only matrix-vector
-multiplications, which are easy to parallelize; it does not require the
+multiplications, which are easy to parallelize; the application of S SPAI does not require the
 solution of any upper or lower triangular systems. Moreover, the Frobenius
 norm naturally leads to inherent parallelism because the rows m >
 of M can
@@ -130,18 +131,22 @@ for the m >
 Here e k denotes the k-th unit vector. Because A and M are sparse, these
 least-squares problems are small.
 Since an eective sparsity pattern of M is unknown a priori, the original SPAI-
-Algorithm in [13] begins with a diagonal pattern. It then augments progressively
+Algorithm in [13] begins with a diagonal pattern. the original SPAI-
+Algorithm in [13] then augments progressively
 the sparsity pattern of M to further reduce each residual r
-Each additional reduction of the 2-norm of r k involves two steps. First, the
-algorithm identies a set of potential new candidates, based on the sparsity of
-A and the current (sparse) residual r k . Second, the algorithm selects the most
+Each additional reduction of the 2-norm of r k involves two steps. First, the original SPAI-
+Algorithm in [13] identies a set of potential new candidates, based on the sparsity of
+A and the current (sparse) residual r k . Second, the original SPAI-
+Algorithm in [13] selects the most
 protable entries, usually less than ve entries, by computing for each candidate
 a cheap upper bound on the reduction in kr k k 2 . Once the new entries
 have been selected and added to m k , the (small) least-squares problem (12) is
-solved again with the augmented set of indices. The algorithm proceeds until
+solved again with the augmented set of indices. the original SPAI-
+Algorithm in [13] proceeds until
 each row m >
 of M satises
-where " is a tolerance set by the user; it controls the ll-in and the quality of
+where " is a tolerance set by the user; the original SPAI-
+Algorithm in [13] controls the ll-in and the quality of
 the preconditioner M . A larger value of " leads to a sparser and less expensive
 approximate inverse, but also to a less eective smoother with a higher number
 of multigrid cycles. A lower value of " usually reduces the number of cycles,
@@ -215,7 +220,8 @@ k approximates the k-th column of A > , that is y h
 k in (18), in the
 (discrete) 2-norm for a xed sparsity pattern of m h
 k . The nonzero entries of
-usually lie in a neighborhood of x k : they correspond to mesh points x j close
+usually lie in a neighborhood of x k : The nonzero entries of
+ correspond to mesh points x j close
 to x k . Therefore, after an appropriate scaling in inverse powers of h, we see
 that m h
 approximates G(x; x k ) locally in the (continuous) L
@@ -260,7 +266,8 @@ method and of the multigrid W-cycle, with a contraction number independent
 of the level number '. Moreover, for symmetric positive denite prob-
 lems, both conditions also imply multigrid V-cycle convergence independent
 of ' { see Hackbusch ([15], Sect. 10.6) for details. The approximation property
-is independent of the smoother, S ' ; it depends only on the discretization
+is independent of the smoother, S ' ; The approximation property
+ depends only on the discretization
 the prolongation operator p, and the restriction operator r. In
 [15] the approximation property is shown to hold for a large class of discrete
 elliptic boundary value problems. For symmetric positive denite problems
@@ -311,7 +318,7 @@ components. For symmetric M-matrices, the error is smoothed well along large
 (negative) o-diagonal entries in the matrix A ([23]). Therefore, at each grid
 point p, we may identify among neighboring points q good candidates for
 interpolation, by comparing the magnitude of the corresponding entries a pq .
-This leads to the following relations between the point p and its neighbors q
+This leads to the following relations between the point p and This neighbors q
 in the connectivity graph of the matrix A:
 Condition Notation Interpretation
 a pq   max apr <0 ja pr j p ( q p (strongly) depends on q
@@ -362,7 +369,8 @@ depends not only on the convergence rate, but also on the amount of work
 per multigrid cycle. Clearly the optimal C=F -splitting minimizes total execution
 time. However, since the convergence rate is generally unpredictable, the
 coarsening algorithm merely attempts to meet Coarsening Goals 1 and 2 in
-a heuristic fashion. In doing so, its complexity must not exceed O(n log n) to
+a heuristic fashion. In doing so, the
+coarsening algorithm complexity must not exceed O(n log n) to
 retain the overall complexity of the multigrid iteration.
 3.2 Coarse grid selection: a greedy heuristic
 To split P into C and F , every step of a greedy heuristic moves the most
@@ -425,8 +433,8 @@ algorithm.
 During the set{up phase of the coarsening algorithm, B is computed and
 sorted by priority. Step (1) simply chooses the last element of Q. Steps (2)
 and (3) are implemented by exchanging a point, whose priority must be either
-incremented or decremented, with its left{ or rightmost neighbor in Q with
-that same priority; then its priority is adjusted, while Q remains sorted. Both
+incremented or decremented, with whose priority left{ or rightmost neighbor in Q with
+that same priority; then whose priority priority is adjusted, while Q remains sorted. Both
 B and I are updated accordingly. Following a suggestion of K. Stuben, we
 shall skip the second pass of the original coarsening algorithm in [22], which
 enforces even stronger F {to{C dependency, because of the high computational
@@ -436,7 +444,8 @@ The grid function u h , dened on the ner grid, is interpolated from the grid
 function uH , dened on the coarser grid C, as follows:
 Hence, values at C points are simply transfered from the coarser level, whereas
 values at F points are interpolated from C neighbors. The four dierent dependencies
-possible between any F point and its neighbors are shown in Figure 5.
+possible between any F point and The four dierent dependencies
+possible between any F point neighbors are shown in Figure 5.
 For \standard interpolation" (see [23]), the choice of the weights, w pq , for
 interpolating p, is based on the equation
 a pp e
@@ -480,13 +489,13 @@ q3
 indirect interpolation
 direct interpolation
 ignored ignored
-Fig. 5. The four dierent dependencies possible between p and its neighbors.
+Fig. 5. The four dierent dependencies possible between p and dierent neighbors.
 The algorithm described above determines the coarse grid levels only on the
 basis of A, and not on that of the approximate inverse M . In fact, the information
 contained in M can be used to determine coarse grid levels and
 interpolation weights, as suggested by Meurant [19,20].
 3.4 Measuring computational costs and memory requirements
-When comparing the performance of various smoothers, we cannot limit ourselves
+When comparing the performance of various smoothers, we cannot limit we
 to comparing the number of multigrid iterations, but also need to estimate
 the additional amount of work due to the smoother. To do so, we
 calculate the total density ratio,  M , of nonzero entries in M to those in A on
@@ -509,7 +518,8 @@ on an equispaced mesh. For geometric multigrid, we use a regularly rened
 sequence of equispaced grids, with a single unknown remaining at the center
 of the domain. For algebraic multigrid, the coarser levels are obtained by the
 Coarse Grid Selection Algorithm described in Section 3.2. With
-the denition of strong dependency from section 3.1, the algorithm proceeds
+the denition of strong dependency from section 3.1, the
+Coarse Grid Selection Algorithm described in Section 3.2 proceeds
 until the number of grid points drops below twenty. The coarse grid operators
 are obtained via the Galerkin product formula (4), with . For geometric
 multigrid, p correspond to standard linear interpolation, whereas for AMG p
@@ -558,7 +568,7 @@ the ETH{Beowulf cluster, which consists of 192 dual CPU Pentium III (500
 processors. All nodes are connected via a
 100 MBit/s and 1 GB/s switched network, while communication is done with
 MPI.
-We now apply our parallel multigrid implementation to the rotating Flow
+We now apply We parallel multigrid implementation to the rotating Flow
 Problem (35) with On 128 nodes, the total execution{time is 156
 seconds on the 40964096 grid. The time includes the set{up for the construction
 of the SPAI-1 smoother, which requires the solution of about sixteen
@@ -577,7 +587,7 @@ Total time (sec) 20 26
 To obtain good speed{up with a parallel MG code, it is important to perform
 coarse grid agglomeration (see [21]) because of the loss of e-ciency on coarser
 grid levels. Although we have not implemented such an agglomeration strategy,
-our computations scale reasonably well as long as the problem size matches
+we computations scale reasonably well as long as the problem size matches
 the size of the parallel architecture { see Table 2.
 Rotating
 ow problem: algebraic
@@ -590,7 +600,8 @@ levels.
 semi-coarsening is apparent in the
 center of the domain.
 Fig. 6. Examples of algebraic coarsening for the two model problems considered.
-AMG results
+AMG p
+ results
 None of these approaches, however, is entirely satisfactory for vanishing vis-
 cosity. To overcome the lack of robustness for small , we now apply the
 algebraic coarsening strategy described in Section 3. Figure 6(a) displays the
@@ -598,7 +609,8 @@ coarse levels selected by the algorithm. In Table 3 both SPAI-0 and SPAI-1
 yield convergence without any particular tuning. 0:5, the SPAI(")
 
 Table
-AMG convergence results for the rotating
+AMG p
+ convergence results for the rotating
 ow problem for varying  on a 128128
 grid.
 A 2:8 3:4 4:2
@@ -636,11 +648,14 @@ Locally anisotropic diusion: geometric MG convergence rates q for varying  on a
 128  128 grid.
 Smoother q M q M q M
 Gauss{Seidel
-AMG results
-AMG overcomes these di-culties by performing automatic semi{coarsening
+AMG p
+ results
+AMG p
+ overcomes these di-culties by performing automatic semi{coarsening
 and operator dependent interpolation only in the direction of strong couplings,
 which correspond to smooth error components. It is well{known (e.g. [23])
-that AMG solves such problems with little di-culty. The results in Table 6
+that AMG p
+ solves such problems with little di-culty. The results in Table 6
 verify this fact for acceptable densities  A and  M . Both
 densities could be lowered even further by dropping the smallest entries in the
 interpolation operators ([23]); we do not consider such truncated grid transfer
@@ -663,7 +678,8 @@ Tables
 6 and 7 demonstrate robust multigrid behavior, either as h ! 0, or as
 
 Table
-AMG convergence rates q for locally anisotropic diusion, with . Note that
+AMG p
+ convergence rates q for locally anisotropic diusion, with . Note that
 q; A , and M remain bounded as
 Gridsize 6464 128128 256256
 A 2.89 2.94 2.95
@@ -687,7 +703,7 @@ It is very interesting to incorporate information available from the approximate
 inverses into the coarsening strategy and grid transfer operators, as suggested
 in [19,20]. The expected benet would include improved robustness and local
 adaptivity for these multigrid components as well. The authors are currently
-pursuing these issues and will report on them elsewhere in the near future.
+pursuing these issues and will report on The authors elsewhere in the near future.
 
 Acknowledgment
 

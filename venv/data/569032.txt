@@ -1,13 +1,13 @@
 --T
 Model Checking of Safety Properties.
 --A
-Of special interest in formal verification are safety properties, which assert that the system always stays within some allowed region. Proof rules for the verification of safety properties have been developed in the proof-based approach to verification, making verification of safety properties simpler than verification of general properties. In this paper we consider model checking of safety properties. A computation that violates a general linear property reaches a bad cycle, which witnesses the violation of the property. Accordingly, current methods and tools for model checking of linear properties are based on a search for bad cycles. A symbolic implementation of such a search involves the calculation of a nested fixed-point expression over the system's state space, and is often infeasible. Every computation that violates a safety property has a finite prefix along which the property is violated. We use this fact in order to base model checking of safety properties on a search for finite bad prefixes. Such a search can be performed using a simple forward or backward symbolic reachability check. A naive methodology that is based on such a search involves a construction of an automaton (or a tableau) that is doubly exponential in the property. We present an analysis of safety properties that enables us to prevent the doubly-exponential blow up and to use the same automaton used for model checking of general properties, replacing the search for bad cycles by a search for bad prefixes.
+Of special interest in formal verification are safety properties, which assert that the system always stays within some allowed region. Proof rules for the verification of safety properties have been developed in the proof-based approach to verification, making verification of safety properties simpler than verification of general properties. In this paper we consider model checking of safety properties. A computation that violates a general linear property reaches a bad cycle, which witnesses the violation of the property. Accordingly, current methods and tools for model checking of linear properties are based on a search for bad cycles. A symbolic implementation of such a search involves the calculation of a nested fixed-point expression over the system's state space, and is often infeasible. Every computation that violates a safety property has a finite prefix along which the property is violated. We use this fact in order to base model checking of safety properties on a search for finite bad prefixes. Such a search can be performed using a simple forward or backward symbolic reachability check. A naive methodology that is based on such a search involves a construction of an automaton (or a tableau) that is doubly exponential in the property. We present an analysis of safety properties that enables We to prevent the doubly-exponential blow up and to use the same automaton used for model checking of general properties, replacing the search for bad cycles by a search for bad prefixes.
 --B
 Introduction
 Today's rapid development of complex and safety-critical systems requires reliable verication
 methods. In formal verication, we verify that a system meets a desired property by checking
-that a mathematical model of the system meets a formal specication that describes the property.
-Of special interest are properties asserting that observed behavior of the system always stays
+that a mathematical model of a system meets a formal specication that describes the property.
+Of special interest are properties asserting that observed behavior of a system always stays
 within some allowed set of nite behaviors, in which nothing \bad" happens. For example, we
 This reasearch is supported by BSF grant 9800096.
 y Address: School of Computer Science and Engineering, Jerusalem 91904, Israel. Email: orna@cs.huji.ac.il
@@ -15,12 +15,12 @@ z Address: Department of Computer Science, Houston,
 in part by NSF grant CCR-9700061, and by a grant from the Intel Corporation.
 may want to assert that every message received was previously sent. Such properties of systems
 are called safety properties. Intuitively, a property is a safety property if every violation of
-occurs after a nite execution of the system. In our example, if in a computation of the system
+occurs after a nite execution of a system. In our example, if in a computation of the system
 a message is received without previously being sent, this occurs after some nite execution of
 the system.
-In order to formally dene what safety properties are, we refer to computations of a nonterminating
+In order to formally dene what safety properties are, our refer to computations of a nonterminating
 system as innite words over an alphabet . Typically, is the set
-of the system's atomic propositions. Consider a language L of innite words over . A nite
+of a system's atomic propositions. Consider a language L of innite words over . A nite
 word x over  is a bad prex for L i for all innite words y over , the concatenation x  y of
 x and y is not in L. Thus, a bad prex for L is a nite word that cannot be extended to an
 innite word in L. A language L is a safety language if every word not in L has a nite bad
@@ -32,7 +32,8 @@ is dierent from the denition in [Lam85], which also refers to the property being
 stuttering.
 Linear properties of nonterminating systems are often specied using Buchi automata on
 innite words or linear temporal logic (LTL) formulas. We say that an automaton A is a safety
-automaton if it recognizes a safety language. Similarly, an LTL formula is a safety formula if
+automaton if safety
+ recognizes a safety language. Similarly, an LTL formula is a safety formula if
 the set of computations that satisfy it form a safety language. Sistla shows that the problem
 of determining whether a nondeterministic Buchi automaton or an LTL formula are safety is
 PSPACE-complete [Sis94] (see also [AS87]). On the other hand, when the Buchi automaton is
@@ -50,12 +51,13 @@ formulas considered in [MP92, MP95] is syntactic: a safety formula is a formula 
 G' where ' is a past formula. The syntactic denition is equivalent to the denition discussed
 here [MP92]. Proof-based methods are also known for the verication of liveness properties
 [OL82], which assert that the system eventually reaches some good set of states. While proof-
-rule approaches are less sensitive to the size of the state space of the system, they require a
+rule approaches are less sensitive to the size of the state space of the system, proof-
+rule approaches are less sensitive to the size of the state space of the system require a
 heavy user support. Our work here considers the state-exploration approach to verication,
 where automatic model checking [CE81, QS81] is performed in order to verify the correctness of
 a system with respect to a specication. Previous work in this subject considers special cases
 of safety and liveness properties such as invariance checking [GW91, McM92, Val93, MR97], or
-assume that a general safety property is given by the set of its bad prexes [GW91].
+assume that a general safety property is given by the set of a general safety property bad prexes [GW91].
 General methods for model checking of linear properties are based on a construction of a
 tableau or an automaton A : that accepts exactly all the innite computations that violate the
 property [LP85, VW94]. Given a system M and a property , verication of M with respect
@@ -67,7 +69,8 @@ that follows is PSPACE, with a matching lower bound [SC85].
 Consider a safety property . Let pref ( ) denote the set of all bad prexes for . For exam-
 ple, pref (Gp) contains all nite words that have a position in which p does not hold. Recall that
 every computation that violates has a prex in pref ( ). We say that an automaton on nite
-words is tight for a safety property if it recognizes pref ( ). Since every system that violates
+words is tight for a safety property if an automaton on nite
+words is tight for a safety property if it recognizes pref ( ) recognizes pref ( ). Since every system that violates
 has a computation with a prex in pref ( ), an automaton tight for is practically more helpful
 than A : . Indeed, reasoning about automata on nite words is easier than reasoning about
 automata on innite words (cf. [HKSV97]). In particular, when the words are nite, we can
@@ -77,47 +80,51 @@ and which is often more helpful than an innite error trace.
 Given a safety property , we construct an automaton tight for . We show that the
 construction involves an exponential blow-up in the case is given as a nondeterministic Buchi
 automaton, and involves a doubly-exponential blow-up in the case is given in LTL. These
-results are surprising, as they indicate that detection of bad prexes with a nondeterministic
+results are surprising, as These
+results indicate that detection of bad prexes with a nondeterministic
 automaton has the
 avor of determinization. The tight automata we construct are indeed
-deterministic. Nevertheless, our construction avoids the di-cult determinization of the Buchi
+deterministic. Nevertheless, the
+construction avoids the di-cult determinization of the Buchi
 automaton for (cf. [Saf88]) and just uses a subset construction.
-Our construction of tight automata reduces the problem of verication of safety properties
+We construction of tight automata reduces the problem of verication of safety properties
 to the problem of invariance checking [Fra92, MP92]. Indeed, once we take the product of a
-tight automaton with the system, we only have to check that we never reach an accepting state
+tight automaton with the system, We only have to check that we never reach an accepting state
 of the tight automaton. Invariance checking is amenable to both model checking techniques
 deductive verication techniques [BM83, SOR93, MAB + 94]. In practice,
 the veried systems are often very large, and even clever symbolic methods cannot cope with the
 state-explosion problem that model checking faces. The way we construct tight automata also
 enables, in case the BDDs constructed during the symbolic reachability test get too large, an
-analysis of the intermediate data that has been collected. The analysis can lead to a conclusion
+analysis of the intermediate data that has been collected. an
+analysis of the intermediate data that has been collected can lead to a conclusion
 that the system does not satisfy the property without further traversal of the system.
 In view of the discouraging blow-ups described above, we release the requirement on tight
 automata and seek, instead, an automaton that need not accept all the bad prexes, yet must
-accept at least one bad prex of every computation that does not satisfy . We say that such
+accept at least one bad prex of every computation that does not satisfy . we say that such
 an automaton is ne for . For example, an automaton that recognizes p   (:p)  (p _:p) does
 not accept all the words in pref (Gp), yet is ne for Gp. In practice, almost all the benet that
-one obtain from a tight automaton can also be obtained from a ne automaton. We show that
+one obtain from a tight automaton can also be obtained from a ne automaton. we show that
 for natural safety formulas , the construction of an automaton ne for is as easy as the
 construction of A .
 To formalize the notion of \natural safety formulas", consider the safety
 G(p _ (Xq ^X:q)). A single state in which p does not hold is a bad prex for . Nevertheless,
-this prex does not tell the whole story about the violation of . Indeed, the latter depends
+a bad prex does not tell the whole story about the violation of . Indeed, the latter depends
 on the fact that Xq ^ X:q is unsatisable, which (especially in more complicated examples),
 may not be trivially noticed by the user. So, while some bad prexes are informative, namely,
-they tell the whole violation story, other bad prexes may not be informative, and some user
-intelligence is required in order to understand why they are bad prexes (the formal denition of
+some bad prexes tell the whole violation story, other bad prexes may not be informative, and some user
+intelligence is required in order to understand why some bad prexes are bad prexes (the formal denition of
 informative prexes is similar to the semantics of LTL over nite computations in which Xtrue
 does not hold in the nal position).
 The notion of informative prexes is the base for a classication of safety properties into
-three distinct safety levels. A property is intentionally safe if all its bad prexes are informative.
+three distinct safety levels. A property is intentionally safe if all A property bad prexes are informative.
 For example, the formula Gp is intentionally safe. A property is accidentally safe if every
 computation that violates has an informative bad prex. For example, the formula G(p_(Xq^
 X:q)) is accidentally safe. Finally, a property is pathologically safe if there is a computation
 that violates and has no informative bad prex. For example, the formula [G(q _ GFp) ^
 G(r _ GF:p)] _ Gq _ Gr is pathologically safe. While intentionally safe properties are natural,
 accidentally safe and especially pathologically safe properties contain some redundancy and we
-do not expect to see them often in practice. We show that the automaton A : , which accepts
+do not expect to see intentionally safe properties are natural,
+ often in practice. We show that the automaton A : , which accepts
 exactly all innite computations that violate , can easily (and with no blow-up) be modied
 to an automaton A true
 on nite words, which is tight for that is intentionally safe, and is ne
@@ -134,12 +141,13 @@ If the product is empty, then, as A true
 accidentally safe formulas, there may be two reasons for this. One, is that M satises , and
 the second is that is pathologically safe. To distinguish between these two cases, we check
 whether is pathologically safe. This check requires space polynomial in the length of . If
-is pathologically safe, we turn the user's attention to the fact that his specication is needlessly
+is pathologically safe, we turn the user's attention to the fact that 
+ specication is needlessly
 complicated. According to the user's preference, we then either construct an automaton tight
 for , proceed with usual LTL verication, or wait for an alternative specication.
 So far, we discussed safety properties in the linear paradigm. One can also dene safety in
 the branching paradigm. Then, a property, which describes trees, is a safety property if every
-tree that violates it has a nite prex all whose extensions violate the property as well. We
+tree that violates a safety property has a nite prex all whose extensions violate a safety property as well. We
 dene safety in the branching paradigm and show that the problems of determining whether
 a CTL or a universal CTL formula is safety are EXPTIME-complete and PSPACE-complete,
 respectively. Given the linear complexity of CTL model checking, it is not clear yet whether
@@ -159,35 +167,35 @@ subformulas. We dene the semantics of LTL with respect to a computation
 where for every j  0,  j is a subset of AP , denoting the set of atomic propositions that hold
 in the j's position of . We denote the su-x  of  by  j . We use  j= to indicate
 that an LTL formula holds in the path . The relation j= is inductively dened as follows:
-For all , we have that  j= true and  6j= false.
+For all , We have that  j= true and  6j= false.
 For an atomic proposition p 2 AP ,
 there is 0  i < k such that  i
 Often, we interpret linear temporal logic formulas over a system with many computations.
-Formally, a system is is the set of states, R  W  W is a
+Formally, a system is is the set of states, R  W  W   is a
 total transition relation (that is, for every w 2 W , there is at least one w 0 such that R(w; w 0 ),
-the set W 0 is a set of initial states, and L maps each state to the sets of atomic
+the set W   is a set of initial states, and L maps each state to the sets of atomic
 propositions that hold in it. A computation of M is a sequence w
 and for all i  0 we have R(w
 The model-checking problem for LTL is to determine, given an LTL formula and a system
-M , whether all the computations of M satisfy . The problem is known to be PSPACE-complete
+M , whether all the computations of M satisfy . The model-checking problem for LTL is known to be PSPACE-complete
 [SC85].
 2.2 Safety languages and formulas
 Consider a language L   ! of innite words over the alphabet . A nite word x 2   is a bad
 prex for L i for all y 2  ! , we have x  y 62 L. Thus, a bad prex is a nite word that cannot
 be extended to an innite word in L. Note that if x is a bad prex, then all the nite extensions
-of x are also bad prexes. We say that a bad prex x is minimal i all the strict prexes of
+of x are also bad prexes. we say that a bad prex x is minimal i all the strict prexes of
 x are not bad. A language L is a safety language i every w 62 L has a nite bad prex. For
-a safety language L, we denote by pref (L) the set of all bad prexes for L. We say that a set
+a safety language L, we denote by pref (L) the set of all bad prexes for L. we say that a set
 pref (L) is a trap for a safety language L i every word w 62 L has at least one bad prex in
 X. Thus, while X need not contain all the bad prexes for L, it must contain su-ciently many
 prexes to \trap" all the words not in L. We denote all the traps for L by trap(L).
-For a language L   ! , we use comp(L) to denote the complement of L; i.e.,
-We say that a language L   ! is a co-safety language i comp(L) is a safety language.
+For a language L   ! , We use comp(L) to denote the complement of L; i.e.,
+We say that a language every w 62 L! is a co-safety language i comp(L) is a safety language.
 (The term used in [MP92] is guarantee language.) Equivalently, L is co-safety i every w 2 L
 has a good prex x 2   such that for all y 2  ! , we have x  y 2 L. For a co-safety language L,
 we denote by co-pref (L) the set of good prexes for L. Note that co-pref
 For an LTL formula over a set AP of atomic propositions, let k k denote the set of
-computations in (2 AP ) ! that satisfy . We say that is a safety formula i k k is a safety
+computations in (2 AP ) ! that satisfy . we say that is a safety formula i k k is a safety
 language. Also, is a co-safety formula i k k is a co-safety language or, equivalently, k: k is
 a safety language.
 2.3 Word automata
@@ -229,8 +237,8 @@ the run r is accepting i inf(rj) \ F 6= ; for all innite path in T r . That is, 
 the run visits at least one state in F innitely often.
 The automaton A can also run on nite words in   . A run of A on a nite word
 is a Q-labeled tree hT r ; ri with T r  IN n , where IN n is the set of all words of length at most
-n over the alphabet IN. The run proceeds exactly like a run on an innite word, only that all
-the nodes of level n in T r are leaves. A run hT r ; ri is accepting i all its nodes of level n visit
+n over the alphabet IN. A run of A proceeds exactly like a run on an innite word, only that all
+the nodes of level n in T r are leaves. A run hT r ; hT r is accepting i all its nodes of level n visit
 accepting states. Thus, if for all nodes x 2 T r \ IN n , we have r(x) 2 F .
 A word (either nite or innite) is accepted by A i there exists an accepting run on it.
 Note that while conjunctions in the transition function of A are re
@@ -241,10 +249,10 @@ denoted L(A), is the set of words that A accepts. As we already mentioned, deter
 nondeterministic automata can be viewed as special cases of alternating automata. Formally,
 an alternating automaton is deterministic if for all q and , we have -(q;
 it is nondeterministic if -(q; ) is always a disjunction over Q.
-We dene the size of an alternating automaton as the sum of jQj and
-j-j, where j-j is the sum of the lengths of the formulas in -. We say that the automaton A
+we dene the size of an alternating automaton as the sum of jQj and
+j-j, where j-j is the sum of the lengths of the formulas in -. we say that the automaton A
 over innite words is a safety (co-safety) automaton i L(A) is a safety (co-safety) language.
-We use pref (A), co-pref (A), trap(A), and comp(A) to abbreviate pref (L(A)), co-pref (L(A)),
+we use pref (A), co-pref (A), trap(A), and comp(A) to abbreviate pref (L(A)), co-pref (L(A)),
 trap(L(A)), and comp(L(A)), respectively. For an automaton A and a set of states S, we
 denote by A S the automaton obtained from A by dening the set of initial states to be S. We
 say that an automaton A over innite words is universal i . When A runs on nite
@@ -285,7 +293,7 @@ Given an LTL formula in positive normal form, one can build a nondeterministic B
 automaton A such that [VW94]. The size of A is exponential in j j. It is
 shown in [KVW00, Var96] that when alternating automata are used, the translation of to A
 as above involves only a linear blow up 1 The translation of LTL formulas to alternating Buchi
-automata is going to be useful also for our methodology, and we describe it below.
+automata is going to be useful also for our methodology, and our describe our methodology below.
 Theorem 2.2 [KVW00, Var96] Given an LTL formula , we can construct, in linear running
 time, an alternating Buchi automaton
 Proof: The set F of accepting states consists of all the formulas of the form ' 1
@@ -295,7 +303,8 @@ Buchi automata, we get:
 Corollary 2.3 [VW94] Given an LTL formula , we can construct, in exponential running
 time, a nondeterministic Buchi automaton N such that L(N
 Combining Corollary 2.3 with Theorem 2.1, we get the following algorithm for checking safety
-of an LTL formula . The algorithm is essentially as described in [Sis94], rephrased somewhat
+of an LTL formula . the following algorithm for checking safety
+of an LTL formula is essentially as described in [Sis94], rephrased somewhat
 to emphasize the usage of model checking.
 1. Construct the nondeterministic Buchi automaton
 1 The automaton A has linearly many states. Since the alphabet of A is 2 AP , which may be exponential in
@@ -325,7 +334,7 @@ want is an automaton on nite words that detects bad prexes. As we discuss in the
 tion, such an automaton is easier to reason about. In this section we construct, from a given
 safety property, an automaton for its bad prexes.
 We rst study the case where the property is given by a nondeterministic Buchi automaton.
-When the given automaton A is deterministic, the construction of an automaton A 0 for pref (A) is
+When an automaton for its bad prexes is deterministic, the construction of an automaton A 0 for pref (A) is
 straightforward. Indeed, we can obtain A 0 from A by dening the set of accepting states to be the
 set of states s for which A s is empty. Theorem 3.1 below shows that when A is a nondeterministic
 automaton, things are not that simple. While we can avoid a di-cult determinization of A
@@ -358,12 +367,12 @@ techniques as used in the verication tool Mona [Kla98]. The lower bound in Theor
 3.1 is not surprising, as complementation of nondeterministic automata involves an exponential
 blow-up, and, as we demonstrate in the lower-bound proof, there is a tight relation
 between pref (A) and comp(A). We could hope, therefore, that when properties are specied
-in a negative form (that is, they describe the forbidden behaviors of the system) or are given
+in a negative form (that is, properties describe the forbidden behaviors of the system) or are given
 in LTL, whose formulas can be negated, detection of bad prexes would not be harder than
-detection of bad computations. In Theorems 3.2 and 3.3 we refute this hope.
+detection of bad computations. In Theorems 3.2 and 3.3 We refute this hope.
 Theorem 3.2 Given a co-safety nondeterministic Buchi automaton A of size n, the size of an
 automaton that recognizes co-pref (L(A)) is 2 (n) .
-Proof: The upper bound is similar to the one in Theorem 3.1, only that now we dene the
+Proof: The upper bound is similar to the one in Theorem 3.1, only that now We dene the
 set of accepting states in A 0 as the set of all the universal sets of A. We prove a matching lower
 bound. For n  1, let  &g. We dene L n as the language of all words w
 such that w contains at least one & and the letter after the rst & is either & or it has already
@@ -373,7 +382,7 @@ can recognize L n with a nondeterministic Buchi automaton with O(n) states (the 
 guesses the letter that appears after the rst &). Obvious good prexes for L n are 12&&, 123&2,
 etc. We can recognize these prexes with a nondeterministic automaton with O(n) states. But
 n also has some less obvious good prexes, like 1234    n& (a permutation of
-by &). These prexes are indeed good, as every su-x we concatenate to them would start in
+by &). these prexes are indeed good, as every su-x we concatenate to these prexes would start in
 either & or a letter in ng that has appeared before the &. To recognize these prexes,
 a nondeterministic automaton needs to keep track of subsets of ng, for which it needs
 states. Consequently, a nondeterministic automaton for co-pref (L n ) must have at least 2 n
@@ -387,7 +396,7 @@ doubly exponential lower bound for going from LTL formulas to deterministic Buch
 A word w is in L n i the su-x of length n that comes after the single & in w appears somewhere
 before the &. By [CKS81], the smallest deterministic automaton on nite words that accepts
 L n has at least 2 2 n
-states (reaching the &, the automaton should remember the possible set of
+states (reaching the &, a nondeterministic automaton for co-pref (L n ) should remember the possible set of
 words in f0; 1g n that have appeared before). On the other hand, we can specify L n with the
 following of length quadratic in n (we ignore here the technical fact that Buchi
 automata and LTL formulas describe innite words).
@@ -409,13 +418,14 @@ states to detect such good
 prexes. This makes the automaton for co-pref (L 0
 doubly exponential. On the other hand,
 we can specify L 0
-n with an LTL formula n that is quadratic in n. The formula is similar to the
+n with an LTL formula n that is quadratic in n. an LTL formula n that is quadratic in n. is similar to the
 one for L n , only that it is satised also by computations in which the rst & is not followed by
 a word in f0; 1g n . Now, the is a safety formula of size quadratic in n and the
 size of the smallest nondeterministic Buchi automaton for pref (: ) is
 In order to get the upper bound in Theorem 3.3, we applied the exponential construction in
 Theorem 3.1 to the exponential Buchi automaton A for k k. The construction in Theorem 3.1
-is based on a subset construction for A , and it requires a check for the universality of sets of
+is based on a subset construction for A , and The construction in Theorem 3.1
+ requires a check for the universality of sets of
 states Q of A . Such a check corresponds to a validity check for a DNF formula in which each
 disjunct corresponds to a state in Q. While the size of the formula can be exponential in j j, the
 number of distinct literals in the formula is at most linear in j j, implying the following lemma.
@@ -426,10 +436,13 @@ Proof: Every state in A is associated with a set  of subformulas of . A set Q of
 of A then corresponds to a set f 1 of sets of subformulas. Let
 l i
 g.
-The set Q is universal i the
+A set Q of states
+of A is universal i the
 j is valid. Though the formula
-Q may be exponentially longer than , we can check its validity in PSPACE. To do this, we
-rst negate it and get the formula :
+Q may be exponentially longer than , we can check the
+j validity in PSPACE. To do this, we
+rst negate this and get the formula
+ :
 . Clearly, Q is valid
 not satisable. But : Q is satisable i at least one conjunction
 in the disjunctive
@@ -449,7 +462,8 @@ Given a safety formula , we say that a nondeterministic automaton A over nite wo
 is tight for i In view of the lower bounds proven above, a construction
 of tight automata may be too expensive. We say that a nondeterministic automaton A over
 nite words is ne for i there exists X 2 trap(k k) such that X. Thus, a ne
-automaton need not accept all the bad prexes, yet it must accept at least one bad prex of
+automaton need not accept all the bad prexes, yet a ne
+automaton must accept at least one bad prex of
 every computation that does not satisfy . In practice, almost all the benet that one obtain
 from a tight automaton can also be obtained from a ne automaton (we will get back to this
 point in Section 6). It is an open question whether there are feasible constructions of ne
@@ -535,7 +549,7 @@ why the method we discuss above is not only sound but also complete.
 Note that it is possible to use semi-exhaustive reachability techniques also when analyzing
 That is, instead of taking S i+1 to be post(S i ) we can take it to be a subset S 0
 of
-We have to ensure, however, that
+we have to ensure, however, that
 is saturated with respect to
 states of A : [LWA98]. Informally, we are allowed to drop states of M from S i+1 , but we are not
 allowed to drop states of A : . Formally, if hw; qi 2 S 0
@@ -543,15 +557,14 @@ allowed to drop states of A : . Formally, if hw; qi 2 S 0
 of
 all the pairs in which the M-state element is w should stay). This ensures that if
 the semi-exhaustive analysis follows a bad prex of length i in M , then Q 0w
-is universal. In the extreme case, we follow only one trace of M , i.e., we simulate M . In that
-case, we have that S 0
+is universal. In the extreme case, we follow only one trace of M , i.e., we simulate M . In the extreme case, we have that S 0
 i . For related approaches see [CES97, ABG + 00]. Note that
 while such a simulation cannot in general be performed for that is not a safety formula, we
 can use it as a heuristic also for general formulas. We will get back to this point in Remarks 5.3
 and 6.1.
 5 Classication of Safety Properties
 Consider the safety LTL formula Gp. A bad prex x for Gp must contain a state in which p
-does not hold. If the user gets x as an error trace, he can immediately understand why Gp is
+does not hold. If the user gets x as an error trace, the user gets x as an error trace can immediately understand why Gp is
 violated. Consider now the The formula is equivalent
 to Gp and is therefore a safety formula. Moreover, the set of bad prexes for and Gp coincide.
 Nevertheless, a minimal bad prex for (e.g., a single state in which p does not hold) does
@@ -559,7 +572,7 @@ not tell the whole story about the violation of . Indeed, the latter depends on 
 Xq^X:q is unsatisable, which (especially in more complicated examples), may not be trivially
 noticed by the user. This intuition, of a prex that \tells the whole story", is the base for a
 classication of safety properties into three distinct safety levels. We rst formalize this intuition
-in terms of informative prexes. Recall that we assume that LTL formulas are given in positive
+in terms of informative prexes. Recall that We assume that LTL formulas are given in positive
 normal form, where negation is applied only to propositions (when we we refer to its
 positive normal form).
 For an LTL formula and a nite computation
@@ -567,7 +580,7 @@ that  is informative for i there exists a mapping such that the
 following hold:
 empty.
 (3) For all 1  i  n and ' 2 L(i), the following hold.
-If ' is a propositional assertion, it is satised by  i .
+If ' is a propositional assertion, ' is a propositional assertion is satised by  i .
 If
 If
 If
@@ -588,14 +601,14 @@ that the su-x  is informative for '. Then,  is informative for (1). The
 construction of L max proceeds in a bottom-up manner. Initially L
 Then, for each 1  i  n, we insert to L max (i) all the propositional assertions in cl(: ) that
 are satised by  i . Then, we proceed by induction on the structure of the formula, inserting
-a subformula ' to L max (i) i the conditions from item (3) above are satised for it, taking
+a subformula ' to L max (i) (i) i the conditions from item (3) above are satised for the conditions from item (3) above, taking
 ;. In order to cope with the circular dependency in the conditions for ' of the
 insertion of formulas proceeds from L max (n) to L max (1). Thus, for
 example, the formula ' 1 _ ' 2 is added to L
 X' 1 is added to L contains no formulas of the form
 is added to L
 that we insert ' 1 U' 2 to L before we
-examine the insertion of ' 1 U' 2 to L max (i)). We have at most j j subformulas to examine, each
+examine the insertion of ' 1 U' 2 to L max (i)). we have at most j j subformulas to examine, each
 of which requires time linear in n, thus the overall complexity is O(n  j j).
 Remark 5.2 A very similar argument shows that one can check in linear running time whether
 an innite computation , represented as a prex followed by a cycle, satises an LTL formula .
@@ -629,7 +642,7 @@ prex  1     i of  is then informative for . It follows that every computation th
 has a prex informative for , thus is intentionally or accidentally safe.
 As described in Section 2.4, given an LTL formula in positive normal form, one can build
 an alternating Buchi automaton Essentially,
-each state of L(A ) corresponds to a subformula of , and its transitions follow the semantics
+each state of L(A ) corresponds to a subformula of , and a subformula transitions follow the semantics
 of LTL. We dene the alternating Buchi automaton A true
 redening
 the set of accepting states to be the empty set. So, while in A a copy of the automaton
@@ -683,7 +696,7 @@ for . Note that is intentionally safe i every prex in pref ( ) is an informative
 . Thus, to check that is intentionally safe, one has to complement n(A true
 that its intersection with the automaton for pref ( ) is empty. A nondeterministic automaton
 that complements n(A true
-exponential in n [MH84], and its product with the automaton
+exponential in n [MH84], and [MH84] product with the automaton
 for pref ( ) is doubly exponential in n. Since emptiness can be checked in nondeterministic
 logarithmic space, the claim follows.
 6 A Methodology
@@ -710,24 +723,24 @@ Instead of checking the emptiness of M  A : , verication starts by checking n(M)
 respect to U true
 . Since both automata refer to nite words, this can be done using nite forward
 reachability analysis 2 . If the product n(M)  U true
-is not empty, we return a word w in the
+is not empty, we return a word W in the
 intersection, namely, a bad prex for that is generated by M 3 . If the product n(M)  U true
 is empty, then, as U true
 is ne for intentionally and accidentally safe formulas, there may be
 two reasons for this. One, is that M satises , and the second is that is pathologically safe.
 Therefore, we next check whether is pathologically safe. (Note that for syntactically safe
 formulas this check is unnecessary, by Theorem 5.4.) If is not pathologically safe, we conclude
-that M satises . Otherwise, we tell the user that his formula is pathologically safe, indicating
-that his specication is needlessly complicated (accidentally and pathologically safe formulas
+that M satises . Otherwise, we tell the user that the user formula is pathologically safe, indicating
+that the user specication is needlessly complicated (accidentally and pathologically safe formulas
 contain redundancy). At this point, the user would probably be surprised that his formula was
-a safety formula (if he had known it is safety, he would have simplied it to an intentionally
-If the user wishes to continue with this formula, we give up using the fact
+a safety formula (if his had known his formula is safety, his would have simplied his formula to an intentionally
+If the user wishes to continue with his formula, we give up using the fact
 that is safety and proceed with usual LTL model checking, thus we check the emptiness of
 (Recall that the symbolic algorithm for emptiness of Buchi automata is in the worst
 case quadratic [HKSV97, TBK95].) Note that at this point, the error trace that the user gets if
 M does not satisfy consists of a prex and a cycle, yet since the user does not want to change
-his formula, he probably has no idea why it is a safety formula and a nite non-informative error
-trace would not help him. If the user prefers, or if M is very large (making the discovery of bad
+his formula, his probably has no idea why it is a safety formula and a nite non-informative error
+trace would not help his. If the user prefers, or if M is very large (making the discovery of bad
 cycles infeasible), we can build an automaton for pref ( ), hoping that by learning it, the user
 would understand how to simplify his formula or that, in spite of the potential blow-up in ,
 nite forward reachability would work better.
@@ -749,13 +762,15 @@ Figure
 
 1: Verication of safety formulas
 Remark 6.1 In fact, our methodology can be adjusted to formulas that are not (or not known
-to be) safety formulas, and it can often terminate with a helpful output for such formulas. As
+to be) safety formulas, and our methodology can often terminate with a helpful output for such formulas. As
 with safety formulas, we start by checking the emptiness of n(M)  U true
 (note that U true
 is
-dened also for formulas that are not safety). If the intersection is not empty, it contains an error
-trace, and M is incorrect. If the intersection is empty, we check whether is an intentionally
-or accidentally safe formula. If it is, we conclude that M is correct. Otherwise, we consult the
+dened also for formulas that are not safety). If the intersection is not empty, the intersection contains an error
+trace, and Y
+M is incorrect. If the intersection is empty, we check whether is an intentionally
+or accidentally safe formula. If it is, we conclude that Y
+M is correct. Otherwise, we consult the
 user. Note also that by determinizing U true
 , we can get a checker that can be used in simulation
 6.2 On going backwards
@@ -764,9 +779,14 @@ whether there is nite prex of a computation of M (a word accepted by n(M)) that 
 informative bad prex for (a word accepted by U true
 both n(M) and U true
 are
-automata on nite words, so is their product, thus a search for a word in their intersection can
+automata on nite words, so is an
+informative bad prex for (a word accepted by U true
+both n(M) product, thus a search for a word in an
+informative bad prex for (a word accepted by U true
+both n(M) intersection can
 be done using nite forward reachability analysis. In this section we discuss another approach
-for checking that no nite prex of a computation of M is an informative bad prex.
+for checking that no nite prex of a computation of Y
+M is an informative bad prex.
 We say that a nondeterministic automaton
 for every state q 2 Q and letter  2 , there is at most one state q 0 2 Q such that q 2 (q
 Thus, given the current state of a run of U and the last letter read from the input, one can
@@ -782,7 +802,7 @@ that M has a nite prex of a computation that is an informative
 bad prex i P is nonempty; namely, there is a path in P from some state in S 0 to some state
 in F . Each state in P is a pair hw; qi of a state w of M and a state q of U : . We say that a set
 of states of P is Q-homogeneous if there is some q 2 Q such that S 0  Wfqg, where W is
-the state of states of M ; that is, all the pairs in S 0 agree on their second element. For every state
+the state of states of M ; that is, all the pairs in S 0 agree on all the pairs in S 0 second element. For every state
 hw; qi and letter  2 2 AP , the set  1 (hw; qi; ) may contain more than one state. Nevertheless,
 since U : is reverse deterministic, the set  1 (hw; qi; ) is Q-homogeneous. Moreover, since
 U : is reverse deterministic, then for every Q-homogeneous set S 0  S and for every  2 2 AP ,
@@ -802,12 +822,12 @@ can reach the
 state q from both states Xp _ Xq and Xq _ Xr. Below we describe a ne reverse deterministic
 for , of size exponential in the length of . The automaton is based on the
 reverse deterministic automata dened in [VW94] for LTL. As in [VW94], each state of the
-associated with a set S of formulas in cl(: ). When the automaton is in
-a state associated with S, it accepts exactly all innite words that satisfy all the formulas in
+associated with a set S of formulas in cl(: ). When The automaton is in
+a state associated with S, The automaton accepts exactly all innite words that satisfy all the formulas in
 S. Unlike the automata in [VW94], a state of N : that is associated with S imposes only
 requirements on the formulas (these in S) that should be satised, and imposes no requirements
 on formulas (these in cl(: ) n S) that should not be satised. This property is crucial for
-being ne. When the automaton N : visits a state associated with the empty set, it has no
+being ne. When the automaton N : visits a state associated with the empty set, This property has no
 requirements. Accordingly, we dene f;g to be the set of accepting states (note that the fact
 that the set of accepting states is a singleton implies that in the product P we can start with
 the single Q-homogeneous set W  f;g).
@@ -822,7 +842,8 @@ If
 If
 If
 If
-It is easy to see that for every S and , there is a single S 0 that satises the above conditions.
+
+ is easy to see that for every S and , there is a single S 0 that satises the above conditions.
 Also, a sequence of states in N : that starts with some S 0 containing : and leads via the nite
 computation induces a mapping showing that  is informative for
 . It follows that N : is a reverse deterministic ne automaton for .
@@ -838,12 +859,13 @@ Theorem 2.1, the analysis of M A ' 1
 can ignore the fairness conditions of A ' 1
 and can proceed
 with model checking ' 2 . (Note, however, that the system MA ' 1
-may not be total, i.e., it may
+may not be total, i.e., the system MA ' 1
+ may
 have dead-end states, which need to be eliminated before model checking ' 2 .) Suppose now that
 ' 2 is a safety formula, while ' 1 is not a safety formula. We can then proceed as follows. We
 rst ignore the fairness condition in M A ' 1
 and use the techniques above to model check the
-Suppose we found a bad prex that ends with the state hw; qi of M A '1 .
+Suppose We found a bad prex that ends with the state hw; qi of M A '1 .
 It remains to check that hw; qi is a fair state, i.e., that there is a fair path starting from hw; qi.
 Instead of performing fair reachability analysis over the entire state space of M A ' 1
 or on the
@@ -857,7 +879,7 @@ Consider a binary tree A prex of T is a nonempty prex-closed subset of T . For
 a labeled tree prex P of T , a P -extension of hT labeled tree hT
 which V and V 0 agree on the labels of the nodes in P . We say that a branching formula is a
 violates , there exists a prex P such that all the
-P -extensions of hT violates . The logic CTL is a branching temporal logic. In CTL, every
+P -extensions of hT violates . The logic CTL is a branching temporal logic. In The logic CTL, every
 temporal operator is preceded by a path quantier, E (\for some path") or A (\for all paths").
 Theorem 6.2 Given a CTL formula , deciding whether is a safety formula is EXPTIME-
 complete.
@@ -870,7 +892,9 @@ be a nondeterministic automaton for ; thus A d
 accepts exactly
 these d-ary trees that a satisfy . We assume that each state in A d
 accepts at least one tree
-(otherwise, we can remove it and simplify the transitions relation). Let A d;loop
+(otherwise, We can remove each state in A d
+accepts at least one tree
+ and simplify the transitions relation). Let A d;loop
 be the automaton
 obtained from A d
 by taking all states to be accepting states. dening the set of accepting states
@@ -970,7 +994,7 @@ An automata-theoretic approach to linear temporal logic
 Forward model checking techniques oriented to buggy designs
 Hybrid techniques for fast functional simulation
 Symbolic model checking using SAT procedures instead of BDDs
-Checking that finite state concurrent programs satisfy their linear specification
+Checking that finite state concurrent programs satisfy finite state concurrent programs linear specification
 Alternation
 An automata-theoretic approach to branching-time model checking
 Proving Liveness Properties of Concurrent Programs

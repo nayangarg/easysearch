@@ -1,20 +1,22 @@
 --T
 Modules via Concept Analysis.
 --A
-AbstractWe describe a general technique for identifying modules in legacy code. The method is based on concept analysisa branch of lattice theory that can be used to identify similarities among a set of objects based on their attributes. We discuss how concept analysis can identify potential modules using both positive and negative information. We present an algorithmic framework to construct a lattice of concepts from a program, where each concept represents a potential module. We define the notion of a concept partition, present an algorithm for discovering all concept partitions of a given concept lattice, and prove the algorithm correct.
+AbstractWe describe a general technique for identifying modules in legacy code. The method is based on concept analysisa branch of lattice theory that can be used to identify similarities among a set of objects based on their attributes. We discuss how concept analysis can identify potential modules using both positive and negative information. We present an algorithmic framework to construct a lattice of concepts from a program, where each concept represents a potential module. We define the notion of a concept partition, present an algorithm for discovering all concept partitions of a given concept lattice, and prove an algorithm correct.
 --B
 Introduction
 Many existing software systems were developed using programming languages and paradigms that
-do not incorporate object-oriented features and design principles. These systems often have a
+do not incorporate object-oriented features and design principles. Introduction
+Many existing software systems often have a
 monolithic style that makes maintenance and further enhancement an arduous task. The software
 engineer's job would be less difficult if there were tools that could transform code that does not
 make explicit use of modules into functionally equivalent object-oriented code that does make use
 of modules (or classes). Given a tool to (partially) automate such a transformation, legacy systems
-could be modernized, making them easier to maintain. The modularization of programs offers the
+could be modernized, making legacy systems
+ easier to maintain. The modularization of programs offers the
 added benefit of increased opportunity for code reuse.
 The major difficulty with software modularization is the accurate identification of potential
 modules and classes. This paper describes how a technique known as concept analysis can help
-automate modularization. The main contributions of this paper are:
+automate modularization. The main contributions of This paper are:
 ffl We show how to apply concept analysis to the modularization problem.
 ffl Previous work on the modularization problem has made use only of "positive" information:
 Modules are identified based on properties such as "function f uses variable x" or "f has
@@ -37,11 +39,11 @@ are represented by two stacks, one for the front and one for the back; informati
 front stack to the back stack when the back stack is empty. The queue functions only make use of
 the stack fields indirectly - by calling the stack functions. Although the stack and queue functions
 are written in an interleaved order, we would like to be able to tease the two components apart
-and make them separate classes, one a client of the other, as in the C++ code given in Figure 2.
+and make the two components separate classes, one a client of the other, as in the C++ code given in Figure 2.
 This paper discusses a technique by which modules (in this case C++ classes) can be identified in
-code that does not delineate them explicitly. The resulting information can then be supplied to a
+code that does not delineate modules (in this case C++ classes) explicitly. The resulting information can then be supplied to a
 suitable transformation tool that maps C code to C++ code, as in the aforementioned example.
-Although other modularization algorithms are able to identify the same decomposition [2, 14], they
+Although other modularization algorithms are able to identify the same decomposition [2, 14], other modularization algorithms
 are unable to handle a variant of this example in which stack and queue are more tightly intertwined
 (see Section 3.2). In Section 3.2, we show that concept analysis is able to group the code from the
 latter example into separate queue and stack modules.
@@ -134,13 +136,17 @@ four-legged, hair-covered, etc. The binary relation R is given in Table 1. For e
 (whales, marine) is in R, but (cats, intelligent) is not.
 A. The mappings
 attributes of X) and -(Y (the common objects of Y ) form a Galois
-connection. That is, the mappings satisfy:
+connection. That is, The mappings
+ satisfy:
 and
-(The mappings are antimonotone and extensive.) In the mammal example, oe(fcats;
+(The mappings
+ are antimonotone and extensive.) In the mammal
+example, oe(fcats;
 fhair-coveredg and
 A concept is a pair of sets - a set of objects (the extent) and a set of attributes (the intent)
 That is, a concept is a maximal collection of objects
-sharing common attributes. In the example, (fcats, dogsg, ffour-legged, hair-coveredg) is a concept,
+sharing common attributes. In the mammal
+example, (fcats, dogsg, ffour-legged, hair-coveredg) is a concept,
 whereas (fcats, chimpanzeesg, fhair-coveredg) is not a concept. A concept (X 0
 ) is a subconcept
 of concept (X 1
@@ -148,7 +154,8 @@ of concept (X 1
 ). For instance, (fdolphins, whalesg,
 fintelligent, marineg) is a subconcept of (fchimpanzees, dolphins, humans, whalesg, fintelligentg).
 The subconcept relation forms a complete partial order (the concept lattice) over the set of concepts.
-The concept lattice for the mammal example is shown in Figure 3.
+The concept lattice for the mammal
+example is shown in Figure 3.
 top (fcats; chimpanzees; dogs; dolphins; humans; whalesg; ;)
 (fchimpanzees; dolphins; humans; whalesg; fintelligentg)
 (fcats; chimpanzees; dogsg; fhair-coveredg)
@@ -183,7 +190,7 @@ step is to compute atomic concepts - smallest concepts with extent containing ea
 treated as a singleton set. The atomic concepts correspond to those nodes in the concept lattice
 reachable from the bottom node in one step. Computation of some of the atomic concepts for the
 mammal example is shown below:
-The algorithm then closes the set of atomic concepts under join: Initially, a worklist is formed
+the algorithm then closes the set of atomic concepts under join: Initially, a worklist is formed
 containing all pairs of atomic concepts c) such that c 6- c 0 and c 0 6- c. While the worklist is not
 empty, remove an element of the worklist (c 0
 using the fundamental
@@ -193,7 +200,7 @@ worklist is empty.
 The iterative step of the concept-building algorithm is illustrated below:
 3 Using Concept Analysis to Identify Potential Modules
 The main idea of this paper is to apply concept analysis to the problem of identifying potential
-modules within monolithic code. An outline of the process is as follows:
+modules within monolithic code. An outline of The process is as follows:
 1. Build a context, where objects are functions defined in the input program and attributes are
 properties of those functions. The attributes could be any of several properties relating the
 functions to data structures. Attributes are discussed in more detail below.
@@ -248,10 +255,10 @@ these techniques. This shows that concept analysis encompasses previously define
 modularization. We now show that concept analysis offers the possibility to go beyond previously
 defined methods: It offers the ability to tease apart code that is, in some sense, more "tangled".
 To illustrate what we mean by more tangled code, consider a slightly modified stack and queue
-example. Suppose the functions isEmptyQ and enq have been written so that they modify the stack
+example. Suppose the functions isEmptyQ and enq have been written so that the functions modify the stack
 fields directly (see Figure 4), rather than calling isEmptyStack and push. While this may be more
-efficient, it makes the code more difficult to maintain - simple changes in the stack implementation
-may require changes in the queue code. Furthermore, it complicates the process of identifying
+efficient, this makes the code more difficult to maintain - simple changes in the stack implementation
+may require changes in the queue code. Furthermore, this complicates the process of identifying
 separate modules. If we apply concept analysis using the same set of attributes as we did above,
 attribute ff 4
 ("uses fields of struct stack") now applies to isEmptyQ and enq. Table 2 shows the
@@ -287,7 +294,7 @@ Figure
 5: The concept lattice (and corresponding key) for the "tangled" stack and queue example
 using the attributes listed on page 8.
 The problem is that the attributes listed on page 8 reflect only "positive" information. A
-distinguishing characteristic of the stack operations is that they depend on the fields of struct
+distinguishing characteristic of the stack operations is that the stack operations depend on the fields of struct
 stack but not on the fields of struct queue. To "untangle" these components, we need to augment
 the set of attributes with "negative" information - in this case the complement of "uses fields of
 struct queue" (i.e., "does not use fields of struct queue"). The revised set of attributes and the
@@ -309,7 +316,7 @@ c 6
 g) initStack
 bot (;; fff 0
 g) empty concept
-This concept lattice contains all of the concepts in the concept lattice from Figure 5, as well as an
+the concept lattice contains all of the concepts in the concept lattice from Figure 5, as well as an
 additional concept, c 4
 , which corresponds to a stack module.
 This modularization identifies isEmptyQ and enq as being part of a queue module that is
@@ -360,7 +367,7 @@ wide variety of attributes we might choose in an effort to identify concepts (mo
 Our examples have used attributes that reflect the way struct data types are used. But in some
 instances, it may be useful to use attributes that capture other properties. Other possibilities for
 attributes include the following:
-ffl Variable-usage information: Related functions can sometimes be identified by their use of
+ffl Variable-usage information: Related functions can sometimes be identified by Related functions use of
 common global variables. An attribute capturing this information might be of the form "uses
 global variable x".
 ffl Dataflow and slicing information can be useful in identifying modules. Attributes capturing
@@ -381,7 +388,7 @@ or - 2
 ". For example, "uses fields of stack or uses fields of queue".
 Any or all of these attributes could be used together in one context. This highlights one of the
 advantages of the concept-analysis approach to modularization: It represents not just a single
-algorithm for modularization; rather, it provides a framework for obtaining a collection of different
+algorithm for modularization; rather, It provides a framework for obtaining a collection of different
 modularization algorithms.
 4 Concept and Module Partitions
 Thus far, we have discussed how a concept lattice can be built from a program in such a way that
@@ -390,7 +397,7 @@ group of concepts represents a potential modularization. Feasible modularization
 collections of modules that are disjoint, but include all the functions in the input code. To limit
 the number of choices that a software engineer would be presented with, it is helpful to identify
 such partitions.
-We now formalize the notion of a concept partition and present an algorithm to identify such
+we now formalize the notion of a concept partition and present an algorithm to identify such
 partitions from a concept lattice.
 4.1 Concept partitions
 Given a context (O; A;R), a concept partition is a set of concepts whose extents form a partition of
@@ -411,7 +418,8 @@ is the trivial partition: All functions are
 placed in one module.
 By looking at concept partitions, the software engineer can eliminate nonsensical possibilities.
 In the preceding example, c 7
-does not appear in any partition - if it did, then to what module
+does not appear in any partition - if c 7
+ did, then to what module
 (i.e., nonoverlapping concept) would deq belong?
 An atomic partition of a concept lattice is a concept partition consisting of exactly the atomic
 concepts. (Recall that the atomic concepts are the concepts with smallest extent containing each
@@ -421,11 +429,11 @@ in
 
 Figure
 
-3 (page does not have an atomic partition: The atomic concepts are c 0
+3 (page does not have an atomic partition: the atomic concepts are c 0
 , and c 3
 however, c 1
 and c 3
-overlap - the object "chimpanzees" is in the extent of both concepts.
+overlap - the object "chimpanzees" is in the extent of the atomic concepts.
 The atomic partition of a concept lattice is often a good starting point for choosing a modularization
 of a program. In order to develop tools to work with concept partitions, it is useful to be
 able to guarantee the existence of atomic partitions. This can be achieved by augmenting a context
@@ -462,18 +470,28 @@ are disjoint
 Figure
 
 7: An algorithm to find the partitions of a concept lattice.
-The algorithm builds up a collection of all the partitions of a concept lattice. Let P be the
-collection of partitions that we are forming. Let W be a worklist of partitions. We begin with
+An algorithm to find the partitions of a concept lattice.
+ builds up a collection of all the partitions of a concept lattice. Let P be the
+collection of partitions that we are forming. Let W
+ be a worklist of partitions. We begin with
 the atomic partition, which is the set of immediate suprema of the bottom element of the concept
-lattice. P and W are both initialized to the singleton set containing the atomic partition.
-The algorithm works by considering partitions from worklist W until W is empty. For each
-partition removed from W , new partitions are formed (when possible) by selecting a concept of
+lattice. P and W
+ are both initialized to the singleton set containing the atomic partition.
+An algorithm to find the partitions of a concept lattice.
+ works by considering partitions from W
+ W
+ until W
+ is empty. For each
+partition removed from W
+ , new partitions are formed (when possible) by selecting a concept of
 the partition, choosing a supremum of that concept, adding it to the partition, and removing
-overlapping concepts. The algorithm is given in Figure 7.
+overlapping concepts. An algorithm to find the partitions of a concept lattice.
+ is given in Figure 7.
 In the worst case, the number of partitions can be exponential in the number of concepts.
-In such a case (or any case where the number of partitions is large), it is possible to adapt the
-algorithm to work interactively. After each new partition is discovered, the algorithm would pause
-for the user to consider that partition. If it is on too fine a scale, the user would allow the algorithm
+In such a case (or any case where the number of partitions is large), it is possible to adapt An algorithm to find the partitions of a concept lattice.
+ to work interactively. After each new partition is discovered, An algorithm to find the partitions of a concept lattice.
+ would pause
+for the user to consider each new partition. If it is on too fine a scale, the user would allow An algorithm to find the partitions of a concept lattice.
 to iterate further to find coarser-grained partitions.
 5 Implementation and Results
 We have implemented a prototype tool that employs concept analysis to propose modularizations
@@ -482,38 +500,40 @@ under Solaris 2.5.1.
 The prototype takes a C program as input. The default object set is the set of all functions
 defined in the input program. The default attribute set consists of one attribute of the form "uses
 the fields of struct t" for each user-defined struct type (or equivalent typedef) in the input
-program. The user has the option to include attributes of the form "has a parameter or return
+program. the user has the option to include attributes of the form "has a parameter or return
 type of type t." The context can be formed as is, or can be formed in fully complemented form,
 where for each user-defined struct type, the attributes of the form"does not use fields of struct
 t" (or "does not have a parameter or return type of type t") are included in the attribute set of
 the context.
 The context is then fed into a concept analyzer, which builds the concepts bottom up as described
-in Section 2. The user can then view the concept lattice or feed the lattice into the parti-
+in Section 2. the user can then view the concept lattice or feed the concept lattice into the parti-
 tioner, which computes (depending on the user's choice) all possible partitions or one partition at
 a time.
 The examples in this paper were analyzed by the implementation. Preliminary results on
 larger examples appear promising. In particular, we have used the prototype tool on the SPEC 95
-benchmark go ("The Many Faces of Go"). The program consists of roughly 28,000 lines of C code,
+benchmark go ("The Many Faces of Go"). the input
+program consists of roughly 28,000 lines of C code,
 372 functions, and 8 user-defined data types. The concept lattice for the fully complemented context
 associated with these functions and data types consists of thirty-four concepts and was constructed
 in seconds of user time (on a SPARCstation 10 with 64MB of RAM). The partitioner identified
 possible partitions of the lattice in roughly the same amount of time.
 5.1 Case study: chull.c
 chull.c is a program taken from a computational-geometry library that computes the convex hull
-of a set of vertices in the plane. The program consists of roughly one thousand lines of C code. It
-has twenty-six functions and three user-defined struct data types: tVertex, tEdge, and tFace,
+of a set of vertices in the plane. the input
+program consists of roughly one thousand lines of C code. the input
+programhas twenty-six functions and three user-defined struct data types: tVertex, tEdge, and tFace,
 representing vertices, edges, and faces, respectively. The context fed into the concept analyzer
 consisted of the twenty-six functions as the object set, six attributes ("uses fields of tVertex",
 "does not use fields of tVertex", etc.), and the binary relation indicating whether or not function
-f uses fields of one of the struct types. The concept analyzer built twenty-eight concepts and the
-corresponding lattice in roughly one second of user time. The lattice appears in Figure 8. The
+f uses fields of one of the struct types. the concept analyzer
+ built twenty-eight concepts and the
+corresponding lattice in roughly one second of user time. the concept lattice appears in Figure 8. The
 partitioner computed the 153 possible partitions of the concept lattice in roughly two seconds.
 
 Figure
 
 8: The concept lattice derived from chull.c.
-The atomic partition groups the functions into the eight concepts listed in Table 3. This
-partition indicates that the code does not cleanly break into three modules (e.g., one for each struct
+The atomic partition groups the functions into the eight concepts listed in Table 3. The atomic partition indicates that the code does not cleanly break into three modules (e.g., one for each struct
 type). However, assuming that the goal is to transform chull.c into an equivalent C++ program,
 the eight concepts do suggest a possible modularization based on the three types: Concepts 2,
 3, and 4 would correspond to three classes, for vertex, edge, and face, respectively; concept 1
@@ -552,11 +572,11 @@ really provides a family of modularization algorithms: Rather than offering one 
 different attributes can be chosen for different conditions.
 The work most closely related to ours is that of Liu and Wilde [8], which makes use of a table
 that is very much like the object-attribute relation of a context. However, whereas our work uses
-concept analysis to analyze such tables, Liu and Wilde propose a less powerful analysis. They
+concept analysis to analyze such tables, Liu and Wilde propose a less powerful analysis. Liu and Wilde
 also propose that the user intervene with ad hoc adjustments if the results of modularization are
 unsatisfactory. As explained above, the concept-analysis approach can naturally generate a variety
 of possible decompositions (i.e., different collections of concepts that partition the set of objects).
-The concept-analysis approach is more general than that of Canfora et al. [2], which identifies
+the concept-analysis approach is more general than that of Canfora et al. [2], which identifies
 abstract data types by analyzing a graph that links functions to their argument types and return
 types. The same information can be captured using a context, where the objects are the functions,
 and the attributes are the possible argument and return types (for example, attributes
@@ -585,7 +605,8 @@ analyzing relationships among functions and types to identify classes. In [1], t
 objects that link functions to specific variables. A similar effect can be achieved via concept analysis
 by introducing one attribute for each actual parameter.
 There has been a certain amount of work involving the use of cluster analysis to identify potential
-modules (e.g., [5, 1, 7]). This work (implicitly or explicitly) involves the identification of
+modules (e.g., [5, 1, 7]). a certain amount of work involving the use of cluster analysis to identify potential
+modules (e.g., [5, 1, 7]) (implicitly or explicitly) involves the identification of
 potential modules by determining a similarity measure among pairs of functions. We are currently
 investigating the link between concept analysis and cluster analysis.
 Concept analysis has previously been applied in a software-engineering tool, albeit for a problem
@@ -594,9 +615,10 @@ conflicts in software-configuration information [11].
 
 Acknowledgements
 
-This work was supported in part by the National Science Foundation under grant CCR-9625667
+a certain amount of work involving the use of cluster analysis to identify potential
+modules (e.g., [5, 1, 7]) was supported in part by the National Science Foundation under grant CCR-9625667
 and by the Defense Advanced Research Projects Agency under ARPA Order No. 8856 (monitored
-by the Office of Naval Research under contract N00014-92-J-1937).
+by the Office of the Defense Advanced Research Projects Agency under contract N00014-92-J-1937).
 The comments of Manuvir Das on the work reported in the paper are greatly appreciated.
 
 

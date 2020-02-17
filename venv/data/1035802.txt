@@ -1,21 +1,21 @@
 --T
 Keeping track of the latest gossip in a distributed system.
 --A
-We tackle a natural problem from distributed computing, involving time-stamps. Let <i>p</i>={<i>p</i><inf>1</inf>,<i>p</i><inf>2</inf>, ...,<i>p</i><inf>N</inf>} be a set of computing agents or processes which synchronize with each other from time to time and exchange information about themselves and others. The gossip problem is the following: Whenever a set <i>P</i>  <i>P</i> meets, the processes in <i>P</i> must decide amongst themselves which of them has the latest information, direct or indirect, about each agent <i>p</i> in the system. We propose an algorithm to solve this problem which is finite-state and local. Formally, this means that our algorithm can be implemented as an asynchronous automation.
+We tackle a natural problem from distributed computing, involving time-stamps. Let <i>p</i>={<i>p</i><inf>1</inf>,<i>p</i><inf>2</inf>, ...,<i>p</i><inf>N</inf>} be a set of computing agents or processes which synchronize with each other from time to time and exchange information about each other and others. The gossip problem is the following: Whenever a set <i>P</i>  <i>P</i> meets, the processes in <i>P</i> must decide amongst themselves and others which of themselves and others has the latest information, direct or indirect, about each agent <i>p</i> in the system. We propose an algorithm to solve this problem which is finite-state and local. Formally, this means that our algorithm can be implemented as an asynchronous automation.
 --B
 Introduction
 The aim of this paper is to tackle a natural problem from distributed computing, involving
 time-stamps. Let be a set of computing agents or processes which
 synchronize with each other from time to time and exchange information about themselves
 and others. The gossip problem is the following: Whenever a set P ' P meets, the
-processes in P must decide amongst themselves which of them has the latest information,
+processes in P must decide amongst themselves which of themselves has the latest information,
 direct or indirect, about each agent p in the system.
 This is easily accomplished if the agents decide to "time-stamp" every synchronization
 and pass these time-stamps along with each exchange of information. This does not
 require that all their clocks be synchronized. For example, each process can use an
 independent counter. When a set P ' P meets, the processes in P jointly agree on a new
-value for their counters which exceeds the maximum of the counter values currently held
-by them. Thus, for any process p, the time-stamps assigned to synchronization events
+value for the processes in P counters which exceeds the maximum of the counter values currently held
+by the processes in P. Thus, for any process p, the time-stamps assigned to synchronization events
 involving p form a strictly increasing sequence (albeit with gaps between successive time-
 stamps). So, the problem of deciding who has the latest information about p reduces to
 that of checking for the largest time-stamp.
@@ -24,41 +24,44 @@ values increase without bound and most of the agents' time would be taken up in 
 on large numbers, as opposed to actual gossip.
 We propose an algorithm using counters which take on values from a bounded, finite
 set. We assign an independent counter to each subset of processes which can potentially
-synchronize. These counters are updated when the corresponding sets of processes meet.
+synchronize. counters which take on values from a bounded, finite
+set are updated when the corresponding sets of processes meet.
 The update is performed jointly by the processes which meet.
 Since our set of counter values is bounded, time-stamps have to be reused and, in
 general, different synchronizations involving a particular set of processes will acquire the
 same time-stamp during a computation. Despite this, our algorithm guarantees that
-whenever a set P ' P meets, the processes in P can decide correctly which of them
+whenever a set P ' P meets, the processes in P can decide correctly which of the processes in P
 has the best information about any other agent p in the system. Thus, in essence, the
 processes in P may be finite state machines and yet manage to keep track of the latest
-information about other agents. Further, the algorithm itself does not induce any
+information about other agents. Further, our algorithm does not induce any
 additional communications.
-We formalize the gossip problem and our solution to it in terms of asynchronous
-automata. These machines were first introduced by Zielonka and are a natural generalization
+We formalize the gossip problem and We solution to it in terms of asynchronous
+automata. finite state machines were first introduced by Zielonka and are a natural generalization
 of finite-state automata for modelling concurrent systems [30]. An asynchronous
-automaton consists of a set of finite-state agents which synchronize to process their input.
+automaton consists of a set of finite-state agents which synchronize to process finite-state agents input.
 Each letter a in the input alphabet \Sigma is assigned a subset '(a) of processes which jointly
-update their state when reading a. The processes outside '(a) remain unchanged during
-this move-in fact, they are oblivious to the occurrence of a.
-(Calling these automata asynchronous is misleading. The automata communicate syn-
+update \Sigma state when reading a. The processes outside '(a) remain unchanged during
+this move-in fact, \Sigma are oblivious to the occurrence of a.
+(Calling the gossip problem and our solution to it in terms of asynchronous
+automata asynchronous is misleading. the gossip problem and our solution to it in terms of asynchronous
+automata communicate syn-
 chronously. Zielonka used the term "asynchronous" to emphasize that different components
 of the network can proceed independently while processing the input. We continue
 to use this rather inappropriate terminology for historical reasons.)
 A preview of the algorithm
 Our algorithm proceeds by having each process maintain different levels of information
 about the rest of the system. At the primary level, a process p records the latest information
-that it has heard from every other process. Thus, the primary information of
+that a process p has heard from every other process. Thus, the primary information of
 process p regarding process q corresponds to the most recent event performed by q which
 p is aware of, either directly or indirectly.
-The secondary information of a process consists of its knowledge about the primary
+The secondary information of a process consists of The secondary information of a process knowledge about the primary
 information of other processes. Thus, for processes p, q and r, p's secondary information
 would refer to events of the form "the latest that p knows about what q knows about
-r". Similarly, the tertiary information of a process consists of its knowledge about the
+r". Similarly, the tertiary information of a process consists of the tertiary information of a process knowledge about the
 secondary information of every other process.
-Events are identified by labels assigned to them when they occur-the label of each
+Events are identified by labels assigned to Events when Events occur-the label of each
 event is assigned jointly by all the processes that take part in the event. (An event
-involving only one process corresponds to an internal event.) These labels are best thought
+involving only one process corresponds to an internal event.) labels assigned to them are best thought
 of as time-stamps. The goal of the algorithm is to correctly compare and update the
 primary information of all processes which participate in each synchronization, with the
 constraint that only a bounded number of labels are used to time-stamp events, regardless
@@ -67,7 +70,7 @@ Let p and q be processes that synchronize. We prove that p's primary information
 about r is more recent (and therefore better) than q's primary information about r if and
 only if the event corresponding to r recorded in q's primary information is also present
 in p's secondary information. In other words, the primary information of p and q can
-be compared by just checking for equality of labels within their primary and secondary
+be compared by just checking for equality of labels within labels primary and secondary
 information-we do not have to maintain any order between the labels. This feature is
 crucial for designing an algorithm which uses only a bounded number of time-stamps:
 reusing a label will, in general, destroy any a priori order on the set of labels.
@@ -79,47 +82,52 @@ should never simultaneously be present in the primary and secondary information 
 system. This invariant is difficult to maintain because the processes which take part in
 an event and assign a time-stamp to it will not, in general, have access to the primary
 and secondary information of all processes across the system. So, they have no way of
-knowing precisely which labels are "in use" across the system when the event occurs.
+knowing precisely which labels are "in use" across the system when the same event occurs.
 It turns out that tertiary information can be used to resolve the problem of deciding
 when a time-stamp can be reused. We prove that a time-stamp previously assigned by
-a process p is currently "in use"-i.e., it currently belongs to the primary or secondary
-information of some other process q-only if it also belongs to the tertiary information of
-p. From this, it follows that labels which are not in the tertiary information of a process
+a process p is currently "in use"-i.e., a time-stamp previously assigned by
+a process p is currently "in use"-i.e currently belongs to the primary or secondary
+information of some other process q-only if a time-stamp previously assigned by
+a process p is currently "in use"-i.e also belongs to the tertiary information of
+p. From this, this follows that labels which are not in the tertiary information of a process
 can be reused. Since the number of events in the tertiary information of each process
 is bounded, processes in the system can always work with a bounded set of labels large
 enough to permit each event to be assigned a fresh time-stamp which does not clash with
 the set of time-stamps currently "in use" across the system.
-As we remarked earlier, our algorithm can be described as an asynchronous automaton,
+As we remarked earlier, we algorithm can be described as an asynchronous automaton,
 where each process is locally a finite-state machine. The automaton that we construct to
 solve the gossip problem can be effectively presented in space polynomial in the number
 of processes in the system. This means that the automaton can be embedded in other
 distributed algorithms without sacrificing efficiency.
 In this paper, we solve the gossip problem for systems with multi-party synchroniza-
-tion. Surpisingly, the problem appears no easier when restricted to systems with pairwise
+tion. Surpisingly, the gossip problem for systems with multi-party synchroniza-
+tion appears no easier when restricted to systems with pairwise
 synchronization. Though systems with pairwise synchronization are perhaps more representative
-of "real world" systems, we have chosen to describe our solution in the general
+of "real world" systems, we have chosen to describe we solution in the general
 setting because it has important applications in theoretical studies of distributed systems
 based on the asynchronous automaton model [13, 14, 23].
 The technique we describe for analyzing synchronizing systems is also applicable to
 more general classes of distributed systems. For instance, we can adapt our algorithm for
 maintaining primary, secondary and tertiary information to solve the gossip problem for
 "well behaved" classes of message-passing systems [21].
-The paper is organized as follows. In the next section, we introduce asynchronous
+this paper is organized as follows. In the next section, we introduce asynchronous
 automata and formalize the gossip problem in terms of these automata. To do this, we
 define a natural partial order on events in the system. In Section 2 we introduce ideals
-and frontiers, both of which play a crucial role in the rest of the paper. Sections 3 and
+and frontiers, both of which play a crucial role in the rest of this paper. Sections 3 and
 4 describe how to maintain, compare and update in a local manner the latest information
-about other processes. The next section puts all these ideas together and formally
+about other processes. the next section puts all these ideas together and formally
 describes the "gossip automaton" which solves the problem we set out to tackle.
 Section 6 briefly examines extensions of the basic gossip automaton and possibilities
 for optimizing the construction. We also look at applications of the gossip automaton in
 logic and the theory of asynchronous automata [13, 14, 23, 27].
-In the concluding Discussion, we place our results in perspective. We discuss similarities
+In the concluding Discussion, we place we results in perspective. we discuss similarities
 and differences with other work on "gossiping" and bounded time-stamps [1, 2, 3, 5,
 Let P be a finite set of processes which synchronize periodically and let the set of possible
 synchronizations permitted in the system be denoted C, where C ' each
 element c 2 C is a non-empty subset of P. When c occurs, the processes in c share all
-information about their local states and update their states in synchrony.
+information about all
+information about their local states local states and update all
+information about their local states states in synchrony.
 We model a computation of the system as a sequence of communications-that is,
 a word u 2 C   . Let u be of length m. It is convenient to think of u as a function
 abbreviates the set fi;
@@ -127,7 +135,7 @@ otherwise. By this convention, the empty word " is denoted by the
 Events With associate a set of events E u . Each event e is of the form
 In addition, it is convenient to include an initial event denoted
 [1::m]g.
-The initial event marks an implicit synchronization of all the processes before the start
+Each event marks an implicit synchronization of all the processes before the start
 of the actual computation. So, if u is the empty word ", E
 Usually, we will write E for E u . For to denote
 that implies that process p participated in the
@@ -147,7 +155,8 @@ Ordering relations on E The word u imposes a total order on events in E: define
 However, the temporal order ! does not accurately reflect the cause and effect relationship
 between events in E. Clearly, synchronizations between disjoint sets of processes
 can be performed independently. In particular, if two such synchronizations occur consecutively
-in u, they could also be transposed without affecting the outcome of the com-
+in u, two such synchronizations occur consecutively
+in u could also be transposed without affecting the outcome of the com-
 putation. To record information about causality and independence, we define a partial
 order v   on E.
 To begin with, we observe that each process p orders the events in which it participates:
@@ -175,17 +184,17 @@ Latest information Let E be the set of events of the communication sequence
 C. The v   -maximum p-event in E is denoted is the last
 event in E in which p has taken part. Since all p-events are totally ordered
 by v   , max p (E) is well-defined.
-Let P. The latest information p has about q in E corresponds to the v   -
+Let P. Latest information p has about q in E corresponds to the v   -
 maximum q-event in the subset of events max p (E)#. We denote this event by latest p!q (E).
 Since all q-events are totally ordered by v   and q 2 0 v   latest p!q (E) is well-defined
 
 Example: Continuing with our example, in Figure 1, max
 e 6 . latest p!q latest p!s On the other hand, latest
 For any processes the events latest p!q (E) and latest p 0 !q (E) are both q-
-events and are thus always comparable with respect to v   . Our goal is to design a
+events and are thus always comparable with respect to v   . our goal is to design a
 scheme whereby each process p maintains a bounded amount of information locally, so
 that whenever a set c ' P synchronizes, the processes in c can decide amongst themselves
-which of them has heard most recently from every process in the system. More formally,
+which of themselves has heard most recently from every process in the system. More formally,
 for every q 2 P, all the processes in c should be able to jointly compute which of the
 events flatest p!q (E)g p2c is maximum with respect to v   .
 We make precise the notions of bounded and local information using asynchronous
@@ -202,7 +211,7 @@ Asynchronous automaton An asynchronous automaton A over (\Sigma; ') is of the fo
 '(a) is the local transition relation for a,
 are sets of initial and final global states. Intuitively, each local transition
 relation ! a specifies how the processes '(a) that meet on a may decide on a joint move.
-outside '(a) do not change their state when a occurs. Thus we define the global
+outside '(a) do not change initial and final global states state when a occurs. Thus we define the global
 transition relation ) ' SP \Theta \Sigma \Theta SP by ~s a
 '(a) and ~s P
 P \Gamma'(a) .
@@ -219,7 +228,7 @@ the language recognized by A, is the set of words accepted by A. In this paper, 
 not look at asynchronous automata as language recognizers. Instead, we shall treat them
 as devices for locally computing families of functions.
 Locally computable functions Let Val be a set (of values). A \Sigma-indexed family of
-functions is a set F contains a function f a for each letter
+functions is a set 2 S F contains a function f a for each letter
 a 2 \Sigma.
 F \Sigma is locally computable if we can find a deterministic asynchronous automaton
 a family of local functions G
@@ -233,7 +242,7 @@ in terms of asynchronous automata.
 Given . The distribution function ' is defined in the
 obvious way-for each " c 2 \Sigma, '("c) = c. For convenience, henceforth we shall drop the
 distinction between a subset c 2 C and the corresponding letter " c 2 \Sigma and refer to both
-as just c. Thus, we will use S c to denote the set of '("c)-states and ! c to denote the local
+as just c. Thus, Our will use S c to denote the set of '("c)-states and ! c to denote the local
 transition function for " c.
 \Sigma be a communication sequence and c ' P. For each q 2 P, we
 denote by best c (u; q) the set of processes in c which have the most recent information
@@ -260,7 +269,7 @@ all the events in the computation which necessarily precede e.
 The minimum possible partial view of a word u is the ideal f0g. This is because of our
 interpretation of 0 as an event which takes place before the actual computation begins.
 lies below every event in E, 0 2 I for every non-empty ideal I. We shall assume
-that every ideal we consider is non-empty.
+that every ideal We consider is non-empty.
 Clearly the entire set E is an ideal, as is e# for any e 2 E. It is easy to see that if I
 and J are ideals, so are I [ J and I " J .
 Example: Let us look once again at Figure 1. f0; e 2 g is an ideal, but f0; e
@@ -273,8 +282,7 @@ P-views For an ideal I, the v   -maximum p-event in I is denoted max p (I). The 
 of I is the set Ij is the set of all events in I which p can "see". For
 the P -view of I, denoted Ij P , is S
 which is also an ideal. In particular,
-we have Ij
-Example: In Figure 1, let I denote the ideal f0; e 1 g.
+we have IjExample: In Figure 1, let I denote the ideal f0; e 1 g.
 and hence Ij g. On the other hand, though
 g. The joint view Ij
 For an ideal I, the views Ij p and Ij q seen by two processes are, in general,
@@ -288,7 +296,7 @@ The pq-frontier at I, frontier pq (I) is defined as follows:
 frontier pq is an r-sentry for p with respect to qg
 1 In the theory of partial orders, order ideals and ideals are distinct concepts. Ideals are normally
 assumed to be subsets which are v   -closed and directed. We shall, however, deal only with order ideals
-in this paper and so our terminology should cause no confusion.
+in this paper and so We terminology should cause no confusion.
 Observe that this definition is asymmetric-in general, frontier pq (I) 6= frontier qp (I).
 Example: As before, in Figure 1, let I denote the ideal f0; e 1 g. Ij q "Ij
 g. frontier rq is a p-sentry for r with respect to q whereas e 3
@@ -306,12 +314,12 @@ The primary information of p after I, primary p (I), is the set flatest p!q (I)g
 More precisely, primary p (I) is an indexed set of events-each event latest p!q (I)
 in primary p (I) is represented as a triple (p; q; e). As usual, for P ' P, primary P
 primary p (I).
-As we have already remarked, for all q 2 P, the set of q-events in Ij p is always
+As We have already remarked, for all q 2 P, the set of q-events in Ij p is always
 nonempty, since q 2 0 2 Ij p . Further, since all q-events are totally ordered by /
 q and hence
 by v   , the maximum q-event in Ij p is well-defined. Notice that latest p!p
 To compare primary events, processes need to maintain additional information. It
-turns out that it is sufficient for each process to keep track of all the other processes'
+turns out that It is sufficient for each process to keep track of all the other processes'
 primary information.
 Secondary information The secondary information of p after I, secondary p (I), is the
 (indexed) set S
@@ -322,7 +330,7 @@ secondary p (I).
 Each event in secondary p (I) is of the form latest q!r (latest p!q (I)#) for some q; r 2 P.
 This is the latest r-event which q knows about upto the event latest p!q (I). We abbreviate
 latest q!r (latest p!q (I)#) by latest p!q!r (I).
-Just as we represented events in primary p (I) as triples of the form (p; q; e), where
+Just as We represented events in primary p (I) as triples of the form (p; q; e), where
 secondary event latest p!q!r (I) in secondary p (I)
 as a quadruple (p; q;
 However, we will often ignore the fact that primary p (I) and secondary p (I) are indexed
@@ -330,15 +338,15 @@ sets of events and treat them, for convenience, as just sets of events. Thus, fo
 e 2 I, we shall write e 2 primary p (I) to mean that there exists a process q 2 P such
 that (p; q; e) 2 primary p (I)-i.e., latest p!q (I). Similarly, e 2 secondary p (I) will
 indicate that for some q; r 2 P, (p; q; secondary p (I). We extend this to other set-theoretic
-operations as well. So, for instance, if we say e
-we mean that we can find
+operations as well. So, for instance, if We say e
+We mean that We can find
 secondary q (I).
 Notice that each primary event latest p!q (I) is also a secondary event latest p!p!q (I)
 (or, equivalently, latest p!q!q (I)). So, following our convention that primary p
 (I) and
 secondary p (I) be treated as sets of events, we write primary p (I) ' secondary p (I).
 Comparing primary information
-Our goal is to compare and update the primary information of processes whenever they
+we goal is to compare and update the primary information of processes whenever they
 meet. For this, we need the following observation regarding the significance of events
 lying on frontiers.
 I be an ideal, an r-sentry for p with
@@ -350,20 +358,20 @@ r , we must have e /
 r is
 the transitive closure of the irreflexive relation / r ). However, e / r f as well, so we have
 means that f 2 Ij p as well, which is a contradiction.
-Next, we must show that latest q!r 0 !r (I) for some r 0 2 P. We know that there is
+Next, we must show that latest q!r 0 !r (I) for some r 0 2 P. we know that there is
 a path e . This path starts inside Ij
-If this path never leaves Ij p "Ij q then is the v   -maximum
+If This path never leaves Ij p "Ij q then is the v   -maximum
 p-event in I, it must be the v   -maximum p-event in Ij q . So, latest q!p!r (I) and we
 are done.
-If this path does leave Ij p " Ij q , we can find an event e 0 along the path such that
+If This path does leave Ij p " Ij q , we can find an event e 0 along the path such that
 In other
-words, e 0 is an r 0 -sentry for q with respect to p. We know by our earlier argument that
+words, e 0 is an r 0 -sentry for q with respect to p. We know by We earlier argument that
 latest q!r 0
 (I). It must be the case that e = latest r 0 !r (e 0 #). For, if latest r 0 !r (e
 e 00 6= e, then e /
 latest p!r (I), which
 is a contradiction. So, latest r 0 !r (e latest q!r 0 !r (I) and we are done. 2
-Our observation about frontier events immediately gives us a way to compare primary
+We observation about frontier events immediately gives we a way to compare primary
 information using both primary and secondary information.
 I be an ideal and latest p!r (I) and latest q!r (I).
 secondary q (I).
@@ -375,9 +383,9 @@ secondary q
 (I), and there is nothing to prove. If e 6= f ,
 then there exists an event e 0 such that e / r e 0 /
 r f and so e 2 Ij We know that
-is an r-sentry in frontier pq (I). But then, by our previous lemma,
+is an r-sentry in frontier pq (I). But then, by We previous lemma,
 secondary q (I) and we are done. 2
-Suppose p and q synchronize at an action a after u. At this point they "share" their
+Suppose p and q synchronize at an action a after u. At this point they "share" they
 primary and secondary information. For
 if the event latest p!r (E u ) is also
 present in q's set of secondary events secondary q (E u ), both p and q know that q's latest
@@ -387,7 +395,7 @@ i.e., latest p!r latest q!r (E u ). In this way, for each r 2 P, p and q locally
 their primary information about r in E ua . Clearly latest p!q latest q!p
 where e a is the new event-i.e., g.
 This procedure generalizes to any arbitrary set P ' P which synchronizes after u.
-The processes in P share their primary and secondary information and compare this
+The processes in P share The processes in P primary and secondary information and compare this
 information pairwise. Using Lemma 2, for each q 2 decide who has the "latest
 information" about q. Each process then comes away with the best primary information
 from P .
@@ -402,9 +410,9 @@ formation, which is achieved by Lemma 2.
 After a synchronization involving P ' P, notice that all processes in P will come
 away with the same set of primary and secondary events.
 From the preceding argument, it is clear that the new event belongs to the primary
-(and hence secondary) information of the processes which synchronize at that event.
-Further, the update procedure reveals that if an event disappears from the secondary
-information of all the processes, it will never reappear as secondary information at some
+(and hence secondary) information of the processes which synchronize at the new event.
+Further, This procedure reveals that if an event disappears from the secondary
+information of all the processes, an event will never reappear as secondary information at some
 later stage. This is captured formally in the following proposition.
 Proposition 3 Let u; w 2 \Sigma   such that w = ua for some a 2 \Sigma. Let e a denote the new
 event in w-i.e., g. Then:
@@ -436,8 +444,9 @@ Figure
 
 2: At e 7 , e 1 2 secondary p
 7 #), but r and s cannot "see" e 1 in secondary fr;sg (e 7 #).
-occurrence of a. 2 In this manner, the processes in P can easily assign consistent local
-time-stamps for each action which will let them compute the relations /
+occurrence of a. 2 In this manner, The processes in P can easily assign consistent local
+time-stamps for each action which will let consistent local
+time-stamps compute the relations /
 between events.
 The problem with this approach is that we will need an unbounded set of time-stamps,
 since u could get arbitrarily large. Instead we would like a scheme which uses only a finite
@@ -453,8 +462,8 @@ of different processes, the corresponding event is actually the same.
 Notice that we do not need to maintain a global temporal order on labels across the
 system. Lemma 2 assures us that to compare events of interest to us, it suffices to check
 for equality of labels assigned to the events.
-Suppose we have such a labelling on u and we want to extend this to a consistent
-labelling on ua-i.e., we need to assign a label to the new a-event. By Proposition 3,
+Suppose us have such a labelling on u and us want to extend this to a consistent
+labelling on ua-i.e., us need to assign a label to the new a-event. By Proposition 3,
 it suffices to use a label which is distinct from the labels of all the a-events currently in
 the secondary information of E u . Since the cardinality of secondary P (E u ) is bounded, such
 a new label must exist. The catch is to detect which labels are currently in use and which
@@ -479,7 +488,7 @@ secondary r (E) either. Thus, e 1 is a c-event which belongs to
 secondary secondary c (E).
 To enable the processes in a to know about all a-events in secondary P (E u ), we need to
 maintain tertiary information.
-Tertiary information The tertiary information of p after I, tertiary p (I), is the (in-
+Tertiary information Tertiary information, is the (in-
 dexed) set S
 q2P secondary q (latest p!q (I)#). In other words, this is the latest information
 that p has in I about the secondary information of q, for all q 2 P. As before, for P ' P,
@@ -489,8 +498,8 @@ Each event in tertiary p
 (I) is of the form latest q!r!s (latest p!q (I)#) for some q;
 We abbreviate latest q!r!s (latest p!q (I)#) by latest p!q!r!s (I). We represent each event
 latest p!q!r!s (I) as a quintuple (p; q; s; e) in tertiary p (I). However, for convenience
-we will work with tertiary p (I) as though it were simply a set of events, rather than an
-indexed set, just as we have been doing with primary and secondary information.
+We will work with tertiary p (I) as though tertiary p (I) were simply a set of events, rather than an
+indexed set, just as We have been doing with primary and secondary information.
 Just as primary p (I) ' secondary p (I), clearly secondary p (I) ' tertiary p (I) since each
 secondary event latest p!q!r (I) is also a tertiary event latest p!p!q!r (I) (or, equivalently,
 latest p!q!q!r (I) and so on).
@@ -500,11 +509,11 @@ We know that e 2 Ij and there is a path e leading
 from e to max p (I) which passes through e latest p!p 0
 (I).
 Suppose this path never leaves Ij
-latest q!p (I). This means that e 2 secondary p (latest q!p (I)#) ' tertiary q (I) and we are
+latest q!p (I). This means that e 2 secondary p (latest q!p (I)#) ' tertiary q (I) and We are
 done.
 Otherwise, the path from e to max p (I) does leave Ij p " Ij q at some stage.
 This means that f 2 frontier qp (I) is an r-sentry
-and by our earlier argument we know that latest q!r (I). So latest q!r!p 00
+and by We earlier argument We know that latest q!r (I). So latest q!r!p 00
 latest q!q!r!p 00
 On the other hand, if q we can find an r-sentry f 2 frontier qp (I) on the
 path from e 0 to max p (I), for some r 2 P. We once again get latest q!r (I) and so
@@ -513,14 +522,14 @@ shall use this lemma in the following form.
 Corollary 5 Let I be an ideal, p 2 P and e a p-event in I. If
 tertiary p (I) then
 primary
-So, a process p can keep track of which of its labels are "in use" in the system by
+So, a process p can keep track of which of a process p labels are "in use" in the system by
 maintaining tertiary information. Each p-event e initially belongs to primary e (I), and
 hence to secondary e (I) and tertiary e (I) as well. (Recall that for an event e, we also use e
 to denote the subset of P which meets at e). As the computation progresses, e gradually
 "recedes" into the background and disappears from the primary and secondary sets of the
 system. Eventually, when e disappears from tertiary p (I), p can be sure that e no longer
 belongs to primary P (I) [ secondary P (I).
-Since tertiary p (I) is a bounded set, p knows that only finitely many of its labels are
+Since tertiary p (I) is a bounded set, p knows that only finitely many of tertiary p (I) is a bounded set labels are
 in use at any given time. So, by using a sufficiently large finite set of labels, each new
 event can always be assigned an unambiguous label by the processes which take part in
 the event.
@@ -623,7 +632,7 @@ checks the arrays prim p and sec p of each process p in a and computes for each 
 set of processes in a which have the most recent information about q.
 small technical point: g a must be defined for all states in V a . However, not all
 combinations of local states may be "meaningful". We can easily assemble local states to
-form an a-state for which the inductive assertions do not hold, as a result of which our
+form an a-state for which the inductive assertions do not hold, as a result of which We
 procedure for comparing primary information breaks down. However, since such a-states
 are unreachable, we can ignore this problem and simply assign a default value to g a in
 these cases-for instance, the default value could be the function fp 7! ag p2P .)
@@ -662,7 +671,7 @@ the automaton would have an exponential number of entries.
 However, in this case, we do not need to exhaustively enumerate the entire state space
 and transition table to completely describe the automaton. Since the states are structured
 entities and the transition function is presented as an algorithm which manipulates the
-data in these structured states, the gossip automaton can in fact be effectively presented
+data in the states, the gossip automaton can in fact be effectively presented
 in space polynomial in N . This ability to build the gossip automaton efficiently "on the
 fly" is crucial for embedding it in other distributed algorithms.
 6 Extensions and Applications
@@ -674,7 +683,7 @@ However, we may want to keep track of events which are older than secondary even
 We can generalize the definition of secondary and tertiary information and inductively
 define the k-ary information of a process p with respect to an ideal I, for any natural
 number k.
-The case corresponds to primary information. For k ? 1, the k-ary information
+this case corresponds to primary information. For k ? 1, the k-ary information
 of p after I, k-ary p (I), is the (indexed) set S
 (latest p!q (I) #). In other
 words, this is the latest information that p has in I about the (k \Gamma1)-ary information of
@@ -687,9 +696,10 @@ Together with Lemma 2, this implies that the gossip automaton can be modified to
 maintain consistent time-stamps for all events upto depth k, for any natural number k.
 Optimizing the automaton
 If we are only concerned with comparing and updating primary information, the gossip
-automaton can be made more concise. To achieve this, each process maintains its primary
+automaton can be made more concise. To achieve this, each process maintains each process primary
 information as a directed graph which reflects the underlying v   -order between primary
-events, rather than storing the information as a simple array of labels as we have described
+events, rather than storing its primary
+information as a simple array of labels as we have described
 here. It turns out that processes can compare and update these primary graphs without
 recourse to secondary information. Secondary information is then required only to ensure
 that new events get unused labels. Tertiary information is dispensed with altogether.
@@ -704,10 +714,11 @@ synchronizations are "well-behaved". One example is when the processes are locat
 the vertices of an d-dimensional hypercube (i.e., synchronizations taking
 place along faces of the hypercube. Once again, details can be found in [15].
 Applications
-Building the gossip automaton is a basic step in tackling many problems in the theory of
+Building The gossip automaton is a basic step in tackling many problems in the theory of
 asynchronous automata.
 Asynchronous automata play an important role in the theory of distributed systems
-because of their close connection to trace theory. Trace theory, initiated by Mazurkiewicz
+because of distributed systems
+ close connection to trace theory. Trace theory, initiated by Mazurkiewicz
 [19], is a language-theoretic approach to the study of concurrent systems. Traditionally,
 formal language theory models computations of sequential systems as strings over an
 abstract alphabet. Instead, trace theory describes computations of concurrent systems in
@@ -726,34 +737,35 @@ much easier to digest. (Other new proofs of Zielonka's theorem exist [2], but th
 based on asynchronous cellular automata [31], a slightly different-and, in our opinion,
 less intuitive-machine model.)
 In [13], a determinization construction is presented for asynchronous automata using
-a generalization of the classical subset construction for finite automata. This construction
-allows us to keep track of the global states which are currently valid at any stage of a
+a generalization of the classical subset construction for finite automata. a determinization constructionallows us to keep track of the global states which are currently valid at any stage of a
 computation by a non-deterministic asynchronous automaton.
-The key problem to be tackled in the determinization construction is to estimate the
+The key problem to be tackled in a determinization construction is to estimate the
 amount of information that can be safely "forgotten" by the subset automaton without
-sacrificing global consistency. It turns out that it is sufficient for each process to maintain
+sacrificing global consistency. It turns out that It is sufficient for each process to maintain
 "histories" upto the level of secondary events. This is accomplished by using the gossip
 automaton presented here to assign consistent time-stamps to all secondary events. Notice
 that the optimized gossip automaton of [15] cannot be used in the determinization
-construction since it only guarantees consistent time-stamps upto primary events.
+construction since the optimized gossip automaton of [15] cannot be used in the determinization
+ only guarantees consistent time-stamps upto primary events.
 In the past few years, there has been a lot of interest in extending asynchronous automata
 to process infinite inputs. Analogous to Buchi automata on infinite strings, Gastin
 and Petit [7] have defined Buchi asynchronous automata which operate on infinite traces.
-Although it has been known for a while that these automata are closed under complementation
+Although it has been known for a while that Buchi asynchronous automata which operate on infinite traces are closed under complementation
 for algebraic reasons, the only direct complementation construction provided
 so far has been for Buchi asychronous cellular automata [24]. Safra's determinization
 construction for Buchi automata [26] has recently been extended to Buchi asynchronous
-automata [14]. This provides a natural procedure for complementing these automata.
-Once again, the gossip automaton plays a crucial role in the construction.
+automata [14]. This provides a natural procedure for complementing Buchi asynchronous automata which operate on infinite traces.
+Once again, the gossip automaton plays a crucial role in [24]. Safra's determinization
+construction for Buchi automata [26].
 Automata on infinite strings have always been closely linked to logic [28]. This connection
 holds for Buchi asynchronous automata as well. Recently, Thiagarajan [27] has
 developed an extension of propositional linear-time temporal logic which is interpreted
 over infinite traces rather than infinite linear sequences. This logic appears to be quite
 expressive, while remaining decidable (unlike several other partial-order logics studied in
-the literature [18]). The decision procedure for this logic is automata-theoretic, in the
+the literature [18]). The decision procedure for This logic is automata-theoretic, in the
 style of Vardi and Wolper [29], except that it makes use of Buchi asychronous automata
 rather than conventional Buchi automata. The gossip automaton plays a crucial role in
-this construction as well. In fact, this was the original motivation for constructing the
+a determinization construction as well. In fact, this was the original motivation for constructing the
 gossip automaton.
 Asynchronous communication
 In this paper, we have only dealt with synchronous communication. Synchronous communication
@@ -762,7 +774,7 @@ subsets of agents to pool information together to make a decision.
 Another standard way for agents to exchange information is through message-passing.
 This mode of exchanging information is usually referred to as asynchronous communica-
 tion, since there may be an arbitrary delay between the time when a message is sent and
-the time when it is received.
+the time when a message is received.
 Synchronous communication is easier to handle, both from a theoretical standpoint as
 well as from the point of view of programming. It is no coincidence that languages like
 CCS [20] and CSP [11] which have been developed for specifying communicating systems
@@ -770,13 +782,13 @@ assume synchronous communication as the basic means of exchanging information.
 However, when agents are widely separated in space, asynchronous communication is
 generally the only practical way of achieving coordination. So, there is a considerable body
 of literature devoted to distributed algorithms and protocols for asynchronous systems
-We have extended our approach to deal with message-passing systems where the communication
+We have extended We approach to deal with message-passing systems where the communication
 medium is reliable, subject to certain restrictions on the number of unacknowledged
 messages that can be present in the system at any given time [21]. This shows that
 our analysis based on primary, secondary and tertiary information is applicable to a much
 wider range of distributed systems than the purely synchronous systems discussed in this
 paper.
-We now discuss the connections between our results and other work in related areas.
+We now discuss the connections between We results and other work in related areas.
 Studies of "gossiping" in networks have traditionally focussed on efficiently disseminating
 a fixed piece of information (or gossip) from one node to all other nodes in a
 network [9]. The main aim is to find an optimal sequence of communications to distribute
@@ -786,9 +798,9 @@ these were fundamental in solving many problems in distributed systems-notably t
 of creating what are called "atomic registers"[17]. Their results have been extended and
 considerably simplified by a number of others [3, 5, 6, 8]. However, this line of work is
 based on a shared memory model, which is quite different in spirit from the asynchronous
-automaton model. Though it may be possible to formally translate their results to our
-framework, we feel that the intuition underlying their time-stamping algorithms is quite
-different from ours. In general, solutions to time-stamping problems seem to depend
+automaton model. Though it may be possible to formally translate Their results to our
+framework, our feel that the intuition underlying Their time-stamping algorithms is quite
+different from our. In general, solutions to time-stamping problems seem to depend
 heavily on the underlying model of a distributed system that is used and it is difficult to
 compare such algorithms across models.
 More closely connected to our work are the bounded time-stamping algorithms implemented
@@ -798,38 +810,39 @@ from that of asynchronous automata. Asynchronous cellular automata correspond mo
 closely to shared memory systems than to systems that communicate by direct inter-process
 communication. Thus, though the overall goal of the constructions in [1, 2] is
 closely related to the gossip problem which we have studied here, the two time-stamping
-algorithms appear to be incomparable since they are based on fundamentally different
+algorithms appear to be incomparable since the two time-stamping
+algorithms are based on fundamentally different
 assumptions about how processes interact.
 Our definition of locally computable functions is closely linked to the notion of asynchronous
 mappings which is fundamental to the constructions used in [2]. It would be
 interesting to formally characterize the class of locally computable functions and develop
 a methodology for automatically synthesizing an asynchronous automaton to compute a
 given locally computable function, as is done for asynchronous mappings in [2].
-Though our algorithm can be implemented as an asynchronous automaton, it correctly
+Though our algorithm can be implemented as an asynchronous automaton, our algorithm correctly
 computes the latest gossip function locally for any input word. In other words, the set
 of communication sequences generated by the underlying system need not be regular.
-Our algorithm will also work on sequences generated, for instance, by N communicating
+our algorithm will also work on sequences generated, for instance, by N communicating
 Turing machines. Thus, any distributed algorithm which needs to keep track of the flow of
 information between processes can incorporate the gossip automaton as a "background"
 routine. Moreover, since the gossip automaton can be constructed efficiently "on the
 fly", embedding it in another algorithm does not involve a very significant computational
 overhead.
 Since our algorithm does not add any extra messages to the underlying computation,
-it is automatically resilient to failures-even if some processes stop functioning, our algorithm
-will continue to update primary information correctly for those parts of the system
+it is automatically resilient to failures-even if some processes stop functioning, our algorithmwill continue to update primary information correctly for those parts of the system
 which are still active in the underlying computation. This in-built fault-tolerance is also
 present in the shared memory time-stamping protocols of [1, 2, 3, 5, 8, 12] and others.
 In an asynchronous automaton, each move is simultaneously performed by all participating
 processes. This strong atomicity assumption is not crucial for our algorithm.
 Notice that the label of an event is uniquely fixed by the primary, secondary and tertiary
 information of the participating processes. Thus, we could implement each multi-way synchronization
-as a series of synchronous communications where processes exchange their
+as a series of synchronous communications where processes exchange the label of an event is uniquely fixed by the primary, secondary and tertiary
+information of the participating processes
 local information pairwise and then proceed independently. The deterministic nature of
 our algorithm guarantees that each process which participates in an event will locally
 choose the same time-stamp for the new event, since all processes taking part in the
 event base their choice of time-stamp on identical shared information. Similarly, once
 each process has collected the primary, secondary and tertiary information of every other
-participating process, it can update its local information unambiguously. Moreover, it
+participating process, each process can update each process local information unambiguously. Moreover, each process
 can also compute the updated information of every other process which took part in the
 event.
 The construction of the gossip automaton establishes a non-obvious property for all
@@ -839,22 +852,24 @@ value of X that they have heard of from p 1 (either directly or indirectly). The
 run of the system, bounded time-stamps suffice for determining which of fp
 have the most recent value of X. This is important, for example, for crash recovery. If the
 system crashes and p 1 fails to come alive after the crash, the other agents can get together
-and synthesize an optimal "last-known" state of p 1 by comparing their information about
+and synthesize an optimal "last-known" state of p 1 by comparing the other agents information about
 There are obvious parallels between the notion of primary, secondary and tertiary
 information we use in this paper and the concept of levels of knowledge about events in a
 distributed system [10, 25]. It would be interesting to formally work out how our approach
-fits in with knowledge-theoretic techniques for analyzing distributed systems. As far as we
+fits in with knowledge-theoretic techniques for analyzing distributed systems. As far as our
 are aware, none of the work in knowledge theory has addressed the synchronizing model
 that we consider here, so establishing a precise connection between the two approaches is
 not straightforward.
 
 Acknowledgments
 
-P.S. Thiagarajan suggested the gossip problem. We have benefited
-greatly from discussions with him. The reformulation of the gossip automaton in
+P.S. Thiagarajan suggested the gossip problem. we have benefited
+greatly from discussions with Acknowledgments
+
+P.S. Thiagarajan. The reformulation of the gossip automaton in
 terms of ideals and frontiers emerged during work with Nils Klarlund on determinizing
-asynchronous automata. His suggestions have been a great help in cleaning up the pre-
-sentation. We also thank Robert de Simone for pointing out some subtle technical errors.
+asynchronous automata. Nils Klarlund suggestions have been a great help in cleaning up the pre-
+sentation. we also thank Robert de Simone for pointing out some subtle technical errors.
 Finally, we thank the referees for several useful comments.
 
 

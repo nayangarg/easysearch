@@ -1,7 +1,7 @@
 --T
 LOD-sprite technique for accelerated terrain rendering.
 --A
-We present a new rendering technique, termed LOD-sprite rendering, which uses a combination of a level-of-detail (LOD) representation of the scene together with reusing image sprites (previously rendered images). Our primary application is accelerating terrain rendering. The LOD-sprite technique renders an initial frame using a high-resolution model of the scene geometry. It renders subsequent frames with a much lower-resolution model of the scene geometry and texture-maps each polygon with the image sprite from the initial high-resolution frame. As it renders these subsequent frames the technique measures the error associated with the divergence of the view position from the position where the initial frame was rendered. Once this error exceeds a user-defined threshold, the technique re-renders the scene from the high-resolution model. We have efficiently implemented the LOD-sprite technique with texture-mapping graphics hardware. Although to date we have only applied LOD-sprite to terrain rendering, it could easily be extended to other applications. We feel LOD-sprite holds particular promise for real-time rendering systems.
+We present a new rendering technique, termed LOD-sprite rendering, which uses a combination of a level-of-detail (LOD) representation of the scene together with reusing image sprites (previously rendered images). Our primary application is accelerating terrain rendering. The LOD-sprite technique renders an initial frame using a high-resolution model of the scene geometry. The LOD-sprite technique renders subsequent frames with a much lower-resolution model of the scene geometry and texture-maps each polygon with the image sprite from the initial high-resolution frame. As it renders these subsequent frames the technique measures the error associated with the divergence of the view position from the position where the initial frame was rendered. Once this error exceeds a user-defined threshold, the technique re-renders the scene from the high-resolution model. We have efficiently implemented the LOD-sprite technique with texture-mapping graphics hardware. Although to date We have only applied LOD-sprite to terrain rendering, LOD-sprite could easily be extended to other applications. We feel LOD-sprite holds particular promise for real-time rendering systems.
 --B
 INTRODUCTION
 As scene geometry becomes complex (into the millions of poly-
@@ -14,7 +14,7 @@ Much of real-time computer graphics has been dedicated to finding
 ways to trade off image quality for frame rate and/or system latency.
 Many recent efforts fall into two general categories:
 Level-of-detail (LOD): These techniques model the objects in the
-scene at different levels of detail. They select a particular LOD for
+scene at different levels of detail. These techniques select a particular LOD for
 each object based on various considerations such as the rendering
 cost and perceptual contribution to the final image.
 Image-based modeling and rendering (IBMR): These techniques
@@ -56,47 +56,51 @@ Figure
 2: The LOD-sprite technique renders each object as both a
 sprite and as a geometric object at a certain level of detail.
 the scene into separate non-occluding layers, where each layer consists
-of an object or a small group of related objects. They render
-each layer separately, and then alpha-channel composite them.
+of an object or a small group of related objects. the scene into separate non-occluding layers, where each layer consists
+of an object or a small group of related objects render
+each layer separately, and then alpha-channel composite the scene into separate non-occluding layers, where each layer consists
+of an object or a small group of related objects.
 Some hybrid techniques use both multiple LODs and IBMR methods
-[16, 27, 22]. A general pipeline of these techniques is shown
+[16, 27, 22]. A general pipeline of Some hybrid techniques is shown
 in
 
 Figure
 
 1. Each 3D object is first subjected to a culling operation.
 Then, depending upon user-supplied quality parameters, the system
-either renders the object at a particular LOD, or it reuses a cached
+either renders the object at a particular LOD, or a particular LOD reuses a cached
 sprite of the object.
 This paper presents the LOD-sprite rendering technique. As
-shown in Figure 2, the technique is similar to previous hybrid techniques
-in that it utilizes view frustum culling and a user-supplied
+shown in Figure 2, the LOD-sprite rendering technique is similar to previous hybrid techniques
+in that the LOD-sprite rendering technique utilizes view frustum culling and a user-supplied
 quality metric. Objects are also modeled as both LOD models and
 sprites. However, the LOD-sprite technique differs in that the 2D
 sprite is coupled with the LOD representation; the renderer utilizes
 both the LOD and the sprite as the inputs to create the output im-
 age. The LOD-sprite technique first renders a frame from high-resolution
 3D scene geometry, and then caches this frame as an
-image sprite. It renders subsequent frames by texture-mapping the
+image sprite. The LOD-sprite technique renders subsequent frames by texture-mapping the
 cached image sprite onto a lower-resolution representation of the
 scene geometry. This continues until an image quality metric requires
 again rendering the scenefrom the high-resolution geometry.
-We have developed the LOD-sprite technique as part of the rendering
+We have developed The LOD-sprite technique as part of the rendering
 engine for a real-time, three-dimensional battlefield visualization
 system [9]. For this application the terrain database consumes
 the vast majority of the rendering resources, and therefore in
-this paper our focus is on terrain rendering. However, LOD-sprite
+this paper We focus is on terrain rendering. However, LOD-sprite
 is a general-purpose rendering technique and could certainly be applied
 to many different types of scene geometry.
 The primary advantage of LOD-sprite over previous techniques
-is that when the sprite is transformed, if the 2D transformation is
+is that when LOD-sprite
+ is transformed, if the 2D transformation is
 within the context of an underlying 3D structure (even if only composed
 of a few polygons), a much larger transformation can occur
 before image distortions require re-rendering the sprite from the full
 3D scene geometry. Thus, the LOD-sprite technique can reuse image
 sprites for a larger number of frames than previous techniques.
 In addition, because the sprite preserves object details, a lower LOD
-model can be used for the same image quality. These properties allow
+model can be used for the same image quality. a lower LOD
+model allow
 interactive frame rates for larger scene databases.
 The next section of this paper places LOD-sprite in the context of
 previous work. Section 3 describes the LOD-sprite technique itself.
@@ -111,17 +115,16 @@ Previous work in image-basedmodeling and rendering falls primarily
 into three categories:
 (1) The scene is modeled by 2D image sprites; no 3D geometry
 is used. Many previous techniques model the 3D scene
-by registering a number of static images [2, 18, 19, 26]. These
-techniques are particularly well-suited for applications where photographs
-are easy to take but modeling the scene would be difficult
-(outdoor settings, for example). Novel views of the scene are created
+by registering a number of static images [2, 18, 19, 26]. Many previous techniques are particularly well-suited for applications where photographs
+are easy to take but modeling The scene would be difficult
+(outdoor settings, for example). Novel views of The scene are created
 by 2D transforming and interpolating between images [3, 18].
 By adding depth [17] or even layered depth [23] to the sprites, more
 realistic navigation, which includes limited parallax, is possible.
 Another category samples the full plenoptic function, resulting in
 3D, 4D or even 5D image sprites [13, 10], which allow the most
 unrestricted navigation of this class of techniques. However, all
-of these techniques lack the full 3D structure of the scene, and so
+of these techniques lack the full 3D structure of The scene, and so
 restrict navigation to at least some degree.
 (2) The scene is modeled using either 3D geometry or
 2D image sprites. Another set of previous techniques model
@@ -135,13 +138,14 @@ and 2D image sprites. There are a group of techniques
 which add very simple 3D geometry to a single 2D image
 [6, 7, 12, 24], which guides the subsequent image warping. Debevec
 et al. [7] construct a 3D model from reference images, while
-Sillion et al. [24] and Darsa et al. [6] use a textured depth mesh
+Sillion et al. [24] and Darsa 
+Sillion et al. [6] use a textured depth mesh
 which is constructed and simplified from depth information. In
 general, using a depth mesh with projective texture mapping gives
 better image quality than using depth image warping [17], because
 the mesh stretches to cover regions where no pixel information is
 available, and thus no holes appear. The main advantage of adding
-3D scene geometry to the image is that it allows the warping to approximate
+3D scene geometry to the image is that the image allows the warping to approximate
 parallax, and therefore increases the range of novel views
 which are possible before image distortion becomes too severe.
 Our LOD-sprite is most closely related to the techniques of Cohen
@@ -156,27 +160,31 @@ generate the texture map from the object itself.
 There is a large body of previous work in level-of-detail (LOD)
 techniques, which is not reviewed here. The general LOD-sprite
 technique requires that geometric objects be represented at various
-levels of detail, but it does not require any particular LOD representation
+levels of detail, but The general LOD-sprite
+technique does not require any particular LOD representation
 or technique (although a specific implementation of LOD-
 sprite will need to access the underlying LOD data structures).
 This paper does not cover how to create LOD representations of
 a terrain - there exist numerous multiresolution representations for
-height fields. Lindstrom et al. [14] and Hoppe [11] represent the
+height fields. 
+Sillion et al. [14] and Hoppe [11] represent the
 most recent view-dependent terrain LOD methods, and Luebke and
-Erikson [15] can also be adapted for terrain datasets. In this paper
-we adopt the technique of Lindstrom et al. [14]. This algorithm
+Erikson [15] can also be adapted for terrain datasets. In This paperwe adopt the technique of 
+Sillion et al. [14]. This algorithm
 organizes the terrain mesh into a hierarchical quadtree structure. To
 decide which quadrant level to use, the algorithm computes a screen
 space error for each vertex, and compares it to a pre-defined error
-threshold. This error measures the pixel difference between the full-resolution
+threshold. a pre-defined error
+threshold measures the pixel difference between the full-resolution
 and lower-resolution representations of the quadrant.
 2.3 Accelerated Virtual Environment Navigation
 As stated above, many LOD and IBMR techniques have been applied
 to the problem of accelerating virtual environment naviga-
-tion. Of these, LOD-sprite is most closely related to the techniques
+tion. Of these, LOD-sprite
+ is most closely related to the techniques
 of Maciel and Shirley [16], Shade et al. [22], Schaufler and Stuerzlinger
 [21], and Aliaga [1]. All of these papers present similar
-hybrid LOD/IBMR techniques. They create a hierarchy of image
+hybrid LOD/IBMR techniques. All of these papers create a hierarchy of image
 sprites based on a space partition of the scene geometry. In subsequent
 frames, for each node the techniques either texture map
 the node sprite onto a polygon, or re-render the node's 3D geometry
@@ -184,29 +192,35 @@ if an error metric is above a threshold. Each reused image
 sprite means an entire subtree of 3D geometry need not be ren-
 dered, which yields substantial speedup for navigating large virtual
 environments. The main limitation of these techniques is that creating
-a balanced space partition is not a quick operation, and it must
+a balanced space partition is not a quick operation, and a balanced space partition must
 be updated if objects move. Also, to avoid gaps between neighboring
-partitions, they either maintain a fairly large amount of overlap
-between partitions [22], or they morph geometries to guarantee a
+partitions, neighboring
+ either maintain a fairly large amount of overlap
+between partitions [22], or neighboring
+ morph geometries to guarantee a
 smooth transition between geometry and sprite [1]; both operations
 add storage and computational complexity. LOD-sprite differs from
 these techniques in that they interpolate the image sprite on a single
-2D polygon, while LOD-sprite interpolates the image sprite on a
+2D polygon, while LOD-sprite
+ interpolates the image sprite on a
 coarse representation of the 3D scene geometry.
 3.1 Algorithm
 The general idea of the LOD-sprite technique is to cache the rendered
 view of a high-resolution representation of the dataset. We
-refer to this image as a sprite, and the frame where the sprite is
+refer to this image as a sprite, and the frame where LOD-sprite
+ is
 created as a keyframe. LOD-sprite renders subsequent frames, referred
 to as novel views, at a lower resolution, but applies the sprite
-as a texture map. LOD-sprite measures the error caused by the divergence
+as a texture map. LOD-sprite
+ measures the error caused by the divergence
 of the viewpoint from the keyframe as each novel view is
 rendered. When this error exceeds a threshold, LOD-sprite renders
 a new keyframe.
 Pseudocode for the LOD-sprite algorithm is given in Figure 3.
 Lines 1 and 5 generate a sprite image from high-resolution scene
 geometry. This is necessary whenever the viewer jumps to a new
-viewpoint position (line 1), and when LOD-sprite generates a new
+viewpoint position (line 1), and when LOD-sprite
+ generates a new
 render sprite image from high-resolution
 scene geometry at viewpoint vp
 2 for each novel viewpoint vp
@@ -224,10 +238,11 @@ render poly, map with original texture map
 Figure
 
 3: Pseudocode for the LOD-Sprite algorithm.
-(line 5). At line 2 the algorithm processes each novel
+(line 5). At line 2 the LOD-Sprite algorithm processes each novel
 viewpoint. Lines 3 and 4 measure the error associated with how
 far the current viewpoint diverges from viewpoint at the time when
-the sprite was rendered; the procedure ErrorMetric is described in
+LOD-sprite
+ was rendered; the procedure ErrorMetric is described in
 Section 3.2. At line 6 the algorithm prepares to render the frame
 at the current viewpoint by gathering a set of polygons from a
 low-resolution version of the scene geometry. Line 7 considers
@@ -237,7 +252,8 @@ taken. This routine, WasVisible (described in Section 3.3), determines
 whether the polygon is texture mapped with the sprite texture
 (line or the original texture map (line 11).
 The sprite data structure holds both the sprite texture map and the
-viewing parameters; LOD-sprite uses both to map polygons
+viewing parameters; LOD-sprite
+ uses both to map polygons
 with the sprite texture in line 9. Creating a new sprite (lines
 1 and 5) requires copying the frame buffer into texture memory,
 which is efficiently implemented with the OpenGL glCopyTexIm-
@@ -245,15 +261,16 @@ age2D function.
 Texture mapping a keyframe could be achieved using projective
 texture mapping: a light placed at the keyframe camera position
 projects the sprite image onto the scene geometry. However, our
-implementation of LOD-sprite does not use projective texture map-
+implementation of LOD-sprite
+ does not use projective texture map-
 ping, because the current OpenGL implementation does not test for
 polygon visibility. Occluded polygons in the keyframe are mapped
-with wrong textures when they become visible. Therefore, our implementation
+with wrong textures when Occluded polygons in the keyframe become visible. Therefore, our implementation
 detects polygon visibility on its own (line 8), and applies
 a different texture map dependingon each polygons' visibility
 (lines 9 and 11).
-3.2
-LOD-sprite decides when to render a new keyframe based on an
+LOD-sprite
+ decides when to render a new keyframe based on an
 error metric which is similar to that described by Shade et al. [22].
 
 Figure
@@ -270,7 +287,8 @@ line segment AB is rendered, and texture mapped with the sprite
 rendered from v1 . Note that this projects the vertex C to the position
 C 0 on AB. From v1 this projection makes no visible differ-
 ence. However, from v2 , vertex C 0 is shifted by the angle ' from
-its true location C . This angle can be converted to a pixel distance
+vertex C 0 true location C . the angle ' from
+its true location C can be converted to a pixel distance
 on the image plane of view v2 , which is our measure of the error of
 rendering point C from view v2 :
 where fi is the view angle of a single pixel (e.g., the field-of-view
@@ -293,7 +311,7 @@ of each low-resolution quadtree quadrant. The resolution of each
 quadrant is determined by the number of levels we traverse down
 into the quadtree that is created by our LOD algorithm [14]. We
 calculate the central vertex by averaging the four corner vertices of
-the quadrant. To calculate ', we have to know the point C 0 . We calculate
+the quadrant. To calculate ', we have to know the point C 0 . we calculate
 by interesting the vector v1C with the plane spanned by
 the estimated central vertex and two original vertices of the quad-
 rant. Once we know C 0 , we calculate ' from the dot product of the
@@ -310,12 +328,15 @@ The light shaded region of the back mountain indicates occluded
 polygons in the keyframe, while the heavy shaded regions in both
 mountains show polygons culled by the view frustum. If these regions
 become visible in a novel view, there will be no sprite texture
-to map on them. Our solution is to map them with the same texture
-map we use to generate the keyframe.
-We classify the visibility of each polygon with a single pass over
+to map on these regions
+. Our solution is to map these regions
+ with the same texture
+map Our use to generate the keyframe.
+Our classify the visibility of each polygon with a single pass over
 all vertices of the low-resolution geometry. This loop is part of the
 process of generating a new keyframe. For novel views, the visibility
-of each polygon to the sprite is already flagged. This visibility
+of each polygon to LOD-sprite
+ is already flagged. This visibility
 Keyframe viewport Novel frame viewport
 
 Figure
@@ -327,37 +348,38 @@ line 8 in Figure 3 is a fast table look-up). OpenGL determines the
 visibility of each polygon from the novel viewpoint using the hardware
 z-buffer.
 In our implementation, the terrain is represented by a triangle
-mesh. We determine the visibility of each low-resolution triangle
+mesh. our determine the visibility of each low-resolution triangle
 using the keyframe viewing parameters and the keyframe z-
-buffer. Our visibility determination for each triangle is binary,
-which means we consider a partially occluded triangle to be fully
-occluded. We do not attempt to subdivide partially occluded tri-
+buffer. our visibility determination for each triangle is binary,
+which means our consider a partially occluded triangle to be fully
+occluded. our do not attempt to subdivide partially occluded tri-
 angles, because achieving this would require clipping the triangle
 into visible and invisible sub-triangles [8]. This would not only be
 expensive, but would also generate too many small triangles.
 To accurately detect visibility, we should scan-convert the whole
 triangle and detect the visibility of every pixel. This is obviously
-too expensive. Instead, we only perform this detection for the three
-triangle vertices. Only when all three vertices are visible do we
+too expensive. Instead, our only perform this detection for the three
+triangle vertices. Only when the three
+triangle vertices are visible do our
 flag the triangle as visible. Of course, this fails for triangles with
 unoccluded vertices but which are nevertheless partially occluded
 (e.g., a part of an edge and interior could be occluded). Such triangle
 will be erroneously flagged as visible. However, with terrain
 datasets this rarely occurs, since the projections of background triangles
 tend to be much smaller than foreground triangles.
-We use the z-buffer to determine the visibility of each vertex.
-When we calculate a keyframe, we store both the z-buffer and the
+our use the z-buffer to determine the visibility of each vertex.
+When our calculate a keyframe, we store both the z-buffer and the
 viewing matrix. Then, for each vertex, we calculate the (x; y)
 screen coordinate and the z-depth value with the keyframe viewing
-matrix. We compare this depth value to the z value at location
-(x; y) in the z-buffer. This tells us whether the vertex is occluded
+matrix. our compare this depth value to the z value at location
+(x; y) in the z-buffer. This tells our whether the vertex is occluded
 in the keyframe.
 This raises several implementation issues. The first is that a vertex
 is usually not projected onto an integer grid point in the z-buffer.
 Using the z-buffer value at the closest grid position does not always
 give the correct visibility, because that z value could represent a
 neighboring triangle. Interpolating between neighboring z values is
-also inappropriate, because they could represent disconnected ob-
+also inappropriate, because neighboring z values could represent disconnected ob-
 jects. The second issue is that the LOD mesh is not static - we
 compare the low-resolution geometry to the z-buffer rendered from
 the high-resolution geometry.
@@ -369,14 +391,14 @@ value at the closet grid point, and ffl is the specified 'thickness'
 of the visible surface. When Equation 3 is true we flag the vertex
 as visible.
 3.4 Implementation Notes
-To further enhance rendering time, we have tried to optimize our
+To further enhance rendering time, we have tried to optimize we
 implementation for the graphics hardware. For each frame, we
 need two texture maps - the original texture map and the current
 keyframe - to map all of the visible polygons. It is much too costly
 to load the appropriate map into texture memory on a per-polygon
 basis. Instead, we load both maps into texture memory, and scale
 the calculated texture coordinates so that each polygon accesses the
-correct map. In addition, we use triangle strips as our rendering
+correct map. In addition, we use triangle strips as we rendering
 primitive. The drawback of this primitive is that we can only apply
 one texture map to the whole strip. For strips which contain both
 visible and invisible triangles, we can only use the original texture
@@ -407,7 +429,7 @@ Figure 7a-e show similar results but are rendered from a view-point
 over the mountains, looking down onto the plain beyond. In
 this figure note that the close mountains appear very similar at low
 resolution (a), high resolution (b), and with the LOD-sprite technique
-(c). This is because these mountains are so close that even at
+(c). This is because the close mountains are so close that even at
 a high resolution the polygons are large, and the LOD decomposition
 keeps these polygons at full resolution. The difference images
 (Figures 7d and e) also demonstrate this. The comments regarding
@@ -427,7 +449,8 @@ an SGI Onyx 2 with 6 195MHz MIPS processors and Infinite Reality
 graphics. We rendered the same animation for three different
 runs: 1) using a high-resolution LOD decomposition, 2) using a
 low-resolution LOD decomposition, and 3) using the LOD-sprite
-technique. The LOD-sprite technique used the same settings as the
+technique. the LOD-sprite
+technique used the same settings as the
 high-resolution run for keyframes, and the same settings as the low-resolution
 run for the other frames.
 
@@ -435,7 +458,7 @@ Figure
 
 9 shows how the number of triangles changes as each
 frame is rendered. The low-resolution and LOD-sprite runs have
-identical triangle counts, except at the keyframes. The high-
+identical triangle counts, except at keyframes. The high-
 Figure
 
 8: The camera path for Figures 9-14.
@@ -446,9 +469,9 @@ variation as the animation progresses.
 Figure
 
 shows how the LOD-sprite error (Section 3.2) changes
-as each frame is rendered. The error always starts from zero for a
+as each frame is rendered. the LOD-sprite error (Section 3.2) always starts from zero for a
 As more novel views are interpolated from the keyframe,
-the error increases. When the error exceeds 1:0 pixels, we calculate
+the error increases. When the LOD-sprite error (Section 3.2) exceeds 1:0 pixels, we calculate
 another keyframe from the high-resolution scene geometry, which
 again drops the error to zero.
 
@@ -473,11 +496,16 @@ frames which are keyframes. This is plotted against the total number
 of frames rendered for the path shown in Figure 8. As expected,
 as more frames are rendered for a fixed path, the distance moved
 between each frame decreases, and so there is more coherence between
-successive frames. This figure shows how our system takes
+successive frames. Figure
+
+12 shows how our system takes
 advantage of this increasing coherence by rendering a smaller fraction
-of keyframes. This figure also illustrates a useful property of
+of keyframes. Figure
+
+12 also illustrates a useful property of
 the LOD-sprite technique for real-time systems: as the frame up-date
-rate increases, the LOD-sprite technique becomes even more
+rate increases, the LOD-sprite
+technique becomes even more
 efficient in terms of reusing keyframes.
 
 Figure
@@ -520,13 +548,13 @@ error threshold.
 5 CONCLUSIONS AND FUTURE WORK
 This paper has described the LOD-sprite rendering technique, and
 our application of the technique to accelerating terrain rendering.
-The technique is a combination of two rich directions in accelerated
+the technique is a combination of two rich directions in accelerated
 rendering for virtual environments: multiple level-of-detail (LOD)
 techniques, and image-basedmodeling and rendering (IBMR) tech-
 niques. It is a general-purpose rendering technique that could accelerate
 rendering for any application. It could be built upon any
 LOD decomposition technique. It improves the image quality of
-LOD techniques by preserving surface complexity, and it improves
+LOD techniques by preserving surface complexity, and It improves
 the efficiency of IBMR techniques by increasing the range of novel
 views that are possible. The LOD-sprite technique is particularly
 well-suited for real-time system architectures that decompose the
@@ -557,7 +585,7 @@ is to render the keyframe in advance by predicting where the
 viewpoint will be when it is next time to render a keyframe. We can
 predict this by extrapolating from the past several viewpoint loca-
 tions. Thus, we can begin rendering a new keyframe immediately
-after the previous keyframe has been rendered. If the system makes
+after the previous keyframe has been rendered. If this system makes
 a bad prediction (perhaps the user makes a sudden, high-speed ma-
 neuver), two solutions are possible: 1) we could use the previous
 keyframe as the sprite for additional frames of LOD-sprite render-
@@ -584,7 +612,7 @@ behavior of moving back and forth within a particular viewing
 region. Issues include how many previous keyframes to cache, and
 choosing a cache replacement policy.
 The continuous LOD algorithm [14] in our implementation is
-well-suited for our application of real-time terrain rendering. How-
+well-suited for We application of real-time terrain rendering. How-
 ever, the low-resolution mesh generated by this technique does not
 preserve silhouette edges, which as demonstrated in Figures 6 and
 7, forces us to use the original texture map along the silhouette.
@@ -606,7 +634,7 @@ did not impose this constraint.
 
 ACKNOWLEDGMENTS
 
-We acknowledge the valuable contributions of Bala Krishna
+our acknowledge the valuable contributions of Bala Krishna
 Nakshatrala for bug fixes and various improvements to the code,
 for re-generating the animations, and for help in preparing the
 graphs. This work was supported by Office of Naval Research

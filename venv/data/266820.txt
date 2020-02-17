@@ -1,7 +1,7 @@
 --T
 Procedure based program compression.
 --A
-Cost and power consumption are two of the most important design factors for many embedded systems, particularly consumer devices. Products such as personal digital assistants, pagers with integrated data services and smart phones have fixed performance requirements but unlimited appetites for reduced cost and increased battery life. Program compression is one technique that can be used to attack both of these problems. Compressed programs require less memory, thus reducing the cost of both direct materials and manufacturing. Furthermore, by relying on compressed memory, the total number of memory references is reduced. This reduction saves power by lowering the traffic on high-capacitance buses. This paper discusses a new approach to implementing transparent program compression that requires little or no hardware support. Procedures are compressed individually, and a directory structure is used to bind them together at run-time. Decompressed procedures are explicitly cached in ordinary RAM as complete units, thus resolving references within each procedure. This approach has been evaluated on a set of 25 embedded multimedia and communications applications, and results in an average memory reduction of 40% with a run-time performance overhead of 10%.
+Cost and power consumption are two of the most important design factors for many embedded systems, particularly consumer devices. Products such as personal digital assistants, pagers with integrated data services and smart phones have fixed performance requirements but unlimited appetites for reduced cost and increased battery life. Program compression is one technique that can be used to attack both of these problems. Compressed programs require less memory, thus reducing the cost of both direct materials and manufacturing. Furthermore, by relying on compressed memory, the total number of memory references is reduced. This reduction saves power by lowering the traffic on high-capacitance buses. This paper discusses a new approach to implementing transparent program compression that requires little or no hardware support. Procedures are compressed individually, and a directory structure is used to bind Procedures together at run-time. Decompressed procedures are explicitly cached in ordinary RAM as complete units, thus resolving references within each procedure. This approach has been evaluated on a set of 25 embedded multimedia and communications applications, and results in an average memory reduction of 40% with a run-time performance overhead of 10%.
 --B
 Introduction
 We will present a technique for saving power and
@@ -15,10 +15,10 @@ is an emerging industry vision of ubiquitous multimedia
 devices and the Java appliance. These products have
 extremely tight constraints on component cost. It is not
 at all uncommon for memory to be one of the most
-expensive components in these products, thus providing
+expensive components in These products, thus providing
 the need to reduce the size of stored programs. A
 second important design goal is low power
-consumption. Each of these products is battery
+consumption. Each of These products is battery
 powered, and reduced power consumption can be
 directly translated into extended battery life. Battery
 life is often the most important factor for this product
@@ -31,17 +31,18 @@ the system power consumption.
 Unlike desktop computing, performance often is not
 a primary factor for these devices. While information
 appliances are not the classic forms of mission-critical
-computing, they tend to have important real-time
+computing, information
+appliances tend to have important real-time
 aspects. For example, a certain amount of processor
 performance is necessary to decode a paging message;
 there is little benefit in providing more.
 Faced with these factors, we have decided to
 investigate the benefits storing programs in a
-compressed form. The compressed programs may
+compressed form. programs may
 reside in any type of memory, often depending on
 whether the system supports software field upgrades.
 The basic approach is to store the program image in a
-compressed form, and dynamically decompress it on
+compressed form, and dynamically decompress The basic approach on
 demand. An effective compression scheme would
 reduce the amount of system memory required for
 various applications, thus saving cost, board space and
@@ -60,12 +61,13 @@ The most direct technique for compressing
 programs involves explicit compression and
 decompression of the complete program. A portion of
 RAM is dedicated for a decompressed buffer, and
-programs are expanded from their compressed form into
-this RAM prior to execution. This approach has been
+programs are expanded from programs compressed form into
+
+RAM prior to execution. This approach has been
 applied to file systems [1] for saving disk space.
 Virtual memory and explicit file caches are usually
 effective at reducing the impact of the decompression
-algorithms on latency. Unfortunately, this approach is
+algorithms on latency. Unfortunately, This approach is
 not well suited to embedded systems. Some
 information appliances have only a single application,
 for example a data-rich pager with a vertical-market
@@ -75,23 +77,25 @@ systems would result in RAM size exceeding ROM size,
 which increases both cost and power consumption.
 Wolfe, Chanin and Kozuch presented a scheme for
 block based decompression in response to dynamic
-demands [2, 3]. Their goal was to improve code
+demands [2, 3]. Wolfe, Chanin and Kozuch goal was to improve code
 density of general-purpose processor architectures.
-They considered a number of compression algorithms,
+Wolfe, Chanin and Kozuch considered a number of compression algorithms,
 and concluded that a Huffman code [4], which reduced
 code size to 74% of the original, was most effective.
-Programs are decompressed as they are brought into the
+Programs are decompressed as Programs are brought into the
 instruction cache, and thus the compression is
 transparent to the executing application. One problem
 that Wolfe et al. identified involves translating memory
 addresses between the program space (i.e.
 decompressed) and the compressed program in the
-backing store. For example, if the program does a PC
+backing store. For example, if the compressed program in the
+backing store does a PC
 relative jump, which hits in the cache, the ordinary
 cache hardware will resolve the reference. However, in
 the case of a cache miss the refill hardware must
 determine where in the compressed space the target is
-stored. This problem requires a set of jump tables to
+stored. One problem
+that Wolfe et al requires a set of jump tables to
 patch references from the program space to the
 compressed space. A link time tool can be used to
 automatically generate the necessary jump tables.
@@ -101,31 +105,35 @@ A correlation is done across all basic blocks in a
 program after compilation but before linking. The
 purpose of this correlation is to identify common
 instruction sequences that exceed some minimal length.
-These sequences are written into a dictionary, and each
+common
+instruction sequences that exceed some minimal length are written into a dictionary, and each
 of the original occurrences is replaced with a mini-
 subroutine call (sic), i.e. a procedure call with no
 arguments. The application code is a skeleton of
 procedure calls and bits of uncommon code sequences.
 This approach can be implemented with no hardware
 support, and results were presented which indicated that
-it might achieve code size reductions of approximately
+
+ might achieve code size reductions of approximately
 12%. With a minor modification of the hardware an
 additional 4% code size reduction can also be achieved.
-While this approach will result in an extremely high rate
+While This approach will result in an extremely high rate
 of procedure calls, there is no discussion of the impact
 of these calls on performance. This issue could be
 particularly significant in the face of the tight code
-scheduling constraints of their target machine, the Texas
+scheduling constraints of the tight code
+ target machine, the Texas
 Instruments TMS320C25 DSP.
 Ernst et al investigated the use of byte-coded
 machine language [6] for compression. This approach
 hearkens back to the original goal of tightly encoded
-ISA formats for CISC processors, and much of their
+ISA formats for CISC processors, and much of CISC processors
 work is focused on minimizing the impact on
 performance.
 2. The Procedure Cache
 While Wolfe et al. have developed an effective
-technique for transparent code compression, their
+technique for transparent code compression, Wolfe et al. have developed an effective
+technique for transparent code compression
 approach has two specific features which may prove
 disadvantageous. First, since the compression process
 is transparent to the supervisor code as well as the
@@ -166,8 +174,10 @@ forms of branching. The remaining inter-procedure and
 global references must be resolved through the use of a
 directory service. We call this software cache the
 Procedure Cache (pcache).
-The pcache should be able to store any procedure
-that is small enough to fit within it. As a result of this
+the
+Procedure Cache (pcache) should be able to store any procedure
+that is small enough to fit within the
+Procedure Cache (pcache). As a result of this
 goal the pcache algorithms must manage variable size
 objects which may not be aligned on a boundary that is
 convenient for addressing, unlike conventional
@@ -179,14 +189,15 @@ recommended path.
 2.1 Runtime Binding
 Procedure calls are bound together at runtime by
 consulting a directory service. A linking tool translates
-each call into a request through a unique identifier. The
-directory service looks up the location of the call target
+each call into a request through a unique identifier. a directory service looks up the location of the call target
 and activates the target with the proper linkage needed
 for the return operation. A table stored with each
 program is used to translate procedure identifiers into
 addresses in the compressed memory. As was the case
-with the scheme from Wolfe et al., this table must be
-generated when the program is linked.
+with the scheme from Wolfe et al., A table stored with each
+program must be
+generated when each
+program is linked.
 The process used for runtime binding can be broken
 down into the following stages:
 1. Source invokes directory service with unique
@@ -227,7 +238,7 @@ followed by the time required to decompress the target
 procedure. The worst case call time is
 . In the expected case, i.e. that
 of a cache hit, the call time is
-. In this case it is
+. In the expected case the expected case is
 clearly important to increase the hit rate. However, in
 the limiting case where the hit rate is high, the directory
 scheme still imposes a cost of c l
@@ -244,8 +255,8 @@ once and then patches the call site. Subsequent
 invocations jump straight to the target, and then test the
 runtime type information to determine if the processor
 ended up at the right location. If the test succeeds the
-execution continues and if it fails the directory service
-is consulted. This approach works if the cached target
+execution continues and if the test fails the directory service
+is consulted. A similar approach works if the cached target
 address is guaranteed to be the start of a valid code
 sequence, which is difficult to guarantee when code
 blocks move within the address space after they are
@@ -256,8 +267,7 @@ Procedures need not be aligned on any standard
 boundary, and thus the risk exists that a jump would end
 up in the middle of a procedure or in free space.
 An alternate approach, which we are advocating, is
-to test the validity of the cached target address at the
-call site. This scheme involves more test operations in
+to test the validity of the cached target address at the call site. This scheme involves more test operations in
 the pcache than does testing at the destination, since
 each procedure has a single entry point but may call
 multiple targets. In order to test at the call site, each
@@ -279,7 +289,8 @@ sequence, introducing the danger of a false positive test.
 This problem is avoided by introducing a tag byte that
 identifies the word as a procedure identifier. The
 specific tag byte to use depends on the processor
-architecture, as it must correspond to an illegal opcode
+architecture, as The
+specific tag byte to use must correspond to an illegal opcode
 and be placed at the proper word alignment.
 Unfortunately, this approach is not foolproof for
 processors with variable length instructions, such as the
@@ -299,14 +310,13 @@ sufficient for the needs of embedded systems.
 2.2 Procedure Returns
 Return instructions are a bit complicated because the
 traditional code sequence cannot explicitly name the
-destination of the return operation. The pcache runtime
-system solves this problem by storing three pieces of
+destination of the return operation. The runtime system
+ solves this problem by storing three pieces of
 data: the source procedure identifier, the predicted
 address of the start of then return procedure (that is the
-address that the caller had at the time it invoked the
+address that the caller had at the time the caller invoked the
 active procedure), and the offset of the call site from the
-start of the source procedure. The regular return
-procedure is then replaced by a test of the predicted
+start of the source procedure. the source procedure is then replaced by a test of the predicted
 prologue for the source, and a jump to that address plus
 displacement in the event of success. A failure causes
 the directory service to lookup (and possibly reload) the
@@ -322,23 +332,26 @@ that both approaches produce similar results. All of the
 results presented below will be with respect to first-fit,
 because of the simplified implementation.
 If there is enough free space available, but not in
-any single block, then the runtime system must invoke
-the pcache compactor. The pcache is compacted by
+any single block, then The runtime system
+ must invoke
+the pcache compactor. the pcache is compacted by
 moving all of the live procedures to the start of the
 pcache and all of the free fragments to the end of the
 pcache.
-In the event that the runtime system does not find
+In the event that The runtime system
+ does not find
 must invoke a replacement
 algorithm to identify procedures that should be evicted
 from the pcache. We have experimented with two
 algorithms for replacement: least recently used (LRU)
-and Neighbor. With LRU the runtime system scans an
+and Neighbor. With LRU The runtime system
+ scans an
 LRU list and marks each procedure in sequence for
 eviction, until enough space has been freed. Once this
 is accomplished, the compactor is invoked to coalesce
-the free space into a single block large enough for the
+enough space into a single block large enough for the
 new procedure. While LRU is easy to implement and
-conceptually simple, it will tend to cause a significant
+conceptually simple, LRU will tend to cause a significant
 amount of memory traffic in the pcache to coalesce the
 fragmented free space. For example, consider the case
 where together the two LRU procedures have enough
@@ -349,8 +362,7 @@ approximately half of the pcache data in order to
 combine the space freed up by evicting these two
 procedures. It may be the case that the third LRU
 procedure could be combined with one of the first two
-and resides in an adjoining region of memory. In this
-case, the compacting procedure is trivial, since no
+and resides in an adjoining region of memory. In the expected case, the compacting procedure is trivial, since no
 intervening procedures need to be moved in the pcache.
 While the primary benefit of such an optimization is
 reducing the data movement in the pcache, a secondary
@@ -367,7 +379,7 @@ squares of the LRU values, where the least recently
 used procedure has an LRU value of 1 and all other
 increase sequentially. This approach is biased toward
 avoiding those procedures that were used recently,
-though it does not explicitly exclude them from
+though This approach does not explicitly exclude those procedures that were used recently from
 consideration. Neighbor scans the pcache for adjacent
 blocks of memory that are large enough for the new
 request, and considers both free and occupied space.
@@ -384,7 +396,7 @@ term to cap the value for each set of adjacent blocks,
 and exclude from consideration a set that exceeds this
 limit. The goal of this approach is to make it
 impossible to remove the most frequently used
-procedures, even in those cases where one of these
+procedures, even in those cases where one of the most frequently used
 procedures would otherwise be selected, e.g. when it
 neighbors a large procedure which is the least
 frequently used.
@@ -433,7 +445,7 @@ bwbasic and go, which represent the typical distribution
 and worst case (widest spread) respectively. Data is
 presented for both the static program image in memory,
 as well as the dynamic distribution seen during
-execution. This data suggests that a modest size pcache
+execution. Data suggests that a modest size pcache
 will often succeed in capturing the working set. In
 general the dynamic data exhibits a slightly slower
 growth than the static data and show sharper breaks;
@@ -472,7 +484,8 @@ encoder and decoder, achieve extremely low miss rates.
 The general trends are for both LRU and Neighbor to
 have very similar hit rates, with two notable exceptions.
 Both djpeg and mpeg2enc show high miss rates with 1k
-pcaches with both LRU and Neighbor. The rates stay
+pcaches with both LRU and Neighbor. high miss rates with 1k
+pcaches with both LRU and Neighbor stay
 relatively high for 2k for Neighbor, while the drop for
 LRU. In both cases there is a specific procedure which
 is frequently called and which is captured by the LRU
@@ -488,17 +501,17 @@ The miss rate data displays an interesting result:
 Neighbor generally achieves a lower miss rate than
 LRU. While it is certainly possible for pathological or
 pedagogical cases to exhibit behavior like this, in
-general LRU is expected to achieve the highest hit rates.
+LRU is expected to achieve the highest hit rates.
 This behavior is a consequence of the caching of
 variable size objects.
 Consider the case of a hardware cache with a fixed
 block size. If a certain amount of space must be made
 available and the entire cache is allocated, a specific
-number of blocks must be evicted from the cache. For
+number of blocks must be evicted from the entire cache. For
 such a cache LRU has proven to be effective at
 providing the best guess for which blocks should be
 evicted. With the software pcache used here the
-number of procedures evicted from the pcache depends
+number of procedures evicted from the software pcache depends
 upon the specific procedures selected. We explain this
 result by considering three different types of pcaches:
 small, medium and large. For a small pcache Neighbor
@@ -517,7 +530,7 @@ replacement algorithm. For half of these cases the size
 of the newly activated procedure will be equal to or less
 than the size of the LRU procedure, and thus both LRU
 and Neighbor will select the LRU procedure. For the
-remaining cases, the LRU algorithm will traverse the
+remaining cases, these the replacement algorithm will traverse the
 list of least frequently used procedures and mark each
 for eviction until the amount of space freed up is at least
 equal to the new request. Neighbor, however, looks for
@@ -529,8 +542,7 @@ multiple procedures into the best set.
 Figure
 
 4 illustrates this phenomenon. Assume that
-three "units" of space must be freed up. The LRU
-algorithm will choose the first three procedures on the
+three "units" of space must be freed up. these the replacement algorithm will choose the first three procedures on the
 LRU list (procedures 23, 17 and 87) for eviction and
 1 While this may not hold in all cases, we believe
 that the assumption is valid in general.
@@ -563,7 +575,8 @@ procedure in gcc is over 12k bytes and corresponds to
 8% of the procedure activations, while the second most
 common procedure is 52 bytes and corresponds to 2%
 of the procedure activations. Although procedures that
-exceed the pcache size are excluded they still contribute
+exceed the pcache size are excluded procedures that
+exceed the pcache size are excluded still contribute
 to the count of procedure activations: thus the gcc
 simulations have low hit rates for pcaches below 64k
 bytes. An interesting phenomenon may occur when one
@@ -581,12 +594,11 @@ Table
 3 and Table 4 show the rate of compaction
 events per procedure activation, rather than raw event
 counts, in order to make the presentation consistent
-across the test programs. This data illustrates the
+across the test programs. The miss rate data illustrates the
 effectiveness of the Neighbor algorithm. While both
 Neighbor and LRU achieve roughly comparable results
 for pcache hit rates, Neighbor is much more effective at
-reducing the number of compacting events. For this
-data, the Neighbor algorithm generally produces a much
+reducing the number of compacting events. For The miss rate data, the Neighbor algorithm generally produces a much
 2 Note that the position of procedure 35 (with a high
 LRU) in the cache blocks Neighbor from merging
 procedures 17 and 35 along with the free space adjacent
@@ -667,10 +679,11 @@ It is impossible to say how the pcache will interact
 with traditional hardware caches without discussing the
 specific hardware configuration. If the pcache memory
 is nearby on high-speed SRAM the cache should ignore
-it, as transparent caching in hardware will provide no
+the pcache memory
+, as transparent caching in hardware will provide no
 direct latency benefit while consuming valuable
 resources. On the other hand, if the pcache memory is
-relatively slow it should be cached by the hardware as
+relatively slow the pcache memory should be cached by the hardware as
 well. Almost all sophisticated embedded processors
 include memory control hardware for functions such as
 chip-select, wait-state insertion and bus sizing. This

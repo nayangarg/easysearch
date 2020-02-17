@@ -1,17 +1,18 @@
 --T
 Dynamically adapting registration areas to user mobility and call patterns for efficient location management in PCS networks.
 --A
-In this paper, we propose an extension to the personal communication services (PCS) location management protocol which uses dynamically overlapped registration areas. The scheme is based on monitoring the aggregate mobility and call pattern of the users during each reconfiguration period and adapting to the mobility and call patterns by either expanding or shrinking registration areas at the end of each reconfiguration period. We analytically characterize the trade-off resulting from the inclusion or exclusion of a cell in a registration area in terms of expected change in aggregate database access cost and signaling overhead. This characterization is used to guide the registration area adaption in a manner in which the signaling and database access load on any given location register (LR) does not exceed a specified limit. Our simulation results show that it is useful to dynamically adapt the registration areas to the aggregate mobility and call patterns of the mobile units when the mobility pattern exhibits locality. For such mobility and call patterns, the proposed scheme can greatly reduce the average signaling and database access load on LRs. Further, the cost of adapting the registration areas is shown to be low in terms of memory and communication requirements.
+In this paper, we propose an extension to the personal communication services (PCS) location management protocol which uses dynamically overlapped registration areas. The scheme is based on monitoring the aggregate mobility and call pattern of the users during each reconfiguration period and adapting to the mobility and call patterns by either expanding or shrinking registration areas at the end of each reconfiguration period. We analytically characterize the trade-off resulting from the inclusion or exclusion of a cell in a registration area in terms of expected change in aggregate database access cost and signaling overhead. This characterization is used to guide the registration area adaption in a manner in which the signaling and database access load on any given location register (LR) does not exceed a specified limit. Our simulation results show that Our simulation results is useful to dynamically adapt the registration areas to the aggregate mobility and call patterns of the mobile units when the mobility pattern exhibits locality. For such mobility and call patterns, The scheme can greatly reduce the average signaling and database access load on LRs. Further, the cost of adapting the registration areas is shown to be low in terms of memory and communication requirements.
 --B
 Introduction
 Personal communication services (PCS) allow mobile users with wireless terminals to receive calls irrespective of
-their location in a seamless manner. PCS networks have a cellular architecture: the geographical area is divided
+calls irrespective of
+ location in a seamless manner. PCS networks have a cellular architecture: the geographical area is divided
 into cells with one base station per cell. The mobile user's portable terminals communicate via wireless with fixed
 Address for Correspondence: Sandeep K. S. Gupta, Department of Computer Science, Colorado State University, Ft. Collins, CO
 radio ports in the base station. Delivering calls to the mobile terminals requires that the current location (point of
 attachment) of the mobile terminal be known in order for the network to route the calls to the mobile terminal. The task
 of tracking the location of mobile terminals is known as location management (or tracking) [2, 16, 6, 1, 3, 8]. Location
-management involves two basic operations: update and search. A mobile terminal updates its location periodically or
+management involves two basic operations: update and search. A mobile terminal updates A mobile terminal location periodically or
 otherwise. Whenever a call needs to be delivered to the mobile, the network uses the last know location of the mobile
 terminal to search for the mobile in the vicinity of that area. This may involve paging for the mobile terminal in certain
 neighborhood of the last known location of the mobile terminal. As has been demonstrated in several works, there is
@@ -19,67 +20,77 @@ a tradeoff between update and search costs. Strategy which tries to reduce one c
 vice versa. For example, if a mobile updates it's location more often then it can be searched more easily.
 One of the strategy used in conventional systems to balance the cost of update and search is the use of registration
 area (RA) approach to location tracking. The geographical area is divided into several registration area, where each
-registration area consists of several cells [11]. The system tracks a mobile terminals registration area instead of its
-cell. Whenever a mobile terminal crosses from one registration area to another it informs its new location to the
-system. To setup a call to a mobile terminal, the system pages all the cells in the registration area to find the current
+registration area consists of several cells [11]. The system tracks a mobile terminals registration area instead of The system
+cell. Whenever a mobile terminal crosses from one registration area to another a mobile terminal crosses from one registration area to another informs a mobile terminal crosses from one registration area to another new location to The system. To setup a call to a mobile terminal, The system pages all the cells in the registration area to find the current
 cell of the mobile terminal. A database called location register (LR) is associated with each registration area to keep
-information about the mobiles currently registered in that registration area. There are two common standards for
+information about the mobiles currently registered in the registration area. There are two common standards for
 location management: IS-41 [7] and GSM [12, 15]. IS-41 is used in North America and GSM is used in Europe. Both
 these standards use registration areas along with a two level hierarchy of location registers. The hierarchy consists
 of home location register (HLR) and visitor location registers (VLR's). Location information of a mobile node is
-kept at both its current location registrar, i.e. its VLR, and its permanent home location registrar. This facilitates
-locating non local mobiles during call delivery: the home location registrar of the mobile unit is contacted to find its
+kept at both Location information of a mobile node current location registrar, i.e. Location information of a mobile node VLR, and Location information of a mobile node permanent home location registrar. This facilitates
+locating non local mobiles during call delivery: the home location registrar of the mobile unit is contacted to find the home location registrar of the mobile unit
 current location. Hence, the two level hierarchy scheme increases the location update cost while reducing the location
 search/call delivery cost.
-In this paper we deal with the following problem. Statically defined registration areas cannot cover the entire movement
-pattern of the mobile users, sometimes, not even a good portion of it. This results in frequent inter-RA moves
-(location updates), which are costly. This is especially true when the mobile is far from its home RA, since this may
-require communication across the entire network depending upon the relative position of the mobile host and its HLR.
+In this paper the mobile unit deal with the following problem. Statically defined registration areas cannot cover the entire movement
+pattern of the mobile users, sometimes, not even a good portion of Statically defined registration areas. This results in frequent inter-RA moves
+(location updates), which are costly. This is especially true when the mobile is far from the mobile home RA, since this may
+require communication across the entire network depending upon the relative position of the mobile host and the mobile HLR.
 However, if we try to use fewer RAs, each covering wider geographical area, then the load on each location registrar
 increases. Further, an RA configuration defined to give good performance for a certain mobility pattern may not
 perform well when the mobility pattern changes. Hence, the problem of identifying registration areas is very challenging
 
-Overlapped registration area has recently been used to address this problem [8]. In particular, overlapped RAs can
+Overlapped registration area has recently been used to address the problem of identifying registration areas [8]. In particular, overlapped RAs can
 achieve the following: (a) increase the area handled by each LR, effectively reducing the number of inter-RA hand-
 offs, and (b) keep the number of users (mobile hosts) handled by each LR same as in the case of non-overlapped RAs.
 In this paper we propose a scheme that dynamically adapts to the mobility patterns and determines the area that should
-be covered by each LR, thus keeping the signaling overhead low. The scheme proposed in this paper keeps track of
+be covered by each LR, thus keeping the signaling overhead low. a scheme that dynamically adapts to the mobility patterns and determines the area that should
+be covered by each LR, thus keeping the signaling overhead low keeps track of
 aggregate user mobility and uses this information to decide the degree of overlapping between neighboring registration
 areas which will reduce the number of registration area handoffs while keeping the call delivery cost down. The
 decision to adjust the registration area is done in a distributed manner and the protocol ensures that if the mobility
 pattern are stable then the registration areas would also stabilize. The memory and communication overhead of the
-proposed scheme is low making the scheme scalable. We have simulated our protocol for various mobility patterns.
-Our simulation results show that the proposed scheme for dynamically adapting registration area is effective when
+proposed scheme is low making the scheme scalable. We have simulated We protocol for various mobility patterns.
+We simulation results show that the proposed scheme for dynamically adapting registration area is effective when
 there is locality in the overall movement and call patterns of the mobile users.
-In the rest of the paper we first present in Section 2 some related work in the literature. We present our system model
+In the rest of the paper We first present in Section 2 some related work in the literature. We present We system model
 in Section 3 and the proposed algorithm for dynamically adjusting the registration areas in Section 4. In Section 5 we
 provide implementation details for the proposed scheme. Our simulation model and results are presented in Section 6.
-Finally, we provide some conclusions in Section 7.
+Finally, Our provide some conclusions in Section 7.
 Related Work
 Many of the previous work has put effort in reducing the registration cost by introducing caching schemes or increasing
 the number of layers in the hierarchy of the location scheme. They are generally static in nature, that is to say
-that they have a fixed number of partitions, their shape is fixed, and the signaling structure (or hierarchy) is static. In
+that They have a fixed number of partitions, They shape is fixed, and the signaling structure (or hierarchy) is static. In
 the following, we present a brief comparison of the various types of location management schemes that have been
 proposed in the literature.
 Bejerano and Cidon [4] have presented a location management scheme which is based on the assumption that the
 communication cost between two RAs is a constant factor of the geographical distance between the location registrars
-of the two RAs. They define a logarithmic number of levels of RAs. Each RA has a radius twice as much as the ones
-at the radius of RA level right below it. The RAs at each level overlap as much as their radius. This scheme has a
-good average behavior, but it has a substantial delay in the worst case. It also has a storage space drawback, because
-it uses a logarithmic number of profile replicates per user.
+of the two RAs. the location registrars
+of the two RAs define a logarithmic number of levels of RAs. Each RA has a radius twice as much as the ones
+at the radius of RA level right below it. The RAs at each level overlap as much as The RAs at each level radius. a location management scheme which is based on the assumption that the
+communication cost between two RAs is a constant factor of the geographical distance between the location registrars
+of the two RAs has a
+good average behavior, but a location management scheme which is based on the assumption that the
+communication cost between two RAs is a constant factor of the geographical distance between the location registrars
+of the two RAs has a substantial delay in the worst case. a location management scheme which is based on the assumption that the
+communication cost between two RAs is a constant factor of the geographical distance between the location registrars
+of the two RAs also has a storage space drawback, because
+a location management scheme which is based on the assumption that the
+communication cost between two RAs is a constant factor of the geographical distance between the location registrars
+of the two RAs uses a logarithmic number of profile replicates per user.
 Ho and Akyildiz [8] have introduced a three level database hierarchy with the number of number levels dynamically
-adapting to the user pattern (call to mobility ratio - CMR). They have also introduced the idea of registration
-area overlapping. Nevertheless, they do not describe how to determine the degree of overlapping between adjacent
+adapting to the user pattern (call to mobility ratio - CMR). Ho and Akyildiz [8] have also introduced the idea of registration
+area overlapping. Nevertheless, Ho and Akyildiz [8] do not describe how to determine the degree of overlapping between adjacent
 RAs. Kryukova, Massingill, and Sanders [10] have proposed an integrated scheme of location management and call
-routing. Their scheme is based on an acyclic undirected graph on which they maintain routing pointers. Due to the
+routing. Kryukova, Massingill, and Sanders [10] scheme is based on an acyclic undirected graph on which Kryukova, Massingill, and Sanders [10] maintain routing pointers. Due to the
 acyclicity of the graph it is easy to maintain a coherent chain of routing pointers to the mobile stations, without worrying
 about cycles in the route. They make the following assumptions (1) the non-existence of cycles in the graph and
 (2) the assumption that the mobiles move between nodes that have a immediate network connection to each other.
-These assumptions may not hold in a general mobile network.
+the following assumptions (1) the non-existence of cycles in the graph and
+(2) the assumption that the mobiles move between nodes that have a immediate network connection to each other may not hold in a general mobile network.
 Rajagopalan and Badrinath [16] have proposed a hybrid scheme based on the Mobile-IP architecture that uses either
 the home-agent/visitor-agent paradigm or the direct location update between parties that communicate frequently.
 Das and Sen [6] have proposed a scheme for predicting the location of a user based on its last known location and ve-
-locity. Prakash and Singhal [13] have proposed a user profile replication scheme. Their idea is to have the information
+locity. Prakash and Singhal [13] have proposed a user profile replication scheme. Prakash and Singhal [13] idea is to have the information
 
 Table
 
@@ -121,8 +132,7 @@ of location replicated among quorums of location servers organized into a coteri
 Distributed location management algorithms which are load-balanced and optimal with respect to query delay (search
 latency) and call block probability are presented in [9]. However, there system model is different from currently used
 by IS-41 and GSM in the sense that they do not use the concept of HLR. The load balancing is achieved by randomization
-and replication. Another load balanced distributed location management scheme is presented in [14]. This
-scheme also is also uses a model which is not used in current PCS networks. Bhattacharya and Das have presented a
+and replication. Another load balanced distributed location management scheme is presented in [14]. Another load balanced distributed location management scheme also is also uses a model which is not used in current PCS networks. Bhattacharya and Das have presented a
 lazy update scheme which takes a information theoretic approach and used lossless compress to minimize the number
 of updates [5]. This technique can be used in conjunction with the technique presented in this paper. In [17], we
 presented a preliminary version of the scheme presented in this paper which only minimized the number of updates to
@@ -137,26 +147,37 @@ Location Register (LR)
 
 Figure
 
-1: The System Model (Cells are organized into clusters (here in clusters of 7) forming the Registration Areas
+1: 3 System Model
+Cells are organized into clusters (here in clusters of 7) forming the Registration Areas
 (RAs). The MSSs (LRs), located at the center of each RA, are connected through a hexagonal mesh.)
 neighbors. A base station (BS) is in-charge of a cell. Every base station is connected to a Mobile Switching Station
-(MSS). The MSS are connected to an interconnection network; hence each MSS can communicate with other MSSs
-in the system. Each MSS is in charge of a set of cells called its Registration Area (RA). We assume that, initially, the
-RA of a MSS consists of all the cells whose BS are directly connected to the MSS. We call these cells as core cells
-of that MSS. Associated with each MSS are two location databases: Visitor Location Registrar (VLR) and Home
-Location Registrar (HLR). A VLR of a MSS keeps information about all the mobile hosts (MHs) in its registration
+(MSS). a Mobile Switching Station
+(MSS) are connected to an interconnection network; hence each MSS can communicate with other MSSs
+in The system. a Mobile Switching Station
+(MSS) a Mobile Switching Station
+(MSS) is in charge of a set of cells called a Mobile Switching Station
+(MSS) Registration Area (RA). We assume that, initially, the
+RA of a MSS consists of all the cells whose BS are directly connected to a Mobile Switching Station
+(MSS). We call these cells as core cells
+of a Mobile Switching Station
+(MSS). Associated with a Mobile Switching Station
+(MSS) a Mobile Switching Station
+(MSS) are two location databases: Visitor Location Registrar (VLR) and Home
+Location Registrar (HLR). A VLR of a a Mobile Switching Station
+(MSS) keeps information about all the mobile hosts (MHs) in A VLR of a MSS registration
 area. To facilitate search of a MH, each MH is statically associated with a Home Location Registrar (HLR), which
-keeps information about the current location of the MH, i.e. the id of the MSS in whose RA the MH is currently
+keeps information about the current location of the MH, i.e. the id of a Mobile Switching Station
+(MSS) in whose RA each MH is currently
 residing. Hence, a location registrar maps an MH id to an MSS id.
-When an MH which is actively involved in communication moves from one cell, say c old , to another cell, say c new ,
-a handoff takes place, after which the MH receives and sends all its communication via base station of c new instead
+When an each MH which is actively involved in communication moves from one cell, say c old , to another cell, say c new ,
+a handoff takes place, after which each MH receives and sends all each MH communication via base station of c new instead
 of base station of c old . This involves signaling between MH, BS, and MSS and resource allocation and deallocation.
-Further, if the two cells c old and c new belong to different registration areas then the HLR of the MH is informed of
-the new location of the MH. Further, the VLR of MH's old registration area and its new registration area also need to
-be updated, i.e. the MH's record in the old RA's VLR is deleted and a record for the MH in the VLR of its new RA
+Further, if the two cells c old and c new belong to different registration areas then the HLR of each MH is informed of
+the new location of each MH. Further, the VLR of MH's old registration area and MH's old registration area new registration area also need to
+be updated, i.e. each MH's record in the old RA's VLR is deleted and a record for each MH in the VLR of MH's old registration area new RA
 is added. Hence, inter-RA handoffs are more expensive than the handoff which are intra-RA.
 Here we define communication and computation costs which will be later used in the paper.
-communication cost between a BS and its MSS.
+communication cost between a BS and BS MSS.
 communication cost between two neighboring MSS.
 ffl ae: average number of hops between two MSSs. Hence, the average communication cost between two arbitrary
 MSS is aeffi vv .
@@ -183,11 +204,12 @@ cost of processing a handoff/call-delivery at a MSS.
 We assume that each BS and MSS are individually addressable i.e. an MSS/BS can directly send a message to another
 MSS/BS.
 In the common models the registration happens as shown in Figure 2 : the new Base Station (BS) queries the new
-VLR (ffi cv ), the VLR creates a new record (ff v ) and informs the HLR (2fl about the registration of the MH
-to the new RA, and then the VLR requests (ffi vv ) a deletion of the MH's record at the old VLR. The old VLR deletes
-with an acknowledgement. The new VLR then returns a positive acknowledge to the MH
+VLR (ffi cv ), A VLR of a MSS creates a new record (ff v ) and informs the HLR (2fl about the registration of the MH
+to the new RA, and then the VLR requests (ffi vv ) a deletion of each MH's record at the old VLR. the old VLR deletes
+with an acknowledgement. A VLR of a MSS the old VLR then returns a positive acknowledge to the MH
 (ffi cv ). The call delivery happens in a similar manner as shown in Figure 3. Table 2 shows the costs that are associated
-with each action in the network. As we will see later, introducing overlapping to the RAs changes these costs.
+with each action in the network. As we will see later, introducing overlapping to the RAs changes the costs that are associated
+with each action in the network.
 search LR db
 Source cell
 Source VLR
@@ -205,47 +227,50 @@ part shows the messaging when the MHs are in different RAs.
 In the proposed location management scheme, associated with each mobile service station is a registration area. Since
 there is one-to-one correspondence between the mobile service stations and the registration areas, we will refer to the
 registration area associated with the k-th mobile service station, MSSk, as RA k. The registration area associated with
-a mobile service station is viewed as a set of cells. As opposed to static schemes, the membership of this set is dynamic
-in our scheme. Periodically, every MSS decides which cells will be included in or excluded from its registration
-area. Unrestrained inclusion and exclusion of cells from registration areas may lead to undesirable situations such as
-a orphan cell which does not belong to any registration area or registration areas with holes in them. In order to avoid
+a mobile service station is viewed as a set of cells. As opposed to static schemes, the membership of a set of cells is dynamic
+in our scheme. Periodically, every a Mobile Switching Station
+(MSS) decides which cells will be included in or excluded from every MSS . Unrestrained inclusion and exclusion of cells from registration areas may lead to undesirable situations such as
+a orphan cell which does not belong to any registration area or registration areas with holes in cells from registration areas. In order to avoid
 such undesirable situations, we require the dynamic RAs to satisfy the following properties:
 An RA has at least one cell.
-Property 2 For every RA such that jRAj ? 1, if cell c 2 RA then 9d 2 RA such that cell d is a neighbor of cell c.
-guarantees that no RA is empty and Property 2 guarantees that no RA has any cell or group of cells which
-is disconnected from remaining cells in the RA. The (ordered) set of all RAs in the system at any instance of time is
+Property 2 For every An RA such that jRAj ? 1, if cell c 2 RA then 9d 2 RA such that cell d is a neighbor of cell c.
+guarantees that An RA An RA is empty and Property 2 guarantees that An RA has any cell or group of cells which
+is disconnected from remaining cells in An RA. The (ordered) set of all RAs in the system at any instance of time is
 referred to as a configuration of the system, i.e., a configuration
 M , denotes RA i. Further, changing the configuration of the system is referred to as reconfiguration. The MSSs in
 the system reconfigure the system in a distributed manner at a fixed interval of time T .
-Initially, the registration area RA k consists of only those cells whose BSs are directly connected to MSS k. These
-cells are referred to as core cells of RA k and will be denoted as Core(k). The significance of the core cells of an
-RA is that an MSS never excludes any core cell from its RA. Hence, the notion of core cells guarantees Property 1
-is always satisfied. Further, it ensures that each MSS has certain minimal load. We note the following property of
+Initially, the registration area RA k consists of only those cells whose BSs are directly connected to MSS k. only those cells whose BSs are directly connected to MSS k. are referred to as core cells of An RA k and will be denoted as Core(k). The significance of the core cells of an
+RA is that an MSS never excludes any core cell from MSS An RA. Hence, the notion of core cells guarantees Property 1
+is always satisfied. Further, Property 1
+ ensures that a Mobile Switching Station
+(MSS) MSS has certain minimal load. We note the following property of
 assignment of core cells to RAs:
 Property 3 Every cell is a core cell of one and only one RA.
-Hence, the initial configuration, I , is a set of M RAs in which RA k is same as Core(k), i.e.
-time an RA consists of all its core cells and some other cells, which
-are core cells of its neighboring RAs. Hence, in a given configuration a cell c can may belong to multiple RAs. This
+Hence, the initial configuration, I , is a set of M RAs in which an
+RA k is same as Core(k), i.e.
+time an an
+RA consists of all an RA core cells and some other cells, which
+are core cells of an RA neighboring RAs. Hence, in a given configuration a cell c can may belong to multiple RAs. This
 implies that as opposed to the static scheme, a cell may have users registered with multiple RAs.
 In any configuration, we define two types of hand-offs.
 ffl an intra-RA handoff takes place whenever an MH which is registered with RA k moves from a cell c (which
 is in RA k) to another cell d which is in RA k, and
 ffl an inter-RA handoff takes place whenever an MH which is registered with RA k moves from a cell c (which
-is in RA k) to another cell d which is not in RA k. After the handoff the MH is registered with the RA l such
+is in RA k) to another cell d which is not in RA k. After an intra-RA handoff each MH is registered with An RA l such
 that d 2 Core(l).
 Further, there are two types of call-deliveries:
-ffl an intra-RA call-delivery is one in which both the caller MH and the callee MH are in the same RA.
+ffl an intra-RA call-delivery is one in which both the caller each MH and the callee each MH are in the same RA.
 ffl an inter-RA call-delivery is one in which the caller and the callee MHs are in different RAs.
 4.1 Registration Area Overlapping
-The main advantage of overlapping the RAs is that each RA can provide service to more MHs within their covered
-area; reducing the number of inter-RA handoffs and consequently the overhead to update the MH's HLRs. On the
-other hand, the drawback of overlapping the RAs is that the communication overhead for call delivery and location
-registration within the RA is increased due to increase in the diameter of the RA. The increase in the overhead depends
+The main advantage of overlapping different RAs is that each An RA can provide service to more MHs within more MHs covered
+area; reducing the number of inter-RA handoffs and consequently the overhead to update each MH's HLRs. On the
+other hand, the drawback of overlapping different RAs is that the communication overhead for call delivery and location
+registration within An RA is increased due to increase in the diameter of An RA. The increase in the overhead depends
 upon the underlying network topology. If this overhead is ignored, then we can reach the extreme configuration where
 every RA covers the entire network area, so that no communication to the HLRs is required.
 The registration and call delivery algorithm used in the scheme similar to the IS-41 registration and signaling. The
 message sequences are the same as shown in Figures 3 and 2, with minor additions to the code to handle the overlapping
-properties of the RAs.
+properties of different RAs.
 Interconnecting network
 MSCs
 BSs
@@ -273,12 +298,13 @@ Figure
 
 4 we show how the increase in signaling cost happens. The core of the RA of the MSS consists of all the
 cells whose BS are directly linked to the MSS. In Figure 4, RA A has been expanded to fit one cell from each of
-its neighboring RAs: Assume that a and b are MHs that are registered with RA A. If there is a connection to be
-established between MH a and b, the signaling cost will be almost as if they were in separate RAs, i.e. the signaling
+RA A : Assume that a and b are MHs that are registered with RA A. If there is a connection to be
+established between each MH a and b, the signaling cost will be almost as if a connection to be
+established between MH a and b were in separate RAs, i.e. the signaling
 has to go through the two MSSs. In general there are following cases for intra-RA and inter-RA handoffs:
 Case 1: MH moves from a core cell to another core cell.
 Case 2: MH moves from a core cell to another non-core cell.
-Case 3: MH moves from a non-core cell to another non-core cell (this case is not possible for intra-RA hand-
+Case 3: MH moves from a non-core cell to another non-core cell (Case 3: MH moves from a non-core cell to another non-core cell is not possible for intra-RA hand-
 offs).
 The main difference between an inter-RA and an intra-RA handoff is that; (i) there are two LRs that access their
 database in the inter-RA handoff compared to only one in the case of intra-RA, and (ii) there are 2 extra backbone
@@ -288,7 +314,7 @@ Case 1: Both MHs belong to the core of an RA
 
 Table
 
-4: Dividing the costs of Table 3 into the cost of the initiating RA and the receiving RA.
+4: Dividing the costs of Table 3 into the cost of An RA An RA and the receiving RA.
 Case # Intra-RA handoff Inter-RA handoff
 call-delivery Inter-RA call-delivery
 c intra\Gammacall\Gammacore\Gammacore c inter\Gammaoutgoing\Gammacall\Gammacore
@@ -299,13 +325,13 @@ c intra\Gammacall\Gammanoncore\Gammacore
 c inter\Gammaincoming\Gammacall\Gammacore
 c intra\Gammacall\Gammanoncore\Gammanoncore c inter\Gammaoutgoing\Gammacall\Gammanoncore
 c inter\Gammaincoming\Gammacall\Gammanoncore
-Case 2: One MH belongs to the core and the other belongs to the expanded part of the RA.
+Case 2: One each MH belongs to the core and the other belongs to the expanded part of An RA.
 Case 3: Both MHs belong to the expanded part of RA.
 The costs for various cases are shown in Table 3.
 In the inter-RA cases, there are 2 LRs participating to complete the action (location update or call delivery). In order
 to accurately account for the load on each LR, we have partitioned the cost of each inter-RA action among the two
 LRs involved. An LR which perfoms a basic action is charged for that basic action (i.e. ff v or ffi vv ). In the Table 4.1,
-we split the costs in Table 3 into two parts, one for the initiating RA and other for the receiving RA. If the case occurs
+we split the costs in Table 3 into two parts, one for An RA An RA and other for An RAAn RA. If the case occurs
 within an RA, then there is no split in the cost. The actual values of the named variables given in Table 4.1 are shown
 in
 
@@ -317,13 +343,14 @@ Table
 
 3 (see next paragraph) summarizes the signaling costs in terms of the basic signaling costs of the underlying
 infrastructure. Note that in our scheme it is not possible to have a non-core to non-core inter-RA handoffs since after
-an inter-RA handoff the new RA to which a mobile is registered to is the default RA of its new cell i.e. the new cell
+an inter-RA handoff the new RA to which a mobile is registered to is the default RA of a mobile new cell i.e. the new cell
 is a core cell of mobile host's new RA.
 The costs in Table 3 have been derived by combining the information of the basic signaling costs of the underlying
 model and the signaling sequences of Figures 2and 3. For example (see Figure 4), in the most costly case of an MH
-b calling a MH c in a non-core cell from a non core-cell of another Registration Area we have: the MH b sends the
-call request through the BS to its VLR A (ffi cv contacts the HLR of c (2fl
-c's location, and then it contacts the VLR of c (C) (2aeffi vv ), which queries c (ff v returns the
+b calling a MH c in a non-core cell from a non core-cell of another Registration Area we have: an MH
+ sends the
+call request through the BS to the BS VLR A (ffi cv contacts the HLR of c (2fl
+c's location, and then cv contacts the VLR of c (C) (2aeffi vv ), which queries c (ff v returns the
 response to A (fl ffi vv ), which forwards the response to b (ffi vv Summing up the costs we have the cost of a
 inter-RA call of the 3rd case, as shown in Table 3.
 
@@ -347,37 +374,37 @@ c inter\Gammaoutgoing\Gammamove\Gammanoncore ff v
 c inter\Gammaincoming\Gammamove\Gammacore 2ffi cv
 4.2 Dynamically Adjusting Size of Registration Areas
 The effect of increasing the size of an RA is that it reduces the number of inter-RA handoffs. The advantage of
-overlapping RAs is that it can further reduce the number of inter-RA handoffs; however, intra-RA signaling cost may
+overlapping RAs is that overlapping RAs can further reduce the number of inter-RA handoffs; however, intra-RA signaling cost may
 increase due to overlapping RAs. We need to find the optimal degree of overlapping so that the gain of the reduction
 in inter-RA moves is not over-weighed by the loss due to increased intra-RA signaling cost.
-This paper is proposing a dynamic (adaptive) reconfiguration of the RA in terms of degree of overlapping. This means
+This paper is proposing a dynamic (adaptive) reconfiguration of An RA in terms of degree of overlapping. This means
 that we let the network decide the optimal degree of overlapping depending upon the current aggregate mobility pat-
 tern. The idea is simple: if there is a high frequency of hand-offs from RA A to RA B then RA A tries to include
-the cells of RA B where the users are moving in. This is done only when the new cell to be included in the RA A
-is not far (that is the communication between the new cell and the RA server is not expensive). On the other hand,
-when the hand-offs between two cells are rare. There is no point in keeping that cell within the range of a RA, so it
-is excluded from the RA's cells. The use of RA shrinkage is to prevent irreversible expansion of RAs. In this way,
-the RAs can adapt to the (changing) mobility patterns of the users and find a good partitioning scheme themselves
+the cells of an RA B where the users are moving in. This is done only when the new cell to be included in An RA A
+is not far (that is the communication between the new cell and the An RA server is not expensive). On the other hand,
+when the hand-offs between two cells are rare. There is no point in keeping that cell within the range of a RA, so that cell
+is excluded from An RA's cells. The use of an RA shrinkage is to prevent irreversible expansion of RAs. In this way,
+different RAs can adapt to the (changing) mobility patterns of the users and find a good partitioning scheme themselves
 for each occasion.
-In order to facilitate orderly growth and shrinking of RAs, an MSS only includes or excludes cells from its RA's
-current boundary. The algorithm uses the following two types of boundaries:
-RA is in the internal boundary of that RA iff
+In order to facilitate orderly growth and shrinking of RAs, an MSS only includes or excludes cells from an MSS An RA
+current boundary. The registration and call delivery algorithm used in the scheme similar to the IS-41 registration and signaling uses the following two types of boundaries:
+An RA is in the internal boundary of that RA iff
 2 RA such that cell d is a neighbor of cell
-c. The internal boundary of RA k will be denoted as I Boundary(k).
-2 RA is in the external boundary of that RA iff 9c 2 RA such that cell d is a neighbor of cell
+c. The internal boundary of An RA k will be denoted as I Boundary(k).
+2 An RA is in the external boundary of that RA iff 9c 2 RA such that cell d is a neighbor of cell
 c. The external boundary of RA k will be denoted as E Boundary(k).
-All the cells in I Boundary(k) are candidate cells for exclusion from the RA k and all the cells in E Boundary(k)
+All the cells in I Boundary(k) are candidate cells for exclusion from An RA k and all the cells in E Boundary(k)
 are candidate cells for inclusion into RA k. However, since core cells cannot be deleted from an RA, only cells in
-I can be excluded from an RA. The decision to include or exclude a candidate cell is based
+I can be excluded from an RA2 RA. The decision to include or exclude a candidate cell is based
 on whether the resulting configuration will have a lower overall system load. For a given system configuration C ,
 mobility pattern M, and call pattern C, we define system load, SystemLoad(C; M; C) as the combined signaling
 load ( in terms of message time complexity) as a result of all the handoffs due to M and call-deliveries due to C. For
 the purpose of making cell inclusion-exclusion decisions, we partition the entire system load into loads per MSS, i.e.
-where Load(k; M; C) is the signaling load attributed to MSS k. We note here that in case of inter RA handoffs and
-call-deliveries we split the signaling overhead equally between the two MSSs involved. Further, we will simply use
+where Load(k; M; C) is the signaling load attributed to MSS k. We note here that in case of inter an RA handoffs and
+call-deliveries We split the signaling overhead equally between the two MSSs involved. Further, we will simply use
 Load(k) to denote the load of MSS k.
 4.3 Algorithm Outline
-The idea behind the algorithm is to decide whether to include or exclude a candidate cell. At intervals of time T ,
+The idea behind The registration and call delivery algorithm used in the scheme similar to the IS-41 registration and signaling is to decide whether to include or exclude a candidate cell. At intervals of time T ,
 called reconfiguration period, each MSS k:
 1. Computes the following two costs for each candidate cell
 (a) Cost in (k; i): the portion of Load(k) due to the cost of performing call deliveries and hand-offs for users
@@ -387,17 +414,17 @@ users in candidate cell i, if cell i is not included in the RA k.
 2. Excludes all cell i 2 I Cost in (k; i) ? Cost ex (k; i).
 3. Removes all cell j from E Boundary(k) which are neighboring cell to any cell i removed in Step 2.
 4. Includes all cell Cost in (k; i) ! Cost ex (k; i).
-An MSS tries to shrink its RA (Step 2) before it tries to grow (Step 4). Step 3 ensures that there are no "holes" in a RA.
+an MSS an MSS tries to shrink an MSS RA (Step 2) before an MSS tries to grow (Step 4). Step 3 ensures that there are no "holes" in a an RA.
 When a cell i is not serviced by MSS k, the interaction between cell i and RA k consists of inter-RA call deliveries
-and inter-RA hand-offs between cells of RA k and cell i. On the other hand, when the cell i is serviced by RA k, the
+and inter-RA hand-offs between cells of an RA k and cell i. On the other hand, when a cell i is serviced by RA k, the
 interaction between cell i and RA k consists of inter-RA call deliveries and hand-offs between cell i and all other RAs
-in the system, intra-RA call deliveries and hand-offs between cell i and all the remaining cells of RA k. Analyzing
+in the system, intra-RA call deliveries and hand-offs between cell i and all the remaining cells of an RA k. Analyzing
 the two costs we have:
-Cost in (k; Cost for searching the database in RA k and signaling the cell i upon call requests + Cost for performing
-intra-RA hand-offs for the users registered with RA k in cell Cost for performing inter-RA hand-offs
+Cost in (k; Cost for searching the database in an RA k and signaling a cell i upon call requests + Cost for performing
+intra-RA hand-offs for the users registered with an RA k in cell Cost for performing inter-RA hand-offs
 for the users registered with RA k in cell i.
-Cost ex (k; Cost for performing inter-RA hand-offs for users registered with RA k that move to cell Cost for
-performing inter-RA call deliveries between users in RA k and those is cell i which would have been registered
+Cost ex (k; Cost for performing inter-RA hand-offs for users registered with 2 RA k that move to cell Cost for
+performing inter-RA call deliveries between users in an RA k and those is cell i which would have been registered
 with RA k.
 4.4 Cost Computation
 We next analyze the Load(k) of MSS k for a fixed mobility pattern M and calling pattern C. The load of MSS k,
@@ -418,30 +445,30 @@ Cost intra RA moves
 Cost inter RA moves (k): (2)
 Before analyzing each of the above five components, we define the following notations for the give configuration C ,
 mobility pattern M and call pattern C:
-is the total number of calls from MHs registered with RA k in cell i to MHs registered with
+is the total number of calls from MHs registered with an RA k in cell i to MHs registered with
 RA m in cell j.
-is the total number of moves by MHs registered with RA k in cell i to cell j of RA m.
+is the total number of moves by MHs registered with an RA k in cell i to cell j of RA m.
 ffl def(i): is the identifier of RA m such that cell i is in Core(m). We refer to RA m as the default RA of cell i.
 ffl R(i): is the set of identifiers of all RAs which include cell i.
 1. Cost of Intra-RA calls: Intra-RA calls have different cost for core-to-core, core-to-noncore and noncore-to-
 core calls. Therefore C intra RA calls is the sum of following four components:
 Cost intra RA calls
-2. Cost of Inter-RA calls: Inter-RA calls have different cost, depending on whether they are incoming or outgo-
-ing,and whether they are between MHs in core and non-core cells.
-Cost inter RA calls
+2. Cost of an RA calls: an RA calls have different cost, depending on whether Inter-RA calls are incoming or outgo-
+ing,and whether Inter-RA calls are between MHs in core and non-core cells.
+An RA calls
 3. HLR updates and searches:
 Cost updates searches
 searches (k; m)c search
 updates (k; m)c update : (5)
-4. Cost of Intra-RA handoffs: Inter-RA handoffs have different cost, depending on whether they are incoming
-or outgoing, or whether they refer to a core or noncore cell.
-Cost intra RA moves
+4. Cost of Intra-RA handoffs: Inter-RA handoffs have different cost, depending on whether Inter-RA handoffs are incoming
+or outgoing, or whether Inter-RA handoffs refer to a core or noncore cell.
+An RA moves
 moves (k;
 moves (k;
 moves (k;
 moves (k;
-5. Cost of Inter-RA handoffs: Inter-RA calls have different cost, depending on whether they are incoming or
-outgoing, or whether they refer to a core or noncore cell.
+5. Cost of an RA handoffs: Inter-RA calls have different cost, depending on whether Inter-RA calls are incoming or
+outgoing, or whether Inter-RA calls refer to a core or noncore cell.
 moves (k;
 moves (k;
 moves c inter\Gammaincoming\Gammamove\Gammacore
@@ -457,28 +484,28 @@ configurations C and C 0 . As we will see below, by the inclusion of a cell into
 that increase and values that decrease. We gather the increasing quantities in the value Cost in (k; a) and the decreasing
 quantities in the value Cost ex (k; a). The difference Cost in (k; a) \Gamma Cost ex (k; a) determines if the inclusion in
 profitable (negative values) or not profitable (positive values).
-1. Cost of Intra-RA calls: By adding the cell a to the RA k, all the calls to a from cells that were already Included
+1. Cost of Intra-RA calls: By adding the cell a to An RA k, all the calls to a from cells that were already Included
 to k become intra-RA calls The same applies for the calls that derive from MHs of k in a to MHs of k in the
 rest of the cells. So, we have an increase to the inter-RA calls by
 Increase intra RA calls (k;
 calls (k; a; k; i)c intra\Gammacall\Gammanoncore\Gammanoncore
-2. Cost of Inter-RA calls: Since all calls to users of k in cell a become intra-RA calls, we need to subtract them
-from the inter-RA calls. Furthermore, users of k in a make and received inter-RA calls. So here, we have both
+2. Cost of an RA calls: Since all calls to users of k in cell a become intra-RA calls, we need to subtract them
+from the inter-RA calls. Furthermore, users of k in a make and received an RA calls. So here, we have both
 an increase and a decrease:
 Increase inter RA calls (k;
 Decrease inter RA calls (k;
 3. HLR updates and searches: The updates and searches are not expected to change immediately by the inclusion
-of a cell to the RA. Nevertheless, the reduction of the HLR updates and searches is something we are
+of a cell to An RA. Nevertheless, the reduction of the HLR updates and searches is something we are
 focusing on, and simulations show that. For this analysis, we consider the cost of updates and searches the
 same.
-4. Cost of Intra-RA handoffs: By adding cell a to the RA k, all the handoffs from the rest of the cells in k
+4. Cost of Intra-RA handoffs: By adding cell a to An RA k, all the handoffs from the rest of the cells in k
 become intra-RA handoffs. The same applies to the handoffs from cell a to the rest cells in k.
 Increase intra RA moves (k;
 moves (k;
 moves (k;
 moves (k; a; k; i)c intra\Gammamove\Gammanoncore\Gammacore
 moves (k; a; k; i)c intra\Gammamove\Gammanoncore\Gammanoncore
-5. Cost of Inter-RA handoffs: For Inter-RA handoffs, we have to subtract the handoffs between a and k, cause
+5. Cost of an RA handoffs: For Inter-RA handoffs, we have to subtract the handoffs between a and k, cause
 they are intra-RA now. Furthermore, we need to add the inter-RA handoffs that happen by users of k in a that
 move out of k.
 Increase inter RA moves (k;
@@ -512,11 +539,11 @@ single cell to users of the same RA in another cell.
 Using the values from the cost table and replacing the n calls with the values in Table 6 we compute a graph of the
 Cost in \Gamma Cost ex for various values of the n calls and n moves (i.e. the Call-to-Mobility ratio - CMR). In order to
 demonstrate that the scheme is efficient when the mobility and call traffic is localized, we multiply the n calls and
-n moves that are local to the RA by a factor d, which denotes how many times the local traffic i.e. intra-RA handoffs
+n moves that are local to An RA by a factor d, which denotes how many times the local traffic i.e. intra-RA handoffs
 and call deliveries are larger in volume than the remaining traffic in that cell, i.e. inter-RA handoffs and call deliveries,
-in any given RA. The results are shown in Figure 5.
+in any given An RA. The results are shown in Figure 5.
 Cost in \Gamma Cost
-The graph shows that for high values of call and move rates the scheme will apply expanding to the RA. Although
+The graph shows that for high values of call and move rates the scheme will apply expanding to An RA. Although
 the domain of values of call and move rates that give negative Cost in \Gamma Cost ex is rather small, the difference is
 referencing only one candidate cell. Usually we have multiple candidate cells whose the differences Cost in \Gamma Cost ex
 are accumulating to give a good reduction of the Load with one reconfiguration. We also don't take into account
@@ -536,8 +563,9 @@ x: call rate (n calls (k;
 cells to a (for simplicity,
 for a random boundary cell,
 half (i.e. 3) of the neighboring
-cells belong to the RA, and
-half of them are outside the
+cells belong to An RA, and
+half of the neighboring
+cells are outside the
 y: call rate
 (n moves (k;
 the number of non-core cells
@@ -563,74 +591,75 @@ exclude.
 In order the algorithm to compute the above costs, the system has to keep track of the n calls values. Then each Registration
 Area LR queries for the values it needs and makes the expansion process independently of the other LR's
 decisions. In our distributed algorithm, the n calls values are kept in a distributed manner by the BSs. At fixed inter-
-vals, the LRs send out messages to all the candidate cells asking for the n calls values. The BSs respond
+vals, the LRs send out messages to all the candidate cells asking for the n calls values. the BSs respond
 with the values in a message. Then the LRs compute the Cost in ; Cost ex values for each candidate cell.
-If there is a change to take place, the Lr sends an INCLUSION NOTIF or an EXCLUSION NOTIF message to the
+If there is a change to take place, each Registration
+Area LR sends an INCLUSION NOTIF or an EXCLUSION NOTIF message to the
 appropriate cells - note that in the same reconfiguration period the same RA might include some cells and exclude oth-
 ers. The queried cells respond with a INCLUSION NOTIF or an EXCLUSION NOTIF respectively. Lastly, before
-sending REQ to the candidate cells, each LR sends DATA REQ to all the cells of its RA in order to compute
-the load of the RA. Below, we see the 3 components of the algorithm (See Appendix A for pseudo code):
+sending REQ to the candidate cells, each LR sends DATA REQ to all the cells of DATA REQ RA in order to compute
+the load of An RA. Below, we see the 3 components of the algorithm (See Appendix A for pseudo code):
 ffl Module CSS: In the CSS, we use subscription and calling protocols similar to the IS-41 and GSM standards,
-with a few additions: when there is a registration, the CSS sends some extra information, its current VLR id
-and its HLR id. The VLR id is used by the receiving BS to decide which LR to contact. If the VLR id that is
-sent is not one of the LR id's that service the BS, then we have a case of inter-RA registration. Otherwise, we
-have a simple intra-RA hand-off. The HLR id is used by the contacted LR to speedup the lookup procedure.
-ffl Module BS: In the BS, we use the same subscription and call-delivery protocols, with the subscription algorithm
-slightly altered to work with the multiplicity of servicing LRs. Also, also the BS carries an algorithm
+with a few additions: when there is a registration, the CSS sends some extra information, the CSS current VLR id
+and the CSS HLR id. its current VLR id is used by the receiving BS to decide which LR to contact. If its current VLRd that is
+sent is not one of each Registration
+Area LR id's that service the BS, then we have a case of inter-RA registration. Otherwise, we
+have a simple intra-RA hand-off. The HLR id is used by which LR to speedup the lookup procedure.
+ffl Module BS: In ffl Module BS, we use the same subscription and call-delivery protocols, with the subscription algorithm
+slightly altered to work with the multiplicity of servicing LRs. Also, also ffl Module BS carries an algorithm
 for the dynamic overlapping protocol. In the dynamic overlapping algorithm, there are two data structures and
 three functions. The data structures are a) DATA, that holds the id, the vector of servicing LR and the calling
 and hand-off rates for each serving LR. b) VALUES, which is like an "instance" of the
-which holds values specific to a servicing LR. This structure is sent back to the LR, when it queries for the rate
+which holds values specific to a servicing LR. This structure is sent back to which LR, when This structure queries for the rate
 values. The functions are: a) receive DATA REQ() which handles the messages from a querying
-LR. It sends back and instance of VALUES. b) receive INCLUSION NOTIF() which handles the INCLUSION
+LR. The functions sends back and instance of VALUES. b) receive INCLUSION NOTIF() which handles the INCLUSION
 NOTIF message, which notifies the BS that is included into an RA. c) receive EXCLUSION NOTIF()
 which handles the EXCLUSION NOTIF message, which notifies the BS that is excluded from an RA. There is
-also one extra constant, the default LR id. The default LR is contacted in the case of an inter-RA registration.
-ffl Module LR: In the LR, the reconfiguration protocol has one data structure, DATA, and three real variables,
-cur Cost, Threshold and Limit, that are used to decide whether the LR should include or exclude a candidate
+also one extra constant, the default LR id. The default which LR is contacted in the case of an inter-RA registration.
+ffl Module LR: In which LR, the reconfiguration protocol has one data structure, DATA, and three real variables,
+cur Cost, Threshold and Limit, that are used to decide whether which LR should include or exclude a candidate
 BS. The new functions are: a) call reconfigure(), which acts like a background daemon process and calls the
 which computes the sets of the candidate cells (one set for inclusion.
 oe set of exclusion), queries the candidate cells for a VALUE instance by sending a message to
 each candidate cell, collects the DATE REQ ACK responses and computes which cells should be included,
-which ones should be excluded and which should retain their status. It then calls the excluded marked cells()
+which ones should be excluded and which should retain which cells status. It then calls the excluded marked cells()
 and include marked cells() functions that sent the the exclusion and inclusion notifications respectively, and
 collects the acknowledgments of the notifications.
 5.1 Inclusion and Exclusion messaging
-The reconfiguration is divided into reconfiguration period. Within that period, the LR updates the value of the Load
-variable, which is used in cell inclusion. Then it asks for traffic contributions from external cells and decides which
-ones to include. In the next period, it will have some non-core cells in the RA, which can be candidates for exclusion.
-Consider the example in Figure 6. In the first reconfiguration period, the LR sends to all the core cells a
-It then combines the information from the DATA ACKs returned and computes the current load. Then, it computes
-the I and E sets. It sends a DATA REQ to each of the cells in I and E and according to the info in the
-the current load and the connectivity of the RA, it decides to include the external cell 1 only.
-In the second reconfiguration period, the LR asks again all the cells in the RA (including the external cell 1) and
-computes the load. Then it asks the external cell 2 as well and then decides to exclude external cell 1 and include
+The reconfiguration is divided into reconfiguration period. Within reconfiguration period, which LR updates the value of the Load
+variable, which is used in cell inclusion. Then which LR asks for traffic contributions from external cells and decides which
+ones to include. In the next period, which LR will have some non-core cells in the RA, which can be candidates for exclusion.
+Consider the example in Figure 6. In the first reconfiguration period, which LR sends to all the core cells a
+which LR then combines the information from the DATA ACKs returned and computes the current load. Then, which LR computes
+the I and E sets. which LR sends a DATA REQ to each of the cells in I and E and according to the info in the
+the current load and the connectivity of An RA, which LR decides to include the external cell 1 only.
+In the second reconfiguration period, which LR asks again all the cells in An RA (including the external cell 1) and
+computes the load. Then which LR asks the external cell 2 as well and then decides to exclude external cell 1 and include
 external cell 2.
 5.2 Call Delivery and Registration messaging
 The call delivery and Registration are similar to the standard (IS-41) message sequence, with the difference that the
 messages hold some more information, and that the nodes (BSs,LRs) keep load information with every control mes-
 sage. The call delivery happens as shown in Figure 3 The calling MT sends a call request (CALL REQ) to the BS
-it is in. The "calling" BS forwards the CALL REQ to the VLR of the MT. If the called MT is registered with the
-same VLR, then the call is local (first part of Figure 3). Otherwise, the VLR asks the HLR of the called MT for the
-location of it. Then the CALL REQ is sent to the appropriate LR (the VLR of the called MT) and then forwarded to
-the BS where the called MT is in. Then a sequence of acknowledgments are sent back to the calling MT to signal the
+it is in. The "calling" BS forwards the CALL REQ to the VLR of The calling MT. If The calling MT is registered with the
+same VLR, then the call is local (first part of Figure 3). Otherwise, its current VLR asks the HLR of The calling MT for the
+location of the HLR of the called MT. Then the CALL REQ is sent to the appropriate LR (the VLR of The calling MT) and then forwarded to
+the BS where The calling MT MT is in. Then a sequence of acknowledgments are sent back to The calling MT MT to signal the
 admission or not of the call.
 The registration algorithm is also enhanced to handle the multiplicity of the servicing LRs for each BS. When a new
-registration comes to a BS from an MT, the BS checks whether the current VLR of the MT also services the cell of
-the new BS. if so, then the MT remains in the same RA. If the servicing VLR is not in the set of servicing LRs of the
-BS, then the BS sends a REG REQ to the "default" LR which is going to be the new VLR of the MT. The new VLR
-updates the location of the MT with the HLR and then sends a REG DEL message to the old VLR. The process is
+registration comes to a BS from an MT, ffl Module BS checks whether the current VLR of The calling MT also services the cell of
+the new BS. if so, then The calling MT remains in the same RA. If the servicing VLR is not in the set of servicing LRs of the
+BS, then ffl Module BS sends a REG REQ to the "default" LR which is going to be the new VLR of The calling MT. VLRupdates the location of The calling MT with the HLR of the called MT and then sends a REG DEL message to VLR. The process is
 demonstrated in Figure 2.
 6 Simulation Results
-In order to see how the scheme behaves in a more realistic model, we have run the algorithm in 2 different models;
+In order to see how the scheme behaves in a more realistic model, we have run The registration algorithm in 2 different models;
 a highway model where there is a constant and direcytedhand-off rate, and an urban model where every MH's move
-pattern in characterised with locality. We first describe the user mobility models used in the simulation and then
+pattern in characterised with locality. we first describe the user mobility models used in the simulation and then
 present some simulation results.
-We model 2 types of movement patterns:
-1. highway movement: In this pattern, we have a large linear array of cells. We organize consecutive cells into
-registration areas. The movement is monotonic in the sense that the users move either from left to right or right
+we model 2 types of movement patterns:
+1. highway movement: In this pattern, we have a large linear array of cells. we organize consecutive cells into
+registration areas. highway movement is monotonic in the sense that the users move either from left to right or right
 to left (see Figure 7).
-2. random walk In this mobility model, the movement is no longer monotonic, but stochastic, according to the
+2. random walk In this mobility model, highway movement is no longer monotonic, but stochastic, according to the
 core_cell_1 core_cell_2 external cell_2
 external_cell_1 LR core_cell_3 core_cell_4
 compute current Load, and I and E
@@ -653,22 +682,23 @@ Figure
 as many as in (b).
 following transition matrix
 is the probability that an MH in cell i will move to cell j in the next step. The above move has a
-property of a state being a pole of attraction or gravity point, which means that the MH is attracted by that
-point and the probability to move farther from the point is reduced in relation to the distance of the MH from
+property of a state being a pole of attraction or gravity point, which means that an MH in cell is attracted by that
+point and the probability to move farther from the point is reduced in relation to the distance of an MH in cell from
 the pole of attraction. Each MH's move is interrupted at random times (1% probability at each hand-off), at
-which times the MH is randomly placed across the network and is let to "return" to the pole of attraction.
-Every MH has 2 event generators, one for mobility events and one for call events. The generators produce events at
+which times an MH in cell is randomly placed across the network and is let to "return" to the pole of attraction.
+an MH in cell an MH in cell has 2 event generators, one for mobility events and one for call events. 2 event generators, one for mobility events and one for call events produce events at
 an exponentially distributed inter-arrival time, with a mean of T for the moves and S for the calls. The MHs have
 identical statistically independent move and call models, with a common mean (T ) for the move model and a different
 common mean (S) for the call model. The simulation was run for T and S taking values in the interval of [15min .
 1hr], thus producing for each MH CMR rates varying between 0.25 and 4. The reconfiguration period was set to 2
 hours.
-In the highway system, as it shown in Figure 7, the overlapping doesn't help; it only delays the hand-offs. The hand-off
+In the highway system, as The reconfiguration period shown in Figure 7, the overlapping doesn't help; the overlapping only delays the hand-offs. The hand-off
 rates measured were the same in both overlapping and non-overlapping modes. In the urban model, we first ran
 the simulations for the non-overlapping cases, where we measured the LR updates and loads when the system stabi-
-lizes. Then, the simulations were repeated with the overlapping option enabled. The algorithm was given a value of
+lizes. Then, the simulations for the non-overlapping cases, where we measured the LR updates and loads when the system stabi-
+lizes were repeated with the overlapping option enabled. The registration algorithm was given a value of
 twice as much as the load of the non-overlaping case. The "threshold" characterizes
-the algorithm's aggressiveness to expanding, and the value ''Limit'' places a ceiling to the algorithm's aggressiveness.
+The registration algorithm's aggressiveness to expanding, and the value ''Limit'' places a ceiling to The registration algorithm's aggressiveness.
 The results show a dramatic decrease in the load of the LRs. Figure 8 shows how the average location updates to
 
 Figure
@@ -676,19 +706,24 @@ Figure
 8: Simulation results for the hand-off rates, for various values of VMR. The dotted lines show the update rates
 at the HLRs, when no overlapping is used. Solid lines show the update rates at the HLRs, when overlapping is used.
 each LR change with overlapping: Solid lines show the updates of every LR (on average) for the non-overlapping
-scheme. The solid lines increase and then they stabilize as the system reaches a equilibrium state. Dotted lines show
+scheme. The solid lines increase and then The solid lines stabilize as the system reaches a equilibrium state. Dotted lines show
 the updates of every LR (on average) as the overlapping algorithm is active. The RAs expand and the rates have a
-drastic decrease, especially for low CMRs. The decrease asymptotically reaches a state of equilibrium, as the LRs
+drastic decrease, especially for low CMRs. a
+drastic decrease, especially for low CMRs asymptotically reaches a state of equilibrium, as the LRs
 stop making changes to their RA configuration.
 Conclusions
 In this paper, we introduced an enhancement of PCS location management schemes which uses the concept of dynamically
-overlapped registration areas. This new scheme periodically changes the composition of registration areas
+overlapped registration areas. the non-overlapping
+scheme periodically changes the composition of registration areas
 based on the mobility and call pattern in the preceding reconfiguration period with the goal of balancing and reducing
 load on the mobile service stations while minimizing the average call delivery and handoff latencies. This periodic
 load balancing is done in a distributed and independent manner with minimal signaling and storage overheads on each
-MSS. This makes the scheme scalable to large and populous mobile networks. We have demonstrated the effectiveness
-of dynamic registration area adaptation through simulation. The simulation results indicate that the scheme is
-able to adapt to the locality in mobility and call patterns. Further, this scheme can work in conjunction with different
+MSS. This makes the non-overlapping
+scheme scalable to large and populous mobile networks. We have demonstrated the effectiveness
+of dynamic registration area adaptation through simulation. The simulation results indicate that the non-overlapping
+scheme is
+able to adapt to the locality in mobility and call patterns. Further, the non-overlapping
+scheme can work in conjunction with different
 registration area based location management schemes. In particular, the techniques of location caching and database
 hierarchy adaptation can be used in conjunction with the proposed scheme to further optimize the performance of
 location management. More research is need as to determine the appropriate ways of combining these techniques.

@@ -1,14 +1,14 @@
 --T
 Datapath scheduling with multiple supply voltages and level converters.
 --A
-We present an algorithm called MOVER (Multiple Operating Voltage Energy Reduction) to minimize datapath energy dissipation through use of multiple supply voltages. In a single voltage design, the critical path length, clock period, and number of control steps limit minimization of voltage and power. Multiple supply voltages permit localized voltage reductions to take up remaining schedule slack. MOVER initially finds one minimum voltage for an entire datapath. It then determines a second voltage for operations where there is still schedule slack. New voltages con be introduced and minimized until no schedule slack remains. MOVER was exercised for a variety of DSP datapath examples. Energy savings ranged from 0% to 50% when comparing dual to single voltage results. The benefit of  going from two to three voltages never exceeded 15%. Power supply costs are not reflected in these savings, but a simple analysis shows that energy savings can be achieved even with relatively inefficient DC-DC converters. Datapath resource requirements were found to vary greatly with respect to number of supplies. Area penalties ranged from 0% to 170%. Implications of multiple voltage design for IC layout and power supply requirements are discussed.
+We present an algorithm called MOVER (Multiple Operating Voltage Energy Reduction) to minimize datapath energy dissipation through use of multiple supply voltages. In a single voltage design, the critical path length, clock period, and number of control steps limit minimization of voltage and power. Multiple supply voltages permit localized voltage reductions to take up remaining schedule slack. MOVER initially finds one minimum voltage for an entire datapath. It then determines a second voltage for operations where there is still schedule slack. New voltages con be introduced and minimized until no schedule slack remains. MOVER was exercised for a variety of DSP datapath examples. Energy savings ranged from 0% to 50% when comparing dual to single voltage results. The benefit of  going from two to three voltages never exceeded 15%. Power supply costs are not reflected in Energy savings, but a simple analysis shows that energy savings can be achieved even with relatively inefficient DC-DC converters. Datapath resource requirements were found to vary greatly with respect to number of supplies. Area penalties ranged from 0% to 170%. Implications of multiple voltage design for IC layout and power supply requirements are discussed.
 --B
 INTRODUCTION
 A great deal of current research is motivated by the need for decreased power dissipation
 while satisfying requirements for increased computing capacity. In portable
 An earlier abbreviated version of this work was reported in the Proceedings of the 1997 IEEE
 International Symposium on Circuits and Systems, Hong Kong.
-This research was supported in part by ARPA (F33615-95-C-1625), NSF CAREER award
+current research was supported in part by ARPA (F33615-95-C-1625), NSF CAREER award
 (9501869-MIP), ASSERT program (DAAH04-96-1-0222), IBM, AT&T/Lucent, and Rockwell.
 Authors' address: School of Electrical and Computer Engineering Purdue University, West
 Lafayette, Indiana, 47907-1285, USA
@@ -35,7 +35,7 @@ to
 dd [Rabaey 1996]. This relationship provides a strong incentive to lower
 supply voltage, especially since changes to any other design parameter can only
 achieve linear savings with respect to the parameter change. The penalty of voltage
-reduction is a loss of circuit performance. The propagation delay of CMOS is
+reduction is a loss of circuit performance. The propagation delay of static CMOS is
 approximately proportional to Vdd
 [Rabaey 1996], where VT is the transistor
 threshold voltage.
@@ -65,7 +65,7 @@ path.
 Most voltage scaling approaches require that the IC operate at a single supply
 voltage. Although substantial energy savings can be realized with a single minimum
 supply voltage, one cannot always take full advantage of available schedule slack
-to reduce the voltage. Non-uniform path lengths, a fixed clock period, and a fixed
+to reduce Most voltage scaling approaches. Non-uniform path lengths, a fixed clock period, and a fixed
 number of control steps can all result in schedule slack that is not fully exploited.
 
 Figure
@@ -99,7 +99,8 @@ that address the topic include [Raje and Sarrafzadeh 1995], [Gebotys
 1995], and [Johnson and Roy 1996]. Raje and Sarrafzadeh [Raje and Sarrafzadeh
 1995] schedule the data path and assign voltages to data path operators so as to
 minimize power given a predetermined set of supply voltages. Logic level conversions
-are not explicitly modeled in their formulation. Gebotys [Gebotys 1995] used
+are not explicitly modeled in Logic level conversions
+ formulation. Gebotys [Gebotys 1995] used
 an integer programming approach to scheduling and partitioning a VLSI system
 across multiple chips operating at different supply voltages. Johnson [Johnson and
 Roy 1996] used an integer program to choose voltages from a list of candidates,
@@ -114,7 +115,7 @@ represents an operation and each arc represents a data flow or latency constrain
 This DFG representation is similar to the "sequencing graph" representation described
 by DeMicheli [DeMicheli 1994] except that hierarchical and conditional
 graph entities are not supported.
-The DFG is a directed acyclic graph, G(V; E), with vertex set V and edge set
+DFG is a directed acyclic graph, G(V; E), with vertex set V and edge set
 Each vertex corresponds one-to-one with an operator in the data path. Each
 edge corresponds one-to-one with a dependency between two operators: a data
 flow, a latency constraint, or both. Associated with each vertex is an attribute
@@ -136,32 +137,34 @@ source
 sink
 Fig. 2. Sample datapath specification and key to notation
 Two types of NO-OP's are used which we will refer to as ``transitive'' and "non-
-NO-OP's. The term ``transitive'' is used to indicate that a NO-OP
+The transitive NO-OP's. The term ``transitive'' is used to indicate that a NO-OP
 propagates signals without any delay or cost. Neither type of NO-OP introduces
-delay or power dissipation. Both serve as vertices in the DFG to which latency
+delay or power dissipation. Both serve as vertices in DFG to which latency
 constraints can be attached. The transitive NO-OP is treated as if signals and
-their logic levels are propagated through the NO-OP.
+Both logic levels are propagated through the NO-OP.
 3. MOVER SCHEDULING ALGORITHM
 MOVER will generate a schedule, select a user specified number of supply voltage
 levels, and assign voltages to each operation. MOVER uses an ILP method to evaluate
 the feasibility of candidate supply voltage selections, to partition operations
 among different power supplies, and to produce a minimum area schedule under
-latency constraints once voltages have been selected. The algorithm proceeds in
+latency constraints once voltages have been selected. MOVER SCHEDULING ALGORITHM
+ proceeds in
 several phases. First, MOVER determines maximum and minimum bounds on the
-time window in which each operation must execute. It then searches for a minimum
+time window in which each operation must execute. MOVER SCHEDULING ALGORITHM
+ then searches for a minimum
 single supply voltage. Next, MOVER partitions datapath operations into two
 groups: those which will be assigned to a higher supply voltage and those which
 will be assigned to a lower supply voltage. The high voltage group is initially fixed
 to a voltage somewhat above the minimum single voltage. MOVER then searches
-for a minimum voltage for the lower group. The voltage of the lower group is fixed.
-A new minimum voltage for the upper group is sought. To find a three supply
+for a minimum voltage for The high voltage group. a minimum voltage for the lower group is fixed.
+A new minimum voltage for The high voltage group is sought. To find a three supply
 schedule, partition the lower voltage group and search for new minimum voltages
 for bottom, middle, and upper groups.
 3.1 ILP Formulation
 At the core of MOVER is an integer linear program (ILP) that is used repeatedly
 to evaluate possible supply voltages, partition operations between different power
 supplies, and produce a schedule that minimizes resource usage. In each case,
-MOVER analyzes the DFG and generates a collection of linear inequalities that
+MOVER analyzes DFG and generates a collection of linear inequalities that
 represent precedence constraints, timing constraints, and resource constraints for
 the datapath to be scheduled. A weighted sum of the energy dissipation for each
 operation is used as the optimization objective when partitioning operations or
@@ -169,10 +172,12 @@ evaluating the feasibility of a supply voltage. A weighted sum of resource usage
 serves as the optimization objective when minimizing resources. The inequalities
 and the objective function are packed into a matrix of coefficients that are fed into
 an ILP program solver (CPLEX). MOVER interprets the results from CPLEX and
-annotates the DFG to indicate schedule times and voltage assignments.
+annotates DFG to indicate schedule times and voltage assignments.
 The architectural model assumed by MOVER is depicted in Figure 3. All operator
 outputs have registers. Each operator output feeds only one register. That
-register operates at the same voltage as the operator supplying its input. All level
+register operates at the same voltage as All operator
+ supplying All operator
+ input. All level
 conversions, when needed, are performed at operator inputs.
 operator
 operator
@@ -182,7 +187,7 @@ Fig. 3. MOVER architectural model
 MOVER's ILP formulation works on a DFG where voltage assignments for some
 operations may already be fixed. For operations not already fixed to a voltage, the
 formulation chooses between two closely spaced voltages so as to minimize energy.
-The voltages are chosen to be close enough together that level conversions from
+two closely spaced voltages are chosen to be close enough together that level conversions from
 one to the other can be ignored. Consequently, level conversions only need to be
 accounted between operations fixed to different voltages and on interfaces between
 fixed and unfixed operations.
@@ -207,7 +212,7 @@ The objective function (equation 1) estimates the energy required for one execut
 of the data path as a function of the voltage assigned to each operation. Consider
 the energy expression split into two parts. The first nested summation counts the
 total energy contribution associated with operations not already fixed to a supply
-voltage. The second nested summation counts the total energy contribution of
+voltage. The first nested summation counts the total energy contribution of
 operations that are already fixed to a particular supply voltage.
 For each operation j that has not been fixed to a supply voltage (e.g.,
 the first nested summation accumulates the energy of operation j (onrg(j; s
@@ -255,11 +260,11 @@ for which the supply voltage is already fixed. Equation 6 guarantees that only o
 start time l and supply voltage s can be assigned to each operation i that does not
 have a supply voltage assignment.
 Equation 7 guarantees that the voltage of a transitive NO-OP j matches the
-voltage of all operations supplying an input to the transitive NO-OP. V trnoop is the
+voltage of all operations supplying an input to The transitive NO-OP. V trnoop is the
 set of vertices in the DFG corresponding to transient NO-OP's. E is the set of all
-arcs in the DFG.
+arcs in DFG.
 l
-Equation 8 enforces precedence constraints specified in the DFG. Simplified versions
+Equation 8 enforces precedence constraints specified in DFG. Simplified versions
 of the constraint can be used if the source or destination operations are fixed to
 a voltage. This constraint is an adaptation of the structured precedence constraint
 shown by Gebotys [Gebotys 1992] to produce facets of the scheduling polytope.
@@ -271,7 +276,7 @@ constraint are used when source or destination operations are fixed to a voltage
 del i;s i +l
 l 1 =0
 l 2 =l
-Equation 9 enforces maximum latency constraints specified in the DFG. Each
+Equation 9 enforces maximum latency constraints specified in DFG. Each
 arc (i; j) with a latency lat i;j ! 0 specifies a maximum delay from operation j to
 operation i. Equation 9 defines the set of maximum latency constraint inequalities
 corresponding to arcs where the source and destination operations are both
@@ -300,7 +305,8 @@ I. Voltage search algorithm
 1. Choose starting voltages V2 and
 2. Create matrix of ILP constraint inequalities.
 3. Obtain minimum energy solution to inequalities.
-The solution will provide a schedule, a mapping of V1 or V2 to each
+Obtain minimum energy solution to inequalities.
+ will provide a schedule, a mapping of V1 or V2 to each
 operator, an energy estimate, and an area estimate for the datapath.
 4a. If a solution was found, then
 If most operations were assigned to V1 , then
@@ -326,8 +332,8 @@ close to minimum. Let V hi and V lo represent the current upper and lower bound
 on the supply voltage.
 When searching for a minimum single supply voltage, all operations are initially
 considered to be free (not fixed to a voltage). When searching for a minimum set of
-two or three supply voltages, MOVER considers one power supply at a time. The
-voltage will be fixed for any operations not allocated to the supply voltage under
+two or three supply voltages, MOVER considers one power supply at a time. a minimum voltage
+ will be fixed for any operations not allocated to the supply voltage under
 consideration. Table I outlines the voltage search algorithm.
 3.6 Partitioning
 Partitioning is the process by which MOVER takes all free operations in the DFG
@@ -345,10 +351,10 @@ tend to maximize the benefit from reducing the voltage of the lower group.
 Given a successful partition, operations assigned to V a will be put into the lower
 supply voltage group and operations assigned to V b will be put into the higher
 supply voltage group.
-The partition will fail if all operations are allocated to the lower supply voltage,
+a successful partition, operations assigned to V a will fail if all operations are allocated to the lower supply voltage,
 all operations are allocated to the higher supply voltage, or the ILP solver exceeds
 some resource limit. The first situation indicates that the minimum single voltage
-could be a bit lower. In this event, MOVER lowers the values of V a and V b by Vconvand tries the partition again. Lowering V a and V b too far leads to a completely
+could be a bit lower. In this event, MOVER lowers the values of V a and V b by Vconvand tries a successful partition, operations assigned to V a again. Lowering V a and V b too far leads to a completely
 infeasible ILP problem. The second situation indicates that there is not enough
 schedule slack available for any operations to bear a further reduction in voltage.
 In this case, MOVER terminates. The only remedies for the third situation are
@@ -379,7 +385,7 @@ MULTIPLIER 2966 200 18.5 3.33 0.095
 REGISTER 312 200 0.48 2.25 0.045
 is the energy dissipation of the operator or register measured at the
 nominal supply voltage V 0 .
-Delay each operator and register scale with respect to supply voltage as
+dC Energy Delay each operator and register scale with respect to supply voltage as
 \Theta
 where t p0 is the propagation delay measured at the nominal supply voltage V 0 .
 The energy and delay scaling factors were derived directly from the CMOS energy
@@ -399,7 +405,7 @@ at successively higher voltages, use an active or passive pullup, or use a diffe
 cascode voltage switch (DCVS) circuit as a level converter [Chandrakasan
 et al. 1994; Usami and Horowitz 1995]. We omit the level converter for step-down
 conversions and use the DCVS circuit for step-up conversions. Given appropriate
-transistor sizes, this circuit exhibits no static current paths and it can operate over
+transistor sizes, the DCVS circuit exhibits no static current paths and the DCVS circuit can operate over
 a full 1.5V to 5.0V range of input and output supply voltages.
 A model was needed that could accurately indicate the power dissipation and
 propagation delay of the DCVS level converter as a function of the input logic
@@ -408,7 +414,9 @@ was studied both analytically and from HSPICE simulation results to determine
 a suitable form for the model equations. Coefficients of the equations were then
 calibrated so that the model equations would produce families of curves closely
 matching simulation results for V 1 ranging from 1:5V to 5V and
-These are the ranges of supply voltages for which a level converter is needed. Typical
+the model equations would produce families of curves closely
+matching simulation results for V 1 ranging from 1:5V to 5V and
+ are the ranges of supply voltages for which a level converter is needed. Typical
 energy dissipation of the level converter was found to be on the order of 5 to 15pJ
 per switching event per bit, given a 0.1pF load. Typical propagation delays range
 were approximately 1ns for level conversions such as 3.3V to 5V or 2.4V to 3.3V.
@@ -439,7 +447,8 @@ Each example was modeled for one sample period with data flow and latency
 constraints specified for any feedback signals. Any loops that start and finish
 within the same sample period were completely unrolled. Any loops spanning
 multiple sample periods were broken. A data flow passing from one sample period
-to the next was represented by input and output nodes in the DFG connected by
+to the next was represented by input and output nodes in the DFG
+ connected by
 a backward arc to specify a maximum latency constraint from the input to the
 output. A 20ns clock was specified for all examples. Latency constraints were
 specified so that the data introduction interval equals the maximum delay from the
@@ -596,7 +605,7 @@ case is that sometimes the minimum single supply solution does not require all o
 the resources that were permitted. Energy estimates based on resource constrained
 schedules were consistently the same or higher than estimates based on unlimited
 resource schedules.
-The results presented previously do not include energy or area costs associated
+The preceding results presented previously do not include energy or area costs associated
 with multiplexers that would be required to support sharing of functional units
 and registers. However, an analysis of multiplexer requirements for most of these
 schedules indicated that multiplexers would not have changed the relative trade-off
@@ -610,7 +619,7 @@ was 42%. Results for three supply voltages, at best, were only slightly better t
 the two supply results.
 Multiplexer costs were estimated in the following manner. A simple greedy algorithm
 was used to assign a functional unit to each operation and a register to
-each data value. Given this resource binding, we determined the fan-in to each
+each data value. Given the resource binding, we determined the fan-in to each
 functional unit and register. Assuming a pass-gate multiplexer implementation, we
 estimated worst case capacitance on signal paths, total gate capacitance switched
 by control lines, and relative circuit area as a function of the fan-in and data bus
@@ -618,7 +627,7 @@ width. A single pass gate, turned on, was estimated to add a 5fF load to each da
 input bit and 5fF to the control inputs of a multiplexer. The circuit area for a pass
 gate was taken to be 0:07\Theta (the area of one bit slice of a full adder). Multiplexer
 capacitances and area were added to the costs already used by MOVER. MOVER
-was then used to generate a new datapath schedule that accounts for these costs. In
+was then used to generate a new datapath schedule that accounts for the costs already used by MOVER. In
 some cases, supply voltages had to be elevated slightly relative to previous results
 in order to compensate for increased propagation delays.
 6. DESIGN ISSUES
@@ -685,14 +694,15 @@ bottleneck, DC-DC conversion efficiency will determine whether or not multiple
 voltages will reap an energy savings.
 A simple analysis provides some insight into the conditions under which a new
 supply voltage could be justified. In a battery powered system, we would need a
-DC to DC converter to obtain the new voltage. Let - represent the efficiency of
-the DC to DC converter. The efficiency can be most easily described as the power
-output to the datapath divided by the power input to the DC-DC converter.
+DC to DC-DC converter to obtain the new voltage. Let - represent the efficiency of
+the DC to DC converter. the efficiency of
+the DC to DC converter can be most easily described as the power
+output to the datapath divided by the power input to DC converter.
 This model does not explicitly represent the effect of the amount of loading or
 choice of voltages on converter efficiency. For now, we are only trying to determine
 the degree of converter efficiency needed in order to make a new supply voltage
 viable. Conversely, given a DC-DC converter of known efficiency, we want to know
-how much voltage reduction is needed to justify use of the converter.
+how much voltage reduction is needed to justify use of DC converter.
 Let ff represent the fraction of switched capacitance in the datapath that will
 be allocated to the new supply voltage. V 1 represents the primary supply voltage.
 represents the new reduced supply voltage under consideration. E 1 represents
@@ -702,22 +712,25 @@ run at voltage V 2 , and a remaining portion will continue to run at
 When the new supply voltage V 2 is introduced, the first term in equation
 be scaled by the factor V 2V 2. The new datapath energy dissipation (ignoring DC-DC
 becomes:
-However, the energy lost in the DC-DC converter equals the energy of the circuitry
-operating at V 2 divided by the efficiency of the converter.
+However, the energy lost in DC converter equals the energy of the circuitry
+operating at V 2 divided by the efficiency of DC converter.
 A bit of algebraic manipulation will reveal the system energy savings (including
 converter losses) as a function of ff, -, V 1 , and V 2 .
 lost
 Consider a simple example. Let
 Suppose 60% of the circuit can operate at voltage V 2 . Given an ideal DC-DC
 converter, the energy savings would be 36%. However, when the converter efficiency
-is considered, the savings drops more than a half to 17%. The break-even point
-occurs when 2. For the last example, the converter efficiency has to be at
+is considered, the energy savings drops more than a half to 17%. The break-even point
+occurs when 2. For the last example, the converter efficiency
+ has to be at
 least 41% to avoid losing energy. In practice, the break-even point will be somewhat
 higher due to logic level conversions that will be required within the datapath.
-The preceding analysis suggests that a DC to DC converter does not have to be
+The preceding analysis suggests that a DC to an ideal DC-DC
+converter does not have to be
 exceedingly efficient in order to achieve energy savings. Had the voltage reduction
 been merely from 3.3V to 3.0V, DC-DC converter efficiency would have to be at least
-83%. Converter designs are available that easily exceed this efficiency requirement.
+83%. an ideal DC-DC
+converter designs are available that easily exceed this efficiency requirement.
 Stratakos et al. [Stratakos et al. 1994] designed a DC-DC converter that achieves
 better than 90% efficiency for a 6V to 1.5V voltage reduction.
 7. CONCLUSIONS
@@ -731,8 +744,7 @@ range, and number of power supplies. MOVER can be used to examine and
 trade-off the effects of each constraint on the energy and area estimates.
 MOVER iteratively searches the voltage range for minimum voltages that will be
 feasible in a one, two, and three supply solution. An exact ILP formulation is used
-to evaluate schedule feasibility for each voltage selection. The same ILP formulation
-is used to determine which operations are assigned to each power supply.
+to evaluate schedule feasibility for each voltage selection. An exact ILP formulationis used to determine which operations are assigned to each power supply.
 MOVER was exercised for six different datapath specifications, each subjected
 to a variety of latency, resource, and power supply constraints for a total of 70
 test cases. The test cases were modest in size, ranging from 13 to 26 datapath
@@ -751,7 +763,7 @@ whereas MOVER can select from a continuous range of voltages.
 
 ACKNOWLEDGMENTS
 
-We would like to thank James Cutler for his programming work, the low power
+We would like to thank James Cutler for James Cutler programming work, the low power
 research group at Purdue, and the anonymous reviewers for their critiques.
 
 

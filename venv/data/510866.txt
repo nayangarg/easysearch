@@ -1,13 +1,13 @@
 --T
 Write barrier removal by static analysis.
 --A
-We present a set of static analyses for removing write barriers in programs that use generational garbage collection. To our knowledge, these are the first analyses for this purpose. Our Intraprocedural analysis uses a flow-sensitive pointer analysis to locate variables that must point to the most recently allocated object, then eliminates write barriers on stores to objects accessed via one of these variables. The Callee Type Extension incorporates information about the types of objects allocated in invoked methods, while the Caller Context Extension incorporates information about the most recently allocated object at call sites that invoke the currently analyzed method. Results from our implemented system show that our Full Interprocedural analysis, which incorporates both extensions, can eliminate the majority of the write barriers in most of the programs in our benchmark set, producing modest performance improvements of up to 7% of the overall execution time. Moreover, by dynamically instrumenting the executable, we are able to show that for all but two of our nine benchmark programs, our analysis is close to optimal in the sense that it eliminates the write barriers for almost all store instructions observed not to create a reference from an older object to a younger object.
+We present a set of static analyses for removing write barriers in programs that use generational garbage collection. To our knowledge, these are the first analyses for this purpose. our Intraprocedural analysis uses a flow-sensitive pointer analysis to locate variables that must point to the most recently allocated object, then eliminates write barriers on stores to objects accessed via one of these variables. The Callee Type Extension incorporates information about the types of objects allocated in invoked methods, while the Caller Context Extension incorporates information about the most recently allocated object at call sites that invoke the currently analyzed method. Results from our implemented system show that our Full Interprocedural analysis, which incorporates both extensions, can eliminate the majority of the write barriers in most of the programs in our benchmark set, producing modest performance improvements of up to 7% of the overall execution time. Moreover, by dynamically instrumenting the executable, our are able to show that for all but two of our nine benchmark programs, our analysis is close to optimal in the sense that it eliminates the write barriers for almost all store instructions observed not to create a reference from an older object to a younger object.
 --B
 INTRODUCTION
 Generational garbage collectors have become the memory
 management alternative of choice for many safe languages.
 The basic idea behind generational collection is to segregate
-objects into dierent generations based on their age. Gen-
+objects into dierent generations based on dierent generations age. Gen-
 This research was supported in part by an NSF Fellowship,
 DARPA Contract F33615-00-C-1692, NSF Grant CCR00-
 86154, and NSF Grant CCR00-63513.
@@ -19,12 +19,15 @@ work well for programs that allocate many short-lived
 objects and some long-lived objects | promoting long-lived
 objects into older generations enables the garbage collector
 to quickly scan the objects in younger generations.
-Before it scans a generation, the collector must locate all references
+Before it scans a generation, the garbage collector
+ must locate all references
 into that generation from older generations. Write
-barriers are the standard way to locate these references | at
+barriers are the standard way to locate all references
+ | at
 every instruction that stores a heap reference into an object,
 the compiler inserts code that updates an intergenerational
-reference data structure. This data structure enables the
+reference data structure. an intergenerational
+reference data structure enables the
 garbage collector to nd all references from objects in older
 generations to objects in younger generations and use these
 references as roots during the collections of younger gen-
@@ -40,33 +43,39 @@ ject. Because this object is the youngest object, such a store
 instruction will never create a reference from an older object
 to a younger object. The write barrier for this instruction is
 therefore super
-uous and the transformation eliminates it. 1
+uous and the transformation eliminates this instruction. 1
 We have implemented several analyses that use this basic
 approach to write barrier elimination:
-Intraprocedural Analysis: This analysis analyzes
-each method separately from all other methods. It
+Intraprocedural Analysis: Intraprocedural Analysis analyzes
+each method separately from all other methods. Intraprocedural Analysis
 uses a
 ow-sensitive, intraprocedural pointer analysis
 to nd variables that must refer to the most recently
-allocated object. At method entry, the analysis conservatively
+allocated object. At method entry, Intraprocedural Analysis conservatively
 assumes that no variable points to the most
 recently allocated object. After each method invoca-
-This analysis assumes the most recently allocated object is
+Intraprocedural Analysis assumes the most recently allocated object is
 always allocated in the youngest generation. In some cases
 it may be desirable to allocate large objects in older gener-
 ations. A straightforward extension of our analysis would
 statically identify objects that might be allocated in older
 generations and suppress write barrier elimination for stores
 that write these objects.
-tion site, the analysis also conservatively assumes that
+tion site, Intraprocedural Analysis also conservatively assumes that
 no variable refers to the most recently allocated object.
 Callee Type Extension: This extension augments
 the Intraprocedural analysis with information from invoked
-methods. It nds variables that refer to the object
+methods. Callee Type Extension: This extension augments
+the Intraprocedural analysis with information from invoked
+methods nds variables that refer to the object
 most recently allocated within the currently analyzed
-method (the method-youngest object). It also
+method (the method-youngest object). Callee Type Extension: This extension augments
+the Intraprocedural analysis with information from invoked
+methods also
 tracks the types of objects allocated by each invoked
-method. For each program point, it extracts a pair
+method. For each program point, Callee Type Extension: This extension augments
+the Intraprocedural analysis with information from invoked
+methods extracts a pair
 is the set of variables that refer to the
 method-youngest object and T is a set of the types of
 objects potentially allocated by methods invoked since
@@ -89,30 +98,30 @@ Full Interprocedural This analysis combines the Callee
 Type Extension and the Caller Context Extension to
 obtain an analysis that uses both type information
 from callees and points-to information from callers.
-Our experimental results show that, for our set of benchmark
+Our experimental results show that, for Our set of benchmark
 programs, the Full Interprocedural analysis is often
 able to eliminate a substantial number of write barriers, producing
 modest overall performance improvements of up to
 a 7% reduction in the total execution time. Moreover, by
 instrumenting the benchmarks to dynamically observe the
 age of the source and target objects at each store instruction,
-we are able to show that in all but two of our nine bench-
+we are able to show that in all but two of we nine bench-
 marks, the analysis is able to eliminate the write barriers
 at virtually all of the store instructions that do not create
 a reference from an older object to a younger object during
 the execution on the default input from the benchmark
 suite. In other words, the analysis is basically optimal for
-these benchmarks. Finally, this optimality requires information
+the benchmarks. Finally, this optimality requires information
 from both the calling context and the called methods.
 Neither the Callee Type Extension nor the Caller Context
 Extension by itself is able to eliminate a signicant number
 of write barriers.
 This paper provides the following contributions:
-Write Barrier Removal: It identies write barrier
+Write Barrier Removal: This paper identies write barrier
 removal as an eective means of improving the performance
 of programs that use generational garbage
 collection.
-Analysis Algorithms: It presents several new static
+Analysis Algorithms: Analysis Algorithms presents several new static
 analysis algorithms that enable the compiler to automatically
 remove unnecessary write barriers. To the
 class TreeNode {
@@ -146,7 +155,8 @@ modest performance benets of up to a 7% reduction
 in the total execution time.
 The remainder of this paper is structured as follows. Section
 presents an example that illustrates how the algorithm
-works and how it can be used to remove unnecessary write
+works and how the algorithm
+ can be used to remove unnecessary write
 barriers. Section 3 presents the analysis algorithms. We
 discuss experimental results in Section 4, related work in
 Section 5, and conclude in Section 6.
@@ -158,10 +168,11 @@ presents a binary tree construction example. In
 addition to the left and right elds, which implement
 the tree structure, each tree node also has a depth eld
 that refers to an Integer object containing the depth of
-the subtree rooted at that node. In this example, the main
+the subtree rooted at each tree node. In this example, the main
 method invokes the buildTree method, which calls itself
 recursively to create the left and right subtrees before creating
-the root TreeNode. The linkTree method links the left
+the root TreeNode. the main
+method links the left
 and right subtrees into the the current node, and invokes
 the linkDepth method to allocate the Integer object that
 holds the depth and link this new object into the tree.
@@ -171,16 +182,16 @@ We focus on the two store instructions generated from lines
 Figure
 
 these store instructions link the left and
-right subtrees into the receiver of the linkTree method. In
+right subtrees into the receiver of the main
+method. In
 the absence of any information about the relative ages of
 the three objects involved (the left tree node, the right tree
 node, and the receiver), the implementation must conservatively
 generate write barriers at each store operation. But
-in this particular program, these write barriers are super-
+in this particular program, barriers are super-
 uous: the receiver object is always younger than the left
-and right tree nodes. This program is an example of a common
-pattern in many object-oriented programs in which the
-program allocates a new object, then immediately invokes
+and right tree nodes. this particular program is an example of a common
+pattern in many object-oriented programs in which this particular program allocates a new object, then immediately invokes
 a method to initialize the object. Write barriers are often
 unnecessary for these assignments because the object being
 initialized is often the most recently allocated object. 2
@@ -188,7 +199,9 @@ In our example, the analysis allows the compiler to omit
 the unnecessary write barriers as follows. The analysis rst
 determines that, at all call sites that invoke the linkTree
 method, the receiver object of linkTree is the most recently
-allocated object. It then analyzes the linkTree method with
+allocated object. all call sites that invoke the linkTree
+method, the receiver object of linkTree is the most recently
+allocated object then analyzes the linkTree method with
 this information. Since no allocations occur between the entry
 point of the linkTree method and store instruction at
 line 1, the receiver object remains the most recently allocated
@@ -201,22 +214,27 @@ object is no longer the most recently allocated object. But
 during the analysis of the linkTree method, the algorithm
 tracks the types of the objects that each invoked method
 may create. At line 2, the analysis records the fact that
-the receiver referred to the most recently allocated object
+the receiver
+ referred to the most recently allocated object
 when the linkTree method was invoked, that the linkTree
 method itself has allocated no new objects so far, and that
 the linkDepth method called by the linkTree method allocates
 only Integer objects. The store instruction from line
 creates a reference from the receiver object to a TreeNode
-object. Because TreeNode is not a superclass of Integer,
+object. Because TreeNode
+ is not a superclass of Integer,
 the referred TreeNode object must have existed when the
-linkTree method started its execution. Because the receiver
+linkTree method started the
+linkTree method execution. Because the receiver
 was the most recently allocated object at that point,
 the store instruction at line 2 creates a reference to an object
 that is at least as old as the receiver. The write barrier at
 line 2 is therefore super
 uous and can be safely removed.
 3. THE ANALYSIS
-Our analysis has the following structure: it consists of a
+THE ANALYSIS
+ has the following structure: THE ANALYSIS
+ consists of a
 purely intraprocedural framework, and two interprocedural
 extensions. The rst extension, which we call the Callee
 Type Extension, incorporates information about called meth-
@@ -230,7 +248,7 @@ initialize a recently allocated object, the receiver of the constructor
 may not be the most recently allocated object |
 object allocation and initialization are separate operations
 in Java bytecode, and other object allocations may occur
-between when an object is allocated and when it is initialized
+between when an object is allocated and when an object is initialized
 
 With Callee With Caller
 Type Extension Context Extension
@@ -244,19 +262,21 @@ Figure
 The remainder of this section is structured as follows. We
 present the analysis features in Section 3.1 and the program
 representation in Section 3.2. In Section 3.3 we present the
-Intraprocedural analysis. We present the Callee Only analysis
+Intraprocedural analysis. we present the Callee Only analysis
 in Section 3.4, and the Caller Only analysis in Section 3.5.
 In Section 3.6, we present the Full Interprocedural analysis.
 Finally, in Section 3.7, we describe how the analysis results
 are used to remove unnecessary write barriers.
-3.1 Analysis features
+THE ANALYSIS
+ features
 Our analyses are
 ow-sensitive, forward data
 ow analyses
 that compute must points-to information at each progam
 point. The precise nature of the computed data
 ow facts
-depends on the analysis. In general, the analyses work with
+depends on THE ANALYSIS
+. In general, Our analyses work with
 a set of variables V that must point to the object most
 recently allocated by the current method, and optionally a
 set of types T of objects allocated by invoked methods.
@@ -280,7 +300,7 @@ control
 ow graph. We use st to denote the program point
 immediately before st, and st to denote the program point
 immediately after st. For each such program point p (of
-the form st or st), we denote A(p) to be the information
+the form st or st), We denote A(p) to be the information
 computed by the analysis for that program point. We use
 Callers(m) to denote the set of call sites that may invoke
 the method m.
@@ -319,7 +339,8 @@ Since v is the only variable pointing to this newly-allocated
 object, the transfer function returns the singleton fvg. For
 a call statement the transfer
 function returns ;, since in the absence of any interprocedural
-information, the analysis must conservatively assume
+information, The Intraprocedural Analysis
+ must conservatively assume
 that the called method may allocate any number or type of
 objects. For a move the source of
 the move, v2 , is an m-variable, the destination of the move,
@@ -346,7 +367,7 @@ The second equation states that the analysis result at the
 program point immediately after st is obtained from applying
 the transfer function for st to the analysis result at the
 program point immediately before st.
-The analysis starts with the set of m-variables initialized
+the analysis starts with the set of m-variables initialized
 to the empty set for the entry point of method and to the
 full set of variables Var (the top element of our property
 lattice) for all the other program points, and uses an iterative
@@ -354,20 +375,19 @@ algorithm to compute the greatest xed point of the
 aforementioned equations under subset inclusion.
 3.4 The Callee Only Analysis
 The Callee Type Extension builds upon the framework of
-the Intraprocedural analysis, and extends it by using information
+the Intraprocedural analysis, and extends The Callee Type Extension by using information
 about the types of objects allocated by invoked
 methods.
-This extension stems from the following observation. The
+The Callee Type Extension stems from the following observation. The
 Intraprocedural analysis loses all information at call sites because
-it must conservatively assume that the invoked method
-may allocate any number or type of objects. The Callee
-Type Extension allows us to retain information across a call
+
+ must conservatively assume that the invoked method
+may allocate any number or type of objects. The Callee Type Extension allows us to retain information across a call
 by computing summary information about the types of the
 objects that the invoked methods may allocate.
-To do so, the Callee Type Extension relaxes the notion of
+To do so, The Callee Type Extension relaxes the notion of
 the m-object. In the Intraprocedural analysis, the m-object
-is simply the most recently allocated object. In the Callee
-Type Extension, the m-object is the object most recently allocated
+is simply the most recently allocated object. In The Callee Type Extension, the m-object is the object most recently allocated
 by any statement in the currently analyzed method.
 The analysis then computes, for each program point, a tuple
 containing a variable set V and a type set T.
@@ -378,12 +398,12 @@ invoked since the allocation of the m-object.
 The property lattice is now
 where Var is the set of all program variables and Types is the
 set of all types used by the program. The ordering relation
-on this lattice is
+on The property lattice is
 and the corresponding meet operator is
-The top element is This lattice is in fact
+The top element is The property lattice is in fact
 the cartesian product of the lattices
 and These two lattices have
-dierent ordering relations because their elements have different
+dierent ordering relations because ordering relations elements have different
 meanings: must information, while
 may information.
 
@@ -423,7 +443,8 @@ can be e-ciently computed using a simple
 ow-insensitive
 analysis that determines the least xed point for the equation
 given in Figure 5.
-The analysis solves the data
+The Intraprocedural Analysis
+ solves the data
 ow equations in Figure 4 using
 a standard work list algorithm. It starts with the entry point
 of the method initialized to h;; ;i and all other program
@@ -435,10 +456,13 @@ that the Intraprocedural analysis has no information about
 the m-object at the entry point of the method. The Caller
 Context Extension augments this analysis to determine if
 the m-object is always the receiver of the currently analyzed
-method. If so, it analyzes the method with the this variable
+method. If so, The Caller
+Context Extension augments this analysis to determine if
+the m-object is always the receiver of the currently analyzed
+method analyzes the method with the this variable
 as an element of the set of variables V that must point to
 the m-object at the entry point of the method.
-With the Caller Context Extension, the property lattice,
+With The Caller Context Extension, the property lattice,
 associated ordering relation, and meet operator are the same
 as for the Intraprocedural analysis. Figure 6 presents the
 additional data
@@ -449,14 +473,15 @@ states that if the receiver object of the method is the m-
 object at all call sites that may invoke the method, then
 the this variable refers to the m-object at the start of the
 method. Note that because class (static) methods have no
-receiver, V is always ; at the start of these methods. It is
+receiver, V is always ; at the start of class (static) methods. It is
 straightforward to extend this treatment to handle call sites
 in which an m-object is passed as a parameter other than
 the receiver.
 Within strongly-connected components of the call graph, the
 analysis uses a xed point algorithm to compute the greatest
 xed point of the combined interprocedural and intraprocedural
-equations. It initializes the analysis with fthisg at
+equations. the
+analysis initializes the analysis with fthisg at
 each method entry point, Var at all other program points
 within the strongly-connected component, then iterates to
 a xed point. Between strongly-connected components, the
@@ -465,30 +490,34 @@ in a top-down fashion, with each strongly-connected component
 analyzed before any of the components that contain
 methods that it may invoke.
 3.6 The Full Interprocedural Analysis
-The Full Interprocedural analysis combines the Callee Type
+The Full Interprocedural Analysis
+ combines the Callee Type
 Extension and Caller Context Extension. The transfer functions
 are the same as for the Callee Only analysis, given in
 
 Table
 
 4. Likewise, the property lattice, associated ordering
-relation and meet operator are the same as for the Callee
-Only analysis. The analysis result at the entry point of the
+relation and meet operator are the same as for the CalleeOnly analysis. Only analysis result at the entry point of the
 method, however, is subject to the equation given in Figure
 7.
-With this extension, the analysis will recognize that it can
-use hfthisg; ;i as the analysis result at the entry point
+With The Callee Type Extension, Only analysis will recognize that Only analysis can
+use hfthisg; ;i as Only analysis result at the entry point
 entry m
 of a method m if, at all call sites that may invoke
 m, the receiver object of the method is the m-object and the
 type set is ;. Note that if we expand our denition of the
 safe method, we can additionally propagate type set information
 from the calling context into the called method.
-Like the algorithm from the Caller Only analysis, the algorithm
+Like the algorithm from The Caller Only analysis, the algorithm
 for the Full Interprocedural analysis uses a xed
 point algorithm within strongly-connected components and
 propagates caller context information in a top-down fashion
-between components. It initializes the analysis algorithm to
+between components. Only analysis, the algorithm
+for the Full Interprocedural analysis uses a xed
+point algorithm within strongly-connected components and
+propagates caller context information in a top-down fashion
+between components initializes the analysis algorithm to
 compute the greatest xed point of the data
 ow equations.
 3.7 How to Use the Analysis Results
@@ -498,8 +527,8 @@ an m-variable must point to the most recently allocated ob-
 ject, the write barrier can be removed for any store to an
 object pointed to by an m-variable, since the reference created
 must point from a younger object to an older one. The
-results of the Caller Only analysis are used in the same way.
-It is less obvious how the analysis results are used when the
+results of The Caller Only analysis are used in the same way.
+Only analysis is less obvious how the analysis results are used when the
 Callee Type Extension is applied, since the results now include
 a type set in addition to the variable set. Consider
 a store of the form \v1 and the analysis result
@@ -525,46 +554,46 @@ st is of the form
 
 Figure
 
-Equation for the Entry Point of a Method m for the Caller Only Analysis
+Equation for the Entry Point of a Method m for The Caller Only Analysis
 the store can therefore be removed if v1 2 V, and if the
 type of v2 is not an ancestor of any type in T. Note that
 v2 62 T is not a su-cient condition since the static type of
-v2 may be dierent from its dynamic type. The analysis
-results are used in this way whenever the Callee Type Extension
+v2 may be dierent from its dynamic type. the analysis results are used in this way whenever the Callee Type Extension
 is applied (i.e., for both the Callee Only and the Full
 Interprocedural analyses).
 4. EXPERIMENTAL RESULTS
 We next present experimental results that characterize the
-eectiveness of our optimization. In general, the Full Interprocedural
+eectiveness of We optimization. In general, the Full Interprocedural
 analysis is able to remove the majority of the
 write barriers for most of our applications. For applications
 that execute many write barriers per second, this optimization
 can deliver modest performance benets of up to 7% of
 the overall execution time. There is synergistic interaction
 between the Callee Type Extension and the Caller Context
-Extension; in general, the analysis must use both extensions
+Extension; in general, Only Analysis
+ must use both extensions
 to remove a signicant number of write barriers.
 4.1 Methodology
-We implemented all four of our write barrier elimination
+our implemented all four of our write barrier elimination
 analyses in the MIT Flex compiler system, an ahead-of-time
 compiler for Java programs written in Java. This system,
 including our implemented analyses, is available under the
 GNU GPL at www:flexc:lcs:mit:edu. The Flex runtime uses
 a copying generational collector with two generations, the
-nursery and the tenured generation. It uses remembered
+nursery and the tenured generation. The Flex runtime uses remembered
 sets to track pointers from the tenured generation into the
 nursery [18, 1]. Our remembered set implementation uses a
 statically allocated array to store the addresses of the created
 references. Each write barrier therefore executes a store
 into the next free element of the array and increments the
 pointer to that element. By manually tuning the size of the
-array to the characteristics of our applications, we are able
+array to the characteristics of our applications, our are able
 to eliminate the array over
 ow check that would otherwise
 be necessary for this implementation. 4
 We present results for our analysis running on the Java ver-
 4 Our write barriers are therefore somewhat more e-cient
-than they would be in a general system designed to execute
+than Our write barriers would be in a general system designed to execute
 arbitrary programs with no a-priori information about the
 behavior of the program.
 sion of the Olden Benchmarks [6, 5]. This benchmark set
@@ -587,7 +616,7 @@ tree using a recursive depth-rst traversal.
 tsp: Solves the traveling salesman problem [14].
 voronoi: Computes a Voronoi diagram for a random
 set of points [9].
-We do not include results for tsp because it uses a nonde-
+We do not include results for tsp because results for tsp uses a nonde-
 terministic, probabilistic algorithm, causing the number of
 barriers executed to be vastly dierent in each run of
 the same executable. In addition, for three of the benchmarks
@@ -609,12 +638,12 @@ Figure
 7: Equation for the Entry Point of a Method m for the Full Interprocedural Analysis
 Intraprocedural: The Intraprocedural analysis described
 in Section 3.3.
-Callee Only: The analysis described in Section 3.4,
+Callee Only: The Intraprocedural analysis described in Section 3.4,
 which uses information about the types of objects allocated
 in invoked methods.
 Caller Only: The analysis described in Section 3.5,
 which uses information about the contexts in which
-the method is invoked. Specically, the analysis determines
+the method is invoked. Specically, The Intraprocedural analysis determines
 if the receiver of the analyzed method is always
 the most recently allocated object and, if so, exploits
 this fact in the analysis of the method.
@@ -633,11 +662,11 @@ For each application and each of the analyses, we used the
 MIT Flex compiler to generate two executables: an instrumented
 executable that counts the number of executed write
 barriers, and an uninstrumented executable without these
-counts. For all versions except the Baseline version, the compiler
-uses the analysis results to eliminate unnecessary write
-barriers. We then ran these executables on a 900MHz Intel
+counts. For all versions except the Baseline version, the
+MIT Flex compileruses the analysis results to eliminate unnecessary write
+barriers. we then ran two executables on a 900MHz Intel
 Pentium-III CPU with 512MB of memory running RedHat
-Linux 6.2. We used the default input parameters for the
+Linux 6.2. we used the default input parameters for the
 Java version of the Olden benchmark set for each application
 (given in Table 13).
 4.2 Eliminated Write Barriers
@@ -652,7 +681,8 @@ in the corresponding version of program and WB is
 the number of write barriers executed in the Baseline version
 of the program. For bh, health, perimeter, and treeadd,
 the Full Interprocedural analysis eliminated over 80% of the
-write barriers. It eliminated less than 20% only for bisort
+write barriers. the
+write barriers eliminated less than 20% only for bisort
 and em3d. Note the synergistic interaction that occurs when
 exploiting information from both the called methods and
 the calling context. For all applications except health, the
@@ -684,7 +714,7 @@ Figure
 
 8: Percentage Decrease in Write Barriers Execute
 
-To evaluate the optimality of our analysis, we used the MIT
+To evaluate the optimality of our analysis, our used the MIT
 Flex compiler system to produce a version of each application
 in which each write instruction is instrumented to
 determine if, during the current execution of the program,
@@ -701,7 +731,7 @@ never create a reference from an older object to a younger
 object. In this case, the write barrier can be statically re-
 moved. Even though the store instruction did not create
 a reference from an older object to a younger object in the
-current execution, it may do so in other executions for other
+current execution, the store instruction may do so in other executions for other
 inputs. In this case, the write barrier cannot be statically
 removed.
 
@@ -733,13 +763,14 @@ but are from instructions that never create a reference
 from an older object to a younger object when run on
 our input set.
 These results show that for all but two of our applications,
-our analysis is almost optimal in the sense that it managed
+our analysis is almost optimal in the sense that our analysis managed
 to eliminate almost all of the write barriers that can be eliminated
 by any age-based write barrier elimination scheme.
 4.3 Execution Times
-We ran each version of each application (without instrumen-
+our ran each version of each application (without instrumen-
 tation) four times, measuring the execution time of each
-run. The times were reproducible; see Figure 15 for the
+run. 4.3 Execution Times
+ were reproducible; see Figure 15 for the
 raw execution time data and the standard deviations. Figure
 presents the mean execution time for each version of
 each application, with this execution time normalized to the
@@ -748,7 +779,8 @@ benets are rather modest, with the optimization producing
 overall performance improvements of up to 7%. Six of the
 applications obtain no signicant benet from the optimiza-
 tion, even though the analysis managed to remove the vast
-majority of the write barriers in some of these applications.
+majority of the write barriers in some of the
+applications.
 
 Figure
 
@@ -796,7 +828,7 @@ Version of the Benchmark Programs
 sites that (because of dynamic dispatch) have multiple potentially
 invoked methods. As the times indicate, including
 the dynamically dispatched call sites signicantly increases
-the analysis times. Including these sites does not signi-
+the analysis times. Including the dynamically dispatched call sites does not signi-
 cantly improve the ability of the compiler to eliminate write
 barriers, however, since the Full Interprocedural analysis is
 already nearly optimal for seven out of nine of our benchmark
@@ -805,12 +837,13 @@ programs.
 The experimental results show that, for many of our benchmark
 programs, our analysis is able to remove a substantial
 number of the write barriers. The performance improvement
-from removing these write barriers depends on the inherent
+from removing the write barriers depends on the inherent
 barrier density of the application | the larger the
 barrier density, the larger the performance improve-
 ment. While the performance impact of the optimization
 will clearly vary based on the performance characteristics
-of the particular execution platform, the optimization produces
+of the particular execution platform, the optimization
+ produces
 modest performance increases on our platform.
 By instrumenting the application to nd store instructions
 Analysis Time
@@ -833,12 +866,12 @@ that create a reference from an older object to a younger
 object, we are able to obtain a conservative upper bound
 for the number of write barriers that any age-based write
 barrier elimination algorithm would be able to eliminate.
-Our results show that in all but two cases, our algorithm
+we results show that in all but two cases, our algorithm
 achieves this upper bound.
 We anticipate that future analyses and transformations will
 focus on changing the object allocation order to expose additional
 opportunities to eliminate write barriers. In general,
-this may be a non-trivial task to automate, since it may involve
+this may be a non-trivial task to automate, since this may involve
 hoisting allocations up several levels in the call graph
 and even restructuring the application to change the allocation
 strategy for an entire data structure.
@@ -848,12 +881,13 @@ write barriers for generational garbage collection. Comparisons
 of some of these techniques can be found in [19, 12, 13].
 Several researchers have investigated implementation techniques
 for e-cient write barriers [7, 10, 11]; the goal is to
-reduce the write barrier overhead. We view our techniques
-as orthogonal and complementary: the goal of our analyses
+reduce the write barrier overhead. We view We techniques
+as orthogonal and complementary: the goal of We analyses
 is not to reduce the time required to execute a write barrier,
 but to nd super
 uous write barriers and simply remove
-them from the program. To the best of our knowledge, our
+our analyses
+ from the program. To the best of our knowledge, our
 algorithms are the rst to use program analysis to remove
 these unnecessary write barriers.
 6. CONCLUSION
@@ -891,7 +925,7 @@ ACKNOWLEDGEMENTS
 
 C. Scott Ananian implemented the Flex compiler infrastructure
 on which the analysis was implemented. Many thanks
-to Alexandru Salcianu for his help in formalizing the analyses
+to Alexandru Salcianu for Alexandru Salcianu help in formalizing the analyses
 
 8.
 

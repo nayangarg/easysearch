@@ -1,7 +1,9 @@
 --T
 Software Trace Cache.
 --A
-This paper explores the use of compiler optimizations which optimize the layout of instructions in memory. The target is to enable the code to make better use of the underlying hardware resources regardless of the specific details of the processor/architecture in order to increase fetch performance. The Software Trace Cache (STC) is a code layout algorithm with a broader target than previous layout optimizations. We target not only an improvement in the instruction cache hit rate, but also an increase in the effective fetch width of the fetch engine. The STC algorithm organizes basic blocks into chains trying to make sequentially executed basic blocks reside in consecutive memory positions, then maps the basic block chains in memory to minimize conflict misses in the important sections of the program. We evaluate and analyze in detail the impact of the STC, and code layout optimizations in general, on the three main aspects of fetch performance: the instruction cache hit rate, the effective fetch width, and the branch prediction accuracy. Our results show that layout optimized codes have some special characteristics that make them more amenable for high-performance instruction They have a very high rate of not-taken branches and execute long chains of sequential instructions; also, they make very effective use of instruction cache lines, mapping only useful instructions which will execute close in time, increasing both spatial and temporal locality.
+This paper explores the use of compiler optimizations which optimize the layout of instructions in memory. The target is to enable the code to make better use of the underlying hardware resources regardless of the specific details of the processor/architecture in order to increase fetch performance. --T
+Software Trace Cache.
+ is a code layout algorithm with a broader target than previous layout optimizations. We target not only an improvement in the instruction cache hit rate, but also an increase in the effective fetch width of the fetch engine. a code layout algorithm with a broader target than previous layout optimizations organizes basic blocks into chains trying to make sequentially executed basic blocks reside in consecutive memory positions, then maps the basic block chains in memory to minimize conflict misses in the important sections of the program. We evaluate and analyze in detail the impact of the STC, and code layout optimizations in general, on the three main aspects of fetch performance: the instruction cache hit rate, the effective fetch width, and the branch prediction accuracy. We results show that layout optimized codes have some special characteristics that make layout optimized codes more amenable for high-performance instruction layout optimized codes have a very high rate of not-taken branches and execute long chains of sequential instructions; also, layout optimized codes make very effective use of instruction cache lines, mapping only useful instructions which will execute close in time, increasing both spatial and temporal locality.
 --B
 Introduction
 Instruction fetch bandwidth may become a major limiting
@@ -18,12 +20,20 @@ APTIND (Alex Ram'irez), the Commission for Cultural, Educational
 and Scientific Exchange between the United States of America and
 Spain (Josep L. Larriba-Pey, Josep Torrellas and Mateo Valero),
 NSF grant MIP-9619351 (Josep Torrellas) and CEPBA. Alex Ram'irez
-wants to thank all his fellow PBC's for their time and efforts. The
-authors want to thank Xavi Serrano for all his help setting up and
+wants to thank all Alex Ram'irez
+ fellow PBC's for This research has been supported by CICYT grant TIC-0511-
+authors), the Generalitat de Catalunya grants ACI 97-
+26 (Josep L. Larriba-Pey and Josep Torrellas) and 1998FI-00306-
+APTIND (Alex Ram'irez), the Commission for Cultural, Educational
+and Scientific Exchange between the United States of America and
+Spain (Josep L. Larriba-Pey, Josep Torrellas and Mateo Valero),
+NSF grant MIP-9619351 (Josep Torrellas) and CEPBA time and efforts. The
+authors want to thank Xavi Serrano for all Xavi Serrano help setting up and
 analyzing PostgreSQL.
 y University of Illinois at Urbana Champaign, USA.
 applications have frequent control flow transfers and high
-instruction-cache miss rates. These characteristics make
+instruction-cache miss rates. y University of Illinois at Urbana Champaign, USA.
+applications make
 supplying a high number of useful instructions a difficult
 task, even in the presence of aiding devices like the Hardware
 Trace Cache (HTC) [4, 12].
@@ -37,22 +47,22 @@ number of useful instructions fetched per access for future
 wide-issue superscalars.
 In this paper, we focus on the interaction between hardware
 and software to provide a high instruction bandwidth.
-We start presenting a fully-automated, compile-time code
+we start presenting a fully-automated, compile-time code
 reordering technique that focuses on maximizing the sequentiality
 of instructions, while still trying to minimize instruction
-cache misses. We call our technique Software Trace
+cache misses. we call we technique Software Trace
 Cache (STC).
-We compare the results obtained with the STC to those
+we compare the results obtained with the STC to those
 obtained with a HTC alone and to the combination of both
 techniques. The results are obtained for the PostgreSQL
 database, an arcade game, and the SPEC'95 benchmark.
-Our results show that for large codes with few loops
+The results show that for large codes with few loops
 and deterministic execution sequences like the Postgres95
 database management system, the STC offers similar, or
 better, results than a HTC. Moreover, if we combine the
 STC and the HTC, we obtain very encouraging results.
 Specifically, the number of fetched instructions per cycle obtained
-with a combination of the STC and a small HTC is
+with a combination of the STC and a small a HTC is
 comparable to that of a HTC of double size alone. Finally,
 the STC can be useful even in combination with a large HTC
 due to the instruction cache miss rate reduction.
@@ -65,11 +75,12 @@ the HTC; Section 6 discusses related work; and in Section 7
 we draw some final remarks.
 2 The Fetch Mechanism
 We simulate an aggressive sequential fetch unit similar to
-that described in [12]. As shown in Figure 1, our core
+that described in [12]. As shown in Figure 1, We core
 fetch unit model is composed of an interleaved instruction
 cache (i-cache), a multiple branch predictor (BP), an interleaved
 branch target buffer (BTB) and a return address
-stack (RAS). This fetch unit is designed to fetch as many
+stack (RAS). an aggressive sequential fetch unit similar to
+that described in [12]. is designed to fetch as many
 contiguous instructions as possible. The limits are posed
 by the width of the data path and the branch predictor
 throughput. In this work, we will assume a limit of 16 instructions
@@ -95,17 +106,20 @@ us to fetch sequential code crossing the cache line
 boundary. The BTB is accessed in parallel with the i-cache,
 and is used to predict the address of indirect jumps and
 subroutine calls. The return address of subroutines can be
-accurately predicted using the RAS. It is assumed that instructions
+accurately predicted using the RAS. The return address of subroutines is assumed that instructions
 will be pre-decoded, allowing branches and other
 control transfers to be detected. The target of PC-relative
-branches is calculated, not obtained from the BTB. Using
+branches is calculated, not obtained from The BTB. Using
 the outputs from the BP, the BTB and the information regarding
 which instructions represent control transfers, we
 obtain an instruction mask to select the valid instructions
 from the fetched i-cache lines, and generate the fetch address
 for the next cycle.
-We do not allow our fetch unit to stop at indirect jumps
-if those do not break the execution sequence. We add a
+we
+ do not allow we
+ fetch unit to stop at indirect jumps
+if those do not break the execution sequence. we
+ add a
 breaking bit to the BTB, which informs the fetch unit when
 the predicted jump address will break the sequence.
 Summarizing, instruction fetch stops in one of these conditions
@@ -122,18 +136,19 @@ correlated branch predictor, with 14-bit history length, extended
 to allow multiple branches to be predicted in a single
 cycle, a 256-entry BTB enhanced with the breaking bit, and
 a 256-entry RAS.
-We also simulated our core fetch unit in conjunction with
+we also simulated we core fetch unit in conjunction with
 the basic trace cache model described in [12]. The complete
 fetch unit, with a trace cache (t-cache), is what we
 call the Hardware Trace Cache (HTC). The fill buffer reads
 instructions from either the fetch unit (speculative trace con-
 struction) or from the commit stage (non-speculative trace
-construction) and stores them in a special purpose buffer.
-When a trace is completed, it is stored in the t-cache in
+construction) and stores instructions from either the fetch unit (speculative trace con-
+struction) or from the commit stage (non-speculative trace
+construction) in a special purpose buffer.
+When a trace is completed, a trace is stored in the t-cache in
 conjunction with the branch outcomes that led to that instruction
 sequence. If the same leading instruction and the
-same branch outcomes are encountered in the future, the
-trace is fed directly from the t-cache to the decode unit.
+same branch outcomes are encountered in the future, a trace is fed directly from the t-cache to the decode unit.
 The fill buffer stops building a trace on the same conditions
 as the core fetch unit, except for the case of sequence breaks,
 as the t-cache is able to store non-contiguous instructions in
@@ -188,13 +203,14 @@ Using the weighted graph obtained running the training set,
 and starting from the selected seeds, we implement a greedy
 algorithm to build our basic block traces targeting an increase
 in the code sequentiality. Given a basic block, the algorithm
-follows the most frequently executed path out of it.
+follows the most frequently executed path out of a basic block.
 This implies visiting a subroutine called by the basic block,
 or following the control transfer with the highest probability
 of being used. All the other valid transitions from the basic
 block are noted for future examination.
-For this algorithm we use two parameters called Exec
-Threshold, and Branch Threshold. The trace building algorithm
+For the algorithm
+ we use two parameters called Exec
+Threshold, and Branch Threshold. the algorithm
 stops when all the successor basic blocks have been
 visited or have a weight lower than the Exec Threshold, or
 all the outgoing arcs have a branch probability less than the
@@ -211,16 +227,16 @@ Figure
 
 Figure
 
-2.b shows the resulting sequences. We use an Exec-
+2.b shows the resulting sequences. we use an Exec-
 Thresh of 4 and a BranchThresh of 0.4. Starting from seed
 and following the most likely outgoing edge from each basic
 block we build the sequence 2.b). The
 transitions to B1 and C5 are discarded due to the Branch
-Threshold. We noted that the transition from A3 to A5 is
+Threshold. we noted that the transition from A3 to A5 is
 a valid transition, so we start a secondary trace with A5,
 but all its successors have been already visited, so the sequence
-ends there. We do not start a secondary trace from
-A6 because it has a weight lower than the Exec Threshold.
+ends there. we do not start a secondary trace from
+A6 because its has a weight lower than the Exec Threshold.
 (Execution Threshold)
 (b) Resulting sequences
 (a) Weighted Graph
@@ -246,20 +262,20 @@ Figure
 2: Trace building example.
 Code replication
 In order to increase code sequentiality, we introduce a limited
-form of code replication in out method. We allow the
+form of code replication in out method. we allow the
 main execution path of each subroutine to be replicated at
 all call points.
-We introduce two new threshold values, the ExecRep
+we introduce two new threshold values, the ExecRep
 and BranchRep Thresholds to control the amount of code
 we are replicating. A sequence will be replicated if the call
 probability passes the BranchRep threshold and the starting
-basic block for that sequence passes the ExecRep Threshold.
+basic block for A sequence passes the ExecRep Threshold.
 In the example from Figure 2, if we found a new call to
 C1 from, say A7, we would replicate the sequence C1 ! C4
 and include it between A7 and A8 in the main execution
 path.
 Threshold selection
-We have a loop in our algorithm that repeatedly selects a
+We have a loop in We algorithm that repeatedly selects a
 set of values for the four thresholds and generates the resulting
 traces for each pass. The basic blocks included in
 previous passes are pruned from the newly formed traces,
@@ -272,7 +288,7 @@ will determine the number of basic blocks included in each
 pass of the algorithm, generating larger or smaller groups of
 traces. The target is to pack in a given pass those traces
 with a similar popularity, while keeping the total number of
-instructions under control. For this paper we selected our
+instructions under control. For this paper we selected we
 Exec Threshold so that each pass contained approximately
 4KB of not replicated code. To maximize the effect of the
 code replication we used the least restrictive ExecRep and
@@ -282,7 +298,7 @@ As shown in Figure 3, we map our code sequences in decreasing
 order of popularity, concentrating the most likely
 used code in the first memory pages and mapping popular
 sequences close to other equally popular ones, reducing conflict
-among them. Also, the most popular sequences
+among other equally popular ones. Also, the most popular sequences
 will map to a reserved area of the cache, leaving gaps to create
 a Conflict Free Area (CFA), shielding the most popular
 traces from interference with any other code.
@@ -326,9 +342,9 @@ point codes, commercial workloads, and arcade games.
 Recent studies have shown that commercial workloads
 do not behave like common integer codes, like the SPECINT
 set. Also, it is well known that floating point codes
-have a different behavior than integer codes. Our workloads
+have a different behavior than integer codes. We workloads
 include the whole SPEC 95 benchmarks. We use the PostgreSQL
-6.3.2 database management system as our commercial
+6.3.2 database management system as We commercial
 workload and XBlast 2.2, an arcade game, as an example
 of a little studied workload.
 All the executions and simulations needed to develop this
@@ -359,7 +375,7 @@ working sets, like applu, apsi, fpppp, gcc and postgres which
 do not fit even in 32KB caches. Furthermore, some codes
 exhibit very little temporal locality, like gcc, which can not
 fit 75% of the references in a 32KB cache.
-We select the CFA size so that it gathers between 75 and
+We select the CFA size so that the CFA size gathers between 75 and
 90% of the instruction references, while still leaving reason-able
 space for the rest of the code. Obviously, larger caches
 allow a larger CFA and more code replication. For example,
@@ -368,7 +384,7 @@ instructions (9448 bytes) which almost fit in an 8KB CFA,
 which we will use for a 32KB instruction cache, but for a
 64KB cache we will allow the CFA to grow to 16KB.
 Next, we examine the code sequentiality for the original
-layout. We observe that all floating point benchmarks
+layout. we observe that all floating point benchmarks
 have very large basic blocks (35 instructions average), leading
 to large code sequences (57 consecutive instructions aver-
 age). Meanwhile, the average sequence length for the integer
@@ -399,7 +415,7 @@ basic block considered are shown in Table 2. The percentage
 of basic blocks of each type executed is shown in Table 3.
 The last two columns show the percentage of branch and
 loop basic blocks which behave in a fixed way (FB,FL), that
-is, they are always taken or always not taken. A low proportion
+is, The last two columns are always taken or always not taken. A low proportion
 of fixed loop branches means that each loop executes
 few iterations (less than 20).
 BB Type Description Target
@@ -434,13 +450,13 @@ in our work. Consequently, the STC as it is now will offer
 little advantage to codes with lots of loops and few fixed
 conditional branches.
 Also, codes with few subroutine calls will not benefit
-from the fact that the STC builds its execution sequences
+from the fact that the STC builds the STC execution sequences
 crossing procedure calls.
 The number of predictable basic block transitions is determined
 by fall-through basic blocks, PC-relative unconditional
 branches, conditional branches with a fixed behavior
 and subroutine calls. The percentage of fall-through basic
-blocks is around 10-20% for most codes, so STC performance
+blocks is around 10-20% for most codes, so the STC performance
 will be determined by the rest of the basic block
 classes, mainly by the percentage of loop basic blocks.
 With this criteria, we expect postgres, with only a 3.4%
@@ -448,7 +464,8 @@ of loop basic blocks, 12.8% of subroutine calls and 43% of
 conditional branches (76.2% of which behave in a fixed way)
 to be the one which will benefit the most from the STC. On
 the other hand, 32% of the basic blocks executed by ijpeg
-end with a loop branch, and barely 30% of its conditional
+end with a loop branch, and barely 30% of ijpeg
+ conditional
 branches behave in a fixed way, which makes it difficult to
 enlarge the execution sequences. Among the FP codes, apsi
 looks as the best candidate, with a large proportion of fixed
@@ -466,8 +483,7 @@ The number of consecutive instructions executed represents
 the performance limit of a sequential fetch unit. Even
 if we were not limited by the bus width, the branch predictor
 throughput, and branch mispredictions, we would still
-be limited by taken branches. Table 4 shows how the STC
-improves this performance limit.
+be limited by taken branches. Table 4 shows how the STCimproves this performance limit.
 Average Original Reordered
 Benchmark BB size %breaks Seq len. %breaks Seq len.
 su2cor 19.8 52 37.7
@@ -532,18 +548,17 @@ in terms of misses per line access. There are two i-cache
 line accesses and one t-cache line access for each fetch
 unit access.
 We also present the branch misprediction rate.
-The final performance metric is the number of Fetched
-Instructions per Cycle (FIPC). The FIPC was obtained dividing
+The final performance metric is The FIPC. The FIPC was obtained dividing
 the FIPA for an estimated number of cycles per access
 (CPA). Instruction cache misses cause the fetch engine to
 stall, increasing the CPA, and branch mispredictions cause
 the fetch unit to fetch instructions from the wrong execution
 path, effectively wasting fetch cycles.
 We used a fixed number of cycles for each i-cache miss,
-and assumed that if both i-cache lines missed, they could be
+and assumed that if both i-cache lines missed, both i-cache lines could be
 served simultaneously. We also assumed an average number
 of penalty cycles for each branch misprediction. As i-cache
-miss penalties we used 3 and 6 cycles, and branch misprediction
+miss penalties We used 3 and 6 cycles, and branch misprediction
 penalties of 4, 8 and 12 cycles, as it will depend on
 the execution core of the processor.
 Software Trace Cache
@@ -608,14 +623,13 @@ The t-cache miss rate does not seem to depend on the
 code layout, but on the t-cache size itself. In order to reduce
 the t-cache miss rate, techniques like Partial matching
 [4] have been proposed, which also reduce the number
-of instruction provided. The HTC mechanism assumes that
+of instruction provided. The the HTC mechanism assumes that
 the t-cache will always be able to provide more instructions
 than the core fetch unit. This statement may not be true
-if we consider the increased FIPA performance of the STC
-and the reduced trace length caused by such techniques. It
+if we consider the increased the FIPA performance of the STCand the reduced trace length caused by such techniques. It
 may not be worth adding such functionality to the HTC, as
 a compile-time optimization can obtain similar results.
-The HTC does not have a visible impact on the branch
+the HTC does not have a visible impact on the branch
 prediction accuracy.
 STC and HTC interaction
 The best results are obtained when combining both STC
@@ -626,8 +640,7 @@ vortex provides 12.2 instructions per access, while a HTC of
 provides only 11.3.
 For the larger codes, the t-cache can not remember all
 the executed code sequences, and the core fetch unit is used
-extensively. It is in these cases, like gcc, where the STC
-proves more useful, combining with a small t-cache to provide
+extensively. It is in these cases, like gcc, where the STCSTCproves more useful, combining with a small t-cache to provide
 better results than a t-cache of double size alone. Combining
 a STC with a large t-cache still improves the results
 for the larger codes, but the FIPA increase is minimum for
@@ -640,21 +653,20 @@ with the HTC providing much better performance. In some
 cases, like li, the increased branch misprediction rate can
 actually hinder the performance of the HTC.
 On the other hand, for the largest codes, like postgres
-and xblast, the STC alone can offer similar, or better results
+and xblast, the STC can offer similar, or better results
 than a HTC alone. In these cases, combining the compile-time
-and the run-time techniques offers the best results, raising
-the FIPC from 5.9 with the STC, or 4.6 with the 16KB
+and the run-time techniques offers The best results, raising
+The FIPC from 5.9 with the STC, or 4.6 with the 16KB
 HTC, to 6.5 with a combination of both. In most cases,
-using a combination of STC and a small HTC offers similar
-or better results than a HTC of double size.
+using a combination of STC and a small the HTC offers similar
+or better results than a the HTC of double size.
 The benefits of the STC are more obvious when the i-cache
 miss penalty increases and the branch misprediction
 penalty is small, while the HTC proves most useful when
 the i-cache miss penalty is low.
-We conclude that for large codes with few loops, the STC
-can provide better results than the HTC alone, and that a
-combination of the STC with a small HTC provides similar
-or better results than a much larger HTC alone. When combined
+We conclude that for large codes with few loops, the STCcan provide better results than the HTC alone, and that a
+combination of the STC with a small the HTC provides similar
+or better results than a much larger the HTC alone. When combined
 with a large t-cache, the STC is still able to provide
 performance improvements, due to the reduced i-cache miss
 rate.
@@ -701,20 +713,22 @@ fetch instructions from multiple basic blocks per cycle.
 Hwu and Chang [7] use function inline expansion, and
 group into traces those basic blocks which tend to execute
 in sequence as observed on a profile of the code. Then, they
-map these traces in the cache so that the functions which
+map traces those basic blocks which tend to execute
+in sequence as observed on a profile of the code in the cache so that the functions which
 are executed close to each other are placed in the same page.
 Pettis & Hansen [10] propose a profile based technique
 to reorder the procedures in a program, and the basic blocks
 within each procedure. Their aim is to minimize the conflicts
 between the most frequently used functions, placing
-functions which reference each other close in memory. They
+functions which reference each other close in memory. Their
 also reorder the basic blocks in a procedure, moving unused
 basic blocks to the bottom of the function code, even splitting
 the procedures in two, and moving away the unused
 basic blocks.
 Torrellas et al [13] designed a basic block reordering algorithm
 for Operating System code, running on a very conservative
-vector processor. They map the code in the form
+vector processor. They
+ map the code in the form
 of sequences of basic blocks spanning several functions, and
 keep a section of the cache address space reserved for the
 most frequently referenced basic blocks. A comparison between
@@ -730,7 +744,7 @@ map procedures so that the resulting number of conflicts is
 minimized.
 Techniques developed for VLIW processors, like Trace
 Scheduling [3] also identify the most frequent execution paths
-in a program. But these techniques are trying to optimize
+in a program. But Techniques are trying to optimize
 the scheduling of instructions in the execution core of the
 processor, not the performance of the instruction fetch en-
 gine. Individual instructions are moved up and down, crossing
@@ -739,8 +753,7 @@ core of the processor, inserting compensation code to
 undo what wrongly placed instructions did when the wrong
 path is taken. The traces they define are logical, the basic
 blocks need not be actually moved in order to obtain
-the desired effect. In that sense, these techniques and the
-STC may be complementary, one optimizes instruction fetch
+the desired effect. In that sense, these techniques and the STC STC may be complementary, one optimizes instruction fetch
 while the other optimizes instruction scheduling, both using
 the same profile information.
 On the hardware side, techniques like the Branch Address
@@ -749,8 +762,7 @@ Cache [4, 12] approach the problem of fetching multiple,
 non-contiguous basic blocks each cycle. The Branch Address
 Cache and the Collapsing Buffer access non-consecutive cache
 lines from an interleaved i-cache each cycle and then merge
-the required instructions from each accessed line. The Trace
-Cache does not require fetching of non-consecutive basic
+the required instructions from each accessed line. the t-cache does not require fetching of non-consecutive basic
 blocks from the i-cache as it stores dynamically constructed
 sequences of basic blocks in a special purpose cache. These
 techniques require hardware extensions of the fetch unit,
@@ -763,8 +775,7 @@ code expanding optimizations (loop unrolling and function
 inlining) on the instruction cache miss rate. Also, as an example
 of software and hardware cooperation, Patel et al [9]
 identify branches with a fixed behavior and avoid making
-prediction on them, increasing the potential of the Trace
-Cache.
+prediction on branches, increasing the potential of the t-cache.
 Conclusions
 In this paper we present a profile based code reordering technique
 which targets an optimization of the instruction fetch

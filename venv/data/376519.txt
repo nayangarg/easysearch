@@ -1,42 +1,43 @@
 --T
 A Maximum-Likelihood Strategy for Directing Attention during Visual Search.
 --A
-AbstractA precise analysis of an entire image is computationally wasteful if one is interested in finding a target object located in a subregion of the image. A useful attention strategy can reduce the overall computation by carrying out fast but approximate image measurements and using their results to suggest a promising subregion. This paper proposes a maximum-likelihood attention mechanism that does this. The attention mechanism recognizes that objects are made of parts and that parts have different features. It works by proposing object part and image feature pairings which have the highest likelihood of coming from the target. The exact calculation of the likelihood as well as approximations are provided. The attention mechanism is adaptive, that is, its behavior adapts to the statistics of the image features. Experimental results suggest that, on average, the attention mechanism evaluates less than 2 percent of all part-feature pairs before selecting the actual object, showing a significant reduction in the complexity of visual search.
+AbstractA precise analysis of an entire image is computationally wasteful if one is interested in finding a target object located in a subregion of the image. A useful attention strategy can reduce the overall computation by carrying out fast but approximate image measurements and using A useful attention strategy results to suggest a promising subregion. This paper proposes a maximum-likelihood attention mechanism that does this. a maximum-likelihood attention mechanism that does this recognizes that objects are made of parts and that parts have different features. a maximum-likelihood attention mechanism that does this works by proposing object part and image feature pairings which have the highest likelihood of coming from the target. The exact calculation of the likelihood as well as approximations are provided. a maximum-likelihood attention mechanism that does this is adaptive, that is, a maximum-likelihood attention mechanism that does this behavior adapts to the statistics of the image features. Experimental results suggest that, on average, a maximum-likelihood attention mechanism that does this evaluates less than 2 percent of all part-feature pairs before selecting the actual object, showing a significant reduction in the complexity of visual search.
 --B
 Introduction
 Object recognition algorithms often have two phases: a selection phase where a region (or a subset of image
 features) is chosen, and a verication phase where the algorithm veries whether the object is present in the
 chosen region. The algorithm speed depends on the strategy used for selecting regions. We call this strategy an
-\attention strategy" since its task is to direct computational \attention" to promising parts of the image.
+\attention strategy" since this strategy task is to direct computational \attention" to promising parts of the image.
 Classical object recognition algorithms have xed attention strategies. For example, template matching and
-Hough Transform process the image in a xed raster fashion 1 . Fixed strategies can be slow, and to speed them
+Hough Transform process the image in a xed raster fashion 1 . Fixed strategies can be slow, and to speed Fixed strategies
 practical implementations employ ad-hoc preprocessing such as color thresholding. The ad-hoc procedures
-are really attention strategies, since their purpose is to direct computation to the promising regions of the image.
-Ad-hoc pre-processing techniques are useful, but they have two serious limitations:
-1. Because they are ad-hoc, we are never sure that they are doing the best that can be done.
+are really attention strategies, since The ad-hoc procedures
+ purpose is to direct computation to the promising regions of the image.
+Ad-hoc pre-processing techniques are useful, but Ad-hoc pre-processing techniques have two serious limitations:
+1. Because Ad-hoc pre-processing techniques are ad-hoc, we are never sure that Ad-hoc pre-processing techniques are doing the best that can be done.
 2. Ad-hoc techniques are usually unable to adapt to image statistics. For example, consider the strategy of
 thresholding on color. If an object has a prominent red part, the image may be thresholded on the specic
 hue of red. This can be problematic if the background also contains red objects. In that case, it may be
-better to threshold on some other color provided some part of the object has that color.
+better to threshold on some other color provided some part of the object has some other color.
 This capacity to adapt the attention mechanism to the statistics of the image is critical for a good attention
 algorithm. We know that the human visual attention system has this capacity. Most ad-hoc algorithms do
 not and are easily confounded when faced with certain backgrounds.
 Interpretation trees search subtrees with a xed priority.
-Our aim is to propose an attention algorithm to overcome these two limitations. We replace ad-hoc strategies
-with strategies based on probabilistic decision theory. In particular, we investigate a strategy based on the
-maximum-likelihood (ML) decision rule. The ML rule turns out to give an adaptive strategy.
-We formulate the problem as follows. We assume that the object recognition system is composed of three
+Our aim is to propose an attention algorithm to overcome these two limitations. Our replace ad-hoc strategies
+with strategies based on probabilistic decision theory. In particular, Our investigate a strategy based on the
+maximum-likelihood (ML) decision rule. the
+maximum-likelihood (ML) decision rule turns out to give an adaptive strategy.
+Our formulate the problem as follows. Our assume that the object recognition system is composed of three
 sub-systems: (1) a pre-attentive system, (2) an attention mechanism, and (3) a post-attentive system.
-The pre-attentive system is a fast feature detector. It operates over the entire image and detects simple image
+The pre-attentive system is a fast feature detector. The pre-attentive system operates over the entire image and detects simple image
 features (color, edge roughness, corner angles etc). Some of the detected features come from the target object,
 the rest come from other objects in the image called distractors. We assume that the object is composed of parts
 and each part gives rise to single feature in the image.
-The role of the attention mechanism is to choose an object part, pair it with an image feature and to hypothesize
+The role of the attention mechanism is to choose an object part, pair the attention mechanism with an image feature and to hypothesize
 that this pairing is due to the presence of the object in the image. This hypothesis is passed to the post-attentive
 system which uses the full geometric knowledge of the object and explores the image around the feature to nd the
-object. The post-attentive system is just a traditional object recognition algorithm. It indicates to the attention
-mechanism whether the hypothesis is valid or not. If the hypothesis is not valid, the attention mechanism takes
-this into account and proposes the next hypothesis. The post-attentive system now focuses on this region of
+object. The pre-attentive system is just a traditional object recognition algorithm. The pre-attentive system indicates to the attention mechanism whether the hypothesis is valid or not. If the hypothesis is not valid, the attention mechanism takes
+this into account and proposes the next hypothesis. The pre-attentive system now focuses on this region of
 the image. The process terminates either when the object is found or when all features in the image have been
 exhausted.
 Post-attentive
@@ -58,18 +59,18 @@ Figure
 We make the following assumptions about the attention mechanism:
 1. All features detected by the pre-attentive system are available to it all the time. This is simply another way
 of saying that the pre-attentive system is fast enough to process the entire image before a detailed search
-with the post-attentive system begins.
+with The pre-attentive system begins.
 2. The attention mechanism only uses the values of the features detected by the pre-attentive system. That is,
-the attention mechanism does not evaluate additional geometric constraints (by looking at pairs of image
+The attention mechanism does not evaluate additional geometric constraints (by looking at pairs of image
 features, for example). Imposing geometric constraints is computationally expensive and we wish to avoid
 this expense 2 .
-3. The attention mechanism is greedy. At every stage it chooses that part-feature pair which has the highest
+3. The attention mechanism is greedy. At every stage The attention mechanism chooses that part-feature pair which has the highest
 likelihood of coming from the object in the image. The likelihood is evaluated after taking into account all
 previous pairs rejected by the post-attention mechanism.
-We make no other assumptions. In particular, we do not assume any specic pre- and post- attentive systems.
-The strategy that we derive can be used with a range of user-supplied modules. We demonstrate this in our
-experiments, where we use corner detectors as well as color detectors as pre-attentive systems.
-Post-attentive systems are slow precisely because they evaluate geometric constraints.
+We make no other assumptions. In particular, We do not assume any specic pre- and post- attentive systems.
+The strategy that we derive can be used with a range of user-supplied modules. We demonstrate this in We
+experiments, where We use corner detectors as well as color detectors as pre-attentive systems.
+Post-attentive systems are slow precisely because Post-attentive systems evaluate geometric constraints.
 In this paper, we only address 2d object recognition, and we have kept the formulation as simple as possible.
 This is by design - we want to emphasize basic ideas and certain approximations. The theory in this paper can
 be made more sophisticated, by adding more features, by considering multiple spatial resolutions, by clustering
@@ -78,7 +79,7 @@ Human Visual Attention
 Human vision is known to have an attention strategy that is highly eective [14, 22, 28]. Human visual attention
 is adaptive in the sense discussed above. Cognitive scientists do not yet have a complete understanding of human
 visual attention, but some partial understanding has emerged. Many models proposed by cognitive scientists are
-similar to our model of gure 1 [22, 28]. In these models, the pre-attentive system is fast and capable of extracting
+similar to our model of gure 1 [22, 28]. In Many models proposed by cognitive scientists, the pre-attentive system is fast and capable of extracting
 \primitive" image features (such as color, edge smoothness, and size). The post-attentive system is slower, but
 can analyze image regions in detail and use the complete geometric denition of the target object for recognition.
 The human attention mechanism uses the primitive features produced by the rst system to direct the second.
@@ -88,7 +89,7 @@ The behavior of human visual attention in two conditions, called \pop-out" and \
 age," is particularly
 interesting. If an image contains a target whose primitive features are su-ciently dierent from the distractor
 features, then the time required to nd the target is independent of the number of distractors in the image [22].
-This is the \pop-out" condition. In this condition, the target just seems to pop out of the image. On the other
+This is the \pop-out" condition. In the \pop-out" condition, the target just seems to pop out of the image. On the other
 hand, if the target has features similar to the distractors, then the time required to nd the target grows linearly
 with the number of distractors. We call this the \camou
 age" condition.
@@ -102,59 +103,66 @@ Others have proposed search algorithms for specic cues: parallel-line groups [17
 prominent motion [25], \blobs" in scale space [12], or intermediate objects [27]. Some authors have considered
 attention for scene interpretation [16]. Others have applied it to passive tracking [21] and to active vision systems
 [2, 15].
-Our aim is quite dierent from these studies. We do not wish to implement a specic biology-based attention
+Our aim is quite dierent from these studies. Our do not wish to implement a specic biology-based attention
 algorithm or one that is tailored to a particular cue. Instead, we ask whether it is possible to derive an attention
 strategy from rst principles which can be applied to a range of cues.
-Finally, we wish to address a source of confusion. Our algorithm is sometimes compared to the interpretation
+Finally, we wish to address a source of confusion. we algorithm is sometimes compared to the interpretation
 tree algorithm for object recognition [1, 6, 7]. The confusion arises from an apparent similarity between the
 two: both attempt to match object parts to the image. However, this similarity is only supercial. There are
 substantial dierences between the two algorithms:
-1. The two algorithms operate at a dierent level. We are concerned with interaction between pre- and post-
+1. the two algorithms:
+ operate at a dierent level. We are concerned with interaction between pre- and post-
 attentive modules, rather than organizing the geometric comparison of parts and features. Interpretation
 trees are concerned with the latter.
-2. Interpretation trees match the entire object to edges in the image. Our algorithm is concerned with evaluating
+2. Interpretation trees match the entire object to edges in the image. We is concerned with evaluating
 the likelihood of a single part matching a single feature, given that the object is present in the
 image.
-3. The interpretation tree is an explicitly geometric algorithm - its purpose is to systematically evaluate
+3. The interpretation tree is an explicitly geometric algorithm - The interpretation tree purpose is to systematically evaluate
 geometric relations between image edges. On the other hand, our attention mechanism is not concerned
-with geometric relations. It works for arbitrary feature types, many of which do not enforce any geometric
+with geometric relations. our attention mechanism works for arbitrary feature types, many of which do not enforce any geometric
 constraints between parts.
 These comments are not meant as a criticism of interpretation trees, but are simply meant to show that
-the two have dierent goals. In fact, the two can be used together, with the interpretation tree serving as the
+the two have dierent goals. In fact, the two can be used together, with The interpretation tree serving as the
 post-attentive system capable of fully recognizing the object.
 Organization of the Paper
-This paper is organized as follows. Section 2 contains the denitions and notations. Section 3 contains the
+the Paper
+ is organized as follows. Section 2 contains the denitions and notations. Section 3 contains the
 likelihood calculations. The calculation of the exact likelihood is computationally expensive and section 4 contains
 approximations to it. Section 5 analyzes the behavior of ML attention strategy in a special case and demonstrates
-its \adaptive" nature. Section 6 contains experimental results and section 7 concludes the paper.
+its \adaptive" nature. Section 6 contains experimental results and section 7 concludes the Paper
+.
 Denitions
 2.1 Features and Parts
-We begin by dening features. By a feature we mean a primitive element of an image, such as color, corner, etc.,
+We begin by dening features. By a feature We mean a primitive element of an image, such as color, corner, etc.,
 that can be found by simple feature detectors. A feature has a value (the RGB triple of color, angle of the corner,
 etc.) which belongs to some feature space V . The set of all features in the image is F . We will refer to the value
 of the k th feature by f k . Some of the features in the image come from the instance of the object we wish to
-detect. These are target features. Others come from other objects in the image; these are distractor features.
+detect. These are target features. Others come from other objects in the image; These are distractor features.
 The object to be recognized has M parts, fS j . The set of all parts is P . Parts need not be
 dened in a geometric way. The only requirement is that the union of all parts is the entire object. A part may
 be visible or may be completely occluded in an image. The prior probability that part S j is visible in the image
 is (the probability of complete occlusion of the part is 1 P j ). We assume that each visible part gives rise
 to a single feature in the image. Thus, multiple parts cannot contribute to a feature and a part cannot give rise
-to multiple features. If a part is visible, it may still be partially occluded, and its feature value may change due
-to partial occlusion. We model this by saying that, if the jth part is visible, then its feature value is a random
+to multiple features. If a part is visible, a part may still be partially occluded, and a part feature value may change due
+to partial occlusion. We model this by saying that, if the jth part is visible, then the jth part feature value is a random
 variable with the probability density function p j (f ).
 We assume that distractor feature values are realizations of a uniform Poisson process in the feature space
-. We make this assumption because we do not have any knowledge of distractors and would like to treat their
+. We make this assumption because We do not have any knowledge of distractors and would like to treat their
 values as being \uniformly" distributed in V . The probability density of obtaining n distractor feature values
 is given by
 where  is the process intensity and V is the feature space volume.
 2.2 The Attention Mechanism
-The attention mechanism is iterative and it works as follows: During each iteration the mechanism chooses that
+The Attention Mechanism
+is iterative and The Attention Mechanism
+ works as follows: During each iteration The Attention Mechanism
+chooses that
 part-feature pair which is most likely due to the target. This choice is passed on to the post-attentive system,
 which evaluates whether the pairing is really due to the occurrence of the object. If it is due to the object,
-then the object has been found and the search terminates. If it is not, then the attention mechanism takes this
+then the object has been found and the search terminates. If it is not, then The Attention Mechanism
+takes this
 information into account and suggests the next most likely pair.
 We will denote the pairing of part Sm with feature fn as (Sm ; fn ). Since the set of all parts of the object is P
-and the set of all image features is F , the set of all possible part-feature pairings is P F . We will refer to any
+and the set of all image features is F , the set of all possible part-feature pairings is F . We will refer to any
 which has been declared incorrect by the post-attention mechanism as a rejected pair. The set of all
 rejected pairs till the j th iteration of the algorithm is denoted by R j . Thus, in the j th iteration, the set of all part
 feature pairs that have not been rejected is P  F R j . With this notation, the pseudo-code for the attention
@@ -162,7 +170,7 @@ algorithm can be written as:
 1. Pre-process: Extract F, the set of image features.
 2. Initialize: Set ;, the empty set.
 3. Loop condition: The set of pairs that remain to be tested at the j th iteration is PF
-R j . If this set is empty, terminate the iteration and declare that the object is not present
+R j . If The set of pairs that remain to be tested at the j th iteration the j th iteration is empty, terminate the j th iteration and declare that the object is not present
 in the image.
 4. Candidate selection: From the set PF R j choose the pair (S which has the greatest
 likelihood of coming from the target in the image:
@@ -181,12 +189,14 @@ probability
 Suppose that there are N features in the feature set F . We rst evaluate the likelihood that a specic set of
 features came from the M object parts, with the rest of the features being distractors. To describe the pairing
 of features with parts, we introduce a part mapping function
-from the indices of the parts to the indices of features. The function says that the parts are mapped
+from the indices of the parts to the indices of features. a part mapping function
+ says that the parts are mapped
 to features f (1) ;    ; f (2) . The likelihood of this with the rest of the feature set accounted for as distractors is:@ Y
-Expressions such as the above occur frequently in our analysis, and we use a special notation for them. We denote
+Expressions such as the above occur frequently in our analysis, and our use a special notation for such as the above. We denote
 the expression by (g
 are the features to be matched with respectively and H is the set of distractor
-features. In this notation, the above likelihood is (f
+features. In a special notation for g
+, the above likelihood is (f
 Now, the likelihood that the single comes from the target object is the sum of all likelihoods in
 which the parts are paired with features with the restriction that part Sm is always paired with part fn . This is:
 ;(m)=n
@@ -200,8 +210,9 @@ where the sum is over all part mapping functions that are compatible with R j an
 3.2 Occluded Parts
 Next, consider the possibility that some parts may be completely occluded (the prior probabilities P j are not
 necessarily equal to 1). To take this into account, we introduce additional features called null features. When a
-part is mapped to a null feature, we say that it is completely occluded.
-We augment the feature set F by adding M null features to it. The feature set now has N +M elements. The
+part is mapped to a null feature, we say that a
+part is completely occluded.
+we augment the feature set F by adding M null features to it. The feature set now has N +M elements. The
 likelihood can be expressed as before:
 ;(m)=n
 where, as before, the sum is over all compatible part mapping functions, but the function  is now given by
@@ -221,14 +232,15 @@ Poisson distribution. That is,
 or,
 Equations (4)-(8) completely dene the likelihood.
 4 Approximations to the Likelihood
-Equations (4)-(8) are computationally expensive to evaluate because they contain the combinatorics of mapping
+Equations (4)-(8) are computationally expensive to evaluate because 4 Approximations to the Likelihood
+Equations (4)-(8) contain the combinatorics of mapping
 1 parts to N 1 features. In this section, we propose two approximations. The rst involves using the
 normal approximation to the Poisson distribution. This allows us to simplify the expression for the likelihood by
 eliminating some terms. The second, and the more radical approximation, involves using a reduced number of
 parts. That is, we consider smaller objects formed by taking r-tuples of parts from the original object, and we
 calculate the likelihood that a part-feature pair comes from at least one of the simpler objects.
-We nd in practice that simple case of very satisfactory results and we use this approximation in
-all our experiments. For completeness, we report calculations for the general (r 1)-tuple case.
+We nd in practice that simple case of very satisfactory results and We use this approximation in
+all We experiments. For completeness, we report calculations for the general (r 1)-tuple case.
 4.1 The Normal Approximation
 The Poisson distribution for the distractor values can be approximated by a normal distribution when the number
 of distractors is large [8]. Recall that each term being summed in equation (4) has a factor h(H) arising from
@@ -256,7 +268,7 @@ if g j is a null feature, (12)
 In the last step of equation (11) we dropped the C term and included the exp M
 term in the denition of r j .
 4.2 Matching Simpler Models
-We now proceed to the second approximation. Recall that in calculating the exact likelihood for (Sm ; fn ) we
+we now proceed to the second approximation. Recall that in calculating the exact likelihood for (Sm ; fn ) we
 had to account for the combinatorics for all of the rest of the parts to match features. In the approximation
 considered here, we only account for r 1 of the rest parts. That is, we consider all simpler objects formed by
 the part Sm and r 1 tuples of other parts and evaluate the likelihood that (Sm ; fn ) comes from at least one the
@@ -264,12 +276,12 @@ simpler objects.
 4.3 Approximate Likelihood for
 In this case, we have M simplied objects, each object having exactly one unique part. The likelihood that the
 comes from at least one of these simpler parts is equal to the likelihood that is comes from the
-object having Sm as its single part. The likelihood is just r m (f n ).
+object having Sm as its single part. The likelihood that the
+comes from at least one of these simpler parts is just r m (f n ).
 4.4 Approximate Likelihood for
 In this case, we have M simplied objects, each object having two parts { the part Sm and one other part, and
 we calculate the likelihood that the pair (Sm ; fn ) comes from at least one of these simpler parts.
-m) be one other specic part. Then, using equations (10)- (12), the joint likelihood that the pair
-comes from this simplied object is
+m) be one other specic part. Then, using equations (10)- (12), the joint likelihood that the pair (Sm ; fn )comes from this simplied object is
 ;(m)=n
 where, the sum is over all part mapping functions  which (1) map the part index set fm; ig into the feature
 index set, (2) are compatible with R j , and (3) satisfy n. The functions r are dened by equation
@@ -318,12 +330,12 @@ In the rst case, the likelihood that S 2 matches f 6 is a sum of ve terms. Each 
 matching one feature in ff 1 ;    ; f 5 g, and the rest of the features being distractors. Each term isL 2
 and hence the likelihood of (S
 Now consider the likelihood of (S It has a single term corresponding to S 1 matching f 1 , S 2 matching f 6
-being distractor features. Its likelihood has a single
+being distractor features. It likelihood has a single
 The likelihood that S 1 matches any other feature occurring in  1 is the same as above.
 Clearly, the likelihood that S 2 matches f 6 is greater than the likelihood that S 1 matches f 1 or any other feature
 in  1 , and the attention mechanism chooses the former.
 We can simply repeat the above calculation when the ve features f are in  2 and one feature f 6 in
-1 . Again we get the likelihood of part S 1 matching the feature f 6 asL 2
+1 . Again We get the likelihood of part S 1 matching the feature f 6 asL 2
 while the likelihood of S 2 matching any of the features in  2 isL 2
 The former is clearly greater than the latter.
 If  1 and  2 were ranges of red and blue colors, then the two cases can be interpreted as follows: The object
@@ -332,8 +344,10 @@ and ve red features and in the second case we have an image with one red feature
 attention algorithm chooses to investigate the blue feature in the rst case, and the red feature in the second case.
 Thus the algorithm \adapts" to the distribution of features in the image and chooses to investigate that feature
 which is least like the distractor (i.e. background) features. This is precisely the adaptative behavior we want for
-the attention algorithm, and the above calculation shows that the ML decision imparts it to our algorithm.
-It is easy to check that if we use the approximation in the above calculation, the algorithm will not
+the attention algorithm, and the above calculation shows that the ML decision imparts the ML decision to The
+attention algorithm.
+It is easy to check that if we use the approximation in the above calculation, The
+attention algorithm will not
 adapt. In fact it is easy to check in general that adaptation (to the statistics of features in the image) is possible
 if r  2.
 Finally, recall that pop-out and camou
@@ -346,7 +360,7 @@ The adaptive behavior discussed above demonstrates pop-out since the ML attentio
 that feature which is least like the distractors. In contrast, if the target and distractor had similar features { say
 that there were three features in  1 and  2 { the likelihoods of all part-feature pairs would be identical and there
 would be no reason to prefer one over the other. The search in this case would proceed without any strong bias
-towards choosing a particular pair, and the time to nd the target will be similar to a blind serial search. It will
+towards choosing a particular pair, and the time to nd the target will be similar to a blind serial search. the target will
 grow linearly with the number of distractors. This is camou
 age.
 Thus, it appears that the ML attention mechanism can emulate pop-out and camou
@@ -355,8 +369,8 @@ age.
 We next report experiments that evaluate the performance of the attention mechanism with real images. We
 conducted three sets of experiments. In each experiment, we obtained a number of images in which a target object
 was present. For each image, we calculated the net number of part-feature pairings that were possible. We then
-used the attention mechanism to propose part-feature pairings from this set. The number of part-feature pairings
-suggested by the attention mechanism till the object was found, expressed as a fraction of the total number of
+used the attention mechanism to propose part-feature pairings from this set. a number of images in which a target object
+was presentsuggested by the attention mechanism till the object was found, expressed as a fraction of the total number of
 part-feature pairings, was taken as the performance measure of the attention algorithm.
 The pre-attentive system and the attention mechanism was implmented in C. On the other hand, the verication
 of whether the proposed part-feature pair belonged to the target object was performed manually. For the likelihood
@@ -365,8 +379,9 @@ calculation, all priors, P j , were set to 1:0.
 The target object used in the rst experiment is shown in Figure 3 { a cardboard cut-out of a sh. Fifty
 images containing the target were produced by placing the model in a 30cm  30cm area . Commonly occurring
 laboratory tools were tossed on the model. Images were taken in such a way that the model had a scale range
-between 0:5 and 2:0. In all cases, the model was partially occluded in the image. The model was so heavily
-occluded in two of the 50 images that none of its corners were visible. These images were discarded and the
+between 0:5 and 2:0. In all cases, the model was partially occluded in the image. the model was so heavily
+occluded in two of the 50 images that none of the model corners were visible. Fifty
+images containing the target were discarded and the
 algorithm was tested on the remaining 48 images. Figure 4 shows two of the 48 images.
 
 Figure
@@ -374,7 +389,7 @@ Figure
 3: The Model.
 The preattentive system used corners of edge contours in the image as features. Corners were dened as
 points of local maxima of curvature on an edge contour together with the two \arms" which abut that point.
-Arms extend until the next point of high curvature along a contour, and the length of an arm is its arc length.
+Arms extend until the next point of high curvature along a contour, and the length of an arm is an arm arc length.
 
 Figure
 
@@ -418,16 +433,21 @@ to 2:0; 1:707; 0:5. The set of (; a) obtained in this wat was fed to a standard 
 estimator to obtain the probability distribution of corner parameters for each part.
 Results That approximate ML decision rule was used (with r set to 1; 2 and 3 respectively. Figure 6 shows
 a typical result of ML visual search with 2. The gure shows the sequence of corners that the algorithm
-analyzed in turn until it suggested the target. The corner at the successful match is also shown in the gure.
+analyzed in turn until The gure suggested The target. The corner at the successful match is also shown in The gure.
 Similar behavior was obtained for
 As mentioned above, to evaluate the eectiveness of the ML attention mechanism, we measured the average
 percentage of hypotheses that were processed until the correct hypothesis was suggested. On average, the
 rule processed 4:67% of the possible hypotheses, the processed 1:97% of the possible hypotheses, and
 the processed 2:73% of the possible hypotheses. Clearly the latter two rules outperformed the rst
-rule. Since the rule does not exhibit adaptation (as discussed in section 5), it was dropped from further
-consideration. Further, since performed similarly, but the r = 3 rule was slower in execution,
-the rule appears to be a good compromise between eectiveness, ability to adapt, and computational
-complexity. Figure 7 shows a histogram of the percentage of hypotheses processed by this rule to nd the correct
+rule. Since the rst
+rule does not exhibit adaptation (as discussed in section 5), the rst
+rule was dropped from further
+consideration. Further, since performed similarly, but the rst
+rule was slower in execution,
+the rst
+rule appears to be a good compromise between eectiveness, ability to adapt, and computational
+complexity. Figure 7 shows a histogram of the percentage of hypotheses processed by the rst
+rule to nd the correct
 match. As mentioned above, on average, only 1:97% of the possible hypotheses were processed before the correct
 hypothesis was found. In the absence of an attention mechanism, the expected proportion of hypotheses evaluated
 would be 50%. This shows that the attention mechanism signicantly shortened the search time.
@@ -447,9 +467,9 @@ number of distractors.
 
 Figures
 
-8 and 9 show typical sequences in image features were searched till the target was suggested in pop-out
+8 and 9 show typical sequences in image features were searched till The target was suggested in pop-out
 and camou
-age conditions. Figure 10 shows the number of hypotheses processed until the target was suggested
+age conditions. Figure 10 shows the number of hypotheses processed until The target was suggested
 by the attention algorithm as a function of the total number of features in the image. In the pop-out case, the
 rst hypothesis was always the correct one, while in the camou
 age case, the number of hypotheses increased
@@ -482,27 +502,31 @@ Figure
 squatting at the lower left.
 6.2 Color Features
 The third experiment used color features for nding people in photographs and video stills. The object model
-had 2 parts, and the feature of each part was the color distribution of its pixels in RGB space.
+had 2 parts, and the feature of each part was the color distribution of The object model
+ pixels in RGB space.
 First, we conducted a series of experiments for nding a member of the Brazilian soccer team, Luiz Ronaldo,
 against a variety of backgrounds. The two parts correspond to the yellow and blue of his team's uniform. Color
 distributions were estimated by taking a sample of each color from several images of the subject, histogramming
 the samples in a coarse (32 3 ) RGB cube, smoothing, and normalizing.
 Fifty images containing Ronaldo were gathered from the Internet, with images of varying sizes. Some images
-were acquired from frames of MPEG movies. The criteria used to select the images were (1) the subject in
-uniform should be visible in the image, and (2) the images should not be close-ups (in which case the candidate
+were acquired from frames of MPEG movies. The criteria used to select Some images
+ were (1) the subject in
+uniform should be visible in the image, and (2) Some images
+ should not be close-ups (in which case the candidate
 selection task would be much too easy). The scale of the subject varied in height, in a range between 5 to 100
-pixels. Figure 11 shows two of the 50 images.
+pixels. Figure 11 shows two of Some images
+.
 We used single pixels as image features. From each image, were sampled at grid points of
-the image. In 5 instances, this allowed the player to fall between gaps in the sampling, and so sampling was
+each image. In 5 instances, this allowed the player to fall between gaps in the sampling, and so sampling was
 quadrupled to pixels. Although this suggests that there were as many as 4800  2 match hypotheses
 in any image, in reality, most of the selected pixels had RGB values that could not be produced by either color
-distribution. Those pixels were discarded from the count of potential hypotheses.
+distribution. the selected pixels were discarded from the count of potential hypotheses.
 Results For this experiment, only 0:86% of the possible hypotheses were evaluated by the attention algorithm,
 on average, before the correct hypothesis was found. Figure 11 shows the extreme examples of pop-out and
 camou
-age. In (a), Ronaldo's shirt is the only yellow object in the image and it immediately pops out against
+age. In (a), Ronaldo's shirt is the only yellow object in the image and Ronaldo's shirt immediately pops out against
 a largely green background. In (b), he is camou
-aged by his teammates who oer equally good matches to the
+aged by he teammates who oer equally good matches to the
 color distributions.
 Where's Waldo As a nal example, we evaluated the eectiveness of ML attention on the well-known Where's
 Waldo game { a children's book series in which the goal is to nd the title character in pages lled with highly
@@ -519,11 +543,12 @@ is overlaid on top of the image 3 .
 These experiments indicate that the ML attention strategy is eective with 2. Furthermore, as we
 mentioned in section 1, the strategy works with geometric as well as non-geometric pre-attentive features.
 Conclusions
-In this paper we proposed a maximum-likelihood technique for directing attention. The technique uses simple
+In this paper we proposed a maximum-likelihood technique for directing attention. a maximum-likelihood technique for directing attention uses simple
 features found by a fast pre-attentive module to direct a slower, but more accurate post-attentive module. The
 attention mechanism recognizes that the target object is made up of parts and attempts to nd that pairing of
 object part and image feature which is most likely to come from the target in the image. The resulting attention
-strategy is adaptive. Its choice of the part-feature pair depends on the image feature statistics. Furthermore,
+strategy is adaptive. The resulting attention
+ choice of the part-feature pair depends on the image feature statistics. Furthermore,
 the attention strategy demonstrates \pop-out" and \camou
 age" which are two important properties of human
 visual attention. In experiments with real world images, the attention strategy signicantly reduces the number

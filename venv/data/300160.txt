@@ -1,16 +1,17 @@
 --T
 Consistent Initial Condition Calculation for Differential-Algebraic Systems.
 --A
-In this paper we describe a new algorithm for the calculation of consistent initial conditions for a class of systems of differential-algebraic equations which includes semi-explicit index-one systems.  We consider initial condition problems of two types---one where the differential variables are specified, and one where the derivative vector is specified.  The algorithm requires a minimum of additional information from the user.  We outline the implementation in a general-purpose solver DASPK for differential-algebraic equations, and present some numerical experiments which illustrate its effectiveness.
+In this paper we describe a new algorithm for the calculation of consistent initial conditions for a class of systems of differential-algebraic equations which includes semi-explicit index-one systems.  We consider initial condition problems of two types---one where the differential variables are specified, and one where the derivative vector is specified.  a new algorithm requires a minimum of additional information from the user.  We outline the implementation in a general-purpose solver DASPK for differential-algebraic equations, and present some numerical experiments which illustrate its effectiveness.
 --B
 Introduction
-. This paper is concerned with the calculation of initial conditions for systems
+. this paper is concerned with the calculation of initial conditions for systems
 of differential-algebraic equations (DAEs). We write the DAE system in the general form
 G(t;
-G, y, and y 0 are N-dimensional vectors. The initial value problem for this system is the
+G, y, and y 0 are N-dimensional vectors. The initial value problem for the DAE system is the
 problem of finding a solution that satisfies a consistent set of initial conditions y(t 0
 . Two software packages have been written for solving initial value problems for the DAE system
-(1.1)-DASSL [2], and an extension of it called DASPK [7]. Both use variable-order, variable-
+(1.1)-DASSL [2], and an extension of the DAE system
+ called DASPK [7]. Both use variable-order, variable-
 stepsize backward differentiation formulas. DASSL solves the linear system at each time step by
 dense or banded direct linear system methods. In DASPK, the linear systems that arise at each
 time step are solved with either direct linear system methods, or with a preconditioned Krylov
@@ -26,17 +27,18 @@ DASSL and DASPK solvers offer an option for finding consistent y 0
 0 from a given initial y 0 , by taking
 a small artificial step with the Backward Euler method. However, initialization problems do not
 always arise in this form, and even for the intended problem type, that technique is not always
-successful. In any case it is unsatisfactory in that it produces values at
+successful. In any case that technique is unsatisfactory in that that technique produces values at
 than at . In this paper, we propose an alternative procedure for a class of DAE problems.
-We will show that this method, in combination with the modified Newton methods of DASSL or
+we will show that this method, in combination with the modified Newton methods of DASSL or
 the Newton-Krylov methods of [5] and [6], yields an algorithm which converges nearly as rapidly
 as the underlying Newton or Newton-Krylov method. The new method is very convenient for the
-user, because it makes use of the Jacobian or preconditioner matrices which are already required in
+user, because The new method makes use of the Jacobian or preconditioner matrices which are already required in
 DASSL or DASPK. The consistent initialization problem has been studied in [1, 8, 9, 12, 13, 15, 14]
 for more general DAE systems than we will consider here. However, none of these algorithms offer
 the simplicity or convenience of the approach which we develop here.
 This research was supported in part by the Applied Mathematical Sciences subprogram of the Office of Energy
-Research, U.S. Dept. of Energy, by Lawrence Livermore National Laboratory under contract W-7405-ENG-48.
+Research, U.S. Dept. of Energy
+, by Lawrence Livermore National Laboratory under contract W-7405-ENG-48.
 y Center for Computational Sciences & Engineering, L-316, Lawrence Livermore National Laboratory, Livermore,
 California 94551.
 z Department of Computer Science, University of Minnesota, Minneapolis, MN 55455. The work of this author
@@ -52,7 +54,7 @@ We can easily generalize the class of problems considered, to those where the OD
 for u may be implicit. Thus we consider systems of the form
 where with the matrix f u being square and nonsingular.
 We will continue to refer to problems of the form (1.3), with f u 0 and g v nonsingular, as semi-explicit
-index-one, even though they may be not be explicit in u 0 . In fact, our main initialization technique
+index-one, even though they may be not be explicit in u 0 . In fact, We main initialization technique
 applies to an even more general class of problems, as we will explain later.
 We also consider a second type of initialization problem, in which the initial derivatives are
 specified but all of the dependent variables are unknown. That is, we must solve for y 0 given y 0
@@ -63,7 +65,7 @@ In later sections, we will refer to these two problems as Initialization Problem
 Problem 2.
 2. The Basic Method. The central idea of this paper is to solve both of these initial condition
 problems with the help of mechanisms already in place for the solution of the DAE system itself,
-rather than requiring the user to perform a special computation for it.
+rather than requiring the user to perform a special computation for the user.
 Consider first Initialization Problem 1 for the semi-explicit index-one system (1.3), where v
 is to be determined, given u at the initial point We expand this problem to
 include the calculation of u 0
@@ -72,16 +74,18 @@ namely
 This general approach of solving the expanded problem has also been used in [12]. A Newton
 iteration for the solution of F would require the Jacobian matrix
 f
-By assumption, this matrix is nonsingular, at least in a neighborhood of the desired solution.
+By assumption, the Jacobian matrix
+ is nonsingular, at least in a neighborhood of the desired solution.
 In the course of integrating a DAE system with DASSL or DASPK, the user must call upon
 one of several linear system algorithms to solve N \Theta N linear systems at every time step. These
 arise from a Newton-like method for solving algebraic systems G(t; y, where a is
 a vector containing past values, and c is a constant, set by the solver, that is inversely proportional
 to the stepsize h. Thus the linear systems have the form
-in which R is a residual vector, \Deltay is a correction to y, and the matrix J is the DAE system
+in which R is a residual vector, \Deltay is a correction to y, and the Jacobian matrix
+ J is the DAE system
 iteration matrix
 @y
-The user is encouraged to supply an approximation to J , for use either as the Newton matrix itself
+the user is encouraged to supply an approximation to J , for use either as the Newton matrix itself
 in the case of direct methods, or as a preconditioner in the case of a Krylov method. In the direct
 case, J is generated by difference quotient approximations if not supplied by the user. In the case
 of the system (1.3), we have
@@ -98,33 +102,32 @@ hg
 evaluated at
 . Note that -
 f
-Thus if h is small in some appropriate sense, we can expect that -
-J will be a good approximation
+Thus if h is small in some appropriate sense, we can expect that J will be a good approximation
 to F 0 (x).
 The proposed initialization procedure is to carry out a Newton-like iteration with corrections
 Each iteration will call on the linear system solution procedure that is to be used later in solving
-the DAE system itself. It will also require information about which components of y are differential
+the DAE system itself. the DAE system itself will also require information about which components of y are differential
 and which are algebraic, in order to apply the correction \Deltax to the vectors y and y 0 . But otherwise,
-the procedure requires no additional information or methodology. Upon convergence, we have all
+The proposed initialization procedure requires no additional information or methodology. Upon convergence, we have all
 components of y(t 0 ), and we have the components of y corresponding to u 0
 0 , the derivatives of
 the differential variables. The remaining components of y corresponding to v 0
 simply be
 set to zero, as the integration procedure is insensitive to these (since v 0 does not appear in (1.3)) 1 ,
 1 Although the BDF formulas do not depend on these values, the error test at the end of the first step depends
-on them, unless the v variables are excluded from the error test (which is an option in the code).
-and the first time step will produce accurate values for them. The next two sections will present
-this procedure in a more formal manner and prove convergence for it.
+on these values, unless the v variables are excluded from the error test (which is an option in the code).
+and the first time step will produce accurate values for these values. The next two sections will present
+this procedure in a more formal manner and prove convergence for this procedure.
 For Initialization Problem 2, we are given the initial value of y 0 and must compute the initial
 y. In this case, we are simply interested in solving for in the system
 with y 0
 We assume that this problem is well-posed as provided by the user, so that F 0
 G y is nonsingular in a neighborhood of the solution, including the initial guess supplied. As in the
-first problem, we will call for the user to supply the DAE iteration matrix J , but this time we set
+first problem, We will call for the user to supply the DAE iteration matrix J , but this time We set
 so that the matrix involved is simply there is no stepsize h. We then proceed
 with Newton iterations using J , with corrections
 \Deltay
-Finally, we remark that an extension of these ideas to Hessenberg index-2 DAE systems is
+Finally, We remark that an extension of these ideas to Hessenberg index-2 DAE systems is
 under way by the authors.
 3. More General Problems. In the case of Initialization Problem 1, the full scope of problems
 for which the above idea can be applied is more general than systems of the form (1.3).
@@ -141,7 +144,8 @@ and in terms of y it is
 In order to express the objective function F (x) precisely, we introduce two projections in R N ,
 I d 0
 I a
-These satisfy the help of these projections, we can write
+These satisfy the help of two projections in R N ,
+, we can write
 I a
 I a
 and
@@ -155,7 +159,7 @@ and so we can write y x. The fact that G does not depend on v 0 means that G(t;
 Thus the system to be solved in x is
 In the same way, we need not require that the components of G are blocked as in (3.2). Thus
 we allow a permutation Q in the components of G, such that QG has that blocked form. Then
-of course so does QF . However, we can work with G (hence F ) in its original ordering, in the
+of course so does QF . However, we can work with G (hence F ) in G (hence F ) original ordering, in the
 initialization procedure.
 3.3. Implicit constraints. To generalize further the form of the problem we can solve, suppose
 that, after permuting the y vector to z = Py, the DAE system function G has the form
@@ -175,7 +179,7 @@ and the fact that the index is one implies that B 2 is nonsingular near the cons
 (see x2.5 of [2]). Thus
 @w
 and so F 0 is nonsingular.
-On the other hand, the Jacobian being supplied (or approximated) by the user is
+On the other hand, The Jacobian of this function being supplied (or approximated) by the user is
 Taking before, and recalling the scaling matrix S defined by (2.6), the corresponding
 scaling in x is
 I a
@@ -189,10 +193,11 @@ for which we have implemented the algorithm described above.
 3.4. General index-one systems. Note that (3.8) does not include all fully-implicit index-
 one DAEs, because the rank and dependency conditions combined exclude certain index-one sys-
 tems. A simple example is the system
-This has index one, and it is well-posed for any given value of y 1 (t 0 ). But it does not fit into the
-scheme of (3.8), because it contains the derivatives of both variables, and the rank of the 2 \Theta 2
+This has index one, and This is well-posed for any given value of y 1 (t 0 ). But This does not fit into the
+scheme of (3.8), because This contains the derivatives of both variables, and the rank of the 2 \Theta 2
 matrix H y 0 is only 1.
-In principle, this scheme can be applied to more general index-1 DAE systems by allowing P
+In principle, the
+scheme of (3.8) can be applied to more general index-1 DAE systems by allowing P
 to be a more general matrix, not just a permutation. If a constant nonsingular matrix P can be
 found that transforms y into
 full rank, as in (3.8), then G(t; defined by (3.5). The
@@ -227,18 +232,18 @@ analysis for the iteration. The theorem below includes both full and modified Ne
 iteration for the same problem, where "full" refers to the fact that the approximate Jacobian is
 evaluated at every iteration. We first prove the main convergence result (Theorem 4.1 below),
 and then discuss its applicability to the initialization problems of Sections 2 and 3. In the last
-subsection, we comment on the use of Newton-Krylov iteration to solve the above initialization
+subsection, We comment on the use of Newton-Krylov iteration to solve the above initialization
 problems.
 4.1. Newton iteration convergence. We consider the convergence of the x iteration
-and we include both types of Newton iterations by taking
+and We include both types of Newton iterations by taking
 ae
 x k for full Newton iteration, or
 - x for modified Newton iteration
-x is fixed. The function F (x) is a general function here, and it is assumed that there exist
+x is fixed. The function F (x) is a general function here, and The function F (x) is assumed that there exist
 smooth matrix-valued functions -
 J(x; h) and C(x) such that -
 h of interest.
-The following theorem says that this iteration converges under mild smoothness assumptions
+The theorem below says that this iteration converges under mild smoothness assumptions
 on the functions F and C. The norm k \Delta k used here is arbitrary.
 Theorem 4.1. Let F : R N ! R N be continuously differentiable in an open convex set D ae R N .
 Assume that
@@ -267,7 +272,7 @@ we have
 Again, by the perturbation relation (3.1.20) in [11], -
 J(-x; h) is nonsingular and
 Lemma 4.4. For ffl - minfae; 1=(2fifl)g,
-Proof. We have
+Proof. we have
 The norm of the first term is bounded by
 xk using Lemma 4.3 and the Lipschitz condition
 on F 0 . The second term is bounded by 4hfiC 0 since kC(-x)k - C 0 as in the previous lemma.
@@ -281,7 +286,7 @@ J(x; h) are both nonsingular with
 h. The value of ffl is also a measure of the
 nonlinearity of the problem.
 We will prove the bound (4.4) by induction on the iteration number k. For 0 - h - h and any
-well-defined and we have
+well-defined and We have
 Of the two terms in the final equation (4.6), the first is bounded using Lemma 4.1.12 of Dennis and
 Schnabel [11], p. 75, which says that kF (x
 the norm of the first term is bounded by 2fiflkx  . The second term can be bounded using
@@ -311,7 +316,7 @@ G(t;
 Define the projection matrix P a j I \Gamma P d and the function F (x) by
 with y 0;d given. We then have
 for all x.
-Proof. From (4.11), we have
+Proof. From (4.11), We have
 Next,
 with all the partial derivatives evaluated at
 all (t; This then proves the lemma.
@@ -352,10 +357,10 @@ The above considerations lead us to consider the convergence of the following in
 iteration for a general function F (x), where for
 with 1. In the general inexact Newton setting, the manner in which the step increment
 s k is computed is unimportant. We only need to know that such an s k can be found. Once
-again, we assume there exist smooth matrix-valued functions -
+again, We assume there exist smooth matrix-valued functions -
 J(x; h) and C(x) such that -
 of interest.
-The following theorem says that this iteration converges under mild smoothness assumptions
+The theorem below says that this iteration converges under mild smoothness assumptions
 on the functions F and C.
 Theorem 4.6. Let F : R N ! R N be continuously differentiable in an open convex set D ae R N .
 Assume that conditions (a)-(d) of Theorem 4.1 hold. Then there exist constants ffl ? 0 and -
@@ -372,10 +377,9 @@ ks
 1, we can choose h smaller (if necessary) so that j +4fi(1+j)hC 0 ! 1. With the residual
 norm condition (4.16) on s 0 , the rest of the proof follows along the lines of the proof of Theorem 2.3
 in Dembo et. al. [10].
-5. The Linesearch Algorithm. In order to improve the robustness of the Newton algorithm
-discussed above, we also employ a linesearch backtracking algorithm. Consider a general function
+5. The Linesearch Algorithm. In order to improve the robustness of The Linesearch Algorithmdiscussed above, we also employ a linesearch backtracking algorithm. Consider a general function
 Let x and ffi in R N be such that the residual norm condition
-holds, where is the Euclidean norm. The vector ffi can be thought of as an
+holds, where is the Euclidean norm. ffi in R N can be thought of as an
 approximate solution of the Newton equations F 0 obtained using either a direct
 solve with an approximate Jacobian or an iterative method such as GMRES. Given such a ffi , it is
 shown in Brown and Saad [6] that ffi is a descent direction for f at x, i.e., that
@@ -386,11 +390,11 @@ Algorithm 5.1: Given
 next step.
 3. Choose - 2 [' min -; ' max -], set -
 -, and go to step 2.
-The global convergence of this algorithm used in connection with an inexact Newton iteration is
+The global convergence of The Linesearch Algorithm used in connection with an inexact Newton iteration is
 discussed at length in [6]. The simplest choice for the ''s is to take ' 1=2, and this
 makes -=2. We use this choice in the implementation here, and also use so that
 only a small decrease in f is required.
-Given f defined in (5.1), we have and so in the above algorithm
+Given f defined in (5.1), We have and so in the above algorithm
 if ffi is the exact Newton step at x, i.e.,
 Hence, in this case
 and the condition in Step 2 of Algorithm 5.1 is simply
@@ -398,7 +402,7 @@ Next, if is the GMRES solution at the m-th step when applied to F 0
 then it is shown in [5] that
 and the condition in Step 2 of Algorithm 5.1 is
 In the present context, we want to solve the nonlinear system F by (2.9) or (3.9).
-However, we have no direct measure on the size of the F that is directly available. The weighted
+However, we have no direct measure on the size of f that is directly available. The weighted
 root-mean-square (WRMS) norm used in DASPK for norms of y suggest that we solve instead the
 problem
 where the matrix A is the current approximate system Jacobian matrix J of (2.4) in the direct
@@ -423,10 +427,10 @@ F at x.
 6. Implementation. We implemented the algorithms described above for Initialization Problems
 1 and 2 as new options in the general-purpose DAE solver DASPK [7]. Initialization Problem
 1 has been implemented for the more general class of index-one systems described in Section 3.3.
-Here we will give a few details concerning the implementation, and describe briefly how to use the
+Here We will give a few details concerning the implementation, and describe briefly how to use the
 new options.
 We will assume here that the reader is familiar with the use of DASSL and DASPK. Detailed
-descriptions of those solvers can be found in [2] and [7], respectively. These solvers normally require
+descriptions of those solvers can be found in [2] and [7], respectively. those solvers normally require
 the initial t, y, y 0 to be consistent. Within the dependent variable vector Y in DASPK, we denote
 by Y d the differential variables, and denote by Y a the algebraic variables. By specifying the input
 parameter INFO(11), DASPK will solve one of the following two initialization problems:
@@ -445,13 +449,14 @@ As a first approximation, we try the initial stepsize h 0 which is used by DASSL
 p. 128). Since we do not know in advance if this value is small enough to achieve convergence of
 the modified Newton iteration, we set up a loop, starting with . If the initialization fails,
 we divide h by 10. If the initialization fails for MXNH (nominally = 5) different values of h, the
-code returns an error flag to the user program. In our experience, if the initialization succeeds, it
+code returns an error flag to the user program. In our experience, if the initialization succeeds, the initialization
 usually succeeds with the initial choice h 0 . For Initialization Problem 2, we always set
-there is no such loop on h. In either case, once the initialization has been completed, we reset the
+there is no such loop on h. In either case, once the initialization has been completed, our reset the
 initial stepsize h 0 for the first step of DASPK based on the newly computed initial values, using
 the formula in [2].
 For a given value of c, the initialization problem is solved with either a modified Newton
-method or an inexact Newton method [10] similar to that used in the general time step. It has
+method or an inexact Newton method [10] similar to that used in the general time step. a modified Newton
+method or an inexact Newton method [10] similar to that used in the general time step has
 been augmented by the linesearch algorithm described above for improved global convergence. In
 both the case of Initialization Problem 1 as given in Eq. (3.9), and Problem 2 as given by Eq.
 (2.9), we must solve a system
@@ -478,9 +483,9 @@ Jacobian at the current values of y and y 0 , and J \Gamma1 F (x) is evaluated b
 preconditioned GMRES method [16]. This makes use of the preconditioner P supplied by the user,
 evaluated at the start of the iteration. In both cases, the inaccuracy of the fixed approximation (J
 or P ) to the system Jacobian is an additional potential cause of difficulty for the Newton iteration.
-The complete algorithm actually involves three loop levels for Problem 1, and two levels for
+The Linesearch Algorithm actually involves three loop levels for Problem 1, and two levels for
 Problem 2. At the innermost level, up to MXNIT Newton iterations are performed with a given
-value of h and a given value of the Jacobian or preconditioner. The iteration is considered to have
+value of h and a given value of the Jacobian or preconditioner. The Newton iteration is considered to have
 converged if the scaled residual is small in norm:
 ae
 where A is the current approximate system Jacobian J in the direct case, and the preconditioner
@@ -496,13 +501,13 @@ but slowly), then we retry the Newton iteration with the current values of y and
 for A (i.e. for J or P ), up to a limit of MXNJ such attempts. In addition, in the case of the Krylov
 method, if the GMRES solver failed to converge after at least two Newton iterations, but RATE
 1, the Newton iteration is retried with a new value for P . If the limit of MXNJ retries is reached,
-we reduce h and retry the iteration (again with a new A and the current y and y 0 ) in the case of
+we reduce h and retry the Newton iteration (again with a new A and the current y and y 0 ) in the case of
 Problem 1, or give up and return an error flag in the case of Problem 2. If convergence of the inner
 Newton iteration failed but RATE ? 0:8 (or some other recoverable failure occurred), we retry the
 iteration with a reduced value of h and the initial y and y 0 (Problem 1) or give up (Problem 2).
 The total number of iterations performed can therefore be as large as MXNH*MXNJ*MXNIT in
 Problem 1, and MXNJ*MXNIT in Problem 2.
-Currently we have set We have set
+Currently we have set we have set
 the case of direct methods, and in the case of Krylov methods. However,
 all four of these controls are optional inputs to DASPK, so that a user may specify different values.
 In addition, an option is provided to turn off the linesearch algorithm.
@@ -510,15 +515,15 @@ Actually, an additional level of logic has been added around the initialization 
 above. The reason for it is that the error weights involved in all convergence and error tests
 depend on the current solution vector:
 Thus, while the initialization algorithm may have succeeded using the weights evaluated at the
-initial guess, those weights may differ greatly from the updated values using the converged y
+initial guess, the error weights involved in all convergence may differ greatly from the updated values using the converged y
 vector. Since updating the weights at every iteration seems rather extreme, we have adopted the
 following scheme: With weights set using the input y vector, the initialization algorithm is called,
-and if it succeeds, we update the weights and call it a second time. If it again succeeds, we update
+and if the initialization algorithm succeeds, we update the weights and call the weights a second time. If the weights again succeeds, we update
 the weights again, and proceed to the first time step. If either initialization fails, an error flag
 is returned to the user. In the case of the Krylov method, on the second initialization call, the
 preconditioner is not updated unless and until there is a convergence failure.
 7. Numerical Experiments. We tested the initialization algorithm on several problems and
-found that it performed much as expected. In the course of development and debugging, we used a
+found that the initialization algorithm performed much as expected. In the course of development and debugging, we used a
 simple index-one system of size 2, having a known analytic solution. For both the first and second
 initialization problem types, and for a wide range of initial guesses, the initialization algorithm
 converged within the limits imposed, for both the direct and Krylov method options. All attempts
@@ -534,28 +539,28 @@ The interaction and diffusion coefficients (a could be functions of (x; general.
 choices made for this test problem are as follows:
 and
 The domain is the unit square 10. The boundary conditions are of
-homogeneous Neumann type (zero normal derivatives) everywhere. The coefficients are such that
+homogeneous Neumann type (zero normal derivatives) everywhere. The interaction and diffusion coefficients (a could be functions of (x; general are such that
 a unique stable equilibrium is guaranteed to exist when derivatives appear in
 the equations for species 2 [3]. Empirically, a stable equilibrium appears to exist for (7.1) when ff
-and fi are positive, although it may not be unique. In our tests on this problem we take
+and fi are positive, although it may not be unique. In our tests on this problem our take
 and 100, for which there is considerable spatial variation in the solution.
 The PDE system (7.1), together with the boundary conditions, was discretized with central
-differencing on an L \Theta L mesh, as described in [7]. We have taken which is quite sufficient
+differencing on an L \Theta L mesh, as described in [7]. our have taken which is quite sufficient
 for accurate spatial resolution. The resulting DAE system G(t; Y; Y 0
 The tolerances used were were run on a Sun Sparc-10 workstation.
-7.1. Initialization Problem 1. In the tests on this problem reported in [7], the initial conditions
+7.1. Initialization Problem 1. In the tests on Initialization Problem 1 reported in [7], the initial conditions
 were taken to be mildly peaked functions that nearly satisfy the constraint equations:
 ae
 The predator value c determined by the equation f 2 (x; is an approximate quasi-steady
-state (QSS) value. The original DASPK solver has no difficulty with this problem, without
-further adjustment of the initial values. However, we expect that in a typical application of this
-type it is impractical to find such accurate initial values. So for our tests, we will prescribe a flat
+state (QSS) value. The original DASPK solver has no difficulty with Initialization Problem 1, without
+further adjustment of the initial values. However, our expect that in a typical application of this
+type it is impractical to find such accurate initial values. So for our tests, our will prescribe a flat
 value
 predas the initial guess in the input Y array, and invoke the new algorithm for Initialization Problem
 1. For the present problem parameters, the QSS values of c 2 at time are all within 10% of
-so we vary c pred
-We will report here only tests with the Krylov method (GMRES) option in DASPK, and as
-a preconditioner we use a product of a spatially-based factor and a reaction-based factor. In the
+so our vary c pred
+our will report here only tests with the Krylov method (GMRES) option in DASPK, and as
+a preconditioner our use a product of a spatially-based factor and a reaction-based factor. In the
 notation of [7], this is given by
 Here R and S are (respectively) the reaction and diffusion terms of the right-hand side of the
 DAE system, so that the problem has the form G(t; Y; Y 0
@@ -577,22 +582,23 @@ number of Newton iterations in the initial condition calculation
 number of linear iterations in the initial condition calculation
 total number of Newton iterations to complete the integration
 total number of linear iterations to complete the integration
-total number of residual evaluations to complete the integration.
+total number of residual evaluations to complete the integration
+.
 The numbers NNI0 and NLI0 measure the cost of the initialization algorithm, while NNI, NLI,
 and NRE measure the total cost of solving the problem. Convergence (to correct values) in the
 initialization was achieved at a very reasonable additional cost for pred
 Evidently,
-the convergence region for the initialization of this problem is strongly skewed to the high side, but
+the convergence region for the initialization of the problem is strongly skewed to the high side, but
 does permit errors of at least 40% on the low side. In the case c pred
 the algorithm converged,
 but to the value c which corresponds to a solution that is valid but different from the one of
 interest here.
 For comparison, when the initial condition calculation option was not selected, only the QSS
-initial values were successful, and in that case the total cost figures were
+initial values were successful, and in the case the total cost figures were
 709. These are slightly larger than with the initialization, indicating that even the
 approximate QSS values from (7.6) are somewhat in error. The unmodified DASPK solver, when
 run with its initial condition option on, was also unable to solve any case except the QSS initial
-values, and in that case the total costs were 971. The failed cases
+values, and in the case the total costs were 971. The failed cases
 either halted in the initialization algorithm, or (when the initialization option was off) failed in the
 first time step with either repeated corrector convergence failures or repeated error test failures.
 2 On the basis of experience with these tests, however, we have changed the default value of NRMAX, the maximum
@@ -612,7 +618,7 @@ We first describe tests using the direct method. These specified a banded Jacobi
 internally by difference quotients, where the two half-bandwidths are equal to
 simplicity, the initial guesses for the discrete c i values were taken to be spatially flat values with
 prey
-Because the subsequent time integration is not an issue here, we stopped it at We
+Because the subsequent time integration is not an issue here, we stopped it at we
 performed tests for a variety of values of ff and fi, revealing, as in the case of Problem 1, a nontrivial
 region of convergence in each case. Table 7.2 below (upper half) gives the results for the case
 where the tabulated counter NNI0 is defined as before. Convergence is achieved
@@ -638,10 +644,12 @@ problem is Since the initialization algorithm sets user-supplied
 preconditioner, the choice P SR of (7.7) used for Problem 1 is undefined. We therefore use
 \GammaR Y , a block-diagonal matrix involving only the reaction Jacobian elements. We again tried a
 variety of values of ff and fi, and provided flat initial guesses (7.8). However, for the larger values
-of these parameters, it was found that convergence of the GMRES iteration was much slower than
+of these parameters, a
+variety of values of ff and fi was found that convergence of the GMRES iteration was much slower than
 in the case of Initialization Problem 1. This is to be expected, since the diffusion terms contribute
 significantly to the system but are completely absent in the preconditioner. In order to achieve
-convergence, we therefore increased the Krylov subspace parameters over their default values,
+convergence, we therefore increased the Krylov subspace parameters over order to achieve
+convergence default values,
 setting the maximum size of the Krylov subspace (MAXL) to 20, and the number of GMRES
 restarts allowed (NRMAX) to 19. This allows a total of 400 GMRES iterations on each linear
 system. For values of c prey

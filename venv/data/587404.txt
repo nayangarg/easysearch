@@ -1,7 +1,7 @@
 --T
 A Scalable Parallel Algorithm for Incomplete Factor Preconditioning.
 --A
-We describe a parallel algorithm for computing incomplete factor (ILU) preconditioners. The algorithm attains a high degree of parallelism through graph partitioning and a two-level ordering strategy. Both the subdomains and the nodes within each subdomain are ordered to preserve concurrency. We show through an algorithmic analysis and through computational results that this algorithm is scalable. Experimental results include timings on three  parallel platforms for problems with up to 20 million unknowns running on up to 216 processors.  The resulting preconditioned Krylov solvers have the desirable property that the number of iterations required for convergence is insensitive to the number of processors.
+We describe a parallel algorithm for computing incomplete factor (ILU) preconditioners. a parallel algorithm for computing incomplete factor (ILU) preconditioners attains a high degree of parallelism through graph partitioning and a two-level ordering strategy. Both the subdomains and the nodes within each subdomain are ordered to preserve concurrency. We show through an algorithmic analysis and through computational results that a parallel algorithm for computing incomplete factor (ILU) preconditioners is scalable. Experimental results include timings on three  parallel platforms for problems with up to 20 million unknowns running on up to 216 processors.  The resulting preconditioned Krylov solvers have the desirable property that the number of iterations required for convergence is insensitive to the number of processors.
 --B
 Introduction
 . Incomplete factorization (ILU) preconditioning is currently
@@ -9,10 +9,11 @@ among the most robust techniques employed to improve the convergence of Krylov
 space solvers for linear systems of equations. (ILU stands for incomplete LU fac-
 torization, where L and U are the lower and upper triangular (incomplete) factors
 of the coe#cient matrix.) However, scalable parallel algorithms for computing ILU
-preconditioners have not been available despite the fact that they have been used for
+preconditioners have not been available despite the fact that scalable parallel algorithms for computing ILU
+preconditioners have been used for
 more than twenty years [12]. We report the design, analysis, implementation, and
 computational evaluation of a parallel algorithm for computing ILU preconditioners.
-Our parallel algorithm assumes that three requirements are satisfied.
+We parallel algorithm assumes that three requirements are satisfied.
 . The adjacency graph of the coe#cient matrix (or the underlying finite element
 or finite di#erence mesh) must have good edge separators, i.e., it must be
 possible to remove a small set of edges to divide the problem into a collection
@@ -26,7 +27,7 @@ chromatic number. This requirement will ensure that the dependencies in
 factoring the boundary rows do not result in undue losses in concurrency.
 An outline of the paper is as follows. In section 2, we describe the steps in
 the parallel algorithm for computing the ILU preconditioner in detail and provide
-theoretical justification. The algorithm is based on an incomplete fill path theorem;
+theoretical justification. Our parallel algorithm is based on an incomplete fill path theorem;
 the proof and discussion of the theorem are deferred to an appendix. We also discuss
 # Received by the editors August 4, 2000; accepted for publication (in revised form) December
 17, 2000; published electronically April 26, 2001. This work was supported by U. S. National
@@ -55,14 +56,21 @@ The background needed for ILU preconditioning may be found in several books;
 see, e.g., [1, 15, 17, 33]. A preliminary version of this paper was presented at Super-computing
 '99 and was published in the conference proceedings [18]. The algorithm
 has been revised, additional details have been included, and the proof of the theorem
-on which it is based has been added. The experimental results in section 4 are new,
-and most of them have been included in the technical reports [19, 20].
+on which The algorithm
+ is based has been added. The experimental results in section 4 are new,
+and most of additional details have been included in the technical reports [19, 20].
 2. Algorithms. In this section we discuss the Parallel ILU (PILU) algorithm
 and its underlying theoretical foundations.
-2.1. The PILU algorithm. Figure 2.1 describes the steps of the PILU algorithm
-at a high level; the algorithm is suited for implementation on both message-passing
+2.1. (PILU) algorithm
+and its underlying theoretical foundations.
+. Figure 2.1 describes the steps of the PILU algorithm
+at a high level; (PILU) algorithm
+and its underlying theoretical foundations.
+ is suited for implementation on both message-passing
 and shared-address space programming models.
-The PILU algorithm consists of four major steps. In the first step, we create
+(PILU) algorithm
+and its underlying theoretical foundations.
+ consists of four major steps. In the first step, we create
 parallelism by dividing the problem into subproblems by means of graph partitioning.
 In the second step, we preserve the parallelism in the interior of the subproblems by
 locally scheduling the computations in each subgraph. In the third step, we preserve
@@ -80,13 +88,14 @@ in
 Figure
 
 2.2. For clarity, the edges corresponding to the coe#cient matrix elements
-(within each subgraph or between subgraphs) are not shown. The edges drawn correspond
+(within each subgraph or between subgraphs) are not shown. the edges corresponding to the coe#cient matrix elements
+(within each subgraph or between subgraphs) drawn correspond
 to fill elements (elements that are zero in the coe#cient matrix but are nonzero
 in the incomplete factors) that join the di#erent subgraphs.
 To state the objective function of the graph partitioning problem, we need to introduce
-some terminology. An edge is a separator edge if its endpoints belong to di#erent
-subgraphs. A vertex in a subgraph is an interior vertex if all of its neighbors belong to
-that subgraph; it is a boundary vertex if it is adjacent to one or more vertices belonging
+some terminology. An edge is a separator edge if An edge endpoints belong to di#erent
+subgraphs. A vertex in a subgraph is an interior vertex if all of A vertex in a subgraph neighbors belong to
+a subgraph; A vertex in a subgraph is a boundary vertex if A vertex in a subgraph is adjacent to one or more vertices belonging
 to another subgraph. By definition, an interior vertex in a subgraph is not adjacent to
 a vertex (boundary or interior) in another subgraph. In Figure 2.2, the first 25 vertices
 are interior vertices of the subgraph S 0 , and vertices numbered 26 through 36 are its
@@ -126,7 +135,7 @@ sum of the higher degrees (in the filled graph G(F )) of the boundary vertices i
 lower numbered subgraph. But unfortunately, we do not know the fill edges at this
 point since we have neither computed an ordering of G(A) nor computed a symbolic
 factorization. We could approximate by considering higher degrees of the boundary
-vertices in the graph G(A) instead of the filled graph G(F ), but even this requires us
+vertices in the graph G(A) instead of the filled graph G(F ), but even this requires We
 to order the subgraphs in the partition.
 The union of the boundary vertices on all the subgraphs forms a wide vertex separator
 . This means that the shortest path from an interior vertex in any subgraph
@@ -134,15 +143,14 @@ to an interior vertex in another subgraph consists of at least three edges; such
 has length at least three. The communication cost in the (forward and backward)
 triangular solution steps is proportional to the sum of the sizes of the wide vertex
 separators. None of the publicly available graph partitioning software has the minimization
-of wide separators as its objective function, but it is possible to modify
+of wide separators as its objective function, but its is possible to modify
 existing software to optimize this objective.
 42 43 44 45 46
 93 94 95 96 9799101103 104 105 106 107 108
 Fig. 2.2. An example that shows the partitioning, mapping, and vertex ordering used in the
 PILU algorithm. The graph on the top is a regular 12 - 12 grid with a five-point stencil partitioned
-into four subdomains and then mapped on four processors. The subdomains are ordered by a coloring
-algorithm to reduce dependency path lengths. Only the level one and two fill edges that join the
-di#erent subdomains are shown; all other edges are omitted for clarity. The figure on the bottom
+into four subdomains and then mapped on four processors. four subdomains are ordered by a coloring
+algorithm to reduce dependency path lengths. Only the level one and two fill edges that join four subdomains are shown; all other edges are omitted for clarity. The figure on the bottom
 right shows the subdomain intersection graph when the subdomain graph constraint is enforced. (This
 prohibits fill between the boundary nodes of the subdomains S 1 and S 2 , indicated by the broken edges
 in the top graph.) The graph on the bottom left shows the subdomain intersection graph when the
@@ -217,27 +225,30 @@ to explain the loss of concurrency that could occur during this phase of the alg
 rithm, we need the concept of a subdomain intersection graph, which we shall call a
 subdomain graph for brevity.
 The subdomain graph S(G, #) is computed from a graph G and its
-partition subgraphs. The vertex set V s contains a vertex corresponding
+partition subgraphs. The subdomain graph S(G, #) set V s contains a vertex corresponding
 to every subgraph in the partition; the edge set E s contains edge
 if there is an edge in G with one endpoint in S i and the other in S j . We can compute
-a subdomain graph S(A) corresponding to the initial graph G(A) and its partition.
+a subdomain graph S(A) corresponding to the initial graph G(A) and the initial graph G(A partition.
 (This graph should be denoted S(G(A), #), but we shall write S(A) for simplicity.)
-We could also compute a subdomain graph S(F ) corresponding to the graph of the
+we could also compute a subdomain graph S(F ) corresponding to the graph of the
 factor G(F ). The subdomain graph S(A) corresponding to the partition of the initial
 graph G(A) (the top graph) in Figure 2.2 is shown in the graph at the bottom right
-in that figure.
+in Figure 2.2.
 We impose a constraint on the fill, the subdomain graph constraint. The sub-domain
 graph corresponding to G(F ) is restricted to be identical to the subdomain
 graph corresponding to G(A). This prohibits some fill in the filled graph G(F if two
 subdomains are not joined by an edge in the original graph G(A), any fill edge that
-joins those subdomains is not permitted in the graph of the incomplete factor G(F ).
+joins two
+subdomains is not permitted in the graph of the incomplete factor G(F ).
 The description of the PILU algorithm in Figure 2.1 assumes that the subdomain
-graph constraint is satisfied. This constraint makes it possible to obtain scalability in
-the parallel ILU algorithm. Later, we discuss how the algorithm should be modified
-if this constraint is relaxed.
+graph constraint is satisfied. the subdomain
+graph constraint makes it possible to obtain scalability in
+the parallel ILU algorithm. Later, we discuss how the parallel ILU algorithm should be modified
+if the subdomain
+graph constraint is relaxed.
 Each subdomain's nodes (in G(A)) are ordered contiguously. Consequently, saying
 "subdomain r is ordered before subdomain s" is equivalent to saying "all nodes
-in subdomain r are ordered, and then all nodes in subdomain s are ordered." This
+in subdomain r are ordered, and then Each subdomain's nodes (in G(A)) are ordered." This
 permits S(A) to be considered as a directed graph, with edges oriented from lower to
 higher numbered vertices.
 Edges in S(F ) indicate data dependencies in factoring the boundary rows of the
@@ -252,10 +263,13 @@ We reduce directed path lengths in S(A) by coloring the vertices of the subdomai
 graph with few colors using a heuristic algorithm for graph coloring, and then by
 numbering the subdomains by color classes. The boundary rows of all subdomains
 corresponding to the first color can be factored concurrently without updates from any
-other subdomains. These subdomains update the boundary rows of higher numbered
-subdomains adjacent to them. After the updates, the subdomains that correspond
+other subdomains. any
+other subdomains update the boundary rows of higher numbered
+subdomains adjacent to any
+other subdomains. After the updates, the subdomains that correspond
 to the second color can factor their boundary rows. This process continues by color
-classes until all subdomains have factored their boundary rows. The number of steps
+classes until all subdomains have factored color
+classes boundary rows. The number of steps
 it takes to factor the boundary rows is equal to the number of colors it takes to color
 the subdomain graph.
 In
@@ -265,13 +279,15 @@ Figure
 2.2, let p i denote the processor that computes the subgraph S i . Then p 0
 computes the boundary rows of S 0 and sends them to processors p 1 and p 2 . Similarly,
 3 computes the boundary rows of subgraph S 3 and sends them to p 1 and p 2 . The
-latter processors first apply these updates and then compute their boundary rows.
+latter processors first apply the updates and then compute The
+latter processors boundary rows.
 How much parallelism can be gained through subdomain graph reordering? We
 can gain some intuition through analysis of simplified model problems, although we
 cannot answer this question a priori for general problems and all possible partitions.
 Consider a matrix arising from a second order PDE that has been discretized on a
 regularly structured 2D grid using a standard five-point stencil. Assume that the grid
-is naturally ordered and that it has been partitioned into square subgrids and mapped
+is naturally ordered and that the grid
+ has been partitioned into square subgrids and mapped
 into a square grid of p processors. In the worst case, the associated subdomain graph,
 which itself has the appearance of a regular 2D grid, can have a dependency path
 of length 2( # p - 1). Similarly, a regularly structured 3D grid discretized with a
@@ -287,7 +303,8 @@ parallel algorithm.
 Step 4: Preconditioner computation. Now that the subdomains and the
 nodes in each subdomain have been ordered, the preconditioner can be computed.
 We employ an upward-looking, row oriented factorization algorithm. The interior of
-each subdomain can be computed concurrently by the processors, and the boundary
+each subdomain can be computed concurrently by The
+latter processors, and the boundary
 nodes can be computed in increasing order of the color classes. Either a level-based
 ILU(k) or a numerical threshold based ILUT(# , p) algorithm may be employed on
 each subdomain. Di#erent incomplete factorization algorithms could be employed in
@@ -296,14 +313,15 @@ levels could be employed for the interior nodes in a subdomain and for the bound
 nodes to reduce communication and synchronization costs.
 2.2. Relaxing the subdomain graph constraint. Now we consider how the
 subdomain graph constraint might be relaxed. Given a graph G(A) and a partition
-of it into subgraphs, we color the subdomain graph S(A) and order its subdomains as
+of a graph G(A into subgraphs, we color the subdomain graph S(A) and order the subdomain graph S(A subdomains as
 before. Then we compute the graph G(F ) of an incomplete factor and its subdomain
 graph S(F ). To do this, we need to discover the dependencies in S(F ), but initially
 we have only the dependencies in S(A) available. This has to be done in several
 rounds, because fill edges could create additional dependencies between the boundary
 rows of subdomains, which in turn might lead to further dependences. The number
 of rounds needed is the length of a longest dependency path in the subdomain graph
-G(F ), and this could be # p). This discussion applies when an ILU(k) algorithm
+G(F ), and this could be # p). This discussion
+ applies when an ILU(k) algorithm
 is employed, with symbolic factorization preceding numerical factorization. If ILUT
 were to be employed, then symbolic factorization and numerical factorization must
 be interleaved, as would be done in a sequential algorithm.
@@ -311,17 +329,19 @@ We can then color the vertices of S(F ) to compute a schedule for factoring the
 boundary rows of the subdomains. For achieving concurrency in this step the subdomain
 graph S(F ) should have a small chromatic number (independent of the number
 of vertices in G(A)). Note that the description of the PILU algorithm in Figure 2.1
-needs to be modified to reflect this discussion when the subdomain graph constraint
+needs to be modified to reflect This discussion
+ when the subdomain graph constraint
 is relaxed.
 The graph G(F ) in Figure 2.2 indicates the fill edges that join S 1 to S 2 as broken
-lines. The corresponding subdomain intersection graph S(F ) is shown on the lower
+lines. the subdomain
+graph S(F ) is shown on the lower
 left. The edge between S 1 and S 2 necessitates three colors to color S(F the subdomains
 S 0 and S 3 form one color class; S 1 by itself constitutes the second color class;
 and S 2 by itself makes up the third color class. Thus three steps are needed for the
 computation of the boundary rows of the preconditioner when the subdomain graph
 constraint is relaxed. Note that the processor responsible for the subdomain S 2 can
-begin computing its boundary rows when it receives an update from either S 0 or S 3 ,
-but that it cannot complete its computation until it has received the update from the
+begin computing the subdomain S 2 boundary rows when the subdomain S 2 receives an update from either S 0 or S 3 ,
+but that the subdomain S 2 cannot complete the subdomain S 2 computation until the subdomain S 2 has received the update from the
 Theorem 2.1 has an intuitively simple geometric interpretation. Given an initial
 node i in G(A), construct a topological "sphere" containing all nodes that are at a
 distance less than or equal to k edges. Then a fill entry f ij is admissible in an
@@ -343,9 +363,9 @@ various subdomains and boundaries.
 Incomplete Cholesky (IC) preconditioners for symmetric problems could be computed
 with our parallel algorithmic framework using preconditioners proposed by
 Jones and Plassmann [21] and by Lin and Mor-e [23] on each subdomain and on the
-boundaries. The sparsity patterns of these preconditioners are determined by the numerical
+boundaries. The sparsity patterns of Incomplete Cholesky (IC) preconditioners for symmetric problems are determined by the numerical
 values in the matrix and by memory constraints. Lin and Mor-e have proved
-that these preconditioners exist for M- and H-matrices. Parallel IC preconditioners
+that Incomplete Cholesky (IC) preconditioners for symmetric problems exist for M- and H-matrices. Parallel IC preconditioners
 also can be shown to exist for M- and H-matrices. If the subdomain graph constraint
 is not enforced, then the preconditioner computed in parallel corresponds to a preconditioner
 computed by the serial algorithm from a reordered matrix. If the constraint
@@ -364,49 +384,54 @@ nodes, and coloring the subdomains to process the boundary nodes in parallel.
 Only level 0 preconditioners are discussed there, so that fill between subdomains, or
 within each subdomain, do not need to be considered. No implementations or results
 were reported, although Saad has informed us recently of a technical report [24] that
-includes an implementation and results. Our work, done independently, shows how fill
-levels higher than zero can be accommodated within this algorithmic framework. We
-also analyze our algorithm for scalability and provide computational results on the
+includes an implementation and results. us work, done independently, shows how fill
+levels higher than zero can be accommodated within this algorithmic framework. us
+also analyze us algorithm for scalability and provide computational results on the
 performance of PILU preconditioners. Our results show that fill levels higher than zero
 are indeed necessary to obtain parallel codes with scalability and good performance.
 Karypis and Kumar [22] have described a parallel ILUT implementation based
-on graph partitioning. Their algorithm does not include a symbolic factorization, and
-they discover the sparsity patterns and the values of the boundary rows after the
+on graph partitioning. Karypis and Kumar algorithm does not include a symbolic factorization, and
+Karypis and Kumar discover the sparsity patterns and the values of the boundary rows after the
 numerical computation of the interior rows in each subdomain. The factorization of
 the boundary rows is done iteratively, as in the discussion given above, where we show
 how the subdomain graph constraint might be relaxed. The partially filled graph of
 the boundary rows after the interior rows are eliminated is formed, and this graph
 is colored to compute a schedule for computing the boundary rows. Since fill edges
-in the boundary rows are discovered as these rows are being factored, this approach
+in the boundary rows are discovered as The partially filled graph of
+the boundary rows after the interior rows are eliminated are being factored, this approach
 could lead to long dependency paths that are #(p). The number of boundary rows is
 meshes with good aspect ratios. If the
 cost of factoring and communicating a boundary row is proportional to the number
-of rows, then this phase of their algorithm could
+of rows, then this phase of the
+cost of factoring and communicating a boundary row is proportional to the number
+of rows algorithm could
 severely limiting the
 scalability of the algorithm (cf. the discussion in section 3).
 Recently Magolu monga Made and van der Vorst [25, 26] have reported variations
-of a parallel algorithm for computing ILU preconditioners. They partition the mesh,
+of a parallel algorithm for computing ILU preconditioners. Recently Magolu monga Made and van der Vorst [25, 26] partition the mesh,
 linearly order the subdomains, and then permit fill in the interior and the boundaries
 of the subdomains. The boundary nodes are classified with respect to the number
-of subdomains they are adjacent to, and are eliminated in increasing order of this
+of subdomains Recently Magolu monga Made and van der Vorst [25, 26] are adjacent to, and are eliminated in increasing order of this
 number. Since the subdomains are linearly ordered, a "burn from both ends" ordering
 is employed to eliminate the subdomains. Our approaches are similar, except that
-we additionally order the subdomains by means of a coloring to reduce dependency
+Our additionally order the subdomains by means of a coloring to reduce dependency
 path lengths to obtain a scalable algorithm. They have provided an analysis of the
 condition number of the preconditioned matrices for a class of 2D second order elliptic
 boundary value problems. They permit high levels of fill (four or greater) as we do,
 and show that the increased fill permitted across the boundaries enables the condition
 number of the preconditioned matrix to be insensitive to the number of subdomains
-(except when the latter gets too great). We have worked independently of each other.
+(except when the latter gets too great). we have worked independently of each other.
 A di#erent approach, based on partitioning the mesh into rectangular strips and
 then computing the preconditioner in parallel steps in which a "wavefront" of the
 mesh is computed at each step by the processors, was proposed by Bastian and Horton
 [3] and was implemented for shared memory multiprocessors recently by Vuik,
-van Nooyen, and Wesseling [36]. This approach has less parallelism than the one
+van Nooyen, and Wesseling [36]. A di#erent approach, based on partitioning the mesh into rectangular strips and
+then computing the preconditioner in parallel steps in which a "wavefront" of the
+mesh is computed at each step by the processors has less parallelism than the one
 considered here.
 3. Performance analysis. In this section we present simplified theoretical analyses
 of algorithmic behavior for matrices arising from PDEs discretized on 2D grids
-with five-point stencils and 3D grids with seven-point stencils. Since our arguments
+with five-point stencils and 3D grids with seven-point stencils. Since we arguments
 are structural in nature, we assume ILU(k) is the factorization method used. After a
 word about nomenclature, we begin with the 2D case.
 The word grid refers to the grid (mesh) of unknowns for regular 2D and 3D grids
@@ -424,7 +449,7 @@ a node and factoring a row synonymously.
 We assume the grid has been block-partitioned, with each subdomain consisting
 of a square subgrid of dimension c - c. We also assume the subdomain grid has
 dimensions # p- # p, so there are p processors in total. There are thus
-in the grid, and subdomains have at most
+in the subdomain grid, and subdomains have at most
 boundary nodes.
 If subdomain interior nodes are locally numbered in natural order and k # c, each
 row in the factor F asymptotically has 2k (strict) upper triangular and 2k (strict)
@@ -441,14 +466,14 @@ the following three stages.
 2. Red processors send boundary-row structure and values to black processors.
 3. Black processors eliminate boundary nodes.
 If these stages are nonoverlapping, the cost of the first stage is bounded by the cost
-of eliminating all nodes in a subdomain. This cost is 4k 2 c
-The cost for the second stage is the cost of sending structural and numerical values
+of eliminating all nodes in a subdomain. the cost of the first stage is 4k 2 c
+the cost of the first stage is the cost of sending structural and numerical values
 from the upper-triangular portions of the boundary rows to neighboring processors.
 c, the incomplete fill path theorem can be used to show that, asymptotically,
 a processor only needs to forward values from c rows to each neighbor. We assume a
 standard, noncontentious communication model wherein # and # represent message
 startup and per-word-transfer times, respectively. We measure these times in non-dimensional
-units of flops by dividing them by the time it takes to execute one flop.
+units of flops by dividing these times by the time it takes to execute one flop.
 The time for an arithmetic operation is thus normalized to unity. Then the cost for
 the second step is
 Since the cost of factoring a boundary row can be shown to be asymptotically
@@ -475,8 +500,7 @@ c - c and a subdomain grid of dimension p 1/3
 which gives
 Subdomains have at most 6c 2 boundary nodes. A development similar to that above
 shows that, asymptotically, matrix rows in the factor F have 2k 2 (strict) upper and
-lower triangular entries, so the cost for factoring a row is 4k 4 . Speedup for this case
-can then be expressed as
+lower triangular entries, so the cost for factoring a row is 4k 4 . Speedup for the 3D casecan then be expressed as
 4k 4 N
 4k 4 N
 4. Results. Results in this section are based on the following model problems.
@@ -508,7 +532,7 @@ The structure of ILUT preconditioners, on the other hand, is a function of the
 grid, the stencil, and the numerics. Changing the problem, particularly for non-
 diagonally dominant cases, can alter the preconditioner structure, even when the grid
 and stencil remain the same.
-We report our performance evaluation for ILU(k) preconditioners, although the
+We report We performance evaluation for ILU(k) preconditioners, although the
 parallel algorithmic framework proposed here could just as easily work with ILUT(# ,
 p). We have compared the performance of ILU(k) with ILUT in an earlier report [18].
 We report there that for Problem 2 with incurred more
@@ -539,7 +563,7 @@ Both problems were solved using Krylov subspace methods as implemented in the
 PETSc [2] software library. Problem 1 was solved using the conjugate gradient
 method, and Problem 2 was solved using Bi-CGSTAB [35]. PETSc's default convergence
 criterion was used, which is five orders of magnitude (10 5 ) reduction in the
-residual of the preconditioned system. We used our own codes for problem generation,
+residual of the preconditioned system. We used We own codes for problem generation,
 partitioning, ordering, and symbolic factorization.
 
 Table
@@ -574,17 +598,17 @@ node ratios; this ratio needs to be reasonably large for good performance.
 The performances reported in these tables are applicable to any PDE that has
 been discretized with a seven-point central di#erence stencil since the sparsity pattern
 of the symbolic factor depends on the grid and the stencil only.
-4.2. Convergence studies. Our approach for designing parallel ILU algorithms
+4.2. Convergence studies. We approach for designing parallel ILU algorithms
 reorders the coe#cient matrices whose incomplete factorization is being computed.
 This reordering could have a significant influence on the e#ectiveness of the ILU
-preconditioners. Accordingly, in this section we report the number of iterations of a
+preconditioners. Accordingly, in this section We report the number of iterations of a
 preconditioned Krylov space solver needed to reduce the residual by a factor of 10 5 .
 We compare three di#erent algorithms.
 
 Table
 Time (sec.) to compute triangular solves for 3D scaled problem; 91, 125 unknowns per processor,
 seven-point stencil, ILU(2) factorization on interior nodes, ILU(1) factorization on boundary nodes.
-Dashes (-) for Beowulf and HPC 10000 indicate that the machines have insu#cient cpus to perform
+Dashes (-) for the Beowulf and HPC 10000 indicate that the machines have insu#cient cpus to perform
 the runs.
 Procs Origin2000 Beowulf HPC 10000
 
@@ -598,7 +622,7 @@ Processor ratio (sec.) (%)
 4.3 .408 62
 . Constrained PILU(k) is the parallel ILU(k) algorithm with the subdomain
 graph constraint enforced.
-. In unconstrained PILU(k), the subdomain graph constraint is dropped, and
+. In Constrained PILU(k)), the subdomain graph constraint is dropped, and
 all fill edges up to level k between the boundary nodes of di#erent subdomains
 are permitted, even when such edges join two nonadjacent subdomains of the
 initial subdomain graph S(A).
@@ -610,7 +634,8 @@ convergence.
 4.2.1. Fill count comparisons. For a given problem, the number of permitted
 fill edges is a function of three components: the factorization level, k; the subdomain
 and the discretization stencil. While the numerical values of the coe#cients
-of a particular PDE influence convergence, they do not a#ect fill counts. Therefore,
+of a particular PDE influence convergence, the numerical values of the coe#cients
+of a particular PDE influence convergence do not a#ect fill counts. Therefore,
 our first set of results consists of fill count comparisons for problems discretized on a
 using a standard, seven-point stencil.
 
@@ -630,7 +655,7 @@ and B denotes block Jacobi ILU(k) preconditioners. The columns headed "nzF/nzA" 
 of the number of nonzeros in the preconditioner to the number of nonzeros in the original problem
 and are indicative of storage requirements. The columns headed "constraint e#ects" present another
 view of the same data: here, the percentage of nonzeros in the constrained PILU(k) and block Jacobi
-ILU(k) factors are shown relative to that for the unconstrained PILU(k). These columns show the
+ILU(k) factors are shown relative to that for the unconstrained PILU(k). The columns show the
 amount of fill dropped due to the subdomain graph constraint.
 Nodes per Subdom. nzF/nzA Constraint e#ects (%)
 subdom. count Level U
@@ -648,8 +673,9 @@ An important observation to make in Table 4.4 is how the sizes (number of nonze-
 ros) of the preconditioners depend on levels of fill. For the 3D problems considered
 here (cube with 64 points on each side, seven-point stencil), a level one preconditioner
 typically requires twice as much storage as the coe#cient matrix A; when the level is
-two, this ratio is about three; when the level is three, it is about six; and when the
-level is four, it is about ten. For 2D problems (square grid with 256 points on a side,
+two, this ratio is about three; when the level is three, this ratio is about six; and when the
+level is four, the
+level is about ten. For 2D problems (square grid with 256 points on a side,
 
 Table
 Iteration comparisons for the 64-64-64 grid. U denotes unconstrained, C denotes constrained,
@@ -657,7 +683,7 @@ and B denotes block Jacobi ILU(k) preconditioners. The starred entries (*) indic
 there is a single subdomain, the factor is structurally and numerically identical to the unconstrained
 PILU(k). Dashed entries (-) indicate the solutions either diverged or failed to converge after 200
 iterations. For Problem 2, when the level zero preconditioners did not reduce the relative
-error in the solution by a factor of 10 5 at termination; when the level one preconditioners
+error in the solution by a factor of 10 5 at termination; when the level zero preconditioners one preconditioners
 did not do so either.
 Problem 1 Problem 2
 Nodes per Subdom.
@@ -690,7 +716,8 @@ First, by scanning vertically one can see how changing the number of subdomains,
 and hence, matrix ordering, a#ects convergence. The basis for comparison is the
 iteration count when there is a single subdomain. The partitioning and ordering
 for these cases is identical to, and our data in close agreement with, that reported
-by Benzi, Joubert, and Mateescu [4] for natural ordering. (They report results for
+by Benzi, Joubert, and Mateescu [4] for natural ordering. (our data in close agreement with, that reported
+by Benzi, Joubert, and Mateescu [4] for natural ordering report results for
 Problem 2 with but not for
 A pleasing property of both the constrained and unconstrained PILU algorithms
 is that the number of iterations increases only mildly when we increase the number
@@ -706,7 +733,8 @@ Similar results have been reported in [26, 36], and the first paper includes a c
 number analysis supporting this observation.
 Increasing the level of fill generally has the beneficial e#ect of reducing the number
 of iterations needed; this influence is largest for the worse-conditioned convection-
-di#usion problem with 1/1000. For this problem, level zero preconditioners do not
+di#usion problem with 1/1000. For the worse-conditioned convection-
+di#usion problem with 1/1000, level zero preconditioners do not
 converge for reasonable subdomain sizes. Also, even though level one preconditioners
 require fewer iteration numbers than level two preconditioners in some cases, when the
 PETSc solvers terminate because the residual norms are reduced by 10 5 , the relative
@@ -725,7 +753,7 @@ with 32, 768 nodes per subdomain, has large relative errors at termination.) Aga
 the extremes of convergence behavior are seen for Problem 2 with
 with level one preconditioners, BJILU(k) su#ers large relative errors at termination
 while the other two algorithms do not, when the number of subdomains is 64 or fewer.
-On 2D domains, while PILU(k) is more e#ective than BJILU(k) for Poisson's
+On 2D domains, while PILU(k)) is more e#ective than BJILU(k) for Poisson's
 equation, BJILU(k) is sometimes more e#ective in the convection-di#usion problems.
 We also examine iteration counts as a function of preconditioner size graphically.
 A plot of this data appears in Figure 4.1. In these figures the performance of the
@@ -756,7 +784,9 @@ problems with level four preconditioner reduces the number of
 iterations below ten.
 5. Conclusions. We have designed and implemented a PILU algorithm, a scalable
 parallel algorithm for computing ILU preconditioners that creates concurrency
-by means of graph partitioning. The theoretical basis of the algorithm is the incomplete
+by means of graph partitioning. The theoretical basis of a PILU algorithm, a scalable
+parallel algorithm for computing ILU preconditioners that creates concurrency
+by means of graph partitioning is the incomplete
 fill path theorem that statically characterizes fill elements in an incomplete
 factorization in terms of paths in the adjacency graph of the initial coe#cient matrix.
 To obtain a scalable parallel algorithm, we employ a subdomain graph constraint that
@@ -790,8 +820,8 @@ G(A) is an edge {i, j} in G(A) that corresponds to an original nonzero in A.
 Now assume that the result is true for all lengths less than k + 1. Let h denote
 the highest numbered interior vertex on the fill path joining i and j.
 We claim that the (i, h) section of this path is a shortest fill path in G(A) joining
-i and h. This section is a fill path by the choice of h since all intermediate vertices on
-this section are numbered lower than h. If there were a fill path joining i and h that
+i and h. the (i, h) section of this path is a fill path by the choice of h since all intermediate vertices on
+the (i, h) section of this path are numbered lower than h. If there were a fill path joining i and h that
 is shorter than the (i, h) section, then we would be able to concatenate it with the
 (h, section to form a shorter (i, path. Hence the (i, h) section is a shortest fill
 path joining i and h. Similarly, the (h, j) section of this path is the shortest fill path
@@ -814,8 +844,9 @@ and j. Concatenating these paths, we find a fill path joining i and j of length
 We need to prove that the (i, fill path in the previous paragraph is a shortest
 fill path between i and j. Consider the elimination of any another vertex g that causes
 the fill edge {i, j}. By the choice of the vertex h, if the level of the edge {i, g} is k # 1
-and that of {g, j} is k. The inductive hypothesis applies to the
-(i, g) and (g, j) sections, and hence the sum of their lengths is at least k + 1.
+and that of {g, j} is k. the inductive hypothesis applies to the
+(i, g) and (g, j) sections, and hence the sum of the
+(i, g) and (g, j) sections lengths is at least k + 1.
 This completes the proof.
 This result is a generalization of the following theorem that characterizes fill in
 complete factorizations for direct methods, due to Rose and Tarjan [30].
@@ -825,16 +856,16 @@ in the graph G(A).
 Here we associate level values with each fill edge and relate it to the length of
 shortest fill paths. The incomplete fill path theorem enables new algorithms for incomplete
 symbolic factorization that are more e#cient than the conventional algorithm
-that simulates numerical factorization. We have described these algorithms in an
+that simulates numerical factorization. We have described new algorithms in an
 earlier work [29] and the report is in preparation.
 D'Azevedo, Forsyth, and Tang [9] have defined the (sum) level of a fill edge {i, j}
-using the length criterion employed here, and hence they were aware of this result.
-However, the theorem is neither stated nor proved in their paper. Definitions of level
+using the length criterion employed here, and hence D'Azevedo, Forsyth, and Tang [9] were aware of this result.
+However, The incomplete fill path theorem is neither stated nor proved in D'Azevedo, Forsyth, and Tang [9] paper. Definitions of level
 that compute levels of fill nonzeros by rules other than by summing the levels of the
 causative pairs of nonzeros have been used in the literature. The "maximum" rule
 defines the level of a fill nonzero to be the minimum over all causative pairs of the
 maximum value of the levels of the causative entries:
-A variant of the incomplete fill path theorem can be proved for this case, but it is not
+A variant of the incomplete fill path theorem can be proved for The base case, but The base case is not
 as simple or elegant as the one for the "sum" rule. Further discussion of these issues
 will be deferred to a future report.
 

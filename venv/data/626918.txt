@@ -1,7 +1,8 @@
 --T
 A Comparison of Trace-Sampling Techniques for Multi-Megabyte Caches.
 --A
-The paper compares the trace-sampling techniques of set sampling and time sampling. Using the multi-billion reference traces of A. Borg et al. (1990), we apply both techniques to multi-megabyte caches, where sampling is most valuable. We evaluate whether either technique meets a 10% sampling goal: a method meets this goal if, at least 90% of the time, it estimates the trace's true misses per instruction with /spl les/10% relative error using /spl les/10% of the trace. Results for these traces and caches show that set sampling meets the 10% sampling goal, while time sampling does not. We also find that cold-start bias in time samples is most effectively reduced by the technique of D.A. Wood et al. (1991). Nevertheless, overcoming cold-start bias requires tens of millions of consecutive references.
+A Comparison of Trace-Sampling Techniques for Multi-Megabyte Caches.
+ compares the trace-sampling techniques of set sampling and time sampling. Using the multi-billion reference traces of A. Borg et al. (1990), we apply both techniques to multi-megabyte caches, where sampling is most valuable. We evaluate whether either technique meets a 10% sampling goal: a method meets this goal if, at least 90% of the time, it estimates the trace's true misses per instruction with /spl les/10% relative error using /spl les/10% of the trace. Results for these traces and caches show that set sampling meets the 10% sampling goal, while time sampling does not. We also find that cold-start bias in time samples is most effectively reduced by the technique of D.A. Wood et al. (1991). Nevertheless, overcoming cold-start bias requires tens of millions of consecutive references.
 --B
 Introduction
 Computer designers commonly use trace-driven simulation to evaluate alternative CPU caches [SMIT82].
@@ -11,7 +12,7 @@ expensive to obtain, store, and use.
 We can avoid simulating long traces by using trace-sampling techniques. Let the cache performance of a
 small portion of the trace be an observation and a collection of observations be a sample. Sampling theory tells
 1. R. E. Kessler was supported in part by a summer internship at Digital Equipment Corporation and graduate fellowships
-from the National Science Foundation and the University of Wisconsin Alumni Research Foundation. He is now employed
+from the National Science Foundation and the University of Wisconsin Alumni Research Foundation. R. E. Kessler is now employed
 by Cray Research, Inc. Mark D. Hill is supported in part by the National Science Foundation (MIPS-8957278 and
 CCR-8902536), A.T.& T. Bell Laboratories, Cray Research Foundation and Digital Equipment Corporation. David A.
 Wood is supported in part by the National Science Foundation (CCR-9157366) and the University of Wisconsin Graduate
@@ -29,8 +30,8 @@ Figure
 This figure shows a time-space diagram of a simulation with a very short trace. The time (position within
 the trace) and cache set of each reference is marked with an -. An observation in set sampling is the cache
 performance of one set. References that determine a single set's performance appear in an horizontal slice
-of this figure. An observation in time sampling is the cache performance of an interval of consecutive
-references. These references appear in a vertical slice of this figure.
+of This figure. An observation in time sampling is the cache performance of an interval of consecutive
+references. References that determine a single set's performance appear in a vertical slice of This figure.
 how to predict cache performance of the full trace, given a random sample of unbiased observations [MIFJ90].
 With additional assumptions, we can also estimate how far the true value is likely to be from the estimate.
 Two important trace-sampling techniques are set sampling [HEIS90, PUZA85] and time sampling
@@ -40,7 +41,8 @@ references in a single time-contiguous trace interval (a vertical slice in Figur
 This study is the first to compare set sampling and time sampling. Using billion-reference traces of large
 workloads that include multiprogramming but not operating system references [BOKW90], we examine how well
 these methods predict mean misses per instruction (MPI) for multi-megabyte caches. We say a sampling method
-is effective if it meets the following goal:
+is effective if a sampling method
+ meets the following goal:
 2. Laha et al. [LAPI88] and Wood et al. [WOHK91] referred to an observation of references in a time-contiguous interval
 as a "sample". We use sample to refer to a collection of observations to be consistent with statistics terminology
 [MIFJ90].
@@ -51,7 +53,7 @@ For set-sampling we find several results. First, calculating the MPI for a sampl
 all sets is much more accurate than using only instruction fetches to the sampled sets. Second, instead of selecting
 the sets in a sample at random, selecting sets that share several index bit values reduces simulation time, facilitates
 the simulation of cache hierarchies, and still accurately predicts the trace's MPI. Third, and most important, set
-sampling is effective. For our traces and caches, it typically meets the 10% sampling goal.
+sampling is effective. For our traces and caches, the trace's MPI typically meets the 10% sampling goal.
 For time-sampling, we first compare techniques for overcoming cold-start bias [EASF78], i.e., determining
 the MPI for a particular trace interval without knowing the initial cache state. We consider leaving the cold-start
 bias unchanged, recording metrics only during the second half of each interval, recording metrics only for initialized
@@ -66,7 +68,8 @@ time sampling for estimating MPI. Time sampling will still be preferred, however
 behavior (e.g., prefetching) or interactions between sets (e.g., a single write buffer).
 We do not consider other (non-sampling) techniques that reduce trace data storage, such as, Mache
 [SAMP89], stack deletion and snapshot method [SMIT77], trace (tape) stripping [PUZA85, WANB90], or exploiting
-spatial locality [AGAH90]. These techniques can be used in addition to the sampling considered in this study. We
+spatial locality [AGAH90]. other (non-sampling) techniques that reduce trace data storage, such as, Mache
+[SAMP89] can be used in addition to the sampling considered in this study. We
 also do not consider Przybylski's prefix technique [PRZY88], which prepends all previously-referenced unique
 addresses to each time-observation. This method seems unattractive for multi-megabyte caches where each time-
 observation requires its own prefix and each prefix must be very large for programs that can exercise multi-megabyte
@@ -74,51 +77,50 @@ caches.
 Section 2 describes our methods. Section 3 and 4 examine set sampling and time sampling, respectively.
 Finally, Section 5 summarizes our results.
 2. Methodology
-This section describes the traces, cache configurations, and performance metric we use in later sections.
+Section 5 describes the traces, cache configurations, and performance metric we use in later sections.
 2.1. The Traces
-The traces used in the study were collected at DEC Western Research Laboratory (WRL)
+The traces used in this study were collected at DEC Western Research Laboratory (WRL)
 [BOKL89, BOKW90] on a DEC WRL Titan [NIEL86], a load/store ("RISC") architecture. Each trace consists of
 the execution of three to six billion instructions of large workloads, including multiprogramming but not operating
 system references. The traces reference from eight to over one hundred megabytes of unique memory locations.
-These traces are sufficiently long to overcome the cold-start intervals of even the large caches considered in this
-study. We chose programs with large memory requirements since we predict large application sizes will be more
+The traces used in the study are sufficiently long to overcome the cold-start intervals of even the large caches considered in this
+study. We chose programs with large memory requirements since We predict large application sizes will be more
 common as main memories of hundreds of megabytes become available.
 The traces of the multiprogrammed workloads represent the actual execution interleaving of the processes
-on the traced system. The Mult2 trace includes a series of compiles, a printed circuit board router, a VLSI design
+on the traced system. Each trace includes a series of compiles, a printed circuit board router, a VLSI design
 rule checker, and a series of simple programs commonly found on UNIX 3 systems, all executing in parallel (about
 megabytes active at any time) with an average of 134,000 instructions executed between each process switch.
-The Mult2.2 trace is the Mult2 workload with a switch interval of 214,000 instructions. The Mult1 trace includes
-the processes in the Mult2 trace plus an execution of the system loader (the last phase of compilation) and a
-Scheme (Lisp variant) program (75 megabytes active) and has a switch interval of 138,000 instructions. The
-Mult1.2 trace is the Mult1 workload with a switch interval of 195,000 instructions. The trace is of a VLSI
+Each trace is the Mult2 workload with a switch interval of 214,000 instructions. Each trace includes
+the processes in Each trace plus an execution of the system loader (the last phase of compilation) and a
+Scheme (Lisp variant) program (75 megabytes active) and has a switch interval of 138,000 instructions. Each trace is the Mult1 workload with a switch interval of 195,000 instructions. Each trace is of a VLSI
 timing verifier (96 megabytes). Sor is a uniprocessor successive-over-relaxation algorithm that uses large, sparse
 matrices (62 megabytes). Tree is a Scheme program that searches a large tree data structure (64 megabytes). Lin
 is a power supply analyzer that uses sparse matrices (57 megabytes).
 2.2. Cache Configuration Assumptions
-This study focuses on multi-megabyte unified (mixed) caches, where we expect trace sampling to be most
+this study focuses on multi-megabyte unified (mixed) caches, where we expect trace sampling to be most
 useful. We vary the size and set-associativity of these caches over a range of 1-megabyte to 16-megabytes and
 direct-mapped to four-way. The caches do no prefetching, use write-back and write-allocate policies, and have
-128-byte blocks. The non-direct-mapped caches use a random replacement policy. We do not expect the
+128-byte blocks. The caches use a random replacement policy. We do not expect the
 3. Trademark AT&T Bell Laboratories.
 replacement policy to affect sampling accuracy since, for example, least-recently-used replacement eliminates at
 most 15% of the cache misses for these caches [KESS91]. The caches use virtual-indexing with PID-hashing, an
-approximation to real-indexing 4 . We also examined a several real-indexed caches and found that they produced
+approximation to real-indexing 4 . We also examined a several real-indexed caches and found that a several real-indexed caches produced
 results similar to those in this paper, which is not surprising since real-indexed cache performance is often close to
 virtual-indexed cache performance.
-Since multi-megabyte caches are likely to be used in a cache hierarchy, we simulate them as alternative
+Since multi-megabyte caches are likely to be used in a cache hierarchy, we simulate multi-megabyte caches are likely to be used in a cache hierarchy as alternative
 secondary caches placed behind a fixed primary cache configuration. The primary caches are split (separate)
 instruction and data caches that are 32-kilobytes each, direct-mapped, 32-byte blocks, do no prefetching, use virtual
 indexing, and write-back and write-allocate policies. We do not evaluate primary cache tradeoffs in this
-study since secondary cache performance is unaffected by the primary caches when their sizes differ by at least a
+study since secondary cache performance is unaffected by the primary caches when the primary caches sizes differ by at least a
 factor of eight [PRHH89].
 2.3. The Performance Metric: Misses Per Instruction
 We measure cache performance with misses per instruction (MPI) rather than miss ratio 5 . Since we only
 use MPI to compare the performance of alternative unified secondary caches, MPI is equivalent to Przybylski's
-global miss ratio [PRHH89]. Specifically, a cache's MPI is equal to its global miss ratio times the average number
+global miss ratio [PRHH89]. Specifically, a cache's MPI is equal to a cache's MPI global miss ratio times the average number
 of processor references (instruction fetches and data references) per instruction.
 3. Set Sampling
 We first examine set sampling, where an observation is the MPI of a single set and a sample is a collection
-of single-set observations. Section 3.1 discusses how to compute a set sample's MPI and why it should not contain
+of single-set observations. Section 3.1 discusses how to compute a set sample's MPI and why a set sample's MPI should not contain
 random sets, while Section 3.2 examines how well set sampling predicts MPI long , the MPI of a full trace.
 4. Caches that use virtual-indexing select the set of reference using the reference's virtual address, while those that use
 real-indexing select with the real address. PID-hashing means that we exclusive-or the upper eight index bits from the virtual
@@ -128,7 +130,7 @@ tion, data, secondary), because MPI implicitly factors in how often a cache is a
 average miss penalty directly gives the cycles per instruction (CPI) lost because of that cache's misses [HENP90].
 3.1. Constructing Set Samples
 3.1.1. Calculating the MPI of a Sample
-Consider a cache with s sets, numbered 0 to s -1. For each set i, let miss i and instrn i be the number of the
+Consider a cache with s sets, numbered 0 to S -1. For each set i, let miss i and instrn i be the number of the
 misses and instruction fetches to set i. Let S be a sample containing n sets. We consider two ways to calculate the
 MPI of sample S, MPI - S . The sampled-instructions method divides the mean misses to sets in sample S by the
 mean instruction fetches to sets in sample S: 6
@@ -137,20 +139,21 @@ while the all-instructions method divides by the mean instruction fetches to all
 MPI
 s
 # .
-We compare the two methods by computing their coefficients of variation across all set samples S (j)
+We compare the two methods by computing the two methods coefficients of variation across all set samples S (j)
 obtained with the constant-bits method, described in Section 3.1.2.:
 long
 long
 where M is the number of samples.
 Experimental results, illustrated in Table 1, show that the all-instructions method performs much better,
 never having a coefficient of variation more than one-tenth the sampled-instructions method. The difference is
-infinite for the Sor and Lin traces because loops confine many instruction fetches to a few sets. We also investigated
+infinite for the Sor and Lin
+ traces because loops confine many instruction fetches to a few sets. We also investigated
 normalizing miss i with total references per set and data references per set [KESS91]. These methods
 6. We do not consider calculating MPI - S with n#
 miss i
 # , because Puzak [PUZA85] showed estimating miss ratio
 with the arithmetic mean of the per-set miss ratios is inferior to dividing the misses to sampled sets by the references to
-sampled sets (the miss-ratio equivalent of the sampled-instructions method). For a sample containing all sets, Puzak's
+sampled sets (the miss-ratio equivalent of the sampled-instructions method). For a sample containing all sets, Puzak
 work also implies s#
 miss i
 long .
@@ -176,16 +179,16 @@ A minor disadvantage of the all-instructions method is that when gathering the r
 must also count instruction fetches to all sets. Since we believe this drawback is out-weighed by the experimental
 results, we will use the all-instructions method throughout this paper.
 3.1.2. The Constant-Bits Method
-We now examine two methods for selecting sets to form a sample. We use an example to show a disadvantage
+we now examine two methods for selecting sets to form a sample. we use an example to show a disadvantage
 of selecting sets at random and introduce the constant-bits method to overcome the disadvantage.
 Assume that we want to evaluate three caches with samples that contain about 1/16-th the references in a
-full trace. Let the caches choose a reference's set with bit selection (i.e., the index bits are the least-significant
+full trace. Let three caches choose a reference's set with bit selection (i.e., the index bits are the least-significant
 address bits above the block offset) and have the following parameters:
 Cache A: 32-kilobyte direct-mapped cache with 32-byte blocks (therefore its index bits are bits 14-5, assuming
 references are byte addresses with bit 0 being least-significant),
 Cache B: 1-megabyte two-way set-associative cache with 128-byte blocks (index bits 18-7), and
 Cache C: 16-megabyte direct-mapped cache with 128-byte blocks (index bits 23-7).
-One method for selecting the sets in a sample is to choose them at random [PUZA85]. To evaluate cache A
+One method for selecting the sets in a sample is to choose the sets at random [PUZA85]. To evaluate cache A
 with references to random sets, we randomly select 64 of its 1024 sets (1/16-th), filter the full trace to extract
 e
 three
@@ -256,10 +259,10 @@ Figure
 3. Using Constant-Bits Samples with a Hierarchy.
 This figure illustrates how to use constant-bits samples to simulate a primary cache (P) and three alternative
 secondary caches (A, B and C).
-values) in address bits 11-8. If the filtered trace is used with cache A, it will select all sets with binary index
-xxx0000xxx, where "x" is either 0 or 1. Since this index pattern has six x's, it identifies 64 (2 6 ) of the 1024
+values) in address bits 11-8. If the filtered trace is used with cache A, the filtered trace will select all sets with binary index
+xxx0000xxx, where "x" is either 0 or 1. Since this index pattern has six x's, this index pattern identifies 64 (2 6 ) of the 1024
 sets in cache A. For caches B and C, the filtered trace selects sets with indices xxxxxxx0000x and
-xxxxxxxxxxxx0000x, respectively. More generally, we can then use this filtered trace to select 1/16-th of the
+xxxxxxxxxxxx0000x, respectively. More generally, we can then use the filtered trace to select 1/16-th of the
 sets in any cache whose block size is 256 bytes or less and whose size divided by associativity exceeds 2 kilo-
 bytes. These include both primary caches (32-byte blocks, kilobytes, direct-mapped) and all secondary caches
 (128-byte blocks, 1-16 megabytes, 1-4-way set-associative) considered in this paper.
@@ -268,7 +271,7 @@ constant-bits samples reduces simulation time by allowing a filtered trace to dr
 one alternative cache. Second, constant-bits samples make it straightforward to simulate hierarchies of caches
 (when all caches index with the constant bits). As illustrated in Figure 3, we may simulate the primary cache once
 and then use a trace of its misses to simulate alternative secondary caches.
-A potential disadvantage of constant-bits samples is they may work poorly for workloads that use their
+A potential disadvantage of constant-bits samples is constant-bits samples may work poorly for workloads that use constant-bits samples
 address space systematically (e.g., frequent accesses to a large, fixed stride vector). Experimental evidence, how-
 ever, suggests that constant-bits sampling is effective. Figure 4 illustrates the accuracy of constant bits sampling
 Instructions Executed (Billions)312Misses
@@ -278,12 +281,14 @@ Set-Sampled Mult1.2 MPI Over Time
 Figure
 
 4. Set Sampling on the Mult1.2 Trace.
-For every 100 million instructions, this figure shows the actual MPI's (solid line) with the predicted MPI's
+For every 100 million instructions, Figure
+
+4 shows the actual MPI's (solid line) with the predicted MPI's
 from each of 16 different set samples (dotted lines) for the Mult1.2 trace with a 4-megabyte direct-mapped
 cache. Each sample includes only references that have the same value for address bits 11-8 (i.e., bits 11-8
 are the constant bits), assuming that references are byte addresses with bit 0 being least-significant Since
 four bits are used to select references, each of the 16 samples contains an average of 1/16-th of the trace.
-for the Mult1.2 trace. For every 100 million instructions, it plots the true MPI for the interval and the MPI
+for the Mult1.2 Trace. For every 100 million instructions, the Mult1.2 Trace plots the true MPI for the interval and the MPI of a Sample
 obtained from 16 set samples (each about 1/16 of the references of the full trace). In this example, the set samples
 are almost indistinguishable from the true MPI. More generally, we found constant-bits samples to be
 equally or more accurate than random samples with multi-megabyte caches [KESS91]. Thus, we use the
@@ -322,7 +327,8 @@ variation of the set-sampling MPI estimates, calculated using Equation 1. We con
 constant-bits method. Samples containing 1/4 the sets in the cache have bits 9-8 constant. Samples for
 1/16 and 1/64 use bits 11-8 and 12-7, respectively. Some entries marked "N/A" are not available, because
 the PID hashing overlapped with the constant bits. Except where marked with a dagger (+), at least 90% of
-the samples have relative errors of less than or equal to -10%.
+Samples for
+1/16 and 1/64 have relative errors of less than or equal to -10%.
 The key result is that, for this data and for four-way set-associative caches not shown here, set sampling
 generally meets the 10% sampling goal. Consider the columns labeled "1/16" in Tables 2 and 3, which
 correspond to samples using 1/16-th of the sets and therefore will contain less than 10% of the trace on average.
@@ -351,7 +357,7 @@ samples have relative errors of less than or equal to -10%.
 four should double the coefficient of variation [MIFJ90, STON90]. Indeed, there is good evidence that this is the
 case (see, for example, the row for Mult1.2 with a 4-megabyte cache). Second, increasing associativity from
 direct-mapped to two-way reduces corresponding coefficients of variation by more than 50%. We conjecture that
-set sampling works better for two-way set-associative caches because they have fewer conflict misses than direct-mapped
+set sampling works better for two-way set-associative caches because two-way set-associative caches have fewer conflict misses than direct-mapped
 caches [HILS89]. A high rate of conflict misses to a few sets can make those sets poor predictors of
 overall behavior.
 Finally, in practical applications of set sampling, we want to estimate the error of an MPI estimate, using
@@ -373,7 +379,9 @@ All 89% 93% 91%
 Table
 
 4. Set-Sampling Error Prediction.
-For a 4-megabyte direct-mapped secondary cache and various traces and fraction of sets, this table gives
+For a 4-megabyte direct-mapped secondary cache and various traces and fraction of sets, Table
+
+4 gives
 the fraction and percent of 90% confidence intervals that contained MPI long . Since the percentages are
 near 90%, confidence intervals usefully estimate how far MPI - S is likely to be from MPI long .
 sample includes 1/4-th of all sets) [KESS91, MIFJ90].
@@ -392,7 +400,7 @@ can accurately characterize the MPI of a full trace, including its temporal vari
 requirements of set sampling allow for simulation of longer traces, and therefore more algorithmic phases, in a
 smaller amount of time. Besides the data reduction, set sampling also reduces the memory required to simulate a
 cache. A set sample containing 1/16 of the full trace needs to simulate only 1/16 of the sets.
-sampling does have its limitations. Even with the constant bits method, the full trace must be retained if
+sampling does have the sets limitations. Even with the constant bits method, the full trace must be retained if
 one wishes to study caches that do not index with the constant bits. Furthermore, set sampling may not accurately
 model caches whose performance is affected by interactions between references to different sets. The
 effectiveness of a prefetch into one set, for example, may depend on how many references are made to other sets
@@ -400,7 +408,8 @@ before the prefetched data is first used. Similarly, the performance of a cache 
 by how often write buffer fills up due to a burst of writes to many sets.
 4. Time Sampling
 The alternative to set sampling is time sampling. Here an observation is the MPI of a sequence of time-
-contiguous references and is called an interval. Section 4.1 discusses determining the MPI for a sample, while
+contiguous references and is called an interval. Section 4.1 discusses determining the MPI of a sequence of time-
+contiguous references for a sample, while
 Section 4.2 examines using a sample to estimate MPI for the full trace.
 4.1. Reducing Cold-Start Bias in Time Samples
 To significantly reduce trace storage and simulation time, we must estimate the true MPI for an interval
@@ -414,37 +423,38 @@ These potential misses are often called cold-start misses [EASF78].
 HALF HALF uses the first half of the instructions in an interval to (partially) initialize the cache, and estimates
 MPI with the remaining instructions.
 PRIME PRIME estimates MPI with references to "initialized" sets. A set in a direct-mapped cache is initialized
-once it is filled [STON90], while a set in a set-associative cache is initialized after it is filled and a
+once A set in a direct-mapped cache is filled [STON90], while a set in a set-associative cache is initialized after it is filled and a
 non-most-recently-used block has been referenced [LAPI88].
 STITCH STITCH approximates the cache state at the beginning of an interval with the cache state at the end of
-the previous interval [AGHH88]. Thus one creates a trace for a sample by stitching it's intervals
+the previous interval [AGHH88]. Thus one creates a trace for a sample by stitching a sample's intervals
 together.
 INITMR Like COLD, INITMR simulates an interval beginning with an empty initial cache state. Instead of
 assuming that all cold-start misses miss, however, INITMR uses Wood et al.'s - split to estimate the
 fraction of cold-start misses that would have missed if the initial cache state was known [WOHK91].
 The estimate is based on (1) the fraction of time that a cache block frame holds a block that will not
-be referenced before it is replaced, and (2) the fraction of the cache loaded during the cold-start simulation
+be referenced before The estimate is replaced, and (2) the fraction of the cache loaded during the cold-start simulation
 of an interval. When we could not estimate (1) with the references in an interval, we assume it
 to be 0.7.
-For a particular trace and cache, we evaluate a cold-start technique as follows. We select the number of
+For a particular trace and cache, we evaluate a cold-start technique as follows. we select the number of
 instructions in an interval, called the interval length, and collect a sample S of n =30 intervals spaced equally in
-the trace. We use the cold-start technique to estimate the MPI for each interval, mpi - i , and calculate an MPI estimate
+the trace. we use the cold-start technique to estimate the MPI of a sequence of time-
+contiguous references for each interval, mpi - i , and calculate an MPI estimate
 for sample S with
 MPI
-Since we have the full trace, we can simulate each interval with its initial cache state to determine the
+Since we have the Full Trace, we can simulate each interval with its initial cache state to determine the
 interval's true MPI, mpi i , and calculate the true MPI for the sample, MPI S , with n#
 We evaluate how
 well a technique reduces cold-start bias in a sample S with 9 :
 # .
-It is important to note that MPI S is not the same as MPI long . In Section 4.2, we will examine how well a time sample
+It is important to note that MPI - S is not the same as MPI long . In Section 4.2, we will examine how well a time sample
 predicts the full trace MPI; here we seek to mitigate the cold-start bias of MPI - S .
 We evaluate BIAS S for five cold-start techniques, eight traces, four interval lengths (100 thousand, 1 mil-
 lion, 10 million, and 100 million instructions), three cache sizes (1, 4, and 16 megabytes) and two associativities
 (direct-mapped and four-way). Since space precludes us from displaying 192 cases for each cold-start technique,
-we present several subsets of the data.
+us present several subsets of the data.
 For a 10-million-instruction interval length, Tables 5 and 6 display BIAS S for direct-mapped and four-way
-set-associative caches, respectively. The data show several trends. First, COLD, HALF and STITCH tend to
-overestimate MPI S . COLD does so because it assumes that all cold-start misses miss. Similarly, HALF tends to
+set-associative caches, respectively. the data show several trends. First, COLD, HALF and STITCH tend to
+overestimate MPI - S . COLD does so because it assumes that all cold-start misses miss. Similarly, HALF tends to
 8. Since with time sampling each interval has the same number of instructions, it is meaningful to compute MPI - S with
 the arithmetic mean of the mpi - i 's.
 9. We calculate BIAS S for PRIME with the secondary cache's local miss ratio rather than MPI, because counting the
@@ -465,16 +475,16 @@ Table
 5. Bias of Cold-Start Techniques With Direct-Mapped Caches.
 This table displays BIAS S for five cold-start techniques, eight traces, interval length of 10 million instruc-
 tions, three direct-mapped cache sizes (1, 4, and 16 megabytes).
-overestimate MPI S when the first half of the trace does not sufficiently fill the cache. HALF can underestimate the
+overestimate MPI - S when the first half of the trace does not sufficiently fill the cache. HALF can underestimate the
 sample's MPI, however, when the second half of most of a sample's intervals have a lower MPI than the whole of
-each interval. We believe STITCH overestimates MPI S , because (due to temporal locality) references are less
+each interval. We believe STITCH overestimates MPI - S , because (due to temporal locality) references are less
 likely to miss when simulated with an interval's true initial state than with the final state from the previous interval
-[WOOD90]. Second, PRIME underestimates MPI S for direct-mapped caches. PRIME calculates MPI S by effectively
+[WOOD90]. Second, PRIME underestimates MPI - S for direct-mapped caches. PRIME calculates MPI S by effectively
 assuming that cold-start misses are as likely to miss as any other reference. Wood et al. [WOHK91] have
 shown, however, that this assumption is false, and that cold-start misses are much more likely to miss than
 randomly-chosen references. PRIME is more accurate for four-way set-associative caches, where the heuristic of
 ignoring initial references to a most-recently-referenced block mitigates the underestimation. Third, INITMR did
-not consistently underestimate or overestimate MPI S . Finally, the large biases for the Lin trace with 4- and 16-
+not consistently underestimate or overestimate MPI - S . Finally, the large biases for the Lin trace with 4- and 16-
 megabyte caches are probably not important, because the true MPI's are so small.
 e
 Trace Size MPI S - 1000 COLD HALF PRIME STITCH INITMR
@@ -488,7 +498,7 @@ Lin
 Table
 
 6. Bias of Cold-Start Techniques With Four-Way Set-Associativity.
-This table displays BIAS S for five cold-start techniques, eight traces, interval length of 10 million instruc-
+This table displays MPI - S for five cold-start techniques, eight traces, interval length of 10 million instruc-
 tions, three four-way set-associative cache sizes (1, 4, and 16 megabytes).
 
 Table
@@ -534,7 +544,7 @@ Table
 8 also illustrates, however, we can determine when INITMR is likely to perform well. We
 marked each entry in the table with an asterisk ("*") if, on average, the interval length was sufficient to (a) fill at
 least half the cache and (b) there were at least as many misses to full sets as cold-start misses. All values Bias S
-marked with an asterisk are less than -10%. Nevertheless, they imply that for multi-megabyte caches each interval
+marked with an asterisk are less than -10%. Nevertheless, less than -10% imply that for multi-megabyte caches each interval
 should contain more instructions than have previously been present in many "full" traces.
 Cache Interval Length (Millions of Instructions)
 Trace Size MPI long - 1000
@@ -572,22 +582,22 @@ This figure displays cones for MPI - S (left) and MPI S (right) for the Mult1.2 
 cache. For an interval length and sample size (whose product gives the fraction of the trace used)
 the height of a cone displays the range of the middle 90% of estimates from many samples.
 4.2. What Fraction of the Full Trace is Needed?
-This section examines how accurately time samples estimate MPI long , the MPI of the full trace. We estimate
+This section examines how accurately time samples estimate MPI long , the MPI of the Full Trace. We estimate
 the MPI of a sample S, MPI - S , with the arithmetic mean of MPI estimates for each interval in the sample,
 where we use INITMR to reduce cold-start bias of each interval.
 Figure 5a illustrates how we summarize the data 10 . For the Mult1.2 traces and a 4-megabyte direct-mapped
-cache, it plots MPI - S /MPI long on the logarithmic y-axis and the fraction of the full trace contained in the sample on
+cache, the data 10 plots MPI - S /MPI long on the logarithmic y-axis and the fraction of the full trace contained in the sample on
 the logarithmic x-axis. Consider the cone at the far left. We use 3000 1-million-instruction intervals to calculate
 its shape. The left edge, near 0.00025, gives the fraction of the trace used in a sample of one interval. We determine
 the end-points of the left edge with the empirical distribution of MPI - S for single-interval samples. The upper
 end-point gives the 95-th percentile, while the lower gives the 5-th percentile. Thus, the length of the left edge is
-10. We use a visual display here instead of coefficient of variation, because we believe it provides more insight. We did
-not use a visual display with set sampling, because we did not have enough samples to smooth the data.
+10. We use a visual display here instead of coefficient of variation, because We believe it provides more insight. We did
+not use a visual display with set sampling, because We did not have enough samples to smooth the data.
 the range of the middle 90% of the MPI - S 's. We compute other vertical slices similarly. A vertical line (not
-shown) in the same cone at example, gives the range of the middle 90% of the MPI S 's for
+shown) in the same cone at example, gives the range of the middle 90% of MPI - S for
 samples of 40 intervals each. The other two cones are for interval lengths of 10 million instructions (300 inter-
-vals) and 100 million instructions (30 intervals). The right graph gives similar data for MPI S , where we calculate
-the MPI of each interval with its true initial cache state.
+vals) and 100 million instructions (30 intervals). The right graph gives similar data for MPI - S , where we calculate
+the MPI of each interval with the MPI of each interval true initial cache state.
 time sample would meet the 10% sampling goal (Definition 1) if the sample's size times the length of
 each interval were less than 10% of the trace (e.g., to the left of x-axis value 0.1 in Figure 5a), the lower point on
 the appropriate cone falls between above 0.9 and 1.1 (on the y-axis) Unfortunately, none of the three cones for
@@ -599,9 +609,8 @@ cones for the single applications, Tree, Tv, Sor and Lin, are more idiosyncratic
 behavior. The cones of Sor, for example, are skewed by Sor's behavior of alternating between low and high MPI
 (with a period of around 300 million instructions [BOKW90]). For these traces and caches (and for direct-mapped
 and four-way, 1- and 16-megabyte caches [KESS91]), time sampling fails to meet the 10% sampling goal.
-Nevertheless, this data provides several insights into time sampling. First, the cones for MPI S (Figure 5b)
-are vertically centered on 1.0 and have a shape similar to those of MPI - S (left). This data and data for other traces
-(not shown) suggest that MPI S and MPI - S have different means but similar distributions. Therefore, it appears that
+Nevertheless, the data 10 provides several insights into time sampling. First, the cones for MPI S (Figure 5b)
+are vertically centered on 1.0 and have a shape similar to those of MPI - S (left). the data 10 suggest that MPI - S and MPI - S have different means but similar distributions. Therefore, it appears that
 looking for better ways of mitigating cold-start bias in an interval (or sample) can be decoupled from examining
 how well samples tend to predict MPI long .
 Second, the height of the cones tends to vary as one over the square root of the sample size (number of
@@ -609,7 +618,7 @@ intervals per sample). This suggests that mpi - i 's are behaving as independent
 variables [MIFJ90].
 Third, even if we eliminate cold-start bias, accurate estimates of MPI long must use hundred of millions of
 instructions to capture temporal workload variations. With Mult1.2 and a 4-megabyte direct-mapped cache, Figure
-5b shows that MPI S is within 10% of MPI long (for 90% of the samples examined) only with samples of 200
+5b shows that MPI - S is within 10% of MPI long (for 90% of the samples examined) only with samples of 200
 intervals of length 1 million instructions, 10-million-instruction intervals, or 20 100-million-instruction intervals
 11 . This is roughly a factor of three decrease in sample size as interval length is multiplied by ten.
 11. For much smaller caches, Laha et al. found a sample size of 35 intervals to be sufficient [LAPI88].
@@ -619,9 +628,10 @@ approximately 90% of the time. In most cases, however, the 90% confidence interv
 90% of the time, because cold-start bias (that was not removed by INITMR) prevents the distribution of MPI - S
 from being centered on MPI long . Furthermore, the confidence intervals provide no information on the magnitude
 of cold-start bias. Confidence intervals did work in a few cases where samples contained 30 or more intervals and
-interval lengths were long enough to make cold-start bias negligible [KESS91]. These cases, however, failed to
+interval lengths were long enough to make cold-start bias negligible [KESS91]. a few cases where samples contained 30 or more intervals and
+interval lengths, however, failed to
 meet the 10% sampling goal because the samples contained much more than 10% of the trace. Confidence intervals
-also worked for MPI S (whose expected value is MPI long because it has no cold-start bias), when samples contain
+also worked for MPI - S (whose expected value is MPI long because it has no cold-start bias), when samples contain
 at least
 4.3. Advantages and Disadvantages of Time Sampling
 The major advantage of time sampling is that it is the only sampling technique available for caches with
@@ -629,7 +639,8 @@ timing-dependent behavior (e.g., that prefetch or are lockup-free [KROF81]) or s
 write buffers or victim caching [JOUP90]). Furthermore, the cold-start techniques for time sampling can be
 applied to any full-trace simulation, since a "full" trace is just a long observation from a system's workload.
 However, in these simulations, time sampling fails to meet the 10% sampling goal for multi-megabyte
-caches, because it needed long intervals to mitigate cold-start bias and many intervals to capture temporal work-load
+caches, because the 10% sampling goal for multi-megabyte
+caches needed long intervals to mitigate cold-start bias and many intervals to capture temporal work-load
 variation. These results suggest that unless researchers develop better cold-start techniques, set sampling is
 more effective than time sampling at estimating the MPI of multi-megabyte caches.
 Fraction of Full Trace Data10Ratio
@@ -678,15 +689,15 @@ A straightforward application of trace-driven simulation to multi-megabyte cache
 that strain computing resources. Resource demands can be greatly reduced using set sampling or time sampling.
 sampling estimates cache performance using information from a collection of sets, while time sampling uses
 information from a collection of trace intervals. This study is the first to apply both techniques to large caches,
-where they are most useful. We use billion-reference traces of large workloads that include multiprogramming
+where both techniques are most useful. We use billion-reference traces of large workloads that include multiprogramming
 but not operating system references [BOKW90]
-For set sampling we obtained several results. First, calculating the MPI (misses per instruction) for a sample
+For set sampling We obtained several results. First, calculating the MPI (misses per instruction) for a sample
 using the number of instruction fetches to all sets is much more accurate than using only the number of
 instruction fetches in the sample. Second, constructing samples from sets that share some common index bit
 values works well, since such samples can be used to accurately predict the MPI of multiple alternative caches
 and caches in hierarchies. Third, sets behave sufficiently close to normal that confidence intervals are meaningful
 and accurate. Last and most important, set sampling meets the 10% sampling goal: using -10% of the references
-in a trace it estimates the trace's true MPI with -10% relative error and at least 90% confidence.
+in a trace the 10% sampling goal estimates the trace's true MPI with -10% relative error and at least 90% confidence.
 Results sampling include the following. First, Wood et al.'s - split was the most effective technique
 for reducing cold-start bias, although using half the references in a trace interval to (partially) initialize a cache
 often performed well. Second, interval lengths must be long to mitigate cold-start bias (10 million instructions for
@@ -694,22 +705,22 @@ often performed well. Second, interval lengths must be long to mitigate cold-sta
 16-megabyte caches). Third and most important, for these traces and caches, time sampling does not meet the
 10% sampling goal: we needed more than 10% of a trace to get (trace) interval lengths that adequately mitigated
 cold-start bias and have enough intervals in a sample to make accurate predictions.
-Thus, we found that for our traces, set sampling is more effective than time sampling for estimating MPI of
+Thus, we found that for we traces, set sampling is more effective than time sampling for estimating MPI of
 the multi-megabyte caches. Time sampling will be preferred, however, when set sampling is not applicable, such
 as for caches that have time-dependent behavior (e.g., prefetching) or structures used by many sets (e.g., write
 buffers).
 As with any experimental work, our results are sure to hold only for the specific cases examined. Neverthe-
-less, we expect our results to extend to other similar cache configurations and to other user-mode traces from similar
+less, we expect we to extend to other similar cache configurations and to other user-mode traces from similar
 workloads. It is an open questions whether our results apply to traces dominated by operating system activity
 or radically different user-mode workloads.
 6.
 
 Acknowledgments
 
-We would like to thank The Western Research Laboratory of Digital Equipment Corporation, especially
-Anita Borg and David Wall, for the traces used in this study. Joel Bartlett, Renato De Leone, Jeremy Dion, Norm
+we would like to thank The Western Research Laboratory of Digital Equipment Corporation, especially
+Anita Borg and David Wall, for the traces used in This study. Joel Bartlett, Renato De Leone, Jeremy Dion, Norm
 Jouppi, Bob Mayo, and Don Stark all were a tremendous help in providing traceable applications. Paul Vixie and
-Colleen Hawk helped to store the traces. Paul Beebe and the Systems Lab were able to satisfy our enormous computing
+Colleen Hawk helped to store the traces used in this study. Paul Beebe and the Systems Lab were able to satisfy our enormous computing
 needs. Mike Litzkow and Miron Livny adapted Condor to the requirements of these simulations. Harold
 Stone gave comments on an earlier version of this work, while Sarita Adve, Vikram Adve and Garth Gibson scrutinized
 this paper.

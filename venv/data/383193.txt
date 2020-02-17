@@ -1,8 +1,8 @@
 --T
 Hash based parallel algorithms for mining association rules.
 --A
-In this paper, we propose four parallel algorithms (NPA, SPA, HPA and  HPA-ELD) for mining association rules on shared-nothing parallel machines to improve its performance.
-In NPA, candidate itemsets are just copied amongst all the processors which can lead to memory overflow for large transaction databases. The remaining three algorithms partition the candidate itemsets over the processors. If it is partitioned simply (SPA), transaction data has to be braodcast to all processors. HPA partitions the candidate itemsets using a hash function to eliminate broadcasting, which also reduces the comparison workload significantly. HPA-ELD fully utilizes the available memory space by detecting the extremely large itemsets and copying them, which is also very effective at flattering  the load over the processors.
+In this paper, we propose four parallel algorithms (NPA, SPA, HPA and  HPA-ELD) for mining association rules on shared-nothing parallel machines to improve shared-nothing parallel machines performance.
+In NPA, candidate itemsets are just copied amongst all the processors which can lead to memory overflow for large transaction databases. The remaining three algorithms partition the candidate itemsets over the processors. If The remaining three algorithms partition the candidate itemsets over the processors is partitioned simply (SPA), transaction data has to be braodcast to the processors. HPA partitions the candidate itemsets using a hash function to eliminate broadcasting, which also reduces the comparison workload significantly. HPA-ELD fully utilizes the available memory space by detecting the extremely large itemsets and copying them, which is also very effective at flattering  the load over the processors.
 We implemented these algorithms in a shared-nothing environment.
 Performance evaluations show that the best algorithm, HPA-ELD, attains good linearity on speedup ratio and is effective for handling skew.
 --B
@@ -30,7 +30,7 @@ rule such as "90% of the customers who buy both A
 and B also buy C".
 Several algorithms have been proposed to solve
 the above problem[1][2][3][4][5][6][7]. However most
-of these are sequential algorithms. Finding association
+of Several algorithms are sequential algorithms. Finding association
 rules requires scanning the transaction database
 repeatedly. In order to improve the quality of the
 rule, we have to handle very large amounts of transaction
@@ -44,7 +44,7 @@ the candidate itemsets among all the processors. As
 we will explain later, in the second pass of the Apriori
 algorithm, introduced by R.Agrawal and R.Srikant[2],
 the candidate itemset becomes too large to fit in the
-local memory of a single processor. Thus it requires
+local memory of a single processor. Thus the candidate itemset requires
 reading the transaction dataset repeatedly from disk,
 which results in significant performance degradation.
 In this paper, we propose four different parallel algorithms
@@ -63,14 +63,15 @@ itemsets using a hash function as in the hash
 join, which eliminates transaction data broadcasting
 and can reduce the comparison workload significantly.
 In case the size of candidate itemset is smaller than
-1 The paper was presented at a local workshop in Japan.
+1 this paper was presented at a local workshop in Japan.
 the available system memory, HPA does not use the
 remaining free space. However HPA-ELD (HPA with
 Extremely Large itemset Duplication) does utilize the
-memory by copying some of the itemsets. The itemsets
-are sorted based on their frequency of appearance.
-HPA-ELD chooses the most frequently occurring itemsets
-and copies them over the processors so that all
+memory by copying some of the itemsets. the itemsetsare sorted based on their frequency of appearance.
+HPA-ELD (HPA with
+Extremely Large itemset Duplication) chooses the most frequently occurring itemsets
+and copies the most frequently occurring itemsets
+ over the processors so that all
 the memory space is used, which contributes to further
 reduce the communication among the processor.
 HPA-ELD, an extension of HPA, treats the frequently
@@ -81,11 +82,11 @@ parallel computer, the Fujitsu AP1000DDV, shows
 that the best algorithm, HPA-ELD, attains satisfactory
 linearity on speedup and is also effective at skew
 handling.
-This paper is organized as follows. In next section,
+this paper is organized as follows. In next section,
 we describe the problem of mining association rules.
 In section 3, we propose four parallel algorithms. Performance
 evaluations and detail cost analysis are given
-in section 4. Section 5 concludes the paper.
+in section 4. Section 5 concludes this paper.
 Mining Association Rules
 First we introduce some basic concepts of association
 rules, using the formalism presented in [1]. Let
@@ -134,8 +135,8 @@ subproblem.
 Here we briefly explain the Apriori algorithm for
 finding all large itemsets, proposed in [2], since the
 parallel algorithms to be proposed by us in section
-3 are based on this algorithm. Figure 1 gives an
-overview of the algorithm, using the notation given
+3 are based on the Apriori algorithm. Figure 1 gives an
+overview of the Apriori algorithm, using the notation given
 in
 
 Table
@@ -158,15 +159,16 @@ each itemset, which is used to measure how many
 times the itemset appeared in transactions. Since
 itemset here contains just single item, each item has
 a support count field. All the items which satisfy the
-minimum support are picked out. These items are
+minimum support are picked out. All the items which satisfy the
+minimum support are
 called large 1-itemset (L 1 ). Here k-itemset is defines
 a set of k items. The second pass (pass 2), the 2-
 itemsets are generated using the large 1-itemset which
 is called the candidate 2-itemsets (C 2 ). Then the
 support count of the candidate 2-itemsets is counted
 by scanning the transaction database. Here support
-count of the itemset means the number of transactions
-which contain the itemset. At the end of scan-
+count of k-itemset means the number of transactions
+which contain k-itemset. At the end of scan-
 large 1-itemsets
 while (L k01 6= ;) do
 The candidates of size k generated from L k01
@@ -192,7 +194,7 @@ The support count for the candidate k-itemsets
 are counted by scanning the transaction database.
 3. Determine large itemset:
 The candidate k-itemsets are checked for whether
-they satisfy the minimum support or not, the
+The candidate k-itemsets satisfy the minimum support or not, the
 large k-itemsets (L k ) which satisfy the minimum
 support are determined.
 4. The procedure terminates when the large itemset
@@ -244,7 +246,8 @@ Figure
 date itemset of pass 2 is too large to fit within the local
 memory of a single processor. In NPA, the candidate
 itemsets are just copied amongst all the processors. In
-the case where all of the candidate itemsets do not fit
+the case where all of the candidate
+itemsets do not fit
 within the local memory of a single processor, the candidate
 itemsets are partitioned into fragments, each of
 which fits in the memory size of a processor. Support
@@ -252,19 +255,23 @@ count processing requires repetitive scanning transaction
 database. The remaining three algorithms, SPA,
 HPA and HPA-ELD, partition the candidate itemsets
 over the memory space of all the processors. Thus
-SPA, HPA and HPA-ELD can exploit the total sys-
+SPA, HPA and HPA-ELD (HPA with
+Extremely Large itemset Duplication) can exploit the total sys-
 tem's memory effectively as the number of processors
 increases. For simplicity, we assume that the size of
-the candidate itemsets is larger than the size of local
+the candidate
+itemsets is larger than the size of local
 memory of single processor but is smaller than the
 sum of the memory of all the processors. It is easy
 We will later introduce an algorithm named NPA, where
 the reason why the parallelization is so easy will be clarified.
-to extend this algorithm to handle candidate itemsets
+to extend an algorithm named NPA, where
+the reason why the parallelization is so easy will be clarified to handle candidate itemsets
 whose size exceeds the sum of all the processors memories
 
 3.2 Non Partitioned Apriori : NPA
-In NPA, the candidate itemsets are copied over all
+In NPA, the candidate
+itemsets are copied over all
 the processors, each processor can work independently
 and the final statistics are gathered into a coordinator
 processor where minimum support conditions are
@@ -342,13 +349,15 @@ Table
 2: Notation
 Each processor generates the candidate k-itemsets
 using the large (k 0 1)-itemsets, and insert
-it into the hash table.
+Notation
+Each processor into the hash table.
 2. Scan the transaction database and count the support
 count value:
 Each processor reads the transaction database
-from its local disk, generates k-itemsets from the
+from Each processor local disk, generates k-itemsets from the
 transaction and searches the hash table. If a hit
-occurs, increment its support count value.
+occurs, increment a hit
+ support count value.
 3. Determine the large itemsets:
 After reading all the transaction data, all pro-
 cessor's support count are gathered into the co-ordinator
@@ -364,27 +373,31 @@ itemsets are partitioned into fragments, each of which
 can fits within the processor's local memory and the
 above process is repeated for each fragment. Figure
 3, beginning at the while loop, shows the method by
-which each of the candidate itemsets are divided into
+which each of the candidate
+itemsets are divided into
 fragments with each fragment being processed sequentially
 
 Although this algorithm is simple and no transaction
 data are exchanged among processors in the second
 phase, the disk I/O cost becomes very large, since
 this algorithm reads the transaction database repeatedly
-if the candidate itemsets are too large to fit within
+if the candidate
+itemsets are too large to fit within
 the processor's local memory.
 3.3 Simply Partitioned Apriori : SPA
-In NPA, the candidate itemsets are not partitioned
-but just copied among the processors. However the
-candidate itemsets usually becomes too large to fit
+In NPA, the candidate
+itemsets are not partitioned
+but just copied among the processors. However the candidate
+itemsets usually becomes too large to fit
 within the local memory of single processor, which
 generally occurs during the second pass
 SPA partitions the candidate itemsets equally over the
 memory space of all the processors. Thus it can exploit
 the aggregate memory of the systems, while memory
 efficiency is very low in copy based NPA.
-Since the candidate itemsets are partitioned among
-the processors, each processor has to be broadcast its
+Since the candidate
+itemsets are partitioned among
+the processors, each processor has to be broadcast each processor
 own transaction data to all the processors at second
 phase, while no such broadcast is required in NPA.
 
@@ -413,7 +426,9 @@ Each processor works as follows:
 1. Generate the candidate itemsets:
 Each processor generates the candidate k-itemsets
 using the large (k 0 1)-itemsets and inserts
-a part of the candidate itemsets into its own
+a part of the candidate
+itemsets into the candidate
+itemsets own
 hash table. The candidate k-itemsets are assigned
 to processors in a round-robin manner 3 .
 2. Scan the transaction database and count the support
@@ -464,9 +479,11 @@ Figure
 
 4: SPA algorithm
 Each processor reads the transaction database
-from its local disk and also broadcasts it to all
-the other processors. For each transaction en-
-try, when read from its own disk or received from
+from SPA algorithm
+ local disk and also broadcasts SPA algorithm
+ to all the processors. For each transaction en-
+try, when read from SPA algorithm
+ own disk or received from
 another processors, the support count is incremented
 in the same way as in NPA.
 3. Determine the large itemsets:
@@ -498,12 +515,11 @@ Each processor works as follows:
 Each processor generates the candidate k-itemset
 using the large (k 0 1)-itemsets, applies the hash
 function and determines the destination processor
-ID. If the ID is its own, insert it into the hash
-table. If not, it is discarded.
+ID. If the ID is the ID own, insert the ID into the hash
+table. If not, the ID is discarded.
 2. Scan the transaction database and count the support
 count:
-Each processor reads the transaction database
-from its local disk. Generates k-itemsets from
+Each processor reads the transaction databaseEach processor . Generates k-itemsets from
 that transaction and applies the same hash function
 used in phase 1. Derives the destination processor
 ID and sends the k-itemset to it. For the
@@ -519,9 +535,15 @@ do
 forall items x 2 t do
 Determine the destination processor ID by applying
 the same hash function which is used in item
-partitioning, and send that item to it. If it is its
-own ID, increment the support count for the item.
-Receive the item from the other processors and increment
+partitioning, and send item
+ to item
+. If item
+ is item
+
+own ID, increment the support count for item
+.
+Receive item
+ from the other processors and increment
 the support count for that item
 All the candidates in C p
 1 with minimum sup-
@@ -543,8 +565,8 @@ do
 do
 Determine the destination processor ID by applying
 the same hash function which is used in
-item partitioning, and send that k-itemset to it.
-If it is its own ID, increment the support count
+item partitioning, and send that k-itemset to the destination processor ID.
+If the destination processor ID is the destination processor ID own ID, increment the support count
 for the itemset.
 Receive k-itemset from the other processors and
 increment the support count for that itemset
@@ -569,10 +591,9 @@ Duplication
 In case the size of candidate itemset is smaller than
 the available system memory, HPA does not use the
 remaining free space. However HPA-ELD does utilize
-the memory by copying some of the itemsets. The
-itemsets are sorted based on their frequency of ap-
+the memory by copying some of the itemsets. the itemsets are sorted based on their frequency of ap-
 pearance. HPA-ELD chooses the most frequently occurring
-itemsets and copies them over the processors
+itemsets and copies itemsets over the processors
 so that all the memory space is used, which contributes
 to further reduce the communication among the pro-
 cessor. In HPA, it is generally difficult to achieve a flat
@@ -585,7 +606,7 @@ bottleneck. In real situations, the skew of items is
 easily discovered. In retail applications certain items
 such as milk and eggs appear more frequently than
 others. HPA-ELD can handle this problem effectively
-since it treats the frequently occurring itemset entries
+since HPA-ELD treats the frequently occurring itemset entries
 in a special way.
 HPA-ELD copies such frequently occurring itemsets
 among the processors and counts the support
@@ -593,7 +614,7 @@ count locally like in NPA. In the first phase, when
 the processors generate the candidate k-itemset using
 the large (k01)-itemsets, if the sum of the support values
 for each large itemset exceeds the given threshold,
-it is inserted in all the processor's hash table. The remaining
+the processors is inserted in all the processor's hash table. The remaining
 candidate itemsets are partitioned as in HPA.
 The threshold is determined so that all of the available
 memory can be fully utilized using sort. After reading
@@ -624,16 +645,8 @@ Figure
 
 Organization of the AP1000DDV system
 jDj the number of transactions
-jtj the average number of items in par-
-transactions
-jIj the average number of items in maximal
-potentially large itemsets
-Name jtj jIj jDj Size
-
-Table
-
-4: Parameters of data sets
-cessor is connected to three independent networks (T-
+jtj the number of transactions
+ is connected to three independent networks (T-
 net, B-net and S-net). The communication between
 processors is done via a torus mesh network called the
 T-net, and broadcast communication is done via the
@@ -681,7 +694,8 @@ Figure
 7: Execution time varying minimum support
 value
 Since all transaction data is broadcast to all of the
-processors in SPA, its communication costs are much
+processors in SPA, the
+processors in SPA communication costs are much
 larger in SPA than in HPA and HPA-ELD where the
 data is not broadcasted but transfered to just one processor
 determined by a hash function. In addition SPA
@@ -699,9 +713,10 @@ ment, which significantly increases the execution time.
 4.2 Communication Cost Analysis
 Here we analyze the communication costs of each
 algorithm. Since the size of the transaction data is
-usually much larger than that of the candidate item-
+usually much larger than that of the candidate
 set, we focus on the transaction data transfer. In NPA,
-the candidate itemsets are initially copied over all the
+the candidate
+itemsets are initially copied over all the
 processors, which incurs processor communication. In
 addition during the last phase of the processing, each
 processor sends the support count statistics to the co-ordinator
@@ -722,7 +737,8 @@ T p the number of p-th processor's transactions
 jDj the number of all the transactions
 In HPA, the itemsets of the transaction are transmitted
 to the limited number of processors instead of
-broadcasting. The number of candidates is dependent
+broadcasting. the limited number of processors instead of
+broadcasting is dependent
 on the data synthesized by the generator. The total
 amount of communication for HPA at pass k can be
 expressed as follows.
@@ -742,7 +758,7 @@ messages received of HPA is much smaller then that of
 SPA. In HPA-ELD, the amount of messages received is
 further reduced, since a part of the candidate itemset
 is handled separately and the itemsets which correspond
-to them are not transmitted but just locally
+to messages received are not transmitted but just locally
 processed.5001500amount
 of
 receive
@@ -755,7 +771,8 @@ Figure
 8: the amount of messages received (pass 2)
 4.3 Search Cost Analysis
 In the second phase, the hash table which consists
-of the candidate itemsets are probed for each transaction
+of the candidate
+itemsets are probed for each transaction
 itemset.
 4 If the number of processors is very small and the number
 of items in transaction is large, then M HPA
@@ -779,9 +796,10 @@ CAN the amount of the candidate itemset in
 bytes
 M the size of main memory of a single processor
 in bytes
-In NPA, if the candidate itemsets are too large to fit
-in a single processor's memory, the candidate itemsets
-are divided and the supports are counted by scanning
+In NPA, if the candidate
+itemsets are too large to fit
+in a single processor's memory, the candidate
+itemsetsare divided and the supports are counted by scanning
 the transaction database repeatedly.
 In SPA, every processor must process all the trans-action
 data. The number of searches at pass k can be
@@ -798,12 +816,14 @@ also can be reduced significantly by employing hash
 based algorithms, which is quite similar to the way
 in which the hash join algorithm works much better
 than nested loop algorithms. In NPA, the search cost
-depends on the size of the candidate itemsets. If the
+depends on the size of the candidate
+itemsets. If the
 candidate itemset becomes too large, S NPA
 k could be
 larger than S SPA
 k . But if it fits, S NPA
-k , that is, the search cost is much smaller than
+k , that is, the search cost
+ is much smaller than
 SPA and almost equal to HPA. Figure 9 shows the
 search cost of the three algorithms for each pass, where
 the t15.I4 data set is used under 16 processors with the
@@ -824,14 +844,14 @@ HPA
 Figure
 
 9: the search cost of SPA, NPA and HPA
-NPA changes drastically for pass 2. The search cost of
-NPA is highly dependent on the size of available main
+NPA changes drastically for pass 2. The search cost ofNPA NPA is highly dependent on the size of available main
 memory. If memory is insufficient, NPA's performance
 deteriorates significantly due to the cost increase at
 pass 2. In Figure 9, the search cost of NPA is less than
-SPA. However as we explained before, it incurred a lot
+SPA. However as we explained before, the search cost of NPA incurred a lot
 of additional I/O cost. Therefore the total execution
-time of NPA is much longer than that of SPA.
+time of NPA is much longer than that of less than
+SPA.
 4.4 Comparison of HPA and HPA-ELD
 In this section, the performance comparison between
 HPA and HPA-ELD is described. In HPA-ELD,
@@ -840,7 +860,8 @@ rately. In order to determine which itemset we should
 pick up, we use the statistics accumulated during pass
 1. As the number of pass increases, the size of the
 candidate itemsets decreases. Thus we focused on
-pass 2. The number of the candidate itemsets to be
+pass 2. The number of the candidate
+itemsets to be
 separated is adjusted so that sum of non-duplicated
 itemsets and duplicated itemsets would just fit in the
 available memory.
@@ -929,7 +950,8 @@ algorithm just focuses on the item distribution of the
 transaction file and picks up the extremely frequently
 occurring items. Transferring such items could result
 in network hot spots. HPA-ELD tries not to send such
-items but to process them locally. Such a small modification
+items but to process such
+items locally. Such a small modification
 to the original HPA algorithm could improve
 the linearity substantially.
 4.6 Effect of increasing transaction
@@ -960,23 +982,28 @@ Figure
 13: Sizeup curve
 algorithms is shown in Table 5. In NPA, the candidate
 itemsets are just copied amongst all the proces-
-sors. Each processor works on the entire candidate
+sors. Each processor works on the candidate
 itemsets. NPA requires no data transfer when the
-supports are counted. However in the case where the
-entire candidate itemsets do not fit within the memory
-of a single processor, the candidate itemsets are
-divided and the supports are counted by scanning the
+supports are counted. However in the case where the candidate
+itemsets do not fit within the memory
+of a single processor, the candidate
+itemsets are
+divided and the
+supports are counted by scanning the
 transaction database repeatedly. Thus Disk I/O cost
 of NPA is high. PDM, proposed in [6] is the same as
-which copies the candidate itemsets among all
+which copies the candidate
+itemsets among all
 the processors. Disk I/O for PDM should be also high.
 The remaining three algorithms, SPA, HPA and
 HPA-ELD, partition the candidate itemsets over the
 memory space of all the processors. Because it better
 exploits the total system's memory, disk I/O cost is
 low. SPA arbitrarily partitions the candidate itemsets
-equally among the processors. Since each processor
-broadcasts its local transaction data to all other pro-
+equally among all
+the processors. Since each processor
+broadcasts each processor
+ local transaction data to all other pro-
 cessors, the communication cost is high. HPA and
 HPA-ELD partition the candidate itemsets using a
 hash function, which eliminates the need for transaction
@@ -986,12 +1013,15 @@ occurring itemsets and handles them separately, which
 can reduce the influence of the workload skew.
 6 Conclusions
 Since mining association rules requires several scans
-of the transaction file, its computational requirements
+of the transaction file, 6 Conclusions
+ computational requirements
 are too large for a single processor to have a reasonable
 response time. This motivates our research.
-In this paper, we proposed four different parallel
+In this paper, our proposed four different parallel
 algorithms for mining association rules on a shared-nothing
-parallel machine, and examined their viabil-
+parallel machine, and examined four different parallel
+algorithms for mining association rules on a shared-nothing
+parallel machine viabil-
 NPA SPA HPA HPA-ELD
 Candidate copy partition partition
 itemset (partially copy)
@@ -1012,13 +1042,14 @@ sets, parallelization is straightforward. It is just sufficient
 to partition the transaction over the processors
 and for each processor to process the allocated
 transaction data in parallel. We named this algorithm
-NPA. However when we try to do large scale
+NPA. However when We try to do large scale
 data mining against a very large transaction file, the
 candidate itemsets become too large to fit within the
 main memory of a single processor. In addition to the
 size of a transaction file, a small minimum support
-also increases the size of the candidate itemsets. As
-we decrease the minimum support, computation time
+also increases the size of the candidate
+itemsets. As
+We decrease the minimum support, computation time
 grows rapidly, but in many cases we can discover more
 interesting association rules.
 SPA, HPA and HPA-ELD not only partition the
@@ -1028,14 +1059,14 @@ on a shard-nothing parallel machine. Performance
 evaluations show that the best algorithm,
 HPA-ELD, attains good linearity on speedup by fully
 utilizing all the available memory space, which is also
-effective for skew handling. At present, we are doing
+effective for skew handling. At present, We are doing
 the parallelization of mining generalized association
 rules described in [9], which includes the taxonomy
-(is-a hierarchy). Each item belongs to its own class
+(is-a hierarchy). Each item belongs to Each item own class
 hierarchy. In such mining, associations between the
 higher class and the lower class are also examined.
 Thus the candidate itemset space becomes much larger
-and its computation time also takes even longer than
+and the candidate itemset space computation time also takes even longer than
 the naive single level association mining. Parallel processing
 is essential for such heavy mining processing.
 
@@ -1044,7 +1075,7 @@ Acknowledgments
 This research is partially supported as a priority
 research program by ministry of education. We would
 like to thank the Fujitsu Parallel Computing Research
-Center for allowing us to use their AP1000DDV systems
+Center for allowing We to use their AP1000DDV systems
 
 
 

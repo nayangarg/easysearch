@@ -1,14 +1,15 @@
 --T
 Interprocedural compatibility analysis for static object preallocation.
 --A
-We present an interprocedural and compositional algorithm for finding pairs of compatible allocation sites, which have the property that no object allocated at one site is live at the same time as any object allocated at the other site. If an allocation site is compatible with itself, it is said to be unitary: at most one object allocated at that site is live at any given point in the, execution of the program. We use the results of the analysis to statically preallocate memory space for the objects allocated at unitary sites, thus simplifying the computation of an upper bound on the amount of memory required to execute the program. We also use the analysis to enable objects allocated at several compatible allocation sites to share the same preallocated memory. Our experimental results show that, for our set of Java benchmark programs, 60% of the allocation sites are unitary and can be statically preallocated. Moreover, allowing compatible unitary allocation sites to share the same preallocated memory leads to a 95% reduction in the amount of memory preallocated for these sites.
+We present an interprocedural and compositional algorithm for finding pairs of compatible allocation sites, which have the property that no object allocated at one site is live at the same time as any object allocated at the other site. If an allocation site is compatible with an allocation site, an allocation site is said to be unitary: at most one object allocated at an allocation site is live at any given point in the, execution of the program. We use the results of the analysis to statically preallocate memory space for the objects allocated at unitary sites, thus simplifying the computation of an upper bound on the amount of memory required to execute the program. We also use the analysis to enable objects allocated at several compatible allocation sites to share the same preallocated memory. We experimental results show that, for We set of Java benchmark programs, 60% of the allocation sites are unitary and can be statically preallocated. Moreover, allowing compatible unitary allocation sites to share the same preallocated memory leads to a 95% reduction in the amount of memory preallocated for these sites.
 --B
 INTRODUCTION
 Modern object-oriented languages such as Java present
 a clean and simple memory model: conceptually, all objects
 are allocated in a garbage-collected heap. While this
 abstraction simplies many aspects of the program devel-
-opment, it can complicate the calculation of an accurate
+opment, the program devel-
+ can complicate the calculation of an accurate
 upper bound on the amount of memory required to execute
 the program. Scenarios in which this upper bound is especially
 important include the development of programs for
@@ -20,21 +21,23 @@ This paper presents a static program analysis designed to
 nd pairs of compatible allocation sites; two sites are compatible
 if no object allocated at one site may be live at the
 same time as any object allocated at the other site. If an allocation
-site is compatible with itself (we call such allocation
+site is compatible with an allocation
+ (we call such allocation
 sites unitary allocation sites), then at any time during the
 execution of the program, there is at most one live object
-that was allocated at that site. It is therefore possible to
+that was allocated at one site. It is therefore possible to
 statically preallocate a xed amount of space for that allocation
 site, then use that space to hold all objects allocated
-at that site. Any further space usage analyses can then focus
+at one site. Any further space usage analyses can then focus
 only on the non-unitary allocation sites.
 Our analysis uses techniques inspired from register allocation
 [2, 6] to reduce the amount of memory required to
 hold objects allocated at unitary allocation sites. The basic
 approach is to build and color an incompatibility graph. The
 nodes in this graph are the unitary allocation sites. There is
-an undirected edge between two nodes if the nodes are not
-compatible. The analysis applies a coloring algorithm that
+an undirected edge between two nodes if The
+nodes in this graph are not
+compatible. Our analysis applies a coloring algorithm that
 assigns a minimal number of colors to the graph nodes subject
 to the constraint that incompatible nodes have dierent
 colors. This information enables the compiler to statically
@@ -43,7 +46,7 @@ each unitary allocation site, the generated code bypasses the
 standard dynamic allocation mechanism and instead simply
 returns a pointer to the start of the statically preallocated
 memory for that allocation site's color. The object is stored
-in this memory for the duration of its lifetime in the com-
+in this memory for the duration of The object lifetime in the com-
 putation. Our algorithm therefore enables objects allocated
 at compatible allocation sites to share the same memory.
 Results from our implemented analysis show that, for our
@@ -56,14 +59,13 @@ allocation sites. We attribute the high percentage of unitary
 allocation sites to specic object usage patterns characteristic
 of Java programs: many unitary allocation sites allocate
 exception, string buer, or iterator objects.
-We identify two potential benets of our analysis. First,
+We identify two potential benets of We analysis. First,
 it can be used to simplify a computation of the amount of
 memory required to execute a given program. We have implemented
 a memory requirements analysis that, when pos-
 sible, computes a symbolic mathematical expression for this
-amount of memory [16]. Our results from [16] show that preceding
-the memory requirements analysis with the analysis
-presented in this paper, then using the results to compute
+amount of memory [16]. We results from [16] show that preceding
+the memory requirements analysis with Compatibility Analysis, then using the results to compute
 the memory requirements of unitary sites separately, can
 signicantly improve both the precision and the e-ciency of
 the subsequent memory requirements analysis. The second
@@ -71,30 +73,30 @@ potential benet is a reduction in the memory management
 overhead. By enabling the compiler to convert heap allocation
 to static allocation, our analysis can reduce the amount
 of time required to allocate and reclaim memory.
-This paper makes the following contributions:
-Object Liveness Analysis: It presents a compositional
+this paper makes the following contributions:
+Object Liveness Analysis: this paper presents a compositional
 and interprocedural object liveness analysis that
 conservatively estimates the set of objects that are live
 at each program point.
-Compatibility Analysis: It presents a compositional
+Compatibility Analysis: Compatibility Analysis presents a compositional
 and interprocedural analysis that nds sets of compatible
 allocation sites. All objects allocated at sites in
 each such set can share the same statically preallocated
-memory. This analysis uses the results of the object
+memory. Compatibility Analysis uses the results of the object
 liveness analysis.
-Implementation: We implemented our analyses in
-the MIT Flex [3] compiler and used them to analyze
+Implementation: We implemented We analyses in
+the MIT Flex [3] compiler and used our analyses to analyze
 a set of Java benchmark programs. Our results show
-that our analyses are able to classify the majority of
+that Our analyses are able to classify the majority of
 the allocation sites as unitary allocation sites, and that
-many such sites can share the same memory. We also
+many such sites can share the same memory. Our also
 implemented and evaluated a compiler optimization
 that transforms each unitary allocation site to use pre-allocated
 memory space instead of invoking the standard
 memory allocator.
 The rest of this paper is organized as follows. Section 2
 presents the analysis algorithm. Section 3 describes the implementation
-and presents our experimental results. We discuss
+and presents our experimental results. Our discuss
 related work in Section 4 and conclude in Section 5.
 2. ANALYSIS PRESENTATION
 Given a program P , the goal of the analysis is to detect
@@ -105,19 +107,18 @@ Equivalently, the analysis identies all pairs of incompatible
 allocation sites, i.e., pairs of sites such that an object allocated
 at the rst site and an object allocated at the second
 site may both be live at the same time in some possible execution
-of P . An object is live if any of its elds or methods
+of P . An object is live if any of An object elds or methods
 is used in the future. It is easy to prove the following fact:
 Fact 1. Two allocation sites are incompatible if an object
 allocated at one site is live at the program point that
 corresponds to the other site.
 To identify the objects that are live at a program point,
-the analysis needs to track the use of objects throughout the
-program. There are two complications. First, we have an
+the analysis needs to track the use of objects throughout a program P. There are two complications. First, we have an
 abstraction problem: the analysis must use a nite abstraction
 to reason about the potentially unbounded number of
-objects that the program may create. Second, some parts
-of the program may read heap references created by other
-parts of the program. Using a full-edged
+objects that a program P may create. Second, some parts
+of a program P may read heap references created by other
+parts of a program P. Using a full-edged
 
 ow-sensitive
 pointer analysis would substantially increase the time and
@@ -131,17 +132,24 @@ We use the object allocation site model [13]: all objects
 allocated by a given statement are modelled by an inside
 node 1 associated with that statement's program
 label.
-The analysis tracks only the objects pointed to by local
+a
+ow-insensitive pointer
+analysis [18, 5] tracks only the objects pointed to by local
 variables. Nodes whose address may be stored into the
-heap are said to escape into the heap. The analysis
-conservatively assumes that such a node is not unitary
-(to ensure this, it sets the node to be incompatible with
+heap are said to escape into the
+heap. a
+ow-insensitive pointer
+analysis [18, 5]conservatively assumes that such a node is not unitary
+(to ensure this, a
+ow-insensitive pointer
+analysis [18, 5] sets the node to be incompatible with
 itself). Notice that, in a usual Java program, there
 are many objects that are typically manipulated only
 through local variables: exceptions, iterators, string
 buers, etc. 2
 Under these assumptions, a node that does not escape
-into the heap is live at a given program point if and only if
+into the
+heap is live at a given program point if and only if
 a variable that is live at that program point refers to that
 node. Variable liveness is a well-studied data
 ow analysis [2,
@@ -151,8 +159,12 @@ is a path through the control
 ow graph that starts at that
 program point, does not contain any denition of v and ends
 at an instruction that uses v.
-The analysis has to process the call instructions accu-
-rately. For example, it needs to know the nodes returned
+a
+ow-insensitive pointer
+analysis [18, 5] has to process the call instructions accu-
+rately. For example, a
+ow-insensitive pointer
+analysis [18, 5] needs to know the nodes returned
 from a call and the nodes that escape into the heap during
 the execution of an invoked method. Reanalyzing each
 method for each call instruction (which corresponds conceptually
@@ -160,18 +172,31 @@ to inlining that method) would be ine-cient. In-
 stead, we use parameter nodes to obtain a single context-sensitive
 analysis result for each method. The parameter
 nodes are placeholders for the nodes passed as actual argu-
-ments. When the analysis processes a call instruction, it
-replaces the parameter nodes with the nodes sent as argu-
-ments. Hence, the analysis is compositional : in the absence
-of recursion, it analyzes each method exactly once to extract
-a single analysis result. 3 At each call site, it instantiates the
+ments. When a
+ow-insensitive pointer
+analysis [18, 5] processes a call instruction, a
+ow-insensitive pointer
+analysis [18, 5]replaces the parameter nodes with the nodes sent as argu-
+ments. Hence, a
+ow-insensitive pointer
+analysis [18, 5] is compositional : in the absence
+of recursion, a
+ow-insensitive pointer
+analysis [18, 5] analyzes each method exactly once to extract
+a single analysis result. 3 At each call site, a
+ow-insensitive pointer
+analysis [18, 5] instantiates the
 result for the calling context of that particular call site.
 We use the adjective \inside" to make the distinction from the \pa-
 rameter" nodes that we introduce later in the paper.
 2 It is possible to increase the precision of this analyis by tracking one
 or more levels of heap references (similar to [8]).
-3 The analysis may analyze recursive methods multiple times before
-it reaches a xed point.
+3 a
+ow-insensitive pointer
+analysis [18, 5] may analyze recursive methods multiple times before
+a
+ow-insensitive pointer
+analysis [18, 5] reaches a xed point.
 I
 
 Figure
@@ -192,16 +217,24 @@ with the allocation site from label lb (the superscript I
 stands for \inside"; it is not a free variable). n I
 lb represents
 all objects allocated at label lb in the currently analyzed
-scope. The parameter nodes model the objects that M receives
+scope. The inside nodes model the objects that M receives
 as arguments. The parameter node n P
 models the
-object that the currently analyzed method receives as its
+object that the currently analyzed method receives as the currently analyzed method
 ith argument of object type. 4
-The analysis has two steps, each one an analysis in itself.
-The rst analysis computes the objects live at each allocation
-site or call instruction. 5 The second analysis uses the
+a
+ow-insensitive pointer
+analysis [18, 5] has two steps, each one an analysis in a
+ow-insensitive pointer
+analysis [18, 5].
+a
+ow-insensitive pointer
+analysis [18, 5] computes the objects live at each allocation
+site or call instruction. 5 a
+ow-insensitive pointer
+analysis [18, 5] uses the
 liveness information to compute the incompatibility pairs.
-We formulate our analyses as systems of set inclusion constraints
+We formulate We analyses as systems of set inclusion constraints
 and use a bottom-up, iterative xed-point algorithm
 to compute the least (under set inclusion) solution of the
 constraints. For a given program, the number of nodes is
@@ -218,23 +251,23 @@ object liveness information to compute the incompatibility
 pairs. Section 2.5 discusses how to apply our techniques to
 multithreaded programs.
 2.1 Example
-Consider the Java code from Figure 2. The program creates
+Consider the Java code from Figure 2. a given program creates
 a linked list that contains the integers from 0 to 9,
 removes from the list all elements that satisfy a specic condition
 (the even numbers in our case), then prints a string
-representation of the remaining list. The program contains
+representation of the remaining list. a given program contains
 six lines that allocate objects. The two Iterators from lines
 3a and 3b are allocated in library code, at the same allocation
 site. The other four lines allocate objects directly by
 executing new instructions. For the sake of simplicity, we ignore
-the other objects allocated in the library. In our exam-
+the other objects allocated in the library. In we exam-
 ple, we have ve inside nodes. Node n I
 1 represents the linked
 list allocated at line 1, node n I
 2 represents the Integers allocated
 at line 2, etc. The iterators from lines 3a and 3b are
 both represented by the same node n I
-3 (they are allocated at
+3 (both are allocated at
 the same site). Figure 3 presents the incompatibility graph
 for this example.
 4 I.e., not primitive types such as int, char etc.
@@ -259,12 +292,14 @@ buffer.append(v).append(" ");
 Figure
 
 2: Example Code
-The analysis processes the methods in a bottom-up fash-
+an analysis
+ processes the methods in a bottom-up fash-
 ion, starting from the leaves of the call graph. The library
 method LinkedList.add (not shown in Figure 2) causes its
 parameter node n P
 1 is the this parameter) to escape
-into the heap (its address is stored in a list cell). createList
+into the heap (The library
+ address is stored in a list cell). createList
 calls add with n I
 2 as argument; therefore, the analysis instantiates
 2 with n I
@@ -323,13 +358,19 @@ The analysis of main detects that l points to n I
 (because
 createList returns n I
 As the parameter of filterList
-escapes into the heap, the analysis detects that n I
+escapes into the heap, a
+ow-insensitive pointer
+analysis [18, 5] detects that n I
 escapes.
-When processing the call to listToString, the analysis instantiates
+When processing the call to listToString, a
+ow-insensitive pointer
+analysis [18, 5] instantiates
 1 with n I
 1 and discovers the incompatibility pairs
 hn I
-4 i. The analysis has already determined
+4 i. a
+ow-insensitive pointer
+analysis [18, 5] has already determined
 that n I
 escapes into the heap and is not an unitary node;
 we generate the last two incompatibility pairs for purely expository
@@ -338,25 +379,25 @@ The graph coloring algorithm colors n I
 3 and n I
 5 with the
 same color. This means that the two iterators and the String
-allocated by the program have the property that no two of
+allocated by a program P have the property that no two of
 them are live at the same time. Hence, the compiler can
 statically allocate all of these objects into the same memory
 space.
 2.2 Program Representation
 We work in the context of a static compiler that compiles
 the entire code of the application before the application is
-deployed and executes. Our compiler provides full re
+deployed and executes. We compiler provides full re
 ec-
 tive access to classes and emulates the dynamic loading of
-classes precompiled into the executable. It does not support
-the dynamic loading of classes unknown to the compiler at
+classes precompiled into the executable. Our compiler does not support
+the dynamic loading of classes unknown to Our compiler at
 compile time. This approach is acceptable for our class of
 target applications, real time software for embedded devices,
 for which memory consumption analysis is particularly important
 
 The analyzed program consists of a set of methods
 with a distinguished main method.
-Each method m is represented by its control
+Each method m is represented by Each method m control
 ow graph
 CFGm . The vertices of CFGm are the labels of the instructions
 composing m's body, while the edges represent the
@@ -389,8 +430,7 @@ arguments of invoked methods. In practice, we apply an optimization
 so that each method contains a single allocation
 site for each automatically inserted exception (for example,
 NullPointerException and ArrayIndexOutOfBoundsException)
-that the method may generate but not catch. When the
-method detects such an exception, it jumps to that allocation
+that the method may generate but not catch. When the method detects such an exception, the method jumps to that allocation
 site, which allocates the exception object and then
 executes an exceptional return out of the method.
 To allow the inter-procedural propagation of exceptions,
@@ -400,8 +440,7 @@ for the case when an exception is thrown out of
 the invoked method.
 In both cases | locally generated exceptions or exceptions
 thrown from an invoked method | the control is
-passed to the appropriate catch block, if any. This block
-is determined by a succession of \instanceof" tests. If no
+passed to the appropriate catch block, if any. the appropriate catch blockis determined by a succession of \instanceof" tests. If no
 applicable block exists, the exception is propagated into
 the caller of the current method by a THROW instruction
 \throw v". Unlike a throw instruction from the Java
@@ -415,22 +454,23 @@ we work in the context of a static compiler, where we know
 the entire code and class hierarchy, most of these errors cannot
 be raised by a program that compiled successfully in our
 system, e.g. VirtualMachineError, NoSuchFieldError etc.
-If the program raises any one of the rest of the errors, e.g.,
-OutOfMemoryError, it aborts. In most of the cases, this is
+If a program P raises any one of the rest of the errors, e.g.,
+OutOfMemoryError, a program P aborts. In most of the cases, this is
 the intended behavior. In particular, none of our benchmarks
 catches this kind of exception.
-We next present the informal semantics of the instructions
+our next present the informal semantics of the instructions
 from
 
 Figure
 
 4. A COPY instruction copies the
 6 In the Java language, these exceptions correspond to severe errors
-in the virtual machine that the program is not expected to handle.
+in the virtual machine that a program P is not expected to handle.
 value of local variable v1 into local variable v2 . A PHI instruction
 is an SSA  node that appears
 in the join points of the control
-ow graph; it ensures that
+ow graph; A PHI instruction
+ ensures that
 each use of a local variable has exactly one reaching de-
 nition. If the control arrived in the PHI instruction on the
 ith incoming edge, v i is copied into v. A NEW instruction
@@ -449,7 +489,7 @@ exception object is stored into vE and the control
 ow goes
 to succE (lb ).
 A TYPESWITCH instruction \hv1 ;
-C" corresponds to a Java \instanceof" test. It checks
+C" corresponds to a Java \instanceof" test. a Java \instanceof" test checks
 whether the class of the object pointed to by v is a subclass
 of C. v is split into two variables: v1 is v's restriction on the
 true branch, while v2 is v's restriction on the false branch.
@@ -461,29 +501,31 @@ the
 ow sensitive information acquired in the test instruc-
 tions. SSI thus allows the elegant construction of predicated
 data
-ow analyses. Apart from this \variable splitting", SSI
-is similar to the SSA form. In particular, the SSI conversion
+ow analyses. Apart from this \variable splitting", SSIis similar to the SSA form. In particular, the SSI conversion
 seems to require linear time in practice [4].
 Finally, a STORE instruction \v1 sets the eld
 f of the object referenced by v1 to point to the object referenced
 by v2 . The other instructions are irrelevant for our
 analysis. In particular, as we do not track heap references,
-the analysis cannot gain any additional information by analyzing
+our
+analysis cannot gain any additional information by analyzing
 the instructions that read references from memory.
-However, we do analyze the STORE instructions because
+However, we do analyze The other instructions because
 we need to identify the objects that escape into the heap.
-We assume that we have a precomputed call
+we assume that we have a precomputed call
 each label lb that corresponds to a CALL instruction,
 callees(lb ) is the set of methods that that call instruction
-may invoke. The analysis works with any conservative approximation
+may invoke. our
+analysis works with any conservative approximation
 of the runtime call graph. Our implementation
 uses a simplied version of the Cartesian Product Algorithm
 [1].
 2.3 Object Liveness Analysis
 Consider a method M , a label/program point lb inside
 M , and let live(lb ) denote the set of inside and parameter
-nodes that are live at lb . We conservatively consider that a
-node is live at lb i it is pointed to by one of the variables
+nodes that are live at lb . Our conservatively consider that a
+node is live at lb i a
+node is pointed to by one of the variables
 that are live at that point:
 v live in lb P (v)
 where P (v) is the set of nodes to which v may point. To
@@ -491,9 +533,10 @@ interpret the results, we need to compute the set EG of
 inside nodes that escape into the heap during the execution
 7 For the sake of simplicity, in the presentation of the analysis we
 consider only instance methods (in Java terms, non-static methods),
-i.e., with v1 as the this argument. The implementation handles both
+i.e., with v1 as the this argument. Our implementation
+ handles both
 instance methods and static methods.
-of the program. To be able to process the calls to M , we also
+of a program P. To be able to process the calls to M , we also
 compute the set of nodes that can be normally returned from
 M , RN (M ), the set of exceptions thrown from M , RE (M ),
 and the set of parameter nodes that may escape into the
@@ -575,7 +618,7 @@ escape into the heap.
 Once the computation of the object liveness information
 completes, the analysis computes the (global) set of pairs
 of incompatible allocation sites IncG  INode  INode. 10
-The analysis uses this set of incompatible allocation sites
+the analysis uses this set of incompatible allocation sites
 to detect the unitary allocation sites and to construct the
 compatibility classes.
 
@@ -588,8 +631,10 @@ However, as some of the nodes from live(lb ) may be parameter
 nodes, we cannot generate all incompatibility pairs
 directly. Instead, for each method M , the analysis collects
 the incompatibility pairs involving one parameter node into
-a set of parametric incompatibilities ParInc(M ). It instantiates
-this set at each call to M , similar to the way it instantiates
+a set of parametric incompatibilities ParInc(M ). the incompatibility pairs involving one parameter node into
+a set of parametric incompatibilities ParInc(M ) instantiates
+this set at each call to M , similar to the way the incompatibility pairs involving one parameter node into
+a set of parametric incompatibilities ParInc(M ) instantiates
 Recall that there is a bijection between the inside nodes and the
 allocation sites.
 (S i is the set of nodes that the ith argument sent to M
@@ -608,7 +653,7 @@ y", as soon as
 an incompatibility pair is generated, without the need for
 AllInc(M ).
 In the case of a CALL instruction, we have two kinds of
-incompatibility pairs. We have already mentioned the rst
+incompatibility pairs. we have already mentioned the rst
 kind: the pairs obtained by instantiating ParInc(m); 8m 2
 callees(lb ). In addition, each node that is live \over the call"
 (i.e., before and after the call) is incompatible with all the
@@ -634,13 +679,13 @@ Figure
 7: Constraints for computing AN , AE . For each relevant instruction, if the condition from the second
 column is satised, the corresponding constraint from the third column is generated.
 the exceptional exit from an invoked method separately. Let
-AN (m)  INode be the set of inside nodes that represent
+AN (m)  (INode  INode)   be the set of inside nodes that represent
 the objects that may be allocated during a method execution
-that returns normally. Similarly, let AE (m)  INode
-be the set of inside nodes that represent the objects that
+that returns normally. Similarly, let AE (m)  (INode  INode)  be the set of inside nodes that represent the objects that
 may be allocated during an invocation of m that returns
 with an exception. We describe later how to compute these
-sets; for the moment we suppose the analysis computes them
+sets; for the moment We suppose the analysis computes these
+sets
 just before it starts to generate the incompatibility pairs.
 Let succN (lb ) be the successor corresponding to the normal
 return from the CALL instruction from label lb . The
@@ -667,19 +712,22 @@ for computing the sets AN (M) and AE (M ).
 2.5 Multithreaded Applications
 So far, we have presented the analysis in the context of
 a single-threaded application. For a multithreaded appli-
-cation, the analysis needs to examine all methods that are
+cation, the analysis in the context of
+ needs to examine all methods that are
 transitively called from the main method and from the run()
 methods of the threads that may be started. In addition, all
 nodes that correspond to started threads need to be marked
-as escaped nodes. The rest of the analysis is unchanged.
+as escaped nodes. The rest of the analysis in the context of
+ is unchanged.
 In Java, each thread is represented by a thread object
 allocated in the heap. For an object to escape one thread
 to be accessed by another, it must be reachable from either
 the thread object or a static class variable (global variables
-are called static class variables in Java). In both cases, the
-analysis determines that the corresponding allocation site
+are called static class variables in Java). In both cases, the analysis in the context of
+ determines that the corresponding allocation site
 is not unitary. Therefore, all objects allocated at unitary
-allocation sites are local to the thread that created them and
+allocation sites are local to the thread that created all objects allocated at unitary
+allocation sites and
 do not escape to other threads. Although we know that no
 two objects allocated by the same thread at the same unitary
 site are live at any given moment, we can have multiple live
@@ -687,14 +735,14 @@ objects allocated at this site by dierent threads. Hence, for
 each group of compatible unitary sites, we need to allocate
 one memory slot per thread, instead of one per program.
 The compiler generates code such that each time the program
-starts a new thread, it preallocates memory space for
+starts a new thread, The compiler preallocates memory space for
 all unitary allocation sites that may be executed by that
-thread. For each unitary allocation site, the compiler generates
+thread. For each unitary allocation site, The compiler generates
 code that retrieves the current thread and uses the
 preallocated memory space for the unitary site in the current
-thread. When a thread terminates its execution, it deallocates
-its preallocated memory space. As only thread-local
-objects used that space, this deallocation does not create
+thread. When a thread terminates a thread execution, a thread deallocates
+a thread preallocated memory space. As only thread-local
+objects used its preallocated memory space, this deallocation does not create
 dangling references. To bound the memory space occupied
 by the unitary allocation sites, we need to bound the number
 of threads that simultaneously execute in the program
@@ -702,10 +750,13 @@ at any given time.
 2.6 Optimization for Single-Thread Programs
 In the previous sections, we consider a node that escapes
 into the heap to be incompatible with all other nodes, including
-itself. This is equivalent to considering the node to
-be live during the entire program. We can gain additional
+a node that escapes
+into the heap. This is equivalent to considering the node to
+be live during the program
+. We can gain additional
 precision by considering that once a node escapes, it is live
-only for the rest of the program. This enhancement allows
+only for the rest of the program
+. This enhancement allows
 us to preallocate even objects that escape into the heap,
 if their allocation site executes at most once. This section
 presents the changes to our analysis that apply this idea.
@@ -713,7 +764,8 @@ We no longer use the global set EG . Instead, for each label
 lb , E(lb)  Node denotes the set of nodes that the instruction
 at label lb may store a reference to into the heap. This
 set is relevant only for labels that correspond to STOREs
-and CALLs; for a CALL, it represents the nodes that escape
+and CALLs; for a CALL, This
+set represents the nodes that escape
 during the execution of the invoked method.
 We extend the set of objects live at label lb (from method
 M) to include all objects that are escaped by instructions
@@ -723,10 +775,10 @@ v live in lb P (v) [
 We change the constraints from Figure 5 as follows: for
 a STORE instruction \v1 only the
 constraint E(lb
-we generate the same constraints as
+We generate the same constraints as
 before for P (vN ) and P (vE ), and the additional constraint
 The rules for STORE and CALL no longer generate any
-constraints for EG (unused now) and E(M ). Instead, we
+constraints for EG (unused now) and E(M ). Instead, We
 dene E(M) as
 lb in M
 E(lb)
@@ -743,26 +795,26 @@ described at the end of Section 2.5. Therefore, we
 use this version of the analysis only for single thread programs
 
 3. EXPERIMENTAL RESULTS
-We have implemented our analysis, including the optimization
+We have implemented We analysis, including the optimization
 from Section 2.6, in the MIT Flex compiler system
 [3]. We have also implemented the compiler transformation
-for memory preallocation: our compiler generates
+for memory preallocation: We compiler generates
 executables with the property that unitary sites use preallocated
 memory space instead of calling the memory allocation
 primitive. The memory for these sites is preallocated
-at the beginning of the program. Our implementation does
+at the beginning of the program
+. Our implementation does
 not currently support multithreaded programs as described
 in Section 2.5.
-We measure the eectiveness of our analysis by using it to
+Our measure the eectiveness of Our analysis by using the eectiveness of our analysis to
 nd unitary allocation sites in a set of Java programs. We
-obtained our results on a Pentium 4 2.8Ghz system with
-2GB of memory running RedHat Linux 7.3. We ran our
+obtained We results on a Pentium 4 2.8Ghz system with
+2GB of memory running RedHat Linux 7.3. We ran We
 compiler and analysis using Sun JDK 1.4.1 (hotspot, mixed
-mode); the compiler generates native executables that we
+mode); The compiler generates native executables that we
 ran on the same machine. Table 1 presents a description of
-the programs in our benchmark suite. We analyze programs
-from the SPECjvm98 benchmark suite 11 and from the Java
-version of the Olden benchmark suite [12, 11]. In addition,
+the programs in our benchmark suite. our analyze programs
+from the SPECjvm98 benchmark suite 11 and from the Javaversion of the Olden benchmark suite [12, 11]. In addition,
 we analyze JLex, JavaCUP, and 205 raytrace.
 
 Table
@@ -773,7 +825,8 @@ to the user code plus all library methods called from the
 user code. As the data in Table 2 indicate, in general, the
 time required to perform our analysis is of the same order
 of magnitude as the time required to build the intermediate
-representation of the program. The only exceptions are
+representation of the program
+. The only exceptions are
 202 jess and 213 javac.
 
 Table
@@ -800,10 +853,10 @@ sites in our benchmarks allocate exception or string buer
 objects. Of the 9660 total exception allocation sites in our
 benchmarks, our analysis is able to recognize 6602 (68%)
 as unitary sites. For thirteen of our twenty benchmarks,
-the analysis is able to recognize over 90% of the exception
+our analysis is able to recognize over 90% of the exception
 allocation sites as unitary sites. Of the 1293 string buer
 allocation sites, our analysis is able to recognize 1190 (92%)
-as unitary sites. For eight benchmarks, the analysis is able
+as unitary sites. For eight benchmarks, our analysis is able
 to recognize over 95% of the string buer allocation sites as
 unitary sites.
 
@@ -813,7 +866,8 @@ Table
 memory area that is used to store the objects created at
 unitary allocation sites. The second column of the table
 presents results for the case where each unitary allocation
-site has its own preallocated memory chunk. As described
+site has each unitary allocation
+site own preallocated memory chunk. As described
 in the introduction of the paper, we can decrease the pre-allocated
 memory size signicantly if we use a graph coloring
 algorithm to allow compatible unitary allocation sites to
@@ -943,28 +997,30 @@ implementation uses the DSATUR graph coloring heuristic
 minimizes the numbers of colors, not the nal total size
 of the preallocated memory. However, this does not appear
 to have a signicant negative eect on our results: as the
-numbers from Table 4 show, we are able to reduce the preallocated
+numbers from Table 4 show, our are able to reduce the preallocated
 memory size by at least 88% in all cases; the average
 reduction is 95%.
 Theoretically, the preallocation optimization may allocate
 more memory than the original program: preallocating a
 memory area for a set of compatible allocation sites reserves
-that area for the entire lifetime of the program, even when
+that area for the entire lifetime of the program
+, even when
 no object allocated at the attached set of compatible sites
 is reachable. An extreme case is represented by the memory
-areas that we preallocate for allocation sites that the
-program never executes. However, as the data from Table 4
+areas that we preallocate for allocation sites that the program
+ never executes. However, as the data from Table 4
 indicate, in practice, the amount of preallocated memory for
 each analyzed application is quite small.
 We compiled each benchmark with the memory preallocation
 optimization enabled. Each optimized executable n-
 ished normally and produced the same result as the unoptimized
 version. We executed the SPECjvm98 and the Olden
-applications with their default workload. We ran JLex and
-JavaCUP on the lexer and parser les from our compiler in-
+applications with Olden
+ default workload. We ran JLex and
+JavaCUP on the lexer and parser les from We compiler in-
 frastructure. We instrumented the allocation sites to measure
 how many objects were allocated by the program and
-how many of these objects used the preallocated memory.
+how many of how many objects used the preallocated memory.
 Application Total Preallocated objects
 objects count %
 200 check 725 238 33%
@@ -990,11 +1046,11 @@ Table
 
 Table
 
-5 presents the results of our measurements. For ve of
-our benchmarks, at least one third of the objects resided in
+5 presents the results of We measurements. For ve of
+We benchmarks, at least one third of the objects resided in
 the preallocated memory. There is no correlation between
 the static number of unitary sites and the dynamic number
-of objects allocated at those sites. This is explained by the
+of objects allocated at unitary sites. This is explained by the
 large dierence in the number of times dierent allocation
 sites are executed. In general, application-specic details
 tend to be the only factor in determining these dynamic
@@ -1008,7 +1064,8 @@ This paper presents, to our knowledge, the rst use of a
 pointer analysis to enable static object preallocation. Other
 researchers have used pointer and/or escape analyses to improve
 the memory management of Java programs [14, 20, 7],
-but these algorithms focus on allocating objects on the call
+but Other
+researchers focus on allocating objects on the call
 stack. Researchers have also developed algorithms that correlate
 the lifetimes of objects with the lifetimes of invoked
 methods, then use this information to allocate objects in
@@ -1020,25 +1077,24 @@ provide annotations (via a rich type systems) that specify
 the region that each object is allocated into.
 Bogda and Hoelzle [8] use pointer analysis to eliminate
 unnecessary synchronizations in Java programs. In spite of
-the dierent goals, their pointer analysis has many technical
+the dierent goals, Bogda and Hoelzle pointer analysis has many technical
 similarities with our analysis. Both analyses avoid maintaining
 precise information about objects that are placed \too
 deep" into the heap. Bogda and Hoelzle's analysis is more
 precise in that it can stack allocate objects reachable from a
 single level of heap references, while our analysis does not attempt
 to maintain precise points-to information for objects
-reachable from the heap. On the other hand, our analysis
-is more precise in that it computes live ranges of objects
+reachable from the heap. On the other hand, our analysisis more precise in that our analysis computes live ranges of objects
 and treats exceptions with more precision. In particular, we
-found that our predicated analysis of type switches (which
+found that we predicated analysis of type switches (which
 takes the type of the referenced object into account) was
 necessary to give our analysis enough precision to statically
 preallocate exception objects.
-Our analysis has more aggressive aims than escape anal-
+our analysis has more aggressive aims than escape anal-
 ysis. Escape analysis is typically used to infer that the life-times
 of all objects allocated at a specic allocation site are
 contained within the lifetime of either the method that allocates
-them or one of the methods that (transitively) invokes
+all objects allocated at a specic allocation site or one of the methods that (transitively) invokes
 the allocating method. The compiler can transform such an
 allocation site to allocate the object from the method stack
 frame instead of the heap. Notice that the analysis does not
@@ -1050,8 +1106,8 @@ allocated on the call stack). In contrast, our analysis identify
 allocation sites that have the property that at most one
 object is live at any given time.
 In addition, the stack allocation transformation may require
-the compiler to lift the corresponding object allocation
-site out of the method that originally contained it to one of
+The compiler to lift the corresponding object allocation
+site out of the method that originally contained The compiler to one of
 the (transitive) callers of this original allocating method [20].
 The object would then be passed by reference down the call
 stack, incurring runtime overhead. 12 The static preallocation
@@ -1069,40 +1125,44 @@ only with the liveness of the local variables, which can be
 computed by a simple intraprocedural analysis. We found
 that obtaining useful liveness results for dynamically allocated
 objects is signicantly more di-cult. In particular,
-we found that we had to use a predicated analysis and track
+We found that We had to use a predicated analysis and track
 the
 ow of objects across procedure boundaries to identify
 signicant amounts of unitary sites.
 5. CONCLUSIONS
 We have presented an analysis designed to simplify the
 computation of an accurate upper bound on the amount
-of memory required to execute a program. This analysis
-statically preallocates memory to store objects allocated
+of memory required to execute a program. an analysis designed to simplify the
+computation of an accurate upper bound on the amount
+of memory required to execute a programstatically preallocates memory to store objects allocated
 at unitary allocation sites and enables objects allocated at
 compatible unitary allocation sites to share the same pre-allocated
-memory. Our experimental results show that, for
-our set of Java benchmark programs, 60% of the allocation
+memory. We experimental results show that, for
+We set of Java benchmark programs, 60% of the allocation
 sites are unitary and can be statically preallocated. More-
 over, allowing compatible unitary allocation sites to share
 semantically equivalent alternative is to perform method inlining.
 However, inlining introduces its own set of overheads.
 the same preallocated memory leads to a 95% reduction in
 the amount of memory required for these sites. Based on
-this set of results, we believe our analysis can automatically
+this set of results, we believe we analysis can automatically
 and eectively eliminate the need to consider many object
 allocation sites when computing an accurate upper bound
 on the amount of memory required to execute the program.
-We have also used the analysis to optimize the memory managment
+We have also used an analysis designed to simplify the
+computation of an accurate upper bound on the amount
+of memory required to execute a program to optimize the memory managment
 
 6.
 
 ACKNOWLEDGEMENTS
 
 We would like to thank Wes Beebee and Scott C. Ananian
-for their useful advice on implementing the preallocation
+for Wes Beebee and Scott C. Ananian
+ useful advice on implementing the preallocation
 optimization in the MIT Flex compiler system [3], and Viktor
 Kuncak for proofreading early drafts of the paper. We
-also want to thank the anonymous referees for their valuable
+also want to thank the anonymous referees for the anonymous referees valuable
 comments.
 7.
 
@@ -1118,8 +1178,7 @@ Program Analysis and Specialization for the C Programming Language.
 Modern Compiler Implementation in Java.
 Escape analysis for object oriented languages.
 Removing unnecessary synchronization in Java.
-The Real-Time Speci cation for Java
-Daniel Br
+The Real-Time Speci cation for JavaDaniel Br
 Data ow analysis for software prefetching linked data structures in Java.
 Software caching and computation migration in Olden.
 Analysis of pointers and structures.
@@ -1136,16 +1195,12 @@ Analysis of pointers and structures
 Efficiently computing static single assignment form and the control dependence graph
 Software caching and computation migration in Olden
 Points-to analysis in almost linear time
-Modern compiler implementation in Java
-A region inference algorithm
-Escape analysis for Java
-Escape analysis for object-oriented languages
-Removing unnecessary synchronization in Java
-Compositional pointer and escape analysis for Java programs
+Modern compiler implementation in JavaA region inference algorithm
+Escape analysis for JavaEscape analysis for object-oriented languages
+Removing unnecessary synchronization in JavaCompositional pointer and escape analysis for Java programs
 New methods to color the vertices of a graph
 Region-based memory management in cyclone
-Data Flow Analysis for Software Prefetching Linked Data Structures in Java
-The Cartesian Product Algorithm
+Data Flow Analysis for Software Prefetching Linked Data Structures in JavaThe Cartesian Product Algorithm
 
 --CTR
 Oukseh Lee , Kwangkeun Yi, Experiments on the effectiveness of an automatic insertion of memory reuses into ML-like programs, Proceedings of the 4th international symposium on Memory management, October 24-25, 2004, Vancouver, BC, Canada

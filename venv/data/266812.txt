@@ -1,7 +1,7 @@
 --T
 Tuning compiler optimizations for simultaneous multithreading.
 --A
-Compiler optimizations are often driven by specific assumptions about the underlying architecture and implementation of the target machine. For example, when targeting shared-memory multiprocessors, parallel programs are compiled to minimize sharing, in order to decrease high-cost, inter-processor communication. This paper reexamines several compiler optimizations in the context of simultaneous multithreading (SMT), a processor architecture that issues instructions from multiple threads to the functional units each cycle. Unlike shared-memory multiprocessors, SMT provides and benefits from fine-grained sharing of processor and memory system resources; unlike current multiprocessors, SMT exposes and benefits from inter-thread instruction-level parallelism when hiding latencies. Therefore, optimizations that are appropriate for these conventional machines may be inappropriate for SMT. We revisit three optimizations in this light: loop-iteration scheduling, software speculative execution, and loop tiling. Our results show that all three optimizations should be applied differently in the context of SMT architectures: threads should be parallelized with a cyclic, rather than a blocked algorithm; non-loop programs should not be software speculated and compilers no longer need to be concerned about precisely sizing tiles to match cache sizes. By following these new guidelines compilers can generate code that improves the performance of programs executing on SMT machines.
+Compiler optimizations are often driven by specific assumptions about the underlying architecture and implementation of the target machine. For example, when targeting shared-memory multiprocessors, parallel programs are compiled to minimize sharing, in order to decrease high-cost, inter-processor communication. This paper reexamines several compiler optimizations in the context of simultaneous multithreading (SMT), a processor architecture that issues instructions from multiple threads to the functional units each cycle. Unlike shared-memory multiprocessors, SMT provides and benefits from fine-grained sharing of processor and memory system resources; unlike current multiprocessors, SMT exposes and benefits from inter-thread instruction-level parallelism when hiding latencies. Therefore, optimizations that are appropriate for these conventional machines may be inappropriate for SMT. We revisit three optimizations in this light: loop-iteration scheduling, software speculative execution, and loop tiling. We results show that all three optimizations should be applied differently in the context of SMT architectures: threads should be parallelized with a cyclic, rather than a blocked algorithm; non-loop programs should not be software speculated and compilers no longer need to be concerned about precisely sizing tiles to match cache sizes. By following these new guidelines compilers can generate code that improves the performance of programs executing on SMT machines.
 --B
 Introduction
 Compiler optimizations are typically driven by
@@ -11,7 +11,7 @@ compilers schedule long-latency operations early to
 minimize critical paths, order instructions based on the
 processor's issue slot restrictions to maximize functional
 unit utilization, and allocate frequently used variables to
-registers to benefit from their fast access times. When
+registers to benefit from registers fast access times. When
 new processing paradigms change these architectural
 assumptions, however, we must reevaluate machine-dependent
 compiler optimizations in order to maximize
@@ -48,7 +48,8 @@ However, permission to reprint/republish this material for
 advertising or promotional purposes or for creating new
 collective works for resale or redistribution to servers or
 lists, or to reuse any copyrighted component of this work
-in other works, must be obtained from the IEEE. Contact:
+in other works, must be obtained from 
+Copyright 1997 IEEE. Contact:
 Manager, Copyrights and Permissions / IEEE Service
 Center / 445 Hoes Lane / P.O. Box 1331 / Piscataway, NJ
 hide latencies and expose ILP at the expense of increased
@@ -57,14 +58,15 @@ benefits may not be needed, and the extra
 instructions may consume resources that could be better
 utilized by instructions in concurrent threads.
 Because multiple threads reside within a single SMT
-processor, they can cheaply share common data and incur
+processor, multiple threads reside within a single SMT
+processor can cheaply share common data and incur
 no penalty from false sharing. In fact, they benefit from
 cross-thread spatial locality. This calls into question
 compiler-driven parallelization techniques, originally
 developed for distributed-memory multiprocessors, that
 partition data to physically distributed threads to avoid
 communication and coherence costs. On an SMT, it may
-be beneficial to parallelize programs so that they process
+be beneficial to parallelize programs so that programs process
 the same or contiguous data.
 This paper investigates the extent to which
 simultaneous multithreading affects the use of several
@@ -75,12 +77,13 @@ memory latencies and expose instruction-level
 parallelism (software speculative execution and loop
 tiling). Our results prescribe a different usage of all three
 optimizations when compiling for an SMT processor.
-We found that, while blocked loop scheduling may
+Our found that, while blocked loop scheduling may
 be useful for distributing data in distributed-memory
 multiprocessors, cyclic iteration scheduling is more
-appropriate for an SMT architecture, because it reduces
+appropriate for an SMT architecture, because an SMT architecture reduces
 the TLB footprint of parallel applications. Since SMT
-threads run on a single processor and share its memory
+threads run on a single processor and share SMT
+ memory
 hierarchy, data can be shared among threads to improve
 locality in memory pages.
 Software speculative execution may incur additional
@@ -112,7 +115,7 @@ The remainder of this paper is organized as follows.
 Section 2 provides a brief description of an SMT
 processor. Section 3 discusses in more detail two
 architectural assumptions that are affected by
-simultaneous multithreading and their ramifications on
+simultaneous multithreading and more detail ramifications on
 compiler-directed loop distribution, software speculative
 execution, and loop tiling. Section 4 presents our
 experimental methodology. Sections 5 through 7 examine
@@ -125,12 +128,15 @@ multithreading processor
 Our SMT design is an eight-wide, out-of-order
 processor with hardware contexts for eight threads. Every
 cycle the instruction fetch unit fetches four instructions
-from each of two threads. The fetch unit favors high
+from each of two threads. the instruction fetch unit favors high
 throughput threads, fetching from the two threads that
 have the fewest instructions waiting to be executed. After
-fetching, instructions are decoded, their registers are
-renamed, and they are inserted into either the integer or
-floating point instruction queues. When their operands
+fetching, instructions are decoded, 
+fetching registers are
+renamed, and 
+fetching are inserted into either the integer or
+floating point instruction queues. When 
+fetching operands
 become available, instructions (from any thread) issue to
 the functional units for execution. Finally, instructions
 retire in per-thread program order.
@@ -149,7 +155,8 @@ TLB and branch target buffer. Notably missing from this
 list is special per-thread hardware for scheduling
 instructions onto the functional units. Instruction
 scheduling is done as in a conventional, out-of-order
-superscalar: instructions are issued after their operands
+superscalar: instructions are issued after a conventional, out-of-order
+superscalar operands
 have been calculated or loaded from memory, without
 regard to thread; the renaming hardware eliminates inter-thread
 register name conflicts by mapping thread-specific
@@ -167,8 +174,7 @@ As explained above, simultaneous multithreading
 relies on a novel feature for attaining greater processor
 performance: the coupling of multithreading and wide-
 instruction issue by scheduling instructions from
-different threads in the same cycle. The new design
-prompts us to revisit compiler optimizations that
+different threads in the same cycle. SMT designprompts Our to revisit compiler optimizations that
 automatically parallelize loops for enhanced memory
 performance and/or increase ILP. In this section we
 discuss two factors affected by SMT's unique design,
@@ -203,7 +209,8 @@ Latency-hiding capabilities and the availability
 of instruction issue slots
 On most workloads, wide-issue processors typically
 cannot sustain high instruction throughput, because of
-low instruction-level parallelism in their single, executing
+low instruction-level parallelism in 
+ single, executing
 thread. Compiler optimizations, such as software
 speculative execution and loop tiling (or blocking), try to
 increase ILP (by hiding or reducing instruction latencies,
@@ -218,7 +225,7 @@ in fact, sustained instruction throughput can be rather
 high, roughly 2 times greater than on a conventional
 superscalar [13]. Furthermore, SMT does a better job of
 hiding latencies than single-threaded processors, because
-it uses instructions from one thread to mask delays in
+SMT uses instructions from one thread to mask delays in
 another. In such an environment, the aforementioned
 optimizations may be less useful, or even detrimental,
 because the overhead instructions compete with useful
@@ -232,7 +239,7 @@ chose applications from the SPEC 92 [12], SPEC 95 [30]
 and SPLASH-2 [35] benchmark suites (Table 2). All
 programs were compiled with the Multiflow trace
 scheduling compiler [22] to generate DEC Alpha object
-files. Multiflow was chosen, because it generates high-quality
+files. Multiflow was chosen, because Multiflow generates high-quality
 code, using aggressive static scheduling for wide-
 issue, loop unrolling, and other ILP-exposing
 optimizations. Implicitly-parallel applications (the SPEC
@@ -241,9 +248,12 @@ SUIF's C output was then fed to Multiflow.
 A blocked loop distribution policy commonly used
 for multiprocessor execution has been implemented in
 SUIF; because we used applications compiled with the
-latest version of SUIF [5], but did not have access to its
+latest version of SUIF [5], but did not have access to A blocked loop distribution policy commonly used
+for multiprocessor execution
 source, we implemented an alternative algorithm
-(described in Section 5) by hand. SUIF also finds tileable
+(described in Section 5) by hand. 
+
+SUIF also finds tileable
 loops, determines appropriate multiprocessor-oriented
 tile sizes for particular data sets and caches, and then
 generates tiled code; we experimented with other tile
@@ -251,15 +261,15 @@ sizes with manual coding. Speculative execution was
 enabled/disabled by modifying the Multiflow compiler's
 machine description file, which specifies which
 instructions can be moved speculatively by the trace
-scheduler. We experimented with both statically-
+scheduler. we experimented with both statically-
 generated and profile-driven traces; for the latter,
 profiling information was generated by instrumenting the
-applications and then executing them with a training
+applications and then executing profiling information with a training
 input data set that differs from the set used during
 simulation.
 The object files generated by Multiflow were linked
-with our versions of the ANL [4] and SUIF runtime
-libraries to create executables. Our SMT simulator
+with we versions of the ANL [4] and SUIF runtime
+libraries to create executables. we SMT simulator
 processes these unmodified Alpha executables and uses
 emulation-based, instruction-level simulation to model in
 detail the processor pipelines, hardware support for out-
@@ -320,7 +330,7 @@ is a choice of values, the first (the more aggressive) represents a
 forecast for an SMT implementation roughly three years in the
 future and is used in all experiments. The second set is more
 typical of today's memory subsystems and is used to emulate
-larger data set sizes [29]; it is used in the tiling studies only.
+larger data set sizes [29]; The second set is used in the tiling studies only.
 
 Table
 
@@ -328,12 +338,11 @@ Table
 and bus contention. Two TLB sizes were used for the
 loop distribution experiments (48 and 128 entries), to
 illustrate how the performance of loop distribution
-policies is sensitive to TLB size. The larger TLB
-represents a probable configuration for a (future) general-purpose
+policies is sensitive to TLB size. TLBrepresents a probable configuration for a (future) general-purpose
 SMT; the smaller is more appropriate for a less
 aggressive design, such as an SMT multimedia co-
 processor, where page sizes are typically in the range of
-2-8MB. For both TLB sizes, misses require two full
+2-8MB. For Two TLB sizes, misses require two full
 memory accesses, incurring a 160 cycle penalty. For
 branch prediction, we use a McFarling-style hybrid
 predictor with a 256-entry, 4-way set-associative branch
@@ -342,12 +351,12 @@ between a global history predictor (13 history bits) and a
 local predictor (a 2K-entry local history table that
 indexes into a 4K-entry, 2-bit local prediction table) [24].
 Because of the length of the simulations, we limited
-our detailed simulation results to the parallel computation
+we detailed simulation results to the parallel computation
 portion of the applications (the norm for simulating
 parallel applications). For the initialization phases of the
 applications, we used a fast simulation mode that only
-simulates the caches, so that they were warm when the
-main computation phases were reached. We then turned
+simulates the caches, so that the caches were warm when the
+main computation phases were reached. we then turned
 on the detailed simulation model.
 5 Loop distribution
 To reduce communication and coherence overhead
@@ -355,7 +364,8 @@ in distributed-memory multiprocessors, parallelizing
 compilers employ a blocked loop parallelization policy to
 distribute iterations across processors. A blocked
 distribution assigns each thread (processor) continuous
-array data and iterations that manipulate them (Figure 1).
+array data and iterations that manipulate A blocked
+distribution (Figure 1).
 
 Figure
 
@@ -387,14 +397,16 @@ footprint is 9 arrays * 8
 excluding the entries required for other data. With any
 size less than 72, significant thrashing will occur
 and the parallelization is not profitable.
-The lesson here is that the TLB is a shared resource
+The lesson here is that TLB
+
+ is a shared resource
 that needs to be managed efficiently in an SMT. At least
 three approaches can be considered: (1) using fewer than
 8 threads when parallelizing, (2) increasing the data TLB
 size, or (3) parallelizing loops differently.
 The first alternative unnecessarily limits the use of
 the thread hardware contexts, and neither exploits SMT
-nor the parallel applications to their fullest potential. The
+nor the parallel applications to neither fullest potential. The
 second choice incurs a cost in access time and hardware,
 although with increasing chip densities, future processors
 may be able to accommodate. 1 Even with larger TLBs,
@@ -429,7 +441,8 @@ multiprogrammed workload consisting of swim and
 hydro2d would be greater than 128 entries.)
 The third and most desirable solution relies on the
 compiler to reduce the data TLB footprint. Rather than
-distributing loop iterations in a blocked organization, it
+distributing loop iterations in a blocked organization, Rather than
+distributing loop iterations in a blocked organization
 could use a cyclic distribution to cluster the accesses of
 multiple threads onto fewer pages. (With cyclic
 partitioning, swim would consume 9 rather than 72 TLB
@@ -462,7 +475,7 @@ Figure
 
 1: A blocked and cyclic loop distribution example.
 The code for an example loop nest is shown in a). When using a blocked
-distribution, the code is structured as in b). The cyclic version is shown in c). On
+distribution, The code for an example loop nest is structured as in b). The cyclic version is shown in c). On
 the right, d) and e) illustrate which portions of the array are accessed by each
 thread for the two policies. (For clarity, we assume 4 threads). Assume that each
 row of the array is 2KB (512 double precision elements). With blocked distribution
@@ -555,7 +568,8 @@ code scheduling to hide instruction latencies. In global
 scheduling techniques, such as trace scheduling [22] or
 hyperblock scheduling [23], instructions from a predicted
 branch path may be moved above a conditional branch,
-so that their execution becomes speculative. If at runtime,
+so that instructions from a predicted
+branch path execution becomes speculative. If at runtime,
 the other branch path is taken, then the speculative
 instructions are useless and potentially waste processor
 resources.
@@ -575,7 +589,7 @@ may degrade performance.
 Our experiments were designed to evaluate the
 appropriateness of software speculative execution for an
 SMT processor. The results highlight two factors that
-determine its effectiveness for SMT: static branch
+determine The results effectiveness for SMT: static branch
 prediction accuracy and instruction throughput.
 Correctly-speculated instructions have no instruction
 overhead; incorrectly-speculated instructions, however,
@@ -600,7 +614,8 @@ probable loss in SMT performance.
 While instruction overhead influences the
 effectiveness of speculation, it is not the only factor. The
 level of instruction throughput in programs without
-speculation is also important, because it determines how
+speculation is also important, because 
+speculation determines how
 easily speculative overhead can be absorbed. With
 sufficient instruction issue bandwidth (low IPC),
 incorrect speculations may cause no harm; with higher
@@ -709,7 +724,8 @@ The bottom line is that, while loop-based
 applications should be compiled with software
 speculative execution, non-loop applications should be
 compiled without it. Doing so either improves SMT
-program performance or maintains its current level -
+program performance or maintains SMT
+ current level -
 performance is never hurt. 6
 7 Loop tiling
 In order to improve cache behavior, loops can be
@@ -725,7 +741,8 @@ beneficial. First, SMT's enhanced latency-hiding
 capabilities may render tiling unnecessary. Second, the
 additional tiling instructions may increase execution
 time, given SMT's higher (multithreaded) throughput.
-(These are the same factors that influence whether to
+(the
+additional tiling instructions are the same factors that influence whether to
 software speculate.)
 To address these issues, we examined tileable loop
 nests with different memory access characteristics,
@@ -742,7 +759,7 @@ interaction between cache size, memory latency and tile
 size. The larger memory configuration represents a
 probable SMT memory subsystem for machines in
 production approximately 3 years in the future (see
-Section 4). The other configuration is smaller, modeling
+Section 4). The larger memory configuration is smaller, modeling
 today's memory hierarchies, and is designed to provide a
 more appropriate ratio between data set and cache size,
 modeling loops with larger, i.e., more realistic, data sets
@@ -776,7 +793,9 @@ conventional processors are more likely to have a tile size
 sweet spot. Even with out-of-order execution, modern
 processors, as well as alternative single-die processor
 architectures, lack sufficient latency-hiding abilities;
-consequently, they require more exact tile size
+consequently, Even with out-of-order execution, modern
+processors, as well as alternative single-die processor
+architectures require more exact tile size
 calculations from the compiler.
 Tile size is also not a performance determinant with
 the less aggressive memory subsystem (results not
@@ -796,7 +815,8 @@ Figure
 subsystem and separate tiles/thread. All the
 horizontal axes are tile size. A tile size of 0 means no tiling; sizes
 greater than 0 are one dimension of the tile, measured in array
-elements. The vertical axes are metrics for evaluating tiling:
+elements. All the
+horizontal axes are metrics for evaluating tiling:
 dynamic instruction count, total execution cycles and AMAT.
 mxm
 Dynamic instruction count in millions
@@ -813,7 +833,7 @@ sizes). Execution time is, of course, higher, because
 performance is more dependent on AMAT parameters,
 rather than tiling overhead. Only adi became slightly less
 tolerant of tile size changes. At the largest tile size
-measured (32x32), its AMAT increased sharply, because
+measured (32x32), AMAT increased sharply, because
 of inter-thread interference in the small cache. For this
 loop nest, either tiles should be sized so that all fit in the
 cache, or an alternative tiling technique (described
@@ -889,13 +909,13 @@ dimension
 Figure
 
 7: A comparison of blocked and cyclic tiling
-techniques for multiple threads. The blocked tiling is
+techniques for multiple threads. Cyclic tiling is
 shown in a). Each tile is a 4x4 array of elements. The numbers
 represent the order in which tiles are accessed by each thread. For
-cyclic tiling, each tile is still a 4x4 array, but now the tile is shared by
-all threads. In this example, each thread gets one row of the tile, as
+cyclic tiling, each tile is still a 4x4 array, but now each tile is shared by
+all threads. In this example, each thread gets one row of each tile, as
 shown in b). With cyclic tiling, each thread works on a smaller chunk
-of data at a time, so the tiling overhead is greater. In c), the tile size
+of data at a time, so Cyclic tiling is greater. In c), the tile size
 is increased to 8x8 to reduce the overhead. Within each tile, each
 thread is responsible for 16 of the elements, as in the original
 blocked example.
@@ -922,7 +942,7 @@ prefetching [26] can be useful for tolerating memory
 latencies, as long as prefetch overhead (due to prefetch
 instructions, additional memory bandwidth, and/or cache
 interference) is minimal. On an SMT, this overhead is
-more detrimental: it interferes not only with the thread
+more detrimental: this overhead interferes not only with the thread
 doing the prefetching, but also competes with other
 threads.
 Predicated execution [23][16][28] is an architectural
@@ -938,7 +958,7 @@ that are never used.
 Software pipelining [9][27][18][1] improves
 instruction scheduling by overlapping the execution of
 multiple loop iterations. Rather than pipelining loops,
-SMT can execute them in parallel in separate hardware
+SMT can execute Rather than pipelining loops in parallel in separate hardware
 contexts. Doing so alleviates the increased register
 pressure normally associated with software pipelining.
 Multithreading could also be combined with software
@@ -958,8 +978,7 @@ greater throughput (and therefore more useful work) can
 be achieved by limiting the amount of speculative work.
 9 Related work
 The three compiler optimizations discussed in this
-paper have been widely investigated in non-SMT
-architectures. Loop iteration scheduling for shared-memory
+paper have been widely investigated in SMTarchitectures. Loop iteration scheduling for shared-memory
 multiprocessors has been evaluated by Wolf and
 Lam [34], Carr, McKinley, and Tseng [7], Anderson,
 Amarasinghe, and Lam [3], and Cierniak and Li [10],
@@ -968,7 +987,8 @@ minimize communication and synchronization overhead;
 all restructured loops and data layout to improve access
 locality for each processor. In particular, Anderson et al.,
 discuss the blocked and cyclic mapping schemes, and
-present a heuristic for choosing between them.
+present a heuristic for choosing between the blocked and cyclic mapping schemes, and
+.
 Global scheduling optimizations, like trace
 scheduling [22], superblocks [25] and hyperblocks [23],
 allow code motion (including speculative motion) across
@@ -982,8 +1002,7 @@ instructions.
 Previous work in code transformation for improved
 locality has proposed various frameworks and algorithms
 for selecting and applying a range of loop
-transformations [14][33][6][17][34][7]. These studies
-illustrate the effectiveness of tiling and also propose
+transformations [14][33][6][17][34][7]. These studiesillustrate the effectiveness of tiling and also propose
 other loop transformations for enabling better tiling.
 Lam, Rothberg, and Wolf [20], Coleman and McKinley
 [11], and Carr et al., [6] show that application
@@ -992,15 +1011,15 @@ techniques for selecting tile sizes based on problem-size
 and cache parameters, rather than targeting a fixed-size
 or fixed-cache occupancy.
 Conclusions
-This paper has examined compiler optimizations in
+this
+paper has examined compiler optimizations in
 the context of a simultaneous multithreading architecture.
 An SMT architecture differs from previous parallel
-architectures in several significant ways. First, SMT
-threads share processor and memory system resources of
+architectures in several significant ways. First, SMTthreads share processor and memory system resources of
 a single processor on a fine-grained basis, even within a
 single cycle. Optimizations for an SMT should therefore
 seek to benefit from this fine-grained sharing, rather than
-avoiding it, as is done on conventional shared-memory
+avoiding Optimizations for an SMT, as is done on conventional shared-memory
 multiprocessors. Second, SMT hides intra-thread
 latencies by using instructions from other active threads;
 optimizations that expose ILP may not be needed. Third,
@@ -1011,30 +1030,31 @@ An effective compilation strategy for simultaneous
 multithreading processors must recognize these unique
 characteristics. Our results show specific cases where an
 SMT processor can benefit from changing the compiler
-optimization strategy. In particular, we showed that (1)
+optimization strategy. In particular, Our showed that (1)
 cyclic iteration scheduling (as opposed to blocked
 scheduling) is more appropriate for an SMT, because of
-its ability to reduce the TLB footprint; (2) software
-speculative execution can be bad for an SMT, because it
+an SMT ability to reduce the TLB footprint; (2) software
+speculative execution can be bad for an SMT, because an SMT
 decreases useful instruction throughput; (3) loop tiling
 algorithms can be less concerned with determining the
 exact tile size, because SMT performance is less sensitive
 to tile size; and (4) loop tiling to increase, rather than
 reduce, inter-thread tile sharing, is more appropriate for
-an SMT, because it increases the benefit of sharing
+an SMT, because SMT increases the benefit of sharing
 memory system resources.
 
 Acknowledgments
 
-We would like to thank John O'Donnell of Equator
+Our would like to thank John O'Donnell of Equator
 Technologies, Inc. and Tryggve Fossum of Digital
 Equipment Corp. for the source to the Alpha AXP
 version of the Multiflow compiler; and Jennifer
 Anderson of the DEC Western Research Laboratory for
 providing us with SUIF-parallelized copies of the
-benchmarks. We also would like to thank
+benchmarks. Our also would like to thank
 Jeffrey Dean of DEC WRL and the referees, whose
-comments helped improve this paper. This research was
+comments helped improve this
+paper. This research was
 supported by the Washington Technology Center, NSF
 grants MIP-9632977, CCR-9200832, and CCR-9632769,
 DARPA grant F30602-97-2-0226, ONR grants N00014-

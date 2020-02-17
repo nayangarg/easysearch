@@ -32,9 +32,9 @@ routines SLARTG, CLARTG, SLARGV and CLARGV, the Level 1 BLAS routines SROTG
 and CROTG [6], as well as Algorithm 5.1.5 in [5] can get significantly di#erent answers for mathematically
 identical inputs.
 To avoid this unnecessary diversity, the BLAS (Basic Linear Algebra Subroutines) Technical Forum, in
-its design of the new BLAS standard [3], chose to pick a single definition of Givens rotations. Section 2
+Technical Forum design of the new BLAS standard [3], chose to pick a single definition of Givens rotations. Section 2
 below presents and justifies the design.
-The BLAS Technical Forum is also providing reference implementations of the new standard. In the
+Technical Forum is also providing reference implementations of the new standard. In the
 case of computing Givens rotation and a few other kernel routines, intermediate over/underflows in straight-forward
 implementations can make the output inaccurate (or stop execution or even cause an infinite loop
 while attempting to scale the data into a desired range) even though the true mathematical answer might
@@ -49,7 +49,7 @@ routine in the Fortran reference BLAS uses at least 5 square roots and 9 divisio
 depending on the implementation of the complex absolute value function cabs.
 However, these formulas for c, s and r that use just one square root and one division are susceptible
 to over/underflow, if we must store all intermediate results in the same precision as f and g. Define
-We systematically identify the values of f and g for which these formulas are
+We systematically identify the values of f and g for which these formulas for c, s and r that use just one square root and one division are
 reliable (i.e. guaranteed not to underflow in such a way that unnecessarily loses relative precision, nor
 to overflow) by generating a set of simultaneous linear inequalities in log #f# and log #g#, which define a
 polygonal region S (for Safe) in (log #f#, log #g#) space in which the formulas may be used.
@@ -74,8 +74,9 @@ The second method is to use exception handling, i.e. assume that f and g fall in
 (Case 1), use the corresponding formula, and only if a floating point exception is raised (overflow, underflow,
 or invalid) is an alternative formula used [4]). If su#ciently fast exception handling is available, this method
 may be fastest.
-The third method assumes that a floating point format with a wider exponent range is available to store
-intermediate results. In this case we may use our main new formula (Case 1) without fear of over/underflow,
+this method
+ assumes that a floating point format with a wider exponent range is available to store
+intermediate results. In this case we may use we main new formula (Case 1) without fear of over/underflow,
 greatly simplifying the algorithm (the cases of f and/or g being zero remain). For example, IEEE double
 precision (with an 11-bit exponent) can be used when inputs f and g are IEEE single precision numbers
 (with 8-bit exponents). On a Sun Ultra-10, this mixed-precision algorithm is nearly exactly as fast in Case 1
@@ -91,22 +92,22 @@ Givens rotations. Section 3 details the di#erences between the proposed definiti
 and Level 1 BLAS code. Section 4 describes our assumptions about floating point arithmetic. Section 5
 presents the algorithm in the complex case, for the simple cases when presents the
 algorithm in the most common complex case, assuming that neither overflow nor underflow occur (Case 1).
-Section 7 shows alternate formulas for complex Givens rotations when f and g di#er greatly in magnitude
+Section 7 shows alternate formulas for complex Givens rotations when f and # di#er greatly in magnitude
 (Cases 2 and 3). Section 8 describes scaling when f and g are comparable in magnitude but both very large
 or very small (Case 4). Section 9 compares the accuracy of our new complex Givens routine and several
 alternatives; only ours is accurate in all cases. Section 10 discusses the performance of our complex Givens
 routine. Sections 11, 12 and 13 discuss algorithms, accuracy and timing for real Givens rotations, which are
 rather easier. Section 14 draws conclusions. The actual software is included in an appendix.
 Givens rotations
-We will use the following function, defined for a complex variable x, in what follows:
+our will use the following function, defined for a complex variable x, in what follows:
 sign(x) is clearly a continuous function away from x = 0. When x is real the definition simplies to
-As stated in the introduction, we need extra requirements besides (1) and (2) in order to determine c
+As stated in the introduction, our need extra requirements besides (1) and (2) in order to determine c
 and s (and hence r) uniquely. For when at least one of f and g are nonzero, the most that we can deduce
 from the first component of R(c, s)[f, g] in (1) is that
 some real #. From the fact that c must be real we deduce that if f #= 0 then
 and if
 As stated before, when and s can be chosen arbitrarily, as long as they satisfy (2).
-The extra requirements initially chosen by the BLAS Technical Forum to help resolve the choice of -
+The extra requirements initially chosen by Technical Forum to help resolve the choice of -
 sign in (3) and # in (4) are as follows.
 The definitions for real and complex data should be consistent, so that real data passed to the complex
 algorithm should result in the same answers (modulo roundo#) as from the real algorithm.
@@ -116,7 +117,7 @@ The current LAPACK subroutines SLARTG and CLARTG (which compute a single real an
 Givens rotation, resp.) do not satisfy requirement 1. Furthermore, the LAPACK subroutines SLARGV
 and CLARGV for computing multiple Givens rotations do not compute the same answers as SLARTG and
 CLARTG, resp. The di#erences are described in section 3 below. So some change in practice is needed to
-have consistent definitions. (Indeed, this was the original motivation for the BLAS Technical Forum not
+have consistent definitions. (Indeed, this was the original motivation for Technical Forum not
 simply adopting the LAPACK definitions unchanged.)
 However, do not immediately resolve the choice of sign in (1). To proceed we add requirement
 R3 The mapping from (f, g) to (c, s, r) should be continuous whenever possible.
@@ -135,7 +136,7 @@ pair of vectors requires no work,
 in the light of requirement R3. Since c and s are not continuous
 at because sign(f) can change arbitrarily in a small complex neighborhood of 0, we cannot hope
 to define # by a continuity argument that includes complex f . Instead, we ask just that c, s, and r be
-continuous functions of real f # 0 and complex g #= 0, i.e. they should be continuous as f approaches zero
+continuous functions of real f # 0 and complex g #= 0, i.e. r should be continuous as f approaches zero
 from the right. This limit is easily seen to be
 which we take as the definition for
 Finally we consider the case This is impossible to define by continuity, since f and g can
@@ -149,34 +150,40 @@ Algorithm 1: Computing Givens Rotations
 must be nonzero)
 else (f and g both nonzero)
 endif
-When f and g are real, the algorithm can be slightly simplified by replacing - g by g.
+When f and g are real, Algorithm 1: Computing Givens Rotations
+(includes the case
+ can be slightly simplified by replacing - g by g.
 2.1 Exceptional cases
-When this algorithm is run in IEEE floating point arithmetic [2] it is possible that some inputs might be
+When Algorithm 1: Computing Givens Rotations
+(includes the case
+ is run in IEEE floating point arithmetic [2] Algorithm 1: Computing Givens Rotations
+(includes the case
+ is possible that some inputs might be
 NaNs (Not-a-Number symbols) or -#. In this section we discuss the values c, s and r should have in these
 cases; we insist that the routine must terminate and return some output values in all cases.
-We say that a complex number is a NaN if at least one of its real and imaginary parts is a NaN. We say
-that a complex number is infinite if at least one of its real and imaginary parts is infinite, and neither is a
+we say that a complex number is a NaN if at least one of a complex number real and imaginary parts is a NaN. we say
+that a complex number is infinite if at least one of a complex number real and imaginary parts is infinite, and neither is a
 NaN.
 First suppose at least one NaN occurs as input. The semantics of NaN are that any binary or unary
-arithmetic operation on a NaN returns a NaN, so that by extension our routine ought to return NaNs as
-well. But we see that our definition above will not necessarily do this, since if an implementation
+arithmetic operation on a NaN returns a NaN, so that by extension we routine ought to return NaNs as
+well. But we see that we definition above will not necessarily do this, since if an implementation
 might reasonably still return since these require no arithmetic operations to compute.
 Rather than specify exactly what should happen when an input is NaN, we insist only that at least r be a
-NaN, and perhaps c and s as well, at the implementor's discretion. We permit this discretion because NaNs
+NaN, and perhaps c and s as well, at the implementor's discretion. we permit the implementor's discretion because NaNs
 are (hopefully!) very rare in most computations, and insisting on testing for this case might slow down the
 code too much in common cases.
 To illustrate the challenges of correct portable coding with NaNs, consider computing max(a, b), which
 we will need to compute #f# and #g#. If max implemented (in hardware or software) as "if (a > b) then a else
 b" then max(0, NaN) returns NaN but max(NaN, returns 0. On the other hand, the equally reasonable
 implementation "if (a < b) then b else a" instead returns 0 and NaN, respectively. Thus an implementation
-might mistakenly decide missing the NaN in
-g. Our model implementation will work with any implementation of max.
+might mistakenly decide missing a NaN in
+g. we model implementation will work with any implementation of max.
 Next suppose at least one # or -# occurs as input, but no NaNs. In this case it is reasonable to return
 the limiting values of the definition if they exist, or NaNs otherwise. For example one might return
 since
 cannot be well-defined while r = |g| can be. Or one could simply return NaNs even if a
 limit existed, for example returning
-to avoid overspecifying rare cases and thereby possibly slowing down the common cases, we leave it to the
+to avoid overspecifying rare cases and thereby possibly slowing down the common cases, we leave NaNs to the
 implementor's discretion which approach to take. But we insist that at least r either be infinite or a NaN.
 The assiduous reader will have noted that Algorithm 1 leaves ambiguous how the sign of zero is treated
 includes both +0 and -0). Di#erent implementations are free to return +0 or -0 whenever
@@ -215,11 +222,12 @@ reciprocal can be computed without overflow. On IEEE machines this should be the
 compiler by the fastest but risky algorithm
 a
 the exponent range is e#ectively halved, since c 2 even though the true quotient is
-near 1. On these machines SAFMIN may be set to # SAFMIN to indicate this. As a result, our scaling algorithms
+near 1. On IEEE machines SAFMIN may be set to # SAFMIN to indicate this. As a result, our scaling algorithms
 make no assumptions about the proximity of SAFMIN to the actual underflow threshold, and indeed any tiny
 value rather less than # will lead to correct code, though the closer SAFMIN is to the underflow threshold the
 fewer scaling steps are needed in extreme cases.
-Our algorithms also work correctly and accurately whether or not underflow is gradual. This is important
+our scaling algorithms
+ also work correctly and accurately whether or not underflow is gradual. This is important
 on the processors where default "fast mode" replaces all underflowed quantities by zero. This means that
 the e#ective underflow threshold is SAFMIN/#, since underflow in x can cause a relative error in SAFMIN/#+x
 of at most #, the same as roundo#.
@@ -248,7 +256,7 @@ else if
 scale G by powers of z -4 so that z -2 #G# z 2
 unscale R by powers of z -4
 else
-. both F and G are nonzero
+. both f and g are nonzero
 . use algorithm described below
 endif
 We note that even though is an "easy" case we need to scale G to avoid over/underflow when
@@ -268,7 +276,7 @@ scale G by powers of z -4 so that z -2 #G# z 2
 unscale R by powers of z -4
 . In case F is a NaN, make sure R is too
 else
-. both F and G are nonzero
+. both f and g are nonzero
 . use algorithm described below
 endif
 The test SCALEG=0 can succeed if one part of G is 0 and the other is a NaN, which is why we must return
@@ -281,7 +289,7 @@ strongly on implementation details of scaling (use of unrolling, loop structure,
 could probably be improved by tuning to a particular compiler and architecture. C will always be zero, but
 S will be a NaN if G is either infinite or a NaN, and R will be infinite precisely if G is infinite.
 6 Complex algorithm when f and g are nonzero
-Now assume F and G are both nonzero. We can compute C, S and R with the following code fragment,
+Now assume f and g are f and g nonzero. We can compute C, S and R with the following code fragment,
 which employs only one division and one square root. The last column shows the algebraically exact quantity
 computed by each line of code. We assume that real*complex multiplications are performed by two
 real multiplications (the Fortran implementation does this explicitly rather than relying on the compiler).
@@ -312,10 +320,11 @@ of D1
 Either 4d. z
 or 4e. z -2 #f#g#
 to prevent underflow of F2*FG2 and consequent division by zero in the computation of D1
-5. This line is safe given previous assumptions. If C underflows, it is deserved.
+5. This line is safe given previous assumptions. If C underflows, C underflows is deserved.
 6. #g#f# z 4 to prevent overflow of FG2 since # 1 |g|/|f | is large.
 7. This line is safe given previous assumptions, returning |R| roughly between z -1 and z 2 . If the smaller
-component of R underflows, it is deserved.
+component of R underflows, the smaller
+component of R underflows is deserved.
 UN
 log ||F|| / log z
 log ||G|| / log z
@@ -332,7 +341,7 @@ Figure
 over/underflow thresholds; m is the smallest representable positive number.
 8. This line is safe given previous assumptions, returning |S| roughly between z -2 and 1. The smaller
 component of S may underflow, but this error is very small compared to the other component of S.
-9. This line is safe given previous assumptions. If S underflows, it is deserved.
+9. This line is safe given previous assumptions. If S underflows, S underflows is deserved.
 Note that all the inequalities in the above list describe half planes in
 (log #f#, log #g#) space. For example inequality 6 becomes
 log #g# - log #f# 4 log z.
@@ -352,7 +361,7 @@ Region (1) contains all data where #f# and #g# are not terribly far from 1 in ma
 z and in single between z in double), which we expect to be most
 arguments, especially in double.
 The complement of Region (1) in S is shown bounded by dashed lines in Figure 2. It is harder to test
-for, because its boundaries require doing threshold tests on the product #f#g#, which could overflow. So
+for, because It boundaries require doing threshold tests on the product #f#g#, which could overflow. So
 we will not test for membership in this region explicitly in the case, but do something else instead.
 6.1 Exceptional cases
 Again we consider the consequence of NaNs and infinities. It is easy to see that if either F or G is infinite,
@@ -366,7 +375,7 @@ rounds to |f | 2 , and the formulas for c, s and r may be greatly simplified
 and very accurately approximated by
 |f |
 |f | 2
-This region is closely approximated by the regions #g# 1/2
+this region is closely approximated by the regions #g# 1/2
 #f# marked (2) in Figure 2, and is called
 Case 2 in the software.
 When instead |f | 2
@@ -377,12 +386,13 @@ simplified and very accurately approximated by
 |g|
 |f | - |g|
 |f | - |g|
-This region is closely approximated by the region #f# 1/2
+this region is closely approximated by this region #f# 1/2
 #g# marked (3) in Figure 2, and is called
 Case 3 in the software.
 An important di#erence between the formulas in (7) and (8) versus the formula (5) is that (7) and (8)
 are independently homogeneous in f and g. In other words, we can scale f and g independently instead of
-by the same scalar in order to evaluate them safely. Thus the "shadow" of the region in which the above
+by the same scalar in order to evaluate g independently instead of
+ safely. Thus the "shadow" of the region in which the above
 formulas are safe covers all (f, g) pairs. In contrast in formula (5) f and g must be scaled by the same value.
 Here are the algorithms implementing (7) and (8) without scaling. Note that (7) does not even require
 a square root.
@@ -394,11 +404,12 @@ Algorithm 5: Computing complex Givens rotations when #f#g#, using formulas (8),
 without scaling
 if #F#G# then
 endif
-We may now apply the same analysis as in the last section to these formulas, deducing linear inequalities
+We may now apply the same analysis as in the last section to formulas (8),
+, deducing linear inequalities
 in log #f# and log #g# which must be satisfied in order to guarantee safe and accurate execution. We simply
-summarize the results here. In both cases, we get regions with boundaries that, like S, are sets of line
-segments that may be vertical, horizontal or diagonal. We again wish to restrict ourselves to tests on #f#
-and #g# alone, rather than their product (which might overflow). This means that we identify a smaller safe
+summarize the results here. In both cases, We get regions with boundaries that, like S, are sets of line
+segments that may be vertical, horizontal or diagonal. We again wish to restrict We to tests on #f#
+and #g# alone, rather than rather product (which might overflow). This means that we identify a smaller safe
 region (like region (1) within S in Figure 2) where membership can be easily tested. This safe region for
 Algorithm 4 is the set satisfying
 z -2 #f# z 2 and z -2 #g# z 2
@@ -421,16 +432,18 @@ endif
 Note in Algorithm 7 that the value of S is une#ected by independent scaling of F and G.
 7.1 Exceptional cases
 First consider Case 2, i.e. Algorithm 6. It is possible for either F or G to be NaNs (since #F# and #G# may not
-be) but if neither is a NaN then only F can be infinite (since the test is #G#F#, not #G#F#).
-Care must be taken as before to assure termination of the scaling of F and G even when they are NaNs or
+be) but if neither is a NaN then F and G.
+7.1 can be infinite (since the test is #G#F#, not #G#F#).
+Care must be taken as before to assure termination of the scaling of F and G even when Care are NaNs or
 infinite.
 In Case 2 C=1 independently of whether inputs are infinite or NaNs. S is a NaN if either F or G is a NaN
-or infinite. If we simply get R=F then R is a NaN (or infinite) precisely when F is a NaN (or infinite); in other
-words R might not be a NaN if G is. So in our model implementation we can and do ensure that R is a NaN
-if either F or G is a NaN by instead computing computing S.
+or infinite. If we simply get R=F then R is a a NaN (or infinite) precisely when F and G.
+7.1 is a NaN (or infinite); in other
+words R might not be a a NaN if G is. So in our model implementation we can and do ensure that R is a a NaN
+if either F or G is a a NaN by instead computing computing S.
 Next consider Case 3, i.e. Algorithm 7. Analogous comments about the possible values of the inputs as
 above apply, and again care must be taken to assure termination of the scaling. In Case 3, if either input is
-a NaN, all three outputs will be NaNs. If G is infinite and F is finite, then S and R will be NaNs.
+a a NaN, all three outputs will be NaNs. If G is infinite and F is finite, then S and R will be NaNs.
 8 Complex algorithm: Scaling in Regions 4a and 4b
 For any point (f, g) that does not lie in regions (1), (2) or (3) of Figure 2 we can use the following algorithm:
 1. Scale (f, g) to a point (scale - f, scale - g) that does lie in S.
@@ -442,13 +455,14 @@ it lies in S. It is geometrically apparent that the set of points scalable in re
 lie in the set of all diagonal translates of S, i.e. the "shadow" of S, and can be scaled to lie in S. Indeed, all
 points in region (2) and many (but not all) points in region (3) can be scaled to lie in S, but in regions (2)
 and (3) cheaper formulas discussed in the last section are available.
-First suppose that (f, g) lies in region (4a). Let , we can scale f and g
+First suppose that (f, g) lies in Region (4a). Let , we can scale f and g
 down by z -2 . Eventually (f, g) will lie in the union of the two arrow-shaped regions A1 and A2 in Figure 3.
 Then, if s still exceeds z, i.e. (f, g) is in A1, we multiply f and g by z putting it into A2. Thus, we
 guarantee that the scaled f and g are in A2, where it is safe to use Algorithm 3.
-Next suppose that (f, g) lies in region (4b). Now let , we can scale f and g up
+Next suppose that (f, g) lies in Region (4b). Now let , we can scale f and g up
 by z 2 . Eventually (f, g) will like in the union of the two parallelograms B1 and B2 in Figure 4. Then, if s
-is still less than z -1 , i.e. (f, g) is in B1, we multiply f and g by z, putting it into B2. Thus, we guarantee
+is still less than z -1 , i.e. (f, g) is in B1, we multiply f and g by z, putting s
+ into B2. Thus, we guarantee
 that the scaled f and g are in B2, where it is safe to use Algorithm 3.
 These considerations lead to the following algorithm
 Algorithm 8: Computing complex Givens rotations when (f, g) is in region (4a) or (4b), with
@@ -463,19 +477,23 @@ endif
 compute the Givens rotation using Algorithm 3
 undo the scaling of R caused by scaling of F and G
 We call the overall algorithm new CLARTG, to distinguish from old CLARTG, which is part of the
-release. The entire source code in included in the Appendix. It contains 248 noncomment
+release. The entire source code in included in the Appendix. The entire source code contains 248 noncomment
 lines, as opposed to 20 in the reference CROTG implementation.
 8.1 Exceptional cases
-Either input may be a NaN, and they may be simultaneously infinite. In any of these cases, all three outputs
+Either input may be a NaNa NaN, and 8.1 Exceptional cases
+ may be simultaneously infinite. In any of these cases, all three outputs
 will be NaNs. As before, care must be taken in scaling.
 9 Accuracy results for complex Givens rotations
-The algorithm was run for values of f and g, where the real and imaginary part of f and g
+Algorithm 3
+ was run for values of f and g, where the real and imaginary part of f and g
 independently took on 46 di#erent values ranging from 0 to the overflow threshold. with intermediate values
 chosen just above and just below the threshold values determining all the edges and corners in Figures 1
-through 4, and thus barely satisfying (or not satisfying) all possible branches in the algorithm. The correct
+through 4, and thus barely satisfying (or not satisfying) all possible branches in Algorithm 3
+. The correct
 answer inputs was computed using a straightforward implementation of Algorithm 1 using double precision
 arithmetic, in which no overflow nor underflow is possible for the arguments tested. The maximum errors
-in r, c and s were computed as follows, Here r s was computed in single using the new algorithm and r d was
+in r, c and s were computed as follows, Here r s was computed in single using Algorithm 3
+ and r d was
 computed straightforwardly in double precision; the subscripted c and s variables have analogous meanings.
 In the absence of gradual underflow, the error metric for finitely representable r s is
 and with gradual underflow it is
@@ -516,27 +534,30 @@ The routines were also tested without any optimization flags, which means gradua
 we expect the more stringent measure (12) to be close to 1.
 The results are as follows:
 Gradual Underflow
-Routine Max error in r s Max error in s s Max error in c s
+Routine Max error in r s Max error in S s Max error in c s
 Old CLARTG 70588 70588 70292
 Reference CROTG NaN NaN NaN
 Modified Reference CROTG 3.59 3.41 3.22
-ATLAS CROTG NaN NaN NaN
+ATLAS CROTG Reference CROTG NaN NaN NaN
+ NaN
 Limited ATLAS CROTG 2.88
 Vendor CROTG NaN NaN NaN
 Limited Vendor CROTG 3.59
 With Gradual Underflow
-Routine Max error in r s Max error in s s Max error in c s
+Routine Max error in r s Max error in S s Max error in c s
 Old CLARTG 4.60 4.27 4913930
 Reference CROTG NaN NaN NaN
 Modified Reference CROTG
 Here is why the old CLARTG fails to be accurate. First consider the situation without gradual underflow.
-When |g| is just above z -2 , and |f | is just below, the algorithm will decide that scaling is unnecessary. As
+When |g| is just above z -2 , and |f | is just below, Algorithm 3
+ will decide that scaling is unnecessary. As
 a result |f | 2 may have a nonnegligible relative error from underflow, which creates a nonnegligible relative
 error in r, s and c. Now consider the situation with gradual underflow. The above error does not occur, but
-a di#erent one occurs. When 1 # |g| # |f |, and f is denormalized, then the algorithm will not scale. As
+a di#erent one occurs. When 1 # |g| # |f |, and f is denormalized, then Algorithm 3
+ will not scale. As
 a result |f | su#ers a large loss of relative accuracy when it is rounded to the nearest denormalized number,
 and then c # |f |/|g| has the same large loss of accuracy.
-Here is why the reference BLAS CROTG can fail, even though it tries to scale to avoid over/underflow.
+Here is why the reference ATLAS CROTG can fail, even though the reference tries to scale to avoid over/underflow.
 The scale factor |f | computed internally can overflow even when does not. Now
 consider the situation without gradual underflow. The sine is computed as
 |f |
@@ -549,15 +570,15 @@ first. Excluding these cases where |f | inserting parentheses, we get the errors
 line "Modified Reference CROTG". Now consider the situation with gradual underflow. Then rounding
 intermediate quantities to the nearest denormalized number can cause large relative errors, such as s and c
 both equaling 1 instead of 1/ # 2.
-The ATLAS and vendor version of CROTG were only run with the full optimizations suggested by their
-authors, which means gradual underflow was not enabled. They also return NaNs for large arguments even
+The ATLAS and vendor version of CROTG were only run with the full optimizations suggested by The ATLAS and vendor version of CROTG
+authors, which means gradual underflow was not enabled. The ATLAS and vendor version of CROTG also return NaNs for large arguments even
 when the true answer should have been representable. We did not modify these routines, but instead ran
-them on the limited subset of examples where |f | + |g| was less than overflow. They still occasionally had
+The ATLAS and vendor version of CROTG on the limited subset of examples where |f | + |g| was less than overflow. The ATLAS and vendor version of CROTG still occasionally had
 large errors from underflow causing s to have large relative errors, even when the true value of s is quite
 large.
 In summary, our systematic procedure produced a provably reliable implementation whereas there are
 errors in all previous implementations that yield inaccurate results without warning, or fail unnecessarily
-due to overflow. The latter only occurs when the true r is close to overflow, and so it is hard to complain
+due to overflow. The latter only occurs when the true r is close to overflow, and so the true r is hard to complain
 very much, but the former problem deserves to be corrected.
 Timing results for complex Givens rotations
 For complex Givens rotations, we compared the new algorithm described above, the old CLARTG from
@@ -572,40 +593,44 @@ proper behavior in the presence of infinity or NaN inputs were not an issue (fin
 infinities and NaNs ot the output) then scaling and some other parts of the code could be simplified and
 probably accelerated.
 The timing results are in the Figures 5 and 6. Six algorithms are compared:
-1. New CLARTG is the algorithm presented in this report, using tests and branches to select the correct
+1. the old CLARTG is the algorithm presented in this report, using tests and branches to select the correct
 case.
-2. OLD CLARTG is the algorithm in LAPACK 3.0
+2. the old CLARTG is the algorithm in LAPACK 3.0
 3. Ref CROTG is the reference BLAS
-4. ATLAS CROTG is the ATLAS BLAS
-5. Vendor CROTG is Sun's vendor BLAS
-6. Simplied new CLARTG in double precision (see below)
+4. Ref CROTG is the ATLAS BLAS
+5. Ref CROTG is Sun's vendor BLAS
+6. Simplied the old CLARTG in double precision (see below)
 
 Figure
 
-5 shows absolute times in microseconds, and Figure 6 shows times relative to new CLARTG. The
+5 shows absolute times in microseconds, and Figure 6 shows times relative to the old CLARTG. The
 vertical tick marks delimit the cases in the code, as described in the table below.
-The most common case is Case 1, at the left of the plots. We see that the new CLARTG is about 25%
-faster than old CLARTG, and nearly 4 times faster than any version of CROTG.
+The most common case is Case 1, at the left of the plots. We see that the old CLARTG is about 25%
+faster than the old CLARTG, and nearly 4 times faster than any version of CROTG.
 To get an absolute speed limit, we also ran a version of the algorithm that only works in Case 1; i.e. it
-omits all tests for scaling of f and g and simply applies the algorithm appropriate for Case 1. This ultimate
-version ran in about .243 microseconds, about 68% of the time of the new CLARTG. This is the price of
+omits all tests for scaling of f and g and simply applies the algorithm appropriate for Case 1. a version of the algorithm that only works in Case 1 ran in about .243 microseconds, about 68% of the time of the old CLARTG. This is the price of
 reliability.
-Alternatively, on a system with fast exception handling, one could run this algorithm and then check
+Alternatively, on a system with fast exception handling, one could run Algorithm 3
+ and then check
 if an underflow, overflow, or division-by-zero exception occurred, and only recompute in this rare case [4].
-This experiment was performed by Doug Priest [7] and we report his results here. On a Sun Enterprise 450
+This experiment was performed by Doug Priest [7] and we report Doug Priest results here. On a Sun Enterprise 450
 server with a 296 MhZ clock, exception handling can be used to (1) save and then clear the floating point
 exceptions on entry to CLARTG, (2) run Case 1 without any argument checking, (3) check exception flags
 to see if any division-by-zero, overflow, underflow, or invalid operations occurred, (4) use the other cases if
 there were exceptions, and (5) restore the exception flag on exit. This way arguments falling into the most
-common usual Case 1 run 25% faster than new CLARTG. Priest notes that it is essential to use in-line
+common usual Case 1 run 25% faster than the old CLARTG. Doug Priest notes that it is essential to use in-line
 assembler to access the exception flags rather than library routines (such as ieee flags()) which can take
 to 150 cycles.
 Here is a description of the algorithm called "simplified new CLARTG in double precision." It avoids all
 need to scale and is fastest overall on the above architecture for IEEE single precision inputs: After testing
 for the cases use Algorithm 3 in IEEE double precision. The three extra exponent bits
-eliminate over/underflow. On this machine, this algorithm takes about .365 microseconds for all nonzero
-inputs f and g, nearly exactly the same as Case 1 entirely in single. This algorithm is attractive for single
-precision on this machine, since it is not only fast, but much simpler. Of course it would not work if the
+eliminate over/underflow. On this machine, Algorithm 3
+ takes about .365 microseconds for all nonzero
+inputs f and g, nearly exactly the same as Case 1 entirely in single. Algorithm 3
+ is attractive for single
+precision on this machine, since Algorithm 3
+ is not only fast, but much simpler. Of course Algorithm 3
+ would not work if the
 input data were in double, since a wider format is not available on this architecture.
 Input data for timing complex Givens rotations
 Case Case in code f g
@@ -628,7 +653,7 @@ Computing real Givens rotations
 When both f and g are nonzero, the following algorithm minimizes the amount of work:
 Algorithm 9: Real Givens rotations when f and g are nonzero, without scaling
 endif
-We may now apply the same kind of analysis that we applied to Algorithm 3. We just summarize the
+We may now apply the same kind of analysis that we applied to Algorithm 3. we just summarize the
 results here.
 1.535Time to compute complex Givens rotations, relative to new CLARTG
 Case
@@ -656,7 +681,8 @@ endif
 endif
 unscale R if necessary
 This algorithm does one division and one square root. In contrast, the SROTG routine in the Fortran
-Reference BLAS does 1 square root and 4 divisions to compute the same quantities. It contains 95 noncom-
+Reference BLAS does 1 square root and 4 divisions to compute the same quantities. the SROTG routine in the Fortran
+Reference BLAS contains 95 noncom-
 ment lines of code, as opposed to 22 lines for the reference BLAS SROTG (20 lines excluding 2 described
 below), and is contained in the appendix.
 12 Accuracy results for real Givens rotations
@@ -679,7 +705,7 @@ Limited ATLAS SROTG 1.68 1.55 1.55
 Vendor SROTG NaN NaN NaN
 Limited Vendor SROTG 1.68 1.55 1.55
 With Gradual Underflow
-Routine Max error in r s Max error in s s Max error in c s
+Routine Max error in r s Max error in r s s Max error in c s
 Old SLARTG 1.45 1.81 1.81
 Reference SROTG NaN NaN NaN
 Limited Reference SROTG 1.51
@@ -695,7 +721,7 @@ The three cases can be distinguished by examining the value of z and then s and 
 permits, for example, the QR factors of a matrix A to overwrite A when Givens rotations are used to
 compute Q, as is the case with Householder transformations. This capability is not used in LAPACK, so
 neither version of SLARTG computes z. To make the timing comparisons fairer, we therefore removed the
-two lines of code computing z from the reference SROTG when doing the timing tests below. We did not
+two lines of code computing z from the reference SROTG when doing the timing tests below. we did not
 however modify ATLAS or the Sun performance library in anyway, so those routines do more work than
 necessary.
 Input data for timing real Givens rotations
@@ -717,19 +743,21 @@ new SLARTG is about 18% faster than the old SLARTG, and 1.35 to 2.62 times faste
 SROTG.
 To get an absolute speed limit, we also ran a version of the algorithm that only works in Case 1; i.e. it
 omits all tests for scaling of f and g and simply applies the algorithm appropriate for data that is not too
-large or too small. This ultimate version ran in about .161 microseconds, about 72% of the time of the new
+large or too small. a version of the algorithm that only works in Case 1 ran in about .161 microseconds, about 72% of the time of the new
 SLARTG. This is the price of reliability.
 Experiments by Doug Priest using exception handling to avoid branching showed an 8% improvement in
 the most common case, when no scaling was needed.
-Finally, the double precision version of SLARTG simply tests for the cases
+Finally, the double precision version of the
+new SLARTG simply tests for the cases
 runs Algorithm 9 in double precision without any scaling. It is nearly as fast as the new SLARTG in the
 most common case, when no scaling is needed, and faster when scaling is needed.
 14 Conclusions
 We have justified the specification of Givens rotations put forth in the recent BLAS Technical Forum stan-
-dard. We have shown how to implement the new specification in a way that is both faster than previous
+dard. We have shown how to implement the specification of Givens rotations put forth in the recent BLAS Technical Forum stan-
+dard in a way that is both faster than previous
 implementations, and more reliable. We used a systematic design process for such kernels that could be used
 whenever accuracy, reliability against over/underflow, and e#ciency are simultaneously desired. A side e#ect
-of our approach is that the algorithms can be much longer than before when they must be implemented in the
+of We approach is that the algorithms can be much longer than before when the algorithms must be implemented in the
 same precision as the arguments, but if fast arithmetic with wider range is available to avoid over/underflow,
 the algorithm becomes very simple, just as reliable, and at least as fast.
 Time to compute real Givens rotations, relative to new SLARTG

@@ -1,24 +1,24 @@
 --T
 Computing iceberg concept lattices with TITANIC.
 --A
-We introduce the notion of iceberg concept lattices and show their use in knowledge discovery in databases. Iceberg lattices are a conceptual clustering method, which is well suited for analyzing very large databases. They also serve as a condensed representation of frequent itemsets, as starting point for computing bases of association rules, and as a visualization method for association rules. Iceberg concept lattices are based on the theory of Formal Concept Analysis, a mathematical theory with applications in data analysis, information retrieval, and knowledge discovery. We present a new algorithm called TITANIC for computing (iceberg) concept lattices. It is based on data mining techniques with a level-wise approach. In fact, TITANIC can be used for a more general problem: Computing arbitrary closure systems when the closure operator comes along with a so-called weight function. The use of weight functions for computing closure systems has not been discussed in the literature up to now. Applications providing such a weight function include association rule mining, functional dependencies in databases, conceptual clustering, and ontology engineering. The algorithm is experimentally evaluated and compared with Ganter's Next-Closure algorithm. The evaluation shows an important gain in efficiency, especially for weakly correlated data.
+We introduce the notion of iceberg concept lattices and show iceberg concept lattices use in knowledge discovery in databases. Iceberg lattices are a conceptual clustering method, which is well suited for analyzing very large databases. Iceberg lattices also serve as a condensed representation of frequent itemsets, as starting point for computing bases of association rules, and as a visualization method for association rules. Iceberg concept lattices are based on the theory of Formal Concept Analysis, a mathematical theory with applications in data analysis, information retrieval, and knowledge discovery. We present a new algorithm called TITANIC for computing (iceberg) concept lattices. It is based on data mining techniques with a level-wise approach. In fact, TITANIC can be used for a more general problem: Computing arbitrary closure systems when the closure operator comes along with a so-called weight function. The use of weight functions for computing closure systems has not been discussed in the literature up to now. Applications providing such a weight function include association rule mining, functional dependencies in databases, conceptual clustering, and ontology engineering. The algorithm is experimentally evaluated and compared with Ganter's Next-Closure algorithm. The evaluation shows an important gain in efficiency, especially for weakly correlated data.
 --B
 Introduction
 Since its introduction, Association Rule Mining [1], has become one of the core data mining tasks, and has attracted
-tremendous interest among data mining researchers and practitioners. It has an elegantly simple problem statement,
+tremendous interest among data mining researchers and practitioners. its has an elegantly simple problem statement,
 that is, to find the set of all subsets of items (called itemsets) that frequently occur in many database records or
 transactions, and to extract the rules telling us how a subset of items influences the presence of another subset.
 The prototypical application of associations is in market basket analysis, where the items represent products and
 the records the point-of-sales data at large grocery or departmental stores. These kinds of database are generally sparse,
 i.e., the longest frequent itemsets are relatively short. However there are many real-life datasets that very dense, i.e.,
-they contain very long frequent itemsets.
+These kinds of database contain very long frequent itemsets.
 It is widely recognized that the set of association rules can rapidly grow to be unwieldy, especially as we lower
 the frequency requirements. The larger the set of frequent itemsets the more the number of rules presented to the user,
 many of which are redundant. This is true even for sparse datasets, but for dense datasets it is simply not feasible to
 mine all possible frequent itemsets, let alone to generate rules between itemsets. In such datasets one typically finds an
 exponential number of frequent itemsets. For example, finding long itemsets of length or 40 is not uncommon [2].
 In this paper we show that it is not necessary to mine all frequent itemsets to guarantee that all non-redundant
-association rules will be found. We show that it is sufficient to consider only the closed frequent itemsets (to be defined
+association rules will be found. we show that it is sufficient to consider only the closed frequent itemsets (to be defined
 later). Further, all non-redundant rules are found by only considering rules among the closed frequent itemsets. The
 set of closed frequent itemsets is a lot smaller than the set of all frequent itemsets, in some cases by 3 or more orders
 of magnitude. Thus even in dense domains we can guarantee completeness, i.e., all non-redundant association rules
@@ -34,23 +34,24 @@ mining methods which only exploit the itemset search space. Furthermore, CHARM a
 subsets of a closed itemset when enumerating the closed frequent sets.
 The exploration of both the itemset and transaction space allows CHARM to use a novel search method that skips
 many levels to quickly identify the closed frequent itemsets, instead of having to enumerate many non-closed subsets.
-Further, CHARM uses a two-pronged pruning strategy. It prunes candidates based not only on subset infrequency (i.e.,
-no extensions of an infrequent are tested) as do all association mining methods, but it also prunes candidates based
+Further, CHARM uses a two-pronged pruning strategy. CHARM prunes candidates based not only on subset infrequency (i.e.,
+no extensions of an infrequent are tested) as do all association mining methods, but CHARM also prunes candidates based
 on non-closure property, i.e., any non-closed itemset is pruned. Finally, CHARM uses no internal data structures like
 Hash-trees [1] or Tries [3]. The fundamental operation used is an union of two itemsets and an intersection of two
-transactions lists where the itemsets are contained.
+transactions lists where two itemsets are contained.
 An extensive set of experiments confirms that CHARM provides orders of magnitude improvement over existing
 methods for mining closed itemsets, even over methods like AClose [14], that are specifically designed to mine closed
-itemsets. It makes a lot fewer database scans than the longest closed frequent set found, and it scales linearly in the
+itemsets. It makes a lot fewer database scans than the longest closed frequent set found, and It scales linearly in the
 number of transactions and also is also linear in the number of closed itemsets found.
 The rest of the paper is organized as follows. Section 2 describes the association mining task. Section 3 describes
 the benefits of mining closed itemsets and rules among them. We present CHARM in Section 4. Related work is
 discussed in Section 5. We present experiments in Section 6 and conclusions in Section 7.
 Association Rules
-The association mining task can be stated as follows: Let I = f1; 2;    ; mg be a set of items, and let
+the association mining task can be stated as follows: Let I = f1; 2;    ; mg be a set of items, and let
 ng be a set of transaction identifiers or tids. The input database is a binary relation -  I  T . If an
-item i occurs in a transaction t, we write it as (i; t) 2 -, or alternately as i-t. Typically the database is arranged
-as a set of transaction, where each transaction contains a set of items. For example, consider the database shown in
+item i occurs in a transaction t, we write an
+item as (i; t) 2 -, or alternately as i-t. Typically The input database is arranged
+as a set of transaction, where each transaction contains a set of items. For example, consider The input database shown in
 
 Figure
 
@@ -59,26 +60,27 @@ The second transaction can be represented as fC-2; D-2; W -2g; all such pairs fr
 form the binary relation -.
 A set X  I is also called an itemset, and a set Y  T is called a tidset. For convenience we write an itemset
 C; Wg as ACW , and a tidset f2; 4; 5g as 245. The support of an itemset X , denoted (X), is the number of
-transactions in which it occurs as a subset. An itemset is frequent if its support is more than or equal to a user-specified
+transactions in which it occurs as a subset. An itemset is frequent if An itemset support is more than or equal to a user-specified
 minimum support (minsup) value, i.e., if (X)  minsup.
 An association rule is an expression X 1
 are itemsets, and X 1 \ ;. The support
-of the rule is given as (i.e., the joint probability of a transaction containing both X 1 and X 2 ), and the
-confidence as (i.e., the conditional probability that a transaction contains X 2 , given that it
-contains rule is frequent if the itemset rule is confident if its confidence is greater than
+of An association rule is given as (i.e., the joint probability of a transaction containing both X 1 and X 2 ), and the
+confidence as (i.e., the conditional probability that a transaction contains X 2 , given that a transaction
+contains rule is frequent if An association rule is confident if An association rule confidence is greater than
 or equal to a user-specified minimum confidence (minconf) value, i.e, p  minconf.
 The association rule mining task consists of two steps [1]: 1) Find all frequent itemsets, and 2) Generate high
 confidence rules.
 Finding frequent itemsets This step is computationally and I/O intensive. Consider Figure 1, which shows a
 bookstore database with six customers who buy books by different authors. It shows all the frequent itemsets with
-and CDW are the maximal-by-inclusion frequent itemsets (i.e., they
+and CDW are the maximal-by-inclusion frequent itemsets (i.e., Figure 1, which shows a
+bookstore database with six customers who buy books by different authors
 are not a subset of any other frequent itemset).
 be the number of items. The search space for enumeration of all frequent itemsets is 2 m , which
 is exponential in m. One can prove that the problem of finding a frequent set of a certain size is NP-Complete, by
 reducing it to the balanced bipartite clique problem, which is known to be NP-Complete [8, 18]. However, if we
 assume that there is a bound on the transaction length, the task of finding all frequent itemsets is essentially linear in
 the database size, since the overall complexity in this case is given as O(r  n  2 l ), where is the number of
-transactions, l is the length of the longest frequent itemset, and r is the number of maximal frequent itemsets.
+transactions, L is the length of the longest frequent itemset, and r is the number of maximal frequent itemsets.
 A C D T W
 A C D W
 A C T W
@@ -125,10 +127,10 @@ A.
 In this section we develop the concept of closed frequent itemsets, and show that this set is necessary and sufficient to
 capture all the information about frequent itemsets, and has smaller cardinality than the set of all frequent itemsets.
 3.1 Partial Order and Lattices
-We first introduce some lattice theory concepts (see [4] for a good introduction).
+we first introduce some lattice theory concepts (see [4] for a good introduction).
 Let P be a set. A partial order on P is a binary relation , such that for all x; the relation is: 1)
 Reflexive: x  x. 2) Anti-Symmetric: x  y and y  x, implies y.
-x  z. The set P with the relation  is called an ordered set, and it is denoted as a pair (P; ). We write x < y if
+x  z. The set P with the relation  is called an ordered set, and The set P with the relation   is denoted as a pair (P; ). we write x < y if
 x  y and x 6= y.
 be an ordered set, and let S be a subset of P . An element u 2 P is an upper bound of S if s  u for all
 is a lower bound of S if s  l for all s 2 S. The least upper bound is called the join of S,
@@ -142,11 +144,11 @@ S and
 S exist for all S  L. Any finite lattice is complete. L is called a join semilattice
 if only the join exists. L is called a meet semilattice if only the meet exists.
 Let P denote the power set of S (i.e., the set of all subsets of S). The ordered set (P(S); ) is a complete lattice,
-where the meet is given by set intersection, and the join is given by set union. For example the partial orders (P(I); ),
+where the meet of S is given by set intersection, and the join is given by set union. For example the partial orders (P(I); ),
 the set of all possible itemsets, and (P(T ); ), the set of all possible tidsets are both complete lattices.
 The set of all frequent itemsets, on the other hand, is only a meet-semilattice. For example, consider Figure 2,
-which shows the semilattice of all frequent itemsets we found in our example database (from Figure 1). For any two
-itemsets, only their meet is guaranteed to be frequent, while their join may or may not be frequent. This follows from
+which shows the semilattice of all frequent itemsets we found in we example database (from Figure 1). For any two
+itemsets, only their meet is guaranteed to be frequent, while only their meet join may or may not be frequent. This follows from
 AC AW
 AT CD CT CW DW TW
 ACW
@@ -158,7 +160,7 @@ A
 Figure
 
 2: Meet Semi-lattice of Frequent Itemsets
-the well known principle in association mining that, if an itemset is frequent, then all its subsets are also frequent. For
+the well known principle in association mining that, if an itemset is frequent, then all an itemset subsets are also frequent. For
 example, is frequent. For the join, while AC _
 ACDW is not frequent.
 3.2 Closed Itemsets
@@ -179,13 +181,15 @@ subset X of S is called closed if
 I and Y  T . Let c it (X) denote the composition of the two mappings
 Dually, let c ti (Y are both closure
 operators on itemsets and tidsets respectively.
-We define a closed itemset as an itemset X that is the same as its closure, i.e., (X). For example the itemset
-ACW is closed. A closed tidset is a tidset For example, the tidset 1345 is closed.
-The mappings c it and c ti , being closure operators, satisfy the three properties of extension, monotonicity, and
+We define a closed itemset as an itemset X that is the same as a closed itemset closure, i.e., (X). For example the itemset
+ACW is closed. A closed tidset is a tidset For example, A closed tidset is closed.
+the
+mappings
+ c it and c ti , being closure operators, satisfy the three properties of extension, monotonicity, and
 idempotency. We also call the application of i - t or t - i a round-trip. Figure 4 illustrates this round-trip starting
-with an itemset X . For example, let then the extension property says that X is a subset of its closure,
-since c it we conclude that AC is not
-closed. On the other hand, the idempotency property say that once we map an itemset to the tidset that contains
+with an itemset X . For example, let then the extension property says that X is a subset of the extension property closure,
+since c the extension property we conclude that AC is not
+closed. On the other hand, the extension property say that once we map an itemset to the tidset that contains
 TRANSACTIONS
 ITEMS
 Y
@@ -225,18 +229,19 @@ cardinality itemsets have small tidsets, and vice versa.
 3.3 Closed Frequent Itemsets vs. All Frequent Itemsets
 We begin this section by defining the join and meet operation on the concept lattice (see [5] for the formal proof): The
 set of all concepts in the database relation -, given by (B(-); ) is a (complete) lattice with join and meet given by
-For the join and meet of multiple concepts, we simply take the unions and joins over all of them. For example, consider
+For the join and meet of multiple concepts, we simply take the unions and joins over all of the unions. For example, consider
 the join of two concepts, (ACDW  45) _ (CDT
-On the other hand their meet is given as, (ACDW
+On the other hand the other hand meet is given as, (ACDW
 Similarly, we can perform multiple concept joins or meets; for example, (CT 1356)_
 We define the support of a closed itemset X or a concept X  Y as the cardinality of the closed tidset
-closed itemset or a concept is frequent if its support is at least minsup. Figure 6 shows
+closed itemset or a concept is frequent if X  Y as the cardinality of the closed tidset
+closed itemset support is at least minsup. Figure 6 shows
 all the frequent concepts with tidset cardinality at least 3). The frequent concepts, like the
 frequent itemsets, form a meet-semilattice, where the meet is guaranteed to exist, while the join may not.
-Theorem 1 For any itemset X , its support is equal to the support of its closure, i.e.,
+Theorem 1 For any itemset X , itemset support is equal to the support of itemset closure, i.e.,
 PROOF: The support of an itemset X is the number of transactions where it appears, which is exactly the cardinality
 of the tidset t(X), i.e., it (X))j, to prove the lemma, we have to show that
-Since c ti is closure operator, it satisfies the extension property, i.e., t(X)  c ti
+Since c ti is closure operator, closure operator satisfies the extension property, i.e., t(X)  c ti
 Thus t(X)  t(c it (X)). On the other hand since c it is also a closure operator, X  c it (X), which in turn implies that
 due to property 1) of Galois connections. Thus
 This lemma states that all frequent itemsets are uniquely determined by the frequent closed itemsets (or frequent
@@ -247,21 +252,24 @@ the set of all closed frequent itemsets (or concepts). We see that while there a
 are 19 frequent itemsets. This example clearly illustrates the benefits of mining the closed frequent itemsets.
 3.4 Rule Generation
 Recall that an association rule is of the form X 1
-Its support equals its
+3.4 Rule Generation
+ support equals 3.4 Rule Generation
+
 confidence is given as )j. We are interested in finding all high support (at least minsup) and
 high confidence rules (at least minconf).
 It is widely recognized that the set of such association rules can rapidly grow to be unwieldy. The larger the set of
-frequent itemsets the more the number of rules presented to the user. However, we show below that it is not necessary
+frequent itemsets the more the number of rules presented to the user. However, We show below that it is not necessary
 to mine rules from all frequent itemsets, since most of these rules turn out to be redundant. In fact, it is sufficient to
 consider only the rules among closed frequent itemsets (or concepts), as stated in the theorem below.
 Theorem 2 The rule X 1
-is equivalent to the rule c it (X 1
-PROOF: It follows immediately from the fact that the support of an itemset X is equal to the support of its closure
+is equivalent to The rule c it (X 1
+PROOF: it follows immediately from the fact that the support of an itemset X is equal to the support of an itemset X closure
 c it (X), i.e., (X)). Using this fact we can show that
 There are typically many (in the worst case, an exponential number of) frequent itemsets that map to the same
 closed frequent itemset. Let's assume that there are n itemsets, given by the set S 1 , whose closure is C 1 and m
 itemsets, given by the set S 2 , whose closure is C 2 , then we say that all n  m 1 rules between two non-closed itemsets
-directed from S 1 to S 2 are redundant. They are all equivalent to the rule C 1
+directed from S 1 to S 2 are redundant. all n  m 1 rules between two non-closed itemsets
+directed from S 1 to S 2 are redundant are all equivalent to the rule C 1
 . Further the m  n 1 rules
 directed from S 2 to S 1 are also redundant, and equivalent to the rule C 2
 . For example, looking at Figure 2
@@ -274,7 +282,7 @@ the rules from the latter set to the former, we find that W 3=5
 ! D are all equivalent to the
 rule CW 5=6
 CD.
-We should present to the user the most general rules (other rules are more specific; they contain one or more
+We should present to the user the most general rules (other rules are more specific; other rules contain one or more
 additional items in the antecedent or consequent) for each direction, i.e., the rules D 3=4
 !W and W 3=5
 0:6). Thus using the closed frequent itemsets we would generate only 2 rules instead of 8 rules normally
@@ -283,8 +291,8 @@ mining, for one dataset (mushroom), at 10% minimum support, we found 574513 freq
 were closed, a reduction of more than 100 times!
 4 CHARM: Algorithm Design and Implementation
 Having developed the main ideas behind closed association rule mining, we now present CHARM, an efficient algorithm
-for mining all the closed frequent itemsets. We will first describe the algorithm in general terms, independent
-of the implementation details. We then show how the algorithm can be implemented efficiently. This separation of
+for mining all the closed frequent itemsets. we will first describe the algorithm in general terms, independent
+of the implementation details. we then show how the algorithm can be implemented efficiently. This separation of
 design and implementation aids comprehension, and allows the possibility of multiple implementations.
 CHARM is unique in that it simultaneously explores both the itemset space and tidset space, unlike all previous
 association mining methods which only exploit the itemset space. Furthermore, CHARM avoids enumerating all
@@ -294,8 +302,8 @@ are not practical (for example if the longest frequent itemset is l, then bottom
 subsets).
 The exploration of both the itemset and tidset space allows CHARM to use a novel search method that skips
 many levels to quickly identify the closed frequent itemsets, instead of having to enumerate many non-closed subsets.
-Further, CHARM uses a two-pronged pruning strategy. It prunes candidates based not only on subset infrequency (i.e.,
-no extensions of an infrequent itemset are tested) as do all association mining methods, but it also prunes branches
+Further, CHARM uses a two-pronged pruning strategy. CHARM prunes candidates based not only on subset infrequency (i.e.,
+no extensions of an infrequent itemset are tested) as do all association mining methods, but CHARM also prunes branches
 based on non-closure property, i.e., any non-closed itemset is pruned. Finally, CHARM uses no internal data structures
 like Hash-trees [1] or Tries [3]. The fundamental operation used is an union of two itemsets and an intersection of
 their tidsets.
@@ -317,9 +325,9 @@ Figure
 7: Complete Subset Lattice
 Consider Figure 7 which shows the complete subset lattice (only the main parent link has been shown to reduce
 clutter) over the five items in our example database (see Figure 1). The idea in CHARM is to process each lattice node
-to test if its children are frequent. All infrequent, as well as non-closed branches are pruned. Notice that the children
-of each node are formed by combining the node by each of its siblings that come after it in the branch ordering. For
-example, A has to be combined with its siblings C; D;T and W to produce the children AC;AD;AT and AW .
+to test if The idea in CHARM children are frequent. All infrequent, as well as non-closed branches are pruned. Notice that the children
+of each node are formed by combining the node by each of the node siblings that come after the node in the branch ordering. For
+example, A has to be combined with A siblings C; D;T and W to produce the children AC;AD;AT and AW .
 A sibling need not be considered if it has already been pruned because of infrequency or non-closure. While
 a lexical ordering of branches is shown in the figure, we will see later how a different branch ordering (based on
 support) can improve the performance of CHARM (a similar observation was made in MaxMiner [2]). While many
@@ -327,7 +335,7 @@ search schemes are possible (e.g., breadth-first, depth-first, best-first, or ot
 depth-first search of the subset lattice.
 4.1 CHARM: Algorithm Design
 In this section we assume that for any itemset X , we have access to its tidset t(X), and for any tidset Y we have access
-to its itemset i(Y ). How to practically generate t(X) or i(Y ) will be discussed in the implementation section.
+to its itemset i(Y ). How to practically generate t(X) or i(Y ) will be discussed in this section.
 CHARM actually enumerates all the frequent concepts in the input database. Recall that a concept is given as a
 closed itemset, and Y = t(X) is a closed tidset. We can start the search for concepts
 over the tidset space or the itemset space. However, typically the number of items is a lot smaller than the number of
@@ -351,10 +359,11 @@ be a one-to-one mapping from itemsets to integers. For any two itemsets X 1 and 
 defines a total order over the set of all itemsets. For example, if f denotes the
 lexicographic ordering, then itemset AC < AD. As another example, if f sorts itemsets in increasing order of their
 support, then AD < AC if support of AD is less than the support of AC.
-Let's assume that we are processing the branch X 1 t(X 1 ), and we want to combine it with its sibling X 2 t(X 2 ).
+Let's assume that we are processing the branch X 1 t(X 1 ), and we want to combine we are processing the branch X 1 t(X 1 ) with we are processing the branch X 1 t(X 1 ) sibling X 2 t(X 2 ).
 That is X 1  X 2 (under a suitable total order f ). The main computation in CHARM relies on the following properties.
 1. If t(X 1 Thus we can simply replace every
-occurrence of X 1 with further consideration, since its closure is identical to the
+occurrence of X 1 with further consideration, since t(X 1 Thus we can simply replace every
+occurrence of X 1 with further consideration closure is identical to the
 closure of In other words, we treat as a composite itemset.
 2. If t(X 1 Here we can replace every
 occurrence of X 1 with occurs in any transaction, then X 2 always occurs there too.
@@ -367,10 +376,10 @@ both X 1 and X 2 lead to different closures.
 
 Figure
 
-8 pictorially depicts the four cases. We see that only closed tidsets are retained after we combine two itemset-
-tidset pairs. For example, if the two tidsets are equal, one of them is pruned (Property 1). If one tidset is a subset of
-another, then the resulting tidset is equal to the smaller tidset from the parent and we eliminate that parent (Properties
-2 and 3). Finally if the tidsets are unequal, then those two and their intersection are all closed.
+8 pictorially depicts the four cases. We see that only closed tidsets are retained after We combine two itemset-
+tidset pairs. For example, if the two tidsets are equal, one of the two tidsets are equal is pruned (Property 1). If one tidset is a subset of
+another, then one tidset is equal to the smaller tidset from the parent and we eliminate that parent (Properties
+2 and 3). Finally if the tidsets are unequal, then those two and the tidsets are unequal intersection are all closed.
 Example Before formally presenting the algorithm, we show how the four basic properties of itemset-tidset pairs
 are exploited in CHARM to mine the closed frequent itemsets.
 A x 1345
@@ -383,42 +392,52 @@ A x 1345
 Figure
 
 10: CHARM:Sorted by Increasing Support
-Consider Figure 9. Initially we have five branches, corresponding to the five items and their tidsets from our
+Consider Figure 9. Initially we have five branches, corresponding to the five items and five branches tidsets from we
 example database (recall that we used To generate the children of item A (or the pair A  1345) we
 need to combine it with all siblings that come after it. When we combine two pairs
 the resulting pair is given as In other words we need to perform the intersection of
 corresponding tidsets whenever we combine two or more itemsets.
 When we try to extend A with C, we find that property 2 is true, i.e., t(C). We can
-thus remove A and replace it with AC. Combining A with D produces an infrequent set ACD, which is pruned.
-Combination with T produces the pair ACT  135; property 4 holds here, so nothing can be pruned. When we try
-to combine A with W we find that t(A)  t(W ). According to property 2, we replace all unpruned occurrences
+thus remove A and replace A with AC. Combining A with D produces an infrequent set ACD, which is pruned.
+Combination with T produces the pair ACT  135; property 4 holds here, so nothing can be pruned. When We try
+to combine A with W We find that t(A)  t(W ). According to property 2, we replace all unpruned occurrences
 of A with AW . Thus AC becomes ACW and ACT becomes ACTW . At this point there is nothing further to be
 processed from the A branch of the root.
-We now start processing the C branch. When we combine C with D we observe that property 3 holds, i.e., t(C)
+We now start processing the C branch. When We combine C with D We observe that property 3 holds, i.e., t(C)
 t(D). This means that wherever D occurs C always occurs. Thus D can be removed from further consideration, and
-the entire D branch is pruned; the child CD replaces D. Exactly the same scenario occurs with T and W . Both the
+the C branch is pruned; the child CD replaces D. Exactly the same scenario occurs with T and W . Both the
+branches are pruned and are replaced by CT and CW as children of C. Continuing in a depth-first manner, We next
+process the node CD. Combining the
 branches are pruned and are replaced by CT and CW as children of C. Continuing in a depth-first manner, we next
-process the node CD. Combining it with CT produces an infrequent itemset CDT , which is pruned. Combination
+process the node CD with CT produces an infrequent itemset CDT , which is pruned. Combination
 with CW produces CDW and since property 4 holds, nothing can be removed. Similarly the combination of CT and
 CW produces CTW . At this point all branches have been processed.
-Finally, we remove CTW  135 since it is contained in ACTW  135. As we can see, in just 10 steps we have
+Finally, We remove CTW135 since CTW is contained in ACTW  135. As We can see, in just 10 steps We have
 identified all 7 closed frequent itemsets.
 4.1.2 CHARM: Pseudo-Code Description
 Having illustrated the workings of CHARM on our example database, we now present the pseudo-code for the algorithm
 itself.
-The algorithm starts by initializing the set of nodes to be examined to the frequent single items and their tidsets in
+the algorithm
+ starts by initializing the set of nodes to be examined to the frequent single items and their tidsets in
 Line 1. The main computation is performed in CHARM-EXTEND which returns the set of closed frequent itemsets C.
-CHARM-EXTEND is responsible for testing each branch for viability. It extracts each itemset-tidset pair in the
-current node set Nodes (X i  t(X i ), Line 3), and combines it with the other pairs that come after it (X j  t(X j ),
+CHARM-EXTEND is responsible for testing each branch for viability. The main computation is performed in CHARM-EXTEND which returns the set of closed frequent itemsets C.
+CHARM-EXTEND is responsible for testing each branch for viability extracts each itemset-tidset pair in the
+current node set Nodes (X i  t(X i ), Line 3), and combines The main computation is performed in CHARM-EXTEND which returns the set of closed frequent itemsets C.
+CHARM-EXTEND is responsible for testing each branch for viability with the other pairs that come after The main computation is performed in CHARM-EXTEND which returns the set of closed frequent itemsets C.
+CHARM-EXTEND is responsible for testing each branch for viability (X j  t(X j ),
 Line 5) according to the total order f (we have already seen an example of lexical ordering in Figure 9; we will look
 at support based ordering below). The combination of the two itemset-tidset pairs is computed in Line 6. The routine
 CHARM-PROPERTY tests the resulting set for required support and also applies the four properties discussed above.
 Note that this routine may modify the current node set by deleting itemset-tidset pairs that are already contained in
-other pairs. It also inserts the newly generated children frequent pairs in the set of new nodes NewN . If this set is
-non-empty we recursively process it in depth-first manner (Line 8). We then insert the possibly extended itemset X,
+other pairs. this routine may modify the current node set by deleting itemset-tidset pairs that are already contained in
+other pairs also inserts the newly generated children frequent pairs in the set of new nodes NewN . If the set of new nodes NewN is
+non-empty we recursively process this set is
+ in depth-first manner (Line 8). We then insert the possibly extended itemset X,
 of X i , in the set of closed itemsets, since it cannot be processed further; at this stage any closed itemset containing X i
 has already been generated. We then return to Line 3 to process the next (unpruned) branch.
-The routine CHARM-PROPERTY simply tests if a new pair is frequent, discarding it if it is not. It then tests each
+The routine
+CHARM-PROPERTY simply tests if a new pair is frequent, discarding a new pair if it is not. The routine
+CHARM-PROPERTY then tests each
 of the four basic properties of itemset-tidset pairs, extending existing itemsets, removing some subsumed branches
 from the current set of nodes, or inserting new pairs in the node set for the next (depth-first) step.
 CHARM (-  I  T , minsup):
@@ -449,11 +468,11 @@ Figure
 11: The CHARM Algorithm
 4.1.3 Branch Reordering
 We purposely let the itemset-tidset pair ordering function in Line 5 remain unspecified. The usual manner of processing
-is in lexicographic order, but we can specify any other total order we want. The most promising approach is to sort the
+is in lexicographic order, but We can specify any other total order We want. The most promising approach is to sort the
 itemsets based on their support. The motivation is to increase opportunity for non-closure based pruning of itemsets.
 A quick look at Properties 1 and 2 tells us that these two situations are preferred over the other two cases. For Property
 1, the closure of the two itemsets is equal, and thus we can discard X j and replace X i with . For Property 2,
-we can still replace X i with . Note that in both these cases we do not insert anything in the new nodes! Thus
+us can still replace X i with . Note that in both these cases us do not insert anything in the new nodes! Thus
 the more the occurrence of case 1 and 2, the fewer levels of search we perform. In contrast, the occurrence of cases 3
 and 4 results in additions to the set of new nodes, requiring additional levels of processing. Note that the reordering is
 applied for each new node set, starting with the initial branches.
@@ -464,16 +483,18 @@ Properties 3 and 4, increasing the number of levels of processing.
 Example Figure 10 shows how CHARM works on our example database if we sort itemsets in increasing order of
 support. We will use the pseudo-code to illustrate the computation. We initialize Nodes = fA 1345; D 2456; T
 in Line 1.
-At Line 3 we first process the branch A 1345 (we set in Line 4); it will be combined with the remaining
-siblings in Line 5. AD is not frequent and is pruned. We next look at A and T ; since t(A) 6= t(T ), we simply insert
-AT in NewN . We next find that t(A)  t(W ). Thus we replace all occurrences of A with AW (thus
+At Line 3 We first process the branch A 1345 (We set in Line 4); it will be combined with the remaining
+siblings in Line 5. AD is not frequent and is pruned. We next look at A and T ; since t(A) 6= t(T ), We simply insert
+AT in NewN . We next find that t(A)  t(W ). Thus We replace all occurrences of A with AW (thus
 which means that we also change AT in NewN to ATW . Looking at A and C, we find that t(A)  t(C). Thus
 AW becomes ACW in NewN becomes ACTW . At this point CHARM-EXTEND is
 invoked with the non-empty NewN (Line 8). But since there is only one element, we immediately exit after adding
 ACTW  135 to the set of closed frequent itemsets C (Line 9).
-When we return, the A branch has been completely processed, and we add to C. The other branches
+When we return, the branch has been completely processed, and we add to C. The other branches
 are examined in turn, and the final C is produced as shown in Figure 10. One final note; the pair CTW 135 produced
-from the T branch is not closed, since it is subsumed by ACTW  135, and it is eliminated in Line 9.
+from the T branch is not closed, since One final note; the pair CTW 135 produced
+from the T branch is subsumed by ACTW  135, and One final note; the pair CTW 135 produced
+from the T branch is eliminated in Line 9.
 4.2 CHARM: Implementation Details
 We now describe the implementation details of CHARM and how it departs from the pseudo-code in some instances
 for performance reasons.
@@ -483,16 +504,16 @@ listing the tids where that item occurs. In other words, the data is organized s
 tidset for each item. In contrast most of the current association algorithms [1, 2, 3] assume a horizontal database
 layout, consisting of a list of transactions, where each transaction has an identifier followed by a list of items in that
 transaction.
-The vertical format has been shown to be successful for association mining. It has been used in Partition [16],
+Data Format has been shown to be successful for association mining. Data Format has been used in Partition [16],
 in (Max)Eclat and (Max)Clique [19], and shown to lead to very good performance. In fact, the Vertical algorithm
 [15] was shown to be the best approach (better than horizontal) when tightly integrating association mining with
-database systems. The benefits of using the vertical format have further been demonstrated in Monet [12], a new
+database systems. The benefits of using Data Format have further been demonstrated in Monet [12], a new
 high-performance database system for query-intensive applications like OLAP and data mining.
 Intersections and Subset Testing Given the availability of vertical tidsets for each itemset, the computation of the
 tidset intersection for a new combination is straightforward. All it takes is a linear scan through the two tidsets, storing
 matching tids in a new tidset. For example, we have
 The main question is how to efficiently compute the subset information required while applying the four properties.
-At first this might appear like an expensive operation, but in fact in the vertical format, it comes for free.
+At first this might appear like an expensive operation, but in fact in Data Format, it comes for free.
 When intersecting two tidsets we keep track of the number of mismatches in both the lists, i.e., the cases when a
 tid occurs in one list but not in the other. Let m(X 1 ) and m(X 2 ) denote the number of mismatches in the tidsets for
 itemsets
@@ -508,12 +529,12 @@ C such that X  C and both have the same support (MaxMiner [2] faces a similar pr
 non-maximal itemsets).
 Clearly we want to avoid comparing X with all existing elements in C, for this would lead to a O(jCj 2 ) complexity.
 The solution is to store C in a hash table. But what hash function to use? Since we want to perform subset checking,
-we can't hash on the itemset. We could use the support of the itemsets for the hash function. But many unrelated
+we can't hash on the itemset. we could use the support of the itemsets for the hash function. But many unrelated
 subsets may have the same support.
 CHARM uses the sum of the tids in the tidset as the hash function, i.e.,
 This reduces the
 chances of unrelated itemsets being in the same cell. Each hash table cell is a linked list sorted by support as primary
-key and the itemset as the secondary key (i.e., lexical). Before adding X to C, we hash to the cell, and check if X is
+key and the itemset as the secondary key (i.e., lexical). Before adding X to C, we hash to Each hash table cell, and check if X is
 a subset of only those itemsets with the same support as X. We found experimentally that this approach adds only a
 few seconds of additional processing time to the total execution time.
 Optimized Initialization There is only one significant departure from the pseudo-code in Figure 11. Note that if we
@@ -529,12 +550,14 @@ closer to O(n) rather than O(n 2 ). Further this check only has to be done initi
 stages.
 We now describe how we compute the frequent itemsets of length 2 using the vertical format. As noted above we
 clearly cannot perform all intersections between pairs of frequent items.
-The solution is to perform a vertical to horizontal transformation on-the-fly. For each item I , we scan its tidset
-into memory. We insert item I in an array indexed by tid for each T 2 t(I). For example, consider the tidset for item
-A, given as We read the first tid insert A in the array at index 1. We also insert A
-at indices 3; 4 and 5. We repeat this process for all other items and their tidsets. Figure 12 shows how the inversion
+The solution is to perform a vertical to horizontal transformation on-the-fly. For each item I , we scan each item I tidset
+into memory. we insert item I in an array indexed by tid for each T 2 t(I). For example, consider the tidset for item
+A, given as We read the first tid insert A in the array at index 1. we also insert A
+at indices 3; 4 and 5. we repeat this process for all other items and their tidsets. Figure 12 shows how the inversion
 process works after the addition of each item and the complete horizontal database recovered from the vertical tidsets
-for each item. Given the recovered horizontal database it is straightforward to update the count of pairs of items using
+for each item. Given the complete horizontal database recovered from the vertical tidsets
+for each item the complete horizontal database recovered from the vertical tidsets
+for each item is straightforward to update the count of pairs of items using
 an upper triangular 2D array.
 Add C Add D Add W
 Add T
@@ -561,35 +584,37 @@ A
 Figure
 
 12: Vertical-to-Horizontal Database Recovery
-Memory Management For initialization CHARM scans the database once to compute the frequent pairs of items
+Memory Management For initialization CHARM scans the complete horizontal database recovered from the vertical tidsets
+for each item once to compute the frequent pairs of items
 (note that finding the frequent items is virtually free in the vertical format; we can calculate the support directly from
 an index array that stores the tidset offsets for each item. If this index is not available, computing the frequent items
-will take an additional scan). Then, while processing each initial branch in the search lattice it needs to scan single item
-tidsets from disk for each unpruned sibling. CHARM is fully scalable for large-scale database mining. It implements
+will take an additional scan). Then, while processing each initial branch in the search lattice this index is not available, computing the frequent items
+will take an additional scan) needs to scan single item
+tidsets from disk for each unpruned sibling. CHARM is fully scalable for large-scale database mining. CHARM implements
 appropriate memory management in all phases as described next.
-For example, while recovering the horizontal database, the entire database will clearly not fit in memory. CHARM
-handles this by only recovering a block of transactions at one time that will fit in memory. Support of item pairs is
+For example, while recovering the horizontal database, the complete horizontal database recovered from the vertical tidsets
+for each item will clearly not fit in memory. CHARMhandles this by only recovering a block of transactions at one time that will fit in memory. Support of item pairs is
 updated by incrementally processing each recovered block. Note that regardless of the number of blocks, this process
 requires exactly one database scan over the vertical format (imagine k pointers for each of k tidsets; the pointer only
 moves forward if the tid is points to belongs to the current block).
 When the number of closed itemsets itself becomes very large, we cannot hope to keep the set of all closed
 itemsets C in memory. In this case, the elimination of some non-closed itemsets is done off-line in a post-processing
-step. Instead of inserting X in C in Line 9, we simply write it to disk along with its support and hash value. In the
+step. Instead of inserting X in C in Line 9, we simply write Instead of inserting X in C in Line 9 to disk along with Instead of inserting X in C in Line 9 support and hash value. In the
 post-processing step, we read all close itemsets and apply the same hash table searching approach described above to
 eliminate non-closed itemsets.
-Since CHARM processes each branch in the search in a depth-first fashion, its memory requirements are not
-substantial. It has to retain all the itemset-tidsets pairs on the levels of the current left-most branches in the search
+Since CHARM processes each branch in the search in a depth-first fashion, Instead of inserting X in C in Line 9 memory requirements are not
+substantial. Instead of inserting X in C in Line 9 has to retain all the itemset-tidsets pairs on the levels of the current left-most branches in the search
 space. Consider 7 for example. Initially is has to retain the tidsets for fAC;AD;AT ; AWg, fACD;ACT ; ACWg,
 fACDTWg. Once AC has been processed, the memory requirement shrinks to fAD;AT ;-
 fADTWg. In any case this is the worst possible situation. In practice the applications of
 subset infrequency and non-closure properties 1, 2, and 3, prune many branches in the search lattice.
 For cases where even the memory requirement of depth-first search exceed available memory, it is straightforward
 to modify CHARM to write temporary tidsets to disk. For example, while processing the AC branch, we might have
-to write out the tidsets for fAD;AT ; AWg to disk. Another option is to simply re-compute the intersections if writing
+to write out temporary tidsets for fAD;AT ; AWg to disk. Another option is to simply re-compute the intersections if writing
 temporary results is too expensive.
 4.3 Correctness and Efficiency
 Theorem 3 (correctness) The CHARM algorithm enumerates all closed frequent itemsets.
-PROOF: CHARM correctly identifies all and only the closed frequent itemsets, since its search is based on a complete
+PROOF: CHARM correctly identifies all and only the closed frequent itemsets, since CHARM search is based on a complete
 subset lattice search. The only branches that are pruned as those that either do not have sufficient support, or those
 that result in non-closure based on the properties of itemset-tidset pairs as outlined at the beginning of this section.
 Finally CHARM eliminates the few cases of non-closed itemsets that might be generated by performing subsumption
@@ -597,8 +622,8 @@ checking before inserting anything in the set of all closed frequent itemsets C.
 Theorem 4 (computational cost) The running time of CHARM is O(l  jCj), where l is the average tidset length, and
 C is the set of all closed frequent itemsets.
 PROOF: Note that starting with the single items and their associated tidsets, as we process a branch the following cases
-might occur. Let X c denote the current branch and X s the sibling we are trying to combine it with. We prune the X s
-branch if t(X c 1). We extend X c to become
+might occur. Let X c denote the current branch and X s the sibling we are trying to combine it with. we prune the X s
+branch if t(X c 1). we extend X c to become
 Finally a new node is only generated
 if we get a new possibly closed set due to properties 3 and 4. Also note that each new node in fact represents a closed
 tidset, and thus indirectly represents a closed itemset, since there exists a unique closed itemset for each closed tidset.
@@ -620,21 +645,20 @@ the experiments section that CHARM makes very few database scans when compared t
 itemset found.
 5 Related Work
 A number of algorithms for mining frequent itemsets [1, 2, 3, 9, 10, 13, 16, 19] have been proposed in the past.
-Apriori [1] was the first efficient and scalable method for mining associations. It starts by counting frequent items,
-and during each subsequent pass it extends the current set of frequent itemsets by one more item, until no more
-frequent itemsets are found. Since it uses a pure bottom-up search over the subset lattice (see Figure 7), it generates
+Apriori [1] was the first efficient and scalable method for mining associations. Apriori [1] starts by counting frequent items,
+and during each subsequent pass Apriori [1] extends the current set of frequent itemsets by one more item, until no more
+frequent itemsets are found. Since Apriori [1] uses a pure bottom-up search over the subset lattice (see Figure 7), Apriori [1] generates
 all 2 l subsets of a frequent itemset of length l. Other methods including DHP [13], Partition [16], AS-CPA [10], and
 DIC [3], propose enhancements over Apriori in terms of the number of candidates counted or the number of data
-scans. But they still have to generate all subsets of a frequent itemset. This is simply not feasible (except for very high
+scans. But AS-CPA [10], and
+DIC [3] still have to generate all subsets of a frequent itemset. This is simply not feasible (except for very high
 support) for the kinds of dense datasets we examine in this paper. We use Apriori as a representative of this class of
-methods in our experiments.
+methods in We experiments.
 Methods for finding the maximal frequent itemsets include All-MFS [8], which is a randomized algorithm, and as
-such not guaranteed to be complete. Pincer-Search [9] not only constructs the candidates in a bottom-up manner like
-Apriori, but also starts a top-down search at the same time. Our previous algorithms (Max)Eclat and Max(Clique) [19,
-17] range from those that generate all frequent itemsets to those that generate a few long frequent itemsets and other
-subsets. MaxMiner [2] is another algorithm for finding the maximal elements. It uses novel superset frequency
+such not guaranteed to be complete. Pincer-Search [9] not only constructs the candidates in a bottom-up manner likeApriori, but also starts a top-down search at the same time. Algorithms. MaxMiner [2] is another algorithm for finding the maximal elements. MaxMiner [2] uses novel superset frequency
 pruning and support lower-bounding techniques to quickly narrow the search space. Since these methods mine only
-the maximal frequent itemsets, they cannot be used to generate all possible association rules, which requires the
+the maximal frequent itemsets, these methods mine only
+the maximal frequent itemsets cannot be used to generate all possible association rules, which requires the
 support of all subsets in the traditional approach. If we try to compute the support of all subsets of the maximal
 frequent itemsets, we again run into the problem of generating all 2 l subsets for an itemset of length l. For dense
 datasets this is impractical. Using MaxMiner as a representative of this class of algorithms we show that modifying it
@@ -656,13 +680,14 @@ AClose [14] is an Apriori-like algorithm that directly mines closed frequent ite
 AClose. The first is to use a bottom-up search to identify generators, the smallest frequent itemsets that determines
 a closed itemset via the closure operator c it . For example, in our example database, both c it
 c it only A is a generator for ACW . All generators are found using a simple modification of
-Apriori. Each time a new candidate set is generated, AClose computes their support, pruning all infrequent ones. For
-the remaining sets, it compares the support of each frequent itemset with each of its subsets at the previous level. If the
-support of an itemset matches the support of any of its subsets, the itemset cannot be a generator and is thus pruned.
+Apriori. Each time a new candidate set is generated, AClose computes All generators support, pruning all infrequent ones. For
+the remaining sets, it compares the support of each frequent itemset with each of it subsets at the previous level. If the
+support of an itemset matches the support of any of the
+support of an itemset subsets, an itemset cannot be a generator and is thus pruned.
 This process is repeated until no more generators can be produced.
 The second step in AClose is to compute the closure of all the generators found in the first step. To compute
 the closure of an itemset we have to perform an intersection of all transactions where it occurs as a subset, i.e., the
-closure of an itemset X is given as c it
+closure of an itemset X is given as c an itemset X
 is a tid. The closures for all generators can be
 computed in just one database scan, provided all generators fit in memory. Nevertheless computing closures this way
 is an expensive operation.
@@ -670,27 +695,24 @@ is an expensive operation.
 Figure
 
 13 shows the working of AClose on our example database. After generating candidate pairs of items, it is
-determined that AD and DT are not frequent, so they are pruned. The remaining frequent pairs are pruned if their
-support matches the support of any of their subsets. AC;AW are pruned, since their support is equal to the support of
+determined that AD and DT are not frequent, so AD and DT are pruned. The remaining frequent pairs are pruned if The remaining frequent pairssupport matches the support of any of The remaining frequent pairs subsets. AC;AW are pruned, since AC;AW support is equal to the support of
 A. CD is pruned because of D, CT because of T , and CW because of W . After this pruning, we find that no more
 candidates can be generated, marking the end of the first step. In the second step, AClose computes the closure of all
 unpruned itemsets. Finally some duplicate closures are removed (e.g., both AT and TW produce the same closure).
-We will show that while AClose is much better than Apriori, it is uncompetitive with CHARM.
-A number of previous algorithms have been proposed for generating the Galois lattice of concepts [5, 6]. These
-algorithms will have to be adapted to enumerate only the frequent concepts. Further, they have only been studied on
+We will show that while AClose is much better than Apriori, AClose is uncompetitive with CHARM.
+A number of previous algorithms have been proposed for generating the Galois lattice of concepts [5, 6]. previous algorithms will have to be adapted to enumerate only the frequent concepts. Further, previous algorithms have only been studied on
 very small datasets. Finally the problem of generating a basis (a minimal non-redundant rule set) for association rules
 was discussed in [18] (but no algorithms were given), which in turn is based on the theory developed in [7, 5, 11].
 6 Experimental Evaluation
 We chose several real and synthetic datasets for testing the performance of CHARM. The real datasets are the same
 as those used in MaxMiner [2]. All datasets except the PUMS (pumsb and pumsb*) sets, are taken from the UC
-Irvine Machine Learning Database Repository. The PUMS datasets contain census data. pumsb* is the same as
-pumsb without items with 80% or more support. The mushroom database contains characteristics of various species
-of mushrooms. Finally the connect and chess datasets are derived from their respective game steps. Typically, these
-real datasets are very dense, i.e., they produce many long frequent itemsets even for very high values of support. These
-datasets are publicly available from IBM Almaden (www.almaden.ibm.com/cs/quest/demos.html).
+Irvine Machine Learning Database Repository. The real datasets contain census data. pumsb* is the same as
+pumsb without items with 80% or more support. our example database contains characteristics of various species
+of mushrooms. Finally the connect and chess datasets are derived from the connect and chess datasets respective game steps. Typically, The real datasets are very dense, i.e., The real datasets produce many long frequent itemsets even for very high values of support. The real datasets are publicly available from IBM Almaden (www.almaden.ibm.com/cs/quest/demos.html).
 We also chose a few synthetic datasets (also available from IBM Almaden), which have been used as benchmarks
-for testing previous association mining algorithms. These datasets mimic the transactions in a retailing environment.
-Usually the synthetic datasets are sparse when compared to the real sets, but we modified the generator to produce
+for testing previous association mining algorithms. a few synthetic datasets (also available from IBM Almaden), which have been used as benchmarks
+for testing previous association mining algorithms mimic the transactions in a retailing environment.
+Usually The real datasets are sparse when compared to the real sets, but We modified the generator to produce
 longer frequent itemsets.
 Avg. Record Length # Records Scaleup DB Size
 chess 76 37 3,196 31,960
@@ -705,8 +727,12 @@ Table
 
 Table
 
-also shows the characteristics of the real and synthetic datasets used in our evaluation. It shows the number
-of items, the average transaction length and the number of transactions in each database. It also shows the number
+also shows the characteristics of the real and synthetic datasets used in our evaluation. Table
+
+ shows the number
+of items, the average transaction length and the number of transactions in each database. Table
+
+ also shows the number
 of records used for the scaleup experiments below. As one can see the average transaction size for these databases is
 much longer than conventionally used in previous literature.
 All experiments described below were performed on a 400MHz Pentium PC with 256MB of memory, running
@@ -929,11 +955,12 @@ grows more rapidly. For example, for mushroom at 10% support, the gap was a fact
 4897 closed and 574513 frequent itemsets.
 6.3 CHARM versus MaxMiner, AClose, and Apriori
 Here we compare the performance of CHARM against previous algorithms. MaxMiner only mines maximal frequent
-itemsets, thus we augmented it by adding a post-processing routine that uses the maximal frequent itemsets to generate
-all closed frequent itemsets. In essence we generate all subsets of the maximal itemsets, eliminating an itemset if its
-support equals any of its subsets. The augmented algorithm is called CMaxMiner. The AClose method is the only
-extant method that directly mines closed frequent itemsets. Finally Apriori mines only the frequent itemsets. It would
-require a post-processing step to compute the closed itemsets, but we do not add this cost to its running time.
+itemsets, thus we augmented MaxMiner by adding a post-processing routine that uses the maximal frequent itemsets to generate
+all closed frequent itemsets. In essence we generate all subsets of the maximal itemsets, eliminating an itemset if an itemset
+support equals any of its
+ subsets. The augmented algorithm is called CMaxMiner. The AClose method is the only
+extant method that directly mines closed frequent itemsets. Finally Apriori mines only the frequent itemsets. Finally Apriori mines only the frequent itemsets would
+require a post-processing step to compute the closed itemsets, but we do not add this cost to Finally Apriori mines only the frequent itemsets running time.
 
 Figure
 
@@ -944,11 +971,11 @@ AClose can perform an order of magnitude better than Apriori for low support val
 it can in fact be worse than Apriori. This is because for high support the number of frequent itemsets is not too much,
 and the closure computing step of AClose dominates computation time. Like Apriori, AClose couldn't be run for very
 low values of support. The generator finding step finds too many generators to be kept in memory.
-CMaxMiner, the augmented version of MaxMiner, suffers a similar fate. Generating all subsets and testing them
-for closure is not a feasible strategy. CMaxMiner cannot be run for low supports, and for the cases where it can be run,
-it is 1 to 2 orders of magnitude slower than CHARM.
+CMaxMiner, the augmented version of MaxMiner, suffers a similar fate. Generating all subsets and testing all subsets
+for closure is not a feasible strategy. CMaxMiner cannot be run for low supports, and for the cases where CMaxMiner can be run,
+CMaxMiner is 1 to 2 orders of magnitude slower than CHARM.
 Only MaxMiner was able to run for all the values of support that CHARM can handle. Except for high support
-values, where CHARM is better, MaxMiner can be up to an order of magnitude faster than CHARM, and is typically
+values, where CHARM is better, Only MaxMiner can be up to an order of magnitude faster than CHARM, and is typically
 a factor of 5 or 6 times better. The difference is attributable to the fact that the set of maximal frequent itemsets is
 typically an order of magnitude smaller than the set of closed frequent itemsets. But it should be noted that, since
 MaxMiner only mines maximal itemsets, it cannot be used to produce association rules. In fact, any attempt to
@@ -977,12 +1004,13 @@ Figure
 shows the number of database scans made by CHARM compared to the length of the longest closed
 frequent itemset found for the real datasets. The number of database scans for CHARM was calculated by taking
 the sum of the lengths of all tidsets scanned from disks, and then dividing the sum by the tidset lengths for all items
-in the database. The number reported is pessimistic in the sense that we incremented the sum even though we may
-have space in memory or we may have scanned the tidset before (and it has not been evicted from memory). This
-effect is particularly felt for the case where we reorder the itemsets according to increasing support. In this case, the
-most frequent itemset ends up contributing to the sum multiple times, even though its tidset may already be cached
+in the database. The number of database scans for CHARM is pessimistic in the sense that we incremented the sum even though we may
+have space in memory or we may have scanned the tidset before (and the tidset has not been evicted from memory). This
+effect is particularly felt for the case where we reorder the itemsets according to increasing support. In the case where we reorder the itemsets according to increasing support, the
+most frequent itemset ends up contributing to the sum multiple times, even though the
+most frequent itemset tidset may already be cached
 (in memory). For this reason, we also show the number of database scans for the lexical ordering, which are much
-lower than those for the sorted case. Even with these pessimistic estimates, we find that CHARM makes a lot fewer
+lower than those for the case where we reorder the itemsets according to increasing support. Even with these pessimistic estimates, we find that CHARM makes a lot fewer
 database scans than the longest frequent itemset. Using lexical ordering, we find, for example on pumsb*, that the
 longest closed itemset is of length 13, but CHARM makes only 3 database scans.0.0010.10.0001 0.001
 Time
@@ -1038,18 +1066,18 @@ synthetic datasets we kept all database parameters constant, and increased the n
 1600K. We find a linear increase in time. For the real datasets we replicated the transactions from 2 to 10 times. We
 again find a linear increase in running time with increasing number of transactions.
 Conclusions
-In this paper we presented and evaluated CHARM, an efficient algorithm for mining closed frequent itemsets in large
+In this paper We presented and evaluated CHARM, an efficient algorithm for mining closed frequent itemsets in large
 dense databases. CHARM is unique in that it simultaneously explores both the itemset space and tidset space, unlike
 all previous association mining methods which only exploit the itemset space. The exploration of both the itemset
 and tidset space allows CHARM to use a novel search method that skips many levels to quickly identify the closed
 frequent itemsets, instead of having to enumerate many non-closed subsets.
 An extensive set of experiments confirms that CHARM provides orders of magnitude improvement over existing
 methods for mining closed itemsets. It makes a lot fewer database scans than the longest closed frequent set found,
-and it scales linearly in the number of transactions and also is also linear in the number of closed itemsets found.
+and It scales linearly in the number of transactions and also is also linear in the number of closed itemsets found.
 
 Acknowledgement
 
-We would like to thank Roberto Bayardo for providing us the MaxMiner algorithm, as well as the real datasets used
+We would like to thank Roberto Bayardo for providing We the MaxMiner algorithm, as well as the real datasets used
 in this paper.
 
 

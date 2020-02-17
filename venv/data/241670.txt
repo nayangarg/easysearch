@@ -9,17 +9,18 @@ research, especially as parallel computers are coming to dominate the high perfo
 arena. Writers of parallel compilers would like to be able to predict performance as an aid towards
 generating efficient highly parallel code. Users of performance instrumentation and tuning tools
 are interested in predicting and observing parallel performance, but must deal with the fact that
-instrumentation code may perturb their measurements. Developers of new parallel algorithms are
+instrumentation code may perturb Users of performance instrumentation and tuning tools
+ measurements. Developers of new parallel algorithms are
 interested in predicting how well the performance of a new algorithm scales up with increasing
 problem size and machine architecture. General users may be interested in performance tuning
-their codes for large numbers of processors (which are only infrequently available) using fewer, more
+General users codes for large numbers of processors (which are only infrequently available) using fewer, more
 readily available resources. Designers of new communication networks are interested in evaluating
-their designs under realistic workloads.
+Designers of new communication networks designs under realistic workloads.
 The method of direct execution simulation[4, 5, 9, 11, 16] of application codes offers a solution
 to each of these problems. Under a direct execution simulation all application code is directly
 executed to obtain information about the application's execution behavior, but all references by
 the application code to the simulated virtual machine are trapped by the simulator. From the point
-of view of the application code, it is running on the virtual machine. Thus, when the application
+of view of the application code, it is running on the simulated virtual machine. Thus, when the application
 executes temporal calls such as "what is the wallclock time now", or, "is there a message of type T
 available now", the response depends on the state of the virtual machine simulator at the simulated
 time of the call's placement. From the point of view of the simulator, the application code is a
@@ -36,7 +37,7 @@ This paper considers the problem of parallelizing the virtual machine simulator 
 parallel programs. The methods we describe have been implemented in a tool named
 LAPSE (Large Application Parallel Simulation Environment), implemented on the Intel Paragon,
 for Paragon codes. While pieces of LAPSE are specific to the Paragon, the synchronization algorithm
-we describe in this paper is applicable to general message-passing systems. LAPSE accepts
+we describe in This paper is applicable to general message-passing systems. LAPSE accepts
 as input only a "makefile" describing how to build the application, the application source code,
 and a LAPSE initialization file describing the size and characteristics of the virtual machine and
 the mapping of the virtual machine onto the physical machine. From these LAPSE automatically
@@ -71,31 +72,30 @@ Among most current simulators other than our own, simulation of cache-coherency 
 are an important concern. LAPSE is implemented on the Intel Paragon[13], which does not support
 virtual shared memory. Coherency protocols complicate the simulation problem considerably, but
 are a facet LAPSE need not deal with. However, existing work has identified context-switching
-overhead as a key performance consideration, and it is one that directly affects us. As much as
+overhead as a key performance consideration, and existing work is one that directly affects us. As much as
 an order of magnitude improvement has been observed when a direct-execution simulator uses
-its own light-weight thread constructs to accelerate context-switching (for small grain sizes). The
+a direct-execution simulator own light-weight thread constructs to accelerate context-switching (for small grain sizes). The
 thread packages available to us do not support the appearance of independent virtual address spaces
-necessary to our approach, nor are we able (in the context of a shared machine in a government lab)
-to modify the operating system kernel to support this ourselves; LAPSE processes are by necessity
+necessary to us approach, nor are us able (in the context of a shared machine in a government lab)
+to modify the operating system kernel to support this us; LAPSE processes are by necessity
 Unix threads, are subject to that operating system's mechanisms for scheduling, and are
-subject to its costs for context switching.
-The Wisconsin Wind Tunnel (WWT) is to our knowledge the only working multiprocessor simulator
+subject to that operating system costs for context switching.
+The Wisconsin Wind Tunnel (WWT) is to us knowledge the only working multiprocessor simulator
 that uses a multiprocessor (the CM-5) to execute the simulation. (HASE was not operational
 in parallel at the time [12] was published. The intent in HASE is to use a commercially available
 simulator based on the optimistic Time Warp synchronization protocol.) It is worthwhile to note
 the differences between LAPSE and the WWT. The first is a matter of purpose. LAPSE's primary
-goal is to support scalability and performance analysis of Paragon codes. The WWT is a tool for
+goal is to support scalability and performance analysis of Paragon codes. the WWT is a tool for
 cache-coherency protocol researchers, being designed to simulate a different type of machine than
-its host. A second difference is a matter of lookahead, the ability of a conservative parallel simulation
-to predict its future behavior. In a cache-coherent system, a processor may interact with the
-communication network on any cache miss, or may have its cache affected by a write at any time by
-another processor. The lookahead is apparently poor. The WWT deals with this by keeping things
-in close synchrony. The WWT exploits an assumption that any communication between processors
-requires at least B - 100 number of cycles. Application object code is altered to cause WWT
+the WWT host. A second difference is a matter of lookahead, the ability of a conservative parallel simulation
+to predict the WWT future behavior. In a cache-coherent system, a processor may interact with the
+communication network on any cache miss, or may have a processor cache affected by a write at any time by
+another processor. The lookahead is apparently poor. The the WWT deals with this by keeping things
+in close synchrony. the WWT exploits an assumption that any communication between processors
+requires at least B - 100 number of cycles. Application object code is altered to cause the WWT
 application processes to synchronize every B cycles. Any communication is deferred until the next
-barrier with the assurance that the barrier occurs before the communication can have affected its
-recipient. (This method of synchronization is a special case of the YAWNS [19, 22] protocol.) The
-WWT ignores any network contention by assuming that the latency of every message is fixed, and
+barrier with the assurance that the barrier occurs before the communication can have affected the barrier
+recipient. (This method of synchronization is a special case of the YAWNS [19, 22] protocol.) the WWT the WWT ignores any network contention by assuming that the latency of every message is fixed, and
 known. By contrast, Paragon processors are less tightly coupled. In a cache-coherent setting any
 memory reference might generate a network event; in a message-passing setting only an explicit call
 to a message-passing subroutine can influence network behavior. This fact allows a less rigid approach
@@ -106,15 +106,14 @@ idleness whereas the WWT cannot. The lookahead available in LAPSE comes from the
 that, in many applications, long portions of the execution path are independent of time. In such
 cases the application code can be executed well in advance of actually simulating the timing. Where
 the execution path is not independent of time, lookahead can still be obtained provided there is a
-lower bound on the operating system overhead required to send or receive a message. Finally, the
-WWT uses a customized operating system that cleverly exploits CM-5 idiosyncrasies to recognize
+lower bound on the operating system overhead required to send or receive a message. Finally, the WWT uses a customized operating system that cleverly exploits CM-5 idiosyncrasies to recognize
 misses in the simulated cache. LAPSE runs purely as an application.
 Individual elements of LAPSE have been proposed before, e.g., parallelized direct execution,
 and support for different network simulators. Our contributions are to show how to effectively
 synchronize parallelized direct-execution simulations of distributed memory programs, to demonstrate
-the feasibility of our approach by actual implementation and testing on non-trivial codes, and
+the feasibility of Our approach by actual implementation and testing on non-trivial codes, and
 to observe sometimes excellent performance. This combination of features makes LAPSE unique
-among its peers.
+among This combination of features peers.
 Section 2 gives an overview of the LAPSE system. Section 3 describes how LAPSE transforms
 a massively parallel code into a direct execution simulation and then Section 4 details our synchronization
 strategy. Section 5 describes our experiments and their results with respect to validation,
@@ -129,12 +128,11 @@ an equivalence we presently assume. We assume the mapping is static. Application
 communicate through message passing using explicit calls to system library routines. For example,
 the csend call in the Intel nx library sends a message. The calling application passes arguments
 defining the message type (a user-defined integer), the message base address and length, the process
-id and processor id of the recipient. Control is returned to the application as soon as the memory
+id and processor id of the recipient. Control is returned to The calling application as soon as the memory
 area occupied by the message is available for reuse. crecv is called to receive a message; arguments
 are the message type, base address to place the message, and maximum message length. Control is
 returned to the application process once the message is received. irecv is an asynchronous version
-of crecv. If the receive routine is called before the anticipated message arrives, the incoming
-message will transfer directly from the network into the location specified by the user. Otherwise
+of crecv. If the receive routine is called before the message arrives, the message will transfer directly from the network into the location specified by the user. Otherwise
 the message transfers from the network into a communications buffer; a subsequent receive call,
 msgdone, copies the message into the user's buffer.
 
@@ -142,25 +140,26 @@ Figure
 
 1(a) illustrates how an application process views time. It runs for a period, then calls a
 system message-passing routine to send or receive a message. The message transaction is complete
-upon return of control to the application. The time the system spends handling messages is invisible
-to the application. An application process knows about execution durations, e.g., process 1 can
+upon return of control to The calling application. The time the system spends handling messages is invisible
+to The calling application. An application process knows about execution durations, e.g., process 1 can
 measure or predict durations a \Gamma 0, c \Gamma b, and e \Gamma d under the assumption that it is not interrupted;
 these are analogous to service times in a queueing network. If we can assume that such durations
 are independent of network activity (again assuming lack of interruptions, a facet we do deal with),
-these durations give us information we can exploit in a parallel simulation synchronization protocol.
+such durations
+ give us information we can exploit in a parallel simulation synchronization protocol.
 durations and message-passing overheads are determined in part by the network state,
 as illustrated in Figure 1(b). In Figure 1(b), a message is sent from process 1 to process 2 starting
 at time a. At time a, control is passed to the operating system on processor 1. Because of the
 operating system overhead required to prepare the message for transmission over the network,
-control is not returned to application process 1 until time b. The message begins coming out of
+control is not returned to application process 1 until time b. a message begins coming out of
 the network on processor 2 at time f , thereby interrupting process 2, which was in the middle
 of an execution block. At this point the operating system on processor 2 gains control to handle
-the interrupt. After the message has been completely received by the operating system, control is
+the interrupt. After a message has been completely received by the operating system, control is
 returned to application process 2 (at time g). When process 2 finally reaches the code (at time
-that explicitly receives the message (in this case copying it from a system buffer to user space)
+that explicitly receives the message (in this case copying this case from a system buffer to user space)
 an additional overhead is incurred; this message receipt overhead is completed at time i at which
 point process 2 begins executing again. By contrast, process 1 reaches its receive statement (at
-time c) before the message from process 2 arrives. The arriving message moves directly into the
+time c) before the message from process 2 arrives. a message moves directly into the
 user buffer. Application process 1 continues execution after the receive has been completed (at
 time d). The application processes are unaware of these timing details. It falls to the simulator
 to assign virtual times to event times a, b, c, and so on, as a function of the execution durations
@@ -192,11 +191,11 @@ execute
 Figure
 
 1: Application and Network views of parallel application timings.
-reported by the application processes, an evaluation of message-passing delays, assumed operating
+reported by The application processes, an evaluation of message-passing delays, assumed operating
 system overheads for message-passing and interrupt handling, and a model of how message-passing
 activity affects the execution of application processes. Indeed, an application simulator in LAPSE
 maintains for each application process a data structure reflecting Figure 1(b), called a time-line, that
-records observed application events and assigns simulation times to them. A time-line is essentially
+records observed application events and assigns simulation times to application events. A time-line is essentially
 a future-events list for an application process simulator, where the time-stamps on future-events
 are modified as the simulation progresses, depending on the simulation activity. The simulator is
 conceptually separated into an application simulator and network simulator, although the set of
@@ -234,7 +233,9 @@ messages between interface and application simulator
 Figure
 
 2: The LAPSE communication structure.
-application simulator, notifying it of the activity it has performed (or that the application
+application simulator, notifying The LAPSE communication structure.
+ of the activity The LAPSE communication structure.
+ has performed (or that the application
 wishes to perform). A LAPSE application simulator is responsible for receiving descriptions of
 application "events" from application interface routines, and for assigning simulation times to
 events on time-lines like those illustrated in Figure 1. Each application simulator interacts with a
@@ -248,7 +249,7 @@ simple, supporting the integration of different network simulators. The performa
 paper is taken from a pure-delay simulator that ignores any contention. As will be seen, the
 no-contention assumption is not deleterious to LAPSE's ability to predict performance.
 3 Application/LAPSE Interaction
-In this section we briefly describe how an application code is transformed into a LAPSE simulation
+In this section we briefly describe how the Unix is transformed into a LAPSE simulation
 code.
 LAPSE preprocessing is invoked by modifying an application's makefile (i.e. the input file for
 the Unix make command). All references to the compiler or linker are replaced by references to
@@ -266,7 +267,7 @@ structures as a virtual processor (VP) in the simulation.
 Every call to an interface routine is temporally sensitive, or insensitive. An insensitive call is
 one whose result or effect does not depend on the state of the virtual machine at the point of the
 call. Put another way, the application's execution path does not depend on insensitive calls, but
-it may depend on the results of a sensitive call. Most calls are temporally insensitive, including
+the application's execution path may depend on the results of a sensitive call. Most calls are temporally insensitive, including
 those corresponding to the transmission or receipt of messages (e.g., csend, crecv, isend, irecv
 and their extended versions, on the Paragon), and those that cause the calling processor to block
 until some condition is satisfied (msgwait, gsync, all global reductions). Sensitive calls include
@@ -275,65 +276,71 @@ those to real-time clocks (dclock), asynchronous probes for the existence of par
 the importance of this distinction, compare the two code fragments below.
 Fragment 1 Fragment 2
 crecv(MSGTYPE, MsgAdrs, MsgSize);
-Both fragments wait for a message of type MSGTYPE to appear, process it, and then send a
-message themselves. Fragment 1 simply blocks and waits for the message. It then processes the
-message and then sends a message (of 1 byte to process 0 on node 10). Fragment 2 polls the Boolean
-valued function msgdone to determine if the message is present. If not, a routine BusyWork is
+the two code fragments wait for a message of type MSGTYPE to appear, process it, and then send a
+message themselves. Fragment 1 simply blocks and waits for a
+message themselves. a
+message themselves then processes a
+message themselves and then sends a message (of 1 byte to process 0 on node 10). Fragment 2 polls the Boolean
+valued function msgdone to determine if a
+message themselves is present. If not, a routine BusyWork is
 called with a parameter that changes with every call. The number of times BusyWork is called,
-and the parameters passed to it depend on the responses from msgdone. While none of the calls
+and the parameters passed to The number of times depend on the responses from msgdone. While none of the calls
 in Fragment 1 are temporally sensitive, Fragment 2's call to msgdone is temporally sensitive. In
-LAPSE, the answer to the msgdone query will come from the simulator, based on whether the
-simulator observes the message of interest. After the simulated message arrives (in the simulator),
-the simulator answers the msgdone affirmatively by tell the LAPSE interface that the message
-is available. The interface then waits until the corresponding application message actually does
+LAPSE, the answer to the msgdone query will come from The simulator, based on whether the
+simulator observes the message of interest. After a
+message themselves arrives (in The simulator),
+The simulator answers msgdone affirmatively by tell the LAPSE interface that a
+message themselvesis available. The interface then waits until the corresponding application message actually does
 arrive (from another application process). In this way, the application calls the msgdone routine
-exactly as many times as it would on the simulated virtual machine. In this case there is close
+exactly as many times as the application would on the simulated virtual machine. In this case there is close
 linkage between the simulator and the application execution. Fragment 1 needs no such interaction
-with the simulator for its execution, and therefore Fragment 1 application code can be run well in
-advance of when the simulator eventually simulates the timing of events corresponding to Fragment
+with the simulator for Fragment 1 execution, and therefore Fragment 1 application code can be run well in
+advance of when The simulator eventually simulates the timing of events corresponding to Fragment
 1.
 At runtime, LAPSE loads simulator and application processes onto the physical machine as
 specified by an input file. Typically, each physical processor is assigned one simulator process and
 a number of application processes, although arrangements separating simulation and application
 processes are also possible. In either case, each application process is notified of the identity of a
-single simulator process with which it will interact. Likewise, each simulator process is initialized
-with the identity of all application processes with which it will interact. The application processes
+single simulator process with which each application process will interact. Likewise, each simulator process is initialized
+with the identity of all application processes with which each simulator process will interact. The application processes
 are then permitted to execute.
-Whenever a LAPSE interface routine is called it recovers the number of application instructions
+Whenever a LAPSE interface routine is called a LAPSE interface routine recovers the number of application instructions
 that have executed since the last call to a LAPSE routine. This count is inflated by an input
 parameter (effective clock ticks per instruction) obtained from the input file to produce an estimate
 of the length of time the VP would have run without interruption on the virtual machine, between
-the last two interactions with the machine. A mechanism for determining that input parameter is
-described in Section 5. Next, if the call is temporally insensitive its parameters are transformed
+the last two interactions with the virtual machine. A mechanism for determining that input parameter is
+described in Section 5. Next, if the call is temporally insensitive the call is parameters are transformed
 from virtual machine coordinates into physical machine coordinates, and the requested operation
 is performed. In the case of message sends and receives we take advantage of the address space co-residence
 of the interface routine and application, and leave memory address parameters unaltered.
 Temporally sensitive calls do not involve actual execution of the request by the interface. In either
-case, subject to flow-control considerations the interface routine next sends a message to its assigned
+case, subject to flow-control considerations the interface routine next sends a message to a message assigned
 simulator, reporting the measured execution burst, and the requested operation. At this point the
-interface routine for a temporally insensitive call completes the operation (e.g., blocks on a crecv
-call until the anticipated message arrives), and then returns control to the calling application
+interface routine for a temporally insensitive call completes the requested operation (e.g., blocks on a crecv
+call until a message arrives), and then returns control to the calling application
 process. A temporally sensitive call waits for a response from the simulator, and upon receiving it
 returns the response to the application.
 The Paragon library nx includes a rich collection of global reduction operations. LAPSE maps
-these to LAPSE routines that implement them using more primitive send/receive calls, and instruments
-such routines as though they were part of the application. To account for the cost of global
+these to LAPSE routines that implement these using more primitive send/receive calls, and instruments
+such routines as though these were part of the application. To account for the cost of global
 synchronization, for instance, the original application call is redirected to a LAPSE routine that
 implements a barrier in the standard tree-fashion, in virtual machine coordinates. Since that code
-is itself remapped and instrumented exactly like application code, the cost of the synchronization
+is that code
+ remapped and instrumented exactly like application code, the cost of the synchronization
 is obtained by executing a LAPSE version of what the Paragon library function does. LAPSE
 supports almost all nx calls consistent with the Single Program Multiple Data (SPMD) paradigm.
 The principle omissions are calls for asynchronous message handling (hrecv), message cancellation
-calls, and message calls involving type masks. These calls are rarely used in our computing
+calls, and message calls involving type masks. calls for asynchronous message handling (hrecv), message cancellation
+calls, and message calls involving type masks are rarely used in our computing
 environment.
 To obtain accurate timing of the application, the operating system overhead for sending and
 receiving messages needs to be properly accounted for. LAPSE currently estimates such operating
 system overheads. For example, the overhead (in clock ticks) to execute a csend can be modeled
 as a+ b \Theta L where a is a startup cost, L is the message length and b is the cost per byte. Estimates
 of a and b can be obtained by measurements of the operating system. In principle, it would also be
-possible to instrument the operating system itself with the instruction counting code and to run this
-instrumented code as part of the simulator. This would eliminate the need for using estimated path
-lengths, however, it requires access to the operating system source code as well as authorization to
+possible to instrument the operating system itself with the instruction counting code and to run that code
+ as part of the simulator. This would eliminate the need for using estimated path
+lengths, however, This requires access to the operating system source code as well as authorization to
 run the modified kernel.
 Synchronization
 A strictly serial simulation executes events in monotone non-decreasing order of event times. We
@@ -341,14 +348,14 @@ view a parallel simulator as a collection of individual discrete-event simulator
 separate processor, each having the ability at any time of scheduling an event on a different simulator
 than itself. We desire that events on each processor also be executed in monotone increasing order,
 or at least compute the same state as though such monotonicity were achieved. If the earliest event
-on a processor has time-stamp t, before the processor executes that event it must either be certain
-that no other simulator can still schedule on it an event with smaller time-stamp s ! t, or it must
+on a processor has time-stamp t, before a processor executes that event a processor must either be certain
+that no other simulator can still schedule on a processor an event with smaller time-stamp s ! t, or it must
 be prepared to rollback and begin recomputing at time s if such an event is later scheduled.
 There is a rich literature of solutions to this synchronization problem. Good introductory
 surveys are found in [10, 25], and a survey of the state-of-the art is found in [20]. Conservative
 synchronization protocols prohibit a simulator from executing an event if there is any possibility
 of an earlier event being scheduled there later. Optimistic protocols allow out-of-sequence event
-processing. Each style has its strengths and weaknesses, and each has been shown to perform well
+processing. Each style has Each style strengths and weaknesses, and each has been shown to perform well
 on some applications, and poorly on others. Regardless of the method, good performance is always
 dependent on a model's tendency towards relatively infrequent scheduling of events by one processor
 onto another. Conservative methods frequently work well if that slackness can be identified ahead
@@ -356,29 +363,29 @@ of time by computation, i.e., if each simulator is able to continuously compute 
 bounds on the future times at which it may schedule events on other processors. The ability to
 make such predictions (called lookahead) is very model dependent. Optimistic methods basically
 work by assuming the slackness exists, and correcting errors made when the assumption proves
-to be false. Optimistic methods have the potential for being more general, but carry with them
+to be false. Optimistic methods have the potential for being more general, but carry with being more general
 the overheads necessary for recovering from errors. Optimistic methods are also very much more
 difficult to implement correctly.
 LAPSE uses a new conservative synchronization protocol, Whoa, (Window-based halting on
 appointments), tailored to the characteristics of the simulation problem. Suppose simulation time
 t was previously chosen as a global synchronization point (initially Once all simulators
-have simulated up to t, they cooperatively establish a simulation time w(t) ? t, and after doing
+have simulated up to t, t cooperatively establish a simulation time w(t) ? t, and after doing
 so simulate all events with time-stamps in [t; w(t)). Within the window simulators may still synchronize
 with each other, but do so in a pairwise fashion; global synchronization occurs only at
 the boundaries of the windows. Once every simulator has reached time
 chosen, and the window simulated. This process continues until the simulation
 terminates. Given lower window edge t, the value w(t) is computed to ensure that all message
-send events whose time-stamps will eventually fall in [t; w(t)) exist already on their applications'
+send events whose time-stamps will eventually fall in [t; w(t)) exist already on whose time-stamps applications'
 time-lines.
 Synchronization within a window is governed by the dynamic computation and distribution of
 lower bounds on future times at which one simulator may affect another. The only interaction between
 simulators is through remote send events, i.e., a message send call whose destination is a VP
-managed by a simulator other than that of its source. These lower bounds are called appointments
+managed by a simulator other than that of a message source. These lower bounds are called appointments
 [21]. There is an appointment associated with every remote send event, on every time-line; it is
-initially computed when the event is received, and it is updated as the simulation progresses. The
+initially computed when every remote send event is received, and every remote send event is updated as the simulation progresses. The
 appointment reflects the best known lower bound on when the associated message reaches the net-work
-hardware. The application simulator passes these appointments to its corresponding network
-simulator, which transforms it into an appointment between itself and the network simulator for
+hardware. The application simulator passes these appointments to The application simulator corresponding network
+simulator, which transforms The application simulator into an appointment between The application simulator and the network simulator for
 the message's destination. Depending on the network being simulated, appointments with other
 network simulators may also be in order. A network simulator computes a halting time as the
 minimum incoming appointment time. Neither application nor network simulator ever processes
@@ -389,10 +396,10 @@ or increase, and each simulator's halting time must increase until it is at leas
 the halting time increases, the application and network simulators are free to execute events with
 smaller time-stamps. The protocol will not deadlock-if h 0 ! w(t) is the least halting time among
 all simulators, then the simulator whose appointment defines h 0 must have a simulation clock value
-strictly less than h 0 , and must have an event with time-stamp strictly less than h 0 , which it can
+strictly less than h 0 , and must have an event with time-stamp strictly less than h 0 , which the simulator whose appointment defines h 0 can
 safely execute.
-We now elaborate on Whoa, in two steps. First we discuss how appointments are computed,
-how they are used, and when they are updated. Secondly we discuss construction of windows.
+We now elaborate on Whoa, in two steps. First We discuss how appointments are computed,
+how appointments are used, and when appointments are updated. Secondly we discuss construction of windows.
 4.1 Appointments
 LAPSE exploits the tendency for message-passing codes' execution paths to be largely insensitive
 to timing. The key observation is that one can execute the application processes largely as on-line
@@ -414,31 +421,32 @@ Figure
 
 3: Application appointment calculation on a VP's time-line.
 D, and application events; we wish to compute a lower bound on the network entry time of the
-remote message. An event's application appointment is a lower bound on the instant when it will
-be scheduled on the network simulator to model network entry. It is constructed as the sum of the
+remote message. An event's application appointment is a lower bound on the instant when An event's application appointment will
+be scheduled on the network simulator to model network entry. An event's application appointment is constructed as the sum of the
 residual time in the current execution or startup block, plus all execution burst lengths, plus lower
 bounds on startup costs of intervening application events, plus the lower bound on the startup cost
-of the event itself. As application events are processed the appointment may increase.
-An application appointment is made for a remote send shortly after that event is reported
-to the application simulator. Whoa strives to keep appointments current as the simulator state
+of the event itself. As application events are processed An event's application appointment may increase.
+An application appointment is made for a remote send shortly after the event itself is reported
+to the network simulator. Whoa strives to keep appointments current as the simulator state
 evolves. Appointments change specifically in two cases. First, it may happen that the duration of
 an application event startup is larger than the lower bound assumed. This usually arises to include
 some cost-like that of copying a message-that is not always suffered and hence is not included
-in the lower bound. When the event is executed and the additional cost is included, appointments
+in the lower bound. When the event itself is executed and the additional cost is included, appointments
 for all remote send events on the affected VP are increased by the amount of the additional cost.
-The appointments may change in the presence of blocking. For example, if simulation of an crecv
+appointments
+for all remote may change in the presence of blocking. For example, if simulation of an crecv
 in
 
 Figure
 
-3 fails to find the anticipated message, the VP becomes suspended. As simulation time
-advances without the message appearing, the appointments computed by the suspended VP must
+3 fails to find the anticipated message, the affected VP becomes suspended. As simulation time
+advances without the message appearing, the appointments computed by the affected VP must
 increase. Likewise, a VP that is interrupted by the arrival of a message becomes suspended until
-the message is completely received, and its appointments must be updated during the period of its
-suspension. At the point a VP becomes suspended, say at t, we find the VP's minimum outgoing
+a message is completely received, and a message appointments must be updated during the period of a message
+suspension. At the point a the affected VP becomes suspended, say at t, we find the affected VP's minimum outgoing
 appointment time t a , compute the difference t, and then periodically schedule a "VP
-appointments update" event every d units of time, until the VP becomes unsuspended. Execution
-of this event advances all of the VP's appointments by d units. The update event is removed from
+appointments update" event every d units of time, until the affected VP becomes unsuspended. Execution
+of the event itself advances all of the affected VP's appointments by d units. the event itself is removed from
 the event list when the VP is released from suspension, at which point updated appointments are
 passed.
 Individual simulators synchronize using network appointments. A network appointment at
@@ -451,36 +459,36 @@ appointment (this is overkill, we are developing a version that very much reduce
 volume associated with appointments). Because LAPSE presently uses a contention free network
 model, no further updating of network appointments is needed. However, more sophisticated
 updating of network appointments will be required for network models that capture contention.
-The transmission of a simulated message from one network simulator to another removes its
-associated appointment. Upon receipt, the target VP is taken to be suspended for as long as it
+The transmission of a simulated message from one network simulator to another removes The transmission of a simulated message from one network simulator
+associated appointment. Upon receipt, the affected VP is taken to be suspended for as long as the affected VP
 takes the message to completely arrive (which depends on the number of packets into which it
-has been decomposed). The target network simulator notes the time at which the message will be
+has been decomposed). the network simulator notes the time at which a message will be
 completely received, data needed for the window computation to be described.
 Every network simulator maintains a single "halting time" for both the application and network
 simulators; at any instant the halting time is the time of the current minimum incoming network
 appointment. Any event with a time-stamp less than the current halting time may be safely exe-
 cuted. The halting time increases as appointments change, and messages are received. Eventually
 the halting time increases past the upper edge of the current window, all remaining events in the
-window are executed, and the simulator engages in computing the upper edge of the next window.
+window are executed, and the network simulator engages in computing the upper edge of the next window.
 4.2 Window Construction
-Suppose that time t is the upper edge of a window. A simulator engages in the window construction
-protocol once its halting time is t or larger, and it has no remaining events with time-stamps less
-than t. The upper edge w(t) of the next window is computed to ensure that it is a lower bound
+Suppose that time t is the upper edge of a window. A simulator engages in 4.2 Window Construction
+protocol once A simulator halting time is t or larger, and A simulator has no remaining events with time-stamps less
+than t. The upper edge w(t) of the next window is computed to ensure that t. The upper edge w(t) of the next window is a lower bound
 on the time-stamp on the next unknown (i.e., not on the time-line) remote send event that any
 simulator may execute. w(t) is thus a measure of how far into the future, globally, the application
 processes have advanced ahead of the simulation processes. We desire that many events be found
 on each VP's time-line between times t and w(t), to better amortize the cost of computing w(t).
-Towards this end, a simulator's first action is wait until every one of its VP's time-lines has as
+Towards this end, a simulator's first action is wait until every one of a simulator's first action 's time-lines has as
 many events as is apparently possible (it will always wait until at least one event is present). For
 reasons involving the Paragon's management of communication buffers, a user specified flow-control
-parameter F is involved in the decision. The general rule is the simulator will wait for more events
-until either the application processes reports that it is blocked, or at least F application events
-exist on the time-line already. The application process reports its current blocked/unblocked state
-with every event it reports; the state is also reported separately when it changes from blocked
-to unblocked. There are three ways an application process may become blocked. First, it will
-be blocked if the last call it made to an interface routine was temporally sensitive. To become
-unblocked it must wait until the the simulator executes the temporally sensitive call and responds to
-it. Secondly, the application process may be blocked at a temporally insensitive call, such as crecv
+parameter F is involved in the decision. The general rule is the network simulator will wait for more events
+until either the application processes reports that the network simulator is blocked, or at least F application events
+exist on the time-line already. The application process reports The application process current blocked/unblocked state
+with every event The application process reports; The application process is also reported separately when The application process changes from blocked
+to unblocked. There are three ways an application process may become blocked. First, The application process will
+be blocked if the last call The application process made to an interface routine was temporally sensitive. To become
+unblocked The application process must wait until the network simulator executes the temporally sensitive call and responds to
+The application process. Secondly, The application process may be blocked at a temporally insensitive call, such as crecv
 or msgwait which both wait until an application message is received from another application
 process. At such time as the application process becomes runnable, the interface routine notifies
 the simulator of the change. Finally, the application may become temporarily blocked for purposes
@@ -498,13 +506,13 @@ includes local sends). Given the global minima L min , S min , and R min , each 
 where B is a lower bound on the startup cost of a send event.
 By construction we are assured that any remote send event whose time-stamp ultimately falls
 in [t; w(t)) is resident on a time-line at the point the window is constructed. This property is
-key to Whoa, for it ensures that an appointment for every remote send event in the window has
+key to Whoa, for This property ensures that an appointment for every remote send event in the window has
 already been established, and that no synchronization other than appointment management is
-needed. It allows us to use the appointments in [t; w(t)) to define a dynamically evolving pairwise
+needed. This property allows us to use the appointments in [t; w(t)) to define a dynamically evolving pairwise
 synchronization schedule that will not deadlock.
 The effect of temporally sensitive calls on window construction deserves remark. Presence of a
-temporally sensitive call on a time-line indicates that the application process is blocked-the call
-will always be the last one on its VP's time-line. This means that the values L and R offered by its
+temporally sensitive call on a time-line indicates that The application process is blocked-the call
+will always be the last one on The application process 's time-line. This means that the values L and R offered by its
 simulator to the reduction will be small, so that the difference between w(t) and t will also be small.
 In extreme cases where most calls are temporally sensitive and tend not to occur simultaneously
 (between VPs), the net effect is to serialize the simulation of communication events.
@@ -521,8 +529,8 @@ application on one physical processor. This relative speedup is representative o
 the execution time of a hypothetical optimized serial simulator divided by that of LAPSE on n
 processors. The justification for this belief is that LAPSE avoids most unnecessary overheads when
 running serially. Essentially the only overhead that LAPSE does not avoid is maintenance of the
-appointment data structures. However, this overhead is small compared to the actual execution of
-the application (with its attendant instruction counting) which would have to be done on any serial
+appointment data structures. However, Essentially the only overhead that LAPSE does not avoid is small compared to the actual execution of
+the application (with Essentially the only overhead that LAPSE does not avoid attendant instruction counting) which would have to be done on any serial
 simulator. In fact for one of our applications (SOR with the high computation to communication
 ratio), LAPSE runs a four VP problem on four processors only 1.8 times slower than the native
 application on four processors. We will see that the slowdowns and speedups are strongly affected
@@ -532,7 +540,8 @@ timing simulator the application is able (or allowed) to run.
 5.1 Applications
 We experimented with four parallel applications that are representative of a variety of scientific
 and engineering workloads (although no claim is made or intended that these comprehensively
-span all such possible workloads). The applications arise in physics, computational fluid dynamics,
+span all such possible workloads). 5.1 Applications
+ arise in physics, computational fluid dynamics,
 performance modeling of computer and communications systems, and graphics.
 The first application, SOR, solves Poisson's boundary value equation in two dimensions (see
 Chapter 17 in [23]). This is a partial differential equation (PDE) in two dimensions with a given
@@ -557,10 +566,11 @@ substructuring type consisting of a conjugate gradient method preconditioned by 
 to the inverse of the matrix operator obtained from discretizing the PDE [1]. The conjugate
 gradient method applied to a sparse matrix is highly parallelizable, requiring at each iteration only
 nearest neighbor communication in the formation of matrix-vector products, and a global reduction
-operation in the formation of inner products. The domain of the PDE is partitioned into nonoverlapping
-subdomains. The subdomains are separated by a "wire basket" consisting of edges and
+operation in the formation of inner products. The domain of The PDE is partitioned into nonoverlapping
+subdomains. nonoverlapping
+subdomains are separated by a "wire basket" consisting of edges and
 vertices. Once values are specified for these edges and vertices, independent problems may be solved
-for each subdomain interior. This is done in the final iteration of the algorithm. The objective of
+for each subdomain interior. This is done in the final iteration of The algorithm. The objective of
 the earlier iterations is to arrive at sufficiently accurate values for the unknowns on the wire-basket
 itself. This process requires independent solutions on each edge at each iteration, as well as a small
 global solution of a problem defined on the vertices only. The specific test case is Poisson's equation
@@ -583,8 +593,8 @@ setting
 The fourth application, PGL, is a parallel graphics library written to support visualization of
 scientific data [6]. In the sample driver program for this library, each processor generates some
 number of randomly spaced and colored triangles of a certain size. The processors then rotate and
-shade the vertices of their triangles. Display scan lines are distributed in an interleaved fashion over
-the processors. The endpoints of the scan lines of each triangle, called a span, are then sent to the
+shade the vertices of The processors triangles. Display scan lines are distributed in an interleaved fashion over
+The processors. The endpoints of the scan lines of each triangle, called a span, are then sent to the
 processor responsible for that scan line. For each scan line, the pixels are colored by interpolating
 between the endpoints of the spans and a Z-buffer algorithm is used for hidden surface removal.
 This process is repeated for each of F frames. This code uses any-to-any pairwise communications
@@ -592,12 +602,12 @@ and is highly asynchronous, frequently using irecvs and the temporally sensitive
 Because of this the simulator has very little application lookahead. This code, which consists of
 approximately 14,000 lines of C, was written and provided to us by Thomas Crockett of ICASE.
 The "high" and "low"computation to communication ratios were achieved by assigning 1000 and
-500 triangles per processor, respectively. However, for this application it is harder to adjust the
+500 triangles per processor, respectively. However, for This application it is harder to adjust the
 computation to communication ratio, and the designations "high" and "low" are used mainly to
 distinguish between two different workloads.
 5.2 Validation
-In this section we describe the process by which we validated LAPSE timing predictions, and
-describe the results of our validation experiments. In order for LAPSE to make reasonable predic-
+In this section us describe the process by which we validated LAPSE timing predictions, and
+describe the results of we validation experiments. In order for LAPSE to make reasonable predic-
 tions, we must know the overhead of system message passing calls (e.g. csend) and interconnection
 network transit times, as well as the time the application spends between each message passing
 call.
@@ -609,14 +619,16 @@ transit times can be similarly measured. We have found that, except for very lon
 software overheads for sending and receiving messages are far greater than the hardware transit
 times. Thus predictions using our simple network simulator, which does not model link contention,
 can be expected to be (and are) accurate.
-To obtain the application time between message passing calls, we proceeded as follows. First, we
+To obtain the application time between message passing calls, We proceeded as follows. First, We
 ran the application natively (i.e., without LAPSE) on a small number of nodes (typically 2 \Theta 2) with
 a certain data size per node (e.g., G in SOR or number of triangles per node for PGL). The Unix
 time command gives us an estimate of the amount of user time U consumed by the application.
 We next ran the same application (with the same data size) under LAPSE, which reports the total
-number of user instructions I . From this, we compute a "conversion factor" which is the
-average time per (user) instruction. This conversion factor incorporates, in an average case sense,
-the instruction mix, cache hit ratio, etc. of the application. The conversion factor is then used in
+number of user instructions I . From this, We compute a "conversion factor" which is the
+average time per (user) instruction. a "conversion factor" which is the
+average time per (user) instruction incorporates, in an average case sense,
+the instruction mix, cache hit ratio, etc. of the application. a "conversion factor" which is the
+average time per (user) instruction is then used in
 subsequent runs of the application under LAPSE for timing predictions. For example, if there are
 J application instructions executed between two message passing calls, LAPSE computes the time
 between these calls as J \Theta c. For a given application and data size per processor, we use the same
@@ -638,23 +650,24 @@ Table
 actual native execution times. As can be seen in the table, the maximum error is 6%. We have
 observed larger prediction errors, but these have always occurred for very short runs in which
 initialization effects may be present. For example, the PGL-High error on 64 nodes is \Gamma12% when
-generating 10 frames; the +3% error reported in Table 2 is for 20 frames. These runs span a range
+generating 10 frames; the +3% error reported in Table 2 is for 20 frames. very short runs in which
+initialization effects may be present span a range
 of application efficiencies. For example, LAPSE estimates that SOR on 16 processors spends 47%
 of its time executing user instructions when (as opposed to executing system instructions
-or waiting for messages), while it spends 90% of its time executing user instructions when
+or waiting for messages), while its spends 90% of its time executing user instructions when
 These results show that LAPSE can provide accurate timing estimates for a range of scientific and
 engineering applications.
 5.3 Slowdowns
 We next investigated the amount of overhead involved in running LAPSE. There are several types of
 overheads. First, there is the overhead involved in counting application instructions. Second, there
-is the overhead in actually doing the timing simulation (in parallel). Third, there is the operating
+is the overhead involved in counting application instructions in actually doing the timing simulation (in parallel). Third, there is the operating
 system overhead that arises from managing multiple processes per node; an SPMD application
 running natively has only one process per node. All of these overheads can be captured in a single
 measurement called the slowdown, which is defined to be the time it takes LAPSE to execute the
 application on N nodes divided by the time it takes to execute the application natively on N nodes.
 Our measurements have indicated that the instruction counting overhead generally ranges between
-30% to 80%. These overheads were obtained by direct comparison of the time to natively
-execute the application to that when the application is augmented with instruction counting, but
+30% to 80%. these overheads were obtained by direct comparison of the time to natively
+execute The application to that when The application is augmented with instruction counting, but
 not timing simulation.
 It is harder to separate simulation overhead from operating system overhead, nor shall we
 attempt to do so here. However, some measurements are presented in [8] indicating that OSF-1
@@ -671,7 +684,7 @@ events the application is permitted to run in advance of the simulator. By runni
 application that has good lookahead (i.e., one with only synchronous sends and receives), we can
 study the effect of lookahead in a controlled manner by varying the parameter F . Table 3 presents
 the results of such an experiment for APUCS running on 8 processors with one VP/processor.
-This table reports the slowdowns as a function of F , as well as the average number of application
+Table 3 reports the slowdowns as a function of F , as well as the average number of application
 events executed per window per VP, A. (An application event is defined to be a call to the LAPSE
 interface). For the low computation to communication ratio the slowdown decreases from 30.4
 down to 9.3 as F increases from 2 to 16. At the same time A increases from only 0.3 to 8.0. For the
@@ -694,7 +707,7 @@ of the application and the simulator, the window construction algorithm, etc.)
 We next consider slowdowns on the set of four applications described earlier. We compared
 LAPSE to native application time for the codes running on 4, 16, 32, and 64 processors. For the
 LAPSE runs, there are two processes per node; one application process and one simulator process.
-F was set at moderate values so as to obtain good lookahead whenever the application so permitted.
+Increasing F was set at moderate values so as to obtain good lookahead whenever the application so permitted.
 The results of these experiments are reported in Table 4. Observe first that the slowdown increases
 as the number of processors increases. This is an effect of using a global window. The cost of
 computing a new window increases (logarithmically) as the number of processors increases, but
@@ -707,10 +720,11 @@ With a high ratio, most of the time is spent executing application code and thus
 overheads are less important.
 The slowdowns for SOR, BPS and APUCS are quite modest (between 1.8 and 28.0) and are
 considerably at the low end of slowdowns reported by other execution-driven simulators [5, 24].
-Recall that these codes all have good application lookahead since they do not make much use of
+Recall that these codes all have good application lookahead since these codes all do not make much use of
 temporally sensitive message passing calls.
 However, for PGL the slowdowns are significantly higher. As described earlier, this application
-has little lookahead since by executing many msgdone calls it continually forces synchronization
+has little lookahead since by executing many msgdone calls this application
+ continually forces synchronization
 between the application and simulation processes. In LAPSE, we deal with this type of temporal
 question by blocking the application process until the simulator has advanced simulation time
 up to the time at which the msgdone question was asked. This severely limits the size of the
@@ -725,16 +739,17 @@ on 48 nodes with 32 nodes for application processing and a different set of 16 n
 the slowdown decreases to 117. Similar reductions in slowdown are obtained for PGL-low.
 We next measure (relative) speedups by running LAPSE on the Paragon using N virtual processors
 on n physical processors where N - n. We again ran the applications for a variety of
-combinations of N and n. For these applications, operating system and physical memory constraints
+combinations of N and n. For the applications for a variety of
+combinations of N and n., operating system and physical memory constraints
 typically limit the level of multiprogramming to at most 8 VPs/processor; in the case of
 BPS-High at most 4 VPs/node could be handled. This effectively limits the size of N , especially
 for LAPSE running on one processor.
 We first consider the case of simulating a small number of VPs on a small number of nodes;
 specifically simulating 8 VPs on from 1 to 8 nodes. (For BPS the number of nodes must be a
-power of 4 so in this case we simulate 4 VPs on from 1 to 4 nodes.) Table 5 shows the relative
+power of 4 so in the case of simulating a small number of VPs on a small number of nodes We simulate 4 VPs on from 1 to 4 nodes.) Table 5 shows the relative
 speedups for these experiments. Here relative speedup is defined to be the LAPSE time on one
 node divided by the LAPSE time on n nodes. For the applications with good lookahead, SOR,
-BPS, and APUCS, the speedups increase monotonically. For these applications, relative speedups
+BPS, and APUCS, the speedups increase monotonically. For the applications with good lookahead, relative speedups
 on 4 nodes are between 2.4 and 3.7 (relative efficiencies between 0.60 and 0.92), while on 8 nodes
 the relative speedups range between 3.5 and 4.7 (relative efficiencies between 0.43 and 0.60). For
 PGL, the maximum relative speedup is 1.7, and most of that is obtained when increasing from 1
@@ -742,11 +757,13 @@ to 2 nodes.
 We next consider simulating 64 VPs on from 8 to 64 nodes. Table 6 shows the relative speedups
 for these experiments. Here relative speedup is defined to be the LAPSE time on 8 nodes, with 8
 VPs per node, divided by the LAPSE time on n nodes. (For BPS-High the maximum number of
-VPs per node was 4, so those speedups are stated relative to LAPSE time on 16 nodes with 4 VPs
-per node.) Again, the speedups are higher for those applications with good lookahead; LAPSE
+VPs per node was 4, so the relative speedups
+for these experiments are stated relative to LAPSE time on 16 nodes with 4 VPs
+per node.) Again, the relative speedups
+for these experiments are higher for those applications with good lookahead; LAPSE
 runs between 3.9 to 7.0 times faster on 64 nodes than on 16 nodes for SOR, BPS, and APUCS.
 The maximum PGL speedup is 2.5.
-We were also able to run a 512 VP case of SOR-Very Low on 64 nodes. Since we did not have
+We were also able to run a 512 VP case of SOR-Very Low on 64 nodes. Since We did not have
 access to 512 nodes, an actual slowdown could not be computed. However, LAPSE ran only 100
 times slower than the time LAPSE predicted it would take the application to run on 512 processors.
 (Remember that each LAPSE processor has 8 VPs and hence at least 8 times as much work to do
@@ -826,8 +843,9 @@ periods where their execution paths are insensitive to temporal considerations.
 Using LAPSE, timing predictions of applications running on a large number of processors can be
 made by executing the application on a smaller number of processors and simultaneously running a
 timing simulation of the larger machine. LAPSE timing predictions were validated for four scientific
-and engineering applications. Typically the predictions were within 10% of the actual execution
-times; often they were within 5%.
+and engineering applications. Typically LAPSE timing predictions were within 10% of the actual execution
+times; often four scientific
+and engineering applications were within 5%.
 The simulation speed was shown to depend on several factors: the computation to communication
 ratio of the application and the amount of application lookahead. For applications with good
 lookahead, slowdowns are modest and good simulation speedups are obtained. For applications
@@ -837,11 +855,12 @@ for increasing lookahead and potentially increasing simulation speed for such ap
 first an application that calls clock routines. The current approach in LAPSE is to block the
 application until simulation time has advanced to the point at which the clock call is made, and
 then report the simulation time. However, in many applications, clock values are not used until
-well after they are set (e.g., in timing intervals). For such applications, it would be possible to
+well after clock values are set (e.g., in timing intervals). For such applications, it would be possible to
 continue running the application beyond the clock call, accept the simulation clock returns asyn-
 chronously, and only block the application when an unreturned clock value actually gets used (and
 only if simulation time has not yet advanced to the calling time). Transparent support of this
-mechanism would be costly since it would involve checking when certain storage locations change
+mechanism would be costly since this
+mechanism would involve checking when certain storage locations change
 values (namely those into which the clock values are stored). However, a simple set of routines
 can be designed to read and subsequently use clock values. These would have to be inserted into
 the application in place of clock calls; however this should not pose a problem in the context of an
@@ -849,35 +868,37 @@ automated instrumentation system that would most likely desire frequent clock ca
 type of temporally sensitive call that can be handled is a query about the status of messages. For
 example, a probe asks "is there a message of a certain type here now?" LAPSE currently blocks
 the application until simulation time has advanced until the time at which the probe call was
-made, and then answers the probe. However, this approach is too conservative in certain cases.
+made, and then answers a probe. However, this approach is too conservative in certain cases.
 Suppose an application probes at some (as yet potentially unknown) time, say 100, and suppose
-that the simulator has advanced to time 50 at the time of the probe. If the probed for message is
-already present at time 50 (and messages can't be canceled), then it is guaranteed to be there at
-time 100. The simulator could so inform the application thereby unblocking the application. This
+that the simulator has advanced to time 50 at the time of a probe. If the probed for message is
+already present at time 50 (and messages can't be canceled), then the probed for message is
+already present at time 50 (and messages can't be canceled) is guaranteed to be there at
+time 100. the simulator could so inform the application thereby unblocking the application. This
 requires somewhat more elaborate data structures and application/simulation flow-control than are
 currently in LAPSE (since, e.g., message types may be reused and the simulator must keep track of
 which message is destined for which probe). However, our experience with the PGL code indicates
 that such an optimization (which is really a more sophisticated form of lookahead) is well worth
 pursuing in order to accelerate the simulation.
 There are a number of worthwhile extensions to LAPSE we are pursuing. First, LAPSE currently
-runs on the Paragon and provides Paragon timing estimates. We are porting LAPSE to work
+runs on the Paragon and provides the Paragon timing estimates. our are porting LAPSE to work
 in conjunction with a software package, nx-lib [15], that provides the Paragon message-passing library
-on networks of workstations. nx-lib provides the workstations with Paragon functionality,
+on networks of workstations. nx-lib provides the workstations with the Paragon functionality,
 our port will augment functionality with timing. Second, our model of the Paragon's operating
 system and hardware is currently fairly crude. For example our current network model is a pure
-delay network. We have implemented a packet-by-packet parallel simulator of the Paragon's mesh
-interconnection network and are in the process of integrating it with LAPSE. Our model of the
+delay network. our have implemented a packet-by-packet parallel simulator of the Paragon's mesh
+interconnection network and are in the process of integrating the Paragon's mesh
+interconnection network with LAPSE. our model of the
 Paragon's operating system is also simple and does not include models of some of the Paragon's
 internal algorithms, e.g., models of the way in which the Paragon manages communications buffers.
-We are planning to investigate how to incorporate such features into our model, and especially how
-lookahead calculations need to be changed for the resulting (more complex) models. In addition, we
+our are planning to investigate how to incorporate such features into our model, and especially how
+lookahead calculations need to be changed for the resulting (more complex) models. In addition, our
 plan to investigate how to port LAPSE to run under and model the newly emerging MPI (Message
 Passing Interface [17]) standard on other parallel platforms besides the Paragon.
 
 Acknowledgments
 
-We are grateful to Jeff Earickson of Intel Supercomputers for his generous assistance in helping us
-to better understand the Intel Paragon system.
+our are grateful to Jeff Earickson of Intel Supercomputers for Jeff Earickson of Intel Supercomputers generous assistance in helping our
+to better understand the Intel the Paragon system.
 
 
 
@@ -897,7 +918,7 @@ Efficient instruction level simulation of computers.
 Hierarchical architecture design and simulation environment.
 Paragon User's Guide
 A comparison of domain decomposition techniques for elliptic partial differential equations and their parallel implementation.
-Paragon parallel programming environment on Sun workstations.
+the Paragon parallel programming environment on Sun workstations.
 A dynamic-trace-driven simulator for evaluating parallelism
 Message Passing Interface Forum
 Parallel simulation of markovian queueing networks using adaptive uniformization.

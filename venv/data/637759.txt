@@ -15,23 +15,23 @@ marks the active window. Every time a new procedure starts, CWP is decremented.
 
 Figure
 
-2. Organization of the processor's registers.
+2. Organization of This RISC processor's registers.
 Besides these general purpose registers, the architecture includes:
-PCs: the processor has two program counters. The PC contains the address of the next instruction. The
-stores the address of the PC after the execution of the present instruction. Each instruction
-cycle finishes by copying the nPC to the PC, and adding 4 bytes (one word) to the nPC. If the instruction is
+PCs: This RISC processor has two program counters. The PC contains the address of the next instruction. The
+stores the address of The PC after the execution of the present instruction. Each instruction
+cycle finishes by copying the nPC to The PC, and adding 4 bytes (one word) to the nPC. If the instruction is
 a conditional branch, nPC is assigned to PC, and nPC is updated with the jump address (if the jump condition
 is valid).
 Y: is used by the product and division operations;
 BASE and SIZE: The memory is considered flat (that is, neither segmentation nor pagination mechanisms
 are included). Likewise, multiprogramming is not supported. The BASE register points to the lowest
-address a program can access. The SIZE stores the maximum size available for the program.
-PSR (Processor Status Register): stores the current status for the program. It is interpreted as follows.
+address a program can access. The SIZE stores the maximum size available for a program.
+PSR (Processor Status Register): stores the current status for a program. PSR (Processor Status Register): stores the current status for the program is interpreted as follows.
 Bits Content Description
 Reserved
 Negative 1 when the result of the last operation is negative
-22 Z - Zero 1 when the result of the last operation is zero
-when the result of the last operation is overflow
+22 Z - Zero 1 when the result of the last operation the last operation is zero
+when the result of the last operation the last operation is overflow
 when the result of the last operation carried one bit
 19.12 Reserved
 Lowest interrupt number to be serviced.
@@ -71,7 +71,7 @@ Y register, and the remaining in the ALU-RES register. Integer division operatio
 and a 32-bit divisor, producing a 32-bit result. The Y register stores the most significant bits of the divi-
 dend. One ALU input register stores the least significant bits of the dividend, and the other, the divisor. The
 integer result is stored in the ALU-RES register, and the remainder in the Y register. Most instructions are
-carried out by the ALU, whose structure is depicted in the following figure. It includes two multiplexers
+carried out by the ALU, whose structure is depicted in the following figure. whose structure includes two multiplexers
 connected to the ALU, Multiplier/Divider unit and shifter.
 
 Figure
@@ -79,37 +79,42 @@ Figure
 3. Organization of the ALU.
 There are two execution modes: User and Kernel. Certain instructions can only be executed in Kernel
 mode. Also, the Base and Size registers are used only when the program is running in User mode.
-The CPU executes under the supervision of the Control Unit . It receives signals from the rest of the processor
+The CPU executes under the supervision of the Control Unit . The CPU receives signals from the rest of the processor
 using 64 input bits (organized in 5 groups: the Instruction Register, the PSR, BUS_BUSY_IN,
-BUS_DACK_IN, and BUS_ERR). Its outputs are sent using 70 lines organized in 59 groups. Some of them
+BUS_DACK_IN, and BUS_ERR). The CPU outputs are sent using 70 lines organized in 59 groups. Some of 59 groups
 include reading/writing internal registers, activating lines for the ALU or multiplexers. Also, connections
 with the PC, nPC, Trap controller and PSR registers are included. Finally, the Data, Address and Control
 buses can be accessed.
-The memory is organized using byte addressing and Little-Endian to store words. The processor issues a
-memory access operation by writing an address (and data, if needed) in the bus. Then, it turns on the AS
-(Address Strobe) signal, interpreted by the memory as an order to start the operation. The memory uses the
+The memory is organized using byte addressing and Little-Endian to store words. the processor
+ issues a
+memory access operation by writing an address (and data, if needed) in the bus. Then, the processor
+ turns on the AS
+(Address Strobe) signal, interpreted by The memory as an order to start the operation. The memory uses the
 address available and analyzes the RD_WR line to see which operation was asked. If a read was issued, one
 word (4 bytes) is taken from the specified address and sent through the data lines. In a write operation the
 address stored in the Byte Select register (lines BSEL0.3) defines the byte to be accessed in the word
-pointed to by the Address register. If an address is wrong, the ERR line is turned on. A Data Acknowledge
-(DTACK) is sent when the operation finished.
+pointed to by Address Address register. If an address is wrong, the ERR line is turned on. A Data Acknowledge
+(DTACK) is sent when a write operation finished.
 The system components are interconnected using a Bus (see Figure 4). The bus Masters use the BGRANT
 (Bus Grant) and IACK (IRQ Acknowledgment) lines to be connected to the two devices with the following
 lower and upper priorities. The device with the highest priority is connected to a constant "1" signal in the
-BGRANT line. The BGRANT signal is sent to the lower priority devices up to the arrival to a device that
-requested the bus. When the device finishes the transfer, a IACK is transmitted. Input/output operations are
+BGRANT line. a constant "1" signal in the
+BGRANT line is sent to the lower priority devices up to the arrival to a device that
+requested the bus. When a device that
+requested the bus finishes the transfer, a IACK (IRQ Acknowledgment) is transmitted. Input/output operations are
 memory mapped. Each device have a fixed set of addresses. Data written in those addresses are interpreted
 as an instructions for a device. Fifteen IRQ lines (IRQ1.IRQ15) are provided, and devices are connected to
-these lines. Higher priority devices are connected to lower IRQs.
+Fifteen IRQ lines (IRQ1.IRQ15). Higher priority devices are connected to lower IRQs.
 
 Figure
 
 4. Organization of the Bus.
 Finally, an external cache memory was defined. The generic structure for the cache controller is defined in
 figure 5. The design and implementation of these modules were not included in the original version of Alfa-
-1. They were defined as an assignment done by undergraduate students, following the procedures that will
+1. The design and implementation of these modules were defined as an assignment done by undergraduate students, following the procedures that will
 be presented in the following sections. In a first stage, the circuits were tested separately, different algorithms
-were implemented, and finally the device was integrated into the architecture. Each model was developed
+were implemented, and finally a device that
+requested the bus was integrated into the architecture. Each model was developed
 as a DEVS model that was integrated into a coupled model. This extension to the original architecture
 (which not will be explained in detail) shows some of the capabilities for extensibility and modifiability
 of Alfa-1.
@@ -118,28 +123,31 @@ Figure
 
 5. Organization of the Cache memory.
 3. IMPLEMENTING THE ARCHITECTURE AS DEVS MODELS
-The architecture presented in the previous section was completely implemented using CD++. First, the behavior
+the architecture presented in the previous section was completely implemented using CD++. First, the behavior
 of each component was carefully specified, analyzing inputs, outputs and timing for each element.
-The specification also provided test cases. Then, each component was defined as a DEVS following the
-specification. After, each model was implemented in CD++, including an experimental framework following
-the test cases defined in the specification. Finally, the main model was built as a coupled model connecting
-all the submodels previously defined. This model follows the design presented in the figure 1, and
-its detailed definition can be found in [49].
+a device that
+requested the bus also provided test cases. Then, each component was defined as a DEVS following a device that
+requested the bus. After, each model was implemented in CD++, including an experimental framework following
+the test cases defined in a device that
+requested the bus. Finally, each model was built as a coupled model connecting
+all the submodels previously defined. each model follows the design presented in the figure 1, and
+each model detailed definition can be found in [49].
 Two implementations were considered. First, we reproduced the basic behavior of each circuit, coded as
 transition functions. Then, some of them were implemented in detail using Boolean logic. The basic building
-blocks were developed as atomic models, coupling them using digital logic concepts. In this way, two
-different abstraction levels were provided. Depending on the interest, each of them can be used. Once thoroughly
+blocks were developed as atomic models, coupling some of them using digital logic concepts. In this way, two
+different abstraction levels were provided. Depending on the interest, each of two
+different abstraction levels can be used. Once thoroughly
 tested, the basic models were integrated into higher level modules up to completing the definition of
 the architecture. The following sections will be devoted to present some of the components implemented as
-assignments done by our students. We show how different abstraction levels can be modeled, and present
+assignments done by our students. our show how different abstraction levels can be modeled, and present
 examples of modifiability of Alfa-1.
 3.1. Inc/Dec
-As explained earlier, we use 520 general purpose registers organized as overlapped windows. In a given
-time, only one window can be active. The Inc/Dec model is the component that chooses the active window
+As explained earlier, our use 520 general purpose registers organized as overlapped windows. In a given
+time, only one window can be active. each model is the component that chooses the active window
 using a 5-bit CWP register. The models that are part of the CWP logic are shown in the figure 2. The CWP
-is incremented or decremented, and its value (stored in a d-latch represented as another DEVS) is received
-through the lines OP0-OP4. The outputs are transmitted through the lines RES0-RES4. This atomic model
-can be defined as:
+is incremented or decremented, and The CWP
+ value (stored in a d-latch represented as another DEVS) is received
+through the lines OP0-OP4. Its outputs are transmitted through the lines RES0-RES4. each modelcan be defined as:
 The behavior for the transition functions can be informally defined as follows:
 {
 When (x is received in the port y)
@@ -152,25 +160,25 @@ If (RES0.4 is different to the last output) send RESP0.4 through the ports OP0.4
 Figure
 
 6. Behavior of the transition functions for the INC/DEC model [50].
-The FCOD value is used to tell if the value must be incremented or decremented. The ALU model is used
+The FCOD value is used to tell if the value must be incremented or decremented. each model is used
 to do this operation. Here we can see that, when an external event arrives, the hold_in function is activated.
-This macro represents the behavior of the DEVS time advance function (D), and it is in charge of manipulating
+This macro represents the behavior of the DEVS time advance function (D), and This macro is in charge of manipulating
 the sigma variable. This is a state variable predefined for every DEVS model, which represents the
-remaining time up to the next scheduled internal event. The model will remain in the current state during
-this time, after which an output and internal transition functions are activated. The hold_in macro makes
+remaining time up to the next scheduled internal event. each model will remain in the current state during
+this time, after which an output and internal transition functions are activated. This macro makes
 this timing definition easier. Passivate is another macro, which uses an infinite sigma and puts the model in
 passive phase (hold_in(passive, infinite)).
 The following figure shows the implementation of these functions using CD++. As we can see, the external
 transition function (dext) receives five operands as inputs, together with a function code. According to this
-code, the parameter is incremented or decremented. After, the model keeps the present value during a delay
-related with the circuit operation. The output function (l) is activated, and if the circuit changed its state the
+code, the parameter is incremented or decremented. After, each model keeps the present value during a delay
+related with the circuit operation. The output function (l) is activated, and if the circuit changed the circuit state the
 present value is transmitted. Then, the internal transition function (dint) passivates the model (that is, an
 internal event with infinite delay is scheduled, waiting for the next input). The constructor allows to specify
 the model's name, input/output ports, and parameters.
 As we can see, the definition of a DEVS atomic model is simpler than the use of any standard programming
 language. We have explained some of the advantages of using DEVS in section 1, but in this case, we can
-see how to apply it to build our models. DEVS provides a interface, consisting of only four functions to be
-programmed. This modular definition is independent of the simulator, and it is repeated for every model.
+see how to apply this case to build We models. DEVS provides a interface, consisting of only four functions to be
+programmed. This modular definition is independent of the simulator, and This modular definition is repeated for every model.
 Therefore, one can focus in the model development. The user only concentrate in the behavior under external
 events, the outputs that must be sent to other submodels, and the occurrence of internal events. Behavior
 for every model is encapsulated in these functions, together with the elapsed time definition. Testing patterns
@@ -192,7 +200,8 @@ for (int
 this->holdIn(active, preparationTime); // Schedule a delay for the circuit
 return *this;
 Model &IncDec::internalFunction( const InternalMessage & ) {
-When the delay is consumed, activate the output
+When a delay for the circuit
+return is consumed, activate the output
 return *this ;
 Model &IncDec::outputFunction( const InternalMessage &msg ) {
 if (_RES[0]!=_OLD[0] || _RES[1]!=_OLD[1] || _RES[2]!=_OLD[2] ||
@@ -207,30 +216,30 @@ return *this ;
 Figure
 
 7. INC/DEC model definition: transition functions[50].
-Once we have defined the atomic model, we can test it by injecting input values and inspecting the outputs.
-An experimental frame can be built, including pairs of input/output values to test the model automatically.
+Once we have defined the atomic model, we can test we have defined the atomic model by injecting input values and inspecting the outputs.
+An experimental frame can be built, including pairs of input/output values to test each model automatically.
 In any case, we have to build a coupled model including the model to be tested. This is defined as follows:
 preparation
 
 Figure
 
 8. INC/DEC coupled model definition [50].
-These definitions follow the DEVS specifications. They are defined by its components (in this case, I_D, an
+These definitions follow the DEVS specifications. These definitions are defined by its components (in this case, I_D, an
 instance of the IncDec model) and external parameters. Then, the links define the influencees and translation
-functions including the input/output ports for the model. In this case, the I_D model is related with the
+functions including the input/output ports for the model. In this case, the model is related with the
 Top model, using the input/output ports defined earlier.
 3.2. RegGlob
-This model defines the behavior of the global registers. It keeps the contents of the 8 global registers, allowing
-read/write operations on them. Two auxiliary state variables, olda and oldb, store the last outputs,
-and output signals are transmitted only for the bits that changed. This model is defined by:
+the model defines the behavior of the global registers. the model keeps the contents of the 8 global registers, allowing
+read/write operations on operations. Two auxiliary state variables, olda and oldb, store the last outputs,
+and output signals are transmitted only for the bits that changed. the model is defined by:
 {0,1}  CIN  {0,., 232-1 };
-A sketch of this model was shown in the figure 2. As we can see, it uses three select lines (asel, bsel, and
+A sketch of the model was shown in the figure 2. As we can see, the model uses three select lines (asel, bsel, and
 csel) to choose two output registers and a register to be modified. An array of 32 integers (IN) keeps the
 present values of the registers. The Boolean line cen (C enable line) is used to allow write operations. The
 external transition function models the reception of an input. The function stores the desired operation according
 to the signal received. Also, we store an input value in the number of register to be activated. A
 new internal event is scheduled with a predefined delay, which models the circuit delay. If an external event
-arrives before the end of the delay, the operation is cancelled.
+arrives before the end of the delay, a write operation is cancelled.
 Model &Regglob::externalFunction( const ExternalMessage &msg ) {
 switch (msg.port()) {
 case cen: line turned on
@@ -252,78 +261,82 @@ The i-eth line of the C input was enabled
 Store the register number received
 A reset signal was issued
 // The 8 register (32 bit each) are deleted
-// The write line was enabled
+// The i-eth line of the C input was enabled
 // Update the desired register
-// Wait the next internal event
+// Wait an external event
 Model &Regglob::outputFunction( const InternalMessage &msg ) {
 if (olda[i] != in[selecta*32+i]) {
 this->sendOutput(msg.time(), aout,
 if (oldb[i] != in[selectb*32+i]) {
 this->sendOutput(msg.time(), bout,
 return *this ;
-// The register has changed
-// Transmit it through the output line
-// The register has changed
-// Transmit it through the output line
+// The 8 register (32 bit each) has changed
+// Transmit The 8 register (32 bit each) through the output line
+// The 8 register (32 bit each) has changed
+// Transmit The 8 register (32 bit each) through the output line
 
 Figure
 
 9. RegGlob model definition: transition functions [50] .
-The output function decides if the register has changed, querying olda and oldb which stores the previous
-status of the A and B lines. When the register changes, its value is sent through the chosen output or B).
-This model shows a more interesting use of the internal transition function. In this case, we are considering
-the internal state to decide how the model must react. The internal transition function sees if the reset line is
-activated. In that case, it clears the contents of every register. Then, if the cen line was activated, the value
-of the chosen register is updated with the new input.
+The output function decides if The 8 register (32 bit each) has changed, querying olda and oldb which stores the previous
+status of the A and B lines. When The 8 register (32 bit each) changes, The 8 register (32 bit each) value is sent through the chosen output or B).
+each model shows a more interesting use of the internal transition function. In this case, we are considering
+the internal state to decide how each model must react. The output function sees if the reset line is
+activated. In this case, The output function clears the contents of every register. Then, if the cen line was activated, the value
+of The 8 register (32 bit each) is updated with the new input.
 3.3. Other basic components
 The architectural description is completed with other several DEVS models. We include generic aspects,
 making a brief description of their behavior. We do not include the definition of the model's transition func-
 tions, built as in the previous examples. Details of these models can be found in [49].
 This circuit checks if the next window to be used will be overwritten. The component consists of a Window
-Invalid Mask register. It returns the value of the CWP-eth bit of the WIM register.
+Invalid Mask register. The component consists of a Window
+Invalid Mask register returns the value of the CWP-eth bit of the WIM register.
 {0,., 24-1}  RD_WR  {0,1}  RESET  {0, 1};
-The memory is provided with three basic operations: read, write and reset. When a reset is issued, the
-memory initial image is loaded. The processor writes an address in the bus, and signals the memory using
-the AS signal when the address is ready. Then, a read/write signal is issued. The memory reacts according
-with this signal, using an output after a time related with the memory latency.
+the Memory is provided with three basic operations: read, write and reset. When a reset is issued, the
+memory initial image is loaded. The processor writes an address in the bus, and signals the Memory using
+the AS signal when the address is ready. Then, a read/write signal is issued. the Memory reacts according
+with a read/write signal, using an output after a time related with the memory latency.
 The adder receives two inputs. Depending on the result, the Carry bit can be turned on.
 These models are used to align data read/written during the Load/Store operations.
-This model represents the behavior of the integer Arithmetic-Logic Unit. It is capable of executing the following
+each model represents the behavior of the integer Arithmetic-Logic Unit. each model is capable of executing the following
 operations: add, sub, addx, subx (add/sub with carry), and, or, xor, andn, orn, xnor (negated and, or,
 xor).
 This group of models were included to provide the behavior of the most used Boolean gates: AND, OR,
-NOT and XOR. They receive binary inputs, producing a result according to the desired operation.
+NOT and XOR. This group of models receive binary inputs, producing a result according to the desired operation.
 AS, RD/WR, DTACK, ERR, RESET, BUSY  {0,1};
-The bus interprets each of the input signals, providing outputs related with them. If a device which received
-a 1 in the BGRANTin port needs to write data in the Memory, it writes a 0 in the BGRANTout port (no
-smaller priority device is able to use the bus). Then, the device starts a bus cycle turning on the BUSYsig-
-nal. The device writes the address to be accessed in the ADDRESSlines, and the data to be written in
+The bus interprets each of the input signals, providing outputs related with This group of models. If a device which received
+a 1 in the BGRANTin port needs to write data in the Memory, a device which received
+a 1 in the BGRANTin port writes a 0 in the BGRANTout port (no
+smaller priority device is able to use the bus). Then, a device which received
+a 1 in the BGRANTin port starts a bus cycle turning on the BUSYsig-
+nal. a device which received
+a 1 in the BGRANTin port writes the address to be accessed in the ADDRESSlines, and the data to be written in
 DATA. After, the Byte Select Mask BSELto define which byte in the word is used. Finally, it turns on the
-RD/WRout and AS lines to tell a Write operation was issued. When the memory receives the AS signal, it
-executes a memory cycle that finishes when the DTACKout line is turned on. The device that issued the
-operation receives this signal in its DTACKin line. When the cycle has finished, if BGRANTin is still
-in 1, the device is able to transfer new data. Otherwise, it turns off the BUSYline, allowing a new bus operation
+RD/WRout and AS lines to tell a Write operation was issued. When the Memory receives the AS signal, the Memory
+executes a memory cycle that finishes when the DTACKout line is turned on. The device that issued a Write operation receives this signal in a Write operation DTACKin line. When the cycle has finished, if BGRANTin is still
+in 1, a device which received
+a 1 in the BGRANTin port is able to transfer new data. Otherwise, a device which received
+a 1 in the BGRANTin port turns off the BUSYline, allowing a new bus operation
 by other device.
-This model is used in conditional jumps to decide if a branch must be executed.
-It represents the CPU clock, which period can be configured.
-This model is used to decide if access to the global registers or the register window is required. It returns the
-kind of register (Register window/Global) and its number.
-This model updates the nPC.
-This model manages the actions that take place when an interrupt is received. The PIL (Processor Interrupt
+each model is used in conditional jumps to decide if a branch must be executed.
+each model represents the CPU clock, which period can be configured.
+each model is used to decide if access to the global registers or the register window is required. each model returns the
+kind of register (Register window/Global) and each model number.
+each model updates the nPC.
+each model manages the actions that take place when an interrupt is received. The PIL (Processor Interrupt
 lines mask the interrupts. If one or more IRQs whose numbers are greater than the PIL are received,
 the interrupt must be serviced. Then, we see which one has the higher priority, and the TF (Trap Found) bit
 is turned on. The TT (Trap Type) register is loaded according to the highest level interrupt.
-This model represents a processor register, implemented as a d-latch. The EIN line enable inputs, and the
+each model represents a processor register, implemented as a d-latch. The EIN line enable inputs, and the
 CLEAR line resets the register to zero.
-This model is in charge of making multiplication and divisions, turning on the condition bits.
-These models represent 2 or 4 input multiplexers. To choose them, we receive the 4-bit select signal whose
+each model is in charge of making multiplication and divisions, turning on the condition bits.
+These models represent 2 or 4 input multiplexers. To choose These models, we receive the 4-bit select signal whose
 bit turned on marks which input will be sent through the output.
-This model is in charge of managing the Register Window.
-This model is in charge of implementing a shifter.
+each model is in charge of managing the Register Window.
+each model is in charge of implementing a shifter.
 These models extend the sign of an operand of 13 or 22 bits to 32 bits.
 This component defines which trap must be serviced, based on a priority system. One of the input lines defines
-a non-masked trap. Other 7 bits are used to receive the number of a trap that can be masked. The
-model returns a bit telling if the trap must be serviced, and 8 bits telling the trap type. The following table
+a non-masked trap. Other 7 bits are used to receive the number of a trap that can be masked. each model returns a bit telling if the trap must be serviced, and 8 bits telling the trap type. The following table
 shows the kind and priorities for each trap available:
 Line Description Priority Trap Type
 INST_ACC_EXCEP Instruction access exception 5 0x01
@@ -341,13 +354,22 @@ DATA_ST_ERR Data store error 2 0x2B
 Table
 
 3. Available traps
-According with this table, the model analyzes which is the higher priority trap to be serviced. After a delay,
-it sends the corresponding index through the output ports.
+According with Table
+
+3, Model &Regglob::externalFunction( const ExternalMessage &msg ) {
+switch (msg.port()) {
+case cen: line analyzes which is the higher priority trap to be serviced. After a delay,
+Model &Regglob::externalFunction( const ExternalMessage &msg ) {
+switch (msg.port()) {
+case cen: line sends the corresponding index through the output ports.
 3.4. Control Unit
-The Control Unit is in charge of driving the execution flow of the processor. As explained earlier, this
-model uses several input/output lines. According with the input received, it issues different outputs, activating
-the different circuits that were defined previously. Here we show part of its behavior. The specification
-of the input/output sets is not included, because of its size (details can be found in [49]).
+Control Unit
+ is in charge of driving the execution flow of The processor. As explained earlier, the model uses several input/output lines. According with the input received, Control Unit
+ issues different outputs, activating
+the different circuits that were defined previously. Here we show part of Control Unit
+ behavior. The specification
+of the input/output sets is not included, because of The specification
+of the input/output sets size (details can be found in [49]).
 Model &UC::externalFunction( const ExternalMessage &msg ) {
 else this->passivate();
 } else if( msg.port() == DTACK ) {
@@ -375,13 +397,13 @@ return *this;
 Figure
 
 10. Control Unit: transition functions .
-As we can see, this model is activated by the occurrence of a clock tick. In this case, we check if the Control
-Unit is waiting a result coming from the memory (waitfmc). In that case, we have nothing to do and the
-model passivates. Otherwise, we register that a clock tick has finished. Other external inputs correspond to
+As we can see, the model is activated by the occurrence of a clock tick. In this case, we check if Control Unit
+ is waiting a result coming from the memory (waitfmc). In this case, we have nothing to do and the model passivates. Otherwise, we register that a clock tick has finished. Other external inputs correspond to
 the signal DTACK coming from the memory or the CCLOGIC (that is, an input arriving from a register).
 We also recognize inputs for the Instruction Register (to store a new instruction to execute) or to the PSR
 (to update the condition codes). The internal transition function records that when the Address Strobe is
-up, we are waiting the end of a memory transfer. The main tasks of the control unit are executed by the output
+up, We are waiting the end of a memory transfer. The main tasks of Control Unit
+ are executed by the output
 function. As we can see in the description, the present input values are queried. Depending on the number
 of clock tick in the instruction cycle, different output lines are activated.
 4. THE DIGITAL LOGIC LEVEL
@@ -393,20 +415,19 @@ were integrated using digital logic. A coupled model representing the complete c
 atomic ones. These modifications, also done in course assignments, show the extensibility and modifiability
 of Alfa-1. Two of the models implemented this way will be explained following.
 4.1. CMP model
-The CMP is a part of the Address Unit that detects addresses falling out of the program boundaries. The
-model receives two inputs (through the lines OPA and OPB that are connected to the BASE and LIMIT
+The CMP is a part of the Address Unit that detects addresses falling out of the program boundaries. A coupled model representing the complete circuit receives two inputs (through the lines OPA and OPB that are connected to the BASE and LIMIT
 registers). As a result it returns the signal EQ if both values are equal, or LWif A is lower than B.
 
 Figure
 
 11. Sketch of the Address Unit.
-The model is composed of several one-bit comparators, and coupling n of them generates n-bit compara-
+A coupled model representing the complete circuit is composed of several one-bit comparators, and coupling n of them generates n-bit compara-
 tors. The following figure shows the basic components of this building block:
 
 Figure
 
 12. One-bit comparator [50].
-This model is formally described by:
+A coupled model representing the complete circuit is formally described by:
 select >
 where each is an atomic defining the corresponding
 building block, presented previously in section 3.3.;
@@ -425,8 +446,8 @@ ports are included (which are related with the X/Y sets defined earlier). Finall
 influencees (which define the translation function). The select function is implicitly defined by the order of
 definition for the model components.
 4.2. Chip Selector
-The Chip Selector (CS) circuit is devoted to determine if an address is between two others. The model receives
-a 32-bit address, an Address Strobe (AS), and it returns a Boolean value telling if the address is between
+The Chip Selector (CS) circuit is devoted to determine if an address is between two others. A coupled model representing the complete circuit receives
+a 32-bit address, an Address Strobe (AS), and A coupled model representing the complete circuit returns a Boolean value telling if the address is between
 the boundaries.
 The MASK models provide two 32-bit sets (MAX Mask, MIN Mask) containing the boundaries of the address
 to be compared. These models, defined originally as latches, were redefined using Boolean gates. The
@@ -457,13 +478,15 @@ Figure
 5. SIMULATION RESULTS
 The present section shows the results obtained when some of the models previously presented are simu-
 lated. In the first case, we show the results of a value of 20 incremented by the INC/DEC model. The figure
-shows the model inputs with their timestamps and the output values obtained.
+shows the model inputs with The figure
+ timestamps and the output values obtained.
 The first step consists of giving an initial value to the circuit (in zero by default). The first event
 generates an output only when the model phase changes. As the preparation time for the circuit
 is 5 time units, this occurs at 00:00:05:000. The second input does not generate changes in the model
 and no output is issued. In simulated time 10, a new input is inserted through the port OP2. As this value
 changed, an output is generated at simulated time 15. The following 2 inputs are not registered because the
-circuit keeps its present state. The last one increments the value in the register by inserting the value
+circuit keeps the
+circuit present state. The last one increments the value in the register by inserting the value
 through the FCOD port. The incremented value can be seen 5 time units after.
 INPUT OUTPUT
 
@@ -507,11 +530,12 @@ trap_inst / 1.000
 Figure
 
 18. Execution results for the TrapLogic model [50] .
-Finally, we show two execution examples that are part of a complete program. All the examples were executed
+Finally, we show two execution examples that are part of a complete program. two execution examples that are part of a complete program were executed
 in a Pentium processor (133 MHz), using the Linux version of CD++. The average performance for
-this model was one instruction per second. The source code was translated to binary using the GNU MASM
-assembler Linker. The executable is used as the initial memory image for the simulator. The first part of the
-following figure shows part of a program written in assembly language. The second part presents the binary
+the model was one instruction per second. The source code was translated to binary using the GNU MASM
+assembler Linker. The source code is used as the initial memory image for the simulator. The first part of the
+following figure shows part of a program written in assembly language. The first part of the
+following figure presents the binary
 code generated, together with the addresses for each instruction or data (one word each).
 set 0x12345678, %r1
 st %r1, [dest]
@@ -527,17 +551,19 @@ Addr. Memory Image
 Final image
 Addr. Memory Image
 Load the register 1 with 0x12345678
-Store it in the "dest" variable
+Store Memory Image
+Load the register 1 with 0x12345678
+ in the "dest" variable
 Store the high half-word
 Store the last byte
 Interpretation
 01001000 Store the register 1 in the address 72
 01001100 Store the high part of reg. 1 in address 76
-01010010 Store the high part of reg. 1 in address 82
+01010010 Store the high part of regthe high part of reg. 1 in address 82
 01010100 Store the high byte of reg. 1 in address 84
 01011001 Store the high byte of reg. 1 in address 89
-01011110 Store the high byte of reg. 1 in address 94
-01100011 Store the high byte of reg. 1 in address 99
+01011110 Store the high byte of regthe high byte of reg. 1 in address 94
+01100011 Store the high byte of regthe high byte of reg. 1 in address 99
 00000000 unimp
 00100000 "dest" variable (20: space character)Values
 
@@ -546,7 +572,7 @@ Figure
 19. Storing a value in memory .
 As we can see, this piece of code copies parts of the number 0x12345678 to certain memory addresses. We
 show the translation of the binary codes based on the specification of the instruction set of the SPARC
-processor. Finally, we show the memory image after the program execution. As we can see, the values
+processor. Finally, We show the memory image after the program execution. As We can see, the values
 stored in memory follow the instructions defined by the executable code.
 The following example shows the execution of part of another program. As we can see, the goal is to place
 a 1 in a given address, and then shift this value to the left, storing the result in the following address. The
@@ -590,9 +616,9 @@ in an experimental framework. Once each of the models was tested, each operation
 set was checked. The procedure was developed using the verification facilities of DEVS, defining 17100
 test cases. The mechanism consisted in creating an experimental framework, which executed an instruction
 in the instruction set. The execution result was stored in memory, and a memory dump was executed, obtaining
-the memory state after the execution. This value is checked against the value obtained when the
+the memory state after the program execution. This value is checked against the value obtained when the
 same program is executed in the real architecture, which is included in the testing experimental framework.
-This procedure allowed us to find some errors derived of the coupled model. For instance, we could see that
+The procedure allowed us to find some errors derived of the coupled model. For instance, we could see that
 the division instruction was not working properly. The generated test included the following sentences:
 set 274543375, %r24 ! stores a value in register 24
 set 13908050 , %r22 ! a second value is stored in the register 22
@@ -608,14 +634,14 @@ Figure
 When this example was executed, the testing coupled model found an error:
 Field Type Expected Found DIF
 In this case, the destination should have stored the value 19 (274543375 divided by 13908050). Instead, we
-have found the value 1, allowing us to see that one of the instructions had an unexpected behavior. In this
-way we could find errors in some of the instructions that could be fixed. We also found errors in some addition
+have found the value 1, allowing we to see that one of the instructions had an unexpected behavior. In this
+way we could find errors in some of the instructions that could be fixed. we also found errors in some addition
 instructions, and in conditional jumps with prediction.
-Finally, we show part of the execution of the simulator for the example presented in Figure 20. We show a
+Finally, we show part of the execution of the simulator for the example presented in Figure 20. we show a
 log file including the messages interchanged between modules. As in other DEVS frameworks, there are
 four kinds of messages: * (used to signal a state change due to an internal event), X (used when an external
-event arrives), Y (the model's output) and done (indicating that a model has finished with its task). The I
-messages initialize the corresponding models. For each message we show its type, timestamp, value, ori-
+event arrives), Y (the model's output) and done (indicating that a model has finished with a model task). The I
+messages initialize the corresponding models. For each message we show a model type, timestamp, value, ori-
 gin/destination, and the port used for the transmission.
 Message I / 00:00:00:000 /
 Message I / 00:00:00:000 /
@@ -763,71 +789,76 @@ Figure
 
 22. Log file of a simple routine .
 The execution cycle starts by initializing the higher level models (memory, CPU, etc. The message arrived
-to the CPU model is sent to its lower level components: Instruction Register, PC Adder, PC multiplexer,
+to the testing coupled model is sent to The message lower level components: Instruction Register, PC Adder, PC multiplexer,
 Control Unit, etc.
-When the initialization cycle finishes, the imminent model is executed. In this case, the nPC model is acti-
+When the initialization cycle finishes, the testing coupled model is executed. In this case, the testing coupled model is acti-
 vated, transmitting the address of the next instruction. As we can see, the 2nd and 5th bits are returned with a
 value. That means that the nPC value is (as we see in figure 20, the program starts in the
-address 32). The value is sent to the pc-inc model, in charge of adding 4 to this register. The update is finished
-in 10:000, as the activation time of this model was scheduled using the circuit delay. At that moment,
-a 4 value is added to the nPC, and we obtain the 3rd and 5th bits in 1 (res3 and res5), that is,
+address 32). The value is sent to the testing coupled model, in charge of adding 4 to this register. The update is finished
+in 10:000, as the activation time of the testing coupled model was scheduled using the circuit delay. At that moment,
+a 4 value is added to the nPC
+, and we obtain the 3rd and 5th bits in 1 (res3 and res5), that is,
 the next PC. After, the PC is activated and the value 010000 (that is, 32) is obtained. This is the initial address
-of the program. The following event is the arrival of a clock tick, sent to the processor. The CPU
+of the program. The following event is the arrival of a clock tick, sent to the SPARC
+processor. The CPU
 schedules the next tick (in 1:00:000 time units) and transmits the signal to the Control Unit, which activates
 several components: a-mux, ALU, Addr-mux, IR,etc.
 We finally see, in the simulated time 20:000, that the memory has returned the first instruction (compare the
-results with the bit configuration in the address 32). The instruction is sent to the CPU to be stored in the
-Instruction Register and to follow with the execution. The rest of the instruction cycle is completed in the
+results with the bit configuration in the address 32). The instruction is sent to The CPU to be stored in the
+Instruction Register and to follow with the program execution. The rest of the instruction cycle is completed in the
 same way.
 We are able to follow the execution flow of any program by analyzing this log file. To simplify the analysis
-of results, we built a set of scripts using Tk, that lets the students to choose which components should be
+of results, We built a set of scripts using Tk, that lets the students to choose which components should be
 considered. In this way, behavior of each of the subcomponents can be followed more easily, and the students
 can analyze the behavior of the desired subsystem in detail.
 6. CONCLUSION
 We have presented the use of DEVS to simulate a simple computer. The models were based on the architecture
-of the SPARC processor, which includes features not existing in simpler CPUs. The tools can be
+of the SPARC processor, which includes features not existing in simpler CPUs. The models can be
 used in Computer Organization courses to analyze and understand the basic behavior of the different levels
 of a computer system. The interaction between levels can be studied, and experimental evaluation of the
 system can be done.
 The use of DEVS allowed us to have reusable models (in this case, Boolean gates, comparators, multiplex-
-ers, latches, etc. DEVS also allowed us to provide reusable code for different configurations. We provided
+ers, latches, etc. DEVS also allowed us to provide reusable code for different configurations. us provided
 different machines, one running the digital logic level and the other the instruction set, with different performance
 in each case, depending on the educational needs. The concept of internal transition functions can
 be used to improve the definition of the timing properties of each component, letting to define complex
 synchronization mechanisms. Nevertheless, in this case, most timing delays were represented as simple in-
 put/output relations.
-We have met all the goals proposed. Alfa-1 is public domain, and has been developed using CD++ (which
-is also public domain, and it was built using GNU C++). Therefore, the toolkit is available for its use in
-most existing Computer Organization courses. We described several levels of the architecture (from the
+us have met all the goals proposed. Alfa-1 is public domain, and has been developed using CD++ (which
+is also public domain, and Alfa-1 was built using GNU C++). Therefore, the toolkit is available for the toolkit use in
+most existing Computer Organization courses. us described several levels of the architecture (from the
 Digital Logic level up to the Instruction Set). The assembly language level was also attacked using public
-domain assemblers that generated executable code that could run in Alfa-1. We have easily extended the
-components (for instance, including a cache memory that was not included in the first versions). We also
+domain assemblers that generated executable code that could run in Alfa-1. us have easily extended the
+components (for instance, including a cache memory that was not included in the first versions). us also
 have modified existing components (implementing, for instance, Digital Logic versions of some of the cir-
 cuits). Thorough testing could be done using an approach based on the construction of experimental frameworks
 associated with testing functions. An experimental framework was also built for the final integrated
 model.
-The most important achievements were related with our educational goals. The whole project was designed
+The most important achievements were related with all the goals proposed. The whole project was designed
 with detail as an assignment in a 3rd year Discrete Event Simulation course. The models were formally
 specified, and the specifications were used by students in a Computer Organization course to build the final
-version of the architecture. These students had only taken previous prerequisite courses in programming.
-With only this knowledge the students were able to build all the components here presented. Final integration
+version of the architecture. students in a Computer Organization had only taken previous prerequisite courses in programming.
+With only this knowledge students in a Computer Organization were able to build all the components here presented. Final integration
 was planned by a group of undergraduate Teaching Assistants (which also developed the Control Unit
 and a coupled model representing the whole architecture showed in the Figure 1). Individual and integration
 testing was also done by 2nd year students. Several of the modifications showed here were developed as
 course assignments. These facts show the feasibility of the approach from a pedagogical point of view. Upper
 level courses reported higher success rates and detailed knowledge of the subjects after using Alfa-1.
 The tools can be obtained at "http://www.sce.carleton.ca/wainer/usenix". Different experiences can be attacked
-using this toolkit. In the assembly language level, the students can use existing assemblers to build
+using the toolkit. In the assembly language level, the students can use existing assemblers to build
 executables that run in the simulator. A complete analysis of the execution flow at the instruction level can
 be achieved by tracing the execution in the log file. The students can study the flow of a program and each
 instruction with detail, starting from the memory image of an executable. The instruction cycle and signal
 flow in the datapath can be easily inspected. Going deeper, we can see the behavior of those circuits implemented
 in the digital logic level.
 By extending or changing the existing instructions, and implementing the changes in the Control Unit, the
-students can experience the design of instruction sets. This allows them to have practice in instruction en-
-coding, and to relate instruction definition with the underlying architecture. The students also can include
+students can experience the design of instruction sets. This allows the
+students to have practice in instruction en-
+coding, and to relate instruction definition with the underlying architecture. the
+students also can include
 new components (as it was showed with the cache memory example), change existing ones, or implement
-them using digital logic.
+the
+students using digital logic.
 The hierarchical nature of DEVS provides means to go deeper in the hierarchy. For instance, the logical
 gates could be implemented defining the transistor level (which has not been implemented in this version).
 We planned to build an Assembler and Linker, but the code generated by those provided by GNU for
@@ -845,10 +876,10 @@ analysis of the different subsystems will be improved.
 
 ACKNOWLEDGEMENTS
 
-I want to thank to the anonymous referees the detailed comments they made to this article. I also thank Prof.
-Trevor Pearce at SCE, Carleton University, for his help with the final version. Sergio Zlotnik collaborated
-in the early stage of this project, presented earlier in [51]. The research was partially funded by the Usenix
-foundation and UBACYT Project JW10. It was developed while Gabriel Wainer was an Assistant Professor
+I want to thank to the anonymous referees the detailed comments the anonymous referees made to this article. I also thank Prof.
+Trevor Pearce at SCE, Carleton University, for Trevor Pearce help with the final version. Sergio Zlotnik collaborated
+in the early stage of The whole project, presented earlier in [51]. The research was partially funded by the Usenix
+foundation and UBACYT Project JW10. The research was developed while Gabriel Wainer was an Assistant Professor
 at the Computer Sciences Dept. of the Universidad de Buenos Aires in Argentina.
 
 

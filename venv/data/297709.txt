@@ -1,7 +1,7 @@
 --T
 Automatic Compiler-Inserted Prefetching for Pointer-Based Applications.
 --A
-AbstractAs the disparity between processor and memory speeds continues to grow, memory latency is becoming an increasingly important performance bottleneck. While software-controlled prefetching is an attractive technique for tolerating this latency, its success has been limited thus far to array-based numeric codes. In this paper, we expand the scope of automatic compiler-inserted prefetching to also include the recursive data structures commonly found in pointer-based applications.We propose three compiler-based prefetching schemes, and automate the most widely applicable scheme (greedy prefetching) in an optimizing research compiler. Our experimental results demonstrate that compiler-inserted prefetching can offer significant performance gains on both uniprocessors and large-scale shared-memory multiprocessors.
+AbstractAs the disparity between processor and memory speeds continues to grow, memory latency is becoming an increasingly important performance bottleneck. While software-controlled prefetching is an attractive technique for tolerating this latency, software-controlled prefetching success has been limited thus far to array-based numeric codes. In this paper, we expand the scope of automatic compiler-inserted prefetching to also include the recursive data structures commonly found in pointer-based applications.We propose three compiler-based prefetching schemes, and automate the most widely applicable scheme (greedy prefetching) in an optimizing research compiler. We experimental results demonstrate that compiler-inserted prefetching can offer significant performance gains on both uniprocessors and large-scale shared-memory multiprocessors.
 --B
 Introduction
 OFTWARE -controlled data prefetching [1], [2] offers
@@ -11,8 +11,8 @@ processors. In recognition of this potential,
 a number of recent processors have added support for
 prefetch instructions [3], [4], [5]. While prefetching has enjoyed
 considerable success in array-based numeric codes [6],
-its potential in pointer-based applications has remained
-largely unexplored. This paper investigates compiler-inserted
+prefetching potential in pointer-based applications has remained
+largely unexplored. this paper investigates compiler-inserted
 prefetching for pointer-based applications-in par-
 ticular, those containing recursive data structures.
 Recursive Data Structures (RDSs) include familiar objects
@@ -26,7 +26,8 @@ even a graph of heterogeneous objects). From a memory
 performance perspective, these pointer-based data structures
 are expected to be an important concern for the following
 reasons. For an application to suffer a large memory
-penalty due to data replacement misses, it typically must
+penalty due to data replacement misses, large memory
+ typically must
 have a large data set relative to the cache size. Aside from
 multi-dimensional arrays, recursive data structures are one
 of the most common and convenient methods of building
@@ -43,14 +44,15 @@ revisited; hence temporal locality may be poor. Finally,
 in contrast with arrays-where consecutive elements are at
 contiguous addresses-there is little inherent spatial locality
 between consecutively-accessed nodes in an RDS, since
-they are dynamically allocated at arbitrary addresses.
+
+ are dynamically allocated at arbitrary addresses.
 To cope with the latency of accessing these pointer-based
 data structures, we propose three compiler-based
 schemes for prefetching RDSs, as described in Section II.
-We implemented the most widely-applicable of these
+we implemented the most widely-applicable of these
 schemes-greedy prefetching-in a modern research compiler
 (SUIF [7]), as discussed in Section III. To evaluate
-our schemes, we performed detailed simulations of their impact
+we schemes, we performed detailed simulations of our schemes impact
 on both uniprocessor and multiprocessor systems in
 Sections IV and V, respectively. Finally, we present related
 work and conclusions in Sections VI and VII.
@@ -64,8 +66,7 @@ pipelining [2], the fundamental difficulty with RDSs is that
 we must first dereference pointers to compute the prefetch
 addresses. Getting several nodes ahead in an RDS traversal
 typically involves following a pointer chain. However,
-the very act of touching these intermediate nodes along the
-pointer chain means that we cannot tolerate the latency of
+the very act of touching several nodes along a pointer chain means that we cannot tolerate the latency of
 fetching more than one node ahead.
 To overcome this pointer-chasing problem [8], we propose
 three schemes for generating prefetch addresses without following
@@ -106,22 +107,22 @@ prefetch two nodes ahead to fully hide the latency. Figure
 1(b) shows the caching behavior of each node. We
 obviously suffer a full cache miss at the root node (node 1),
 since there was no opportunity to fetch it ahead of time.
-However, we would only suffer half of the miss penalty ( L
-when we visit node 2, and no miss penalty when we eventually
+However, We would only suffer half of the miss penalty ( L
+when We visit node 2, and no miss penalty when We eventually
 visit node 3 (since the time to visit the subtree rooted
 at node 2 is greater than L). In this example, the latency
 is fully hidden for roughly half of the nodes, and reduced
 by 50% for the other half (minus the root node).
 Greedy prefetching offers the following advantages: (i)
-it has low runtime overhead, since no additional storage
+Greedy prefetching has low runtime overhead, since no additional storage
 or computation is needed to construct the prefetch point-
-ers; (ii) it is applicable to a wide variety of RDSs, regardless
-of how they are accessed or whether their structure
-is modified frequently; and (iii) it is relatively straightforward
+ers; (ii) Greedy prefetching is applicable to a wide variety of RDSs, regardless
+of how they are accessed or whether they structure
+is modified frequently; and (iii) Greedy prefetching is relatively straightforward
 to implement in a compiler-in fact, we have implemented
-it in the SUIF compiler, as we describe later in
+Greedy prefetching in the SUIF compiler, as we describe later in
 Section III. The main disadvantage of greedy prefetching
-is that it does not offer precise control over the prefetching
+is that Greedy prefetching does not offer precise control over the prefetching
 distance, which is the motivation for our next algorithm.
 B. History-Pointer Prefetching
 Rather than relying on existing pointers to approximate
@@ -130,7 +131,7 @@ pointers based on the observed RDS traversal pat-
 terns. To prefetch d nodes ahead under the history-pointer
 prefetching scheme [8], we add a new pointer (called a
 history-pointer) to a node n i to record the observed address
-of n i+d (the node visited d nodes after n i ) on a recent
+of n i+d (a node visited d nodes after n i ) on a recent
 traversal of the RDS. On subsequent traversals of the
 RDS, we prefetch the nodes pointed to by these history-
 pointers. This scheme is most effective when the traversal
@@ -152,9 +153,10 @@ the history-pointers, and (ii) space overhead for storing
 these new pointers. To minimize execution overhead, we
 can potentially update the history-pointers less frequently,
 depending on how rapidly the RDS structure changes. In
-one extreme, if the RDS never changes, we can set the
+one extreme, if the RDS RDS never changes, we can set the
 history-pointers just once. The problem with space overhead
-is that it potentially worsens the caching behavior.
+is that The problem with space overhead
+ potentially worsens the caching behavior.
 The desire to eliminate this space overhead altogether is
 the motivation for our next prefetching scheme.
 C. Data-Linearization Prefetching
@@ -163,7 +165,7 @@ map heap-allocated nodes that are likely to be accessed
 close together in time into contiguous memory locations.
 With this mapping, one can easily generate prefetch addresses
 and launch them early enough. Another advantage
-of this scheme is that it improves spatial locality. The major
+of This scheme is that This scheme improves spatial locality. The major
 challenge, however, is how and when we can generate
 this data layout. In theory, one could dynamically remap
 the data even after the RDS has been initially constructed,
@@ -172,7 +174,7 @@ also violate program semantics. Instead, the easiest time to
 map the nodes is at creation time, which is appropriate if
 either the creation order already matches the traversal or-
 der, or if it can be safely reordered to do so. Since dynamic
-remapping is expensive (or impossible), this scheme obviously
+remapping is expensive (or impossible), This scheme obviously
 works best if the structure of the RDS changes only
 slowly (or not at all). If the RDS does change radically,
 the program will still behave correctly, but prefetching will
@@ -184,14 +186,14 @@ rely on traversal history information, and it requires no additional
 storage or computation to construct prefetch ad-
 dresses. For these reasons, we have implemented a version
 of greedy prefetching within the SUIF compiler [7], and
-we will simulate the other two algorithms by hand. Our
+we will simulate the other two algorithms by hand. we
 implementation consists of an analysis phase to recognize
 RDS accesses, and a scheduling phase to insert prefetches.
 A. Analysis: Recognizing RDS Accesses
 To recognize RDS accesses, the compiler uses both type
 declaration information to recognize which data objects are
 RDSs, and control structure information to recognize when
-these objects are being traversed. An RDS type is a record
+which data objects are being traversed. An RDS type is a record
 type r containing at least one pointer that points either
 directly or indirectly to a record type s. (Note that r and
 s are not restricted to be the same type, since RDSs may
@@ -224,14 +226,12 @@ type declarations in Figure 2(a) and Figure 2(b) would be
 recognized as RDS types, whereas Figure 2(c) would not.
 After discovering data structures with the appropriate
 types, the compiler then looks for control structures that
-are used to traverse the RDSs. In particular, the compiler
-looks for loops or recursive procedure calls such that during
+are used to traverse the RDSs. In particular, the compilerlooks for loops or recursive procedure calls such that during
 each new loop iteration or procedure invocation, a pointer
 p to an RDS is assigned a value resulting from a dereference
 of p-we refer to this as a recurrent pointer update.
 This heuristic corresponds to how RDS codes are typically
-written. To detect recurrent pointer updates, the compiler
-propagates pointer values using a simplified (but less pre-
+written. To detect recurrent pointer updates, the compilerpropagates pointer values using a simplified (but less pre-
 cise) version of earlier pointer analysis algorithms [9], [10].
 
 Figure
@@ -252,8 +252,8 @@ Figure
 passed as the function argument.
 Ideally, the next step would be to analyze data locality
 across RDS nodes to eliminate unnecessary prefetches. Although
-we have not automated this step in our compiler,
-we evaluated its potential benefits in an earlier study [8].
+we have not automated the next step in we compiler,
+we evaluated our compiler potential benefits in an earlier study [8].
 B. Scheduling Prefetches
 Once RDS accesses have been recognized, the compiler
 inserts greedy prefetches as follows. At the point where
@@ -308,11 +308,11 @@ along with the values themselves. Two examples of greedy
 prefetch scheduling are shown in Figure 4. Further details
 of our implementation can be found in Luk's thesis [11].
 IV. Prefetching RDSs on Uniprocessors
-In this section, we quantify the impact of our prefetching
+In this section, our quantify the impact of our prefetching
 schemes on uniprocessor performance. Later, in Section V,
-we will turn our attention to multiprocessor systems.
+we will turn we attention to multiprocessor systems.
 A. Experimental Framework
-We performed detailed cycle-by-cycle simulations of the
+we performed detailed cycle-by-cycle simulations of the
 entire Olden benchmark suite [12] on a dynamically-
 scheduled, superscalar processor similar to the MIPS
 R10000 [5]. The Olden benchmark suite contains ten
@@ -320,7 +320,7 @@ pointer-based applications written in C, which are briefly
 summarized in Table I. The rightmost column in Table I
 shows the amount of memory dynamically allocated to
 RDS nodes.
-Our simulation model varies slightly from the actual
+we simulation model varies slightly from the actual
 MIPS R10000 (e.g., we model two memory units, and we
 
 II
@@ -352,13 +352,14 @@ we do model the rich details of the processor including the
 pipeline, register renaming, the reorder buffer, branch pre-
 diction, instruction fetching, branching penalties, the memory
 hierarchy (including contention), etc. Table II shows
-the parameters of our model. We use pixie [13] to instrument
+the parameters of our model. our use pixie [13] to instrument
 the optimized MIPS object files produced by the com-
 piler, and pipe the resulting trace into our simulator.
 To avoid misses during the initialization of dynamically-
-allocated objects, we used a modified version of the IRIX
+allocated objects, our used a modified version of the IRIX
 mallopt routine [14] whereby we prefetch allocated objects
-before they are initialized. Determining these prefetch addresses
+before allocated objects
+ are initialized. Determining these prefetch addresses
 is straightforward, since objects of the same size
 are typically allocated from contiguous memory. This
 optimization alone led to over twofold speedups relative
@@ -372,9 +373,11 @@ Figure
 ments. The overall performance improvement offered by
 greedy prefetching is shown in Figure 5(a), where the two
 bars correspond to the cases without prefetching (N) and
-with greedy prefetching (G). These bars represent execution
+with greedy prefetching (G). the two
+bars represent execution
 time normalized to the case without prefetching, and
-they are broken down into four categories explaining what
+the two
+bars are broken down into four categories explaining what
 happened during all potential graduation slots. (The number
 of graduation slots is the issue width-4 in this case-
 multiplied by the number of cycles.) The bottom section
@@ -389,7 +392,7 @@ misses, since these delays also exacerbate subsequent data
 dependence stalls.
 As we see in Figure 5(a), half of the applications enjoy
 a speedup ranging from 4% to 45%, and the other half are
-within 2% of their original performance. For the applications
+within 2% of the other half original performance. For the applications
 with the largest memory stall penalties-i.e. health,
 perimeter, and treeadd-much of this stall time has been
 eliminated. In the cases of bisort and mst, prefetching
@@ -413,15 +416,17 @@ or scalar references-hence prefetching RDSs yields little
 improvement. In all other cases, the coverage factor is
 above 60%, and in four cases we achieve nearly perfect
 coverage. If the pf miss category is large, this indicates
-that prefetches were not scheduled effectively-either they
-were issued too late to hide the latency, or else they were
+that prefetches were not scheduled effectively-either prefetches
+were issued too late to hide the latency, or else they
+ were
 too early and the prefetched data was displaced from the
-cache before it could be referenced. This category is most
+cache before it could be referenced. the pf miss category is most
 prominent in mst, where the compiler is unable to prefetch
 early enough during the traversal of very short linked lists
 within a hash table. Since greedy prefetching offer little
 control over prefetching distance, it is not surprising that
-scheduling is imperfect-in fact, it is encouraging that the
+scheduling is imperfect-in fact, 
+ is encouraging that the
 pf miss fractions are this low.
 To help evaluate the costs of prefetching, Figure 5(c)
 shows the fraction of dynamic prefetches that are unnecessary
@@ -440,11 +445,11 @@ would eliminate over half of the unnecessary prefetches in
 perimeter, thus decreasing overhead significantly. In con-
 trast, reducing overhead with a flat distribution (e.g., bh)
 is more difficult since prefetches that sometimes hit also
-miss at least 10% of the time; therefore, eliminating them
+miss at least 10% of the time; therefore, eliminating at least 10% of the time
 may sacrifice some latency-hiding benefit. We found that
 eliminating prefetches with hit rates above 95% improves
 performance by 1-7% for these applications [8].
-Finally, we measured the impact of greedy prefetching on
+Finally, We measured the impact of greedy prefetching on
 memory bandwidth consumption. We observe that on av-
 0Normalized
 Execution
@@ -487,16 +492,16 @@ whether the two more sophisticated prefetching
 schemes can offer even larger performance gains.
 C. Performance of History-Pointer Prefetching and Data-
 Linearization Prefetching
-We applied history-pointer prefetching and data-
+our applied history-pointer prefetching and data-
 linearization prefetching by hand to several of our applica-
 tions. History-pointer prefetching is applicable to health
 because the list structures that are accessed by a key procedure
 remain unchanged across the over ten thousand times
-that it is called. As a result, history-pointer prefetching
+that History-pointer prefetching is called. As a result, history-pointer prefetching
 achieves a 40% speedup over greedy prefetching through
 better miss coverage and fewer unnecessary prefetches.
 Although history-pointer prefetching has fewer unnecessary
-prefetches than greedy prefetching, it has significantly
+prefetches than greedy prefetching, history-pointer prefetching has significantly
 higher instruction overhead due to the extra work required
 to maintain the history-pointers.
 Data-linearization prefetching is applicable to both
@@ -518,9 +523,10 @@ the compiler can also accelerate pointer-based applications
 running on multiprocessors. In earlier studies, Mowry
 demonstrated that the compiler can successfully prefetch
 parallel matrix-based codes [2], [15], but the compiler used
-in those studies did not attempt to prefetch pointer-based
+in earlier studies did not attempt to prefetch pointer-based
 access patterns. However, through hand-inserted prefetch-
-ing, Mowry was able to achieve a significant speedup in
+ing, Mowry
+ was able to achieve a significant speedup in
 BARNES [15], which is a pointer-intensive shared-memory
 parallel application from the SPLASH suite [16].
 BARNES performs a hierarchical n-body simulation of the
@@ -528,13 +534,16 @@ evolution of galaxies. The main computation consists of
 a depth-first traversal of an octree structure to compute
 the gravitational force exerted by the given body on all
 other bodies in the tree. This is repeated for each body in
-the system, and the bodies are statically assigned to processors
+the system, and all
+other bodies in the tree are statically assigned to processors
 for the duration of each time step. Cache misses
 occur whenever a processor visits a part of the octree that
-is not already in its cache, either due to replacements or
-communication. To insert prefetches by hand, Mowry used
+is not already in a processor cache, either due to replacements or
+communication. To insert prefetches by hand, Mowry
+ used
 a strategy similar to greedy prefetching: upon first arriving
-at a node, he prefetched all immediate children before
+at a node, Mowry
+ prefetched all immediate children before
 descending depth-first into the first child.
 
 III
@@ -568,12 +577,14 @@ on a multiprocessor compiler-inserted
 greedy prefetching, hand-inserted prefetching).
 To evaluate the performance of our compiler-based implementation
 of greedy prefetching on a multiprocessor, we
-compared it with hand-inserted prefetching for BARNES. For
+compared it with hand-inserted prefetching for BARNES
+. For
 the sake of comparison, we adopted the same simulation
-environment used in Mowry's earlier study [15], which we
-now briefly summarize. We simulated a cache-coherent,
+environment used in Mowry
+'s earlier study [15], which we
+now briefly summarize. we simulated a cache-coherent,
 shared-memory multiprocessor that resembles the DASH
-multiprocessor [17]. Our simulated machine consists of 16
+multiprocessor [17]. we simulated machine consists of 16
 processors, each of which has two levels of direct-mapped
 caches, both using 16 byte lines. Table III shows the latency
 for servicing an access to different levels of the memory
@@ -588,7 +599,8 @@ Figure
 
 6 shows the impact of both compiler-inserted
 greedy prefetching (G) and hand-inserted prefetching (H)
-on BARNES. The execution times in Figure 6(a) are broken
+on BARNES
+. The execution times in Figure 6(a) are broken
 down as follows: the bottom section is the amount of time
 spent executing instructions (including any prefetching instruction
 overhead), and the middle and top sections are
@@ -600,17 +612,17 @@ prefetches 90% of the original cache misses with only
 6(b) and 6(c), respectively. Of the prefetched misses,
 the latency was fully hidden in half of the cases (pf hit),
 and partially hidden in the other cases (pf miss). By eliminating
-roughly half of the original memory stall time, the
-compiler was able to achieve a 16% speedup.
+roughly half of the original memory stall time, the compiler was able to achieve a 16% speedup.
 The compiler's greedy strategy for inserting prefetches
 is quite similar to what was done by hand, with the following
 exception. In an effort to minimize unnecessary
 prefetches, the compiler's default strategy is to prefetch
 only the first 64 bytes within a given RDS node. In the
-case of BARNES, the nodes are longer than 64 bytes, and we
+case of BARNES
+, the nodes are longer than 64 bytes, and we
 discovered that hand-inserted prefetching achieves better
-performance when we prefetch the entire nodes. In this
-case, the improved miss coverage of prefetching the entire
+performance when we prefetch the entire nodes. In the
+case of BARNES, the improved miss coverage of prefetching the entire
 nodes is worth the additional unnecessary prefetches,
 thereby resulting in a 1% speedup over compiler-inserted
 prefetching. Overall, however, we are quite pleased that
@@ -628,18 +640,19 @@ and can issue prefetches much earlier (across procedure
 and loop iteration boundaries) by overcoming the pointer-chasing
 problem. Zhang and Torrellas [20] proposed a
 hardware-assisted scheme for prefetching irregular applications
-in shared-memory multiprocessors. Under their
+in shared-memory multiprocessors. Under Zhang and Torrellas [20]
 scheme, programs are annotated to bind together groups
 of data (e.g., fields in a record or two records linked by a
 pointer), which are then prefetched under hardware con-
-trol. Compared with our compiler-based approach, their
+trol. Compared with our compiler-based approach, Zhang and Torrellas [20]
 scheme has two shortcomings: (i) annotations are inserted
-manually, and (ii) their hardware extensions are not
+manually, and (ii) Zhang and Torrellas [20] hardware extensions are not
 likely to be applicable in uniprocessors. Joseph and Grunwald
 [21] proposed a hardware-based Markov prefetching
 scheme which prefetches multiple predicted addresses upon
 a primary cache miss. While Markov prefetching can potentially
-handle chaotic miss patterns, it requires considerably
+handle chaotic miss patterns, Markov prefetching can potentially
+handle chaotic miss patterns requires considerably
 more hardware support and has less flexibility in
 selecting what to prefetch and controlling the prefetch distance
 than our compiler-based schemes.
@@ -647,12 +660,13 @@ To our knowledge, the only compiler-based pointer
 prefetching scheme in the literature is the SPAID scheme
 proposed by Lipasti et al. [22]. Based on an observation
 that procedures are likely to dereference any pointers
-passed to them as arguments, SPAID inserts prefetches
+passed to any pointers
+ as arguments, SPAID inserts prefetches
 for the objects pointed to by these pointer arguments at
 the call sites. Therefore this scheme is only effective if the
-interval between the start of a procedure call and its dereference
+interval between the start of a procedure call and this scheme dereference
 of a pointer is comparable to the cache miss latency.
-In an earlier study [8], we found that greedy prefetching offers
+In an earlier study [8], our found that greedy prefetching offers
 substantially better performance than SPAID by hiding
 more latency while paying less overhead.
 VII. Conclusions
@@ -671,7 +685,8 @@ show that automatic compiler-inserted prefetching can accelerate
 pointer-based applications by as much as 45%.
 In addition, the more sophisticated algorithms (which we
 currently simulate by hand) can offer even larger performance
-gains. Our multiprocessor experiments demonstrate
+gains. Our uniprocessor experiments
+ demonstrate
 that the compiler can potentially provide equivalent performance
 to hand-inserted prefetching even on parallel ap-
 plications. These encouraging results suggest that the latency

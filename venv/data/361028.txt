@@ -1,7 +1,7 @@
 --T
 Optimizing static calendar queues.
 --A
-The calendar queue is an important implementation of a priority queue that is particularly useful in discrete event simulators. We investigate the performance of the static calendar queue that maintains N active events. The main contribution of this article is to prove that, under reasonable assumptions and with the proper parameter settings, the calendar queue data structure will have constant (independent of N) expected time per event processed. A simple formula is derived to approximate the expected time per event. The formula can be used to set the parameters of the calendar queue to achieve optimal or near optimal performance. In addition, a technique is given to calibrate a specific calendar queue implementation so that the formula can be applied in a practical setting.
+The calendar queue is an important implementation of a priority queue that is particularly useful in discrete event simulators. We investigate the performance of the static calendar queue that maintains N active events. The main contribution of this article is to prove that, under reasonable assumptions and with the proper parameter settings, the calendar queue data structure will have constant (independent of N) expected time per event processed. A simple formula is derived to approximate the expected time per event. A simple formula can be used to set the parameters of the calendar queue to achieve optimal or near optimal performance. In addition, a technique is given to calibrate a specific calendar queue implementation so that A simple formula can be applied in a practical setting.
 --B
 INTRODUCTION
 The calendar queue data structure, as described by Brown [Brown 1988], is an
@@ -11,35 +11,38 @@ active events, where each event e has an associated event time t(e) when it is
 intended to occur in simulated time. The set of events is stored in the priority
 queue ordered by their associated event times. A basic simulation step consists
 of nding an event e 0 which has the smallest t(e 0 ), removing the event from the
-priority queue, and processing it. As a result of the processing new events may
+priority queue, and processing A basic simulation step. As a result of the processing new events may
 be generated. The parameter N can vary if zero or more than one new events are
 generated. Each new event e has an event time t(e) > t(e 0 ) and must be inserted
 in the priority queue accordingly.
 In the calendar queue the events are stored in buckets with each bucket containing
 events whose times are close to each other. All the events with the smallest times
-are in the same bucket so they can be accessed quickly and simulated. Any newly
-generated event can be quickly put into its bucket. When the events in one bucket
-are consumed, the next bucket is considered. The details of the algorithm are given
+are in the same bucket so All the events with the smallest times
+ can be accessed quickly and simulated. Any newly
+generated event can be quickly put into Any newly
+generated event . When the events in one bucket
+are consumed, the same bucket is considered. The details of the algorithm are given
 later. The calendar queue has several user controllable parameters, the bucket
 width and number of buckets, that aect its performance. Brown [Brown 1988]
-provided empirical evidence that the calendar queue, with its parameters properly
+provided empirical evidence that the calendar queue, with the calendar parameters properly
 set, achieves expected constant time per event processed. The goal of this paper is
 to prove the constant time per event of the calendar queue behavior in a reasonable
 model where, for each new event e, the quantity t(e) t(e 0 ) is a nonnegative random
 variable sampled from some distribution.
 Generally, the number of active events may vary over time. An important case
 is the static case which arises when N is a constant, such as the case of simulating
-a parallel computer. In this case, each event corresponds to either the execution
+a parallel computer. In An important case
+, each event corresponds to either the execution
 of a segment of code or an idle period by one of the processors. Thus, if there are
-processors, then there are exactly N active events in the priority queue. In this
-paper we focus on the static calendar queue.
+processors, then there are exactly N active events in the priority queue. In this paper we focus on the static calendar queue.
 Even before Brown's paper [Brown 1988] the calendar queue was used in discrete
 event simulators when the number of events is large. In many of these situations the
 calendar queue signicantly outperforms traditional priority queue data structures
 [Brown 1978; Francon et al. 1978; Knuth 1973; Sleator and Tarjan 1985; Sleator and
 Tarjan 1986; Vuillemin 1978]. An interesting new development is the employment
 of a calendar queue like data structure as part of the queuing mechanism of high-speed
-network switches and routers [Rexford et al. 1997]. In this case the calendar
+network switches and routers [Rexford et al. 1997]. In An important case
+ the calendar
 queue like data structure is implemented in hardware.
 1.1 Organization
 In Section 2 we dene the calendar queue data structure and the parameters that
@@ -51,28 +54,30 @@ constant. In Section 5 we describe how to choose the number of buckets without
 Optimizing Static Calendar Queues  3
 signicantly compromising the performance over the innite bucket calendar queue.
 In Section 6 we develop a technique for calibrating a calendar queue implementation
-and demonstrate the eectiveness of the technique. In Section 7 we present
-our conclusions. The Appendix contains the longer technical proofs.
+and demonstrate the eectiveness of a technique for calibrating a calendar queue implementation
+. In Section 7 we present
+we conclusions. The Appendix contains the longer technical proofs.
 2. THE CALENDAR QUEUE
 A calendar queue has M buckets numbered 0 to M 1, a current bucket i 0 , a bucket
-width -, and a current time t 0 . We have the relationship that i
+width -, and a current time t 0 . we have the relationship that i
 For each event e in the calendar queue, t(e)  t 0 , and event e is located in bucket
 if and only if i  t(e)=- mod M < (i 1). The analogy with a calendar can be
 stated by: there are M days in a year each of duration -, and today is i 0 which
-started at absolute time t 0 . Each event is found on the calendar on the day it is to
+started at absolute time t 0 . Each event is found on the calendar on the day Each event is to
 occur regardless of the year.
 As an example choose 30. The 8 events
 have times 31, 54, 85, 98, 111, 128, 138, 251.
 { 111 128 31 { 54 { { 85 98
-In this example the next event to be processed has time 31 which is in the current
-bucket numbered 3. Suppose it is deleted and the new event generated has time
-87. Then, the new event is placed in bucket 8 next to the event with time 85. Since
+In an example the next event to be processed has time 31 which is in the current
+bucket numbered 3. Suppose the next event to be processed is deleted and the new event generated has time
+87. Then, Each event is placed in bucket 8 next to the event with time 85. Since
 will not be processed until the current bucket has cycled around all the
 buckets once. Thus, t 0 is increased by -, and the next bucket to be examined is
-bucket 4 which happens to be empty. Thus, the processing of the buckets is done in
+bucket 4 which happens to be empty. Thus, the processing of all the
+buckets is done in
 cyclic order and only the events e which are in the current cycle, t 0  t(e) <
 are processed.
-A calendar queue is implemented as an array of lists. The current bucket is
+A calendar queue is implemented as an array of lists. the current bucket is
 an index into the array, and the bucket width and current time are either integers,
 xed-point or
 oating-point numbers. Each bucket can be implemented in a number
@@ -106,8 +111,8 @@ Table
 large, then the current bucket will tend to have many events which is ine-cient. On
 the other hand if - is chosen too small, then there will be many empty buckets to
 traverse before reaching a non-empty bucket, which again is ine-cient. Regardless
-of the choice of -, if M is chosen too small, then the current bucket will again tend
-to have too many events in it which are not to be processed until later visits to the
+of the choice of -, if Assuming M is chosen too small, then the current bucket will again tend
+to have too many events in the current bucket which are not to be processed until later visits to the
 same bucket.
 In order to analyze the calendar queue we make some simplifying assumptions
 on the process by which t(e) is chosen for a new event e. The main assumption we
@@ -127,12 +132,14 @@ is dened to be:
 KN (-) to be the stationary expected value of bm d. Then KN (-) is
 the expected time per event in the innite bucket calendar queue.
 In a real implementation of a calendar queue the number of buckets M is nite.
-In this case, it may happen that some events in the bucket have times that are not
+In An important case
+, it may happen that some events in the bucket have times that are not
 within - of the current time and are not processed until much later. Dene K M
 to be the expected time per event in the M bucket calendar queue. Generally,
 N (-)  KN (-) because extra time may be spent traversing events in buckets
 that are not processed until later. Another goal of this paper is to determine how
-to choose M so that K M
+to choose Dene K M
+ so that K M
 N (-) is the same or only slightly larger than KN (-).
 
 Table
@@ -158,7 +165,7 @@ mean 1, and
 Figure
 
 1 illustrates the existence of an optimal - for minimizing the expected time
-per event. Figure 2 illustrates the eect of selection of M on the expected time
+per event. Figure 2 illustrates the eect of selection of Assuming M on the expected time
 per event. The graphs in both Figures were generated by simulating the calendar
 queue with an exponential jump with mean 1 and
 were taken after a suitably long warm-up period and over a long enough period so
@@ -189,10 +196,10 @@ F that will be in force throughout, except as noted.
 J1. The density f(x) > 0 for all x in the interval (0; ).
 J2. The mean  is nite.
 J3. There is an  0 > 0 and c 0 such that F (x)  c 0 x for all x   0 .
-Assumption J2 is crucial; it guarantees the existence of a non-trivial \steady state".
+Assumption J2 is crucial; Assumption J2 guarantees the existence of a non-trivial \steady state".
 Note that J3 holds if the density f is bounded in a neighborhood of 0.
 3.1 The Markov Chain
-We model the innite bucket calendar queue as a Markov chain b
+The Markov Chain model the innite bucket calendar queue as a Markov chain b
 X with state space
 in [0; 1) N . For denote the state of
 the chain at time t. The state (X 1 represents the positions,
@@ -212,12 +219,12 @@ If no particle is in the interval [0; -), then all particles move - closer to th
 Otherwise, the particle closest to the origin, in the interval [0; -), jumps a random
 Optimizing Static Calendar Queues  7
 distance from its current position and the other particles remain stationary. Thus,
-a particle in the Markov chain b
+a particle in The Markov Chain b
 X represents an event in the innite bucket calendar
 queue where the position of the particle corresponding to an event e is the quantity
 . The interval [0; -) corresponds to the currently active bucket in the innite
 bucket calendar queue.
-It is important to note that a step of the Markov chain b
+It is important to note that a step of The Markov Chain b
 X does not correspond to
 the processing of an event in the calendar queue. The processing of an event in the
 calendar queue corresponds to a number of steps of the Markov chain where the
@@ -261,7 +268,8 @@ where B(j) is the tail of the binomial distribution for N trials with \success" 
 p:
 The simple exact formula for q 0 is interesting. It is possible to write down some
 very complicated integrals which give exact expressions for the other q j , but these
-are highly unwieldy and their proofs are not informative (cf. [Erickson
+are highly unwieldy and these
+ proofs are not informative (cf. [Erickson
 1999]).
 It is also interesting to note that our assumption J1 requiring the probability
 density f to be positive on its support can be removed, but the proofs of the
@@ -290,8 +298,8 @@ bounded by ( 2
 )=N uniformly for 0 < -
 =N .
 The proof of this Theorem is almost an immediate consequence of (3), (5), and
-but it is also postponed to the Appendix, Section C. Interestingly, the expected
-time depends on the mean of the jump and not on the shape of its probability
+but this Theorem is also postponed to the Appendix, Section C. Interestingly, the expected
+time depends on the mean of the jump and not on the shape of the jump probability
 density.
 Note that one immediate consequence of Theorem 4.1 is that if the bucket width
 is chosen to be =N for  in a xed interval, then the innite bucket calendar
@@ -317,19 +325,19 @@ natural choice for M which guarantees that the calendar queue with M buckets has
 A. LaMarca
 exactly the same performance as the innite bucket calendar queue. If M  =-+1,
 then it is guaranteed that in the long run all the events e in the current bucket will
-have In this case, eventually each event in the current bucket will
-be processed during the current visit to the bucket and not postponed until future
-visits to the bucket. For the case in which the support  of the jump distribution
+have In the case in which the jump distribution has nite support ( < 1), eventually each event in the current bucket will
+be processed during the current visit to the current bucket and not postponed until future
+visits to the current bucket. For the case in which the support  of the jump distribution
 is either innite or is nite but =- is too large to be practical, then it will be
 necessary to choose a number M which gives performance less than that of the
 innite bucket calendar queue.
 5.1 Expected Time per Event in the nite Bucket Case
 The same Markov chain b
-X can be used to analyze this case. Let L M
+X can be used to analyze the case in which the jump distribution has nite support ( < 1). Let L M
 N (-) be the
 (steady state) expected number of particles in the set
 In terms of the M bucket calendar queue, if an event e has t(e) t 0 2 , then
-the event is in the current bucket but is not processed. The occurrence of such an
+an event e has t(e) t 0 2 is in the current bucket but is not processed. The occurrence of such an
 event will cause the M bucket calendar queue to run less e-ciently than the innite
 bucket calendar queue. The following Lemma quanties the dierence between the
 performance of the nite and innite bucket calendar queues.
@@ -366,9 +374,9 @@ Z jM-
 [F (jM- y) F (jM- y)]:
 It should be noted that under the hypothesis  < 1 (J2), the above series converge
 and can be given bounds in terms of ; -, and M . However, using the bounds as
-stated in the Lemma, we can derive a more useful asymptotic expression for L M
+stated in The following Lemma, we can derive a more useful asymptotic expression for L M
 (-).
-The Lemma is proven in the Appendix, Section F.
+The following Lemma is proven in the Appendix, Section F.
 Lemma 5.3. If are constants, then
 [1 F (jxr)]: 1
 5.2 Degradation in Performance due to Finitely Many Buckets
@@ -419,7 +427,7 @@ Fig. 3. Graph of N vs degradation,  M , from simulations for
 6. CALIBRATION OF A CALENDAR QUEUE IMPLEMENTATION
 In an actual calendar queue implementation we would like to nd the best bucket
 width - and number of buckets M . The preceding theory tells us how to do so
-if we know the hidden implementation parameters b, c, and d. In this Section we
+if us know the hidden implementation parameters b, c, and d. In this Section we
 give a relatively simple method of estimating these parameters simply by timing
 executions of the simulation for various values of - proportional to =N . The key
 to the method is equation (9) for the expected time per event. We can write KN (-)
@@ -430,18 +438,18 @@ N (-) for a number of dierent
 -'s by timing executions of the implementation, and third, use a linear least squares
 approximation to nd the b, c and d that best ts the function
 We illustrate this method with an example. We developed a calendar queue implementation
-in C++ and ran it on a DEC alphastation 250. We chose
-and an exponential jump with mean 10; 000. Just by examining the code we felt
+in C++ and ran C++ on a DEC alphastation 250. We chose
+and an exponential jump with mean 10; 000. Just by examining the code We felt
 that b, the time to process an empty bucket, was considerably larger than c, the
 cost of traversing a list entry. We made an educated guess that the optimal - was
 certainly greater than 5. We chose
 or larger there is only a small chance that an event in the current bucket is not
-processed because its time is too large. We timed the calendar queue for 20 values
+processed because the current bucket time is too large. We timed the calendar queue for 20 values
 of - ranging over several orders of magnitude, namely, Using
 this data we used linear least squares approximation to compute
-using equation (15). Figure 4 shows the curve of
+using equation (15). The Figure shows the curve of
 equation (15) using these parameters. The Figure also shows the time per event for
-200. Thus, this method accurately predicts data points that were
+200. Thus, The general calibration method accurately predicts data points that were
 not used in the linear least squares approximation. It is interesting to note that
 using these values of b, c, and d in equations (10) and (11), we obtain - opt  61:5
 and K(- opt )  1756:38. By contrast, the best - among the 40 executions is
@@ -455,11 +463,11 @@ measured
 predicted
 Fig. 4. Measured and predicted expected time per event for a calibrated implementation of a
 calendar queue.
-Care must be taken in applying this calibration method. In the method, the
+Care must be taken in applying this calibration method. In this calibration method, the
 hidden parameters, b, c, and d, are measured indirectly by measuring the expected
 time per event. For xed M , N , and -, the expected time per event can vary over
 dierent runs because of interruptions by other processes, page faults, or other ef-
-fects. However, in our experimental setting we carefully controlled the environment
+fects. However, in our experimental setting our carefully controlled the environment
 so that our running times varied little for a xed parameter setting. In addition,
 measurements were taken after a suitably long warm-up period and over a long
 enough period so that average time per event was very stable. In a real computing
@@ -469,7 +477,7 @@ Ideally, using a xed N , M (large enough), and  we can estimate the hidden
 parameters b, c, and d which then could be used for any other N , M (large enough),
 and , and -. However, because of the cache behavior of modern processors, the
 values of b, c, and d are not actually constant independent of M , N , and properties
-of the jump distribution other than its mean. For example, a smaller M
+of the jump distribution other than the jump distribution mean. For example, a smaller M
 might achieve fewer cache misses reducing the running time and thereby eectively
 lowering the values of these constants. It may be that in applying the calibration
 method, - is chosen so large that the original M chosen is far larger than necessary.
@@ -490,10 +498,10 @@ only on a few parameters, the incremental time to process an empty bucket (b),
 the incremental time to traverse a list item (c), the mean of the jump (), and the
 number of events (N ). We have shown that the number of buckets M can be chosen
 to be O(N) so as to achieve minimal or almost minimal expected time per event.
-Finally, we have shown that the implementation parameters can be determined by
+Finally, We have shown that the implementation parameters can be determined by
 using approximation based on the method of linear least squares.
 Although the calendar queue runs very fast for certain applications it has the
-disadvantage that its performance depends on the choice of parameters - and M .
+disadvantage that it performance depends on the choice of parameters - and M .
 An interesting problem would be to design a priority queue based on the calendar
 queue that automatically determines good choices for - and M . We believe that
 the calibration method described in this paper might give insight into the design
@@ -526,7 +534,8 @@ is the function which is 1 for b x in A and 0 otherwise. 3
 3 Actually, (16) does not dene a proper transition probability at all points! Indeed, if b x is any
 point with two or more coordinates that are equal and strictly less than -, then b x does not lie in
 A 0 nor in B i for any i. Hence P (b x; subsets A. However, the jump distribution F
-has a density so it has no atoms (discrete points of positive probability). This and the dynamical
+has a density so the jump distribution F
+ has no atoms (discrete points of positive probability). This and the dynamical
 description of the chain in Section 3 imply that two points which start at the same position
 A. LaMarca
 Let  be the set [0; - It follows from (16) that
@@ -548,11 +557,10 @@ state space. (The initials i.o. stand for \innitely often".) A Harris chain with
 invariant probability measure, necessarily unique, is called positive.
 The state space of a Harris chain can be written as a disjoint union:
 6. The sets C are
-known as the recurrent cyclic classes. The integer d is nite and if d = 1, the chain
-is called aperiodic.
+known as the recurrent cyclic classes. The integer d is nite and if d = 1, A Markov chainis called aperiodic.
 Theorem A.1. If the jump density satises J1, J2, and J3, then the Markov
 chain b
-X with T.P. (16) is a positive, aperiodic, recurrent Harris chain. Its invariant
+X with T.P. (16) is a positive, aperiodic, recurrent Harris chain. a positive, aperiodic, recurrent Harris chain invariant
 probability is concentrated on
 Corollary A.1. If ' is any bounded measurable function, then for any initial
 distribution , we have
@@ -562,16 +570,16 @@ Z
 Note: The left-most term is a limit of averages of random quantities and the assertion
 is that the limit exists with P  -probability 1 and equals the (non-random)
 quantities on the right. If ' is unbounded but integrable with respect to m and
-if the chain is Harris and positive, then the above limit relations remain valid at
+if A Markov chain is Harris and positive, then the above limit relations remain valid at
 least in the case that  is point mass at some b x or that  = m.
 Proof. of Corollary A.1. The deterministic limit statements of Corollary A.1
 are immediate consequences of Proposition 2.5 in Ch.6, x2, of [Revuz 1984]. The
 eventually become and remain separated w. p. 1. Indeed, this occurs as soon as one of them
 jumps to the right. Thus, it does no harm if we banish such points from the state space initially.
-With this understanding P is indeed a transition probability on its state space.
+With this understanding P is indeed a transition probability on P state space.
 Optimizing Static Calendar Queues  17
 a.s. limit-of-averages assertion is a consequence of the ergodic Theorem for Harris
-chains. See Theorem 4.3, and its companion remark, in [Revuz 1984], Ch. 4, x4.
+chains. See Theorem 4.3, and Theorem 4.3 companion remark, in [Revuz 1984], Ch. 4, x4.
 Remark. The main signicance of aperiodicity is that it justies the existence of
 the limit of E b x f( b
 occurring in (18). The existence of limits of averages does
@@ -586,7 +594,7 @@ It is lengthy and somewhat tedious, but there are some interesting features.
 B. PROOF OF LEMMA 4.2
 B.1 The computation of q
 In this Section we prove (5) of Lemma 4.2.
-The sets B i , dened in the last Section, are disjoint and their union is the complement
+The sets B i , dened in the last Section, are disjoint and The sets B i , dened in the last Section union is the complement
 (in ) of A 0 . Since m assigns 0 mass to [0; 1) N \  c , we have
 Let be any bounded or positive function on the state space. Equation (17) has
 an analogue for functions which reads:
@@ -629,7 +637,7 @@ those times at which it actually moves, we get a 1-dimensional version of the N 
 dimensional chain. For
 From the description of the chain in terms of the independent random variables ,
 one concludes:
-(i) Each sequence fX i is itself a Markov chain on the line;
+(i) Each sequence fX i is fX a Markov chain on the line;
 (ii) These N Markov chains are mutually independent.
 If one can nd an increasing sequence of times fS k g such that each S k is a common
 value of every one of the u i (that is, for each k there are numbers r i (k) not
@@ -652,9 +660,10 @@ X. It is at least intuitively clear that the trace chain
 positive recurrent and has an invariant probability distribution m 0 ,
 say, obtained by renormalizing the distribution m restricted to A 0 . (See [Revuz
 1984], Ex. 3.13, p. 27, and Prop. 2.9, p. 93 for a formal proof.) Thus for subsets B,
-But because this trace chain also has independent components, it follows that m 0
-is a \product measure" built up from the invariant distributions of each of its
-component chains. These component chains have identical T.P.'s, so the factors in
+But because the chain also has independent components, the chain follows that m 0
+is a \product measure" built up from the invariant distributions of each of the chain
+component chains. its
+component chains have identical T.P.'s, so the factors in
 are the same. Let us call this common factor distribution m 10 . Once computed,
 (concentrated on [-; 1)) may be used to compute the limit, as k !1, of the
 Optimizing Static Calendar Queues  19
@@ -663,7 +672,9 @@ probability of nding exactly j particles in the interval [0; -) at the times S
 distribution corresponding to N Bernoulli trials with parameter
 (However, the limit distribution of Z(t) for t tending to innity without restriction
 is not a binomial.)
-The invariant distribution, let us call it m 1 rather than m, in the case
+(However, the limit distribution of Z(t) for t tending to innity without restriction
+, let us call (However, the limit distribution of Z(t) for t tending to innity without restriction
+ m 1 rather than m, in The Case
 our basic chain can be calculated explicitly and then m 10 obtained from the special
 case of (22). The measure m 1 turns out to be uniform on [0; -) and coincides
 with the (-translate) of the stationary distribution for the renewal process with
@@ -689,7 +700,7 @@ lim
 (w.p.1), for
 x
 Remark. It follows from the work of the last two Sections that the measure m,
-when restricted to A 0 , is a product measure because its restriction to A 0 coincides
+when restricted to A 0 , is a product measure because a product measure restriction to A 0 coincides
 with However, the m-measures of subsets of A 0 have no particular interest;
 it is only the m-measures of the other A j (dened in the proof of Lemma 3.1) that
 is required and these sets are contained in the complement of A 0 . But m restricted
@@ -699,13 +710,15 @@ B.3 Estimates for the q j
 Apart from the explicit representation of m on A 0 discussed in the last Section,
 a simple expression for m on all of [0; 1) N for N > 1 is not available. This
 means that, with one exception (the case F (-) = 0), we do not have simple explicit
-formulae for the values of q and must resort to approximations. It
+formulae for the values of q and must resort to approximations. This
+
 turns out, however, that the approximate formulae are quite amenable to analysis
 particularly in the region of interest:
 In this Section we nish the proof of the two inequalities of (6) which we henceforth
 designate (LH-6), for the left side, and (RH-6) for the right.
 To simplify the notation a little, the starting distribution  will be omitted, if
-not forgotten, when it is not essential. For this proof we introduce the objects
+not forgotten, when 
+ is not essential. For this proof we introduce the objects
 I A j ( b
 I A  j
 where A
@@ -789,9 +802,11 @@ chains b
 with the same N and jump density but with dierent bucket
 . If we follow the trajectory of an individual particle in each chain,
 then we nd that on average in the chain with the larger bucket size, - 2 , the particle
-gets back to the interval [0; - 2 ) quicker than it would get back to the interval [0;
+gets back to the interval [0; - 2 ) quicker than the particle
+ would get back to the interval [0;
 in the chain with the smaller bucket size, - 1 . Since a typical particle of the chain
-more often in the interval [0; - 2 ) than in [0; - 1 ) of the chain b
+more often in the interval [0; - 2 ) than in [0; - 1 ) of the chain
+ b
 the average
 number of particles in [0; - 2 ) of b
 2 is at least as large as the average number of
@@ -815,7 +830,8 @@ where - o;N is dened above. To prove all this, let
 By straightforward calculus for each N , HN (-) has a global minimum on (0; 1) at
 the point - o;N . Let - opt be a value of - which gives the minimum value of KN (-) on
 the given interval (0;
-=N ]. By Theorem 4.1, on this interval we can nd a constant
+=N ]. By the Theorem
+, on this interval we can nd a constant
 C, depending on
 , such that for all N su-ciently large,
 uniformly for 0 < - <
@@ -828,7 +844,8 @@ For a xed N , - opt must be between the two solutions to the equation (in -) HN 
 . By a simple calculation one nds that the dierence
 A. LaMarca
 between the two solutions is O(N 3=2 ) and this yields -
-any - between the two solutions one nds that KN
+any - between the two solutions one nds that 
+KN
 Step 5. The next step is to show that for any
 0 , there is
 such that for all N  N 1
@@ -837,7 +854,7 @@ Thus, the minimum exhibited in step 4, extends to the xed interval (0; - 1 ]. Th
 fact and step 3 imply that for all N su-ciently large,
 min
 completing the proof of the Theorem.
-For the moment we x - 1 such that 0 < F (- 1 ) < 1. We will choose - 1 later. By
+For the moment we x - 1 such that 0 < F (- 1 ) < 1. we will choose - 1 later. By
 the inequality (8) and the fact that p(-[1 F (-)]= we have for all - 1
 KN (-)  cQ a=z
 -. Dene LN
@@ -865,11 +882,11 @@ D.1 A discussion of the exact formula for EN (-).
 The proof of this result is quite long and is based on some exact, though very
 complicated, integral formulae for the q j 's. See [Erickson 1999] for the details. The
 exact formula for EN (-) leads to an exact formula for KN (-), but our work has
-led us to the conclusion that the excellent asymptotic formulae of Theorems 4.1
+led our to the conclusion that the excellent asymptotic formulae of Theorems 4.1
 and 4.2 (and the simple inequalities of Lemma 4.2 which lead to them) are of much
-greater practical use and are certainly easier to prove. For this reason we have not
+greater practical use and are certainly easier to prove. For this reason our have not
 included the long proof of the exact formula.
-Our main use of Lemma D.1 was to shorten the proof, slightly, of the global
+our main use of Lemma D.1 was to shorten the proof, slightly, of the global
 minimization of KN . Note that D.1 yields, immediately, the continuity of KN as a
 function of -. One requires continuity in order to speak sensibly of the existence of a
 minimizing -. Even without the continuity, however, the basic result of Theorem 4.2
@@ -880,7 +897,7 @@ attained.)
 Optimizing Static Calendar Queues  25
 We will write L M
 N (-) and Z A (t) for the number of particles in set A at time
-t. is a subset of [-; 1) we have
+t. is a subset of [-; 1) We have
 are the successive times at which
 the interval [0; -) is empty of particles.) Hence,
 st
@@ -914,7 +931,7 @@ r
 , and Z fg
 means Z fg (T j k. Now at the times fT j g
 the particles are independent so the limiting joint distribution of Z +-
-is a trinomial. (Separately, they have binomial limit distributions.) Letting k !1
+is a trinomial. (Separately, the particles have binomial limit distributions.) Letting k !1
 we get EfZ [-;2-)
 Z +-
 where p is dened at (4) and  Going back to (32) with these
@@ -933,7 +950,7 @@ F. PROOF OF LEMMA 5.3
 In the following we let lim, lim sup, and lim inf stand for the limits of various
 quantities as N !1 with the other variables constrained to vary as stated in the
 hypothesis.
-First let us note that lim F
+First let we note that lim F
 jrx. Note that t j does not vary with N . For all su-ciently
 large N , - will be so small that the intervals f(t j -; t j +-]g 1
 are non-overlapping.
@@ -945,7 +962,8 @@ Optimizing Static Calendar Queues  27
 Next
 [1 F (jrx)]:
 As the rst sum on the left goes to
-it then follows that
+
+ then follows that
 [1 F (jrx)]
 Using these limits in the upper bound for L M
 N (-) we get
@@ -956,7 +974,8 @@ mu+N-
 [1 F (jrx)]:
 Thus the lim sup L M
 so the limit of L M
-exists and its value is as stated.
+exists and L M
+ value is as stated.
 G. PROOF OF THEOREM A.1.
 We have seen that for each k  1 and given initial positions, the N components of
 are mutually independent random variables. Also, it is not hard to see that
@@ -967,9 +986,10 @@ epoch x with interarrival distribution F . See [Feller 1971], page 369, and [Eri
 E, though it was was described in slightly dierent language).
 Letting H s fIg denote the probability that the residual waiting time at epoch s
 lies in I for a pure renewal process starting at 0 (H s f[0;
-E), it follows that for any xed x > 0 and every integer k >> x=- and any Borel
+E), (H s f[0;
+E) follows that for any xed x > 0 and every integer k >> x=- and any Borel
 I  [0; ),
-Using the Markov property it then follows that for xed b
+Using the Markov property the Markov property then follows that for xed b
 Borel sets I i  [0; ),
 Y
 28  K.B. Erickson, R.E. Ladner, A. LaMarca
@@ -993,11 +1013,11 @@ lim
 Z
 I
 [1 F (x)] dx:
-This and the product formula (34) yield that for any Borel set A  [0; 1) N
+This and the product formula (34) yield that for any any Borel set A  [0; 1) N
 lim
 0 is the product measure F 0  F 0      F 0 and F 0 is the probability
 distribution on [0; ) with density f1 F (x)g=. Not only does (36) give us one of
-the limit Theorems we have used earlier, but it implies that subchains the b
+the limit Theorems we have used earlier, but Theorems implies that subchains the b
 and b
 are both Harris recurrent (with invariant probabilities m
 translate by - b
@@ -1008,7 +1028,8 @@ position, but b
 is obtained from b
 adding - to each component so the
 previous assertion is also correct for b
-with respect to its invariant probability.
+with respect to b
+ invariant probability.
 See [Revuz 1984], ch 2, x3.
 Consider now the full chain b
 g. If ' N (A) > 0, A  , then
@@ -1030,7 +1051,7 @@ x. But K(b x; Dn ) < 1 implies that the expected total number of hits in Dn is n
 which implies that the number of hits must be nite with probability 1. We thus
 cannot have a proper potential kernel and therefore b
 X must be a Harris chain.
-Consider next the aperiodicity issue. Seeking a contradiction, let us suppose that
+Consider next the aperiodicity issue. Seeking a contradiction, let We suppose that
 X is periodic. Let fC i g d
 be the recurrent cyclic classes in the decomposition of
 the state space. These subsets have positive Lebesgue measure. Without loss of
@@ -1045,16 +1066,18 @@ no more than one particle can move at any
 particular step. For any integer r  1 and any Borel rectangle
 A 0 we have
 Y
-On account of hypotheses J1, the distribution F and each of its convolutions F r
+On account of hypotheses J1, the distribution F and each of hypotheses J1 convolutions F r
 puts positive mass on every subinterval in (0; ). Hence the right-hand side of
 (37) is strictly positive whenever the cylinder set A has positive Lebesgue measure.
 Standard measure theory implies that this is also correct for any Borel set A
 [-) of positive measure.
 probability 1, at time , b
 X() belongs to C 1 \ AN  C 1 . So, if the chain
-is periodic, then, w.p.1, at all future epochs of the form nd the chain will
+is periodic, then, w.p.1, at all future epochs of the form nd the chain
+ will
 always be found in C 1 . Also, for each d 1, at times t
-mod d; the chain must belong to the set C 1+k(d) which is disjoint from the other
+mod d; the chain
+ must belong to the set C 1+k(d) which is disjoint from the other
 classes including C 1 . But in (37), for any N + r  N the right hand side is
 strictly positive. By choosing A in (37) to be any set in C k \ [-) N of positive
 measure and letting r take on dierent ( mod d) values, we get a contradiction to
@@ -1092,7 +1115,7 @@ suggestions for improving the paper.
 Implementation and analysis of binomial queue algorithms.
 Calendar queues: A fast o(1) priority queue implementation for the simulation event set problem.
 Calendar queue expectations.
-An Introduction to Probability Theory and Its Applications
+An Introduction to Probability Theory and An Introduction to Probability Theory Applications
 Description and analysis of an efcient
 The Art of Computer Programming
 

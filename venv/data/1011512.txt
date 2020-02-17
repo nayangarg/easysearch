@@ -1,7 +1,7 @@
 --T
 Optimistic register coalescing.
 --A
-Graph-coloring register allocators eliminate copies by coalescing the source and target nodes of a copy if they do not interfere in the interference graph. Coalescing, however, can be harmful to the colorability of the graph because it tends to yield a graph with nodes of higher degrees. Unlike aggressive coalescing, which coalesces any pair of noninterfering copy-related nodes, conservative coalescing or iterated coalescing perform safe coalescing that preserves the colorability. Unfortunately, these heuristics give up coalescing too early, losing many opportunities for coalescing that would turn out to be safe. Moreover, they ignore the fact that coalescing may even improve the colorability of the graph by reducing the degree of neighbor nodes that are interfering with both the source and target nodes being coalesced. This article proposes a new heuristic called optimistic coalescing which optimistically performs aggressive coalescing, thus exploiting the positive impact of coalescing aggressively, but when a coalesced node is to be spilled, it is split back into separate nodes. Since there is a better chance of coloring one of those splits, we can reduce the overall spill amount.
+Graph-coloring register allocators eliminate copies by coalescing the source and target nodes of a copy if they do not interfere in the interference graph. Coalescing, however, can be harmful to the colorability of the graph because it tends to yield a graph with nodes of higher degrees. Unlike aggressive coalescing, which coalesces any pair of noninterfering copy-related nodes, conservative coalescing or iterated coalescing perform safe coalescing that preserves the colorability. Unfortunately, these heuristics give up coalescing too early, losing many opportunities for coalescing that would turn out to be safe. Moreover, these heuristics ignore the fact that coalescing may even improve the colorability of the graph by reducing the degree of neighbor nodes that are interfering with both the source and target nodes being coalesced. This article proposes a new heuristic called optimistic coalescing which optimistically performs aggressive coalescing, thus exploiting the positive impact of coalescing aggressively, but when a coalesced node is to be spilled, a coalesced node is split back into separate nodes. Since there is a better chance of coloring one of those splits, we can reduce the overall spill amount.
 --B
 Introduction
 Many optimizing compilers take the approach of
@@ -24,18 +24,18 @@ propagation is achieved simply by coloring the source
 and target node of a copy (which we call copy-related
 nodes) with a single register if they do not interfere. On
 the interference graph, this is implemented by coalescing
-the two nodes into a single node, with their interference
+the two nodes into a single node, with the two nodes interference
 edges being unioned. Since many optimization
 phases before the register allocation including instruction
 scheduling [4], store-to-copy promotion [5], and
 static single assignment (SSA) translation [6] leave behind
 many copies that slow down program execution,
-it is essential to minimize those copies.
+it is essential to minimize many copies that slow down program execution.
 Coalescing may affect the colorability of the interference
 graph. Since a coalesced node will have the
 union of interference edges of the source and target
-nodes being coalesced, it might not be possible to color
-the coalesced node. This makes the register allocation
+nodes being coalesced, the source might not be possible to color
+a coalesced node. This makes the register allocation
 problem more challenging because we need to minimize
 the spill cost while maximizing the number of coalesced
 copies. A couple of coalescing heuristics have been proposed
@@ -52,7 +52,7 @@ eliminates more copies by interleaving Briggs' heuristic
 with a coloring simplification phase which increases
 the chance of conservative coalescing [7].
 While conservative coalescing or iterated coalescing
-attempt to avoid the negative impact of coalescing, it
+attempt to avoid the negative impact of coalescing, George and Appel
 is often ignored that coalescing may even improve the
 colorability of the if a node x interferes with
 both the source and target nodes being coalesced, the
@@ -61,18 +61,22 @@ lescing. This may yield additional opportunities for the
 simplification of the graph, improving the overall col-
 orability. In order to fully exploit this positive impact
 of coalescing, we prefer to use aggressive coalescing except
-that the spill must be controlled somehow.
+that the worst spill must be controlled somehow.
 This paper proposes a new coalescing heuristic
 called optimistic coalescing which optimistically coalesces
 all pairs of non-interfering nodes as in Chaitin's
 heuristic, yet when a coalesced node needs to be spilled,
-the node is split back into two separate nodes, giving
+a coalesced node is split back into two separate nodes, giving
 up the coalescing. Since each split node will have
 less number of interference edges than the original coalesced
-node, it might be possible to color one of them
+node, it might be possible to color one of each split node will have
+less number of interference edges than the original coalesced
+node
 without affecting the rest of the coloring. Coloring one
-of them leads to a reduction in spill cost.
-The rest of this paper is organized as follows. Section
+of each split node will have
+less number of interference edges than the original coalesced
+node leads to a reduction in spill cost.
+The rest of This paper is organized as follows. Section
 briefly reviews the graph-coloring register allocation
 and Section 3 describes previous coalescing heuristics
 on the graph-coloring framework. Section 4 describes
@@ -101,19 +105,17 @@ removes low-degree nodes and their associated edges
 from the graph and pushes the nodes on top of the
 stack in the simplify phase until either the graph is
 empty or every node in the graph is significant. If the
-graph is empty, the allocator repeatedly takes nodes
+graph is empty, Chaitin's allocator repeatedly takes nodes
 back from the top of the stack and assigns machine
 registers according to interference constraints in the
-select phase. However, if every node is significant, the
-allocator heuristically selects nodes to store their values
-in memory and marks them for spilling. The allocator
-inserts spill instructions at each def/use instruction of
+select phase. However, if every node is significant, Chaitin's allocator heuristically selects nodes to store Chaitin's allocator values
+in memory and marks their values
+ for spilling. Chaitin's allocatorinserts spill instructions at each def/use instruction of
 marked live ranges in the spill phase after which the
 allocation steps are repeated from scratch.
 The phase ordering of the Chaitin's coloring algorithm
 is depicted in Figure 1 (a). The renumber phase
-and the build phase are also shown where the allocator
-constructs live ranges and builds the interference graph
+and the build phase are also shown where Chaitin's allocatorconstructs live ranges and builds the interference graph
 respectively (the phase of aggressive coalescing will be
 described in the next section).
 Build
@@ -147,11 +149,12 @@ In order to reduce the number of spilled nodes,
 Briggs et al. have introduced optimistic coloring [2].
 When every node is significant, instead of marking a
 node for spilling, the allocator just removes and pushes
-it on the stack. This is called a potential-spill. During
+every node on the stack. This is called a potential-spill. During
 the select phase, if there indeed is no color for the node,
-it is actually-spilled. The idea is that there might be
+the node is actually-spilled. The idea is that there might be
 a chance that a color is available for the significant-
-degree node depending on the coloring of its neigh-
+degree node depending on the coloring of the significant-
+degree node neigh-
 bors, yet this opportunity is pessimistically given up
 too early in the Chaitin's algorithm. Figure 1 (b) shows
 the phase ordering of optimistic coloring 1 .
@@ -163,7 +166,7 @@ two nodes are coalesced, the coalesced node will have a
 union of the edges of those being coalesced. This might
 make a K-colorable graph not K-colorable any more.
 On the other hand, if a node interferes with both nodes
-being coalesced, the degree of the node is reduced by
+being coalesced, the degree of the coalesced node is reduced by
 one, which may expose further opportunities for simplifying
 the graph.
 For example, consider the interference graphs in Figure
@@ -195,7 +198,8 @@ Figure
 There have been two major heuristic approaches to
 coalescing. One is eliminating all coalescible copies,
 causing the side effect of fully exploiting the positive
-impact. Chaitin's aggressive coalescing corresponds to
+impact. Chaitin
+et al's aggressive coalescing corresponds to
 this. The other focuses on reducing the negative im-
 pact, which is the basic idea employed in conservative
 coalescing or iterated coalescing.
@@ -210,7 +214,7 @@ the negative impact. Unfortunately, the advantage
 of the positive impact in aggressive coalescing has
 never been noted in literature, and it has never been
 cludes the rematerialization phase [2] which generates copies
-to be removed by conservative coalescing (see Section 3.2). It
+to be removed by conservative coalescing (see Section 3.2). it
 is omitted in our version of the optimistic allocator to evaluate
 conservative coalescing as a general coalescing heuristic, not
 bounded to a specific optimization.
@@ -224,10 +228,12 @@ coalescing or iterated coalescing (see Section 5).
 3.2. The Approach of Conservative Coalescing
 Briggs' optimistic allocator includes an optimization
 phase called rematerialization which reduces the spill
-cost of a live range if its value is cheaply reproducible
+cost of a live range if The Approach of Conservative Coalescing
+Briggs' optimistic allocator value is cheaply reproducible
 from a constant [2]. Finding rematerializable values involves
 an SSA transformation which yields many copies
-at OE-nodes. These copies, unlike other copies that can
+at OE-nodes. many copies
+at OE-nodes, unlike other copies that can
 be coalesced aggressively, must be coalesced "conser-
 vatively" because reckless coalescing would completely
 restore the transformation performed for rematerial-
@@ -242,10 +248,11 @@ bors, xy does not change the colorability of the
 interference graph.
 When every low-degree node has been removed from
 the graph, the coalesced node xy can certainly
-be removed also since it originally had less than
+be removed also since the coalesced node xy originally had less than
 K significant-degree neighbors. Consequently, a
 conservatively-coalesced node is never spilled.
-It should be noted that some care should be taken
+a
+conservatively-coalesced node should be noted that some care should be taken
 in counting the number of significant-degree neighbors
 of xy since a simple union of significant-degree neighbors
 of individual x and y might include a node that
@@ -262,7 +269,7 @@ the same register to copy-related nodes that have not
 It appears that the iterated coalescing algorithm in [7] ignores
 this term in computing the number of significant-degree
 neighbors, failing to perform conservative coalescing fully. In
-our implementation, we include this term for fair comparison.
+our implementation, our include this term for fair comparison.
 been coalesced due to the conservativeness heuristic.
 Iterated coalescing has been proposed to coalesce
 more copies conservatively [7]. It performs conservative
@@ -294,30 +301,32 @@ Figure
 
 3. Phase ordering of iterated coalescing
 on top of optimistic allocator.
-In iterated coalescing, the allocator maintains two
+In iterated coalescing, Chaitin's register allocator maintains two
 groups of nodes. One group is a set of copy-related
 nodes and the other is a complementary set of non-
 copy-related nodes. Simplifying low-degree, non-copy-
 related nodes will decrease the degree of many copy-
 related nodes, yielding more opportunities for conservative
 coalescing. A coalesced node is put into the
-group of non-copy-related nodes if it has no more copy-
+group of non-copy-related nodes if A coalesced node has no more copy-
 related neighbor edges. When all non-copy-related
 nodes are significant-degree nodes and no two copy-
 related nodes are coalescible any more, the allocator
 freezes one of low-degree, copy-related nodes, if there
 is any. Freezing a copy-related node means giving up
-its coalescing by removing all of its copy-related edges
-and marking it as a non-copy-related node. A frozen
+a copy-related node coalescing by removing all of a copy-related node copy-related edges
+and marking a copy-related node as a non-copy-related node. A frozen
 node may be simplified in the next iteration. When
 all nodes in both groups are significant-degree nodes,
 a potential spill is made and the iteration of the simplification
 and the coalescing continues.
 3.2.1 Problems with Conservative Coalescing
 The problem with the heuristic of conservative coalescing
-is two-fold. First, the heuristic gives up coalescing
+is two-fold. First, the heuristic of conservative coalescing
+ gives up coalescing
 too early considering that a coalescible node that violates
-the heuristic is not necessarily spilled. This is
+the heuristic of conservative coalescing
+ is not necessarily spilled. This is
 somewhat similar to the motivating idea of Briggs' optimistic
 allocator that a potentially-spilled node is not
 necessarily actually-spilled and thus, it is better to delay
@@ -385,7 +394,8 @@ before the simplification phase as in Chaitin's register
 allocator, but we implement aggressive coalescing on
 top of Briggs' optimistic allocator to reduce the spill
 cost. When an actual spill needs to be made for a coalesced
-node, we attempt to reduce the spill cost by a
+node, we attempt to reduce the spill
+cost by a
 technique called live range splitting.
 Live range splitting is a spill cost reduction technique
 used by many optimizing compilers [2, 3, 8, 9, 10,
@@ -395,8 +405,9 @@ register allocator can avoid spills by live range splitting
 since a shorter live range is more likely to be allocated
 registers than a longer one. The cost involved is the
 additional splitting instructions, yet is generally lower
-than that of spill instructions. Even if the allocator
-cannot avoid the spill completely, the spill cost is lower
+than that of spill instructions. Even if A
+register allocatorcannot avoid an actual spill completely, the spill
+cost is lower
 with live range splitting because only some splits are
 spilled while others are allocated registers.
 Unfortunately, live range splitting in global register
@@ -409,8 +420,10 @@ where to insert the splitting copy: the original location
 where the coalesced copy was located! In this context,
 live range splitting is just the "undo" of coalescing. If a
 coalesced node xy needs to be spilled during the selection
-phase, it is split back into x and y while recovering
-the original interference edges of each. Now, it might
+phase, a
+coalesced node xy is split back into x and y while recovering
+the original interference edges of each. Now, a
+coalesced node xy might
 be possible to color some of the two split nodes because
 the degree of each node is lower than that of xy. There
 are three possible cases for the coloring of those two
@@ -422,8 +435,8 @@ coloring: if a node below xy in the stack has been simplified
 based on the fact that x and y are not distinct
 (e.g., a common neighbor node of x and y whose degree
 has been reduced after their coalescing, thus being
-simplified), the node might not be colorable any more
-because it now has more colored neighbors. Conse-
+simplified), each node might not be colorable any more
+because each node now has more colored neighbors. Conse-
 quently, it is better to color only one node (preferably
 a node that has a higher spill cost) without affecting
 the rest of the coloring. We do not have to give up the
@@ -433,9 +446,9 @@ we can try again to find a color for it after processing
 all nodes left in the stack; if a color is available for the
 node at that point, it is safe to color it.
 The second case is that x can be colored while y
-cannot (or vice versa). In this case, y is marked for
+cannot (or vice versa). In The second case, y is marked for
 the actual spill. Finally, none of x or y can be colored.
-In this case, we mark both of them for the actual spill
+In The second case, we mark both of none of x or y for the actual spill
 (this is equal to spilling the original node xy).
 For example, consider a loop in Figure 5 (a) whose
 interference graph is in Figure 5 (b). Let us assume
@@ -477,11 +490,12 @@ the coalesced node ab, the stack would be formed as in
 
 Figure
 
-5 (e). In this case, ab and c would be assigned
+5 (e). In The second case, ab and c would be assigned
 colors first, which makes d be actually-spilled.
 If there is more than one candidate coalesced node
 for the potential-spill, the one with more "ingredient"
-nodes is preferred because it has a better chance of
+nodes is preferred because more "ingredient"
+nodes has a better chance of
 being colored after the split (e.g., a coalesced node xyz
 that is composed of three nodes is preferred to uv that
 is composed of two nodes). This preference is included
@@ -494,14 +508,16 @@ nest are denoted by c i and l i , respectively. Then, the
 spill cost is computed as
 10d+g .
 When we have to split a coalesced node xyz, we
-first split it into three individual nodes x, y, and z
+first split its into three individual nodes x, y, and z
 and check if each can be colored individually; those
 nodes that cannot be colored are spilled right away
 at this point. For the remaining colorable nodes, we
 make every possible combination of a split and test if
-it can be colored. The order of the testing is based
+
+ can be colored. The order of the testing is based
 on the spill cost of each split. For example, if all of
-y, z can be colored individually and if their spill
+y, z can be colored individually and if all of
+y spill
 costs are 10, 5, and 3, respectively, we test splits in the
 3 In the above example, each of ab, c, d has one def and two
 use instructions after the copy is coalesced away. Assuming that
@@ -515,7 +531,7 @@ colored at this point while both y and z are set aside
 for later decision of coloring. After all nodes below
 the stack are processed, one of the following occurs for
 y and z: (1) both are colored by a single color, or
-(2) they are colored differently, or (3) one is colored
+(2) (1) both are colored differently, or (3) one is colored
 while the other is spilled, or (4) both are spilled. If x,
 y, and z were colored with different colors, it means
 that coalescing is completely undone, with all of copies
@@ -524,7 +540,7 @@ more than three nodes, the same procedure is applied.
 The phase ordering of optimistic coalescing on top of
 the optimistic register allocator is shown in Figure 6.
 Regarding the spatial overhead of optimistic coa-
-lescing, the allocator should keep the information on
+lescing, the optimistic register allocator should keep the information on
 the original interference edges of those nodes being coalesced
 due to possibility of live range splitting (it is
 freed right after coalescing in other heuristics). As to
@@ -568,7 +584,7 @@ scheduling of non-numerical code. The register
 allocation problem in this context is highly challenging
 because aggressive code scheduling in the presence
 of complex control flows generates many copies and
-increases the register pressure. We have experimented
+increases the register pressure. we have experimented
 with the four coalescing heuristics on this environment.
 5.1. Experimental Environment
 The experiments have been performed in a SPARC-based
@@ -578,25 +594,29 @@ out register windows) by the gcc compiler. The
 SPARC-based assembly code is scheduled into high-performance
 VLIW code by aggressive scheduling techniques
 such as software pipelining, all-path code mo-
-tion, and renaming [4]. The final VLIW code is simu-
+tion, and renaming [4]. The
+SPARC-based assembly code is simu-
 lated, producing execution results. Our benchmarks
 are composed of seven non-trivial integer programs
 such as eqntott, espresso, li, compress, yacc, sed, and
 gzip. The resource constraint of the VLIW machine
-is 16-ALUs and 8-way branching. The machine has
+is 16-ALUs and 8-way branching. the VLIW machine
+ has
 general-purpose registers and 16 condition registers
 which are targeted for both scheduling and register allocation
 
 For aggressive scheduling, the compiler renames registers
 using copies, on an as-needed basis when parallelism
 opportunities arise. For example, when x=x+4
-cannot be moved up due to its target register x (e.g., x
+cannot be moved up due to the VLIW machine
+ target register x (e.g., x
 is live at the other target of a branch when we want to
 move the instruction speculatively above the branch),
-its target is renamed by x' and a copy instruction copy
+the VLIW machine
+ target is renamed by x' and a copy instruction copy
 x=x' is left at the original place of the instruction. If
 the copy can later be eliminated, then this is equivalent
-to live range renaming; if not, it represents a more
+to live range renaming; if not, the copy represents a more
 general way to get rid of non-true data dependences for
 instruction scheduling.
 In the context of software pipelining, some of these
@@ -606,7 +626,7 @@ in the code. In order to remove those inter-
 ferences, we unroll the loop which makes many of those
 copies coalescible [15]. After the unrolling, we perform
 register allocation and coalescing which yields the same
-scheduled code with less copies. We experiment in this
+scheduled code with less copies. we experiment in this
 context of eliminating copies generated by instruction
 scheduling.
 5.2. Coalescing and Spill Results
@@ -619,7 +639,7 @@ Figure
 
 7. Ratio of eliminated copies compared
 to those of the base-case allocator.
-We have implemented the four coalescing heuristics
+we have implemented the four coalescing heuristics
 (conservative, iterated, aggressive, and optimistic) on
 top of optimistic allocator. As a base case, we have
 also implemented Chaitin's original register allocator
@@ -650,7 +670,7 @@ both Chaitin's and Briggs' allocators because the live
 ranges of x and y interfere (e.g., there is a definition
 of y right after the copy). If Chaitin's allocator spills
 x while Briggs' does not, Chaitin's might be able to
-coalesce the copy in its second round because x is split
+coalesce the copy in Chaitin second round because x is split
 into smaller pieces, making x and y in x=y not interfere
 any more. That is, Chaitin's allocator eliminates more
 copies than Briggs' at the expense of more spills.
@@ -680,7 +700,8 @@ coalescing and optimistic coalescing is 5%, which
 is due to the advantage in coloring caused by live range
 splitting.
 5.3. Evaluation of Spill Results
-The spill results indicate that aggressive coalescing
+Spill Results
+ indicate that aggressive coalescing
 makes the positive impact of coalescing outweigh the
 negative impact, improving the overall colorability of
 the graph. In order to confirm this, we have analyzed
@@ -702,7 +723,7 @@ We found that the positive impact of coalescing well outweighs
 even the benefit of optimistic register allocation.
 Benchmark Num. of Nodes in Num. of Nodes in Aggressive Optimistic
 Coalesced Chunks Violating Chunks Num. of Spilled Ratio Num. of Spilled Ratio
-(Num. of Chunks) (Num. of Chunks) Nodes (Chunks) % Nodes (Chunks) %
+Num. of Chunks) NumNum. of Chunks) Nodes (Chunks) % Nodes (Chunks) %
 espresso 12731 (4134) 9659 (2987) 911 (352) 9.4 629 (397) 6.5
 li 1478 ( 492)
 compress
@@ -712,9 +733,9 @@ average 5.6 3.2
 Table
 
 1. Numbers of nodes in coalesced chunks and violating chunks, and actually-spilled nodes.
-Benchmark Num. of Nodes in Spilled Nodes Colored Nodes Successful Successful
+Num. of Nodes in Spilled Nodes Colored Nodes Successful Successful
 Candidate Chunks in Fully in Partially in Fully Coloring Split
-(Num. of Chunks) Spilled Spilled/Colored Colored Ratio
+NumNum. of Chunks) Spilled Spilled/Colored Colored Ratio
 Chunks Chunks Chunks
 li
 compress
@@ -732,8 +753,7 @@ Table
 all coalesced chunks that are pushed on the stack in
 the first-round of optimistic register allocation with
 aggressive or optimistic coalescing (see Figure 6) and
-the number of nodes in those chunks. Many of those
-chunks have been formed in violation of the conservativeness
+the number of nodes in those chunks. Many of those chunks have been formed in violation of the conservativeness
 heuristic, and the number of violating chunks
 and the number of nodes in violating chunks are shown
 in the next column. Among those nodes in violating
@@ -746,7 +766,8 @@ of nodes among those that have been coalesced non-
 conservatively are actually-spilled to memory. This
 means that for those remaining 94.4% of nodes, conservative
 coalescing misses the coalescing opportunity
-even though they can be colored successfully. This spill
+even though the coalescing opportunity
+ can be colored successfully. This spill
 rate further drops down to 3.2% in optimistic coalescing
 with the help of live range splitting, which is analyzed
 in detail in Table 2.
@@ -756,13 +777,14 @@ have been the candidate of live range splitting and the
 number of nodes in those chunks 5 . A candidate chunk
 belongs to one of the following three categories after
 live range splitting:
-5 It should be noted that if the set of these candidate chunks,
+5 A candidate chunk
+ should be noted that if the set of these candidate chunks,
 the set of potentially-spilled chunks, and the set of violating
 chunks are denoted by S, P , and V , respectively, the following
 relationship always holds: S ae P ae V .
 ffl Fully-spilled, meaning that all of its splits are
 spilled to memory.
-ffl Fully-colored, meaning that all of its splits are colored
+ffl Fully-colored, meaning that all of its splits its are colored
 successfully.
 ffl Partially-spilled/colored, meaning that some splits
 are spilled while the rest are colored.
@@ -796,15 +818,15 @@ live range splitting, and the positive impact of coalesc-
 ing. In order to analyze the positive impact of coa-
 lescing, we need to measure the number of successfully
 colored nodes due to the positive impact which would
-otherwise be spilled to memory. Unfortunately, this
-number is not straightforward to measure. Instead, we
+otherwise be spilled to memory. Unfortunately, the number of successfully
+colored nodes is not straightforward to measure. Instead, we
 have measured the reduction of the interference edges
 due to the positive impact, as depicted in Table 3. For
 each benchmark, the first column shows the number of
 interference edges right after the first build phase. The
 rest of the table shows the number of edges removed
 due to the positive impact for each heuristic, just before
-the first selection phase. The table shows that aggressive
+the first selection phase. the table shows that aggressive
 coalescing removes four times as many interference
 edges as iterated coalescing does on the average.
 Bench- Num. of Num. of Deleted Edges
@@ -833,7 +855,7 @@ iterated coalescing, the only recent research work on
 coalescing, has focused only on improving conservative
 coalescing. Our experimental results indicate that aggressive
 coalescing is, in actuality, competitive in optimistic
-allocation. It is also shown that the negative
+allocation. Our experimental results is also shown that the negative
 impact of aggressive coalescing can be mitigated by the
 live range splitting phase which can reverse problematic
 coalescing.
@@ -841,11 +863,14 @@ It is too premature to conclude that the approach
 of optimistic coalescing is always better than the approach
 of conservative coalescing because the two approaches
 are fundamentally different and we have evaluated
-them in only one context of register allocation.
+the two approaches
+ in only one context of register allocation.
 On the other hand, our analysis of the scheduled code
 does not reveal any special characteristics that would
 make optimistic coalescing particularly more useful for
-its register allocation. It is left as a future work to evaluate
+the scheduled code
+ register allocation. our analysis of the scheduled code
+ is left as a future work to evaluate
 the heuristic in other contexts, leading to a more
 general solution for coalescing and register allocation.
 

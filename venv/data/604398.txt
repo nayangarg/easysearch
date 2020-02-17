@@ -13,7 +13,7 @@ play vital roles in the solutions of these problems.
 This contribution presents the design and analysis of a parallel implementation
 of the widely used TOUGH2 software package [9, 10] for
 numerical simulation of flow and transport in porous and fractured
-media. The contribution includes descriptions of algorithms and methods
+media. This contribution includes descriptions of algorithms and methods
 used in the parallel implementation and performance evaluation
 Present address: Department of Computing Science and High Performance
 Computing Center North, Ume-a University, SE-901 87 Ume-a, Sweden.
@@ -67,7 +67,7 @@ leads naturally to the finite volume method, resulting in the following
 ordinary differential equations:
 dt
 is the volume of the block n, and Anm is the interface area
-bordering between blocks n; m and Fnm is the flow between them.
+bordering between blocks n; m and Fnm is the flow between Fnm.
 Note that flow terms usually contain spatial derivatives, which are
 replaced by simple difference between variables defined on blocks n; m
 and divided by the distances between the block centers. See Figure 1
@@ -123,8 +123,8 @@ is reached.
 If the Newton procedure does not converge after a preset max-
 Newton-iteration, the current time step is reduced (usually by half) and
 the Newton procedure is tried for the reduced time step. If converged,
-the time will advance; otherwise, time step is further reduced and another
-round of Newton iteration follows. This procedure is repeated
+the time will advance; otherwise, the reduced time step is further reduced and another
+round of Newton iteration follows. the Newton procedure is repeated
 until convergence in the Newton iteration is reached.
 The system of linear equation is usually very ill-conditioned, and
 requires very robust solvers. The dynamically adjusted time step size is
@@ -140,7 +140,8 @@ is spent on solving the linear systems, and the second major part (about
 The aim of this work is to develop a parallel prototype of TOUGH2,
 and to demonstrate its ability to efficiently solve problems significantly
 larger than problems that have previously been solved using the serial
-version of the software. The problems should be larger both in the
+version of the software. problems that have previously been solved using the serial
+version of the software should be larger both in the
 number of blocks and the number of equations per block. The target
 computer system for this prototype version of the parallel TOUGH2
 is the 696 processor Cray T3E-900 at NERSC, Lawrence Berkeley
@@ -162,7 +163,8 @@ connections given as input data. From this information, an adjacency
 matrix is constructed, i.e., a matrix with a non-zero entry for each
 element (i; j) where there is a connection between blocks i and j. In
 the current implementation the value 1 is always used for non-zero
-elements, but different weights may be used. The adjacency matrix is
+elements, but different weights may be used. an adjacency
+matrix is
 stored in a compressed row format, called CRS format, which is a slight
 modification of the Harwell-Boeing format. See, e.g., [2] for descriptions
 of CRS and Harwell-Boeing formats.
@@ -180,22 +182,22 @@ After partitioning the grid on the processors, the blocks (or more
 specifically, the vector elements and matrix rows associated with the
 blocks) are reordered by each processor to a local ordering. The blocks
 for which a processor computes the results are denoted the update set
-of that processor. The update set can be further partitioned into the
+of each processor. The update set can be further partitioned into the
 internal set and the border set. The border set consists of blocks with
 an edge to a block assigned to another processor and the internal set
-consists of all other blocks in the update set. Blocks not included in
+consists of all other blocks in The update set. Blocks not included in
 the update set but needed (read only) during the computations defines
 the external set.
 
 Figure
 
-3 illustrates how the blocks can be distributed over the pro-
+3 illustrates how Blocks can be distributed over the pro-
 cessors. (The vertices of the graph represent blocks and the edges
 represent connections, i.e., interface areas between pairs of blocks.)
 
 Table
 
-I shows how the blocks are classified in the update and the
+I shows how Blocks are classified in the update and the
 external sets and how the update sets are further divided into internal
 and border sets. In the table, the elements are placed in local order and
 the global numbering illustrates the reordering.11314135
@@ -216,26 +218,25 @@ Processor 1: (2; 3 j
 Processor 2: (6; 14 j 5; 10; 13 k12; 4;
 In order to facilitate the communication of elements corresponding
 to border/external blocks, the local renumbering of the nodes is made
-in a particular way. All blocks in the update set precede the blocks
-in the external set, and in the update set, all internal blocks precede
-the border blocks. Finally, the external blocks are ordered internally
+in a particular way. All blocks in The update set precede the blocks
+in the external set, and in The update set, all internal blocks precede
+the border blocks. Finally, all internal blocks are ordered internally
 with blocks assigned to a specific processor placed consecutively. One
 possible ordering is given as an example in Table I.
-For processor 0 in this example, the grid blocks numbered 7 and 11
-are internal blocks, i.e., these blocks are updated by processor 0 and
+For processor 0 in this example, all internal blocks numbered 7 and 11
+are internal blocks, i.e., all internal blocks are updated by processor 0 and
 there are no dependencies between these blocks and blocks assigned
 to other processors. The grid blocks 8 and 12 are border blocks for
-processor 0, i.e., the blocks are updated by processor 0 but there are
+processor 0, i.e., all internal blocks are updated by processor 0 but there are
 dependencies to blocks assigned to other processors. Finally, blocks 1,
-and 13 are external blocks for processor 0, i.e., these blocks are
-not updated by processor 0 but data associated with these blocks are
+and 13 are external blocks for processor 0, i.e., all internal blocks are
+not updated by processor 0 but data associated with all internal blocks are
 needed read-only during the computations. The amount of data that
 a processor is to send and receive during the computations are approximately
 proportional to the number of border and external blocks,
 respectively.
 The consecutive ordering of the external blocks that reside on each
-processor makes it possible to receive data corresponding to these
-blocks into appropriate vectors without use of buffers and with no need
+processor makes it possible to receive data corresponding to all internal blocks into appropriate vectors without use of buffers and with no need
 for further reordering, provided that the sending processor has access
 to the ordering information. However, it is not possible in general to
 order the border blocks so that transformations can be avoided when
@@ -248,22 +249,23 @@ gorithm, each processor is responsible for computing the rows of the
 HIGH PERFORMANCE COMPUTATIONS FOR SUBSURFACE SIMULATIONS 9
 Jacobian matrix that correspond to blocks in the processor's update
 set. All derivatives are computed numerically.
-The Jacobian matrix is stored in the Distributed Variable Block
+A new Jacobian matrix is stored in the Distributed Variable Block
 Row format (DVBR) [7]. All matrix blocks are stored row wise, with
 the diagonal blocks stored first in each block row. The scalar elements
 of each matrix block are stored in column major order. The use of
 dense matrix blocks enable use of dense linear algebra software, e.g.,
 optimized level 2 (and level subproblems. The DVBR
 format also allows for a variable number of equations per block.
-Computation of the elements in the Jacobian matrix is basically performed
+Computation of the elements in A new Jacobian matrix is basically performed
 in two phases. The first phase consists of computations relating
-to individual blocks. At the beginning of this phase, each processor
+to individual blocks. At the beginning of The first phase, each processor
 already holds the information necessary to perform these calculations.
-The second phase include all computations relating to interface quan-
+The first phase include all computations relating to interface quan-
 tities, i.e., calculations using variables corresponding to pairs of blocks.
-Before performing these computations, exchange of relevant variables
+Before performing all computations relating to interface quan-
+tities, exchange of relevant variables
 is required. For a number of variables, each processor sends elements
-corresponding to border blocks to appropriate processors, and it receives
+corresponding to border blocks to appropriate processors, and each processor receives
 elements corresponding to external blocks.
 4.3. Linear Systems
 The non-symmetric linear systems to be solved are generally very ill-conditioned
@@ -285,9 +287,9 @@ as the Block Jacobi scaling and the latter as the domain decomposition
 based preconditioner, though both are of course preconditioners.
 As an illustration of the difficulties arising in these linear systems,
 we would like to mention a very small problem from the Yucca Mountain
-simulations mentioned in the Introduction. This non-symmetric
-problem includes 45 blocks, 3 equations per block, and 64 connections.
-When solving the linear system, the Jacobian matrix is of size 135 \Theta 135
+simulations mentioned in the Introduction. a very small problem from the Yucca Mountain
+simulations mentioned in the Introduction includes 45 blocks, 3 equations per block, and 64 connections.
+When solving the linear system, A new Jacobian matrix is of size 135 \Theta 135
 with 1557 non-zero elements. For the first Jacobian generated (in the
 first Newton step of the first Time step), i.e., the matrix involved in
 the first linear system to be solved, the largest and smallest singular
@@ -328,7 +330,7 @@ order with Internal, Border, and External elements as described in
 Section 4.1. Vectors with elements corresponding to connections are
 distributed and adjusted to the local grid block numbering after each
 HIGH PERFORMANCE COMPUTATIONS FOR SUBSURFACE SIMULATIONS 11
-processor have determined which connections are involved in its own local
+processor have determined which connections are involved in the local grid own local
 partition. Vectors with elements corresponding to sinks and sources
 are replicated in full before each processor extracts and reorders the
 parts needed. There are in addition a number of scalars and small
@@ -340,28 +342,30 @@ This include all integer vectors defining the matrix structure but not
 the large array for holding the floating point numbers for the matrix
 elements.
 As the problem is distributed, the time stepping procedure begins.
-A very brief description of the routine Cycit is given in Figure 4. In this
-description, lots of details have been omitted for clarity, and calls have
+A very brief description of the routine Cycit is given in Figure 4. In A very brief description of the routine Cycit is given in Figure 4, lots of details have been omitted for clarity, and calls have
 been included to a couple of routines that require further description.
 ExchangeExternal
-The routine ExchangeExternal is of particular interest for the parallel
+ExchangeExternal
+ is of particular interest for the parallel
 implementation. The main loop of this routine is outlined in Figure 5.
-When called by all processors with a vector and a scalar noel as argu-
+When called by the other processors with a vector and a scalar noel as argu-
 ments, an exchange of vector elements corresponding to external grid
-blocks is performed between all neighboring processors. The parameter
+blocks is performed between the other processors. The parameter
 noel is the number of vector elements exchanged per external grid block.
 Some additional parameters that defines the current partition, e.g.,
 information about neighbors etc, need also to be passed to the routine,
-but we have for clarity chosen not to include them in the figure. Though
+but we have for clarity chosen not to include neighbors in the figure. Though
 some details are omitted, we have chosen to include the full MPI syntax
 (using Fortran interface) for the communication primitives. The routine
 pack, called by ExchangeExternal, copies appropriate elements from
 vector into a consecutive work array. The external elements for a given
 processor are specified by sendindex.
-We remark that the elements can be stored directly into the appropriate
+we remark that The external elements for a given
+processor can be stored directly into the appropriate
 vector when received (since external blocks are ordered consecutively
 for each neighbor), whereas the border elements to be sent need
-to be packed into a consecutive work space before they are sent.
+to be packed into a consecutive work space before need
+ are sent.
 Note that we use the nonblocking MPI routines for sending and
 receiving data. With use of blocking routines we would have had to
 assure that all messages are sent and received in an appropriate order
@@ -369,13 +373,14 @@ to avoid deadlock. When using nonblocking primitives, the sends and
 receives can be made in arbitrary order. A minor inconvenience with
 use of the nonblocking routines is that the work space used to store
 elements to be sent need to be large enough to store all elements a
-processor is to send to all its neighbors.
+processor is to send to all a
+processor neighbors.
 Cycit(.)
 Initialization, grid partitioning, data distribution etc
 Set up first time step and the first Newton step
 number of secondary variables (in PAR) per grid block
 while Time ! EndTime
-while not Newton converged
+while Newton Newton converged
 call Multi(.)
 Newton converged = result from convergence test
 if Newton converged
@@ -414,8 +419,9 @@ call MPI WAITALL(2*num neighbors, req, stat, ierr)
 
 Figure
 
-5. Outline of the routine ExchangeExternal. When simultaneously called by
-all processors it performs an exchange of noel elements per external grid block for
+5. Outline of ExchangeExternal
+. When simultaneously called by
+all processors all processors performs an exchange of noel elements per external grid block for
 the data in vector.
 The routine Multi is called to set up the linear system, i.e., the main
 part of the computations in Multi is for computing the elements of
@@ -440,13 +446,15 @@ The thermophysical properties of fluid mixtures needed in assembling
 the governing mass and energy balance equations are provided by a
 routine called Eos (Equations of state). The main task for the Eos
 routine is to provide values for all secondary (thermophysical) variables
-as functions of the primary variables, though it also performs some
+as functions of the primary variables, though the Eos
+routine also performs some
 additional important tasks (see [10], pages 17-26 for details).
-Several Eos routines are available for TOUGH2, and new Eos routines
+Several Eos routines are available for TOUGH2, and new Eos( routines
 will become available. However, Eos3 is the only one that have
-been used in this parallel implementation. In order to provide maximum
+been used in the parallel implementation. In order to provide maximum
 flexibility, we strive to minimize the number of changes that needs
-to be done to the Eos routine when moving from the serial to the
+to be done to the Eos
+routine when moving from the serial to the
 parallel implementation. This have been done by organizing data and
 assigning appropriate values to certain variables before calling the Eos
 routine. In the current parallel implementation, the Eos3 routine from
@@ -461,7 +469,7 @@ of the standard Fortran 77 programming language and the MPI Message
 Passing Interface for interprocessor communication. The development
 and analysis, however, have been performed on a 696 processor
 Cray T3E-900 system.
-The T3E is a distributed memory computer, each processor has its
+The T3E is a distributed memory computer, each processor has The T3E
 own local memory. Together with some network interface hardware, the
 processor (known as Digital EV-5 or Alpha) and local memory form a
 Processing Element (PE), is sometimes called a node. All 696 PEs are
@@ -488,7 +496,8 @@ to 10 years for the 2D problem and 0:1 year for the 3D problem,
 which still require enough time steps to perform the analysis of the
 parallel performance. A shorter simulated time will of course give the
 initialization phase unproportionally large impact on the performance
-figures. The initialization phase is therefore excluded from the timings.
+figures. the
+initialization phase is therefore excluded from the timings.
 Tests have been performed using the K-way, the VK-way, and the
 Recursive partitioning algorithms in METIS. As we will see later, different
 orderings of the grid blocks lead to variations in the time discretization
@@ -516,20 +525,20 @@ Number of processors
 
 Figure
 
-6. Execution time and parallel speedup on the 2D problem for 2, 4, 8, 16,
+6. Execution time and parallel speedup on The 2D problem for 2, 4, 8, 16,
 32, 64, and 128 processors on the Cray T3E-900.
 HIGH PERFORMANCE COMPUTATIONS FOR SUBSURFACE SIMULATIONS 17
 reduced from 7504 seconds (i.e., 2 hours, 5 minutes, and 4 seconds) on
 two processors to 126 seconds (i.e., 2 minutes and 6 seconds) on 128
 processors.
-The parallel speedup for the 2D problem is presented in the second
-graph of Figure 6. Since the problem cannot be solved on one processor
+The parallel speedup for The 2D problem is presented in the second
+graph of Figure 6. Since The 2D problem cannot be solved on one processor
 with the parallel code the speedup is normalized to be 2 on two pro-
 cessors, i.e., the speedup on p processors is calculated as 2T 2 =T p , where
 denote the wall clock execution time on 2 and p processors,
 respectively. For completeness we also report that the execution time
 for the original serial code is 8245 seconds on the 2D problem.
-The 3D problem consists of 97,976 blocks, 3 components per block
+the 2D problem consists of 97,976 blocks, 3 components per block
 and 396,770 connections between blocks, giving in total 293,928 equa-
 tions. The Jacobian matrix in the linear systems to be solved for
 each Newton step is of size 293,928 \Theta 293,928 with 8,023,644 non-zero
@@ -547,14 +556,18 @@ even better illustrated by the speedup shown in the second graph of the
 
 Figure
 
-7. The speedup is defined as 16T 16 =T p since performance result
+7. the speedup shown in the second graph of the
+
+Figure
+
+7 is defined as 16T 16 =T p since performance result
 are not available for smaller number of processors.
-The results clearly demonstrate very good parallel performance up
+Results clearly demonstrate very good parallel performance up
 to very large number of processors for both problems. We observe
-speedups up to 119.1 on 128 processors for the 2D problem and up
+speedups up to 119.1 on 128 processors for The 2D problem and up
 to 489.3 on 512 processors for the 3D problem.
 When repeatedly doubling the number of processors from 2 to 4,
-from 4 to 8, etc, up to 128 processors for the 2D problem, we obtain
+from 4 to 8, etc, up to 128 processors for The 2D problem, we obtain
 the speedup factors 1.58, 2.85, 2.19, 1.91, 1.96, and 1.62. For the 3D
 problem, the corresponding speedup factors when repeatedly doubling
 the number of processors from 16 to 512 processors are 2.70, 2.28, 1.95,
@@ -579,7 +592,8 @@ Overall the parallel performance is very satisfactory, and we complete
 this analysis by providing some insights and explaining the super-linear
 speedup.
 5.2. An Unstructured Problem
-In the ideal case, the problem can be evenly divided among the processors
+In the ideal case, An Unstructured Problem
+ can be evenly divided among the processors
 not only with approximately the same number of internal grid
 blocks per processor, but also roughly the same number of external
 blocks per processor. Our problems, however, are very unstructured,
@@ -639,9 +653,9 @@ solver compared to the execution on 2 processors. This increase of work
 fully explains the low speedup on 4 processors. Similar variations in the
 amount of work also contribute to a very good speedup for some cases.
 However, the figures in Table II alone do not fully explain the super-linear
-speedup observed for some cases. We will therefore continue our
+speedup observed for some cases. We will therefore continue We
 study by looking at the performance of the linear solver. Before doing
-that, however, we show some examples that motivates this continued
+that, however, We show some examples that motivates this continued
 study, i.e., cases where the speedup actually is higher than we would
 expect from looking at iteration counts only.
 For example, on the 2D problem the speedup on 8 processors is
@@ -650,8 +664,7 @@ to the execution on two processors, the 8 processor execution actually
 requires slightly more Newton iterations and iterations in the linear
 solver. The number of time steps is the same for both tests. When
 doubling the number of processors from 8 to 16, we see another factor
-of 2.19 in speedup, even though the reduction in number of Newton
-iterations and iterations in the linear solver is only 2.4% and 9.6%,
+of 2.19 in speedup, even though the reduction in number of Newtoniterations and iterations in the linear solver is only 2.4% and 9.6%,
 respectively. The speedup on the 3D problem from 16 to processors
 (2.70) and from 32 to 64 processors (2.28) is also higher than what
 would be expected by looking at Table II alone.
@@ -663,14 +676,16 @@ Table
 
 II. Iteration counts and execution times for the 2D and 3D test problems.
 2D problem
-Partitioning algorithm VK VK K Rec. Rec. Rec. K Rec.
+Partitioning algorithm VK VK K Rec. 2D problem
+Partitioning algorithm VK VK K Rec. 2D problem
+Partitioning algorithm VK VK K Rec. K Rec.
 #Time steps 104 120 104 104 104 94 94 103
 Total #Newton iterations 645 869 669 653 663 697 620 637
 #Newton iter./Time step 6.20 7.24 6.43 6.28 6.38 7.41 6.60 6.18
 Total #Lin. solv. iterations 8640 16528 10934 9888 11011 11282 11894 19585
 #Lin. solv. iter./Newton step 13.40 19.02 16.34 15.14 16.61 18.46 19.18 30.75
 #Lin. solv. iter./Time step 83.1 137.1 105.1 95.1 105.9 120.0 126.5 190.1
-Time spent on Lin. solv.
+Time spent on #Lin. solv.
 Time spent on other
 Total time
 3D problem
@@ -678,22 +693,22 @@ Partitioning algorithm K Rec. K K Rec. Rec.
 #Time steps 154 149 143 137 185 166
 Total #Newton iterations 632 606 585 561 708 646
 #Newton iter./Time step 4.10 4.07 4.09 4.09 3.83 3.89
-Total #Lin. solv. iterations 8720 10275 9357 10362 14244 14487
+#Lin. solv. iterations 8720 10275 9357 10362 14244 14487
 #Lin. solv. iter./Newton step 13.80 16.96 15.99 18.47 20.12 22.43
 #Lin. solv. iter./Time step 56.6 69.0 65.4 75.6 77.0 87.3
-Time spent in Lin. solv.
+Time spent in #Lin. solv.
 Time spent on other
 Total execution time
 22 ELMROTH, DING AND WU
 some of the speedup anomalies observed, but for a couple of cases, it is
 evident that are other issues to be investigated. We therefore continue
-this study by focusing on the performance of the linear solver and the
+our
+study by focusing on the performance of the linear solver and the
 preconditioner.
 5.4. Performance of Preconditioner and Linear Solver
 A breakup of the speedup in one part for the linear solver (including
 preconditioner) and one for all other computations (mainly assembly of
-the Jacobian matrix) is presented for both problems in Figure 8. The
-figure illustrates that the super-linear speedup for the whole problem
+the Jacobian matrix) is presented for both problems in Figure 8. Figure 8 illustrates that the super-linear speedup for the whole problem
 follows from super-linear speedup of the linear solver. Note that the
 results presented are for the total time spent on these parts, i.e., a
 different number of linear systems to be solved or a difference in the
@@ -705,21 +720,25 @@ may show good performance also for larger number of processors.
 The slight decrease on 256 and 512 processors for the 3D problem is
 due to increased number of time steps.
 We conclude that the performance of "the other parts" is satisfying
-and that it needs no further explanations. We continue with the study
+and that the performance of "the other parts needs no further explanations. We continue with the study
 of the super-linear speedup of the linear solver.
 5.4.1. Effectiveness of the Preconditioner
-The preconditioner is crucial to the number of iterations per linear
+the Preconditioner
+ is crucial to the number of iterations per linear
 system solved. The domain decomposition based process is expected to
 become less efficient as the number of processors increases. The best
-effect of the preconditioner is expected when the whole matrix is used in
+effect of the Preconditioner
+ is expected when the whole matrix is used in
 the factorization, but in order to achieve good parallel performance, the
 size for the preconditioning operation on each processor is restricted to
-its local subdomain. On average, the matrix used in the preconditioning
+
+ local subdomain. On average, the matrix used in the preconditioning
 by each processor is n
 is the size of the whole (global)
 matrix and p is the number of processors. The reduced effectiveness
 follows naturally from the smaller subdomains, i.e., the decreased size
-of the matrices used in the preconditioner, since only diagonal blocks
+of the matrices used in the Preconditioner
+, since only diagonal blocks
 are used to calculate an approximate solution.
 The number of iterations required per linear system for the two test
 problems confirms this theory (see Table II). For both test problems
@@ -779,7 +798,8 @@ Figure
 speedup for the linear solver separated into one part for the preconditioner
 (i.e., the ILUT factorization) and one for the other parts of
 the linear solver.
-The preconditioner shows a dramatic improvement of the performance
+the Preconditioner
+ shows a dramatic improvement of the performance
 as the number of processors increases, following naturally from
 the decreased work in the ILUT factorization. As we continue, this will
 turn out to be the single most important explanation for the sometimes
@@ -806,7 +826,7 @@ part for ILUT factorization (marked "*") and one part for all other computations
 26 ELMROTH, DING AND WU
 5.4.3. Performance of the Linear Iterations
 We have explained the super-linear speedup of the preconditioning part
-of the linear solver, presented in Figure 9, but we also observe only a
+of the linear solver, presented in Figure 9, but We also observe only a
 modest speedup of the other parts of the computation.
 The low speedup for the other parts is partly explained by the increased
 number of iterations, as seen in the previous section. Increased
@@ -820,7 +840,8 @@ would eventually become large. The performance obtained for the
 iteration process in the linear solver supports this observation.
 5.4.4. Impacts on the Overall Performance
 In order to fully understand the total (combined) effect of the super-linear
-behavior of the preconditioner and the moderate speedup of
+behavior of the Preconditioner
+ and the moderate speedup of
 the other parts of the linear solver, we now only need to investigate
 how large proportion is spent on preconditioning out of the total time
 required for solving the linear systems. This is illustrated in Table III.
@@ -842,30 +863,32 @@ the 2D problem and for 16 processors on the 3D problem. For example,
 for 16 processors on the 3D problem 88.4% of the time in the linear
 solver was spent on the factorization for the preconditioner, whereas
 the corresponding number is only 39.4% for 512 processors. As long as
-the preconditioner consumes a large portion of the time, its super-linear
+the preconditioner consumes a large portion of the time, the preconditioner super-linear
 speedup will have significant effects on the overall performance of the
 implementation.
-It is evident, that up to a certain number of processors, the super-linear
+its super-linear
+speedup is evident, that up to a certain number of processors, the super-linear
 speedup of the incomplete LU factorization in the domain decomposition
 based preconditioner is sufficient to give super-linear speedup
 for the whole application. As the number of processor becomes large,
 the factorization consumes a smaller proportion of the execution time,
-and hence, it's super-linear behavior has less impact on the overall per-
+and hence, the factorization's super-linear behavior has less impact on the overall per-
 formance. Instead, there are other issues that become more critical for
 large number of processors, such as the increased number of iterations
 in the linear solver.
 6. Conclusions
 This contribution presents the design and analysis of a parallel prototype
-implementation of the TOUGH2 software package. The parallel
-implementation shows to efficiently use up to at least 512 processors
-of the Cray-T3E system. The implementation is constructed to
+implementation of the TOUGH2 software package. a parallel prototype
+implementation of the TOUGH2 software package shows to efficiently use up to at least 512 processors
+of the Cray-T3E system. a parallel prototype
+implementation of the TOUGH2 software package is constructed to
 have flexibility to use different linear solvers, preconditioners, and grid
 partitioning algorithms, as well as alternative Eos modules for solving
 different problems. Computational experiments on real application
 problems show high speedup for up to 128 processors on a 2D problem
 and up to 512 processors on a 3D problem.
 The results are accompanied by an analysis that explains the good
-parallel performance observed. It also explains some minor variations
+parallel performance observed. The results also explains some minor variations
 in performance following from the unstructured nature of the problem
 and some super-linear speedups following from decreased work in the
 preconditioning process.
@@ -875,11 +898,13 @@ the wall clock execution time, we note that, for these particular
 problems, smaller subdomains could be used, at least on small number
 of processors.
 We have seen some variations in performance in tests using three
-different partitioning algorithms. Some of these variations clearly follow
+different partitioning algorithms. Some of some variations in performance in tests using three
+different partitioning algorithms clearly follow
 from variations in the amount of work required, e.g., due to differences
 in the time discretization. Further analysis is required in order to determine
 whether these variations follow some particular pattern or if
-they are only a result from unpredictable circumstances.
+
+ are only a result from unpredictable circumstances.
 28 ELMROTH, DING AND WU
 The problems we are targeting in the near future are larger both in
 terms of number of blocks and number of equations per block. Moreover
@@ -900,7 +925,7 @@ Acknowledgements
 We thank Karsten Pruess, the author of the original TOUGH2 software,
 for valuable discussions during this work, and the anonymous referees
 for constructive comments and suggestions.
-This work is supported by the Director, Office of Science, Office of
+this work is supported by the Director, Office of Science, Office of
 Laboratory Policy and Infrastructure, of the U.S. Department of Energy
 under contract number DE-AC03-76SF00098. This research uses
 resources of the National Energy Research Scientific Computing Center,

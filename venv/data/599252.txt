@@ -1,22 +1,23 @@
 --T
 Interpolation models with multiple hyperparameters.
 --A
-A traditional interpolation model is characterized by the choice of regularizer applied to the interpolant, and the choice of noise model. Typically, the regularizer has a single regularization constant , and the noise model has a single parameter . The ratio / alone is responsible for determining globally all these attributes of the interpolant: its complexity, flexibility, smoothness, characteristic scale length, and characteristic amplitude. We suggest that interpolation models should be able to capture more than just one flavour of simplicity and complexity. We describe Bayesian models in which the interpolant has a smoothness that varies spatially. We emphasize the importance, in practical implementation, of the concept of conditional convexity when designing models with many hyperparameters. We apply the new models to the interpolation of neuronal spike data and demonstrate a substantial improvement in generalization error.
+A traditional interpolation model is characterized by the choice of regularizer applied to the interpolant, and the choice of noise model. Typically, the regularizer has a single regularization constant , and A traditional interpolation model has a single parameter . The ratio / alone is responsible for determining globally all these attributes of the interpolant: its complexity, flexibility, smoothness, characteristic scale length, and characteristic amplitude. We suggest that interpolation models should be able to capture more than just one flavour of simplicity and complexity. We describe Bayesian models in which the interpolant has a smoothness that varies spatially. We emphasize the importance, in practical implementation, of the concept of conditional convexity when designing models with many hyperparameters. We apply the new models to the interpolation of neuronal spike data and demonstrate a substantial improvement in generalization error.
 --B
 Introduction
 In this paper our philosophy of generalization is as follows: the best generalization
 will be achieved by a Bayesian model that is well-matched to the problem
 and that is accurately implemented. The aim of obtaining the best generalization
-is thus subsumed under the aim of searching for good models. In this
-paper we expand the space of interpolation models by introducing additional
+is thus subsumed under the aim of searching for good models. In this paper we expand the space of interpolation models by introducing additional
 hyperparameters, and demonstrate that the generalization performance on a
 real problem is substantially improved.
 A traditional linear interpolation model 'H 1 ' is characterized by the choice
 of the regularizer R, or prior probability distribution, that is applied to the
 interpolant; and the choice of noise model N . The choice of basis functions A
-used to represent the interpolant may also be important if only a small number
+used to represent the
+interpolant may also be important if only a small number
 of basis functions are used. Typically the regularizer is a quadratic functional
-of the interpolant and has a single associated regularization constant ff, and the
+of the
+interpolant and has a single associated regularization constant ff, and the
 noise model is also quadratic and has a single parameter fi. For example, the
 splines prior for the function y(x) (Kimeldorf and Wahba 1970) is: 1
 log
@@ -52,7 +53,7 @@ An example of a function from a real system is shown in figure 1; this is the ac
 potential of a neuron deduced from recordings of 40 distinct events (Lewicki
 1994). The graph was created by fitting a simple spline model (with
 the data. This function has one 'spiky' region with large characteristic amplitude
-and short spatial scale. Elsewhere the true function is smooth. However the
+and short spatial scale. Elsewhere This function is smooth. However the
 fitted function shown in figure 1, controlled by only one regularization constant
 ff, overfits the noise on the right, having a rough appearance where it should
 plausibly be smooth. The value of ff appropriate for fitting the spiky region is
@@ -80,14 +81,17 @@ difficulty with discontinuities: if the value of ff=fi is set high, then edges a
 blurred out in the model; if ff=fi is lowered the edge is captured, but ringing
 appears near the edge, and noise is overfitted everywhere. Blake and Zisserman
 introduce additional hyperparameters defining the locations of edges. The
-models they use are computationally non-convex, so that finding good representatives
-of the posterior distribution is challenging. They use 'graduated
+models Blake and Zisserman
+ use are computationally non-convex, so that finding good representatives
+of the posterior distribution is challenging. Blake and Zisserman
+ use 'graduated
 non-convexity' techniques to find good solutions. By contrast we attempt to
 create new hierarchical models that are, for practical purposes, convex.
 Tractable hierarchical modelling: Convexity
 Bayesian statistical inference is often implemented either by Gaussian approximations
 about modes of distributions, or by Markov Chain Monte Carlo methods
-(Smith 1991). Both methods clearly have a better chance of success if the
+(Smith 1991). Markov Chain Monte Carlo methods
+(Smith 1991) clearly have a better chance of success if the
 posterior probability distribution over the model parameters and hyperparameters
 is not dominated by multiple distinct optima. If we know that most of the
 probability mass is in just one 'hump', then we know that we need not engage in
@@ -105,7 +109,7 @@ It is hard, however, to make interesting hierarchical models such that all
 conditional and marginal distributions are log convex. We introduce a weaker
 criterion:
 model is conditionally convex if its variables can be divided
-into groups such that, for every group, their distribution conditioned on any
+into groups such that, for every group, every group distribution conditioned on any
 values for the other variables is log convex.
 An example of a conditionally convex model is the traditional interpolation
 model with three groups of variables: D (data), w (parameters), and ff (one
@@ -116,11 +120,11 @@ over ff (it is a Gamma distribution).
 That a model is conditionally convex does not guarantee that marginal distributions
 of all variables are unimodal. For example the traditional model's
 posterior marginals P (wjD) and P (ffjD) are not necessarily unimodal; but good
-unimodal approximations to them can often be made (MacKay 1996). So we
+unimodal approximations to P (wjD) and P (ffjD) can often be made (MacKay 1996). So we
 conjecture that conditional convexity is a desirable property for a tractable
 model.
 We now generalize the spline model of equation (1) to a model with multiple
-hyperparameters that is conditionally convex, and demonstrate it on the neural
+hyperparameters that is conditionally convex, and demonstrate the spline model of equation (1) on the neural
 spike data. We then discuss general principles for hierarchical modelling with
 multiple hyperparameters.
 3 A new interpolation model
@@ -133,10 +137,11 @@ and the constant of equation (4) is a function of ff(x; u) which becomes importa
 when ff(x; u) is inferred. The exponentiated quantity has the form
 of a linear interpolant using basis functions / h (x). In the special case
 we obtain the traditional single alpha model. This representation
-is chosen because (1) it embodies our prior belief that ff(x) should be a
+is chosen because (1) This representation
+ embodies our prior belief that ff(x) should be a
 smooth function of x, and (2) the model is conditionally convex (a partial proof
 is given in section 4).
-When implementing this model we optimize the hyperparameters u and fi
+When implementing the model we optimize the hyperparameters u and fi
 by maximizing the marginal likelihood or 'evidence',
 Z
 where k is the dimensionality of our representation y of y(x). Some authors view
@@ -144,7 +149,8 @@ this 'empirical Bayes' approach as controversial and inaccurate (Wolpert 1993),
 but it is widely used under various names such as 'ML-II', and is closely related
 to 'generalized maximum likelihood' (Gu and Wahba 1991). The ideal Bayesian
 method would put a proper prior on the hyperparameters and marginalize over
-them, but optimization of the hyperparameters is computationally more convenient
+
+, but optimization of the hyperparameters is computationally more convenient
 and often gives predictive distributions that are indistinguishable (MacKay
 1996).
 We use a discrete representation of y(x) and ff(x) on a finely spaced grid,
@@ -185,7 +191,7 @@ the most probable interpolant and the predictive error bars (dotted lines) are
 one-standard-deviation error bars. Second row: the inferred ff(x) on a log
 scale (contrast with the values of 5.9 \Theta10 \Gamma7 and 2:0 \Theta 10 \Gamma6 inferred for the
 traditional models). The third row shows the nine basis functions / used to
-represent ff(x). The bottom row shows the errors between the interpolant and
+represent ff(x). The third row shows the errors between the interpolant and
 the original function to which the noise was added to make the artificial data.
 The predictive error bars are also shown. The top and bottom graphs should
 be compared with those of figure 2. 9
@@ -211,20 +217,21 @@ level. In order for the spiky part of the data to be fitted, ff has to be set to
 a small value, and the most probable interpolant is able in both models to go
 very close to all the data points. There is considerable overfitting everywhere,
 and the predictive error bars are large everywhere.
-We then interpolated the data with two new models defined by equations (4)
+We then interpolated an artificial data set by adding Gaussian noise of standard deviation
+1000 to the function depicted in figure 1 with two new models defined by equations (4)
 and (5), with 2. We set the basis functions / to the hump-shaped
-functions shown in figure 3. These functions define a scale length on which the
+functions shown in figure 3. the hump-shaped
+functions shown in figure 3 define a scale length on which the
 smoothness is permitted to vary. This scale length was optimized roughly by
-maximizing the evidence. The new models had nine hyperparameters u. These
-hyperparameters were set by maximizing the evidence using conjugate gradi-
-ents. Because the new models are conditionally convex, we had hoped that the
+maximizing the evidence. both models had nine hyperparameters u. nine hyperparameters were set by maximizing the evidence using conjugate gradi-
+ents. Because both models are conditionally convex, we had hoped that the
 maximization of the evidence would lead to a unique optimum uMP . However,
 there were multiple optima in the evidence as a function of the hyperparam-
 eters; but these did not cause insurmountable problems. We found different
 optima by using different initial conditions u for the optimization. The best
 evidence optima were found by initializing u in a way that corresponded to our
 prior knowledge that neuronal spike functions start and end with a smooth re-
-gion; we set u initially to fu h 0g. This
+gion; our set u initially to fu h 0g. This
 prior knowledge was not formulated into an informative prior over u during
 the optimization, though doing so would probably be a good idea for practical
 purposes.
@@ -243,7 +250,7 @@ the extra hyperparameters in H 2 , c.f. MacKay (1992). The root mean square
 errors between the interpolant and the original function to which the noise was
 added to make the artificial data are given in table 1, and the errors themselves
 are displayed at bottoms of figures 2-3.
-By both the evidence value and the RMS error values, the new models are
+By both the evidence value and the RMS error values, both models are
 significantly superior to the traditional model. Table 1 also displays the value of
 the 'effective number of well-determined parameters' (Gull 1989; MacKay 1992),
 fl, which, when the hyperparameters are optimized, is given by:
@@ -265,9 +272,9 @@ of the 95 errors in either case exceed 2.5 standard deviations. We therefore
 see no significant evidence for the observed errors to be incompatible with the
 predictive error bars.
 3.3 Discussion
-These new models offer two practical benefits. First, while the new models
+both models offer two practical benefits. First, while the new models
 still fit the spiky region well (indeed the errors are slightly reduced there),
-they give a smoother interpolant elsewhere. This reduction in overfitting allows
+both models give a smoother interpolant elsewhere. This reduction in overfitting allows
 more information to be extracted from any given quantity of experimental data;
 neuronal spikes will be distinguishable given fewer samples. To quantify the
 potential savings in data we fitted the four models to fake data equivalent to
@@ -284,12 +291,15 @@ by decreasing the actual noise level in the artificial data). The figures and
 tables shown thus far correspond to the case of one observation, In
 figure 4 we show the RMS error of each model as a function of the number of
 data points, averaged over four runs with different artificial noise. To achieve
-the same performance (RMS error) as the new models, the traditional models
-require about three times as much data.
-Second, the new models have greater values of the evidence. This does not
-only mean that they are more probable models (assuming that the omitted
+the same performance (RMS error) as the new models, These new modelsrequire about three times as much data.
+Second, both models have greater values of the evidence. This does not
+only mean that both models are more probable models (assuming that the omitted
 Occam factors for the hyperparameters are smaller than these evidence differ-
-ences). It also means that model comparison questions can be answered in a
+ences). both models are more probable models (assuming that the omitted
+Occam factors for the hyperparameters are smaller than these evidence differ-
+ences) are more probable models (assuming that the omitted
+Occam factors for the hyperparameters are smaller than these evidence differ-
+ences) also means that model comparison questions can be answered in a
 more reliable way. For example, if we wish to ask 'are two distinct spike types
 present in several data sets or just one?' then we must compare two hypotheses:
 HB , which explains the data in terms of two spike functions, and HA , which
@@ -297,10 +307,10 @@ just uses one function. In such model comparisons, the 'Occam factors' that
 penalize the extra parameters of HB are important. If we used the traditional
 interpolation model, we would obtain Occam factors about e 20 bigger than those
 obtained using the new interpolation model. Broad priors bias model comparisons
-toward simpler models. The new interpolation model, when optimized,
+toward simpler models. the new interpolation model, when optimized,
 produces a prior in which the effective number of degrees of freedom of the
 interpolant is reduced so that the prior is less broad.
-Of course, inference is open-ended, and we expect that these models will in
+Of course, inference is open-ended, and we expect that both models will in
 turn be superceded by even better ones. Close inspection of figure 3 reveals
 that the smoothness assumption on the regularizer may be imperfect - we
 know from prior experience that the true function's spikiness is confined to a
@@ -310,7 +320,7 @@ smoothly. Future models might include a continuum of alternative values of p
 (non-integer values of p can be implemented in a Fourier representation). It
 might also make sense for the characteristic length scale of the basis functions
 / with which ff(x) is represented to be shorter where ff is small.
-The advantages conferred by the new models are not accompanied by a significant
+The advantages conferred by both models are not accompanied by a significant
 increase in computational cost. The optimization of the hyperparameters
 requires that the Hessian matrix be inverted a small number of times.
 Other approaches to the implementation of models with multiple hyperparameters
@@ -348,23 +358,28 @@ with hyperparameters u h 2 (\Gamma1; 1), so that
 exp
 \Gamma2
 exp
-These models have very different capabilities.
-The sum model implements the paradigm of starting from a flexible distri-
-bution, then adding in extra terms ff c C c so as to kill degrees of freedom. This
-model has no way of introducing selective flexibility. If one hyperparameter ff c
+both models have very different capabilities.
+Covariance Sum Model
+ implements the paradigm of starting from a flexible distri-
+bution, then adding in extra terms ff c C c so as to kill degrees of freedom. Covariance Sum Model
+ has no way of introducing selective flexibility. If one hyperparameter ff c
 is large, there is no way that other hyperparameters can be set to undo the
 stiffness introduced.
-The covariance sum model uses an alternative paradigm, starting from a stiff
-distribution, and introducing lacunae of flexibility into it.
-The important difference between these two paradigms is that whereas the
-sum model is conditionally convex, the covariance sum model is not; it is possible
+Covariance Sum Model
+ uses an alternative paradigm, starting from a stiff
+distribution, and introducing lacunae of flexibility into Covariance Sum Model
+.
+The important difference between these two paradigms is that whereas Covariance Sum Model
+ is conditionally convex, Covariance Sum Model
+ is not; it is possible
 for there to be multiple optima over the hyperparameters even in the limit of
 perfect data. This will be demonstrated and explained subsequently.
 The exponential sum model, of which the interpolation model of section 3 is
 an example, is intended to combine the best of both worlds. Consider the case
 where the matrix elements / ch are non-negative. As one hyperparameter u h is
-increased, it introduces selective stiffness, and as it is decreased, it introduces
-selective flexibility. The model, being a reparameterization of the sum model, is
+increased, u h introduces selective stiffness, and as u h is decreased, u h introduces
+selective flexibility. The model, being a reparameterization of Covariance Sum Model
+, is
 still conditionally convex (as long as / does not have pathological properties).
 4.2 Convexity of the sum model
 We give a partial proof of conditional convexity for the sum model. It is
@@ -415,28 +430,27 @@ This model has the same number of hyperparameters as the previous two models
 but uses them differently. Figure 5c shows the log probability log P (wjfug) as
 a function of u a and u b . The function is convex. Two alternative flavours of
 flexibility are embodied, but (just) do not compete with each other destructively.
-The sum model starts from flexibility and adds in constraints of stiffness that
+This model starts from flexibility and adds in constraints of stiffness that
 kill degrees of freedom in w. The covariance sum representation starts from stiffness
-and adds in selective flexibility to create required degrees of freedom. The
-covariance sum model is not convex because different forms of flexibility compete
+and adds in selective flexibility to create required degrees of freedom. This model is not convex because different forms of flexibility compete
 to account for the data. There is a struggle for existence, because any potential
 piece of flexibility is penalized by Occam factors in the det M term, encouraging
 it to stay switched off. In contrast, alternative ways of introducing stiffness (as
 in the sum model and the exponential sum model) do not compete. If two sorts
-of stiffness are compatible with the data, they can both be switched on without
-incurring any penalty. This is why the sum model is convex. The exponential
-sum model, we conjecture, pushes flexibility to the limits of convexity. We
+of stiffness are compatible with the data, two sorts
+of stiffness are compatible with the data can both be switched on without
+incurring any penalty. This is why This model is convex. This model, we conjecture, pushes flexibility to the limits of convexity. We
 believe these ideas may be relevant to the design of computationally tractable
 Gaussian process models for non-linear regression (Williams and Rasmussen
 1996).
 4.4 How to represent a covariance matrix
 In this paper we have used interpolation of neural spike data as a test bed for
-the new models. We now discuss another task to which the general principles
+both models. we now discuss another task to which the general principles
 we have discussed may apply.
 Imagine that we wish to model correlations between k variables
 that are assumed to be Gaussian with a covariance matrix V that varies with
 other variables x. How should this varying covariance matrix V(x) be param-
-eterized? We assume that a representation V(U(x)) is to be used. We would
+eterized? we assume that a representation V(U(x)) is to be used. we would
 like the parameterization V(U) to satisfy the following desiderata.
 1. Any setting of the parameters U should produce a valid positive definite
 matrix V.
@@ -453,10 +467,9 @@ independent elements in the symmetric matrix V.
 is, given one or more vectors y, the conditional probability of U should
 be log convex.
 These desiderata rule out most obvious representations of V. The raw matrix
-V is not permitted because it violates desideratum 1. A triangular decomposition
-violates 4. An eigenvector / eigenvalue representation violates 2,3,5. The
-'variance component model' representation used for example in Gu and Wahba
-(1991) is a covariance sum representation and violates desiderata 5 and 6.
+V is not permitted because The raw matrix
+V violates desideratum 1. A triangular decomposition
+violates 4. An eigenvector / eigenvalue representation violates 2,3,5. An eigenvector / eigenvalue representation is a covariance sum representation and violates desiderata 5 and 6.
 The ideas of this paper motivate the following representation, which is conditionally
 convex. Let y be k dimensional, and let R k\Gamma1 be the unit spherical
 surface, with v being a unit vector in that space. As parameters we introduce
@@ -480,7 +493,7 @@ in these cases. Thus
 e (i) e T
 Z
 d
-that is, V has the same eigenvectors as U, and its eigenvalues are given by:
+that is, V has the same eigenvectors as U, and V eigenvalues are given by:
 Z
 d
 Then the mapping from U to V is one to one if the above mapping from the
@@ -490,20 +503,20 @@ then the mapping is one to one.
 @- U
 Z
 d
-This Jacobian is a sum of outer products of positive vectors z given by z
-so it either defines a positive semi-definite or a positive definite matrix. The
+the Jacobian is a sum of outer products of positive vectors z given by z
+so the Jacobian either defines a positive semi-definite or a positive definite matrix. The
 matrix can only be positive semi-definite if there is some direction h such that
 having non-zero measure under the integral over R k\Gamma1 .
 Because the integral is over all of R k\Gamma1 , there is no such vector h. Thus the
 matrix is full rank, and the mapping from U to V is one to one.
-The only problem with this representation is that it involves a high-dimensional
+The only problem with this representation is that this representation involves a high-dimensional
 integral. We propose for practical purposes the following approximation:
 "C
 exp(v T
 c
 where fv c g C
 are fixed unit vectors lying in R k\Gamma1 , selected either at random
-or systematically. This representation is conditionally convex and is able to
+or systematically. this representation is conditionally convex and is able to
 in the limit C !1.
 Conclusions
 This work builds on a data modelling philosophy previously illustrated by
@@ -511,7 +524,7 @@ work on the 'Automatic Relevance Determination' model for neural networks
 (MacKay 1994; Neal 1996): use a huge, flexible model with an essentially infinite
 number of parameters; and control the complexity of the model with
 sophisticated regularizers. Models with large numbers of hyperparameters can,
-if carefully designed, be practically implemented. The hyperparameters reduce
+if carefully designed, be practically implemented. hyperparameters reduce
 the effective number of degrees of freedom of the model in a manner appropriate
 to the the properties of the data, leading to substantial improvements in
 generalization error.
@@ -520,7 +533,7 @@ Acknowledgements
 
 D.J.C.M. thanks the Isaac Newton Institute and T. Matsumoto, Waseda Uni-
 versity, for hospitality, and Radford Neal, Mike Lewicki, David Mumford and
-Brian Ripley for helpful discussions. R.T. thanks T. Matsumoto for his support.
+Brian Ripley for helpful discussions. R.T. thanks T. Matsumoto for T. Matsumoto support.
 We also thank the referees for helpful feedback.
 
 

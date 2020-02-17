@@ -1,7 +1,7 @@
 --T
 Parallel Cluster Identification for Multidimensional Lattices.
 --A
-AbstractThe cluster identification problem is a variant of connected component labeling that arises in cluster algorithms for spin models in statistical physics. We present a multidimensional version of Belkhale and Banerjee's Quad algorithm for connected component labeling on distributed memory parallel computers. Our extension abstracts away extraneous spatial connectivity information in more than two dimensions, simplifying implementation for higher dimensionality. We identify two types of locality present in cluster configurations, and present optimizations to exploit locality for better performance. Performance results from 2D, 3D, and 4D Ising model simulations with Swendson-Wang dynamics show that the optimizations improve performance by 20-80 percent.
+AbstractThe cluster identification problem is a variant of connected component labeling that arises in cluster algorithms for spin models in statistical physics. We present a multidimensional version of Belkhale and Banerjee's Quad algorithm for connected component labeling on distributed memory parallel computers. We extension abstracts away extraneous spatial connectivity information in more than two dimensions, simplifying implementation for higher dimensionality. We identify two types of locality present in cluster configurations, and present optimizations to exploit locality for better performance. Performance results from 2D, 3D, and 4D Ising model simulations with Swendson-Wang dynamics show that the optimizations improve performance by 20-80 percent.
 --B
 Introduction
 The cluster identification problem is a variant of connected component labeling that arises
@@ -10,7 +10,8 @@ graph to be labeled is a d-dimensional hypercubic lattice of variables called sp
 (bonds) that may exist between nearest-neighbor spins. A cluster of spins is a set of spins
 defined by the transitive closure of the relation "is a bond between". Cluster algorithms
 require the lattice to be labeled such that any two spins have the same label if and only if
-they belong to the same cluster.
+Cluster algorithms
+ belong to the same cluster.
 Since the cluster identification step is often the bottleneck in cluster spin model applica-
 tions, it is a candidate for parallelization. However, implementation on a distributed memory
 parallel computer is problematic since clusters may span the entire spatial domain, requiring
@@ -21,15 +22,14 @@ We have developed a multidimensional extension of Belkhale and Banerjee's Quad a
 [1, 2], a 2D connected component labeling algorithm developed for VLSI circuit
 extraction on a hypercube multiprocessor. This paper presents performance results from
 applying the algorithm to Ising model simulations with Swendson-Wang dynamics [3] in
-2D, 3D, and 4D. Our extension abstracts away extraneous spatial information so that distributed
+2D, 3D, and 4D. We extension abstracts away extraneous spatial information so that distributed
 data structures are managed in a dimension-independent manner. This strategy
-considerably simplifies implementation in more than two dimensions. To our knowledge,
+considerably simplifies implementation in more than two dimensions. To We knowledge,
 this implementation is the first parallelization of cluster identification in 4D.
-To improve performance, we identify two types of locality present in Swendson-Wang
-cluster configurations and present optimizations to exploit each type of locality. The optimizations
-work with an abstract representation of the spatial connectivity information, so
-they are no more complicated to implement in d ? 2 dimensions than in 2D. Performance
-results show that the optimizations effectively exploit cluster locality, and can improve performance
+To improve performance, We identify two types of locality present in Swendson-Wang
+cluster configurations and present optimizations to exploit each type of locality. present optimizationswork with an abstract representation of the spatial connectivity information, so
+present optimizations are no more complicated to implement in d ? 2 dimensions than in 2D. Performance
+results show that present optimizations effectively exploit cluster locality, and can improve performance
 by 20-80% for the multidimensional Quad algorithm.
 The remainder of his paper proceeds as follows. Section 2 discusses previous approaches
 to the cluster identification problem on parallel computers. Section 3 describes the Ising
@@ -42,7 +42,7 @@ Several algorithms for 2D cluster identification on distributed memory MIMD comp
 have been presented in recent years.
 Flanigan and Tamayo present a relaxation algorithm for a block domain decomposition
 [4]. In this method, neighboring processors compare cluster labels and iterate until a
-steady state is reached. Baillie and Coddington consider a similar approach in their self-
+steady state is reached. Baillie and Coddington consider a similar approach in Baillie and Coddington self-
 labeling algorithm [5]. Both relaxation methods demonstrate reasonable scaleup for 2D
 problems, but for critical cluster configurations the number of relaxation iterations grows
 as the distance between the furthest two processors (2
@@ -53,8 +53,10 @@ However, the distance between two processors can be as large as P , which increa
 number of stages to reach a steady state. Multigrid methods to accelerate the relaxation
 algorithm for large clusters have been presented for SIMD architectures [8, 9].
 Host-node algorithms involve communicating global connectivity information to a single
-processor. This host processor labels the global graph and then communicates the results to
-other processors. Host-node algorithms [10, 11, 5] do not scale to more than a few processors
+processor. a single
+processor labels the global graph and then communicates the results to
+other processors. a single
+processor algorithms [10, 11, 5] do not scale to more than a few processors
 since the serialized host process becomes a bottleneck.
 Hierarchical methods for connected component labeling are characterized by a spatial
 domain decomposition and propagation of global information in log P stages. Our approach
@@ -65,8 +67,10 @@ hierarchical algorithm for the Ising model, but do not achieve good parallel eff
 Mino presents a hierarchical labeling algorithm for vector architectures [14].
 There has been comparably little work evaluating MIMD cluster identification algorithms
 in more than two dimensions. Bauernfeind et al. consider both relaxation and a host-
-node approaches to the 3D problem [15]. They introduce the channel reduction and net list
-optimizations to reduce communication and computation requirements in 3D. They conclude
+node approaches to the 3D problem [15]. a single
+processor introduce the channel reduction and net list
+optimizations to reduce communication and computation requirements in 3D. a single
+processor conclude
 that the host-node approach is inappropriate for 3D due to increased memory requirements
 on the host node.
 Fink et al. present 2D and 3D results from a preliminary implementation of the multidimensional
@@ -87,13 +91,14 @@ aspects, in particular phase transitions, of such theories [19].
 In d dimensions, the Ising model consists of a d-dimensional lattice of variables (called
 spins) that take discrete values of \Sigma1. Neighboring spins are coupled, with a coupling
 strength - which is inversely proportional to the temperature T .
-Monte Carlo simulations of the Ising model generate a sequence of spin configurations.
+Monte Carlo simulations of The Ising model generate a sequence of spin configurations.
 In traditional local-update Monte Carlo Ising model simulations, a spin's value may or may
-not change depending on the values of its neighbors and a random variable [5]. Since each
+not change depending on the values of a spin's value neighbors and a random variable [5]. Since each
 spin update depends solely on local information, these algorithms map naturally onto a
 distributed memory architecture.
 The interesting physics arises from spin configurations in the critical region, where phase
-transitions occur. In these configurations, neighboring spins form large clusters in which all
+transitions occur. In spin configurations in the critical region, where phase
+transitions occur, neighboring spins form large clusters in which all
 spins have the same value. Unfortunately, if - is the length over which spins are correlated
 (the correlation length), then the number of iterations required to reach a statistically independent
 configuration grows as - z . For local update schemes the value z (the dynamical
@@ -103,7 +108,8 @@ model [20].
 In order to avoid critical slowing-down, Swendson and Wang's cluster algorithm updates
 whole regions of spins simultaneously [3]. This non-local update scheme generates
 independent configurations in fewer iterations that the conventional algorithms. The cluster
-algorithm has a much smaller value of z, often approaching 0. Therefore, it eliminates critical
+algorithm has a much smaller value of z, often approaching 0. Therefore, The cluster
+algorithm eliminates critical
 slowing-down completely. The Swendson-Wang cluster algorithm proceeds as follows:
 1. Compute bonds between spins. A bond exists with probability
 adjacent spins with the same value.
@@ -129,21 +135,24 @@ Quad algorithm as applied to a 2D lattice of spins is presented here. For a more
 description of the Quad algorithm, see [1].
 The cluster labeling algorithm consists of a local labeling phase and a global combining
 phase. First, the global 2D lattice is partitioned blockwise across the processor array. Each
-processor labels the clusters in its local partition of the plane with some sequential labeling
-algorithm. The Quad algorithm merges the local labels across processors to assign the correct
+processor labels the clusters in Each
+processor local partition of the plane with some sequential labeling
+algorithm. some sequential labeling
+algorithm merges the local labels across processors to assign the correct
 global label to each spin site on each processor.
-On P processors, the Quad algorithm takes log P stages, during which each processor
+On P processors, some sequential labeling
+algorithm takes log P stages, during which each processor
 determines the correct global labels for spins in its partition of the plane. Before each stage,
 each processor has knowledge of a rectangular information region that spans an ever-growing
 section of the plane. Intuitively, processor Q's information region represents the portion of
 the global domain from which Q has already collected the information necessary to label Q's
 local spins. The data associated with an information region consists of
 ffl A list of labels of clusters that touch at least one border of the information region.
-These clusters are called CCOMP sets.
+clusters that touch at least one border of the information region are called CCOMP sets.
 ffl For each of the four borders of the information region, a list representing the off-
 processor bonds that touch the border.
 Each bond in a border list connects a spin site in the current information region with a
-spin site that is outside the region. Each bond is associated with the CCOMP set containing
+spin site that is outside the information region. Each bond is associated with the CCOMP set containing
 the local spin site. The border list data structure is a list of offsets into the list of CCOMP
 set labels, where each offset represents one bond on the border. This indirect representation
 facilitates Union-Find cluster mergers, which are described below (see figure 1).
@@ -160,17 +169,17 @@ Figure
 
 1: Fields of an information region data structure.
 The initial information region for a processor consists of the CCOMP set labels and
-border lists for its local partition of the plane. At each stage, each processor Q 1 exchanges
-messages with a processor Q 2 such that Q 1 and Q 2 's information regions are adjacent. The
-messages contain the CCOMP set labels and border lists of the current information region.
+border lists for The initial information region for a processor local partition of the plane. At each stage, each processor Q 1 exchanges
+messages with a processor Q 2 such that Q 1 and Q 2 's information regions are adjacent. each stage, each processor Q 1 exchanges
+messages with a processor Q 2 such that Q 1 and Q 2 's information regions are adjacent contain the CCOMP set labels and border lists of the current information region.
 Processor merges the CCOMP sets on the common border of the two information regions
 using a Union-Find data structure [21]. The other border lists of the two information regions
 are concatenated to form the information region for processor Q 1 in the next stage. In this
 manner, the size of a processor's information region doubles at each stage so after log P
-stages each processor's information region spans the entire plane. Figure 2 illustrates how
+stages each processor's information region spans the plane. Figure 2 illustrates how
 the information region grows to span the entire global domain.
-For a planar topology, a processor's global combining is complete when its information
-region spans the entire plane. If the global domain has a toroidal topology, clusters on
+For a planar topology, a processor's global combining is complete when a processor's global combining information
+region spans the plane. If the global domain has a toroidal topology, clusters on
 opposite borders of the last information region are merged in a post-processing step.
 current information region
 stage 1 stage 2
@@ -181,18 +190,21 @@ done
 
 Figure
 
-2: Information regions in each stage of the Quad algorithm. There are sixteen
+2: Information regions in each stage of some sequential labeling
+algorithm. There are sixteen
 processors. At each stage, the information region of the processor in the top left corner is
-the current information region. The partner processor and its information region are also
+the current information region. The partner processor and the current information region information region are also
 shown. In each stage, the two information regions are merged, forming the information
 region for the subsequent stage.
-4.2 Extending the Quad Algorithm to Higher Dimensions
-A straightforward extension of the Quad algorithm to more than two dimensions results in
+4.2 Extending some sequential labeling
+algorithm to Higher Dimensions
+A straightforward extension of some sequential labeling
+algorithm to more than two dimensions results in
 fairly complex multidimensional information region data structures. To simplify implemen-
 tation, we present a multidimensional extension using an abstract dimension-independent
 information region representation.
 The divide-and-conquer Quad algorithm strategy can be naturally extended to d ? 2
-dimensions by partitioning the global domain into d-dimensional blocks, and assigning them
+dimensions by partitioning the global domain into d-dimensional blocks, and assigning the global domain
 one to a processor. Each processor performs a sequential labeling method on its local domain,
 and then the domains are translated into information regions for the global combining step.
 An information region represents a d-dimensional subset of the d-dimensional global domain.
@@ -225,7 +237,7 @@ the sets on a border in the same order, without regard to the orientation of the
 space.
 This ordering linearizes (d \Gamma 1)-dimensional borders, resulting in an abstract information
 region whose border representations are independent of the problem dimensionality. When
-two of these information regions are merged, the order of bonds in the new border lists is
+two of These d-dimensional information regions are merged, the order of bonds in the new border lists is
 consistent on different processors. Therefore, the logic of merging clusters on a border of
 two information regions does not change for multidimensional lattices. No sparse hyperplane
 data structures are required, and a 2D cluster implementation can be extended to 3D and
@@ -295,19 +307,22 @@ ffl Type 2: Adjacent lattice points are likely to belong the same cluster.
 Subcritical configurations exhibit Type 1 locality, and supercritical configurations exhibit
 Type 2 locality. Configurations at criticality show some aspects of both types.
 Belkhale and Banerjee exploit Type 1 locality in two dimensions with the Overlap Quad
-algorithm [1]. In this algorithm, information regions overlap and only clusters that span the
-overlap region must be merged. Intuitively, small clusters are eliminated in early stages of the
-algorithm, leaving only large clusters to merge in later stages. The Overlap Quad algorithm
-requires that the positions of bonds within borders be maintained, precluding use of an
+algorithm [1]. In some sequential labeling
+algorithm, information regions overlap and only clusters that span the information region must be merged. Intuitively, small clusters are eliminated in early stages of some sequential labeling
+algorithm, leaving only large clusters to merge in later stages. some sequential labeling
+algorithmrequires that the positions of bonds within borders be maintained, precluding use of an
 abstract dimension-independent information region data structure. Instead, we present two
-simpler optimizations, Bubble Elimination and Border Compression. These optimizations
-work with the abstract border representations, so they are no more complicated to implement
+simpler optimizations, Bubble Elimination and Border Compression. two
+simpler optimizations, Bubble Elimination and Border Compressionwork with the abstract border representations, so two
+simpler optimizations, Bubble Elimination and Border Compression are no more complicated to implement
 in d ? 2 dimensions than in 2D.
 5.1 Bubble Elimination
 Bubble Elimination exploits Type 1 locality by eliminating small clusters in a preprocessing
-phase to the Quad algorithm. A local cluster that touches only one border of the information
+phase to some sequential labeling
+algorithm. A local cluster that touches only one border of the information
 region is called a bubble. Immediately after initializing its information region, each processor
-identifies the bubbles along each border. This information is exchanged with each neighbor,
+identifies the bubbles along each border. A local cluster that touches only one border of the information
+region is exchanged with each neighbor,
 and clusters marked as bubbles on both sides of a border are merged and deleted from the
 borders. Thus, small clusters are eliminated from the information regions before performing
 the basic Quad algorithm. During the course of the Quad algorithm, communication and
@@ -322,10 +337,11 @@ Border Compression exploits Type 2 locality by changing the representation of th
 lists. We compress the representation of each list using run-length encoding [22]. That is,
 a border list of set labels is replaced by a sequence of pairs ((l
 where s(l i ) is the number of times value l i appears in succession in a border list.
-If Type 2 locality is prevalent, border compression aids performance in two ways: it
+If Type 2 locality is prevalent, border compression aids performance in two ways: Type 2 locality
 reduces the length of messages, and we can exploit the compressed representation to reduce
 the number of Union-Find operations that are performed. Before two compressed borders are
-merged, they are decompressed to form two corresponding lists of cluster labels to combine.
+merged, two compressed borders are
+merged are decompressed to form two corresponding lists of cluster labels to combine.
 From the compressed representation, it is simple to determine when two clusters are merged
 together several times in succession. During decompression, it is simple to filter redundant
 mergers out of the lists, reducing the number of Union-Find mergers to be performed. Thus,
@@ -345,24 +361,27 @@ We have implemented the cluster algorithm and Ising model simulation in 2D, 3D, 
 bubble elimination, only Manhattan neighbors are considered. The local labeling method is
 Breadth-First Search [21].
 According to the Swendson-Wang algorithm, clusters must be flipped randomly after
-the cluster identification step. For a spatially decomposed parallel implementation, it is
+the cluster identification step. For a spatially decomposed parallel implementation, The local labeling method is
 necessary that all processors obtain consistent pseudorandom numbers when generating the
-new spins for clusters that span more than one processor. In our implementation, we generate
+new spins for clusters that span more than one processor. In our implementation, our generate
 the new random spins for each local cluster prior to global cluster merging, and store the
 new spin as the high-order bit in the cluster label. Thus, after cluster merging, all spins in
 a cluster are guaranteed to be consistent.
-To simplify implementation in more than 2 dimensions, we use the LPARX programming
+To simplify implementation in more than 2 dimensions, our use the LPARX programming
 library, version 1.1 [23]. LPARX manages data distribution and communication between
 Cartesian lattices, and greatly simplifies the sections of the code that manages the regular
 spin lattice. The kernel of the cluster algorithm is written in a message-passing style using the
 message-passing layer of LPARX[24], a generic message-passing system resembling the
-Message Passing Interface[25]. Since the cluster algorithm is largely dimension-independent,
+Message Passing Interface[25]. Since some sequential labeling
+algorithm is largely dimension-independent,
 the message-passing code is almost identical for each problem dimensionality. In fact, the
 same code generates the 2D,3D, and 4D versions; compile-time macros determine the problem
 dimensionality.
-The code was developed and debugged on a Sun workstation using LPARX mechanisms
+the
+same code was developed and debugged on a Sun workstation using LPARX mechanisms
 to simulate parallel processes and message-passing. All performance results were obtained
-from runs on an Intel Paragon under OSF/1 R1.2, with 32MB/node. The code was compiled
+from runs on an Intel Paragon under OSF/1 R1.2, with 32MB/node. the
+same code was compiled
 with gcc v.2.5.7 with optimization level 2.
 6.2 Performance
 The total cluster identification time consists of a local stage, to perform local labeling with
@@ -375,10 +394,9 @@ at varying values of -. For the problem sizes shown, the critical region occurs 
 in 2D, - c - 0:111 in 3D, and - c - 0:08 in 4D.
 Since the surface area-to-volume ratio is larger in 3D and 4D than in 2D, the optimizations
 are more important for these problems. As expected, figures 5 and 6 show that bubble
-elimination is effective in the subcritical region, and border compression is effective in the
-supercritical region. In the critical region, the two optimizations together are more effective
+elimination is effective in the subcritical region, and border compression is effective in the subcritical region. In the critical region, the two optimizations together are more effective
 than either optimization alone. Presumably this is due to the "swiss cheese" effect discussed
-in Section 5. Together the optimizations improve performance by 35-85%, depending on -,
+in Section 5. Together the two optimizations together improve performance by 35-85%, depending on -,
 in both 3D and 4D.
 Kappa1.03.05.07.0
 Global
@@ -390,14 +408,15 @@ Nodes, 68x68x34x34 Lattice
 Bubble Elimination
 Border Compression
 Both
-In 2D, the optimizations improve performance by 20-70%, but do not show the intuitive
+In 2D, the two optimizations together improve performance by 20-70%, but do not show the intuitive
 dependence on - as in 3D and 4D. We suspect this is due to cache effects. As - increases,
 the number of global clusters decreases. Thus, during cluster merging, more union-find
 data structure accesses will be cache hits at higher - since a greater portion of the union-
 find data structure fits in cache. In 2D, the surface area-to-volume ratio is low, so these
 union-find accesses become the dominant factor in the algorithm's performance. In 3D and
 4D, information region borders are much larger, overflowing the cache and causing many
-more cache misses traversing the borders of the information region. Since these borders are
+more cache misses traversing the borders of the information
+region. Since information region borders are
 larger than the union-find data structures, union-find data structure memory accesses are
 less critical.
 
@@ -409,10 +428,10 @@ time, so the benefit from optimizations is limited by Amdahl's law [26]. However
 4D, the global stage is the bottleneck in the computation, so the two optimizations have a
 significant impact on performance.
 Timing results are instructive, but depend on implementation details and machine ar-
-chitecture. To evaluate the optimizations with a more objective measure, Table 1 shows the
+chitecture. To evaluate the two optimizations with a more objective measure, Table 1 shows the
 total number of bytes transmitted in the course of the Quad algorithm. Since the amount
 of work to merge clusters is directly proportional to the length of messages, these numbers
-give a good indication of how successfully the optimizations exploit various cluster configu-
+give a good indication of how successfully the two optimizations exploit various cluster configu-
 rations. The communication volume reduction varies depending on the cluster configuration
 structure, ranging up to a factor of twenty to one.
 Since physicists are interested in using parallel processing capability to run larger problems
@@ -444,7 +463,7 @@ Opt. Elim. Compress
 
 Table
 
-1: Total number of bytes transmitted during global combining. All runs are with 64
+1: Total number of bytes transmitted during global combining. All runs here are with 64
 processors.
 algorithm, if the problem size and number of processors are scaled together asymptotically,
 the running time remains constant. Due to the global nature of the cluster identification
@@ -453,15 +472,16 @@ the Quad algorithm takes log P stages, the global work should increase by at lea
 further difficulty is that in d dimensions, the work in the last stage of the algorithm doubles
 every d stages.
 However, the bubble elimination and border compression optimizations vastly reduce the
-work in later stages of the algorithm. Thus, with the optimizations, we can get closer to
+work in later stages of the algorithm. Thus, with the two optimizations, we can get closer to
 achieving ideal scaled speedup. Table 2 shows these scaled speedup results for a fixed number
-of spins sites per processor for critical cluster configurations. The results show that as the
+of spins sites per processor for critical cluster configurations. these scaled speedup results for a fixed number
+of spins sites per processor for critical cluster configurations show that as the
 number of processors and problem size are scaled together, the performance benefit from the
-optimizations increases. In 2D, the scaled speedup with the optimizations is nearly ideal.
+optimizations increases. In 2D, the scaled speedup with the two optimizations is nearly ideal.
 The 3D and especially 4D versions do not scale as well, although figure 7 shows that better
 performance is achieved away from criticality.
-Although the optimizations were developed with the multidimensional Quad algorithm
-in mind, we conjecture that they would also be effective for other cluster identification
+Although the two optimizations were developed with the multidimensional Quad algorithm
+in mind, we conjecture that the two optimizations would also be effective for other cluster identification
 algorithms, such as relaxation methods [4, 6, 7]. The multidimensional Quad algorithm and
 optimizations may be also be appropriate for other variants of connected component labeling.
 One open question is whether the border compression and bubble elimination optimizations
@@ -482,7 +502,7 @@ connectivity information, distributed data structures are managed in a dimension
 manner. This technique considerably simplifies implementations in more than two dimen-
 sions. We introduced two optimizations to the basic algorithm that effectively exploit locality
 in Ising model cluster configurations. Depending on the structure of cluster configurations,
-the optimizations improve performance by 20-80% on the Intel Paragon. With the opti-
+two optimizations improve performance by 20-80% on the Intel Paragon. With the opti-
 mizations, large lattices can be labeled on many processors with good parallel efficiency.
 The optimizations are especially important in more than two dimensions, where the surface
 area-to-volume ratio is high.

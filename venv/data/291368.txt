@@ -1,44 +1,48 @@
 --T
 Theoretical Analysis for Communication-Induced Checkpointing Protocols with Rollback-Dependency Trackability.
 --A
-AbstractRollback-Dependency Trackability (RDT) is a property that states that all rollback dependencies between local checkpoints are on-line trackable by using a transitive dependency vector. In this paper, we address three fundamental issues in the design of communication-induced checkpointing protocols that ensure RDT. First, we prove that the following intuition commonly assumed in the literature is in fact false: If a protocol forces a checkpoint only at a stronger condition, then it must take, at most, as many forced checkpoints as a protocol based on a weaker condition. This result implies that the common approach of sharpening the checkpoint-inducing condition by piggybacking more control information on each message may not always yield a more efficient protocol. Next, we prove that there is no optimal on-line RDT protocol that takes fewer forced checkpoints than any other RDT protocol for all possible communication patterns. Finally, since comparing checkpoint-inducing conditions is not sufficient for comparing protocol performance, we present some formal techniques for comparing the performance of several existing RDT protocols.
+AbstractRollback-Dependency Trackability (RDT) is a property that states that all rollback dependencies between local checkpoints are on-line trackable by using a transitive dependency vector. In this paper, we address three fundamental issues in the design of communication-induced checkpointing protocols that ensure RDT. First, we prove that the following intuition commonly assumed in the literature is in fact false: If a protocol forces a checkpoint only at a stronger condition, then a protocol forces a checkpoint only at a stronger condition must take, at most, as many forced checkpoints as a protocol based on a weaker condition. This result implies that the common approach of sharpening the checkpoint-inducing condition by piggybacking more control information on each message may not always yield a more efficient protocol. Next, we prove that there is no optimal on-line RDT protocol that takes fewer forced checkpoints than any other RDT protocol for all possible communication patterns. Finally, since comparing checkpoint-inducing conditions is not sufficient for comparing protocol performance, we present some formal techniques for comparing the performance of several existing RDT protocols.
 --B
 Introduction
 A distributed computation consists of a finite set of processes connected by a communication
 network, that communicate and synchronize by exchanging messages through the network.
 A local checkpoint is a snapshot of the local state of a process, saved on nonvolatile storage
-to survive process failures. It can be reloaded into volatile memory in case of a failure
+to survive process failures. A local checkpoint can be reloaded into volatile memory in case of a failure
 to reduce the amount of lost work. When a process has to record such a local state, we
-say that this process takes a (local) checkpoint. With each distributed computation is
+say that a process takes a (local) checkpoint. With each distributed computation is
 thus associated a checkpoint and communication pattern, defined from the set of messages
 and local checkpoints. A global checkpoint [1] is a set of local checkpoints, one from each
 process, and a global checkpoint M is consistent if no message is sent after a checkpoint
 of M and received before another checkpoint of M [2]. The computation of consistent
 global checkpoints is an important work when one is interested in designing or implementing
-systems that have to ensure dependability of the applications they run.
+systems that have to ensure dependability of the applications consistent
+global checkpoints run.
 Many protocols have been proposed to select local checkpoints in order to form consistent
 global checkpoints (see the survey [3]). Remark that if local checkpoints are taken independently
-there is a risk that no consistent global checkpoint can ever be formed from them (this
+there is a risk that no consistent global checkpoint can ever be formed from local checkpoints are taken independently
+ (this
 is the well-known unbounded domino effect , that can occur during rollback-recovery [4]). To
 avoid the domino effect, a kind of coordination in the determination of local checkpoints is
 required. In [2, 5], the coordination is achieved at the price of synchronization by means of
 additional control messages. Another approach, namely, communication-induced checkpointing
 [6], achieves coordination by piggybacking control information on application messages.
 In that case, processes select local checkpoints independently (called basic checkpoints) and
-the protocol requires them to take additional local checkpoints (called forced checkpoints)
+the protocol requires select local checkpoints to take additional local checkpoints (called forced checkpoints)
 in order to ensure the progression of a consistent recovery line. Forced checkpoints are taken
 according to certain condition tested each time a message is received, on the basis of control
 information piggybacked on messages.
 Generally, the fact that two local checkpoints be not causally related is a necessary
-but not sufficient condition for them to belong to the same consistent global checkpoint
-[7]. They can have "hidden" dependencies that make them impossible to belong to the
-same consistent global checkpoint. These dependencies are characterized by the fact that
-they cannot be tracked with transitive dependency vectors. To solve this problem, Wang
+but not sufficient condition for two local checkpoints to belong to the same consistent global checkpoint
+[7]. two local checkpoints can have "hidden" dependencies that make two local checkpoints impossible to belong to the
+same consistent global checkpoint. " dependencies that make them impossible to belong to the
+same consistent global checkpoint are characterized by the fact that
+" dependencies that make them impossible to belong to the
+same consistent global checkpoint cannot be tracked with transitive dependency vectors. To solve this problem, Wang
 has defined the Rollback-Dependency Trackability (RDT) property [8]. A checkpoint and
 communication pattern satisfies this property if all dependencies between local checkpoints
 can be on-line trackable (i.e. trackable by a simple use of the transitive dependency vector).
-RDT has two noteworthy properties: (1) It ensures that any set of local checkpoints that are
-not pairwise causally related can be extended to form a consistent global checkpoint; (2) It
+RDT has two noteworthy properties: (1) RDT ensures that any set of local checkpoints that are
+not pairwise causally related can be extended to form a consistent global checkpoint; (2) RDT
 enjoys efficient calculations of the minimum and the maximum consistent global checkpoints
 that contain a given set of local checkpoints. As a consequence, the RDT property has
 applications in a large family of dependability problems such as: software error recovery [9],
@@ -46,46 +50,46 @@ deadlock recovery [10], mobile computing [11], distributed debugging [12], etc. 
 when combined with an appropriate message logging protocol [13], RDT allows to solve some
 dependability problems posed by nondeterministic computations as if these computations
 were piecewise deterministic [8].
-Since the RDT property has a wide range of applications on many problems, it becomes
+Since the RDT property has a wide range of applications on many problems, the RDT property becomes
 an important pragmatic issue to design an efficient communication-induced checkpointing
 protocols satisfying the RDT property. The number of forced checkpoints and the size
 of piggybacked control information are dominant factors on the price to be paid. Hence
 the main question in this context is: how to design an efficient RDT protocol with less
 number of forced checkpoints and smaller size of piggybacked control information? Is the
 common intuition in the literature [8, 14], "If a protocol forces a checkpoint at a weaker
-condition then it must force at least as many checkpoints as a protocol that does at a
+condition then a protocol must force at least as many checkpoints as a protocol that does at a
 stronger condition.", necessarily true (note that the stronger condition is a subset of the
 weaker condition)? Is there actually a tradeoff between the number of forced checkpoints
 and the size of piggybacked control information [15]? In this paper, we give a theoretical
 analysis for these problems. First, some counterexamples against the previous two statements
 are enumerated. We then demonstrate that there is no optimal on-line protocol in terms of
 the number of forced checkpoints. Since the common intuition is proved to be invalid, some
-interesting techniques of comparing useful protocols are also proposed. These techniques
-can be used to compare many existing RDT protocols in the literature. Remark that our
+interesting techniques of comparing useful protocols are also proposed. some
+interesting techniques of comparing useful protocolscan be used to compare many existing RDT protocols in the literature. Remark that our
 results are not only from a theoretical point of view, but also from a practical one, when
 considering the task of designing efficient protocols with the RDT property.
-This paper is structured in five main sections. Section 2 defines the computational model
+this paper is structured in five main sections. Section 2 defines the computational model
 and introduces definitions and elements of the Rollback-Dependency Trackability theory. In
 Section 3, we discuss some "impossibility " problems. Then several techniques of comparing
 useful protocols are addressed in the next section. Section 5 depicts a hierarchy graph for
 comparing a family of RDT protocols to marshal the discussions in the context. Finally, we
-conclude the paper in Section 6.
+conclude this paper in Section 6.
 2. Preliminaries
 2.1 Checkpoint and Communication Patterns
 A distributed computation consists of a finite set P of n processes fP that
 communicate and synchronize only by exchanging messages. We assume that each ordered
 pair of processes is connected by an asynchronous, reliable, directed logical channel whose
 transmission delays are unpredictable but finite. Each process runs on a processor; processors
-do not share a common memory; there is no bound for their relative speeds and they fail
+do not share a common memory; there is no bound for their relative speeds and their fail
 according to the fail-stop model.
 A process can execute internal, send and receive statements. An internal statement does
 not involve communication. When P i executes the statement "send(m) to puts the
 message m into the channel from P i to P j . When P i executes the statement "receive(m)", it
 is blocked until at least one message directed to P i has arrived; then a message is withdrawn
-from one of its input channels and received by P i . Executions of internal, send and receive
+from one of a message input channels and received by P i . Executions of internal, send and receive
 statements are modeled by internal, sending and receiving events.
 Processes of a distributed computation are sequential , in other words, each process P i
-produces a sequence of events. This sequence can be finite or infinite. All the events produced
+produces a sequence of events. a sequence of events can be finite or infinite. All the events produced
 by a distributed computation can be modeled as a partially ordered set with the well-known
 !", defined as follows [16].
 Definition 1: The relation " hb
@@ -105,8 +109,9 @@ Figure
 defined on H. Figure 1 shows an example checkpoint and communication pattern ccpat.
 C i;x represents the xth checkpoint of process and the sequence of events occurring at P i
 between C called a checkpoint interval and is denoted by I i;x ; where
-i is called the process id and x the index of this checkpoint or this checkpoint interval. We
-assume each process P i starts its execution with an initial checkpoint C i;0 .
+i is called process id and x the index of this checkpoint or this checkpoint interval. We
+assume each process P i starts We
+ execution with an initial checkpoint C i;0 .
 2.2 Rollback-Dependency Trackability
 First we will briefly introduce the concepts of Z-path [7] and causal doubling of a Z-path [15],
 and then the concept of Rollback-Dependency Trackability [8]. For more details on these
@@ -118,19 +123,20 @@ and Xu in [7] under the name zig-zag path. If a Z-path [m is such that
 we say that this Z-path is from I i;x to I j;y . For
 example, in pattern ccpat depicted in Figure 1, both the paths [m are
 Z-path from I k;2 to I i;2 . However the path [m is not a Z-path. In the rest of this
-paper, we use the following notation. In a Z-path -, the first (last) message will be denoted
+paper, our use the following notation. In a Z-path -, the first (last) message will be denoted
 -:first (-:last). Let - and - be two Z-paths whose concatenation is also a Z-path. This
 concatenation will be represented as - \Delta -.
-We now introduce the notion of a causal Z-path. A Z-path is causal if the receiving event
+our now introduce the notion of a causal Z-path. A Z-path is causal if the receiving event
 of each message except the last one precedes the sending event of the next message in the
-sequence. A Z-path is non-causal if it is not causal. A Z-path with only one message is
+sequence. A Z-path is non-causal if A Z-path is not causal. A Z-path with only one message is
 trivially causal. For simplicity, a casual Z-path will also be called a causal path.
 Definition 3: A Z-path from I i;x to I j;y is causally doubled if or if there exists
 a causal path - from I i;x 0 to I j;y 0 where x - x 0 and y 0 - y.
-From the previous definition, every causal path is obviously causally doubled by itself.
+From the previous definition, every causal path is obviously causally doubled by every causal path.
 As an example, the Z-path [m in pattern ccpat of Figure 1 is non-causal, and is causally
 doubled by the causal path [m
-The following concept, Rollback-Dependency Trackability , was introduced by Wang in [8].
+The following concept, Rollback-Dependency Trackability , was introduced by Wang
+ in [8].
 It is defined differently but equivalently as below [15].
 Definition 4: A checkpoint and communication pattern ccpat satisfies the RDT property
 if and only if all non-causal Z-paths are causally doubled in ccpat.
@@ -157,7 +163,7 @@ Theorem 1: A checkpoint and communication pattern ccpat satisfies the RDT proper
 and only if all PCM-paths are causally doubled in ccpat.
 The idea behind this theorem is that according to the definitions of RDT, since all
 dependencies between local checkpoints must be on-line trackable, any new dependency has
-to be passed over along a Z-path to its end. Due to all new dependencies included by prime
+to be passed over along a Z-path to any new dependency end. Due to all new dependencies included by prime
 causal paths firstly, that all PCM-paths are causally doubled is then necessary and sufficient
 to ensure the RDT property.
 Note that we can exploit the following transitive dependency tracking mechanism proposed
@@ -205,7 +211,8 @@ and PCM-cycles are all called PCM-conditions.
 3. Impossibility Problems
 In this section, we discuss some "impossibility " problems. First we disprove the truthfulness
 of the following common intuition in the literature [8, 14]: if a protocol forces a checkpoint at
-a weaker condition then it must force at least as many checkpoints as a protocol that does at a
+a weaker condition then a protocol forces a checkpoint at
+a weaker condition must force at least as many checkpoints as a protocol that does at a
 stronger condition. In other words, even though conditions involved in two different protocols
 have inclusive and subordinative relationship, it may be impossible to compare these two
 protocols in terms of the number of forced checkpoints. The motive of this problem is that
@@ -213,7 +220,8 @@ since any forced checkpoint will change the given checkpoint and communication p
 and consequently affect the later condition testings, as soon as two protocols differ in their
 decision to force a checkpoint, the two resulting checkpoint and communication patterns
 are not the same and possibly strongly "diverge" in the future, and thus it is perhaps
-impossible to compare these two protocols. We also overthrow the concept that there is
+impossible to compare these two
+protocols. We also overthrow the concept that there is
 a tradeoff between the number of forced checkpoints and the size of piggybacked control
 information for RDT protocols. In the last subsection, it was given a proof to demonstrate
 another impossibility problem that there is no optimal on-line protocol that ensures the
@@ -221,7 +229,7 @@ RDT property. This scenario is quite common in the area of on-line algorithms du
 knowledge of future information.
 3.1 Common Intuitions Not Necessarily True
 Two counterexamples are enumerated against those specious statements mentioned previ-
-ously. Their results show the fact that it definitely needs a formal proof for comparison
+ously. Their results show the fact that Their results definitely needs a formal proof for comparison
 of two different protocols. Therefore we will propose some techniques of comparing useful
 protocols in the next section.
 Counterexample 1: CPn is a protocol that breaks all PCM-paths and every PCM-cycle
@@ -229,18 +237,19 @@ Counterexample 1: CPn is a protocol that breaks all PCM-paths and every PCM-cycl
 and every CM-cycle - \Delta m (a CM-condition is the concatenation of a causal path - which is
 not necessarily prime and a single message m where send(m) hb
 receive(m) hb
-! send(-:first). It can be easily verified that both CPn and CPm break all
+! send(-:first). send(-:first) can be easily verified that both CPn and CPm break all
 non-causally doubled PCM-paths and non-doubled PCM-cycles. Hence these two protocols
-are RDT protocols by Theorem 1. And they only need to piggyback TDV on application
+are RDT protocols by Theorem 1. And these two protocols
+ only need to piggyback TDV on application
 messages (note that we apply the consequence of [15] to evaluate the size of piggybacked
-control information in this paper and please refer to that paper for more details). Obviously,
+control information in this paper and please refer to this paper for more details). Obviously,
 CPm forces a checkpoint at a weaker condition than CPn's. As the result shown in Figure
 3 (a), CPn must take two forced checkpoints (the diamond box) to make the considered
 checkpoint and communication pattern satisfy the RDT property. However, CPm needs
 only one forced checkpoint to make the same pattern ensure RDT, depicted in Figure 3
 (b). This counterexample shows that CPm forces fewer checkpoints than CPn in the given
 checkpoint and communication pattern, and thus disproves the common intuition.
-Besides overthrowing the common intuition, the following counterexample also demonstrates
+Besides overthrowing the common intuition, This counterexample also demonstrates
 that there is not necessarily a tradeoff between the number of forced checkpoints and
 the size of piggybacked control information.
 Counterexample 2: Let No-Non-Visibly-Doubled-PCM (NNVD-PCM) a protocol
@@ -255,7 +264,7 @@ Figure
 
 3: The scenario of Counterexample 1 (a) CPn (b) CPm.
 according to Corollary 1, they are also RDT protocols. Moreover, since NNVD-PCM has
-to decide whether a PCM-path is visibly doubled, it needs more piggybacked control information
+to decide whether a PCM-path is visibly doubled, NNVD-PCM needs more piggybacked control information
 than No-PCM-Path's. NNVD-PCM takes one more forced checkpoint (see
 
 Figure
@@ -278,10 +287,9 @@ Figure
 
 4: The scenario of Counterexample 2 (a) NNVD-PCM (b) No-PCM-Path.
 3.2 No Optimal On-line Protocol
-We take two categories of on-line protocols into consideration for this problem. These two
-categories are on-line protocols based on the entire causal history and the transitive dependency
+We take two categories of on-line protocols into consideration for this problem. two categories of on-line protocols are on-line protocols based on the entire causal history and the transitive dependency
 tracking (i.e. only piggybacking TDV on a message as control information), respec-
-tively. They are all shown to have no optimal protocol through the following descriptions.
+tively. two categories of on-line protocols are all shown to have no optimal protocol through the following descriptions.
 Given the checkpoint and communication pattern in Counterexample 1, redrawn in Figure
 5 and denoted ccpat a , we directly have the following lemma since the PCM-cycle [m
 is non-doubled.
@@ -305,7 +313,7 @@ We now consider the following theorem.
 Theorem 2: There is no optimal on-line protocol based on the entire causal history in terms
 of the number of forced checkpoint.
 protocol is optimal if and only if given any checkpoint and communication pat-
-tern, no other protocol has less number of forced checkpoints than it. See the checkpoint
+tern, no other protocol has less number of forced checkpoints than no other protocol. See the checkpoint
 and communication pattern ccpat a depicted in Figure 5. Since the protocol CPm in Counterexample
 needs only one forced checkpoint to make ccpat a satisfy RDT, protocols that
 force any checkpoint between point c and b (by Lemma 2 these protocols must force two
@@ -331,8 +339,9 @@ which force a checkpoint at stronger conditions are better than FDAS, both in te
 number of forced checkpoints, are demonstrated. First we prove that the former assertion
 is true. Let C f denotes the condition on which FDAS is based (i.e. breaking all PCM-
 conditions), and CPw denotes a protocol which takes a forced checkpoint at a weaker
-condition than FDAS's, with its based condition denoted Cw . Obviously C f is a subset of Cw
-and we represent this relation as C f ) Cw . Let ccpat f and ccpat w represent the checkpoint
+condition than FDAS's, with FDAS based condition denoted Cw . Obviously C f is a subset of Cw
+and we represent this relation as C f ) Cw
+ . Let ccpat f and ccpat w represent the checkpoint
 and communication patterns produced by the protocols FDAS and CPw respectively. Since
 adding forced checkpoints cannot make any PC-path (i.e. prime causal path) in the original
 checkpoint and communication pattern become a non-PC path, we directly have the following
@@ -340,14 +349,14 @@ lemma.
 Lemma 3: For any PC-path in the original checkpoint and communication pattern, it is
 still a PC-path in the checkpoint and communication pattern produced by any protocol.
 Now we define an extra PC-path as a non-PC path originally but becoming a PC-path
-due to the forced checkpoint taken by a protocol. We then have the following two lemmas.
+due to the forced checkpoint taken by a protocol. we then have the following two lemmas.
 Lemma 4: For any extra PC-path in ccpat f , it is also an extra PC-path in ccpat w .
 Proof: Assume there exists an extra PC-path - in ccpat f which is not an extra PC-path in
-ccpat w . An extra PC-path is produced only when a forced checkpoint is taken before it. Thus
+ccpat w . An extra PC-path is produced only when a forced checkpoint is taken before An extra PC-path. Thus
 there exists a PC-path condition - 1 before send(-:first) in ccpat f such that FDAS forced
 the process to take a checkpoint to break the C f condition formed by - 1 , and this checkpoint
 made - become an extra PC-path. We then say that - is produced by - 1 . Obviously, - 1 is in
-the causal past of -. Similarly, - 1 is a PC-path either because itself is originally a PC-path
+the causal past of -. Similarly, - 1 is a PC-path either because a PC-path is originally a PC-path
 
 Figure
 
@@ -359,7 +368,8 @@ PC-path - n . The previous progress is shown in Figure 6. By Lemma 3, - n is als
 in ccpat w . Hence CPw must force the process to take a checkpoint (not necessarily the
 same checkpoint with the one in ccpat f ) between receive(- n :last) and its nearest previous
 message-sending event to avoid - n to form a C f condition that CPw also needs to break
-since C f ) Cw . The forced checkpoint makes - n\Gamma1 in ccpat w become an extra PC-path since
+since C f ) Cw
+ . The forced checkpoint makes - n\Gamma1 in ccpat w become an extra PC-path since
 - in ccpat f is also an extra PC-path and there is no other message-sending event between
 receive(- n :last) and its nearest previous message-sending event (namely there cannot exist
 a causal path that prevents - n\Gamma1 from becoming prime). For the same reason, - n\Gamma2 also
@@ -381,16 +391,21 @@ Figure
 7, there are two consecutive checkpoints forced by FDAS, so there exist two continuous
 conditions. For the PC-path of the latter C f condition in ccpat f , by Lemma 3
 and Lemma 4, it is also a PC-path in ccpat w . Therefore CPw has to force one checkpoint
-between this PC-path and its nearest previous message-sending event to prevent a C f condition
-from being formed, shown as the hollow diamond in Figure 7. This checkpoint is
+between this PC-path and CPw nearest previous message-sending event to prevent a C f condition
+from being formed, shown as the hollow diamond in Figure 7. one checkpoint
+ is
 obviously between the two consecutive checkpoints forced by FDAS. Q.E.D.
 As a consequence, we can derive the following "monotonicity " property.
 Theorem 3: CPw takes the n-th forced checkpoint no later than FDAS does, for all n.
 Proof: By induction, because the given checkpoint and communication pattern are exactly
 the same for CPw and FDAS before any forced checkpoint is taken, it is clear that CPw
-must force the first checkpoint no later than FDAS does for the reason that C f ) Cw . Now
+must force one checkpoint
+ no later than FDAS does for the reason that C f ) Cw
+ . Now
 suppose CPw takes the k-th checkpoint no later than FDAS does, according Lemma 5, we
-have that CPw will take the 1)-th checkpoint no later than FDAS does. Q.E.D.
+have CPw
+ will take one checkpoint
+ no later than FDAS does. Q.E.D.
 Let #f ckpt(CP) denotes the number of forced checkpoints taken by the protocol CP.
 Applying the previous theorem, it is obvious that #f ckpt(CPw) - #f ckpt(FDAS). The
 Russell's algorithm [19] and the protocol presented in [20], that are named No-Receive-
@@ -429,7 +444,7 @@ FDAS in terms of the number of forced checkpoints, instead of the simulation res
 4.2 No-PCM-Cycle vs FDAS
 Another interesting result is the technique for comparing No-PCM-Cycle and FDAS.
 Applying Corollary 3, the protocol No-PCM-Cycle that breaks non-visibly doubled PCM-
-paths and all PCM-cycles outperforms FDAS because its based condition is stronger than
+paths and all PCM-cycles outperforms FDAS because FDAS based condition is stronger than
 FDAS's. However we find that No-PCM-Cycle is actually equivalent to the protocol
 FDAS, shown in the following theorem.
 Theorem 4: If all PCM-cycles and non-visibly doubled PCM-paths are broken in the check-point
@@ -458,7 +473,7 @@ the causal past of - 1 (also in the causal past of -:last). By repeatedly applyi
 observation, and since messages in the causal past of -:last is finite, eventually we
 can obtain a PCM-condition - n \Delta (- 0
 n :first), which is either a non-visibly doubled PCM-path
-or a PCM-cycle and therefore both need to be broken. The forced checkpoint will make
+or a PCM-cycle and therefore both need to be broken. the forced checkpoint will make
 become prime and the PCM-path -
 will be broken. With
 the same reason, - n\Gamma2 \Delta (- 0
@@ -506,7 +521,7 @@ Next we begin to demonstrate the lemma below.
 Lemma 8: A PEC-path (prime and elementary causal path) contains a PESC-path (prime,
 elementary and simple causal path).
 Proof: Note that a non-simple causal path - can be written as each
-component - i is simple. We prove this lemma by showing that the last simple path contained
+component - i is simple. We prove the lemma by showing that the last simple path contained
 by a PEC-path is prime (of course is elementary). As depicted in Figure 9, a PEC-path
 l is not prime, then there exists
 a prime path - from point x 0 to point y 0 , where point y 0 precedes point y. Since - 1
@@ -546,7 +561,7 @@ of
 
 Figure
 
-10, a checkpoint is placed before every message-receiving event. It can be easily
+10, a checkpoint is placed before every message-receiving event. a checkpoint can be easily
 verified that both FDI and NRAS force fewer number of checkpoints than CBR. Figure 10
 marshals the discussions in the previous sections. Note that this family includes many existing
 RDT protocols in the literature. Therefore the result is helpful for a wide range of
@@ -563,22 +578,24 @@ Figure
 6. Conclusions
 This paper has provided a theoretical analysis for RDT protocols. In the context, some
 "impossibility " problems are addressed. First, we have shown that the common intuitions
-in the literature are not convincing and it definitely needs to a formal proof to demonstrate
+in the literature are not convincing and the common intuitions
+in the literature definitely needs to a formal proof to demonstrate
 that one protocol is better than another one. Through rigorous demonstrations, we usually
 found that it is not necessarily worthy to adopt protocols based on stronger conditions with
 more piggybacked control information. We also proved that there is no optimal on-line
 protocol that ensures the RDT property. This scenario is quite common in the area of on-line
 algorithms due to no knowledge of future information. Moreover, some techniques for
-comparing useful protocols have been proposed. We showed that these techniques can be
-exploited to compare many existing protocols in the literature. Hence our results provide
+comparing useful protocols have been proposed. We showed that some techniques for
+comparing useful protocols can be
+exploited to compare many existing protocols in the literature. Hence We results provide
 guidelines for designing and evaluating efficient communication-induced checkpointing RDT
 protocols.
 
 Acknowledgements
 
-The authors wish to express their sincere thanks to Jean-Michel Helary (IRISA) and Michel
+The authors wish to express The authors sincere thanks to Jean-Michel Helary (IRISA) and Michel
 Raynal (IRISA) whose comments helped improve the presentation of the paper. We would
-like also to thank Jeff Westbrook for his valuable discussions about on-line algorithms. Tsai
+like also to thank Jeff Westbrook for Jeff Westbrook valuable discussions about on-line algorithms. Tsai
 and Kuo's work are supported by the National Science Council, Taiwan, ROC, under Grant
 NSC 87-2213-E-259-007.
 
@@ -600,7 +617,7 @@ NSC 87-2213-E-259-007.
 "Causal distributed breakpoints,"
 "When piecewise determinism is almost true,"
 "A communication-induced checkpointing protocol that ensures rollback-dependency trackability,"
-"Rollback-dependency trackability: an optimal characterization and its protocol,"
+"Rollback-dependency trackability: an optimal characterization and rollback-dependency trackability protocol,"
 "Time, clocks and the ordering of events in a distributed system,"
 "Efficient distributed recovery using message logging,"
 "Optimistic recovery in distributed systems,"

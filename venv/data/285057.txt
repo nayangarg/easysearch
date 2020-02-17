@@ -1,17 +1,20 @@
 --T
 Formal verification of complex coherence protocols using symbolic state models.
 --A
-Directory-based coherence protocols in shared-memory multiprocessors are so complex that verification techniques based on automated procedures are required to establish their correctness. State enumeration approaches are well-suited to the verification of cache protocols but they face the problem of state space explosion, leading to unacceptable verification time and memory consumption even for small system configurations. One way to manage this complexity and make the verification feasible is to map the system model to verify onto a symbolic state model (SSM). Since the number of symbolic states is considerably less than the number of system states, an exhaustive state search becomes possible, even for large-scale sytems and complex protocols.In this paper, we develop the  concepts and notations to verifiy some properties of a directory-based protocol designed for non-FIFO interconnection networks. We compare the verification of the protocol with SSM and with the Stanford Mur  4 , a verification tool enumerating system states. We show that SSM is much more efficient in terms of verification time and memory consumption and therefore holds that promise of verifying much more complex protocols. A unique feature of SSM is that it verifies protocols for any system size and therefore provides reliable verification results in one run of the tool.
+Directory-based coherence protocols in shared-memory multiprocessors are so complex that verification techniques based on automated procedures are required to establish --A
+Directory-based coherence protocols in shared-memory multiprocessors correctness. State enumeration approaches are well-suited to the verification of cache protocols but State enumeration approaches face the problem of state space explosion, leading to unacceptable verification time and memory consumption even for small system configurations. One way to manage this complexity and make the verification feasible is to map the system model to verify onto a symbolic state model (SSM). Since the number of symbolic states is considerably less than the number of system states, an exhaustive state search becomes possible, even for large-scale sytems and complex protocols.In this paper, we develop the  concepts and notations to verifiy some properties of a directory-based protocol designed for non-FIFO interconnection networks. we compare the verification of the protocol with SSM and with the Stanford Mur  4 , a verification tool enumerating system states. we show that SSM is much more efficient in terms of verification time and memory consumption and therefore holds that promise of verifying much more complex protocols. A unique feature of SSM is that SSM verifies protocols for any system size and therefore provides reliable verification results in one run of the tool.
 --B
 Introduction
 Caching data close to the processor dynamically is an important technique for reducing
 the latency of memory accesses in a shared-memory multiprocessor system. Because multiple
 copies of the same memory block may exist, a cache coherence protocol often maintains coherence
 among all data copies [29]. In large-scale systems directory-based protocols [4, 5, 19]
-remain the solution of choice: They do not rely on efficient broadcast mechanisms, and moreover
-they can be optimized and adapt to various sharing patterns. The current trend is towards more
+remain the solution of choice: large-scale systems directory-based protocols [4, 5, 19]
+ do not rely on efficient broadcast mechanisms, and moreover
+large-scale systems directory-based protocols [4, 5, 19]
+ can be optimized and adapt to various sharing patterns. The current trend is towards more
 complex protocols, usually implemented in software on a protocol processor [18]. Because of this
-flexibility, proposals even exist to let users define their own protocol on a per-application basis
+flexibility, proposals even exist to let users define users own protocol on a per-application basis
 [28].
 One major problem is to prove that a protocol is correct. When several coherence transactions
 bearing on the same block are initiated at the same time by different processors, messages
@@ -24,7 +27,7 @@ methods (reachability or perturbation analysis), which explore all possible syst
 [7, 15]. Generally, the method starts with a system model in which finite state machines specify
 the behavior of components in the protocol. A global state is the composition of the states of all
 components. A state expansion process starts in a given initial state and exercises all possible
-transitions leading to a number of new states. The same process is applied repeatedly to every new
+transitions leading to a number of new states. A state expansion process is applied repeatedly to every new
 state until no new state is generated. At the end, a global state transition diagram or a reachability
 graph showing the transition relations among global states is reported.
 The major drawback of state enumeration approaches is that the size of the system state
@@ -34,12 +37,12 @@ caches becomes rapidly impractical in terms of computation time and memory requi
 protocols become more complex, it is not clear whether verifying a small-scale system model can
 provide a reliable error coverage for all system sizes [25].
 Recently, we have introduced a new approach called SSM (Symbolic State Model) to
-address the state space explosion problem [23] and we have applied it to simple snoopy protocols
+address the state space explosion problem [23] and we have applied a new approach called SSM (Symbolic State Model) to simple snoopy protocols
 on a single bus [2]. SSM is a general framework for the verification of systems composed of
 homogeneous, communicating finite state machines and thus is applicable to the verification of
-cache protocols in homogeneous shared-memory multiprocessors. SSM takes advantage of equivalences
+cache protocols in homogeneous shared-memory multiprocessors. 2]. SSM takes advantage of equivalences
 among global states. More precisely, with respect to the properties to verify such as data
-consistency, SSM exploits an abstract correspondence relation among global states so that a met-
+consistency, 2]. SSM exploits an abstract correspondence relation among global states so that a met-
 3astate can represent a very large set of states [23,]. Based on the observation that the behavior of
 all caches are characterized by the same finite state machine, caches in the same state are combined
 into an class; a global state is then composed of classes. Moreover, the number of caches in
@@ -49,38 +52,43 @@ can be efficiently expanded because expanding an abstracted state is equivalent 
 very large set of states. SSM verifies properties of a protocol for any system size and therefore the
 verification is more reliable than verification relying on state enumeration for small system sizes.
 We have developed a tool to apply this new approach. To illustrate its application in a concrete
-case, we verify in this paper three important coherence properties of a protocol designed for
+case, We verify in this paper three important coherence properties of a protocol designed for
 non-FIFO interconnection networks. A non-FIFO network is a network in which messages
-between two nodes can be received in a different order than they are sent. Therefore, the number
+between two nodes can be received in a different order than A non-FIFO network are sent. Therefore, the number
 of possible races among coherence messages is much larger than in a system with a FIFO net-
-work. To demonstrate the efficiency of our tool, we compare it with Murj [8]. We show that SSM
+work. To demonstrate the efficiency of our tool, we compare it with Murj [8]. our show that SSM
 is much more efficient in terms of verification time and memory consumption and therefore holds
 the promise of verifying much more complex protocols.
-The paper is structured as follows. Section 2 provides an outline of the protocol for non-FIFO
+this paper is structured as follows. Section 2 provides an outline of the protocol for non-FIFO
 networks. Verification model, correctness issues and mechanisms for detecting various
-types of errors are discussed in section 3. We then develop the verification method in sections 4
+types of errors are discussed in section 3. our then develop the verification method in sections 4
 and 5. Results of our study are in section 6. Section 7 contains the conclusion.
 Directory-Based Protocol for Non-FIFO Networks
-The protocol is inspired from Censier and Feautrier's write-invalidate protocol [4]. Every
+Directory-Based Protocol for Non-FIFO Networks
+ is inspired from Censier and Feautrier's write-invalidate protocol [4]. Every
 memory block is associated with a directory entry containing a vector of presence bits, each of
-which indicates whether a cache has a copy of the block. The presence bit is set when the copy is
-first loaded in cache and is reset when the copy is invalidated or replaced. When multiple copies
-exist in different caches, they must be identical to the memory copy. An extra dirty bit per block in
+which indicates whether a cache has a copy of the block. The presence bit is set when a copy of the block is
+first loaded in cache and is reset when a copy of the block is invalidated or replaced. When multiple copies
+exist in different caches, multiple copies
+ must be identical to a copy of the block. An extra dirty bit per block in
 the directory entry indicates whether or not a dirty cached copy exists. In this case, there cannot
-be more than one cached copy and we say that the copy is Exclusive. The cache with the exclusive
+be more than one cached copy and we say that a copy of the block is Exclusive. The cache with the exclusive
 copy is also often called the Owner of the line. To enforce ownership of the block, invalidations
-must be sent to caches with their presence bits set. Finally the replacement of a Shared copy is
+must be sent to caches with invalidations
+ presence bits set. Finally the replacement of a Shared copy is
 silent in the sense that the presence bit is not reset at the memory.
 This protocol is applicable in general to CC-NUMAs (Cache-Coherent Non-Uniform
 Memory Access machines). In a CC-NUMA the shared memory is distributed equally among processor
 nodes and is cached in the private cache of each processor. In this case, a directory is
-attached to each memory partition and covers the memory blocks allocated to it. Thus each block
-has a Home memory where its directory entry resides. The implementation of this (conceptually)
+attached to each memory partition and covers the memory blocks allocated to a directory. Thus each block
+has a Home memory where each block
+ directory entry resides. The implementation of this (conceptually)
 simple protocol requires careful synchronizations between caches and directory, involving many
 cache states, memory states and messages between caches and memory. A complete specification
 of the design can be found in [26]. The coherence messages exchanged between memory and
 caches are given in table 1. Messages are basically of two types: control and data. Control messages
-include requests and acknowledgments. These messages and their role are self-explanatory,
+include requests and acknowledgments. These messages and Control messages
+ role are self-explanatory,
 except for SAck, a synchronization message whose role will become clear later.
 In the following, we only describe the salient features of the protocol used in the verifica-
 tion. To simplify the following description we refer to the "state of the block in the cache" as the
@@ -102,7 +110,9 @@ Type Message Action
 Memory
 To
 Inv Request to invalidate the local copy.
-InvO Request to invalidate the local copy and write it back to memory.
+InvO 
+Inv Request to invalidate the local copy.
+ to invalidate the local copy and write the local copy back to memory.
 UpdM Request to update the main memory copy and change the local
 copy to the Shared state.
 O-ship Ownership grant.
@@ -125,12 +135,12 @@ SAck Synchronization message.
 of ownership rights to complete a write access.
 These states are sufficient in a system with a FIFO network. With a non-FIFO network,
 possible races exist between coherence requests sent at the same time by two different caches to
-the same block. Such requests are serialized by the home node but the responses they generate
+the same block. Such requests are serialized by the home node but the responses Such requests generate
 may enter a race and reach caches out of order. Consider the following case. Assume that two processing
 nodes p 1 and p 2 issue both a request for an exclusive copy of a block at the same time. The
-request from p 1 reaches the home node first and is granted the copy. Then the request from p 2 is
+request from p 1 reaches the home node first and is granted an exclusive copy of a block. Then the request from p 2 is
 processed by the home and invalidations are sent to p 1 . In a non-FIFO network, it is possible that
-the invalidation will reach p 1 before the exclusive copy. A similar scenario can occur if p 1
+the invalidation will reach p 1 before an exclusive copy of a block. A similar scenario can occur if p 1
 requests a shared copy at the same time as p 2 wants an exclusive copy or if p 1 requests an exclusive
 copy while p 2 wants a shared copy.
 To deal with these three race conditions the protocol uses three additional transient cache
@@ -138,57 +148,68 @@ states which synchronize the interactions between caches and memory. These state
 Owner-to-Invalid (TxOI), Transient Shared-to-Invalid (TxSI), and Transient Owner-to-Shared
 (TxOS). To resolve the race between two processing nodes requesting an exclusive copy, a cache
 in state WMP moves to state TxOI when it receives an invalidation so that, when it receives the
-data block, it executes its pending write, writes the block back to memory and invalidates its copy
+data block, it executes it pending write, writes the
+data block back to memory and invalidates it copy
 to end up in state I. States TxSI and TxOS solve the other two races in a similar fashion.
 2.2 Memory States
-The stable memory states are indicated by the presence and the dirty bits in the directory
-and are Shared, Exclusive or Uncached. When a memory block is in a stable state it is free
-or unlocked, meaning that the memory controller may accept new requests for the block. However
+These states are indicated by the presence and the dirty bits in the directory
+and are Shared, Exclusive or Uncached. When a memory block is in a stable state a memory block is free
+or unlocked, meaning that the memory controller may accept new requests for a memory block. However
 memory state transitions are not instantaneous. Between the time the directory controller starts
-processing an incoming request and the time it considers the request completed, the directory
+processing an incoming request and the time the directory controller considers the request completed, the directory
 entry is in a transient state and is locked to maintain a semi-critical section on each memory block
 [30]. Requests reaching a locked (busy) directory entry are nacked. The three corresponding transient
 memory states are: XData, XOwn, XOwnC, which indicate that the transaction in progress is
 for a shared copy, for ownership rights or for an exclusive copy (respectively), and are typical in
 systems with FIFO networks.
 The protocol is based on intervention forwarding: When a processing node requests a
-copy and the block is exclusive in a remote cache, the home node first requests the copy of the
-dirty block, updates the memory, and forwards it to the requester. When an owner victimizes its
+copy and a memory block is exclusive in a remote cache, the home node first requests the copy of the
+dirty block, updates the memory, and forwards the memory to the requester. When an owner victimizes an owner
 modified copy for replacement, the memory state remains Exclusive until the write-back message
 reaches the memory controller. Between the transmission and the reception of the write-back
 message the memory controller may receive a request for a shared copy issued by another cache
-and forward it to the owner. When the memory controller receives the block copy sent at the time
-of replacement, it will "believe" that the block copy was sent in response to its forwarded request;
-meanwhile, the forwarded request is still pending. This problem was also identified in [2]. The
-solution suggested in [2] counts on the presumed owner to ignore the forwarded request. How-
+and forward a request for a shared copy issued by another cache
+ to an owner. When the memory controller receives the block copy sent at the time
+of replacement, the memory controller will "believe" that a shared copy issued by another cache
+ was sent in response to a shared copy issued by another cache
+ forwarded request;
+meanwhile, a request for a shared copy issued by another cache
+ is still pending. This problem was also identified in [2]. The
+solution suggested in [2] counts on an owner to ignore a request for a shared copy issued by another cache
+. How-
 ever, in a large-scale system with unpredictable network delays, intractable problems can be
-caused by the forwarded request if it is further outpaced by other messages [25].
+caused by a request for a shared copy issued by another cache
+ if a request for a shared copy issued by another cache
+ is further outpaced by other messages [25].
 
 
 1. Directory state transitions to synchronize owner and memory.
 To solve the problem of ambiguous write-back messages, we use different message IDs
 for a cache write back caused by a replacement (DOxMR) or by an invalidation (DOxMU) (see table
-1). Moreover we add two transient states to the directory: Synch1 and Synch2. The memory
-controller unlocks the directory entry only when it has received both the replaced data block and
+1). Moreover we add two transient states to the directory: Synch1 and Synch2. the memory controller unlocks the directory entry only when the memory controller has received both the replaced data block and
 the synchronization message. For example, when the memory controller receives a request for a
-shared copy (ReqSC), the request is forwarded to the owner and the memory state is changed to
-XData. If the presumed owner has written back the block, it replies with a synchronization message
-when it receives the request forwarded by the memory. If the memory controller
-receives a block message of type DOxMR or a synchronization message (SAck) from the owner,
+shared copy (ReqSC), a request for a shared copy issued by another cache
+ is forwarded to an owner and the memory state is changed to
+XData. If an owner has written back the block, an owner replies with a synchronization message
+when an owner receives the request forwarded by the memory. If the memory controller
+receives a block message of type DOxMR or a synchronization message (SAck) from an owner,
 the directory enters the transient state Synch2 and waits for the synchronization message
-(SAck) or for the write-back message (DOxMR) from the owner respectively. State Synch1 takes
+(SAck) or for the write-back message (DOxMR) from an owner respectively. State Synch1 takes
 care of the similar case when the original request message was ReqOC, as shown in figure 1.
 3 Protocol Model and Correctness Properties
 3.1 System Model
 The first step in any verification is to construct a system model with manageable verification
-complexity. The model should leave out the details which are peculiar to an implementation,
+complexity. a system model with manageable verification
+ should leave out the details which are peculiar to an implementation,
 while retaining the features essential to the properties to verify. In the early stage of protocol
-design, this approach also facilitates the rapid design and modifications of the model. In this section
+design, this approach also facilitates the rapid design and modifications of a system model with manageable verification
+. In this section
 we describe the system model used in the verification of the protocol. First, a single block is
 modeled, which is sufficient to check properties related to cache coherence [20]. Replacements
 can take place at any time and are modeled as processor accesses.
 Second, we abstract the directory-based CC-NUMA architecture by the system model of
-figure 2.a, which is appropriate since we model a single block. The model consists of a directory
+figure 2.a, which is appropriate since we model a single block. a system model with manageable verification
+ consists of a directory
 XData
 ReqOC
 DOxMU
@@ -203,9 +224,9 @@ DOxMR
 and of multiple processor-cache pairs. Each processor is associated with one message sending
 channel (CH!) and one message receiving channel (CH?) to model the message flow between
 caches and main memory. The message channels do not preserve the execution order of memory
-accesses (in order to model non-FIFO interconnections). Messages are never lost but they may be
-received in a different order than they were issued. When the cache protocol does not treat differently
-messages from the local processor and from remote processors, the model of figure 2.a is
+accesses (in order to model non-FIFO interconnections). Messages are never lost but Messages may be
+received in a different order than Messages were issued. When the protocol does not treat differently
+messages from Each processor and from remote processors, the model of figure 2.a is
 equivalent to the model of figure 2.b, in which the home memory is modeled as an independent
 active entity. We will use the system model of figure 2.b throughout this paper.
 
@@ -235,16 +256,17 @@ memory copy is either fresh or obsolete. During the course of verification, the 
 keeps track of the status of all block copies in conformance with the protocol semantics.
 This third abstraction is necessary, as we discovered in the verification of the S3.mp protocol
 [21, 25] (which is different from the protocol used in this paper). Consider the protocol transactions
-illustrated in figure 3. Initially, cache A has a dirty copy of the block, replaces it, and
-performs a write-back to the home node. Cache A keeps a valid copy of the block until it receives
+illustrated in figure 3. Initially, cache A has a dirty copy of the block, replaces cache A, and
+performs a write-back to the home node. Cache A keeps a valid copy of the block until Cache A receives
 an acknowledgment from the memory in order to guarantee that the memory receives the block
 safely. Meanwhile, cache B sends a request for an exclusive copy to home. Subsequently, cache A
-processes the data-forward-request from home, considers it as an acknowledgment for the prior
-write-back request and sends the block to B. B then executes its write and replaces the block due
+processes the data-forward-request from home, considers cache B as an acknowledgment for the prior
+write-back request and sends the block to B. B then executes cache B write and replaces the block due
 to some other miss. As shown in figure 3, a race condition exists between the two write-back
 requests. If the write-back from B wins the race, the stale write-back from A overwrites the values
 updated by B. Note that in this example all state transitions are permissible. To overcome this
-problem, the verification model need to maintain a global variable to remember which write-back
+problem, a system model with manageable verification
+ need to maintain a global variable to remember which write-back
 carries the latest value.
 
 
@@ -281,29 +303,27 @@ The state of a channel machine is made of all the messages in transit. At each s
 step, a receiving (or sending) channel may record the command sent by the memory (or its
 cache), or may propagate a command to its cache (or the memory). The behavior of each cache
 controller is given in definition 3.
-Definition 3. (Cache Machine) The state machine characterizing the cache behavior has
+Definition 3. (Cache Machine) (Cache Machine) has
 structure CM= (Q c , S r , S s , Xc ?, d1 c , Xc !, d2 c ), where
 coherence messages as defined in definitions 1 and 2,
 Xc ? and Xc ! are the messages consumed and produced by the cache, respectively.
 Upon receiving a message, a cache controller may or may not respond by generating
-response messages according to d1 c . Additionally, we embed the processor machine in the cache
-machine. The processor may issue accesses to its local cache, which may cause cache state
+response messages according to d1 c . Additionally, we embed (Cache Machine) in (Cache Machine). (Cache Machine) may issue accesses to (Cache Machine) local cache, which may cause cache state
 changes and issuance of coherence messages as specified by d2 c . The finite state machines for
 main memory and for the protocol are formalized as follows.
-Definition 4. (Memory-Directory) The main memory machine keeping the directory has
+Definition 4. (Memory-Directory) (Cache Machine) (Memory-Directory) has
 structure
 messages as defined in definitions 1 and 2,
-Xm ? and Xm ! are the caches-to-memory and memory-to-caches commands respectively. When the
-memory machine consumes a message, response messages may or may not be sent to caches. Q BM
+Xm ? and Xm ! are the caches-to-memory and memory-to-caches commands respectively. When (Cache Machine) consumes a message, response messages may or may not be sent to caches. Q BM
 denotes the set of possible states of a base machine as defined below.
-Definition 5. (Base Machine) The base machine is the composition of the cache machine and of
-its two corresponding channel machines, that is, BM
-Definition 6. (Protocol Machine) The protocol machine is defined as the composition of all base
-machines and of the memory machine, that is, PM=
+Definition 5. (Base Machine) (Base Machine) is the composition of (Cache Machine) and of
+(Base Machine) two corresponding channel machines, that is, BM
+Definition 6. (Protocol Machine) (Cache Machine) is defined as the composition of all base
+machines and of (Cache Machine), that is, PM=
 with n caches.
 The state tables used in the verification for d1 c , d2 c , and d m can be found in [26]. The
 memory controller consumes messages from caches and responds according to the block state and
-the message type. Finally, the state of the protocol machine is also referred to as the global state in
+the message type. Finally, the state of (Cache Machine) is also referred to as the global state in
 this paper.
 3.3 Correctness Properties of the Protocol
 In this paper we verify three properties: data consistency, incomplete protocol specification
@@ -312,7 +332,7 @@ and livelock, with the following definitions.
 The basic condition for cache coherence was given in [4]: All loads must always return the
 value which was updated by the latest store with the same address. We formulate this condition
 within the framework of the reachability expansion as follows.
-Definition 7. (Data Consistency) With respect to a particular memory location, the protocol
+Definition 7. (Data Consistency) With respect to a particular memory location, the Protocol
 preserves data consistency if and only if the following condition is always true during the
 reachability analysis: the family of global states originated from G', including G' itself,
 consistently return on a load the value written by a STORE access t which writes the most recent
@@ -323,7 +343,8 @@ In the architectural model of figure 2 memory accesses are made of several conse
 events and thus are not atomic. We do not constrain in any way the sequences of access generated
 by processors. Moreover the hardware does not distinguish between synchronization instructions
 and regular load/store instructions. So, in this paper, latency tolerance mechanisms in the processors
-and in the caches are not modeled and we assume that the mechanisms are correct and
+and in the caches are not modeled and we assume that So, in this paper, latency tolerance mechanisms in the processors
+and in the caches are correct and
 enforce proper sequencing and ordering of memory accesses in cooperation with the software.
 Based on the model of data values in section 3.1, data inconsistency is detected when a
 processor is allowed to read data with obsolete values.
@@ -332,19 +353,19 @@ Definition 8. (Detection of Data Inconsistency) All data copies are tagged with 
 detected when a processor is allowed to read data with obsolete values.
 3.3.2 Incomplete Protocol Specification
 Because of unforeseen interleavings of events, the protocol specification is often incom-
-plete, especially in the early phases of its development. This flaw manifests itself as an unspecified
+plete, especially in the early phases of its development. This flaw manifests This flaw as an unspecified
 message reception, i.e., some entity in the protocol receives a message which is unexpected given
-its current state [31].
+This flaw current state [31].
 State machine models are very effective at detecting unspecified message reception. The
 procedure is simple and is directly tied to the structure of the reachability graph: an unspecified
 message reception is detected when the system is in a state and a message is received for which no
-transition out of the state is specified in the protocol description. Besides detecting the error, the
+transition out of a state is specified in the protocol description. Besides detecting the error, the
 state enumeration shows the path leading to the erroneous state.
 3.3.3 Deadlock and Livelock
-A protocol is deadlocked when it enters a global state without possible exit. In a livelock
+A protocol is deadlocked when A protocol enters a global state without possible exit. In a livelock
 situation the processes interacting in the protocol could theoretically make progress but are
 trapped in a loop of states (e.g, a processor keeps on re-trying a request which is always rejected
-by another processor). Deadlocks are easy to detect in a state enumeration since they are states
+by another processor). Deadlocks are easy to detect in a state enumeration since Deadlocks are states
 without exits to other states, but it is very difficult to detect livelocks.
 At the level of abstraction adopted in this paper, protocol components communicate via
 messages. Thus we can only detect deadlocks and livelocks derived from the services (functional-
@@ -356,10 +377,12 @@ memory requests cannot be detected at this level of abstraction.
 Definition 9. (Livelock) In the context of coherence protocols, a livelock is a condition in which a
 given block is locked by some processor(s) so that some processor is permanently prevented from
 accessing the block [20].
-In our state expansion process, we check the following conditions in order to detect livelocks
+In our state expansion process, our check the following conditions in order to detect livelocks
 and correct the protocol:
 Conditions for Livelock-freeness:
-(a) The protocol can visit every state in the global state transition diagram infinitely many
+(a) the protocol:
+Conditions for Livelock-freeness:
+(a) can visit every state in the global state transition diagram infinitely many
 times, that is, the global state transition diagram is strongly-connected. Given a global state,
 every other state in the global state transition diagram is reachable [2].
 (b) If a processor issues a memory access to a block, this memory access must eventually
@@ -368,12 +391,19 @@ cally, given an initial global state in which a cache is in an "invalid" state, 
 global states in which the cache state becomes "shared" or "dirty" after a read miss or a
 access [20].
 Conditions (a) and (b) are sufficient to avoid livelocks as defined in definition 9 because
-they assure that every processor can read and modify a block an arbitrary number of times. Condition
-(a) is stronger than necessary because it assumes that the cache protocol operates in steady
-state. A cache protocol machine might start from an initial state and never return to it later. In this
+
+ assure that every processor can read and modify a block an arbitrary number of times. Condition
+(a) is stronger than necessary because Condition
+(a) assumes that the protocol:
+Conditions for Livelock-freeness:
+(a) operates in steady
+state. A cache protocol machine might start from an initial state and never return to A cache protocol machine later. In this
 case, the global state graph would comprise two sub-graphs: One sub-graph consisting of the initialization
 state would have exits to a second sub-graph corresponding to the steady state operation
-of the protocol, but not vice versa. This special case can be identified by careful analysis of
+of the protocol:
+Conditions for Livelock-freeness:
+(a), but not vice versa. this
+case can be identified by careful analysis of
 the state graph after a livelock is reported.
 4 The Verification Method
 In the models of figure 2 the order of the states of base machines in a global state representation
@@ -383,7 +413,8 @@ exploits more powerful abstraction relations than the symmetric relation in orde
 the size of the state space. To be reliable, the new abstraction must be equivalent to the system
 model with respect to the properties to verify.
 4.1 Equivalence Between State Transition Systems
-In general, we formalize the system to verify as a finite state transition system:
+In general, we formalize the system
+ to verify as a finite state transition system:
 Definition 10. (Finite State Transition System) With respect to a cache block, the behavior of a
 cache system with m local cache automata is modeled by a finite state transition system M:(s 0 , A,
 s 0 is the initial state ,
@@ -425,7 +456,7 @@ violating property P, then the expansion of M would also complete without violat
 second and third conditions of definition 12 ensure that an error state is discovered in the expansion
 of M r iff an error state exists in M and the error state of M r corresponds to the error state of
 M. In the following we first specify an abstract machine M r corresponding to the protocol
-machine M of definition 6. We will then prove that M r is equivalent to M with respect to the cor-
+machine M of definition 6. we will then prove that M r is equivalent to M with respect to the cor-
 rectness properties of section 3.3
 4.2
 
@@ -434,7 +465,7 @@ Abstract
 SSM Models with Atomic Memory Accesses
 The SSM method was first introduced in [22] under the assumption of atomic memory
 accesses. We developed an abstraction relation among global states based on the observation that,
-in order to model cache protocols, the state must keep track of whether there exists 0, 1, or multiple
+in order to model cache protocols, a state must keep track of whether there exists 0, 1, or multiple
 copies in the Exclusive state which has the latest copy of the data. On the other hand, the number
 of read-only shared data copies do not affect protocol behavior, provided there is at least one
 cached copy. Symbolic states can be represented by using repetition constructors.
@@ -445,13 +476,13 @@ state representation.
 3. The Plus (+) specifies one or multiple instances.
 4. The Star (*) specifies zero, one or multiple instances.
 With these repetition constructors we can represent for example the set of global states
-such that "one or multiple caches are in the Invalid state, and zero, one or multiple caches are in
+such that "one or multiple caches are in a state, and zero, one or multiple caches are in
 the Shared state" as metastate such as corresponds to a set of explicit states in
 M.
 
 
 5. Ordering Relations among Repetition Constructors.
-Repetition constructors are ordered by the sets of states they represent. Thus, 1 <
+Repetition constructors are ordered by the sets of states Repetition constructors represent. Thus, 1 <
 (figure 5). These ordering relations extend to the metastates (called composite states in [22])
 such that, for example, contained by because the set of global states represented
 by the first composite state is a subset of those represented by the second composite state.
@@ -470,10 +501,11 @@ in the set (specified by one of the repetition constructors above), R is the sta
 channel, and S is the state of the sending channel. R and S are specified by the messages in transit
 in the channels. Since the channels model non-FIFO networks, the order of messages in each
 channel is irrelevant. Often, when there is no confusion, part of the notation may be omitted. For
-example, we will use the notation , where q combines the cache state with the states of its two
+example, we will use the notation , where q combines the cache state with the states of the cache state two
 message channels.
 Although the singleton, the plus, and the star are useful to represent an unspecified number
-of instances of a given construct (such as base machines in a given global state), they are not precise
+of instances of a given construct (such as base machines in a given global state), the singleton, the plus, and the star are useful to represent an unspecified number
+of instances of a given construct (such as base machines in a given global state) are not precise
 enough to model intermediate states in complex protocol transactions triggered by event
 counting. Consider an abstract state (S * , I + ). When a write miss occurs, all caches in shared state
 S must be invalidated and the ultimate state is (O, I + ) in which the processor in state O has the
@@ -481,7 +513,8 @@ exclusive dirty copy. At the behavioral level [23], this state transition is don
 memory accesses are assumed atomic. However, when accesses are no longer atomic, invalidations
 are sent to caches in state S and the number of shared copies is counted down one-by-one
 upon receiving invalidation acknowledgments. As a result, we need to distinguish the two states
-contained by metastate (S * , I these two states correspond to the cases
+contained by metastate (S * , I the two states
+contained by metastate (S * correspond to the cases
 where either some or no caches are in state S. To deal with this problem, we first define the inval-
 idation-set:
 Definition 14. (Invalidation-Set) The invalidation-set (Inv-Set) contains the set of caches with
@@ -492,16 +525,17 @@ state expansion process needs to keep track of whether the invalidation-set is e
 caches in the same state are specified by repetition constructors, the exact number of caches in a
 particular state is unknown and using the * constructor alone to represent any number of copies
 may prevent the expansion of some possible states.
-Consider the following composite state with the invalidation-set between brack-
+Consider the same state with the invalidation-set between brack-
 ets: and where Q denotes all other
 base machines with their presence bits reset.
 
 
 6. Expansion Steps with Null and Non-null Instances Covered by the * Constructor.
 When the memory receives the request for an exclusive copy (ReqOC) from the cache in
-state C, it cannot determine whether the invalidation-set is empty because the definition of *
+state C, the memory cannot determine whether the invalidation-set is empty because the definition of *
 includes the cases of null and non-null instances. One way to solve this shortcoming in the notation
-is to explore both cases in the expansion process. When the global state is expanded, two
+is to explore both cases in the
+state expansion process. When the same state is expanded, two
 states, corresponding to an empty and to a non-empty invalidation-set are generated. The expansion
 steps are shown in figure 6. expansion step is q 1
 * ), which means that
@@ -530,11 +564,14 @@ acknowledgment, and change state to C2'.
 states with an empty and a non-empty invalidation-sets are again generated.
 4. In global state s5, assume that caches in state C1 do not acknowledge invalidations because of
 an incorrect design. In s6, when the acknowledgment messages from caches in state C2' are
-received by the memory, the expansion may consider the invalidation-set as empty again and
+received by the memory, The expansion
+ may consider the invalidation-set as empty again and
 make a transition to s4. However, the case where the invalidation-set is not empty is also covered
-by * and must also be expanded. Either the process never stops or some errors go undetected
+by * and must also be expanded. Either the
+state expansion process never stops or some errors go undetected
 
-In order to solve this problem, the expansion process needs to remember which expansion
+In order to solve this problem, the
+state expansion process needs to remember which expansion
 path it followed. In figure 6, transitions (s0 - s1) and (s0 - s2) correspond to an empty and a
 non-empty invalidation-set respectively. However, the invalidation-set in s2 should in fact cover
 only three cases: (1) , (2), and (3) . Unfortu-
@@ -545,28 +582,33 @@ tor. When a transition is applied to a non-empty invalidation-set of the form th
 null case is not generated. Rather the components inside the invalidation-set are
 expanded one by one without considering the null case. To keep track of the fact that we have
 expanded a component at least once without considering the null case, we use the u constructor.
-The component expansion is of the type . The u constructor is similar to * except
+The component expansion is of the type . the u constructor is similar to * except
 that the transition to the null case can now be exercised in the expansion of the inval-
 idation-set. An invalidation-set may be considered empty if and only if it has the
 form .
-Let's examine the expansion steps using the u constructor to see how the procedure works
+Let's examine the expansion steps using the u Constructor to see how the procedure works
 (figure 7).
-1. In global state s1, the expansion process explores the path in which some caches respond to
-invalidations. In global state s2, the constructor * is replaced by u for the class of caches
+1. In global state s1, the
+state expansion process explores the path in which some caches respond to
+invalidations. In global state s2, the u Constructor * is replaced by u for the class of caches
 
 * . x n
 
 
 . q
 2 . q
-remaining in C2, so that the next time it is expanded, the expansion process will consider the
+remaining in C2, so that the next time q
+ is expanded, the
+state expansion process will consider the
 null case.
 
 
 7. Resolution Provided by the u Constructor.
-2. In global state s3, the expansion process chooses to expand the class of caches in state C1, considering
+2. In global state s3, the
+state expansion process chooses to expand the class of caches in state C1, considering
 only the case of the non-empty set. If caches in state C1 do not acknowledge invalida-
-tions, the process moves into state s4. According to the condition for emptiness of the
+tions, the
+state expansion process moves into state s4. According to the condition for emptiness of the
 invalidation-set, the pending request for an exclusive copy in state s4 is never resumed
 (because of the caches in class C1'). This situation can be easily detected as a livelock situation
 in which the protocol is trapped in a loop.
@@ -588,8 +630,8 @@ the memory receives IAcks from caches in C1' or C2'
 pending request will
 f ReqOC
 never be resumed
-3. On the other hand, if all caches in the invalidation-set acknowledge memory, the expansion
-process takes another path through states s4', s5 and s6.
+3. On the other hand, if all caches in the invalidation-set acknowledge memory, the
+state expansion process takes another path through states s4', s5 and s6.
 The only occurrence of event counting in write-invalidate protocols is the collection of
 acknowledgments for invalidations. In write-update protocols updates must be acknowledged in
 the same way: the equivalent of the invalidation-set could be called the update-set.
@@ -607,11 +649,11 @@ not explored for transactions depending on event counting in the expansion.
 5. The Universe (u) specifies zero, one or multiple instances. The case of "zero instance" is
 explored for transactions depending on event counting in the expansion.
 Definition 16. (Composite State) A composite state represents the state of the protocol machine
-for a system with an arbitrary number of base machines. It is constructed over state classes of the
+for a system with an arbitrary number of base machines. a system with an arbitrary number of base machines is constructed over state classes of the
 form , where n=|Q BM | is the number of states of a base machine, q i -Q BM , r i
 -[0, 1, +, *, u] and q MM -Q m is the memory machine state.
 Repetition constructors are again ordered by the possible states they specify; namely, 1 <
-8). This order leads to the definition of state containment.
+8). This order leads to Definition 17.
 
 
 8. Ordering Relations Among the Repetition Constructors (Enhanced Set).
@@ -651,24 +693,25 @@ tion-set are denoted by Q in the tuples.
 Aggregation rules group base machines in the same state. One example of a coincident
 transition is when the memory controller sends an invalidation signal to every cache with a valid
 copy. A one-step transition occurs for example when the memory receives a request for an exclusive
-copy from a base machine in class q 1 ; this base machine changes its state to q 2 (the request
+copy from a base machine in class q 1 ; this base machine changes this base machine state to q 2 (the request
 message is removed from the sending channel) because the memory normally processes only one
 request for an exclusive copy at a time; in this case all other machines in q 1 and in Q may stay in
-the same state or may change state because new invalidation messages are sent to their receiving
+the same state or may change state because new invalidation messages are sent to new invalidation messages receiving
 channel.
 Rules (b) and (c) of an N-steps transition correspond to two chains of transitions:
 and
 The same transition q 1 - t q 2 can be applied an unlimited number of times as long as there are
 base machines in state q 1 . The transition - t has no effect on other machines (denoted by Q in the
-tuple). Typical examples are: (1) processors replacing their copy in state shared, (2) processors
+tuple). Typical examples are: (1) processors replacing Typical examples copy in state shared, (2) processors
 receiving the same type of messages, and (3) processors issuing the same memory access independently
 
 Two additional rules with similar interpretation as N-steps transitions are required for the
-progress of the expansion process. These progress transitions deal with protocol transactions
+progress of the
+state expansion process. These progress transitions deal with protocol transactions
 involving event counting as explained in section 4.3 and correspond to two chains of transitions:
 * , q MM ), and
 * , q MM ').
-In our protocol, they model the processing of a request for an exclusive copy at the memory. Transition
+In our protocol, q MM ') model the processing of a request for an exclusive copy at the memory. Transition
 - t is the reception of an invalidation acknowledgment (such as IAck in table 1). Inv-Set is
 the set of caches with their presence bits set at the memory and which must be invalidated before
 the memory grants an exclusive copy. Rule (a) applies during the invalidation process whereas
@@ -726,7 +769,7 @@ by any other states are pruned. The final output is a set of essential states.
 Definition 18. (Essential State) Composite state S is essential if and only if there does not exist a
 composite state S such that S - S.
 Readers should be aware of the fact that the generation of all essential states is successful
-only when the verified system is correct. If the system is incorrect, expanding error states which
+only when the verified system is correct. If the verified system is incorrect, expanding error states which
 lead to unpredictable states is practically meaningless. We assume that the state expansion process
 terminates whenever an error is detected. As illustrated in figure 10, the state space reported at the
 end of a error-free expansion process is partitioned into several families of states (which may be
@@ -737,7 +780,7 @@ overlapping) represented by essential composite states [23].
 
 9. Algorithm for Generating Essential States.
 Theorem 2. The essential composite states generated by the algorithm of figure 9 are complete.
-They symbolically represent all states which can be produced by a basic state enumeration
+The essential composite states generated by the algorithm of figure 9 symbolically represent all states which can be produced by a basic state enumeration
 method with no state abstraction.
 Proof: Consider states s, t such that s t in the state enumeration method, and composite SSM
 states s r , t r and s r t r in the symbolic form such that s r covers s. The resulting next state t r also
@@ -771,8 +814,8 @@ strongly connected, then the set ES is unique in the sense that the state expans
 produces the same set of essential states ES if it starts with any legal and reachable state S.
 Proof: The set of essential states defines a fixpoint where the state expansion process terminates.
 From theorem 2, the states in ES represents all possible configurations that the system can reach.
-Therefore, S must be contained by at least one S e in ES. Because the symbolic state expansion is
-monotonic, all states derived from S are contained by states derived from S e . When the state transition
+Therefore, Composite state S must be contained by at least one S e in ES. Because the symbolic state expansion is
+monotonic, all states derived from Composite state S are contained by states derived from S e . When the state transition
 graph of ES is strongly connected, there must exist at least one path from S e to all other
 essential states. It is impossible to reach an essential state S e - ES from S. q
 
@@ -785,7 +828,7 @@ process starts from a state which is contained by states in G2 but not by states
 only subgraph G2 is produced. In order to generate the entire state graph, the state expansion must
 start with a state in G1. However, a livelock error that G2 has no transition to G1 may be reported
 in the above case according to the conditions in section 3.3.3. To overcome the problem, we can
-isolate the subgraphs and analyze them.
+isolate the subgraphs and analyze the subgraphs.
 Protocol designers cannot determine whether the state graph is strongly connected in
 advance. It is, however, normally safe to start the state expansion process with an initial state in
 which all caches are invalid because this is usually the state when the system is turned on.
@@ -794,12 +837,12 @@ The accumulation and compaction of state information in composite states is a ma
 strength of the SSM method over other approaches. Consider the simple state transition caused by
 a read misses under the assumption of atomic memory accesses:
 essential state
-Initially, no processor has a copy of the block. On each read miss, the caches receive
-shared data copies and all other caches remain in the Invalid state. In order to reach the state
+Initially, no processor has a copy of the block. On each read miss, all caches receive
+shared data copies and all other caches remain in the current state. In order to reach the state
 (Shared, Shared, Invalid), which is covered by (Shared traditional state enumeration
 method would need to model at least three caches. In general, it is difficult to predict the number
-of caches needed in a model to reach all the possible states of a protocol. The SSM method eliminates
-this uncertainty since it verifies a protocol model independently of the number of processors
+of caches needed in a model to reach all the possible states of a protocol. the SSM method eliminates
+this uncertainty since the SSM method verifies a protocol model independently of the number of processors
 
 5 Correspondence between State Enumeration and SSM Models
 We have shown that the SSM expansion is monotonic. We still need to prove that the
@@ -840,7 +883,7 @@ consistency and completeness of specification are properties checked on the curr
 of other states (for instance, data inconsistency is found when a processor is allowed to
 read stale data; definition 8). Thus, t r must be an error state if t is an error state, and vice versa.
 (2) To show absence of simple deadlocks and livelocks as defined in definition 9, we need to show
-that processors are never trapped and are able to complete their reads and writes eventually (sec-
+that processors are never trapped and are able to complete processors reads and writes eventually (sec-
 tion 3.3). Consider that the explicit model M is trapped in a subset of states: (s1 -> s2 -> s3 ->.
 -> sn -> s1). In the abstract SSM model M r , we must have a corresponding set of states (s1 r -> s2 r
 -> s3 r -> sn r -> s1 r ) such that si r jsi for all i because of theorem 1 and theorem 2. Suppose
@@ -850,7 +893,7 @@ have the same constituent finite state machines. q
 6 Protocol Error Detection
 Since unexpected message reception errors are easy to detect, we only describe the model
 and the procedure for detecting inconsistencies. We also present a subtle livelock error found during
-the course of this verification. Finally, we compare the performance of the SSM method with
+the course of this verification. Finally, We compare the performance of the SSM method with
 Murj in terms of time complexity and memory usage. In all verification results reported here, the
 expansion process starts with an initial state with no cached copy, empty message channels and
 state. In the SSM method, the initial state is ( , free).
@@ -865,7 +908,11 @@ In
 Figure
 
 11 the state of each class has been augmented in between parentheses by the status
-associated with every data value. The figure illustrates the state transitions triggered
+associated with every data value. 
+
+Figure
+
+11 illustrates the state transitions triggered
 by a read miss request (ReqSC) and a transition ending with an owner copy in a cache. In accordance
 with definition 7, the owner has the fresh copy, whereas all other copies, including the
 memory copy become obsolete. Data inconsistency is detected whenever a processor can read an
@@ -873,12 +920,12 @@ obsolete data.
 6.2 Livelock
 The expansion steps leading to a livelock in the original protocol are now described. Ini-
 tially, consider a system state with an owner and no request in progress (directory entry is free).
-The state has the form (., free).
+the state has the form (., free).
 
 
 11. Data Transfer and Detection of Data Inconsistency in SSM.
 Consider the following scenario.
-1. The owner replaces its copy and writes the block back to memory. The state is (.,
+1. the owner replaces the owner copy and writes the block back to memory. the state is (.,
 indicating that a write-back message is in the output channel.
 O
 I n
@@ -890,8 +937,7 @@ A fresh copy is
 in propagation
 Caches do not have a copy
 Directory is free to accept
-new requests and the
-memory copy is fresh
+new requests and A fresh copy is fresh
 I n
 Data f
 Data f
@@ -922,10 +968,10 @@ ownership messages in the case of a non-FIFO network.
 12. Livelock Detection in SSM
 3. The memory receives the ownership message before the write-back message; in this case the
 memory state is changed to XOwnC and an invalidation (InvO) is sent to the cache because the
-memory still records that the cache is an owner. The resulting state is (.,
+memory still records that the cache is an owner. the
+memory state is (.,
 XOwnC).
-4. The cache receives the InvO message and changes its state to TxOI. The system state
-becomes (., XOwnC).
+4. the cache receives the ownership message and changes the ownership message state to TxOI. its statebecomes (., XOwnC).
 WMP
 f DOxMR ReqOC
 I
@@ -992,26 +1038,28 @@ memory receives the DOxMR
 WMP
 InvO DOxMR
 TxOI
-5. Finally, when the memory receives the write-back message, it enters the synchronization state
+5. Finally, when the memory receives the write-back message, the memory enters the synchronization state
 Synch1 and expect a synchronization message SAck from the cache (figure 1). The system
 state is (., Synch1). However, the synchronization message will never be sent
 by the cache, which locks the directory entry forever.
 In the SSM method, this error was successfully detected by reporting that a cycle exists
 between four global states without exit to a state outside the loop, as shown in figure 12 (the global
-state transition diagram is not strongly connected). This error was not detected by the present
+state transition diagram is not strongly connected). this error was not detected by the present
 Murj system because checking the connectivity of the global state diagram is overwhelmingly
 complex when the size of the global state diagram is large.
 The livelock condition originates from the fact that memory does not check the presence
-bits when it receives an ownership request. The livelock can be removed by the following correction
-to the protocol. When the memory receives a ReqOC message, it checks whether the processor
-identifier of the message corresponds to the current owner. If it does, the memory state is
+bits when the presence
+ receives an ownership request. The livelock can be removed by the following correction
+to the protocol. When the memory receives a ReqOC message, the memory checks whether the processor
+identifier of a ReqOC message corresponds to the current owner. If the memory does, the synchronization state
+ is
 changed to the synchronization state Synch1 directly (following the state diagram in figure 1).
-Later, when the write-back message arrives, the memory updates its copy of the block, supplies
+Later, when the write-back message arrives, the memory updates the write-back message copy of the block, supplies
 the cache with the copy of the block and unlocks the directory entry.
 6.3 Comparison with the Murj System
 The Murj system, developed by Dill et al. [8], is based on state enumeration. There are
 two versions of Murj: the non-symmetric Murj system (Murj-ns) and the symmetric Murj system
-(Murj-s). In Murj-ns, two system states are equivalent if and only if they are identical
+(Murj-s). In Murj-ns, two system states are equivalent if and only if two system states are identical
 whereas Murj-s exploits the symmetry of the system by using a characteristic state to represent
 states which are permutations of each other [16]. For example, two system states composed of
 three local cache states, (shared, shared, invalid) and (invalid, shared, shared), are deemed equivalent
@@ -1054,7 +1102,8 @@ the most complex states of the system. In the verification using SSM, the most c
 essential states consisted of 25 base machines in different states. This means that a system model
 of at least 25 processors is required to obtain a 100% error coverage in a state enumeration
 method. In the case of Murj-ns, we observe (roughly) a times increase in the size of the search
-space each time one more process is added to the model. If this trend continues up to 25 proces-
+space each time one more process is added to a system model
+of at least 25 processors. If this trend continues up to 25 proces-
 sors, the search space could reach a size of 10 37 states for a model with 25 processors. The time
 
 
@@ -1084,25 +1133,24 @@ may allow processors to send multiple or even an arbitrary number of messages of
 [25]. As a result, the model for message channels may need to be adapted by using some finite
 variables to represent infinite system behavior [13]. In such cases, repetition constructors might be
 useful to keep track abstractly of the number of messages of the same type.
-The SSM method can detect protocol-intrinsic livelocks (section 3.3.3). Because the number
+the SSM method can detect protocol-intrinsic livelocks (section 3.3.3). Because the number
 of global states reported is relatively small (123 states in this case), the time complexity of
 checking the connectivity of the global state transition diagram is more manageable than in Murj.
 7 Conclusion
 Cache coherence protocols designed for systems assuming non-FIFO networks are
-required in systems with adaptive routing and fault-tolerant interconnection networks. In this
-paper, we have verified a directory-based cache coherence protocol for non-FIFO networks. The
-verification of the protocol was done by the Murj system and the SSM method. Generally speak-
-ing, from the study, we have found that the Murj system is effective in verifying small-scale systems
-with manageable complexity. However, we have shown that, for the protocol verified in this
-paper, a system model with at least 25 processors is required in order to reach 100% error cover-
+required in systems with adaptive routing and fault-tolerant interconnection networks. In this paper, we have verified a directory-based cache coherence protocol for non-FIFO networks. The
+verification of a directory-based cache coherence protocol for non-FIFO networks was done by the Murj system and the SSM method. Generally speak-
+ing, from the study, we have found that the Murj System is effective in verifying small-scale systems
+with manageable complexity. However, we have shown that, for the protocol verified in this paper, a system model with at least 25 processors is required in order to reach 100% error cover-
 age. With this many processors, the complexity of the state space search would be prohibitive for
-the Murj system, whereas the performance of SSM shows that it could deal with much more
+the Murj System, whereas the performance of SSM shows that SSM could deal with much more
 complex protocols than the one used in this paper.
 Overall, the SSM method offers three advantages over classic state enumeration methods
-with no state abstraction. First, it overcomes the state explosion problem. Second, since the entire
+with no state abstraction. First, the SSM method overcomes the state explosion problem. Second, since the entire
 global state space is symbolically represented by a small number of essential states, the time complexity
 of checking the connectivity of the global state transition diagram (needed for livelock
-detection) is manageable. Third, it verifies the protocol for any system size.
+detection) is manageable. Third, the connectivity of the global state transition diagram (needed for livelock
+detection) verifies the protocol for any system size.
 Recently, Ip and Dill have integrated a variation of the SSM method in Murj [17]. Their
 tool expands explicit states and then infers abstract states based on generated explicit states,
 whereas our tool works directly on the abstract states. Therefore, the new Murj tool may require
@@ -1115,7 +1163,8 @@ In the architectural model of figure 2 memory accesses are made of several conse
 events and thus are not atomic. We do not constrain in any way the sequences of access generated
 by processors. Moreover the hardware does not distinguish between synchronization instructions
 and regular load/store instructions. So, in this paper, latency tolerance mechanisms in the processors
-and in the caches are not modeled and we assume that the mechanisms are correct and
+and in the caches are not modeled and we assume that So, in this paper, latency tolerance mechanisms in the processors
+and in the caches are correct and
 enforce proper sequencing and ordering of memory accesses [9]. However, the methodology of
 SSM does not preclude the verification of consistency in the presence of latency tolerance hard-
 ware. In order to include latency tolerance hardware. synchronization accesses must be modeled
@@ -1123,7 +1172,7 @@ and the sequence of accesses generated by the processors are constrained by the 
 model [11]. This approach was applied in [26] and in [27] for the delayed consistency protocol
 specified in [10].
 Whereas state enumeration approaches are appropriate for verifying coherence properties,
-they do not seem to be applicable to the verification of memory access orders. The reason is that
+state enumeration approaches do not seem to be applicable to the verification of memory access orders. The reason is that
 no one has found a way so far to formulate the verification property for memory order over the
 state enumeration graph. Thus, the verification of memory access orders must still rely on testing
 procedures [6] or on manual proofs [1, 12].
@@ -1131,8 +1180,8 @@ procedures [6] or on manual proofs [1, 12].
 Acknowledgments
 
 This research was supported by the National Science Foundation under Grant No. CCR-
-9222734. We also want to acknowledge the contributions of David L. Dill and C. Norris Ip who
-provided invaluable information on the Murj system.
+9222734. the National Science Foundation also want to acknowledge the contributions of David L. Dill and C. Norris Ip who
+provided invaluable information on the Murj System.
 
 
 
@@ -1177,7 +1226,9 @@ A lazy cache algorithm
 A Survey of Cache Coherence Schemes for Multiprocessors
 Directory-Based Cache Coherence in Large-Scale Multiprocessors
 Proving sequential consistency of high-performance shared memories (extended abstract)
-Delayed consistency and its effects on the miss rate of parallel programs
+Delayed consistency and A Survey of Cache Coherence Schemes for Multiprocessors
+Directory-Based Cache Coherence in Large-Scale Multiprocessors
+ effects on the miss rate of parallel programs
 Reasoning about parallel architectures
 The verification of cache coherence protocols
 The Stanford FLASH multiprocessor

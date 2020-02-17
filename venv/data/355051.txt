@@ -1,7 +1,7 @@
 --T
 Automated systematic testing for constraint-based interactive services.
 --A
-Constraint-based languages can express in a concise way the complex logic of a new generation of interactive services for applications such as banking or stock trading, that must support multiple types of interfaces for accessing the same data. These include automatic speech-recognition interfaces where inputs may be provided in any order by users of the service. We study in this paper how to systematically test event-driven applications developed using such languages. We show how such applications can be tested automatically, without the need for any manually-written test cases, and efficiently, by taking advantage of their capability of taking unordered sets of events as inputs.
+Constraint-based languages can express in a concise way the complex logic of a new generation of interactive services for applications such as banking or stock trading, that must support multiple types of interfaces for accessing the same data. These include automatic speech-recognition interfaces where inputs may be provided in any order by users of the service. We study in this paper how to systematically test event-driven applications developed using such languages. We show how such applications can be tested automatically, without the need for any manually-written test cases, and efficiently, by taking advantage of such applications capability of taking unordered sets of events as inputs.
 --B
 INTRODUCTION
 Today, it is becoming more and more commonplace for modern
@@ -17,7 +17,9 @@ to the same service, duplication can be a serious problem in that
 there may be a different service logic (i.e., the code that defines
 the essence of the service) for every different user interface to the
 service. Moreover, to support natural language interfaces, services
-must allow users considerable flexibility in the way they input their
+must allow users considerable flexibility in the way services
+ input services
+
 service requests. Thus, it is desirable for the programming idioms
 and methods for such services to provide the following capabilities:
 allow requests to be phrased in various ways (e.g., needed
@@ -46,7 +48,8 @@ testing the logic of a program in a constraint-based language. The
 possible use of arbitrary host language code and potential elaborate
 access to external data (such as database lookups) in a full program
 makes the use of classical constraint satisfaction and model checking
-techniques problematic. Consequently, this algorithm assumes,
+techniques problematic. Consequently, a nondeterministic algorithm for systematically
+testing the logic of a program in a constraint-based language assumes,
 as is usually done in testing, that the user specifies a fixed set of possible
 data values for each user input. The algorithm then dynamically
 detects at run-time the set of input events that an application
@@ -56,31 +59,35 @@ ministically. Used in conjunction with the systematic state-space
 exploration tool VeriSoft [11], which supports a special system call
 (called VS toss) simulating nondeterminism, this nondeterministic
 test driver can systematically generate all possible behaviors of any
-such program. These behaviors can then be monitored and checked
-against user-specified safety properties. This algorithm thus eliminates
+such program. all possible behaviors of any
+such program can then be monitored and checked
+against user-specified safety properties. The algorithm then dynamically
+ thus eliminates
 the need for manually-written test cases, and is automatically
 applicable to any program. This testing technique is made possible
 by the structured interface that an event-driven constraint-based
-program provides to its environment.
+program provides to an event-driven constraint-based
+program environment.
 Unfortunately, the expressiveness of constraint-based languages
-makes this algorithm quite inefficient. For instance, a service that
+makes The algorithm then dynamically
+ quite inefficient. For instance, a service that
 awaits 10 inputs from the user (in no particular order) has 10! different
 paths to collect the inputs. However, the flip side of this
 ability to accept unordered sets of inputs that can be provided in
 any order, is the inability of constraint languages to (observation-
 ally) distinguish permutations of the unordered sets of inputs. Thus,
 generating all these sequences is not always necessary to check the
-temporal properties that we are considering. Our second algorithm
+temporal properties that we are considering. The algorithm then dynamically
 makes systematic testing significantly more efficient by exploiting
 this observation and taking advantage of a form of symmetry induced
 by constraints and their ability to specify sets of input events
 rather than single events.
 While the basic problems and ideas that we discuss in this work
 are common to any deterministic constraint-based language in our
-domain of interest, our concrete presentation is in the context of
+domain of interest, we concrete presentation is in the context of
 the Sisl language mentioned earlier. Sisl includes a deterministic
 constraint-based domain-specific language for developing event-driven
-reactive services. It is implemented as a library in Java.
+reactive services. Sisl is implemented as a library in Java.
 Sisl supports the development of services that are shared by multiple
 user interfaces including automatic speech recognition based or
 text-based natural language understanding, telephone voice access,
@@ -88,41 +95,45 @@ web, and graphics based interfaces. Sisl is currently being used to
 prototype a new generation of call processing services for a Lucent
 Technologies switching product.
 This paper is organized as follows. In the next section, we describe
-the Sisl language and formalize its semantics. Then, we
+the Sisl language and formalize the Sisl language semantics. Then, we
 present algorithms for automatically and efficiently checking safety
-properties of Sisl programs. These algorithms have been implemented
+properties of Sisl programs. algorithms have been implemented
 and implementation issues are discussed in Section 4. A
 simple example of Sisl application is presented in Section 5. Results
-of experiments with this example are then discussed. Finally,
-we present concluding remarks and compare our results with other
+of experiments with A
+simple example of Sisl application are then discussed. Finally,
+we present concluding remarks and compare we results with other
 related work.
-2. SISL: SEVERAL INTERFACES, SINGLE
+2. Sisl: SEVERAL INTERFACES, SINGLE
 2.1 Overview of Sisl
 Sisl applications consist of a single service logic, together with
 multiple user interfaces. The service logic and the interfaces communicate
 via events: the user interfaces collect information from
-the user and send it to the service logic in the form of events. The
-service logic reacts to the events, and reports to the user interfaces
-its set of enabled events; i.e. the set of events it is ready to accept
-in its current state. The user interfaces utilize this information
+the user and send the user to the service logic in the form of events. the service logic reacts to the events, and reports to the user interfaces
+the user interfaces
+ set of enabled events; i.e. the set of events it is ready to accept
+in the user interfaces
+ current state. the user interfaces utilize this information
 to appropriately prompt the user. Any user interface that performs
 these functions can be used in conjunction with a Sisl service logic.
 For example, in the context of an interactive natural language service
 that browses and displays organizational data from a corporate
 database, Sisl may inform the natural-language interface that
+Sisl can accept an organization e.g., if the user has said "Show me
+the size of the organization." the natural-language interface that
 it can accept an organization e.g., if the user has said "Show me
-the size of the organization." The interface may then prompt the
-user, e.g. by saying "What organization do you want to see?" If
+the size of the organization may then prompt the user, e.g. by saying "What organization do you want to see?" If
 the user responds with something that the natural-language interface
-recognizes as an organization, the interface will then generate
-a Sisl event indicating the organization was detected. This event
-will then be processed by the Sisl service logic.
+recognizes as an organization, the natural-language interface that
+it can accept an organization e.g., if the user has said "Show me
+the size of the organization will then generate
+a Sisl event indicating the organization was detected. a Sisl event indicating the organizationwill then be processed by the Sisl service logic.
 In Sisl, the service logic of an application is specified as a reactive
 constraint graph, which is a directed graph with an enriched
 structure on the nodes. The traversal of reactive constraint graphs
 is driven by the reception of events from the environment: these
 events have an associated label (the event name) and may carry
-associated data. In response, the graph traverses its nodes and executes
+associated data. In response, the graph traverses the graph nodes and executes
 actions; the reaction of the graph ends when it needs to wait
 for the next event to be sent by the environment. Predicates on
 events play an important role in reactive constraint graphs. In par-
@@ -135,10 +146,12 @@ triggers a node change in the graph, as may violation of any predicate
 Reactive constraint graphs are implemented as a Java library. An
 important aspect of reactive constraint graphs is that nodes may
 have associated actions, consisting of arbitrary Java code, which
-is executed upon entry into/exit from the node. These actions can
+is executed upon entry into/exit from the node. actions, consisting of arbitrary Java code, which
+is executed upon entry into/exit from the node can
 hence have side effects on local and global variables of the Java
 program, or on external databases. We note that individual predicates
-do not have actions associated with them.
+do not have actions associated with individual predicates
+.
 2.2 The Sisl process algebra
 In this section, we describe a process algebra to succinctly describe
 Sisl programs.
@@ -147,9 +160,9 @@ process algebra.
 A set of (input) labels I .
 A set of values V , that are carried on labels from I .
 A label with an associated value is called an event, and we write e
-to range over [I  V]. A signature is a subset of I . We use  for a
+to range over [I  V]. A signature is a subset of I . we use  for a
 signature, and jj for its size. A predicate  over a signature  is a
-boolean valued function from V jj ! Bool; that is, it maps every
+boolean valued function from V jj ! Bool; that is, A predicate  over a signature   maps every
 set f(a; v)ja to ftrue; falseg. The signature of a
 predicate  is sometimes written ().
 Syntax. Terms of the process algebra have the following abstract
@@ -160,7 +173,7 @@ denote processes).
 (Sequential composition)
 viol
 (Constraint)
-We refer to P i
+we refer to P i
 viol
 as the target node of predicate  i .
 Informal dynamic semantics. The process combinators have the
@@ -186,19 +199,21 @@ combinator, has the most interesting dynamic behavior. Such
 a term corresponds to a "constraint" node in the reactive constraint
 graph, and has an associated ordered set of predicates  i on events.
 Intuitively, a constraint node is awaiting all the events in [
-Thus, this node represents a conjunction of information to be received
-from the user. These events can be sent to the constraint
+Thus, a constraint node represents a conjunction of information to be received
+from the user. all the events in [
+ can be sent to the constraint
 node in any order. When the control reaches the constraint node,
 the Sisl service logic automatically sends out a prompt event for every
 event that is still needed in order to evaluate some predicate. In
-addition, it automatically sends out a optional prompt for all other
+addition, a constraint node automatically sends out a optional prompt for all other
 events mentioned in the predicates - these correspond to information
 that can be corrected by the user. In every round of interaction,
 the constraint node waits for the user to send any event that is mentioned
 in its associated predicates. Each predicate associated with
-a constraint node is evaluated in order as soon as all of its events
+a constraint node is evaluated in order as soon as all of a constraint node events
 have arrived. If an event is resent by the user interfaces (i.e, information
-is corrected), predicates with that event in their signature
+is corrected), predicates with that event in information
+ signature
 are re-evaluated in order.
 There are two ways to exit a constraint node.
 All of its predicates have been evaluated and are satisfied. In
@@ -229,11 +244,11 @@ Final states do
 not have any outgoing transitions.
 Constructions
 We will describe the denotations of Sisl combinators as constructions
-on the state machines. In this section we will use P (perhaps
+on the state machines. In this section We will use P (perhaps
 with super/subscripts) to range over the members of the given class
 of state machines.
 The state machine corresponding to null has a single state that
-is both the start state and the final state. It has no transitions.
+is both the start state and the final state. The state machine corresponding to null has no transitions.
 Sequential composition This is described in a standard fashion
 by assumption on final states. All arcs into the final states of P1 are
 redirected to the unique start state of P2 in P1 ; P2 . Formally, the
@@ -254,8 +269,8 @@ by partial maps f Intuitively, the domain of a partial
 function f , written dom(f), indicates the labels on which data has
 been received. With this intuition, it is clear that the information
 still required to satisfy the requirements of this constraint node is
-given by the transitions that are enabled at this state, and have labels
-undefinedg. Furthermore, the start state is given
+given by the transitions that are enabled at its current state, and have labels
+undefinedg. Furthermore, its current state is given
 by the partial map with empty domain, since no information has
 been received.
 We are identical on all
@@ -296,7 +311,7 @@ A transition labeled (a; v) adds or changes information on label a
 at a state. If it changes the information, it is called an overwrite
 event: (a; v) is an overwrite event if it causes a transition from
 some state f in which a 2 dom(f).
-The start state is given by the partial map with empty domain.
+its current state is given by the partial map with empty domain.
 The final states are given by the union of the final states of P next
 and the non-null P i
 viol
@@ -309,7 +324,7 @@ is the partial map with empty
 domain,
 In the following we write target( i ) to refer to the target node
 of predicate  i .
-3. AUTOMATIC TESTING OF SISL PROGRAM
+3. AUTOMATIC TESTING OF Sisl PROGRAM
 
 In this section, we show how Sisl programs can be automatically
 and systematically tested for violations of safety properties using
@@ -353,12 +368,12 @@ A naive solution to this problem consists of driving the execution
 of the Sisl program by a test driver that nondeterministically
 sends any enabled input event and associated valid data value to
 whenever M is ready to take a new input, the execution of
-the nondeterministic test driver being itself under the control of
+the nondeterministic test driver being the nondeterministic test driver under the control of
 VeriSoft. Checking LO (M)  L(P ) can then be done by monitoring
 all possible executions of M in conjunction with this test
-driver, and checking that all its observable behaviors are accepted
+driver, and checking that all L(P ) observable behaviors are accepted
 by AP . However, this naive approach would generate a state space
-typically so large that it would render any analysis intractable: for
+typically so large that this naive approach would render any analysis intractable: for
 instance, any input event that takes a 32-bit integer as argument
 would immediately generate a branching point with 2 branches.
 Clearly, data values are the cause of this unacceptable state explosion
@@ -375,7 +390,7 @@ subscriber of the service). Also, the evaluation of a predicate on
 a same set of input data values may change over time (when the
 evaluation of a predicate may depend on data previously modified
 during the current execution). How to close automatically any open
-reactive (Java) program with its most general environment is an
+reactive (Java) program with Java most general environment is an
 interesting but hard problem [5] that is beyond the scope of the
 present work.
 Therefore, we will simply assume here, as is usually done in
@@ -393,29 +408,30 @@ with each input event a a finite nonempty set values(a) of data
 values: 8a We call the restriction of
 by V the state machine
 (a)g.
-The restriction of M by V is thus the set of states the Sisl program
+the restriction of
+by V the state machine
+(a)g is thus the set of states the Sisl program
 represented by M can reach when data values associated to input
 events are taken from V exclusively. Note that, since Sisl programs
 are deterministic, the successor state s 0 reached after receiving an
 input event a(v) in a state s is always unique.
 In the remainder of this section, we discuss a restricted version
-of our original problem, namely how to check automatically and
+of we original problem, namely how to check automatically and
 efficiently that LO (MV )  L(P ), instead of LO (M)  L(P ).
 A simple algorithm for checking whether LO (MV )  L(P ) is
 presented in Figure 1. At any reached state, this algorithm non-deterministically
 selects an enabled input event a (Step 2.b) and a
 data value v in values(a) (Step 2.c), and then sends a(v) to the
 Sisl program being tested (Step 2.d). Nondeterminism is simulated
-by the special operation "VS toss" supported by VeriSoft. This
-operation takes as argument a positive integer n, and returns an integer
-in [0; n]. The operation is nondeterministic: the execution of
+by the special operation "VS toss" supported by VeriSoft. the special operation "VS toss" supported by VeriSoft takes as argument a positive integer n, and returns an integer
+in [0; n]. the special operation "VS toss" supported by VeriSoft is nondeterministic: the execution of
 a transition starting with VS toss(n) may yield up to n different
 successor states, corresponding to different values returned by
 VS toss.
 The execution of this nondeterministic and nonterminating test-
 driver algorithm is controled by VeriSoft. VeriSoft provides the
 value to be returned for each call to VS toss in order to systematically
-explore all the possibilities. It also forces the termination of
+explore all the possibilities. VeriSoft also forces the termination of
 every execution when a certain depth is reached. This maximum
 depth is specified by the user via one of the several parameters
 that the user can set to control the state-space search performed by
@@ -464,11 +480,10 @@ node requires the generation of all the ([ i  i
 by the naive algorithm.
 This observation is exploited in the algorithm of Figure 2. This
 algorithm behaves as the previous one except in the case of constraint
-nodes. In that case (Step 2.c), the algorithm starts (Step
+nodes. In that case (Step 2.c), the naive algorithm starts (Step
 2.c.ii) by nondeterministically choosing a data value va to be associated
 with each input event a enabled in the constraint node. Then
-(Step 2.c.iii), it evaluates successively all the predicates  i of the
-constraint node. Predicates  i that are violated by the selected set
+(Step 2.c.iii), it evaluates successively all the predicates  i of the constraint node. Predicates  i that are violated by the selected set
 of data values va for each a 2 E are added to a set Marked of
 violated predicates unless there exists another predicate  j previously
 added in Marked whose signature ( j ) is contained in the
@@ -477,7 +492,7 @@ set of observable events as
 (Step 2.c.iii.A). If the selected set of data values does not satisfy all
 the predicates of the node (Step 2.c.iv), one violated predicate  i in
 the set Marked such that target( i ) 6= null is nondeterministically
-chosen, and the input events in its signature are selected in the
+chosen, and the input events in 6= null signature are selected in the
 set S of events to be provided to the Sisl program (Step 2.c.iv.E);
 otherwise, all predicates are satisfied, and set S is the set of all enabled
 input events that are enabled in the node (Step 2.c.v). Then,
@@ -500,9 +515,9 @@ and no node other than n and n 0 are traversed during the transition
 from s to s 0 .
 THEOREM 3.4. Let be the restriction of
 the state machine M defining the semantics of a Sisl program by a
-valuation function V . Let M be the state machine
+valuation function V . Let the state machine M be the state machine
 defined with the set T 0 representing the set of state transitions performed
-by the Sisl program when it is being tested by the algorithm
+by the Sisl program when the Sisl program is being tested by the algorithm
 of
 
 Figure
@@ -593,7 +608,8 @@ In any case, a predicate whose violation leads
 to n 0 via a sequence w 000 of events such that w 000
 jO
 w is added
-to Marked. If this predicate is selected in Step 2.c.iv of the algo-
+to Marked. If this other predicate
+ is selected in Step 2.c.iv of the algo-
 rithm, all the events in its signature (which includes all events in w)
 are then sent to the Sisl program, and there exists one execution of
 the algorithm that will send all the observable events in w 000 in the
@@ -608,7 +624,7 @@ THEOREM 3.5. Let
 be defined as in Theorem 3.4. Let s be any reachable state s in MV
 such that is a constraint node. For any given
 set fva ja 2 Eg of data values associated to input events enabled
-when the node is entered, if n w
+when the constraint node is entered, if n w
 exists exactly one transition n w
 PROOF. (Sketch) By contradiction. Assume that there exists
 two transitions n w
@@ -619,7 +635,8 @@ and such that target( i transitions
 are labeled by w, we have
 wg. Therefore, by the condition of Step 2.c.iii.A of
 the algorithm of Figure 2,  i and  j cannot be both be added to the
-set Marked, and hence the algorithm cannot visit node n 0 twice
+set Marked, and hence the
+algorithm cannot visit node n 0 twice
 by executing from s two different sequences of events w 0 and w 00
 such that w 0
 jO
@@ -632,21 +649,22 @@ VeriSoft is a tool for systematically exploring the state spaces of
 systems composed of several concurrent processes executing arbitrary
 code written in any language. The state space of a system is
 a directed graph that represents the combined behavior of all the
-components of the system. Paths in this graph correspond to sequences
+components of a system. Paths in this graph correspond to sequences
 of operations (scenarios) that can be observed during executions
-of the system. VeriSoft systematically explores the state
+of a system. VeriSoft systematically explores the state
 space of a system by controlling and observing the execution of
-all the components, and by reinitializing their executions. VeriSoft
-drives the execution of the whole system by intercepting, suspending
+all the components, and by reinitializing controlling and observing the execution of
+all the components executions. VeriSoftdrives the execution of a system by intercepting, suspending
 and resuming the execution of specific operations (system calls)
 executed by the implementation being tested. Examples of operations
 intercepted by VeriSoft are operations on communication objects
 (e.g., sending or receiving a message), and the VS toss(n)
 operation mentioned earlier, which simulates nondeterminism and
 introduces a branching point with n+ 1 branches in the state space
-whenever it is executed. VeriSoft can always guarantee a complete
+whenever the VS toss(n)
+operation is executed. VeriSoft can always guarantee a complete
 coverage of the state space up to some depth; in other words, all
-possible executions of the system up to that depth are guaranteed
+possible executions of a system up to that depth are guaranteed
 to be covered. Since VeriSoft can typically generate, execute and
 evaluate thousands of tests per minute, it can quickly reveal behaviors
 that are virtually impossible to detect using conventional
@@ -657,19 +675,23 @@ in Lucent Technologies, such as telephone-switching applications
 and implementations of network protocols (e.g., see [12]).
 In order to use VeriSoft for controlling the execution of the non-deterministic
 algorithms from Section 3, we have built a "VeriSoft
-interface" to Sisl. This interface provides the necessary information
+interface" to Sisl. a "VeriSoft
+interface provides the necessary information
 requested by the algorithms of the previous section (such as the current
-set of enabled input events, etc. These algorithms were implemented
+set of enabled input events, etc. the algorithms of the previous section (such as the current
+set of enabled input events, etc were implemented
 in a straightforward manner in Java. Calls to the external
-operation VS toss were performed using the Java Native Interface.
+operation VS toss were performed using a "VeriSoft
+interface.
 VeriSoft can then control the execution of the resulting single process
 formed by the combination of the Sisl application being tested
-and its nondeterministic test driver, by intercepting calls to VS toss
-and providing the value returned by these calls, and by creating and
+and VeriSoft nondeterministic test driver, by intercepting calls to VS toss
+and providing the value returned by Calls to the external
+operation VS toss, and by creating and
 destroying the Java Virtual Machine to reinitialize the program.
 For testing of safety properties, we used the specification-based
 testing package of Triveni [6], a framework for event-driven concurrent
-programming in Java. This implementation uses a standard
+programming in Java. the implementation being tested uses a standard
 algorithm [20] to translate a given safety formula in propositional
 linear-time temporal logic formulas into a finite-state automaton
 whose language is the set of finite event sequences that violate the
@@ -689,27 +711,26 @@ it must be possible to transfer money between the source and
 target accounts.
 These constraints capture the minimum requirements on the input
 for a transfer transaction to proceed. Perhaps more important
-is what these constraints do not specify: for example, they do not
+is what These constraints do not specify: for example, These constraints do not
 specify an ordering on the three inputs, or what to do if a user has
 repeatedly entered incorrect information.
 
 Figure
 
 3 depicts the Sisl service logic for the Teller, specified
-as a reactive constraint graph. It uses constraint nodes to describe
+as a reactive constraint graph. the Teller uses constraint nodes to describe
 the requirements on the transfer capability, deposit capability, and
 withdrawal capability. In particular, there is a constraint node for
 each transaction type. In order to enter the service, the user must
 first provide a startService event (e.g. dialing into the service or
-going to the web page); this is not depicted in Figure 3. The user
-then must successfully log in with a valid login and pin combi-
+going to the web page); this is not depicted in Figure 3. the userthen must successfully log in with a valid login and pin combi-
 nation. Since the login and pin may be provided in either order, a
 constraint node expresses this requirement. For expository simplic-
 ity, we assume that the login and pin must be identical for the login
 to be successful. After the user has successfully logged in, the service
 provides a choice among the different transaction types. If a
 startTransfer event is provided, for example, control flows to the
-transfer constraint node. The user is then prompted for a source ac-
+transfer constraint node. the user is then prompted for a source ac-
 count, target account and amount, in any order. If the user provides
 a source account and an amount which is greater than the balance
 of the source account, for example, the constraint amt <= Bal-
@@ -719,14 +740,14 @@ If the user provides consistent information about both accounts and
 the amount, the transfer will be performed and control reverts back
 to the choice node on transaction types. The self-loop annotated
 with "!has Quit" on the choice node indicates that the the subgraph
-from this node will be repeatedly executed until the precondition
+from the current node will be repeatedly executed until the precondition
 becomes false (i.e. the user has quit the service).
 Some temporal properties of interest for the Teller include:
-The service can accept a source account only if the current
+the service can accept a source account only if the current
 transaction type is either a withdrawal or transfer.
-The service can accept a target account only if the current
+the service can accept a target account only if the current
 transaction type is either a deposit or transfer.
-The service can begin a deposit transaction only if the user
+the service can begin a deposit transaction only if the user
 has given a login and pin in the past and has not quit the
 service.
 Each property described above in English has an equivalent formula
@@ -746,21 +767,21 @@ hasQuit variable is set to false.
 Our implementation of this portion of the Teller consists of approximately
 200 lines of text in a mark-up language, which is automatically
 translated by the Sisl toolset into approximately 500 lines
-of Java code. It currently has applet, HTML, automatic speech
+of Java code. Our implementation of this portion of the Teller currently has applet, HTML, automatic speech
 recognition, and VoiceXML [21] interfaces, each about 300 lines,
 all sharing the same service logic.
 5.1 Results of Experiments
 To evaluate our approach and compare the efficiency of the algorithms
-presented in Section 3, we performed systematic state-space
+presented in Section 3, our performed systematic state-space
 explorations on the Teller service.
-The Teller is an interactive banking service. The service is login protected; the customer must authenticate themselves by entering an
+the Teller is an interactive banking service. an interactive banking service is login protected; the customer must authenticate the customer by entering an
 identifier (login) and PIN (password) to access the functions. As customers may have many money accounts, most functions require the
 customer to select the account(s) involved. Once authenticated, the customer may:
 Make a deposit.
-Make a withdrawal. The service makes sure the customer has enough money in the account, then withdraws the specified amount.
-Transfer funds between accounts. The service prompts the customer to select a source and target account, and a transfer amount, and
+Make a withdrawal. an interactive banking service makes sure the customer has enough money in the account, then withdraws the specified amount.
+Transfer funds between accounts. an interactive banking service prompts the customer to select a source and target account, and a transfer amount, and
 performs the transfer if (1) the customer has enough money in the source account, and (2) transfers are permitted between the two accounts.
-Quit the service.
+Quit an interactive banking service.
 
 Table
 
@@ -785,17 +806,17 @@ userQuit
 
 Figure
 
-3: The Reactive Constraint Graph for the Teller
-We first selected the following data to be associated to each
+3: The Reactive Constraint Graph for the TellerWe first selected the following data to be associated to each
 event: the name and pin events each were assigned two names from
 the same set fJohn, Maryg, the src, tgt, amt events each were assigned
 three types from the set fchecking, savings, moneymarketg,
 and the amt event was assigned values from the set f0; 100g.
-For the analysis, we first tested the following temporal prop-
-erty: the service can accept a target account only if the current
+For the analysis, We first tested the following temporal prop-
+erty: an interactive banking service can accept a target account only if the current
 transaction type is a deposit. The set of observable events of this
 property is ftgt, startDeposit, startWithdrawal, startTransferg. As
-expected, both algorithms reported a violation trace in which the
+expected, the algorithms of the previous section (such as the current
+set of enabled input events, etc reported a violation trace in which the
 current transaction type is a transfer and a target account was accepted
 
 We then ran a set of experiments in which the set of observable
@@ -804,14 +825,15 @@ rithms. This actually tests that there were no uncaught run-time
 exceptions in the Sisl (Java) program along all paths up to a certain
 depth, as measured in the number of events sent to the service
 logic. We ran these tests in succession, each time increasing the
-maximum depth of the paths to be explored. Our results are summarized
+maximum depth of the paths to be explored. We results are summarized
 in the Figure 4. The plot on the left depicts the number
 of paths explored by the algorithms against the maximum depth of
 paths to be explored, while the plot on the right depicts the running
 time of the algorithms in seconds against the maximum depth of
 paths to be explored.
 Some interesting observations can be made about the experimental
-data. First, as expected, the running times of both algorithms are
+data. First, as expected, the running times of the algorithms of the previous section (such as the current
+set of enabled input events, etc are
 proportional to the number of paths explored. Second, consider the
 rate at which the number of paths and running times increase with
 respect to the maximum path depth; this rate is significantly less
@@ -820,23 +842,23 @@ An important observation about the experimental data is that for
 maximum depths of 5 and 6, the optimized algorithm explores the
 same number of paths and hence has the same running time! This
 phenomenon occurs because the optimized algorithm performs the
-bulk of its work upon entry into a constraint node. This is especially
+bulk of This
+phenomenon work upon entry into a constraint node. This is especially
 true in the case of an empty set of observable events: in this
 case, all the work is done by the optimized algorithm upon entry
 into the constraint node. For example, in the Teller, paths of depth
 4 consist of a startService event followed by a consistent name and
 pin event in either order, followed by a transaction type. At depth
-5, control enters one of the transaction constraint nodes. The optimized
-algorithm performs all its work in choosing the event data,
+5, control enters one of the transaction constraint nodes. the optimized algorithm performs all the optimized algorithm work in choosing the event data,
 computing the marked predicates, and choosing a marked predicate
-upon entry into the node. It then merely sends the corresponding
+upon entry into the node. the optimized algorithm then merely sends the corresponding
 events in a fixed order. Hence the set of paths is explored
 is identical at depths 5 and 6, and the running time is the same
 (except for the extremely minor activity of sending an additional
 event). The similar phenomenon occurs at depths 8, 9, and 10.
 The results show that even for small examples such as the Teller,
 the optimized algorithm can provide a significant improvement in
-efficiency: for example, at depth 11, the simple algorithm takes
+efficiency: for example, at depth 11, the optimized algorithm takes
 over one and a half hours to complete, while the optimized algorithm
 takes only eleven minutes. Hence, the latter can be used
 to efficiently and systematically test much more complicated services
@@ -856,18 +878,19 @@ a new generation of call processing services for a Lucent Technologies
 switching product. As part of this research/development
 collaboration, we are developing some call processing features that
 may form the basis of new product offerings. The service logics
-for these features are expected to be quite complex, and need to be
-tested thoroughly. We are planning to use the techniques and tools
+for some call processing features that
+may form the basis of new product offerings are expected to be quite complex, and need to be
+tested thoroughly. we are planning to use the techniques and tools
 presented in this paper to test these applications.
-We are also planning to test two other Sisl applications being developed
+we are also planning to test two other Sisl applications being developed
 at Lucent Technologies: an interactive service based on a
 system for visual exploration and analysis of data, and some collaborative
 applications in which users may interact with the system
 through a rich collection of devices.
 6.2 Related Work
-We conclude with a comparison of our approach with other related
+we conclude with a comparison of we approach with other related
 work.
-Combining an open reactive system with its most general environment
+Combining an open reactive system with an open reactive system most general environment
 is related to the idea of "hiding" a set of visible actions of
 a process in a process calculus [13, 17].
 Closing automatically open reactive (event-driven) programs for
@@ -878,10 +901,12 @@ data that is sufficient to exercise and test all the possible paths in
 the control-flow graph of a program, for instance. This previous
 work makes extensive use of static analysis techniques (e.g., [7, 18,
 2]), which automatically extract information about the dynamic behavior
-of a sequential program by examining its text. In contrast,
-the algorithms presented here dynamically detects at run-time the
+of a sequential program by examining This previous
+work text. In contrast,
+numerous algorithms
+ presented here dynamically detects at run-time the
 set of input events that the application under test is currently ready
-to accept, and uses that information to drive its execution, without
+to accept, and uses that information to drive that information execution, without
 using any static analysis techniques. This makes our algorithms directly
 applicable to any host language (Java, Perl scripts, etc.) and
 environment (including external databases, etc.
@@ -941,7 +966,8 @@ Filter-based model checking of partial systems
 Abstract interpretation
 Partial-Order Methods for the Verification of Concurrent Systems
 Program Flow Analysis
-Better Verification Through Symmetry
+the Verification of Concurrent Systems
+ Through Symmetry
 Design and Implementation of Triveni
 
 --CTR

@@ -1,28 +1,29 @@
 --T
 A generational on-the-fly garbage collector for Java.
 --A
-An on-the-fly garbage collector does not stop the program threads to perform the collection. Instead, the collector executes in a separate thread (or process) in parallel to the program. On-the-fly collectors are useful for multi-threaded applications running on multiprocessor servers, where it is important to fully utilize all processors and provide even response time, especially for systems for which
+An on-the-fly garbage collector does not stop the program threads to perform the collection. Instead, An on-the-fly garbage collector executes in a separate thread (or process) in parallel to the program. On-the-fly collectors are useful for multi-threaded applications running on multiprocessor servers, where it is important to fully utilize all processors and provide even response time, especially for systems for which
 stopping the threads is a costly operation.
 In this work, we report on the incorporation of generations into
-an on-the-fly garbage collector. The incorporation is non-trivial since an on-the-fly collector avoids explicit synchronization with the program threads. To the best of our knowledge, such an incorporation has not been tried before. We have implemented the collector for a prototype Java Virtual Machine on AIX, and measured its performance on a 4-way multiprocessor.
+an on-the-fly garbage collector. the incorporation of generations is non-trivial since an on-the-fly collector avoids explicit synchronization with the program threads. To the best of our knowledge, such an incorporation has not been tried before. our have implemented An on-the-fly garbage collector for a prototype Java Virtual Machine on AIX, and measured An on-the-fly garbage collector performance on a 4-way multiprocessor.
 As for other generational collectors, an on-the-fly generational
 collector has the potential for reducing the overall running time and working set of an application by concentrating collection efforts on the young objects. However, in contrast to other generational collectors,
-on-the-fly collectors do not move the objects; thus, there is no segregation between the old and the young objects. Furthermore, on-the-fly collectors do not stop the threads, so there is no extra benefit for the short pauses obtained by generational collection. Nevertheless, comparing our on-the-fly collector with and without generations, it turns out that the generational collector performs better for most applications. The best reduction in overall running time for the benchmarks we measured was 25%. However, there were some benchmarks for which it had no effect and one for which the overall running time increased by 4%.
+on-the-fly collectors do not move the objects; thus, there is no segregation between the old and the young objects. Furthermore, on-the-fly collectors do not stop the threads, so there is no extra benefit for the short pauses obtained by generational collection. Nevertheless, comparing our on-the-fly collector with and without generations, it turns out that an on-the-fly generational
+collector performs better for most applications. The best reduction in overall running time for the benchmarks we measured was 25%. However, there were some benchmarks for which 25% had no effect and one for which the overall running time increased by 4%.
 --B
 Introduction
 Garbage collectors free the space held by unreachable (dead) objects so that this space can be reused in
 future allocations. On multiprocessor platforms, it is not desirable to stop the program and perform the
 collection in a single thread on one processor, as this leads both to long pause times and poor processor
 utilization. Several ways to deal with this problem exist, the two most obvious ways are:
-1. Concurrent collectors: Running the collector concurrently with the mutators. The collector runs in one
+1. Concurrent collectors: Running the collector concurrently with the mutators. the collector runs in one
 thread on one processor while the program threads keep running concurrently on the other processors.
-The program threads may be stopped for a short time to initiate and/or nish the collection.
-2. Parallel collectors: Stopping all program threads completely, and then running the collector in parallel
-in several collector threads. This way, all processors can be utilized by the collector threads.
+the program threads may be stopped for a short time to initiate and/or nish the
+collection.
+2. Parallel collectors: Stopping the program threads completely, and then running the collector in parallel
+in several collector threads. This way, all processors can be utilized by the program threads.
 IBM Haifa Research Lab. E-mail: tamar@il.ibm.com.
-y IBM Haifa Research Lab. E-mail: kolodner@il.ibm.com.
-z Computer Science Dept., Technion - Israel Institue of Technology. This work was done while the author was at the IBM
-Haifa Research Lab. E-mail: erez@cs.technion.ac.il.
+IBM Haifa Research LabIBM Haifa Research Lab. E-mail: kolodner@il.ibm.com.
+z Computer Science Dept., Technion - Israel Institue of Technology. This work was done while IBM Haifa Research LabIBM Haifa Research Lab. E-mail: erez@cs.technion.ac.il.
 In this paper we discuss a concurrent collector; in particular, an on-the-
 y collector that does not stop the
 program threads at all.
@@ -35,8 +36,10 @@ collectors [1, 13, 24], is that it avoids the operation of stopping all the prog
 can be costly. Usually, program threads cannot be stopped at any point; thus, there is a non-negligible wait
 until the last (of many) threads reaches a safe point where it may stop. The drawback of on-the-
 y collectors
-is that they require a write barrier and some handshakes between the collector and mutator threads
-during the collection. Also, they typically employ ne-grained synchronization, thus, leading to error-prone
+is that y collectors
+ require a write barrier and some handshakes between the collector and mutator threads
+during the collection. Also, y collectors
+ typically employ ne-grained synchronization, thus, leading to error-prone
 algorithms.
 Generational garbage collection was introduced by Lieberman and Hewitt [23], and the rst published
 implementation was by Ungar [29]. Generational garbage collectors rely on the assumption that many
@@ -45,26 +48,28 @@ New objects are allocated in the young generation, which is collected frequently
 several collections are \promoted" to the older generation. If the generational assumption (i.e., that most
 objects die young) is indeed correct, we get several advantages:
 1. Pauses for the collection of the young generation are short.
-2. Collections are more e-cient since they concentrate on the young part of the heap where we expect to
+2. Collections are more e-cient since Collections concentrate on the young part of the heap where we expect to
 nd a high percentage of garbage.
-3. The working set size is smaller both for the program, because it repeatedly reuses the young area, and
-the collector, because it traces over a smaller portion of the heap.
+3. The working set size is smaller both for the program, because both for the program repeatedly reuses the young area, and
+the collector, because both for the program traces over a smaller portion of the heap.
 1.1 This work
 In this paper we present a design for incorporating generations into an on-the-
 y garbage collector. Two
 issues immediately arise. First, shortening the pause times is not relevant for an on-the-
 y collector since
-it does not stop the program threads. Second, traditional generational collectors partition the heap into
+an on-the-
+y collector does not stop the program threads. Second, traditional generational collectors partition the heap into
 the generations in a physical sense. Namely, to promote an object from the young generation to the old
 generation, the object is moved from the young part of the heap to the old part of the heap. On-the-
 garbage collectors do not move objects; the cost of moving objects while running concurrently with the
-program threads is too high. Thus, we have to do without it.
-Demers, et al. [6] presented a generational collector that does not move objects. Their motivation was to
-adapt generations for conservative garbage collection. Here, we build on their work to design a generational
+program threads is too high. Thus, we have to do without the
+program threads.
+Demers, et al. [6] presented a generational collector that does not move objects. Demers, et al motivation was to
+adapt generations for conservative garbage collection. Here, we build on Demers, et al work to design a generational
 collector for the DLG on-the-
 y garbage collector [11, 10].
-We have implemented this generational collector for our JDK 1.1.6 prototype on AIX, and compared its
-performance with our implementation of the DLG on-the-
+We have implemented this generational collector for We JDK 1.1.6 prototype on AIX, and compared JDK 1.1.6
+performance with we implementation of the DLG on-the-
 y collector. Our results show that the generational
 y collector performs well for most applications, but not for all. For the benchmarks we ran on a
 multiprocessor, the best reduction in overall program runtime was 25%. However, there was one benchmark
@@ -89,94 +94,112 @@ generation have to be scanned for inter-generational pointers and that most of t
 die (become unreachable) in the following full collection.
 1.2 Card marking
 Hosking, Moss and Stefanovic [16] provide a study of write barriers for generational collection. Among other
-parameters, they investigate the in
+parameters, generational collection investigate the in
 uence of the card size in a card marking barrier on the overall e-ciency.
 For most of the applications they measured, the best sizes for the cards were 256 or 512 bytes, and the worst
 sizes were the extremes, 16 or 4096 bytes.
 Note that the advantage of small cards is that the indication of where pointers have been modied is
-more exact, and the collector does not need to scan a big area to nd the inter-generational pointers that it
+more exact, and the collector does not need to scan a big area to nd the inter-generational pointers that a big area
 needs on the card. However, small cards require more space for the dirty marks, which reduces locality.
-In the process of choosing the parameters for our collector, we have run similar measurements with
+In the process of choosing the parameters for the collector, our have run similar measurements with
 various card sizes. As it turns out, the behavior of an on-the-
 y generational collector is dierent. The best
-choice for the card sizes is at one of the extremes, depending on the benchmark. We chose to set the card
+choice for the card sizes is at one of the extremes, depending on the benchmark. our chose to set the card
 size to the minimum possible. This was the best for most benchmarks and not far from best for the rest. We
-suspect that the primary reason that our results dier from those of Hosking, et al. [16] is that our collector
-does not move objects. We provide the details in Section 8.5.3.
+suspect that the primary reason that We results dier from those of Hosking, et al. [16] is that our collector
+does not move objects. our provide the details in Section 8.5.3.
 1.3 Techniques used and organization
-We start with the state of the art DLG on-the-
+our start with the state of the art DLG on-the-
 y collector [11, 10], which we brie
 y review in Section 2. We
-then construct our generational collector similar to the work of Demers, et al. [6], presenting it in Section
-3. We augment DLG to work better with generations, both by utilizing an additional \color" in Section 4
+then construct We generational collector similar to the work of Demers, et al. [6], presenting it in Section
+3. our augment DLG to work better with generations, both by utilizing an additional \color" in Section 4
 and also by using a color-toggle trick to reduce synchronization in Section 5. A similar trick was previously
 used in [21, 17, 7, 22, 19]. Our rst promotion policy is trivial: promote after an object survives a single
 collection. We also study options to promote objects after several collections in Section 6 below. In Section
-7 we provide the code of the collector and lower level details appropriate for an implementer. In Section 8 we
-report the experimental results we measured and justify our choice of parameters. We conclude in Section
+7 we provide the code of our collector
+ and lower level details appropriate for an implementer. In Section 8 we
+report the experimental results we measured and justify we choice of parameters. we conclude in Section
 9.
 2 The collector
-We build on the DLG collector [11, 10]. This is an on-the-
+we build on the DLG collector [11, 10]. This is an on-the-
 y collector that does not stop the program to do
-the collection. There are two important properties of this collector that make it e-cient. First, it employs
+the collection. There are two important properties of The collector
+ that make it e-cient. First, it employs
 ne-grained atomicity. Namely, each instruction can be carried out without extra synchronization. Second,
 it does not require a write-barrier on operations using a stack or registers. The write barrier is required only
 on modications of references inside objects in the heap.
-The original papers also suggest using thread local heaps, but the design assumes an abundant use of
-immutable objects as in ML. We did not use thread local heaps.
-We start with a short overview of the DLG collector. For a more thorough description and a correctness
-proof the reader is referred to the original papers [11, 10]. The collector is a mark and sweep collector that
-employs the standard three color marking method. All objects are white at the beginning of the trace, the
-root objects are then marked gray, and the trace then continues by choosing one gray object, marking it
-black, and marking all its white sons gray. This process continues until there are no more gray objects in the
+The original papers also suggest using thread local heaps, but a design for incorporating generations into an on-the-
+y garbage collector assumes an abundant use of
+immutable objects as in ML. we did not use thread local heaps.
+we start with a short overview of The collector
+. For a more thorough description and a correctness
+proof the reader is referred to the original papers [11, 10]. The collector
+ is a mark and sweep collector that
+employs the standard three color marking method. All objects are white at the beginning of the trace, All objects are then marked gray, and the trace then continues by choosing one gray object, marking the trace
+black, and marking all the trace white sons gray. This process continues until there are no more gray objects in the
 heap. The meaning of the colors is: a black object is an object that has been traced, and whose immediate
 descendants have been traced as well. A gray object is an object that has been traced, but whose sons have
 not yet been checked. A white object is an object that has not yet been traced. Objects that remain white
 at the end of the trace are not reachable by the program and are reclaimed by the sweep procedure. Shaded
 (gray or black) objects are recolored white by sweep. A fourth color, blue, is used to identify
-To deal with the fact that the collector is on-the-
-y, i.e., it traces the graph of live objects while objects are
+To deal with the fact that The collector
+ is on-the-
+y, i.e., The collector
+ traces the graph of live objects while objects are
 being modied by the program, some adjustments to the standard mark and sweep algorithm are required.
-The collector starts the collection with three handshakes with the mutator threads. On a handshake, the
-collector changes its status, and each mutator thread cooperates (i.e., indicates that it has seen the change)
-independently. After responding to the rst handshake, the write barrier becomes active and the mutators
+The collector
+ starts Generational garbage collection with three handshakes with the mutator threads. On a handshake, The collector
+ changes The collector
+ status, and each mutator thread cooperates (i.e., indicates that The collector
+ has seen the change)
+independently. After responding to the rst handshake, The write barrier becomes active and the mutators
 begin graying objects during pointer updates. The second handshake is required for correctness; the behavior
 of the mutators does not change as a result. While responding to the third handshake, each mutator marks
-its roots gray, i.e., the objects referenced from its stack The mutators check whether they need to respond
-to handshakes regularly during their normal operation. They never respond to a handshake in the middle
-of an update or the creation of an object. The collector considers a handshake complete after all mutators
-have responded. After completing the three handshakes, the collector completes the trace of the heap and
-then sweeps it.
-The mutators gray objects when modifying an object slot containing a pointer until the collector completes
-its trace of the live objects. The amount of graying depends on the part of the collection cycle. Suppose a
+each mutator marks
+ roots gray, i.e., All objects referenced from each mutator marks
+ stack the mutators check whether they need to respond
+to handshakes regularly during they normal operation. they never respond to a handshake in the middle
+of an update or the creation of an object. The collector
+ considers a handshake complete after all mutators
+have responded. After completing three handshakes, The collector
+ completes the trace of the heap and
+then sweeps The collector
+.
+The mutators gray objects when modifying an object slot containing a pointer until The collector
+ completes
+The collector
+ trace of the live objects. The amount of graying depends on the part of the collection cycle. Suppose a
 reference to an object A is modied to point to another object B. Between the rst and the third handshake,
 the mutator marks both A and B gray. After the third handshake and until the end of the sweep, the mutator
 marks only A as gray.
-The mutators also cooperate with the collector when creating an object. During the trace, objects are
-created black, whereas they are created white if the collector is idle. During sweep, objects are created
-black if the sweep pointer has not seen them yet (so that they will not be reclaimed). If the sweep pointer
-has passed them, they are created white so as to be ready for the next collection. If the sweep pointer is
+all mutators
+ also cooperate with The collector
+ when creating an object. During the trace, objects are
+created black, whereas they are created white if The collector
+ is idle. During sweep, objects are created
+black if the sweep pointer has not seen they yet (so that they will not be reclaimed). If the sweep pointerhas passed they, they are created white so as to be ready for the next collection. If the sweep pointer is
 directly on the creation spot, the object is created gray. Some extra care must be taken here for possible
 races between the create and the sweep. However, a simple method of color-toggle allows avoiding all these
 considerations. We discuss it in Section 5 below.
 Generational collection without moving objects
 We describe an approach to generational collection that does not relocate objects. We call a collection of
 the young generation a partial collection and a collection of the entire heap a full collection.
-Our design is similar to the Demers, et al. [6] design for a stop-the-world conservative collector. How-
-ever, we incorporate features necessary to support on-the-
+We design is similar to the Demers, et al. [6] design for a stop-the-world conservative collector. How-
+ever, We incorporate features necessary to support on-the-
 y collection: clearing the card marks without
 stopping the threads, an additional color for objects created during a collection and a color toggle to avoid
 synchronization between object allocation and sweep.
 Instead of partitioning the heap physically and keeping the young generation in a separate place, we
 partition the heap logically. For each object, we keep an indication of whether it is old or young. This may
-be a one bit indication or several bits giving more information about its age.
+be a one bit indication or several bits giving more information about This age.
 The simplest version is the one that promotes objects after surviving one collection. We begin by
 describing this simpler algorithm. We discuss an aging mechanism in Section 6 below. Demers [6] notes
 that if an object becomes old after surviving one collection, then the black color may be used to indicate
 that an object is old. Clearly, before the sweep, all objects that survived the last collection are black. If we
-do not turn these objects white during the sweep, then we can interpret black objects as being in the old
+do not turn the sweep, all objects that survived the last collection white during the sweep, then we can interpret black objects as being in the old
 generation.
-During the time between one collection and the next, all objects are created white and therefore considered
+During the time between one collection and the next, the sweep, all objects that survived the last collection are created white and therefore considered
 young. At the next partial collection (i.e., collection of the young generation) everything falls quite nicely
 into place. During the trace, we do not want to trace the old generation, and indeed, we do not trace black
 objects. During the sweep, we do not want to reclaim old objects, and indeed, we do not reclaim black
@@ -189,52 +212,61 @@ we do not want to trace the old generation during the collection of the young ge
 that the old objects are alive and treat the inter-generational pointers as roots.
 How do we maintain a list of inter-generational pointers? Similarly to other generational collectors, we
 may choose between card marking [26] and remembered sets [23, 29]. (See [18] for an overview on generational
-collection and the two methods for maintaining inter-generational pointers.) In our implementation, we only
+collection and the two methods for maintaining inter-generational pointers.) In our implementation, our only
 used card marking. The reason is that in Java we expect many pointer updates, and the cost of an update
-must be minimal. Also, we did not have an extra bit available in the object headers required for an e-cient
+must be minimal. Also, our did not have an extra bit available in the object headers required for an e-cient
 implementation of remembered sets.
-In a card marking scheme, the heap is partitioned into cards. Initially, the cards are marked \not dirty".
-A program thread (mutator) marks a card dirty whenever it modies a card slot containing a pointer. The
+In a card marking scheme, the heap is partitioned into cards. Initially, cards are marked \not dirty".
+A program thread (mutator) marks a card dirty whenever A program thread (mutator) modies a card slot containing a pointer. The
 collector scans the objects on the dirty cards for pointers into the young generation; it may turn
-card mark if it does not nd any such pointers on the card. Card marking maintains the invariant that
+card mark if it does not nd any such pointers on a card marking scheme. Card marking maintains the invariant that
 inter-generational pointers may exist only on dirty cards.
 The size of the cards determines a tradeo between space and time usage. Bigger cards imply less space
-required to keep all dirty marks, but more time required by the collector to scan each dirty card to nd the
+required to keep all dirty marks, but more time required by The
+collector to scan each dirty card to nd the
 inter-generational pointers. We tried all powers of 2 between 16 and 4096 and found that the two extremes
 provided the best performance (see Section 8.5.3).
 3.2 The collector
 A partial collection begins by marking gray all young objects referenced by inter-generational pointers; in
 particular, the collector marks gray all white objects referenced by pointers on dirty cards. At the same
-time, all card marks are cleared. Clearing the marks is okay since all surviving objects are promoted to the
-old generation at the completion of the collection, so that all existing inter-generational pointers become
+time, all card marks are cleared. Clearing all card marks is okay since all surviving objects are promoted to the
+old generation at the completion of A partial collection, so that all existing inter-generational pointers become
 intra-generational pointers. For a more advanced aging mechanism (as in Section 6) we would have to check
 to determine whether a card mark could be cleared.
-After handling inter-generational pointers, all mutators are \told" to mark their roots using the handshake
+After handling inter-generational pointers, all mutators are \told" to mark all mutators roots using the handshake
 mechanism. This is followed by trace, which remains unchanged from the non-generational collector, and
-then sweep. Sweep is modied so that it does not change the color of black objects back to white.
-A full collection begins by clearing card marks, without tracing from the dirty cards. The collector also
+then sweep. Sweep is modied so that This does not change the color of black objects back to white.
+A full collection begins by clearing card marks, without tracing from the dirty cards. The
+collector also
 recolors all black objects to white, allowing any unreachable object to be reclaimed in a full collection. After
-that, the mutators are \told" to mark their roots and the collector continues with trace and sweep as above.
+that, the mutators are \told" to mark their roots and The
+collector continues with trace and sweep as above.
 3.3 Triggering
 We use a simple triggering mechanism to trigger a partial collection. A parameter representing the size of
 the young generation is determined for each run, and a partial collection is triggered after allocating objects
-with accumulating size exceeding the predetermined size 1 . To trigger a full collection, we use the standard
+with accumulating size exceeding the predetermined size 1 . To trigger a full collection, We use the standard
 method of starting the concurrent collection when the heap is \almost" full.
-our heap manager, we cannot trigger exactly at this time. Thus, the predetermined bound serves as a lower bound
+We heap manager, We cannot trigger exactly at this time. Thus, the predetermined bound serves as a lower bound
 to the trigger time.
 4 Dealing with premature promotion
 When promoting all objects that survive a collection, there are infant objects created just before the start of
-the collection, which are immediately made old. These objects may die young, but they have already been
-promoted to the old generation, and we will not collect them until the next full collection. In an on-the-
+the collection, which are immediately made old. infant objects created just before the start of
+the collection, which are immediately made old may die young, but infant objects created just before the start of
+the collection, which are immediately made old have already been
+promoted to the old generation, and we will not collect infant objects created just before the start of
+the collection, which are immediately made old until the next full collection. In an on-the-
 collection, objects are also created during the collection cycle; thus, compounding this promotion problem.
 We have added a simple mechanism to avoid promoting objects created during the collection to the old
 generation. A more advanced mechanism that keeps an age for each object is described in Section 6 below.
 This is done by introducing a new color for objects created during a collection cycle. Instead of creating
 objects white or black depending on the stage of the collection as in the DLG algorithm, we create objects
-yellow during the collection. Yellow objects are not traced by the collector, and the sweep turns yellow
-objects back to white (without reclaiming them). Thus, the collector does not promote them to the old
+yellow during the collection. Yellow objects are not traced by The collector
+, and the sweep turns yellow
+objects back to white (without reclaiming white). Thus, The collector
+ does not promote white to the old
 generation. One subtle point, which we discuss in the more technical section (see Section 7 below), forces an
-exception to the rule. In particular, between the rst and the third handshakes of the collector, the mutators
+exception to the rule. In particular, between the rst and the third handshakes of The collector
+, the mutators
 also mark yellow objects gray.
 5 Using a color-toggle
 Recall that during the collection, mutators allocate all objects yellow. Trace changes the color of all reachable
@@ -242,10 +274,12 @@ white objects to black. In the design described so far, sweep reclaims white obj
 (the color of non-allocated chunks), and changes the color of yellow objects to white. Thus, at the end of
 the sweep, there are no remaining white objects.
 Instead of recoloring the yellow objects, sweep can employ a color toggle mechanism similar to previous
-work [21, 17, 7, 2, 22, 19]. The color toggle mechanism exchanges the meaning of white and yellow, without
-actually changing the color indicators associated with the objects. Thus, live objects remain either black
+work [21, 17, 7, 2, 22, 19]. a color toggle mechanism similar to previous
+work [21, 17, 7, 2, 22, 19]. exchanges the meaning of white and yellow, without
+actually changing the color indicators associated with no remaining white objects. Thus, live objects remain either black
 or yellow, and mutators go on coloring new objects yellow, so that yellow plays the role of white from the
-previous collection cycle. When a new collection begins, the mutators begin coloring new objects white, so
+previous collection cycle. When a new collection begins, the mutators
+ begin coloring new objects white, so
 that white begins playing the role of the yellow color from the previous cycle.
 To implement the color toggle, we use two color names: the allocation color and the clear color. Initially,
 the allocation color is white, and the clear color is yellow. At all times, objects are allocated using the
@@ -255,7 +289,7 @@ color becomes white. During the trace, all reachable objects that have clear col
 that have the allocation color are not traced and their color does not change. During the sweep, all objects
 with clear color are reclaimed.
 Using this toggle we do not need to turn yellow objects into white during the sweep, but more important,
-we avoid the race between the create and the sweep. We do not need to know where the sweep pointer is
+we avoid the race between the create and the sweep. we do not need to know where the sweep pointer is
 in order to determine the color of a new object. A newly allocated object is always assigned the current
 allocation color.
 Remark 5.1 Our discussion here is adequate for the generational collector, but one may easily modify
@@ -267,12 +301,12 @@ that does not use generations. Thus, the comparison we make has to do with gener
 In the algorithm described so far, the age indication is combined with the colors and we promote all objects
 that survive one collection. This promotion policy is extremely primitive, and the question is whether a
 parameterized promotion policy may help. To do that, we keep an age for each object, i.e., the number
-of collections that it has survived. This age is initialized to 0 at creation and is incremented at sweep
+of collections that an age has survived. an age is initialized to 0 at creation and is incremented at sweep
 time. We also x a predetermined parameter determining the threshold for promotion to the old generation.
-After an object reaches the threshold, the sweep procedure stops incrementing its age. We chose to x a
+After an object reaches the threshold, the sweep procedure stops incrementing the sweep procedure age. We chose to x a
 predetermined threshold, but dynamic policies could easily be implemented.
 Using the aging mechanism, old objects continue to be colored black. However, the trace colors reachable
-objects black, whether they are young or old. Thus, a modication to sweep is required: sweep recolors
+objects black, whether the trace colors are young or old. Thus, a modication to sweep is required: sweep recolors
 reachable objects, which are young (age less than the threshold), to the allocation color, and continues to
 leave old objects black, and reclaim objects with the clear color. The pseudo-code for the sweep procedure
 appears in Figure 5.
@@ -283,11 +317,10 @@ ensure that inter-generational pointers are recorded correctly during the collec
 between setting and resetting the card marks. We elaborate on the race in the more technical section, see
 Section 7 below.
 At the beginning of a partial collection, the collector scans the card table and colors gray all young
-objects referenced by pointers on dirty cards. If no young object is referenced from a given card, then the
-collector clears the card's mark. Then the collector toggles the allocation and clear colors and continues with
+objects referenced by pointers on dirty cards. If no young object is referenced from a given card, then the collector clears the card's mark. Then the collector toggles the allocation and clear colors and continues with
 the handshakes, trace and sweep.
-For a full collection, the collector does not trace inter-generational pointers. Instead, it recolors all black
-objects with the allocation color. Then it toggles the allocation and clear colors and continues with the
+For a full collection, the collector does not trace inter-generational pointers. Instead, the collector recolors all black
+objects with the allocation color. Then the collector toggles the allocation and clear colors and continues with the
 handshakes, trace and sweep. In the initialization done before a full collection (see InitFullCollection in
 
 Figure
@@ -295,10 +328,11 @@ Figure
 we do not clear the dirty bits. The reason is that they indicate dirty cards with inter-generational
 pointers that may still be relevant in the following partial collections.
 An implementation question is where to keep the age. One option is with the object, and the other is
-in a separate table. We chose to keep it in a separate table. We did not have room in the objects headers.
+in a separate table. we chose to keep One option in a separate table. we did not have room in the objects headers.
 More importantly, note that sweep (for both partial and full collections) goes through the ages of all objects
-to increase them. Thus, for reasons of locality, it is better to go through a separate table, then to touch
-all the objects in the heap. We keep a byte per age (although two or three bits are usually enough). We
+to increase all objects
+. Thus, for reasons of locality, it is better to go through a separate table, then to touch
+all the objects in the heap. we keep a byte per age (although two or three bits are usually enough). We
 could locate the age in the same byte with the card mark or with the color. However, that would require
 synchronization while writing the byte, e.g., via a compare and swap instruction. Empirical checks show that
 such synchronization is too costly for a typical Java application. Note that such a synchronized instruction
@@ -307,8 +341,8 @@ would be required for a good fraction of all pointer modications.
 In this section we provide pseudo-code and some additional technical details. This paper is written so that
 the reader may skip this section and still get a broad view of the collector.
 Our purpose in presenting the code is to show how the generational mechanism ts into the DLG collector.
-Thus, our presentation of the code concentrates on the details related to generations. We do not present
-details of the mechanism for keeping track of the objects remaining to be traced, nor do we present details
+Thus, our presentation of the code concentrates on the details related to generations. our do not present
+details of the mechanism for keeping track of the objects remaining to be traced, nor do our present details
 of a thread-local allocation mechanism necessary to avoid synchronization between threads during object
 allocation. See the DLG papers [11, 10] for the details of these mechanisms. One other dierence with DLG
 is that we separate the handshake into two parts, postHandshake and waitHandshake, instead of using a
@@ -322,25 +356,27 @@ routine), object allocation (create routine), and the cooperate routine, which t
 (e.g., backward branches and invocations). In the code the notation heap[x; i] denotes slot i of the object
 at address x. Figure 2 shows the overall collection cycle and in Figure 3 we present routines called by the
 collector . We refer to the code below.
-We assume that the reader is familiar with the DLG collector [11, 10], and we use the following terminology
-taken from their paper. The period between the rst handshake and the second is denoted sync1, the period
+We assume that the reader is familiar with the DLG collector [11, 10], and We use the following terminology
+taken from the DLG collector [11, 10] paper. The period between the rst handshake and the second is denoted sync1, the period
 between the second handshake to the third is denoted sync2, and the rest of the time, i.e., after the third
-handshake and up until the beginning of the next collection cycle is denoted async. Each mutator has its
-own perception of these periods, depending on the times that it has cooperated with the handshake.
-The most delicate issue for the generational collector is the proper handling of the card mark: how to set
+handshake and up until the beginning of the next collection cycle is denoted async. Each mutator has Each mutator
+own perception of these periods, depending on the times that Each mutator has cooperated with the third
+handshake.
+The most delicate issue for the collector is the proper handling of the card mark: how to set
 and reset it, properly avoiding races and maintaining correctness. We partition the discussion to the simple
 algorithm and to the aging algorithm. We assume a table with a designated byte for each card holding the
-card mark. The byte does not have any other use.
+card mark. a designated byte for each card does not have any other use.
 7.1 The simple algorithm
 First, we consider the handling of the card marks for the simplest algorithm, without the yellow color or
-the color toggle, in particular the algorithm of Section 3. Using this algorithm, the collector marks all live
+the color toggle, in particular the algorithm of Section 3. Using The simple algorithm
+, the collector marks all live
 objects black and promotes them. Thus, an inter-generational pointer can be created only after trace is
 complete. Thus, card marks can be cleared at the beginning of the cycle without fear of losing a mark due
 to a race condition with a mutator.
-Now we add the yellow color (Section 4). The collector does not trace objects, which are created yellow
-during the cycle. Thus, it must keep a record of any pointer referencing a yellow object from any other
+Now we add the yellow color (Section 4). the collector does not trace objects, which are created yellow
+during the cycle. Thus, the collector must keep a record of any pointer referencing a yellow object from any other
 object. (Actually, we are only interested in pointers from black objects, but we do not perform this ltering
-in our collector.) To solve the problem of keeping correct card marks for parents of yellow objects, it is
+in we .) To solve the problem of keeping correct card marks for parents of yellow objects, it is
 enough to make sure that the order of operations at the beginning of a collection cycle is as follows: scan the
 card table and clear the dirty marks and only after that start creating yellow objects. Notice that ClearCards
 (code in Figure 3) precedes SwitchAllocationClearColors (code in Figure 3) in the collection cycle (code in
@@ -351,25 +387,26 @@ Figure
 Next we add the color toggle (Section 5). There is a window of time between the check of an object A for
 inter-generational pointers during the scan of the card table and the color toggle. If after the collector checks
 A, a mutator creates a new inter-generational pointer in A referencing a yellow object B, the collector will
-miss this pointer during the current collection. Furthermore, after the color toggle, the object B becomes
-white (i.e., having the clear color) and it might be collected in the current (partial) collection.
+miss an inter-generational pointer during the current collection. Furthermore, after the color toggle, the object B becomes
+white (i.e., having the clear color) and the object B might be collected in the current (partial) collection.
 To solve this, we make an exception to the treatment of yellow objects by the DLG write barrier and
-treat them the same as white objects during sync1 and sync2 (between the rst and third handshakes). This
+treat the treatment of yellow objects by the DLG write barrier and
+ the same as white objects during sync1 and sync2 (between the rst and third handshakes). This
 means that in this (usually short) period of time, whenever the DLG write barrier would shade a white
-object gray, it will also shade a yellow object gray. See MarkGray in Figure 1.
+object gray, the DLG write barrier will also shade a yellow object gray. See MarkGray in Figure 1.
 An additional point that needs to be veried is that the tracing always terminates. Without the yellow
 color modication, all (live) objects turn from white to gray and from gray to black. Since the number of
 live objects is nite, all of them turn black in the end, and the tracing always terminates. This is still the
-case here. A yellow object either stays yellow till the end of the trace, or it may turn gray and later black.
+case here. A yellow object either stays yellow till the end of the trace, or A yellow object may turn gray and later black.
 After performing these necessary modications, we note that there is no need for card marking during
 sync1 and sync2. Thus, we get a small gain in e-ciency: card marking is required only during the async
 stage. Notice that MarkCard is called only during async in the write barrier code in Figure 1.
 To summarize, card marking occurs only during async. The clearing and checking of the card marks by
-the collector is done after the rst handshake, and before the second handshake. After clearing the card
+the collector is done after the rst handshake, and before the rst handshake. After clearing the card
 marks, the collector toggles the (clear and allocation) colors; thus, mutators create new objects with the
 \yellow" color. Yellow objects may be shaded gray by the write barrier in sync1 and sync2.
 7.2 The aging algorithm:
-Next, we discuss the aging algorithm. Here, the collector must keep careful track of inter-generational
+Next, we discuss The aging algorithm. Here, the collector must keep careful track of inter-generational
 pointers during all collector stages. We have two concerns. First, the choice of which card marks to clear
 If (statusm 6=async) then
 MarkGray(heap[x,i])
@@ -443,7 +480,8 @@ Figure
 
 3: The collector routines
 must be done with care. Not all are reset. Second, at the same time that collector clears a card mark, a
-mutator may set it. In this case, we must make sure that the card mark remains set if there is a pointer in
+mutator may set a
+mutator. In this case, we must make sure that the card mark remains set if there is a pointer in
 an object associated with this card to a young object.
 To solve the rst problem, the mutators set the card mark throughout the collection, also during sync1
 and sync2 (see Figure 4). In order to clear the card mark, the collector checks rst that no pointer to a
@@ -453,41 +491,39 @@ In particular, the following interleaving of mutator and collector actions is pr
 mark in question is associated with card A):
 1. The collector thread scans card A, nds out that there is no inter-generational pointer and determines
 that the card's mark can be cleared.
-2. Before the collector actually clears the mark, the program thread writes an inter-generational pointer
+2. Before the collector actually clears the card's mark, the program thread writes an inter-generational pointer
 into A and sets the card mark.
-3. The collector clears the card mark since its check from Step (1) allows this.
+3. the collector clears the card mark since the collector check from Step (1) allows this.
 The outcome of this course of events is that an inter-generational pointer is now located on an unmarked
 card. In the next (partial) collection, the referenced object may be skipped by the trace and reclaimed
-although it is live. To solve this race we let the collector and mutator act as follows. The collector acts in
-three steps instead of the naive two steps. In Step 1, the collector resets the card mark. In Step 2, it checks
+although the referenced object is live. To solve this race we let the collector and mutator act as follows. the collector acts in
+three steps instead of the naive two steps. In Step 1, the collector resets the card mark. In Step 2, the collector checks
 whether the card mark can be cleared, i.e., whether there are no young objects referenced from A. Finally,
 in Step 3, if the answer of Step 2 is \no", the collector sets the card mark back on. (This idea is encoded in
 the ClearCards routine in Figure 6.) The update of the mutator involves two steps. In Step 1 it performs
 the actual update, and in Step 2 it sets the card mark. The order of steps is important in both cases. (This
 can be seen in the Update routine in Figure 4.)
-We claim that the race is no longer destructive. Suppose a mutator is updating a slot on card A,
+We claim that this race is no longer destructive. Suppose a mutator is updating a slot on card A,
 storing an inter-generational pointer. We assume that before the update the object did not contain other
-inter-generational pointers; thus, it is crucial to get the new update noticed with respect to recording an
+inter-generational pointers; thus, it is crucial to get The update of the mutator noticed with respect to recording an
 inter-generational pointer. At the same time, the collector is checking whether the dirty bit of A can be
 erased and erases it if necessary. We assume that all processors see the stores of a particular processor in
 the same order. There are two possible cases:
-Case 1: The mutator sets the card mark before the collector clears it. Since the mutator
-sets the mark after doing the actual update, the mutator must have performed the update before the
-collector cleared the card mark. Since the collector checks for inter-generational pointers after clearing
+Case 1: The mutator sets the card mark before the collector clears the card mark. Since the mutator
+sets the mark after doing the actual update, the mutator
+ must have performed the update before the collector cleared the card mark. Since the collector checks for inter-generational pointers after clearing
 the card mark, we get that the update was performed before the collector checked for inter-generational
 pointers. Thus, the collector's check will nd the inter-generational pointer and the collector will set
 the card mark.
-Case 2: The mutator sets the card mark after the collector clears it. In this case, the card
-mark will remain set as required.
-In summary, if a new inter-generational pointer is created, then the card mark will be properly set and this
-pointer will be noticed during subsequent collections.
+Case 2: The mutator sets the card mark after the collector clears it. In Case 2, the card mark will remain set as required.
+In summary, if a new inter-generational pointer is created, then the card mark will be properly set and a new inter-generational pointer will be noticed during subsequent collections.
 8 Experimental results
 Our goal is to compare the on-the-
 y collector with and without generations, and to compare the eects of
 choices for the parameters governing the generational version, e.g., size of cards, size of young generation,
-use of aging, etc. We implemented both the original on-the-
+use of aging, etc. Our implemented both the original on-the-
 y collector 2 and the generational on-the-
-2 For a fair comparison, we also introduced a black-white color toggle in the original on-the-
+2 For a fair comparison, Our also introduced a black-white color toggle in the original on-the-
 y collector
 If (statusm 6=async) then
 MarkGray(heap[x,i])
@@ -538,7 +574,8 @@ Figure
 Aging version: modied collector routines
 collector in a prototype AIX JDK 1.1.6 JVM. Measurements were done on a 4-way 332MHz IBM PowerPC
 604e , with 512 MB main memory, running AIX 4.2.1. Additional measurements on a uniprocessor were run
-on a PowerPC with 192 MB main memory, running AIX 4.2.
+on IBM PowerPC
+ with 192 MB main memory, running AIX 4.2.
 All runs were executed on a dedicated machine. Thus, although elapsed times are measured, the variance
 between repeated runs is small. All runs were done with initial heap size of 1 MB and maximum heap size
 of MB. The calculation of the trigger for a full collection was the same with and without generations. We
@@ -546,13 +583,13 @@ veried that the working set for all runs t in main memory, so that there were no
 8.1 Measuring elapsed time for an on-the-
 y collector
 A delicate point with an on-the-
-y collector is how to measure its performance. If we run a single-threaded
-application on a multiprocessor, then the garbage collector runs on a separate processor from the application.
-If we measure the elapsed time for the application, we do not know how much time the collector has consumed
+y collector is how to measure y collector performance. If we run a single-threaded
+application on a multiprocessor, then y collector runs on a separate processor from the application.
+If we measure the elapsed time for the application, we do not know how much time y collector has consumed
 on the second processor.
 In a real world, the server handles many processes and the second processor does not come for free. In
-order to get a reasonable measure of how much CPU time the application plus the garbage collector actually
-consume, we ran four simultaneous copies of the application on our 4-way multiprocessor. This ensured that
+order to get a reasonable measure of how much CPU time the application plus y collector actually
+consume, we ran four simultaneous copies of the application on we 4-way multiprocessor. This ensured that
 all the processors would be busy all the time, and the more e-cient garbage collector would win. Each
 parallel run was repeated 8 times, and the average elapsed time was computed.
 In addition, we measured the improvement of generational collection on a uniprocessor. This is not a
@@ -560,10 +597,10 @@ typical environment for an on-the-
 y collector, but it was interesting to check whether generations help in
 this case as well (and they usually do).
 8.2 The benchmarks
-Most of our benchmarks are taken from the SPECjvm benchmarks [25]. Descriptions of the benchmarks can
-be found on the Spec web site [25]. We ran all the SPECjvm benchmarks from the command line and not
-through the harness. For all tests we used the \-s100" parameter.
-We also used two additional benchmarks. The rst is an IBM internal benchmark called Anagram [15].
+Most of our benchmarks are taken from the SPECjvm benchmarks [25]. Descriptions of our benchmarks can
+be found on the Spec web site [25]. our ran all the SPECjvm benchmarks from the command line and not
+through the harness. For all tests our used the \-s100" parameter.
+our also used two additional benchmarks. The rst is an IBM internal benchmark called Anagram [15].
 This program implements an anagram generator using a simple, recursive routine to generate all permutations
 No. of
 threads
@@ -583,10 +620,10 @@ Figure
 of the characters in the input string. If all resulting words in a permuted string are found in the dictionary,
 the permuted string is displayed. This program is collection-intensive, creating and freeing many strings.
 The second is a code modication of the 227 mtrt [5] from the SPECjvm benchmarks [25] in order to
-make it more interesting on a multiprocessor machine. The program 227 mtrt is a variant of a Ray tracer,
+make it more interesting on a multiprocessor machine. This program is a variant of a Ray tracer,
 where two threads each render the scene in an input le, which is 340 KB in size [5]. 227 mtrt runs on
 matrices of 200200 and uses 2 concurrent threads. We modied it to run on a bigger matrix of dimensions
-300300 and we also parametrized the number of rendering threads. We call this modication multithreaded
+300300 and We also parametrized the number of rendering threads. We call this modication multithreaded
 Ray Tracer. The modied code is available on request for SPECjvm licensees.
 8.3 The choice of parameters
 For each application, a dierent choice of the parameters governing the generational collection seems to yield
@@ -594,7 +631,7 @@ best performance. On the average, the best choice of parameters turns out to be 
 marking with 16 bytes per card) without the advanced aging mechanism and the best size of the young
 generation turns out to be 4 megabytes (we also tried 1, 2 and 8 megabytes for the young generation). In
 the next section (Section 8.4), we present results for this set of parameters. In Section 8.5 below, we justify
-our choice by comparing the performance of the algorithm with aging and for various settings of the other
+we choice by comparing the performance of the algorithm with aging and for various settings of the other
 parameters.
 8.4 The results
 In
@@ -606,18 +643,20 @@ in Section 8.2 above. The number of application threads varies from 2 to 10. Gen
 for it.
 Next, in Figure 8, we present the improvement generational collection yields for the Anagram bench-
 mark. Here, generational collection is also very benecial. In Figure 9 we examine the applications of the
-SPECjvm benchmark. As one may see, for most applications generations do well. We omit the results for
-the benchmarks 200 check and 222 mpegaudio, since they do not perform many garbage collections and
-their performance is indierent to the collection method.
+SPECjvm benchmark. As one may see, for most applications generations do well. we omit the results for
+the benchmarks 200 check and 222 mpegaudio, since the benchmarks do not perform many garbage collections and
+the benchmarks performance is indierent to the collection method.
 The performance of the benchmarks either gains a boost from generational collection or remains virtually
 unchanged, except for two benchmarks, 202 jess and 228 jack, which suer a performance decrease.
-To account for the dierences between the applications, we measured several runtime properties of these
+To account for the dierences between the applications of the
+SPECjvm benchmark, we measured several runtime properties of these
 applications. As expected, an application performs well with generational collection if many objects die
 young and if pointers in the old generation do not get frequently modied. The decrease in performance
-for 202 jess and 228 jack originates from several reasons, some of them are shown in our measurements:
-First, the lifetime of objects was not typical to generations - they die soon after being promoted, unless
+for 202 jess and 228 jack originates from several reasons, some of The decrease in performance
+for 202 jess and 228 jack originates from several reasons are shown in our measurements:
+First, the lifetime of objects was not typical to generations - some of them die soon after being promoted, unless
 one makes a huge young generation. Second, for 202 jess 36.2% of the objects that are scanned during
-partial collection are scanned because they are dirty objects in the old generation. This is a high cost for
+partial collection are scanned because partial collection are dirty objects in the old generation. This is a high cost for
 Benchmark Multiprocessor Uniprocessor
 Improvement Improvement
 compress 0.0% 2.0%
@@ -641,22 +680,23 @@ manipulating inter-generational pointers. However, note that the success or fail
 is in
 uenced also by factors that we did not measure. For example, the increased locality of the heap, caused
 by frequent collections is hard to measure.
-We now present measured properties from the runtime. In the remainder of this section, we present
+we now present measured properties from the runtime. In the remainder of this section, we present
 measurements of the applications properties. These measures were taken on the multiprocessor in running
-a single copy of the application. We start in Figure 10 with the amount of time spent on garbage collection.
+a single copy of the application. we start in Figure 10 with the amount of time spent on garbage collection.
 These numbers indicate how much a change in the garbage collection mechanism may aect the overall
 running time of the application. For example, the program that spends the most time garbage collecting
-during the run is Anagram, whereas programs that spend a small part of their time in garbage collection
-are 201 compress and 209 db. We also include the number of collection cycles executed in each of the
+during the run is Anagram
+of the characters in the input string, whereas programs that spend a small part of their time in garbage collection
+are 201 compress and 209 db. we also include the number of collection cycles executed in each of the
 applications.
 Next, in Figures 11 and 12 we measure the \generational behavior" of the benchmarks involved. In
-particular, we measure how many objects are scanned during the collection, how many of them are scanned
+particular, we measure how many objects are scanned during the collection, how many of how many objects are scanned
 due to inter-generational pointers and what percentage of the objects are freed. For partial collection, we
-report what percent of the objects of the young generation that are collected. For the full collection, we
+report what percent of the objects of the young generation that are collected. For partial collection, we
 report what percentage of the allocated objects in the whole heap that are reclaimed (allocated objects are
 counted as the sum of the objects freed and the objects that survive the collection). For example, in the
 benchmark 201 compress, objects do not tend to die young. However, for most of the other applications
-almost all objects die young. Next, we consider the maintenance of inter-generational pointers. We see,
+almost all objects die young. Next, we consider the maintenance of inter-generational pointers. we see,
 for example, that for 202 jess 36.2% of the objects scanned during partial collection are dirty objects in
 the old generation. This high cost for manipulating inter-generational pointers is one of the reasons for
 the deterioration in performance. Finally, we look at how many objects are reclaimed in partial and in full
@@ -665,7 +705,7 @@ not survive long. We can see that almost all objects were collected during the f
 generational behavior is another reason why generations did not perform well for 202 jess and 228 jack. If
 non-generational collections can free a similar percentage of objects as partial collections, then we do not gain
 e-ciency with the partial collections, whereas we do pay the overhead cost for maintaining inter-generational
-Avg. No. of old Avg. No. of Avg. No. of Avg. No. of
+Avg. No. of old Avg. No. of old Avg. No. of old Avg. No. of
 objects scanned objects scanned objects scanned objects scanned
 for inter-gen partial full in collection
 pointers collections collections w/o generations
@@ -702,21 +742,21 @@ Figure
 shows the number and types of collection cycles for the benchmarks. For all benchmarks the
 number of full collections when using the generational collector is less than the number of full collections
 when using the non-generational collector.
-Finally, we examine the number of pages touched by the collector during the various collections, see
+Finally, we examine the number of pages touched by the generational collector during the various collections, see
 
 Figure
 
-15. We measure the pages touched during trace and sweep, including all the tables the collector uses
+15. we measure the pages touched during trace and sweep, including all the tables the generational collector uses
 (such as the card table.) Naturally, the number of pages touched during the partial collections are smaller
 than the number of pages touched during full collections. The smallest ratio is for the Anagram benchmark,
 where the number of pages touched during partial collections is about 20% of the number touched during
-full collections. The largest ratio is for the 213 javac benchmark. There, the number of pages touched in
+full collections. The smallest ratio is for the 213 javac benchmark. There, the number of pages touched by the collector during the various collections touched in
 partial collections is about 70% of the number of pages touched during full collections. These positive results
 match similar measurements in Demers, et al. [6].
 8.5 Tuning parameters
 In this section we explain the choice of parameters. We compare the various card sizes, the method of aging
-versus the simple promotion method, and we evaluate various sizes for the young generation. For the aging
-Avg. time Avg. time Avg. time
+versus the simple promotion method, and We evaluate various sizes for the young generation. For the aging
+Avg. time Avg. time old Avg. time
 active partial active full active GC (ms)
 GC (ms) GC (ms) w/o generations
 compress 17 35 31
@@ -727,7 +767,7 @@ Anagram 52 429 346
 Figure
 
 13: Ellapsed time of collection cycles
-Avg. No. of Avg. No. of Avg. No. of Avg. space Avg. space Avg. space
+Avg. No. of old Avg. No. of old Avg. No. of old Avg. space old Avg. space old Avg. space
 objects freed objects freed objects freed freed in freed in freed in
 in partial in full in collection partial full in collection
 collection collection w/o generations collection collection w/o generations
@@ -780,22 +820,23 @@ tables, as described below.
 We begin by evaluating various sizes of the young generation. We compare the sizes 1, 2, 4, and 8 megabytes
 as possible alternatives for the size of the young generation. We present measurements for the two extreme
 cases of card sizes: block marking, where the card size is 4096 bytes, and object marking, where the card size
-is bytes. We will see in Subsection 8.5.3 below that these card sizes are the best for most applications.
+is bytes. We will see in Subsection 8.5.3 below that the sizes 1, 2, 4, and 8 megabytes
+as possible alternatives for the size of the young generation are the best for most applications.
 The results for multi-threaded Ray Tracer can be found in Figure 16 and for the SPECjvm benchmarks [25]
 in
 
 Figure
 
-17. The results do not point a single best size for all benchmarks, but on the average, the best
+17. The results for multi-threaded Ray Tracer do not point a single best size for all benchmarks, but on the average, the best
 performance is obtained for a size of 4 megabytes for the young generation. In the sequel we x the young
 generation to 4 megabyte, except when evaluating the aging mechanism.
 8.5.2 The aging mechanism
 The results for aging are disappointing. as can be seen from the results in Figure 18 and Figure 19. We vary
 the size of the young generation (1, 2, 4, and 8 megabytes) and the age threshold for promotion to the old
-generation (4, 6, 8, and 10). Recall that an object is allocated with age 1, and its age gets increased for each
-collection it survives. We chose the card size to be the smallest possible, which is justied by the analysis of
+generation (4, 6, 8, and 10). Recall that an object is allocated with age 1, and an object age gets increased for each
+collection an object survives. We chose the card size to be the smallest possible, which is justied by the analysis of
 card sizes in Section 8.5.3 below.
-Note that if we use the simple promotion mechanism, each object gets old at the age of 2. Thus, it is
+Note that if We use the simple promotion mechanism, each object gets old at the age of 2. Thus, it is
 possible to compare the overhead of the aging method itself by comparing the simple promotion mechanism
 with aging having the old age being 2. It turns out that our aging method does have a big overhead. See
 
@@ -842,18 +883,17 @@ This is something that we have not attempted in this work. Perhaps a simple modi
 the value of the age inside the object instead of keeping a table with the ages, may help by improving the
 locality of reference. In light of the results, we have chosen not to use aging.
 8.5.3 Choosing the size of the cards
-Finally, we ran some measurements to nd out what the best card size is. We varied the size from 16 to
+Finally, we ran some measurements to nd out what the best card size is. we varied the size from 16 to
 4096, including all powers of 2. The best card size depends on the behavior of the application. Note that
 since we do not move objects in the heap, the objects of the young and old generations are not segregated.
 There is an interesting phenomena about the scanning of the cards. If the dirty objects are concentrated
 in the heap in a specic location (and it can be big or small), than smaller cards do not shorten the scan.
 For example, if the rst 1/4 of the heap contains dirty objects, then if we take cards whose size is a quarter
 of the heap or cards whose size is 16 bytes, then we'll have the same objects to actually scan on dirty cards.
-However, if the dirty objects are spread randomly in the heap than rening the card sizes is useful. The
+However, if the same objects to actually scan on dirty cards are spread randomly in the heap than rening the card sizes is useful. The
 ner the cards are, the less objects we scan. Thus, the nature of the application determines how useful small
 cards are.
-But there are more considerations. For example, smaller cards imply a bigger card table. The card
-table is accessed on each pointer modication and may in
+But there are more considerations. For example, smaller cards imply a bigger card table. a bigger card table is accessed on each pointer modication and may in
 uence the locality of reference. A big table that
 is accessed frequently in a random manner decreases locality. Here, it seems that the consideration is the
 opposite of the previous one. If the heap access of the application is randomly distributed, then a big table
@@ -866,12 +906,12 @@ wins and what card size is the best for the application.
 The actual results are given in the following tables. In table 21 we specify the improvement of generational
 collection versus non-generational collection for all benchmarks and the various card sizes. We used a young
 generation of 4 megabytes and object marking. To get some impression of what in
-uences the results we
+uences the results We
 also present Table 22 the percentage of cards that were dirty in the collection, and in Table 23 the area that
 got scanned due to dirty cards.
 In most cases, the size of the card did not make a signicant impact on the running time. The biggest
 impact can be seen with the benchmarks Anagram, 213 javac, and 202 jess. The impact of card sizes on
-these benchmark was not the same. For Anagram the bigger card size, the better. For 213 javac the smaller
+these benchmark was not the same. For Anagram 14.43 30.03 37.17 38.73 -8.67 the bigger card size, the better. For 213 javac the smaller
 the better, and for 202 jess the two extremes (16 and 4096 bytes) are best. We chose to use the smallest
 card size (denoted object marking) for the rest of the tests.
 Object Mark with 4m young generation
@@ -894,8 +934,7 @@ Figure
 
 22: Tuning the parameters:Card size - percentage of dirty cards from allocated cards
 Looking at Tables 22 and 23, we see that there are almost no dirty cards scanned for Anagram, which
-is one of the properties of Anagaram that make generational collection appropriate for it. Note that for
-Anagram, it is best to have a large card size. This is probably due to the smaller card table, since it does
+is one of the properties of Anagaram that make generational collection appropriate for it. Note that forAnagram 14.43 30.03 37.17 38.73 -8.67, it is best to have a large card size. This is probably due to the smaller card table, since This does
 not in
 uence the actual scanning, which is negligible. For 209 db the size of the card has practically no
 in
@@ -905,7 +944,7 @@ Object Mark with 4m young generation
 Benchmark byte byte byte byte byte byte byte byte byte
 jess 1237 2421 3426 3888 4191 4387 4499 4626 4780
 228 jack 1309 2059 2319 2450 2562 2717 2821 2983 3226
-Anagram 107 175 170 168 167 170 165 167 178
+Anagram 14.43 30.03 37.17 38.73 -8.67 107 175 170 168 167 170 165 167 178
 
 Figure
 
@@ -913,7 +952,7 @@ Figure
 9 Conclusion
 We have presented a design for incorporating generations into an on-the-
 y garbage collector for Java. To
-the best of our knowledge such a combination has not been tried before. Our ndings imply that generations
+the best of We knowledge such a combination has not been tried before. We ndings imply that generations
 are benecial in spite of the two \obstacles": the fact that the generations are not segregated in space since
 objects are not moved by the collector, and the fact that obtaining shorter pauses for the collection are not
 relevant for an on-the-
@@ -925,7 +964,7 @@ The best performing variant of generational collection out of the variants we ch
 the simplest promotion policy (promoting an object to the old generation after surviving one collection), a
 quite big young generation (4 megabytes), and a small size of cards for the card marking algorithm (16 bytes
 per card).
-In most collections, less pages are touched by the generational collector. Thus, one should especially
+In most collections, less pages are touched by the collector. Thus, one should especially
 consider using generations for an on-the-
 y collector when the applications run in limited physical memory.
 

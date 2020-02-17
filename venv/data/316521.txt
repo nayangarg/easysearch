@@ -1,7 +1,7 @@
 --T
 Modifying a Sparse Cholesky Factorization.
 --A
-Given a sparse symmetric positive definite matrix ${\bf AA}^{\sf T}$ and an associated sparse Cholesky factorization ${\bf LDL}^{\sf T}$ or ${\bf LL}^{\sf T}$, we develop sparse techniques for obtaining the new factorization associated with either adding a column to ${\bf A}$ or deleting a column from ${\bf A}$. Our techniques are based on an analysis and manipulation of the underlying graph structure and on ideas of Gill et al.\ [ Math. Comp., 28 (1974), pp. 505--535] for modifying a dense Cholesky factorization. We show that our methods extend to the general case where an arbitrary sparse symmetric positive definite matrix is modified. Our methods are optimal in the sense that they take time proportional to the number of nonzero entries in ${\bf L}$ and ${\bf D}$ that change.
+Given a sparse symmetric positive definite matrix ${\bf AA}^{\sf T}$ and an associated sparse Cholesky factorization ${\bf LDL}^{\sf T}$ or ${\bf LL}^{\sf T}$, we develop sparse techniques for obtaining the new factorization associated with either adding a column to ${\bf A}$ or deleting a column from ${\bf A}$. Our techniques are based on an analysis and manipulation of the underlying graph structure and on ideas of Gill et al.\ [ Math. Comp., 28 (1974), pp. 505--535] for modifying a dense Cholesky factorization. We show that We methods extend to the general case where an arbitrary sparse symmetric positive definite matrix is modified. our methods are optimal in the sense that our methods take time proportional to the number of nonzero entries in ${\bf L}$ and ${\bf D}$ that change.
 --B
 Introduction
 This paper presents a method for updating and downdating the sparse Cholesky
@@ -12,7 +12,7 @@ column of A. Both AA T and AA T must be symmetric and positive definite.
 The techniques we develop for the matrix AA T can be extended to determine the
 effects on the Cholesky factors of a general symmetric positive definite matrix M of
 any symmetric change of the form M preserves positive definiteness.
-Our methods are optimal in the sense that they take time proportional to the number
+Our methods are optimal in the sense that Our methods take time proportional to the number
 of nonzero entries in L that change.
 There are many applications of the techniques presented in this paper. In
 the Linear Program Dual Active Set Algorithm (LP DASA) [19], the A matrix
@@ -30,7 +30,7 @@ the Cholesky factorization of AA T and in x4, we discuss the structure associate
 with the Cholesky factors of AA T . The symbolic update and downdate
 methods provide the framework for our sparse version of Method C5 of Gill, Golub,
 Murray, and Saunders [15] for modifying a dense Cholesky factorization. We discuss
-our sparse algorithm in x5. Section 6 presents the general algorithm for modifying
+We sparse algorithm in x5. Section 6 presents the general algorithm for modifying
 the sparse Cholesky factorization for any sparse symmetric positive definite matrix.
 Implementation details for the modification algorithm associated with AA T
 are summarized in x7, while the results of a numerical experiment with a large
@@ -61,14 +61,15 @@ of the parent map is the children multifunction. That is, the children of
 node k is the set defined by
 The ancestors of a node j, denoted P(j), is the set of successive parents:
 Here the powers of a map are defined in the usual way: - 0 is the identity while - i
-is the i-fold composition of - with itself. The sequence of nodes j, -(j),
+is the i-fold composition of - with the identity. The sequence of nodes j, -(j),
 forming P(k), is called the path from j to the associated tree root. The
 collection of paths leading to a root form an elimination tree, and the set of all trees
 is the elimination forest. Typically, there is a single tree whose root is m, however,
 if column j of AA T has only one nonzero element, the diagonal element, then j will
 be the root of a separate tree.
 The number of elements (or size) of a set X is denoted jX j, while jAj or jLj denote
-the sum of the sizes of the sets they contain. Define the directed graph G(M) of an m
+the sum of the sizes of the sets j, while jAj or jLj denote
+ contain. Define the directed graph G(M) of an m
 by m matrix M with nonzero pattern M as the vertex and edge sets:
 is the vertex set and is the directed
 edge set.
@@ -81,10 +82,12 @@ do
 min A k =j
 A kA
 end for
-Algorithm 1 basically says that the pattern of column j of L can be expressed as
+Algorithm 1 (Symbolic factorization of AA T )
+ basically says that the pattern of column j of L can be expressed as
 the union of the patterns of each column of L whose parent is j and the patterns of the
 columns of A whose first nonzero element is j. The elimination tree, connecting each
-child to its parent, is easily formed during the symbolic factorization. Algorithm 1
+child to each
+child parent, is easily formed during the symbolic factorization. Algorithm 1
 can be done in O(jLj
 1 Asymptotic complexity notation is defined in [2]. We write there exist positive
 constants c and n 0
@@ -93,9 +96,10 @@ Observe that the pattern of the parent of node j contains all entries in the pat
 of column j except j itself [22]. That is,
 Proceeding by induction, if k is an ancestor of j, then
 This leads to the following relation between L j and the path P(j). The first part of
-this proposition, and its proof, is given in [22]. Our proof differs slightly from the one
-in [22]. We include it here since the same proof technique is exploited later.
-Proposition 3.1 For each j, we have L j ' P(j); furthermore, for each k and j 2
+this proposition, and The first part of
+ proof, is given in [22]. Our proof differs slightly from the one
+in [22]. Our include it here since the same proof technique is exploited later.
+Proposition 3.1 For each j, Our have L j ' P(j); furthermore, for each k and j 2
 Proof. Obviously, be any given element of L j with i 6= j. Since
 we see that the following relation holds for
 Now suppose that (2) holds for some integer l - 0, and let k denote - l (j). By (1)
@@ -104,19 +108,19 @@ Hence, either or (2) holds with l replaced by l + 1. Since (2) is violated
 for l sufficiently large, we conclude that there exists an l for which
 Consequently, each element of L j is contained in P(j), we have
 is an ancestor of k, and P(j) ' P(k).
-Since we have already shown that L j ' P(j), the proof is complete.
+Since we have already shown that L j P(j), the proof is complete.
 As we will see, the symbolic factorization of AA T can be obtained by
 updating the symbolic factorization of AA T using an algorithm that has the same
 structure as that of Algorithm 1. The new pattern L j is equal to the old pattern L j
 union entries that arise from new children and from the pattern of the new column
-(We put a bar over a matrix or a set or a multiset to denote its value after the
+(We put a bar over a matrix or a set or a multiset to denote a bar value after the
 update or downdate is complete.)
 Downdating is not as easy. Once a set union has been computed, it cannot be
 undone without knowledge of how entries entered the set. We can keep track of
 this information by storing the elements of L as multisets rather than as sets. The
-multiset associated with column j has the form
+multiset associated with column L j has the form
 where the multiplicity m(i; j) is the number of children of j that contain row index i
-in their pattern plus the number of columns of A whose smallest entry is j and that
+in children of j pattern plus the number of columns of A whose smallest entry is j and that
 contain row index i. Equivalently,
 With this definition, we can undo a set union by subtracting multiplicities.
 We now define some operations involving multisets. First, if X ] is a multiset
@@ -131,7 +135,7 @@ The multiset subtraction of Y from X ] undoes a prior addition. That is, for any
 multiset X ] and any set Y, we have
 In contrast ((X [ Y) n Y) is equal to X if and only if X and Y are disjoint sets.
 Algorithm 2 below performs a symbolic factorization of AA T , with each set union
-operation replaced by a multiset addition. This algorithm is identical to Algorithm 1
+operation replaced by a multiset addition. Algorithm 2 is identical to Algorithm 1
 except for the bookkeeping associated with multiplicities.
 Algorithm 2 (Symbolic factorization of AA T , using multisets)
 do
@@ -162,7 +166,7 @@ by Proposition 3.2, the Cholesky factors of PAA T P T and of P(AA T +ww T )P T w
 be at least as sparse as those of PBB T P T .
 4 Modifying the symbolic factors
 Let A be the modified version of A. Again, we put a bar over a matrix or a set or a
-multiset to denote its value after the update or downdate is complete. In an update
+multiset to denote a bar value after the update or downdate is complete. In an update
 A is obtained from A by appending the column w on the right, while in a downdate,
 A is obtained from A by deleting the column w from A. Hence, we have
 where oe is either +1 and w is the last column of A (update) or oe is \Gamma1 and w is a
@@ -178,7 +182,7 @@ i for all i except when i is k or one of the new ancestors of k. For
 a downdate, P(k) ' P(k) and L ]
 . That is, L
 except when i is k or one of the old ancestors of k.
-Proof. To begin, let us consider an update. We will show that each element of P(k)
+Proof. To begin, let us consider an update. us will show that each element of P(k)
 is a member of P(k) as well. Clearly, k lies in both P(k) and P(k). Proceeding by
 induction, suppose that - 0 (k),
 We need to show that to complete the induction.
@@ -206,7 +210,7 @@ l . Hence, when
 l is trivial. Now,
 assuming that for some p - 0, we have L
 l whenever l 2 P(k) c and d(l) - p,
-let us suppose that
+let we suppose that
 by the induction assumption. And since l 6= k, the pattern of w is not
 added to L ]
 l . Consequently, when Algorithm 2 is executed, we have L
@@ -225,7 +229,7 @@ from j, and evaluate all the changes induced by the additional column in A. In o
 to do the bookkeeping, there are at most four cases to consider:
 Case 1. At the start of the new path, we need to add the pattern for w to L ]
 .
-Case 2. c 2 P(k), In this case, c is a child
+Case 2. c 2 P(k), In Case 2, c is a child
 of j in both the new and the old elimination tree. Since the pattern L c may
 differ from L c , we need to add the difference to L ]
 j . Since j has a unique child
@@ -234,7 +238,7 @@ Also note that if
 then by Theorem 4.1, L and hence, this node does not lead to an
 adjustment to L ]
 in Algorithm 2.
-Case 3. In this case, c is a child of j in the
+Case 3. In Case 2, c is a child of j in the
 new elimination tree, but not in the old tree, and the entire set L c should be
 added to L ]
 since it was not included in L ]
@@ -242,8 +246,9 @@ since it was not included in L ]
 all
 and hence, c 62 P(k) c , or equivalently, c 2 P(k). Again, since each node on the
 path P(k) from k has only one child on the path, there is at most one node c
-satisfying these conditions, and it lies on the path P(k).
-Case 4. In this case, c is a child of j
+satisfying these conditions, and most one node c
+satisfying these conditions lies on the path P(k).
+Case 4. In Case 2, c is a child of j
 in the old elimination tree, but not in the new tree, and the set L c should be
 subtracted from L ]
 since it was previously added to L ]
@@ -264,7 +269,7 @@ Case 4: consider each lost child of j
 for each c in lost-child-queue of j do
 end for
 while
-The time taken by this algorithm is given by the following lemma.
+The time taken by Algorithm 3 (Symbolic update is given by the following lemma.
 Lemma 4.2 The time to execute Algorithm 3 is bounded above by a constant times
 the number of entries associated with patterns for nodes on the new path P(k). That
 is, the time is
@@ -272,7 +277,7 @@ OB @
 Proof. In Algorithm 3, we simply march up the path P(k) making adjustments to
 j as we proceed. At each node j, we take time proportional to jL j j, plus the time
 taken to process the children of j. Each node is visited as a child c at most twice,
-since it falls into one or two of the four cases enumerated above (a node c can be a
+since Each node falls into one or two of the four cases enumerated above (a node c can be a
 new child of one node, and a lost child of another). If this work (proportional to jL c j
 or jL c j) is accounted to step c instead of j, the time to make the adjustment to the
 pattern is bounded above by a constant times either jL j j or jL j j. Since jL
@@ -280,12 +285,12 @@ by Theorem 4.1, the proof is complete.
 In practice, we can reduce the execution time for Algorithm 3 by skipping over
 any nodes for which L ]
 . That is, if the current node j has no lost children, and
-if its child c falls under case 2 with L
+if j child c falls under case 2 with L
 j and the update
 can be skipped. The execution time for this modified algorithm, which is the one we
 implement, is
 4.2 Symbolic downdate algorithm
-Let us consider the removal of a column w from A and let k be the index of the first
+Let we consider the removal of a column w from A and let k be the index of the first
 nonzero entry in w. The symbolic downdate algorithm is analogous to the symbolic
 update algorithm, but the roles of P(k) and P(k) are interchanged in accordance
 with Theorem 4.1. Instead of adding entries to L ]
@@ -315,23 +320,26 @@ is
 When we add or delete a column in A, we update or downdate the symbolic
 factorization in order to determine the location in the Cholesky factor of either new
 nonzero entries or nonzero entries that are now zero. Knowing the location of the
-nonzero entries, we can update the numerical value of these entries. We first consider
-the case when A and L are dense and draw on the ideas of [15]. Then we show how
-the method extends to the sparse case.
+nonzero entries, we can update the numerical value of the
+nonzero entries. we first consider
+Case 4 when A and L are dense and draw on the ideas of [15]. Then we show how
+the method extends to Case 4.
 5.1 Dense matrices
-Our algorithm to implement the numerical update and downdate is based on the
-Method C5 in [15] for dense matrices. To summarize their approach, we start by
+this modified Algorithm 4
+ to implement the numerical update and downdate is based on the
+Method C5 in [15] for dense matrices. To summarize dense matrices approach, we start by
 writing
 I
 is positive on account
-of our assumption that both AA T and AA T are positive definite. That is, since
+of we assumption that both AA T and AA T are positive definite. That is, since
 the matrices AA T
 and I are congruent, and by
 Sylvester's law of inertia (see [24]), they have the same number of positive, negative,
 and zero eigenvalues. The eigenvalues of I are one, with multiplicity
 (corresponding to the eigenvectors orthogonal to v) and 1 (corresponding
 to the eigenvector v). Since AA T
-is positive definite, its eigenvalues are all positive,
+is positive definite, AA T
+ eigenvalues are all positive,
 which implies that 1
 Combining (4) and (5), we have
 A sequence of Givens rotations, the product being denoted G 1 , is chosen so that
@@ -365,19 +373,19 @@ LD, where D is a diagonal matrix. The components of ffi can be absorbed
 into D, with fl adjusted accordingly, and ffi in Algorithm 6 can be eliminated. We did
 not exploit this simplification for the numerical results reported in x8.
 5.2 The sparsity pattern of v
-In the sparse case, sparse, and its nonzero pattern is crucial. Since the
-elements of G satisfy for each i ? j, we conclude that only the columns
+In the sparse case, sparse, and the sparse case nonzero pattern is crucial. Since the
+elements of G satisfy for each i ? j, We conclude that only the columns
 of L associated with the nonzero components of v enter into the computation of L.
 The nonzero pattern of v can be found using the following lemma.
 Lemma 5.1 The nodes reachable from any given node k by path(s) in the directed
 graph G(L T ) coincide with the path P(k).
 Proof. If P(k) has a single element, the lemma holds. Proceeding by induction,
 suppose that the lemma holds for all k for which jP(k)j - j. Now, if P(k) has
-elements, then by the induction hypothesis, the nodes reachable from -(k) by path(s)
+elements, then by the induction hypothesis, The nodes reachable from -(k) by path(s)
 in the directed graph G(L T ) coincide with the path P(-(k)). The nodes reachable
 in one step from k consist of the elements of L k . By Proposition 3.1, each of the
 elements of L k is contained in the path P(k). If
-By the induction hypothesis, the nodes reachable from i coincide with P(i) ' P(k).
+By the induction hypothesis, The nodes reachable from i coincide with P(i) ' P(k).
 The nodes reachable from k consist of fkg union the nodes reachable from L k . Since
 that the nodes reachable from k are contained in P(k). On
 the other hand, for each p, the element of L T in row - p (k) and column - p+1 (k) is
@@ -385,14 +393,13 @@ nonzero. Hence, all the elements of P(k) are reachable from k. Since the nodes i
 coincide with the the nodes reachable from k by path(s) in the directed graph
 G(L T ), the induction step is complete.
 Theorem 5.2 During symbolic downdate AA T
-(where w is a column
+(where W is a column
 of A), the nonzero pattern of equal to the path P(k) in the (old)
 elimination tree of L where
 Proof. Let 0g. Theorem 5.1 of Gilbert [10, 11, 14] states that
 the nonzero pattern of v is the set of nodes reachable from the nodes in W by paths
-in the directed graph G(L T ). By Algorithm 1, W ' L k . Hence, each element of W
-is reachable from k by a path of length one, and the nodes reachable from W are a
-subset of the nodes reachable from k. Conversely, since k 2 W, the nodes reachable
+in the directed graph G(L T ). By Algorithm 1, W ' L k . Hence, each element of Wis reachable from k by a path of length one, and the nodes reachable from W are a
+subset of the nodes reachable from k. Conversely, since k 2 W, the nodes reachable from W reachable
 from k are a subset of the nodes reachable from W. Combining these inclusions, the
 nodes reachable from k and from W are the same, and by Lemma 5.1, the nodes
 reachable from k coincide with the path P(k).
@@ -405,7 +412,7 @@ downdate Hence, we can apply Theorem 5.2, in effect replacing P by
 P.
 5.3 Sparse matrices
 In the dense algorithm presented at the start of this section, we write
-To be specific, let us consider the case where (7) corresponds to
+To be specific, let we consider the case where (7) corresponds to
 an update. The nonzero elements of I lie along the diagonal or at
 the intersection of rows i 2 P(k) and columns j 2 P(k), where k is defined in (6).
 In essence, we can extract the submatrix of I corresponding to these rows
@@ -436,7 +443,7 @@ in the path P(k) or P(k) where k is defined in (6). We apply the dense Algorithm
 to the vector of (symbolically) nonzero entries of v. Then we update the entries in L
 in the rows and columns associated with indices in P(k) or P(k) using Algorithm 6.
 As the following result indicates, Algorithm 6 does not have to be applied to all
-of L 11 because of its specific structure.
+of L 11 because of Algorithm 6 specific structure.
 Proposition 5.4 During symbolic downdate, L 11 is a lower triangular matrix with
 a dense profile. That is, for each row i ? 1, there is an integer
 Proof. The rows and columns columns of L 11 correspond to the nodes in the path
@@ -444,7 +451,7 @@ P(k). We assume that the nodes have been relabeled so that
 It follows that [L 11
 by (1), if Consequently, [L
 Letting p i be the smallest such index p, the proof is complete.
-Corollary 5.5 During symbolic update L 11 is a lower triangular matrix with a dense
+Corollary 5.5 During the sparse L is a lower triangular matrix with a dense
 profile. That is, for each row i ? 1, there is an integer
 Proof. This follows immediately from Proposition 5.4, replacing P(k) with P(k).
 As a consequence of Proposition 5.4, Corollary 5.5, and Proposition 3.2, we can
@@ -528,7 +535,7 @@ Algorithms 5 and 6 are completely unchanged in the general case. They can be
 applied after the completion of Algorithm 7b so that we know the location of new
 nonzero entries in the Cholesky factor. They process the submatrix associated with
 rows and columns in P(k) where k is the index of the first nonzero element of w.
-When M has the form AA T and when M is gotten by either adding or deleting a
+When M j has the form AA T and when M j is gotten by either adding or deleting a
 column in A, then assuming no numerical cancellations, Algorithm 7b can be skipped
 when we add a column to A since M for each j. Similarly, when a column
 is removed from A, Algorithm 7a can be skipped since M for each j. Hence,
@@ -546,14 +553,14 @@ B. The update and downdate algorithms can be used to compute the modification
 to a Cholesky factor corresponding to additions or deletions to the columns of A.
 The Cholesky factorization of the initial AA T (before any columns are added or
 deleted) is often preceded by a fill reducing permutation P of the rows and columns.
-For example, we could compute a permutation to reduce the fill for BB T since the
-Cholesky factors of AA T will be at least as sparse as those of BB T by Proposition 3.2,
+For example, we could compute a permutation to reduce the fill for AA T since the
+Cholesky factors of AA T will be at least as sparse as those of AA T by Proposition 3.2,
 regardless of how the columns of A are chosen from the columns of B. Based on the
-number of nonzeros in each column of the Cholesky factors of BB T , we could allocate
+number of nonzeros in each column of the Cholesky factors of AA T , we could allocate
 a static storage structure that will always contain the Cholesky factors of each AA T .
 On the other hand, this could lead to wasted space if the number of nonzeros in the
 Cholesky factors of AA T are far less than the number of nonzeros in the Cholesky
-factors of BB T . Alternatively, we could store the Cholesky factor of the current AA T
+factors of AA T . Alternatively, we could store the Cholesky factor of the current AA T
 in a smaller space, and reallocate storage during the updates and downdates, based
 on the changes in the nonzero patterns.
 The time for the initial Cholesky factorization of AA T is given by (see [8]) the
@@ -583,9 +590,9 @@ sparse optimization problem from Netlib [3]. The computer used for this experime
 was a Model 170 UltraSparc, equipped with 256MB of memory, and with Matlab
 Version 4.2c.
 8.1 Experimental design
-We selected an optimization problem from airline scheduling (DFL001). Its constraint
-matrix B is 6071-by-12,230 with 35,632 nonzeros. The matrix BB T has 37,923
-nonzeros in its strictly lower triangular part. Its Cholesky factor LB has 1.49 million
+We selected an optimization problem from airline scheduling (DFL001). an optimization problem constraint
+matrix B is 6071-by-12,230 with 35,632 nonzeros. AA T has 37,923
+nonzeros in AA T strictly lower triangular part. AA T Cholesky factor LB has 1.49 million
 nonzeros (with a fill-minimizing permutation PB of the rows of B, described below)
 and requires 1.12 billion floating-point operations and 115 seconds to compute (the
 LP Dual Active Set Algorithm does not require this matrix, however, as noted earlier,
@@ -593,17 +600,17 @@ this is an upper bound on the number of nonzeros that can occur during the execu
 of the LP DASA). This high level of fill-in in LB is the result of the highly irregular
 nonzero pattern of B. The basis matrix A 0 corresponding to an optimal solution of
 the linear programming problem has 5,446 columns.
-We wrote a set of Matlab scripts that implements our complete Cholesky
+We wrote a set of Matlab scripts that implements We complete Cholesky
 update/downdate algorithm, discussed in x7. We first found PB , using 101 trials
 of Matlab's column multiple minimum degree ordering algorithm (colmmd [12]), 100
-of them with a different random permutation of the rows of B. We then took the
+of PB with a different random permutation of the rows of B. We then took the
 best permutation found. With this permutation (PB ), the factor L of A 0 A T
 0 has 831
 thousand nonzeros, and took 481 million floating-point operations and 51 seconds to
 compute (using Matlab's chol). Following the method used in LP DASA, we added
 \Gamma12 to the diagonal to ensure positive definiteness. We used the same permutation
 PB for the entire experiment. The initial symbolic factorization took 15 seconds
-(Algorithm 2). It is this matrix and its factor that are required by the LP DASA.
+(Algorithm 2). The initial symbolic factorization is this matrix and The initial symbolic factorization factor that are required by LP DASA.
 We did not use Matlab's sparse matrix data structure, since Matlab removes
 explicit zeros. Changing the nonzero pattern by a single entry can cause Matlab to
 make a new copy of the entire matrix. This would defeat the asymptotic performance
@@ -613,7 +620,7 @@ to the first entry in each column, and an array of length m holding the number o
 nonzeros in each column. The columns are allocated so that each column can hold as
 many nonzeros as the corresponding column of LB , without reallocation.
 Starting with the optimal basis of 5,446 columns, we added one column at a time
-until the basis included all 12,230 columns, and then removed them one at a time
+until the basis included all 12,230 columns, and then removed all 12,230 columns one at a time
 to obtain the optimal basis again. The total time and work required to modify the
 factors was 76,598 seconds and 61.5 billion floating point operations. This divides
 into
@@ -646,7 +653,7 @@ accurate estimate for kEk 1 , where
 in [16] (see [17, p. 139] for a symbolic statement of the algorithm) to estimate the
 1-norm of the inverse of a matrix. That is, we used a gradient accent approach to
 compute a local maximum for the following problem:
-L is used multiple times in the following algorithm, we copied our data structure
+L is used multiple times in the following algorithm, we copied we data structure
 for -
 L into a Matlab sparse matrix.
 Algorithm 8 (Estimate 1-norm of an m by m matrix E)
@@ -689,15 +696,15 @@ Figure
 
 1: Estimated 1-norm of error in Cholesky factorization
 8.3 Alternative permutations
-Our methods are optimal in the sense that they take time proportional to the number
-of nonzero entries in L that change at each step. However, they are not optimal with
+Our methods are optimal in the sense that Our methods take time proportional to the number
+of nonzero entries in L that change at each step. However, Our methods are not optimal with
 respect to fill-in, since we assume a single initial permutation, and no subsequent
-permutations. A fill-reducing ordering of BB T might not be the best ordering to use
+permutations. A fill-reducing ordering of AA T might not be the best ordering to use
 for all basis matrices. A simple pathological example is the m-by-n matrix B, where
 and the nonzero pattern of each of the column of B is a unique
-pair of integers from the set f1; 2; mg. In this case, every element of BB T is
+pair of integers from the set f1; 2; mg. In this case, every element of AA T is
 nonzero, while the nonzero pattern of AA T is arbitrary. As the matrix A changes, it
-might be advantageous to compute a fill-reducing ordering of AA T if the size of its
+might be advantageous to compute a fill-reducing ordering of AA T if the size of AA T
 factors grow "too large." A refactorization with the new permutation would then be
 required.
 We found a fill-reducing permutation PA of the optimal basis A 0 A T
@@ -705,7 +712,7 @@ We found a fill-reducing permutation PA of the optimal basis A 0 A T
 best of 101 trials of colmmd). This results in a factor L with 381 thousand nonzeros,
 requiring only 169 million floating point operations to compute. This is significantly
 less than the number of nonzeros (831 thousand) and floating point operations (481
-million) associated with the fill reducing permutation for BB T . We also computed
+million) associated with the fill reducing permutation for AA T . We also computed
 an ordering of AA T at each step, using colmmd just once, and then computed the
 number of nonzeros in the factor if we were to factorize A using this permutation
 Although it only takes about 1 second to compute the ordering [12] and symbolic
@@ -724,24 +731,32 @@ Figure
 at each of the 13,568 steps. The fixed permutation PB results in the smooth curve
 starting at 831 thousand and peaking at 1.49 million. The fixed permutation PA
 results in a number of nonzeros in L that starts at 381 thousand and rises quickly,
-leaving the figure at step 1,206 and peaking at 7.4 million in the middle. It surpasses
+leaving Figure
+
+2 at step 1,206 and peaking at 7.4 million in the middle. It surpasses
 PB at step 267. Using a permutation, P s , computed at each step s, gives the
-erratic line in the figure, starting at 390 thousand and peaking at 1.9 million in the
-middle. These results indicate that it might be advantageous to start with the fixed
+erratic line in Figure
+
+2, starting at 390 thousand and peaking at 1.9 million in the
+middle. The fixed permutation PA
+results in a number of nonzeros in L that starts at 381 thousand and rises quickly,
+leaving the figure at step 1,206 and peaking at 7.4 million in the middle indicate that it might be advantageous to start with the fixed
 permutation PA , use it for 267 steps, and then refactorize with the permutation P s
 computed at step 267. This results in a new factor with only 463 thousand nonzeros.
-Near the center of the figure, however, the basis A includes most of the columns in
+Near the center of Figure
+
+2, however, the basis A includes most of the columns in
 B, and in this case the PB permutation should be used.
 9
 
 Summary
 
 We have presented a new method for updating and downdating the factorization LL T
-of a sparse symmetric positive definite matrix AA T . Our experimental results show
+of a sparse symmetric positive definite matrix AA T . We experimental results show
 that the method should be fast and accurate in practice. Extensions to an arbitrary
 sparse symmetric positive definite matrix, M, have been discussed. We mention here
-an additional extension to our work that would be useful.
-We do not make use of the supernodal form of the factorization, nor do we use
+an additional extension to We work that would be useful.
+We do not make use of the supernodal form of the factorization, nor do We use
 the related compressed pattern of L [8]. Any method can be used for the numerical
 factorization of the first basis matrix, of course, but the factor would then be copied
 into a simple column-oriented data structure. Keeping the supernodal form has the
@@ -782,7 +797,7 @@ New York
 --TR
 
 --CTR
-W. Hager, The Dual Active Set Algorithm and Its Application to Linear Programming, Computational Optimization and Applications, v.21 n.3, p.263-275, March 2002
+W. Hager, The Dual Active Set Algorithm and The Dual Active Set Algorithm Application to Linear Programming, Computational Optimization and Applications, v.21 n.3, p.263-275, March 2002
 Ove Edlund, A software package for sparse orthogonal factorization and updating, ACM Transactions on Mathematical Software (TOMS), v.28 n.4, p.448-482, December 2002
 Matine Bergounioux , Karl Kunisch, Primal-Dual Strategy for State-Constrained Optimal Control Problems, Computational Optimization and Applications, v.22 n.2, p.193-224, July 2002
 Frank Dellaert , Michael Kaess, Square Root SAM: Simultaneous Localization and Mapping via Square Root                 Information Smoothing, International Journal of Robotics Research, v.25 n.12, p.1181-1203, December  2006

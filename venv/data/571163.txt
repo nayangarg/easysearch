@@ -1,15 +1,16 @@
 --T
 Modular termination of context-sensitive rewriting.
 --A
-Context-sensitive rewriting (CSR) has recently emerged as an interesting and flexible paradigm that provides a bridge between the abstract world of general rewriting and the (more) applied setting of declarative specification and programming languages such as OBJ*, CafeOBJ, ELAN, and Maude. A natural approach to study properties of programs written in these languages is to model them as context-sensitive rewriting systems. Here we are especially interested in proving termination of such systems, and thereby providing methods to establish termination of e.g. OBJ* programs. For proving termination of context-sensitive re-writing, there exist a few transformation methods, that reduce the problem to termination of a transformed ordinary term rewriting system (TRS). These transformations, however, have some serious drawbacks. In particular, most of them do not seem to support a modular analysis of the termination problem. In this paper we will show that a substantial part of the well-known theory of modular term rewriting can be extended to CSR, via a thorough analysis of the additional complications arising from context-sensitivity. More precisely, we will mainly concentrate on termination (properties). The obtained modularity results correspond nicely to the fact that in the above languages the modular design of programs and specifications is explicitly promoted, since it can now also be complemented by modular analysis techniques.
+Context-sensitive rewriting (CSR) has recently emerged as an interesting and flexible paradigm that provides a bridge between the abstract world of general rewriting and the (more) applied setting of declarative specification and programming languages such as OBJ*, CafeOBJ, ELAN, and Maude. A natural approach to study properties of programs written in these languages is to model these languages as context-sensitive rewriting systems. Here we are especially interested in proving termination of such systems, and thereby providing methods to establish termination of e.g. OBJ* programs. For proving termination of context-sensitive re-writing, there exist a few transformation methods, that reduce the problem to termination of a transformed ordinary term rewriting system (TRS). These transformations, however, have some serious drawbacks. In particular, most of These transformations do not seem to support a modular analysis of the termination problem. In this paper we will show that a substantial part of the well-known theory of modular term rewriting can be extended to CSR, via a thorough analysis of the additional complications arising from context-sensitivity. More precisely, we will mainly concentrate on termination (properties). The obtained modularity results correspond nicely to the fact that in the above languages the modular design of programs and specifications is explicitly promoted, since it can now also be complemented by modular analysis techniques.
 --B
 INTRODUCTION
 Programmers usually organize the programs into components
 or modules. Components of a program are easier to de-
 velop, analyze, debug, and test. Eventually, the programmer
 wants that interesting computational properties like termination
-hold for the whole program if they could be proved for
-the individual components of the program. Roughly speak-
+hold for the whole program if interesting computational properties like termination
+ could be proved for
+the individual components of the whole program. Roughly speak-
 ing, this is what being a modular property means.
 Context-sensitive rewriting (CSR [26]) is a restriction of
 rewriting which forbids reductions on selected arguments of
@@ -36,9 +37,9 @@ point of view. Nevertheless, our discussion on termination
 of the program does not depend on this fact in any
 way.
 obj TRUTH-VALUE is
-obj NAT is
-Nat .
-obj ID-NAT is
+Module ID-NAT is
+NAT .
+Module ID-NAT is
 protecting TRUTH-VALUE .
 var
 obj LAZYLIST is
@@ -54,9 +55,9 @@ List -> List [strat (1 2 0)] .
 Figure
 
 1: Modular specification in OBJ3
-D.3 of [16]). Module INF specifies a function inf which is
+D.3 of [16]). obj INF specifies a function inf which is
 able to build an infinite object: the list of all natural numbers
-following number n. Module TAKE specifies a
+following number obj TAKE specifies a
 function take which is able to select the first n components
 of a (lazy) list given as the second argument of take. Fi-
 nally, module LENGTH introduces a function for computing
@@ -66,14 +67,15 @@ LAZYLIST) is intended for both (1) allow for a real terminating
 behavior of the program due to disallowing the recursive
 call inf(s(n)) in the definition of inf and (2) avoiding useless
 reductions on the first component of a list when computing
-its length. For instance, it is possible to obtain the
+the use of the strategy annotation
+strat (0) for the list constructor cons (in module
+LAZYLIST) length. For instance, it is possible to obtain the
 value s(s(0)) of length(take(s(0),inf(s(0)))) without
 any risk of nontermination 2 .
 Although very simple, program of Figure 1 provides an in-
 This claim can be justified by using the results in [31, 30].
 teresting application of our modularity results. For instance,
-whereas it is not possible to prove termination of the program
-using automatic techniques for proving termination
+whereas it is not possible to prove termination of the programusing automatic techniques for proving termination
 such as Knuth-Bendix, polynomial, or recursive path orderings
 (see [1, 5]), it is pretty simple to separately prove termination
 of modules ID-NAT, INF, TAKE, and LENGTH. Then,
@@ -91,26 +93,27 @@ and other related strategies, cf. e.g. [3], [7], [9], [10],
 [11], [40].
 2. PRELIMINARIES
 2.1 Basics
-Subsequently we will assume in general some familiarity with
+Subsequently us will assume in general some familiarity with
 the basic theory of term rewriting (cf. e.g. [1], [5]). Given
 a set A, P(A) denotes the set of all subsets of A. Given a
 binary relation R on a set A, we denote the reflexive closure
-of R by its transitive closure by R + , and its reflexive and
+of R by a
+binary relation R transitive closure by R + , and a
+binary relation R reflexive and
 transitive closure by R # . An element a # A is an R-normal
 form, if there exists no b such that a R b; NFR is the set of R-
-normal forms. We say that b is an R-normal form of a, if b is
-an R-normal form and a R # b. We say that R is terminating
-i# there is no infinite sequence a1 R a2 R a3 - . We say
+normal forms. us say that b is an R-normal form of a, if b is
+an R-normal form and a R # b. us say that R is terminating
+i# there is no infinite sequence a1 R a2 R a3 - . us say
 that R is locally confluent if, for every a, b, c # A, whenever
 a R b and a R c, there exists d # A such that b R # d and
-We say that R is confluent if, for every a, b, c # A,
+us say that R is confluent if, for every a, b, c # A,
 whenever a R # b and a R # c, there exists d # A such that
-d. If R is confluent and terminating, then we
-say that R is complete. Throughout the paper, X denotes a
+d. If R is confluent and terminating, then Tsay that R is complete. Throughout the paper, X denotes a
 countable set of variables and F denotes a signature, i.e., a
 set of function symbols {f, g, .}, each having a fixed arity
 given by a mapping ar : F # N. The set of terms built
-from # and X is T is said to be linear if it
+from # and X is T is said to be linear if T
 has no multiple occurrences of a single variable. Terms are
 viewed as labelled trees in the usual way. Positions p, q, .
 are represented by chains of positive natural numbers used
@@ -128,18 +131,19 @@ replaced by s. The symbol labelling the root of t is denoted
 as root(t).
 A rewrite rule is an ordered pair (l, r), written l # r, with
 l, r # T Var(l). The left-hand
-side (lhs) of the rule is l and r is the right-hand side (rhs). A
+side (lhs) of A rewrite rule is l and r is the right-hand side (rhs). A
 TRS is a is a set of rewrite rules.
 3 Available at http://cime.lri.fr
 L(R) denotes the set of lhs's of R. An instance #(l) of a
 lhs l of a rule is a redex. The set of redex positions in t is
 PosR(t). A TRS R is left-linear if for all l # L(R), l is a
 linear term. Given TRS's
-we let R # R # be the TRS
+we let R # R # be the TRS's
 rewrites to s (at position p), written
 #R s (or just t # s), if t|
 for some rule # : l # r # R, p # Pos(t) and substitution
-#. A TRS is terminating if # is terminating. We say that
+#. A TRS's
+ is terminating if # is terminating. We say that
 innermost rewrites to s, written t # i s, if t p
 # s and
 innermost terminating
@@ -175,13 +179,13 @@ also sometimes say that the TRS R is -terminating if the
 CSRS (R, -) is terminating. With innermost CSR, # i , we
 only contract maximal positions of replacing redexes: t # i s
 #R s and p # maximal# (Pos -
-R (t)). We say that (R, -)
+R (t)). we say that (R, -)
 is innermost terminating if # i is terminating.
 3. MODULARPROOFSOFTERMINATION
 OF CSR BY TRANSFORMATION
 Subsequently we assume some basic familiarity with the
 usual notions, notations and terminology in modularity of
-rewriting (cf. e.g. [45], [33], [17], [38, 39] 4 ). We say that
+rewriting (cf. e.g. [45], [33], [17], [38, 39] 4 ). we say that
 some property of CSRS's is modular (under disjoint, constructor
 sharing, composable unions) if, whenever two (resp.
 disjoint, constructor sharing, composable) CSRS's (R1 ,
@@ -189,10 +193,10 @@ and (R2 , -2 ) have the property, then the union (R1#R2 , -1#
 property. 5 Two CSRS's (R1 , -1 ) and
 are disjoint if the signatures of R1 and are dis-
 joint. CSRS's (R1 , -1 ) and (R2 , -2 ) are constructor sharing
-if they only share constructor symbols (see Definition 7 for
+if CSRS's (R1 , -1 ) and (R2 , -2 ) only share constructor symbols (see Definition 7 for
 details). Finally, CSRS's (R1 , -1 ) and (R2 , -2 ) are composable
 if they share defined symbols provided that they
-share all of their defining rules, too (cf. [39]). Note that disjoint
+share all of they defining rules, too (cf. [39]). Note that disjoint
 TRS's are sharing constructor, and sharing constructor
 TRS's are composable.
 Termination of CSRS's (R, -) is usually proved by demonstrating
@@ -303,10 +307,11 @@ modules S and T , S -
 Z and T -
 Z are composable only if blocked
 symbols in both S and T are the same.
-Example 3. Consider the TRS's:
+Example 3. Consider A
+TRS's:
 and
 that correspond to modules INF and ID-NAT in Figure 1.
-Viewed as modules, they are sharing constructor. Let - be
+Viewed as modules, Viewed are sharing constructor. Let - be
 as in Example 1. Now we have that
 and
 are not composable. The problem is that S -
@@ -335,7 +340,8 @@ mark(f(x1 , . , xk
 Unfortunately, unless R = S, this transformation will
 never yield a pair of composable TRS's. Note that two di#er-
 ent composable systems R and S cannot share all symbols:
-if they have the same defined symbols (i.e.,
+if two di#er-
+ent composable systems R and S have the same defined symbols (i.e.,
 all rules must coincide too (up to renaming of variables).
 Hence R #= S implies that they di#er (at least) in a constructor
 symbol. However, if, e.g., f # FR - FS , then a
@@ -464,11 +470,11 @@ alization. Consider e.g. the following variant of Toyama's
 basic counterexample.
 Example 4. The systems
 with are both terminating CSRS's, as well as
-their disjoint union (the latter is a consequence of Theorem
+both disjoint union (the latter is a consequence of Theorem
 3 below). In Toyama's original version, where the union is
 non-terminating, there are no restrictions, collapsing
 and duplicating.
-A careful inspection of these two CSRS's and of their interaction
+A careful inspection of these two CSRS's and of these two CSRS interaction
 shows that the duplicating R-rule is not a problem
 any more regarding non-termination, because the first two
 occurrences of x in the rhs of the R1 -rule become blocked
@@ -481,18 +487,18 @@ blocked/inactive variables in rhs's shouldn't count for duplication
 Definition 1. A rule l # r in a CSRS (R, -) is non-
 duplicating if for every x # Var(l) the multiset of replacing
 occurrences of x in r is contained in the multiset of replacing
-occurrences of x in l. (R, -) is non-duplicating if all its rules
+occurrences of x in l. (R, -) is non-duplicating if all (R, -) rules
 are.
 Of course, in order to sensibly combine two CSRS's, one
 should require some basic compatibility condition regarding
 the respective replacement restrictions.
 Definition 2. Two CSRS's (R1 , are said
-to be compatible if they have the same replacement restrictions
+to be compatible if Two CSRS's (R1 have the same replacement restrictions
 for shared function symbols, i.e., if
 and
 Disjoint CSRS's are trivially compatible.
 Theorem 3. Let (R1 , be two disjoint, terminating
-CSRS's, and let (R, -) be their union. Then the
+CSRS's, and let (R, -) be R, -) union. Then the
 following hold:
 (i) (R, -) terminates, if both R1 and are non-collapsing.
 (ii) (R, -) terminates, if both R1 and are non-duplica-
@@ -503,7 +509,7 @@ Proof. We sketch the proof idea and point out the differences
 to the TRS case. All three properties follow immediately
 from the following observations. For any infinite
 (R, -derivation D : s1 # s2 # . of minimal rank (i.e.
-in any minimal counterexample) we have:
+in any minimal counterexample) We have:
 (a) There are infinitely many outer reduction steps in D.
 (b) There are infinitely many inner reduction steps in D
 which are destructive at level 2.
@@ -529,9 +535,9 @@ counterexamples (cf. [17] 7 ). For CSRS's this powerful result
 also holds. To show this, we first need another definition
 (where R# S mean R # S provided that R and S are dis-
 joint).
-Definition 3. A TRS R is said to be terminating under
+Definition 3. TRS R is said to be terminating under
 FP-terminating for short, if R#{G(x, y) #
-(R, -) is said to
+TRS R is said to
 be FP-terminating, if (R # {G(x, y) # x, G(x, y) # y}, -),
 Theorem 4 (extends [17, Theorem 7]).
 Let (R1 , be two disjoint, terminating CSRS's,
@@ -574,12 +580,15 @@ of context-sensitive rewrite steps).
 4.2 Modularity of Weak Termination Proper-
 ties
 Weak termination properties are clearly interesting on
-their own, since full termination may be unrealistic or need
+4.2 Modularity of Weak Termination Proper-
+ties
+Weak termination properties own, since full termination may be unrealistic or need
 not really correspond to the computational process being
 modelled. Certain processes or programs are inherently non-
 terminating. But still, one may wish to compute normal
-forms for certain inputs (and guarantee their existence).
-On the other hand, interestingly, for TRS's it has turned
+forms for certain inputs (and guarantee normal
+forms existence).
+On the other hand, interestingly, for TRS's TRS has turned
 out that weak termination properties can be very helpful
 in order to obtain in a modular way the full termination
 property under certain assumptions.
@@ -590,15 +599,14 @@ minating. (R, -) (and #) is weakly innermost terminating
 is weakly terminating, and (strongly) innermost terminating
 (SIN) if the innermost context-sensitive rewrite relation # i
 is (strongly) terminating.
-For ordinary TRS's it is well-known (and not di#cult to
+For ordinary TRS's ordinary TRS is well-known (and not di#cult to
 prove) that weak termination, weak innermost termination
 and (strong) innermost termination are all modular properties
 (cf. e.g. [6], [17, 18]), w.r.t. disjoint unions. Surprisingly,
 this does not hold in general for CSRS's as shown by the following
 counterexample.
-Example 5. Consider the disjoint CSRS's
-with are both innermost terminating,
-in fact even terminating, but their union (R, -) is neither
+Example 5. Consider CSRSwith are both innermost terminating,
+in fact even terminating, but both is neither
 terminating nor innermost terminating. We have
 ever, that (R, -) is weakly innermost terminating, hence also
 weakly terminating: f(a, b, G(a, b)) # i f(G(a, b), G(a, b),
@@ -606,11 +614,9 @@ the latter term is in (R, -normal form.
 But even WIN and WN are not modular in general for
 CSRS's as we next illustrate by a modified version of Example
 5.
-Example 6. Consider the disjoint CSRS's
-f(b, a, x) # f(x, x, x)
+Example 6. Consider CSRSf(b, a, x) # f(x, x, x)
 with (and WN), but not
-SIN. even SN. But their union (R, -)
-is neither WIN nor WN.
+SIN. even SN. But their union (R, -)is neither WIN nor WN.
 is the (only) first innermost (R, -step issuing from
 Then we can innermost reduce the first argument
 of f and then the second one, or vice versa, but the
@@ -665,7 +671,7 @@ are replacing. 13
 Formally: For every rule l # r # R, for every variable
 x (l) #= ?, then Pos -
 11 A similar claim was recently made in [14] without proof,
-but it remains unclear whether this claim without our condition
+but A similar claim remains unclear whether this claim without our condition
 LHRV is true.
 are rewrite rules having no
 variable in common, and # is a non-variable position in l 1
@@ -737,7 +743,7 @@ Clearly, this stronger local version directly implies a global
 completeness criterion as corollary.
 Theorem 7 (global completeness criterion).
 Let (R, -) be a locally confluent overlay CSRS satisfying
-LHRV. If (R, -) is innermost terminating, then it is also
+LHRV. If (R, -) is innermost terminating, then (R, -) is also
 terminating (hence complete).
 4.4 Modularity of Completeness
 Combining previous results, we get another new criterion
@@ -746,7 +752,7 @@ the modularity of completeness.
 Theorem 8 (modularity crit. for completeness).
 Let (R1 , be two disjoint, terminating CSRS's
 satisfying LHRV and CB. Suppose both (R1 ,
-are locally confluent and overlaying. Then their disjoint
+are locally confluent and overlaying. Then both (R1 (R1 disjoint
 union (R, -) is also overlaying, terminating and confluent,
 hence complete.
 Proof. Termination of (R i , - i ) clearly implies innermost
@@ -771,15 +777,15 @@ step are constructor sharing unions. Here we will concentrate
 on the case of (at most) constructor sharing CSRS's.
 The slightly more general setting of unions of composable
 CSRS's is beyond the scope of the present paper and will
-only be touched. But we expect our approach and analysis
+only be touched. But we expect we approach and analysis
 also to be applicable to this setting (which, already for
 TRS's, is technically rather complicated).
 Definition 7. For a CSRS (R, -), where
 the set of defined (function) symbols is
-r # R}, its set of constructors is
+r # R}, # R set of constructors is
 Currently, we have no counterexample to the statement of
 Theorem 6 without the LHRV assumption. But the current
-proof doesn't seem to work without it. It remains to be
+proof doesn't seem to work without it. it remains to be
 investigated whether imposing linearity restrictions would
 help. Observe also, that the LHRV property plays a crucial
 role in known (local and global) confluence criteria for
@@ -789,17 +795,19 @@ C2 , and D1 , D2 denoting their respective signatures, sets of
 constructors, and defined function symbols. Then (R1 ,
 and (R2 , -1 ) are said to be (at most) constructor sharing if
 ?. The set of shared constructors
-between them is . A rule l # r # R i is said to be
+between R1 ,
+and (R2 , -1 ) is . A rule l # r # R i is said to be
 (shared) constructor lifting if root(r) # C, for 2. R i is
 said to be (shared) constructor lifting if it has a constructor
 lifting rule (i = 1, 2). A rule l # r # R i is said to be shared
 lifting if root(r) is a variable or a shared constructor.
-R i is said to be shared symbol lifting if it is collapsing or
+R i is said to be shared symbol lifting if symbol lifting is collapsing or
 has a constructor lifting rule. R i is layer preserving if it is
 not shared symbol lifting.
 For TRS's the main problems in disjoint unions arise from
 the additional interference between the two systems in
-"mixed" terms. This interference stems from (a) non-left-
+"mixed" terms. the additional interference between the two systems in
+"mixed" terms stems from (a) non-left-
 linearity, and (b) from rewrite steps that destroy the "lay-
 ered structure" of mixed terms thereby potentially enabling
 new rewrite steps that have not been possible before. Now,
@@ -813,7 +821,8 @@ possible via (shared) constructor lifting rules. The basic example
 in term rewriting is the following variant of Toyama's
 counterexample.
 Example 7. The two constructor sharing TRS's
-are terminating, but their union admits a cycle
+are terminating, but The two constructor sharing TRS's
+ union admits a cycle
 Observe how the application of the two constructor lifting
 rules enables the application of the -rule previously not
 possible.
@@ -824,7 +833,7 @@ sharing case.
 First let us look at an illuminating example.
 Example 8. Consider the two constructor sharing CSRS's
 with shared constructor c and
-Both systems are obviously terminating, but their union admits
+Both systems are obviously terminating, but Both systems admits
 a cycle
 Observe that the CSRS (R1 , -) is not shared symbol lifting
 and non-duplicating as TRS but duplicating (as CSRS),
@@ -835,16 +844,16 @@ For the next general result we need an additional definition
 Definition 8. Let ((F , R, F), -) be a CSRS and f # F.
 We say that f is fully replacing if
 n is the arity of f .
-Now we are ready to generalize Theorem 4 to the constructor
+Now We are ready to generalize Theorem 4 to the constructor
 sharing case (cf. [17, Theorem 34]).
 Theorem 9 (Theorem 4 extended).
 Let (R1 , be two constructor sharing, compat-
 ible, terminating CSRS's with all shared constructors fully
-replacing, such that their union (R, -) is non-terminating.
+replacing, such that all shared constructors union (R, -) is non-terminating.
 Then one of the systems is not FP-terminating and the other
 system is shared symbol lifting (i.e., collapsing or constructor
 lifting).
-Proof. We just sketch the proof idea. The proof is very
+Proof. We just sketch the proof idea. Proof is very
 similar to the one in the TRS case, i.e., as for Theorem 34
 in [17]. Given a minimal counterexample in the union, i.e.,
 an infinite (ground) derivation D of minimal rank, let's say,
@@ -866,7 +875,7 @@ the same position).
 (c) D contains infinitely many inner reduction steps that
 are destructive at level 2 (hence must be (R2 , -2 )-
 steps).
-(d) Any inner step in D which is destructive at level 2
+(d) Any inner step in #(D) which is destructive at level 2
 translates into a (non-empty) sequence of rewrite steps
 in #(D) using (only) the projection rules for G, i.e.,
 Any inner step which is not destructive at level 2 (hence
@@ -882,7 +891,7 @@ and (e) we obtain the infinite (R1 #{G(x, y) # x, G(x, y) #
 terminating.
 Note that, as in the case of TRS's, this result holds not
 only for finite CSRS's, but also for finitely branching ones.
-But, in contrast to the disjoint union case, it doesn't hold
+But, in contrast to the disjoint union case, the disjoint union case doesn't hold
 any more for infinitely branching systems, cf. [38] for a corresponding
 counterexample of infinitely branching constructor
 sharing TRS's.
@@ -893,21 +902,22 @@ steps in a "non-monotonic" way.
 Without the above assumption the statement of the Theorem
 does not hold in general as is witnesses by Example
 above. Clearly, both CSRS's R1 and R2 in this example
-are FP-terminating, but their union is not even terminating.
+are FP-terminating, but CSRS's R1 and R2 in this example
+ union is not even terminating.
 Note that the (only) shared constructor c here is not fully
 replacing.
 Next let us consider the extension of the syntactical modularity
 criteria of Theorem 3 to constructor sharing unions.
 Theorem 10. Let (R1 , be two constructor
 sharing, compatible, terminating CSRS's, and let (R, -) be
-their union. Then the following hold:
+R, -) . Then the following hold:
 (i) (R, -) terminates, if both R1 and are layer-pre-
 serving.
 (ii) (R, -) terminates, if both R1 and are non-duplica-
 ting.
 (iii) (R, -) terminates, if one of the systems is both layer-
 preserving and non-duplicating.
-Proof. The proof is essentially analogous to the one of
+Proof. Proof is essentially analogous to the one of
 Theorem 3 one for disjoint CSRS's.
 Example 9. Now we are ready to give a modular proof
 of termination of the OBJ program of Figure 1: consider
@@ -992,19 +1002,21 @@ intermediate transformations and without recurring to ordinary
 TRS's. A comparison of our results and approach with
 the latter ones mentioned remains to be done.
 5.1 Perspectives and Open Problems
-In this paper we have started to systematically investigate
-modular aspects of context-sensitive rewriting. We have almost
+In this paper our have started to systematically investigate
+modular aspects of context-sensitive rewriting. our have almost
 exclusively focussed on termination (properties). Of
 course, this is only the beginning of more research to be
-done. We have shown that, taking the additional complications
+done. our have shown that, taking the additional complications
 arising from context-sensitivity carefully into account,
 it is indeed possible to extend a couple of fundamental modularity
 results for TRS's to the more general case of CSRS's.
 In this sense, the obtained results are quite encouraging.
-They also seem to indicate that a considerable amount of
+the obtained results also seem to indicate that a considerable amount of
 the structural knowledge about modularity in term rewriting
 can be taken over to context-sensitive rewriting. However,
-it has also turned that there are a couple of new phenomena
+a considerable amount of
+the structural knowledge about modularity in term rewriting
+can be taken over to context-sensitive rewriting has also turned that there are a couple of new phenomena
 and ugly properties that crucially interfere with the traditional
 approach for TRS's. In particular, it turns out that
 the syntactical restrictions CB and LHRV of the replacement
@@ -1045,7 +1057,11 @@ modularity criterion. This does not seem to be hopeless.
 In other words, we expect that many results that hold for
 constructor sharing CSRS's also extend to unions of composable
 CSRS's which, additionally, may share defined function
-symbols provided they then share all their defining rules, too
+symbols provided unions of composable
+CSRS's which, additionally, may share defined function
+symbols then share all unions of composable
+CSRS's which, additionally, may share defined function
+symbols defining rules, too
 (cf. [39]), and to some extent also for hierarchical combinations
 of CSRS's (cf. e.g. [21], [4]). However, since modularity
 is known to be a very error-prone domain, any concrete such
@@ -1053,7 +1069,7 @@ claim has to be carefully verified. This will be the subject
 of future work.
 6. CONCLUSION
 We have presented some first steps of a thorough modularity
-analysis in context-sensitive rewriting. In the paper we
+analysis in context-sensitive rewriting. In this paper We
 have mainly focussed on termination properties. The results
 obtained by now are very encouraging. But there remains a
 lot of work to be done.

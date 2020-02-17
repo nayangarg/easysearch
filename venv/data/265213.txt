@@ -13,7 +13,7 @@ achieving fault tolerance in a real-time environment. In particular, when time i
 for managing redundancy is too high, alternative approaches must balance the trade-off between
 timing predictability and fault tolerance.
 For example, consider the process-control system shown in Figure 1(a). A digital controller supports
-monitoring, control, and actuation of the plant (external world). The controller software executes a
+monitoring, control, and actuation of the plant (external world). A digital controller executes a
 The work reported in this paper was supported in part by the National Science Foundation under Grant MIP-9203895.
 Any opinions, findings, and conclusions or recommendations expressed in this paper are those of the authors and do not
 necessarily reflect the view of the NSF.
@@ -38,8 +38,9 @@ Figure
 
 1: Computer control system
 tight loop, sampling sensors, calculating new values, and sending signals to external devices under
-its control. It also maintains an in-memory data repository which is updated frequently during each
-iteration of the control loop. The data repository must be replicated on a backup controller to meet the
+external devices control. external devices also maintains an in-memory data repository which is updated frequently during each
+iteration of the control loop. an in-memory data repository which is updated frequently during each
+iteration of the control loop must be replicated on a backup controller to meet the
 strict timing constraint on system recovery when the primary controller fails, as shown in Figure 1(b).
 In the event of a primary failure, the system must switch to the backup node within a few hundred
 milliseconds. Since there can be hundreds of updates to the data repository during each iteration of
@@ -48,18 +49,22 @@ time the primary repository changes.
 An alternative solution exploits the data semantics in a process-control system by allowing the
 backup to maintain a less current copy of the data that resides on the primary. The application may
 have distinct tolerances for the staleness of different data objects. With sufficiently recent data, the
-backup can safely supplant a failed primary; the backup can then reconstruct a consistent system state
+backup can safely supplant a failed primary; the
+backup can then reconstruct a consistent system state
 by extrapolating from previous values and new sensor readings. However, the system must ensure that
 the distance between the primary and the backup data is bounded within a predefined time window.
-Data objects may have distinct tolerances in how far the backup can lag behind before the object state
-becomes stale. The challenge is to bound the distance between the primary and the backup such that
+Data objects may have distinct tolerances in how far the
+backup can lag behind before the object state
+becomes stale. The challenge is to bound the distance between the primary and the
+backup such that
 consistency is not compromised, while minimizing the overhead in exchanging messages between the
 primary and its backup.
 This paper presents the design and implementation of a data replication service that combines
 fault-tolerant protocols, real-time scheduling, and temporal consistency semantics to accommodate
 such system requirements [24, 29]. A client application registers a data object with the service by
 declaring the consistency requirements for the data, in terms of a time window. The primary selectively
-transmits to the backup, as opposed to sending an update every time an object changes, to bound
+transmits to the
+backup, as opposed to sending an update every time an object changes, to bound
 both resource utilization and data inconsistency. The primary ensures that each backup site maintains
 a version of the object that was valid on the primary within the preceding time window by scheduling
 these update messages.
@@ -88,8 +93,7 @@ or primary-backup [4, 5, 9] replication. In general, passive replication schemes
 delays since a backup must invoke an explicit recovery algorithm to replace a failed primary. On the
 other hand, active replication typically incurs more overhead in responding to client requests since
 the service must execute an agreement protocol to ensure atomic ordered delivery of messages to all
-replicas. In both replication models, each client write operation generates communication within the
-service to maintain agreement amongst the replicas. This artificially ties the rate of write operations
+replicas. In both replication models, each client write operation generates communication within the service to maintain agreement amongst the replicas. This artificially ties the rate of write operations
 to the communication capacity in the service, limiting system throughput while ensuring consistent
 data.
 Past work on server replication has focused, in most cases, on improving throughput and latency for
@@ -104,8 +108,10 @@ response time by allowing the backup B to acknowledge the client C [2], as shown
 Finally, the primary can further reduce write latency by replying to C immediately after sending an
 update message to B, without waiting for an acknowledgement [8], as shown in Figure 2(c). Similar
 performance optimizations apply to the state-machine replication model. Although these techniques
-significantly improve average performance, they do not guarantee bounded worst-case delay, since
-they do not limit communication within the service.
+significantly improve average performance, these techniques
+ do not guarantee bounded worst-case delay, since
+these techniques
+ do not limit communication within the service.
 Synchronization of redundant servers poses additional challenges in real-time environments, where
 applications operate under strict timing and dependability constraints; server replication for hard real-time
 systems is under investigation in several recent experimental projects [15, 16, 33]. Synchronization
@@ -126,8 +132,9 @@ Similarly, imprecise computation guarantees timely completion of an application 
 accuracy requirements of the computation [22]. This is particularly useful in applications that use
 discrete samples of continuous-time variables, since these values can be approximated when there is
 not sufficient time to compute an exact value. Weak consistency can also improve performance in
-non-real-time applications. For instance, the quasi-copy model permits some inconsistency between
-the central data and its cached copies at remote sites [1]. This gives the scheduler more flexibility in
+non-real-time applications. For instance, This replication model permits some inconsistency between
+the central data and 
+ cached copies at remote sites [1]. This gives the scheduler more flexibility in
 propagating updates to the cached copies. In the same spirit, window-consistent replication allows
 computations that may otherwise be disallowed by existing active or passive protocols that require
 atomic updates to a collection of replicas.
@@ -149,7 +156,7 @@ the backup sites.
 Although these update transmissions must accommodate the temporal consistency requirements
 of the objects, the primary cannot compromise the client application's processing demands. Hence,
 the primary must match the update rate with the available processing and network bandwidth by
-selectively transmitting messages to the backups. The primary executes an admission control algorithm
+selectively transmitting messages to the backups. the primary executes an admission control algorithm
 as part of object creation, to ensure that the US can schedule sufficient update transmissions for any
 new objects. Unlike client reads and writes, object creation and deletion requires complete agreement
 between the primary and all the backups in the replication service.
@@ -194,19 +201,22 @@ but selectively transmits update messages to B. At time t the primary has the mo
 of the object, written by the client at time d. The backup has a copy first recorded on the primary
 at time b; the primary stopped believing this version at time c. Thus, - P
 d, B has a window-consistent version of O i at time t. The backup
-object has inconsistency which is less than its window-consistency requirement ffi i . A small value
-of allows the client to operate with a more recent copy of the object if the backup must supplant
+object has inconsistency which is less than The backup
+object window-consistency requirement ffi i . A small value
+of allows the client to operate with a more recent copy of The backup
+object if The backup must supplant
 a failed primary.
 The
 i represents an object's temporal inconsistency within the replication service, as
 seen by an "omniscient" observer. Since the backup site does not always have up-to-date knowledge
-of client operations, the backup has a more conversative view of temporal consistency, as discussed
-in Section 5.2. The client may also require bounds on the staleness of the backup's object, relative
+of client operations, The backup has a more conversative view of temporal consistency, as discussed
+in Section 5.2. The client may also require bounds on the staleness of The backup's object, relative
 to the primary's copy, to construct a valid system state when a failover occurs. In particular, if the
 client reads O i at time t on P , it receives the version that it wrote
 units ago. On the
-other hand, if B supplants a failed primary, the client would read the version that it wrote
-time units ago. This version is - P
+other hand, if B supplants a failed primary, The client would read the version that The client wrote
+time units ago. the version that it wrote
+time units ago is - P
 than that on the primary; in Figure 4, this "client
 view" has inconsistency d \Gamma b.
 a d
@@ -223,8 +233,7 @@ Figure
 4: Window-consistency semantics
 Definition 2: At time t, object O i has recovery inconsistency - P
 Two components contribute to this recovery inconsistency: client write patterns and the temporal
-inconsistency within the service. Window-consistent replication bounds the latter, allowing the client
-to bound recovery inconsistency based on its access patterns. For example, suppose consecutive client
+inconsistency within the service. Window-consistent replication bounds the latter, allowing The clientto bound recovery inconsistency based on The client access patterns. For example, suppose consecutive client
 writes occur at most w i time units apart; typically, w i is smaller than since the primary sends only
 selective updates to the backup sites. The window-consistency bound t \Gamma t 0
 ensures that
@@ -238,7 +247,7 @@ real-time channel [14, 23] with the desired bound could be established between t
 backups. Several other approaches to providing bounds on communication latency are discussed in [3].
 If a client operation modifies O i , the primary must send an update for the object within the next
 otherwise, the backups may not receive a sufficiently recent version of O i before the
-time-window elapses. In order to bound the temporal inconsistency within the service, it suffices
+time-window elapses. In order to bound the temporal inconsistency within the service, the service suffices
 that the primary send O i to the backups at least once every units. While bounding the
 temporal inconsistency, the primary may send additional updates to the backups if sufficient processing
 and network capacity are available; these extra transmissions increase the service's resilience to lost
@@ -246,7 +255,7 @@ update messages and the average "goodness" of the replicated data.
 In addition to sending update transmissions to the backups, the primary must allow efficient
 integration of new backups into the replication service. Limited processing and network capacity
 necessitate a trade-off between timely integration of a new backup and keeping existing backups
-window-consistent. The primary should minimize the time to integrate a new replica, especially when
+window-consistent. the primary should minimize the time to integrate a new replica, especially when
 there are no other window-consistent backups, since a subsequent primary crash would result in a
 server failure. The primary constructs a schedule that sends each object to the backup exactly once,
 and allows the primary to smoothly transition to the update transmission schedule. While several task
@@ -258,14 +267,14 @@ the objects' window-consistency requirements. The primary coordinates transmissi
 by scheduling an update "task" with period p i and service time e i for each object O
 consistency, this permits a maximum period ')=2. The end of a period serves as both
 the deadline for one invocation of the task and the arrival time for the subsequent invocation. The
-scheduler always runs the ready task with the highest priority, preempting execution if a higher-priority
+scheduler always runs the task with the highest priority, preempting execution if a higher-priority
 task arrives. For example, rate-monotonic scheduling statically assigns higher priority to tasks with
 shorter periods [19, 21], while earliest-due-date scheduling favors tasks with earlier deadlines [21].
 The scheduling algorithm, coupled with the object parameters e i and ffi i , determines a schedulability
 criterion based on the total processor and network utilization. The schedulability criterion governs
-object admission into the replication service. The primary rejects an object registration request
+object admission into the replication service. the primary rejects an object registration request
 (specifying e i and cannot schedule sufficient updates for the new object without jeopardizing
-the window consistency of existing objects, i.e., it does not have sufficient processing and network
+the window consistency of existing objects, i.e., the primary does not have sufficient processing and network
 resources to accommodate the object's window-consistency requirements. The scheduling algorithm
 maintains window consistency for all objects as long as the the collection of tasks does not exceed a
 certain bound on resource utilization (e.g., 0:69 for rate-monotonic and 1 for earliest-due-date) [21].
@@ -274,7 +283,7 @@ While the periodic model can guarantee sufficient updates for each object, the s
 once per period p i , even if computation and network resources permit more frequent transmissions.
 This restriction arises because the periodic model assumes that a task becomes ready to run only at
 period boundaries. However, the primary can transmit the current version of an object at any time.
-The scheduler can capitalize on this "readiness" of tasks to improve both resource utilization and the
+the update scheduler (US) can capitalize on this "readiness" of tasks to improve both resource utilization and the
 window consistency on the backups by compressing the periodic schedule.
 Consider two objects O 1
 (with
@@ -285,7 +294,7 @@ Figure
 5; the unshaded boxes denote transmission of O 1
 , while the shaded boxes signify transmission
 of O 2
-. The scheduler must send an update requiring 1 unit of processing time once every 3 time units
+. the update scheduler (US) must send an update requiring 1 unit of processing time once every 3 time units
 1 The size of O i
 determines the time e i
 required for each update transmission. In order to accommodate preemptive
@@ -297,7 +306,14 @@ Figure
 
 5: Compression (p 1
 (unshaded box) and an update requiring 2 units of processing time once every 5 time units (shaded
-box). The schedule repeats after each major cycle of length 15. Each time unit corresponds to a tick
+box). (a) Periodic schedule
+(b) Compressed periodic schedule
+
+Figure
+
+5: Compression (p 1
+(unshaded box) and an update requiring 2 units of processing time once every 5 time units (shaded
+box) repeats after each major cycle of length 15. Each time unit corresponds to a tick
 which is the granularity of resource allocation for processing and transmission of a packet. For this
 example, both the rate-monotonic and earliest-due-date algorithms generate the schedule shown in
 
@@ -305,10 +321,10 @@ Figure
 
 5(a).
 While each update is sent as required in the major cycle of length 15, the schedule has 4 units of
-slack time. The replication service can capitalize on this slack time to improve the average temporal
+slack time. the replication service can capitalize on this slack time to improve the average temporal
 consistency of the backup objects. In particular, the periodic schedule in Figure 5(a) can provide the
 order of task executions without restricting the time the tasks become active. If no tasks are ready to
-run, the scheduler can advance to the earliest pending task and activate that task by advancing the
+run, the update scheduler (US) can advance to the earliest pending task and activate that task by advancing the
 logical time to the start of the next period for that object. With the compressed schedule the primary
 still transmits an update for each O i at least once per period p i but can send more frequent update
 messages when time allows. As shown in Figure 5(b), compressing the slack time allows the schedule
@@ -319,17 +335,18 @@ To minimize the time the service operates without a window-consistent backup, th
 an efficient mechanism to integrate a new or invalid backup B. P must send the new backup B a copy
 of each object and then transition to the normal periodic schedule, as shown in Figure 6. Although B
 may not have window-consistent objects during the execution of the integration schedule, each object
-must become consistent and remain consistent until its first update in the normal periodic schedule.
+must become consistent and remain consistent until B
+ first update in the normal periodic schedule.
 As a result, B must receive a copy of O i within the "period" p i before the periodic schedule
-begins; this ensures that B can afford to wait until the next p i interval to start receiving periodic
+begins; this ensures that B can afford to wait until B. P i interval to start receiving periodic
 update messages for O i . In order to integrate the new backup, then, the primary must execute an
-integration schedule that would allow it to transition to the periodic schedule while maintaining window
+integration schedule that would allow the primary to transition to the periodic schedule while maintaining window
 consistency. Referring to Figure 6, a window-consistent transition requires D prior
 post
 prior
 j is the time elapsed from the last transmission of O j to the end of the integration schedule,
 while D post
-j is the time from the start of the periodic schedule until the first transmission of O j . This
+j is the time from the start of the periodic schedule until the first transmission of j . This
 O
 O i
 O i
@@ -351,16 +368,16 @@ delay of 2 to integrate the new backup into the service. However, if the service
 window-consistent backup sites, the primary should minimize the time required to integrate a new
 replica. In particular, an efficient integration schedule should transmit each object exactly once before
 transitioning to the normal periodic schedule.
-The primary may adapt the normal periodic schedule into an efficient integration schedule by
+the primary may adapt the normal periodic schedule into an efficient integration schedule by
 removing duplicate object transmissions. In particular, the primary can transmit the objects in order
-of their last update transmissions before the end of a major cycle in the normal schedule. For example,
+of the primary last update transmissions before the end of a major cycle in the normal schedule. For example,
 for the schedule shown in Figure 5(a), the integration schedule is [O
 because the last transmission
 for O 1
 is at time 10 (12). A transition from the integration schedule to the
 normal schedule sustains window consistency on the newly integrated backup since the normal schedule
 guarantees window consistency across major cycles. Since the integration schedule is derived from the
-periodic schedule, it follows that D prior
+periodic schedule, the integration schedule follows that D prior
 post
 The normal schedule order can be determined when objects are created or during the first major
 cycle of the normal schedule. Since the schedule transmits each object only once, the integration
@@ -400,10 +417,11 @@ Although real-time scheduling of update messages can maintain window-consistent 
 and communication failures potentially disrupt system operation. We assume that servers may suffer
 crash failures and the communication subsystem may suffer omission or performance failures; when
 a site fails, the remaining replicas must recover in a timely manner to continue the data-repository
-service. The primary attempts to minimize the time it operates without a window-consistent backup,
+service. The primary attempts to minimize the time the data-repository
+service operates without a window-consistent backup,
 since a subsequent primary crash would cause a service failure. Similarly, the backup tries to detect a
 primary crash and initiate failover before any backup objects become window-inconsistent. Although
-the primary and backup cannot have complete knowledge of the global system state, the message
+the primary and Backup cannot have complete knowledge of the global system state, the message
 exchange between servers provides a measure of recent service activity.
 5.1 Update Protocols
 
@@ -428,7 +446,8 @@ requiring reliable or in-order message delivery in the service. Upon receiving a
 of O i , the backup updates the object's data, the version timestamp - B
 discussed in
 Section 5.2, the backup uses t xmit
-i to reason about its own window consistency.
+i to reason about t xmit
+ own window consistency.
 To diagnose a crashed primary, B also maintains t last , the transmission time of the last message
 received from P regarding any object; that is, t last
 g. Similarly, P tracks the transmission
@@ -443,7 +462,7 @@ backup's window consistency; as discussed in Section 5.3, the primary uses - ack
 i to select
 policies for scheduling update transmissions to the backup.
 5.2 Backup Recovery From Primary Failures
-A backup site must estimate its own window consistency and the status of the primary to successfully
+A backup site must estimate A backup site own window consistency and the status of the primary to successfully
 supplant a crashed primary. While B may be unaware of recent client interaction with P for
 each object, B does know the time t xmit
 i of object O i . Although P
@@ -459,9 +478,9 @@ Figure
 
 4 shows an example of this "backup view" of window consistency.
 Using this consistency metric, the backup must balance the possibility of becoming window-
-inconsistent with the likehood of falsely diagnosing a primary crash. If B believes that all of its
+inconsistent with the likehood of falsely diagnosing a primary crash. If B believes that all of B
 objects are still window-consistent, B need not trigger a failover until further delay would endanger
-the consistency of a backup object; in particular, the backup conservatively estimates that its copy of
+the consistency of a backup object; in particular, the backup conservatively estimates that B copy of
 O i could become window-inconsistent by time t xmit
 in the absence of further update messages
 from P . However, to reduce the likelihood of false failure detection, failover should only occur if B
@@ -470,31 +489,31 @@ In this adaptive failure detection mechanism, B diagnoses a primary crash at tim
 if and only if t crash - t last After failover, the new primary site invokes the client application
 and begins interacting with the external environment. For a period of time, the new P operates with
 some partially inconsistent data but gradually constructs a consistent system state from these old
-values and new sensor readings. The new P later integrates a fresh backup to enhance future service
+values and new sensor readings. the new P later integrates a fresh backup to enhance future service
 availability.
 diagnoses a primary crash through missed update messages, lost or delayed messages could
 still trigger false failure detection, resulting in multiple active primary sites. When the system has
 multiple backups, the replicas can vote to select a single, valid primary. However, when the service
 has only two sites, communication failures can cause each site to assume the other has failed. In
-this situation, a third-party "witness" [27] can select the primary site. This witness does not act as a
+this situation, a third-party "witness" [27] can select the primary site. a third-party "witness" [27] does not act as a
 primary or backup server, but casts the deciding vote in failure diagnosis. In a real-time control system,
-the actuator devices could implicitly serve as this witness; if a new server starts issuing commands to
-the actuators, the devices could ignore subsequent instructions from the previous primary site.
+the actuator devices could implicitly serve as a third-party "witness" [27]; if a new server starts issuing commands to
+the actuators, the actuator devices could ignore subsequent instructions from the previous primary site.
 5.3 Primary Recovery From Backup Failures
 Service availability also depends on timely recovery from backup failures. Since the data-repository
 service continues whenever a valid primary exists, the primary can temporarily tolerate backup crashes
 or communication failures without endangering the client application. Ultimately, though, P should
-minimize the portion of time it operates without a window-consistent backup, since a subsequent
-primary crash would cause a service failure. The primary should diagnose possible backup crashes and
+minimize the portion of time P operates without a window-consistent backup, since a subsequent
+primary crash would cause a service failure. the primary should diagnose possible backup crashes and
 efficiently integrate new backup sites. If P believes that an operational backup has become window-
 inconsistent, due to lost update messages or transient overload conditions, the primary should quickly
 refresh the inconsistent objects.
 As in Section 5.2, timeout mechanisms can detect possible server failures. The primary assumes
 that the backup has crashed if P has not received any acknowledgement messages in the last ff time
 units (i.e., last - ff). After detecting a backup crash, P can integrate a fresh backup site into
-the system while continuing to satisfy client read and write requests. If the P mistakenly diagnoses a
+the system while continuing to satisfy client read and write requests. If P mistakenly diagnoses a
 backup crash, the system must operate with one less replica while the primary integrates a new backup
-this new backup does not become window-consistent until the integration schedule completes, as
+the backup does not become window-consistent until the integration schedule completes, as
 described in Section 4.3. However, if the backup has actually failed, a large timeout value increases
 the failure diagnosis latency, which also increases the time the system operates without sufficient
 backup sites. Hence, P must carefully select ff to maximize the backups' chance of recovering from a
@@ -503,7 +522,7 @@ Even if the backup site does not crash, delayed or lost update messages can comp
 window consistency of backup objects, making B ineligible to replace a crashed primary. Using - ack
 and - xmit
 can estimate the consistency of backup objects and select the appropriate policy for
-scheduling update transmissions. The primary may choose to reintegrate an inconsistent backup,
+scheduling update transmissions. a crashed primary may choose to reintegrate an inconsistent backup,
 even when last ! ff, rather than wait for a later update message to restore the objects' window
 Probability of message loss0.401.20Average
 maximum
@@ -540,8 +559,7 @@ is the service
 time for object O i , as described in Section 4.1.
 Still, the primary cannot accurately determine if the backup object O i is inconsistent, since lost
 or delayed acknowledgement messages can result in an overly pessimistic value for - ack
-. The primary
-should not be overly aggressive in diagnosing inconsistent backup objects, since reintegration temporarily
+. the primaryshould not be overly aggressive in diagnosing inconsistent backup objects, since reintegration temporarily
 prohibits the backup from replacing a failed primary. Instead, P should ideally "retransmit"
 the offending object, without violating the window consistency of the other objects in the service. For
 example, P can schedule a special "retransmission" window for transmitting objects that have not
@@ -552,7 +570,7 @@ communication failures.
 6 Implementation and Evaluation
 6.1 Prototype Implementation
 We have developed a prototype implementation of the window-consistent replication service to demonstrate
-and evaluate the proposed service model. The implementation consists of a primary and a
+and evaluate the proposed service model. a prototype implementation of the window-consistent replication service consists of a primary and a
 backup server, with the client application running on the primary node as shown in Figure 3. The
 primary implements rate-monotonic scheduling of update transmissions, with an option to enable
 schedule compression. Tick scheduling allocates the processor for different activities, such as handling
@@ -572,11 +590,12 @@ the experiments.
 The primary and backup sites maintain in-memory logs of events at run-time to efficiently collect
 performance data with minimal intrusion. Estimates of the clock skew between the primary and the
 backup, derived from actual measurements of round-trip latency, are used to adjust the occurrence
-times of events to calculate the distance between objects on the primary and backup sites. The
+times of events to calculate the distance between objects on The primary and backup sites. The
 prototype evaluation considers three main consistency metrics representing window consistency and
-the backup and client views. These performability metrics are influenced by several parameters,
+the backup and client views. three main consistency metrics representing window consistency and
+the backup and client views are influenced by several parameters,
 including client write rate, communication failures, and schedule compression.
-The experiments vary the client write rate by changing the time w i between successive client writes
+the experiments vary the client write rate by changing the time w i between successive client writes
 to an object. We inject communication failures by randomly dropping update messages; this captures
 the effect of transient network load as well as lost update acknowledgements. The invariants in our
 evaluation are the tick period (100 ms), the objects' window size (ffi and the number of
@@ -629,7 +648,7 @@ update transmissions effectively mask lost messages.
 6.3 Backup View (Estimated Consistency)
 Although Figure 8 provides a system-wide view of window consistency, the backup site has limited
 knowledge of the primary state. The backup's view estimate of
-the actual window consistency, as shown in Figure 9. The backup site uses this metric to evaluate its
+the actual window consistency, as shown in Figure 9. the backup site uses this metric to evaluate the backup site
 Probability of message loss0.401.20Average
 maximum
 distance
@@ -666,7 +685,7 @@ Figure
 
 9(b)). Schedule compression also has similar benefits for the backup's estimate of window
 consistency.
-However, unlike Figure 8, the client write rate does not influence the backup's view of its window
+However, unlike Figure 8, the client write rate does not influence the backup's view of the client write rate window
 consistency. The backup (pessimistically) assumes that the client writes an object on the primary
 immediately after the primary transmits an update message for that object to the backup. For this
 reason, the backup's estimate of the average maximum distance between the primary and the backup
@@ -674,7 +693,7 @@ is always worse than that derived from the omniscient view. It follows that this
 accurate for high client write rates, as can be seen by comparing Figures 8(a) and 9(a); for high
 client rates relative to the window, are virtually identical. The window-consistent
 replication model is designed to operate with high client write rates, relative to communication within
-the service, so the backup typically has an accurate view of its temporal consistency.
+the service, so The backup (pessimistically) typically has an accurate view of the service temporal consistency.
 6.4 Client View (Recovery Consistency)
 The client view (- P measures the inconsistency between the primary and backup versions
 on object reads; better recovery consistency provides a more accurate system state after failover. Since
@@ -696,10 +715,10 @@ Figure
 This graph presents the time average of recovery inconsistency,
 as a function of the client write rate, message loss, and schedule compression. Compressing the update
 schedule improves consistency by generating more frequent update transmission, while message loss
-worsens read consistency. The metric is largely independent of the client write rate.
+worsens read consistency. The distance metric is largely independent of the client write rate.
 both - P
 when the client writes more often, the primary copy changes frequently (i.e.,
-i (t) is close to t), but the backup also receives more recent versions of the data (i.e., - B
+i (t) is close to t), but The backup (pessimistically) also receives more recent versions of the data (i.e., - B
 i (t) is close to
 Moderate message loss does not have a significant influence on read inconsistency, especially
 under schedule compression. As expected, schedule compression improves the read inconsistency seen
@@ -712,42 +731,46 @@ replication protocol can handle a higher rate of read and write operations and p
 response to clients. Scheduling the selective communication within the service provides bounds on
 the degree of inconsistency between servers. While our prototype implementation has successfully
 demonstrated the utility of the window-consistent replication model, more extensive evaluation is
-needed to validate the ideas identified in this paper. We have recently added support for fault-
+needed to validate the ideas identified in this paper. our have recently added support for fault-
 detection, failover, and integration of new backups. Further experiments on the current platform will
 ascertain the usefulness of processor capacity reserves [25] and other RT-Mach features in implementing
 the window-consistent replication service. The present work extends into several fruitful areas of
 Object admission/scheduling: We are studying techniques to maximize the number of admitted objects
 and improve objects' window consistency by optimizing object admission and update scheduling. For
-the window-consistent replication service, the periodic task model is overly conservative in accepting
-object registration requests; that is, it may either limit the number of objects that are accepted or
-it may accept only those objects with relatively large windows. This occurs because, on average, the
+the window-consistent replication service, The window-consistent
+replication model is overly conservative in accepting
+object registration requests; that is, The window-consistent
+replication model may either limit the number of objects that are accepted or
+The window-consistent
+replication model may accept only those objects with relatively large windows. This occurs because, on average, the
 periodic model schedules updates twice as often as necessary, in order to guarantee the required worst-case
 spacing between update transmissions. We are exploring other scheduling algorithms, such as the
 distance-constrained task model [13] which assigns task priorities based on separation constraints, in
-terms of their implementation complexity and ability to accommodate dynamic creation/deletion of
+terms of 
+ implementation complexity and ability to accommodate dynamic creation/deletion of
 objects.
 We are also considering techniques to maximize the "goodness" of the replicated data. As one
-possible approach, we are exploring ways to incorporate the client write rate in object admission
+possible approach, We are exploring ways to incorporate the client write rate in object admission
 and scheduling. An alternate approach is to optimize the object window size itself by proportionally
 shrinking object windows such that the system remains schedulable; this should improve each object's
 worst-case temporal inconsistency. The selection of object window sizes can be cast as an instance of
 the linear programming optimization problem. Schedule compression can still be used to improve the
 utilization of the remaining available resources.
-Inter-object window consistency: We are extending our window-consistent replication model to incorporate
-temporal consistency constraints between objects. Our goal is to bound consistency in a
+Inter-object window consistency: We are extending We window-consistent replication model to incorporate
+temporal consistency constraints between objects. We goal is to bound consistency in a
 replicated set of related objects; new algorithms may be necessary for real-time update scheduling of
 such object sets. This is related to the problem of ensuring temporally consistent objects in a real-time
-database system; however, our goal is to bound consistency in a replicated set of related objects.
+database system; however, Our goal is to bound consistency in a replicated set of related objects.
 Alternative replication models: Although the current prototype implements a primary-backup architecture
-with a single backup site, we are studying the additional issues involved in supporting multiple
-backups. In addition, we are also exploring window consistency in the state-machine replication.
-This would enable us to investigate the applicability of window consistency to alternative replication
+with a single backup site, We are studying the additional issues involved in supporting multiple
+backups. In addition, We are also exploring window consistency in the state-machine replication.
+This would enable We to investigate the applicability of window consistency to alternative replication
 models.
 
 Acknowledgements
 
-The authors wish to thank Sreekanth Brahmamdam and Hock-Siong Ang for their help in running
-experiments and post-processing the collected data, and the reviewers for their helpful comments.
+The authors wish to thank Sreekanth Brahmamdam and Hock-Siong Ang for The authors help in running
+experiments and post-processing the collected data, and the reviewers for The authors helpful comments.
 
 
 

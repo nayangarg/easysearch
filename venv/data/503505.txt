@@ -1,7 +1,7 @@
 --T
 Featherweight Java.
 --A
-Several recent studies have introduced lightweight versions of Java: reduced languages in which complex features like threads and reflection are dropped to enable rigorous arguments about key properties such as type safety. We carry this process a step further, omitting almost all features of the full language (including interfaces and even assignment) to obtain a small calculus, Featherweight Java, for which rigorous proofs are not only possible but easy. Featherweight Java bears a similar relation to Java as the lambda-calculus does to languages such as ML and Haskell. It offers a similar computational "feel," providing classes, methods, fields, inheritance, and dynamic typecasts with a semantics closely following Java's. A proof of type safety for Featherweight Java thus illustrates many of the interesting features of a safety proof for the full language, while remaining pleasingly compact. The minimal syntax, typing rules, and operational semantics of Featherweight Java make it a handy tool for studying the consequences of extensions and variations. As an illustration of its utility in this regard, we extend Featherweight Java with generic classes in the style of GJ (Bracha, Odersky, Stoutamire, and Wadler) and give a detailed proof of type safety. The extended system formalizes for the first time some of the key features of GJ.
+Several recent studies have introduced lightweight versions of Java: reduced languages in which complex features like threads and reflection are dropped to enable rigorous arguments about key properties such as type safety. We carry this process a step further, omitting almost all features of the full language (including interfaces and even assignment) to obtain a small calculus, Featherweight Java, for which rigorous proofs are not only possible but easy. Featherweight Java bears a similar relation to Java as the lambda-calculus does to languages such as ML and Haskell. Featherweight Java offers a similar computational "feel," providing classes, methods, fields, inheritance, and dynamic typecasts with a semantics closely following Java's. A proof of type safety for Featherweight Java thus illustrates many of the interesting features of a safety proof for the full language, while remaining pleasingly compact. The minimal syntax, typing rules, and operational semantics of Featherweight Java make it a handy tool for studying the consequences of extensions and variations. As an illustration of its utility in this regard, we extend Featherweight Java with generic classes in the style of GJ (Bracha, Odersky, Stoutamire, and Wadler) and give a detailed proof of type safety. The extended system formalizes for the first time some of the key features of GJ.
 --B
 Introduction
 "Inside every large language is a small language
@@ -10,12 +10,12 @@ Formal modeling can offer a significant boost to the design
 of complex real-world artifacts such as programming
 languages. A formal model may be used to describe
 some aspect of a design precisely, to state and
-prove its properties, and to direct attention to issues
+prove A formal model properties, and to direct attention to issues
 that might otherwise be overlooked. In formulating a
 model, however, there is a tension between completeness
-and compactness: the more aspects the model addresses
-at the same time, the more unwieldy it becomes. Often
-it is sensible to choose a model that is less complete but
+and compactness: the more aspects A formal model addresses
+at the same time, the more unwieldy A formal model becomes. Often
+A formal model is sensible to choose a model that is less complete but
 more compact, offering maximum insight for minimum
 investment. This strategy may be seen in a flurry of
 recent papers on the formal properties of Java, which
@@ -58,7 +58,7 @@ part of the paper illustrates this utility by enriching
 FJ with generic classes and methods 'a la GJ [7]. Al-
 though, the model omits a few important aspects of GJ
 (such as "raw types" and type argument inference for
-generic method calls), it has already revealed portions
+generic method calls), the model has already revealed portions
 of the design that were underspecified and bugs in the
 GJ compiler.
 Our main goal in designing FJ was to make a proof of
@@ -66,7 +66,8 @@ type soundness ("well-typed programs don't get stuck'')
 as concise as possible, while still capturing the essence
 of the soundness argument for the full Java language.
 Any language feature that made the soundness proof
-longer without making it significantly different was a
+longer without making the soundness proof
+ significantly different was a
 candidate for omission. As in previous studies of type
 soundness in Java, we don't treat advanced features
 such as concurrency, inner classes, and reflection. Other
@@ -85,8 +86,10 @@ by its constructor and never changed afterwards.
 This restricts FJ to a "functional" fragment of Java,
 in which many common Java idioms, such as use of
 enumerations, cannot be represented. Nonetheless, this
-fragment is computationally complete (it is easy to encode
-the lambda calculus into it), and is large enough
+fragment is computationally complete (this
+fragment is easy to encode
+the lambda calculus into this
+fragment), and is large enough
 to include many useful programs (many of the programs
 in Felleisen and Friedman's Java text [12] use a purely
 functional style). Moreover, most of the tricky typing
@@ -96,7 +99,7 @@ algorithm for generic method invocation in GJ has some
 twists imposed on it by the need to maintain soundness
 in the presence of assignment. This paper treats a simplified
 version of GJ without type inference.
-The remainder of this paper is organized as follows.
+The remainder of This paper is organized as follows.
 Section 2 introduces the main ideas of Featherweight
 Java, presents its syntax, type rules, and reduction
 rules, and sketches a type soundness proof. Section 3
@@ -142,8 +145,7 @@ There are five forms of expression in FJ. Here, new A(),
 new B(), and new Pair(e1,e2) are object constructors,
 and e3.setfst(e4) is a method invocation. In the body
 of setfst, the expression this.snd is a field access, and
-the occurrences of newfst and this are variables. FJ
-differs from Java in that this is an ordinary variable
+the occurrences of newfst and this are variables. FJdiffers from Java in that this is an ordinary variable
 rather than a special keyword.
 The remaining form of expression is a cast. The
 expression
@@ -152,7 +154,7 @@ new A()).fst).snd
 evaluates to the expression
 new B().
 Here, ((Pair)e7), where e7 is new Pair(.fst, is
-a cast. The cast is required, because e7 is a field access
+a cast. a cast is required, because e7 is a field access
 to fst, which is declared to contain an Object, whereas
 the next field access, to snd, is only valid on a Pair. At
 run time, it is checked whether the Object stored in the
@@ -188,7 +190,7 @@ here the slogan is "everything is an object."
 Here is the rule for field access in action:
 new Pair(new A(), new B()).snd \Gamma! new B()
 Because of the stylized form for object constructors, we
-know that the constructor has one parameter for each
+know that the super constructor has one parameter for each
 field, in the same order that the fields are declared. Here
 the fields are fst and snd, and an access to the snd field
 selects the second parameter.
@@ -205,7 +207,7 @@ The receiver of the invocation is the object
 new Pair(new A(), new B()), so we look up the
 setfst method in the Pair class, where we find
 that it has formal parameter newfst and body
-new Pair(newfst, this.snd). The invocation reduces
+new Pair(newfst, this.snd). the invocation reduces
 to the body with the formal parameter replaced by
 the actual, and the special variable this replaced
 by the receiver object. This is similar to the beta
@@ -215,7 +217,8 @@ the receiver determines where to look for the body
 (supporting method override), and the substitution of
 the receiver for this (supporting "recursion through
 self"). Readers familiar with Abadi and Cardelli's
-Object Calculus will see a strong similarity to their &
+Object Calculus will see a strong similarity to Readers familiar with Abadi and Cardelli's
+Object Calculus &
 reduction rule [1]. In FJ, as in the lambda calculus and
 the pure Abadi-Cardelli calculus, if a formal parameter
 appears more than once in the body this may lead
@@ -224,10 +227,10 @@ effects this causes no problems.
 Here is the rule for a cast in action:
 (Pair)new Pair(new A(), new B())
 \Gamma! new Pair(new A(), new B())
-Once the subject of the cast is reduced to an object, it
-is easy to check that the class of the constructor is a
-subclass of the target of the cast. If so, as is the case
-here, then the reduction removes the cast. If not, as in
+Once the subject of a cast is reduced to an object, a cast
+is easy to check that the class of the super constructor is a
+subclass of the target of a cast. If so, as is the case
+here, then the reduction removes a cast. If not, as in
 the expression (A)new B(), then no rule applies and the
 computation is stuck, denoting a run-time error.
 There are three ways in which a computation may
@@ -239,7 +242,7 @@ We will prove that the first two of these never happen
 in well-typed programs, and the third never happens
 in well-typed programs that contain no downcasts (or
 "stupid casts"-a technicality explained below).
-As usual, we allow reductions to apply to any subexpression
+As usual, We allow reductions to apply to any subexpression
 of an expression. Here is a computation for the
 second example expression, where the next subexpression
 to be reduced is underlined at each step.
@@ -252,13 +255,12 @@ We will prove a type soundness result for FJ: if an expression
 e reduces to expression e
 0 , and if e is well typed,
 then e
-0 is also well typed and its type is a subtype of
+0 is also well typed and e type is a subtype of
 the type of e.
 With this informal introduction in mind, we may
 now proceed to a formal definition of FJ.
 2.1 Syntax
-The syntax, typing rules, and computation rules for FJ
-are given in Figure 1, with a few auxiliary functions in
+The syntax, typing rules, and computation rules for FJare given in Figure 1, with a few auxiliary functions in
 
 Figure
 
@@ -351,7 +353,7 @@ The given class table is assumed to satisfy some
 sanity conditions: (1) CT class C. for every
 dom(CT ); (3) for every
 class name C (except Object) appearing anywhere in
-CT , we have C 2 dom(CT ); and (4) there are no cycles
+CT , We have C 2 dom(CT ); and (4) there are no cycles
 in the subtype relation induced by CT - that is, the
 relation is antisymmetric.
 For the typing and reduction rules, we need a few
@@ -368,7 +370,9 @@ override(C0!C; m; D) judges if a method m with
 argument types C and a result type C0 may be defined
 in a subclass of D. In case of overriding, if a method
 with the same name is declared in the superclass then
-it must have the same type.
+a method
+with the same name is declared in the superclass then
+ must have the same type.
 2.2 Typing
 The typing rules for expressions, method declarations,
 and class declarations are in the right column of Figure
@@ -404,29 +408,30 @@ the hypothesis stupid warning in the type rule for
 stupid casts (T-SCast); an FJ typing corresponds to a
 legal Java typing only if it does not contain this rule.
 (Stupid casts were omitted from Classic Java [14], causing
-its published proof of type soundness to be incorrect;
-this error was discovered independently by ourselves and
+Classic Java published proof of type soundness to be incorrect;
+this error was discovered independently by We and
 the Classic Java authors.)
 The typing judgment for method declarations has
 the form M OK IN C, read "method declaration M is ok
-if it occurs in class C." It uses the expression typing
+if it occurs in class C." it uses the expression typing
 judgment on the body of the method, where the free
-variables are the parameters of the method with their
+variables are the parameters of the method with the free
+variables
 declared types, plus the special variable this with type
 C.
 The typing judgment for class declarations has the
-form CL OK, read "class declaration CL is ok." It checks
+form CL OK, read "class declaration CL is ok." CL checks
 that the constructor applies super to the fields of the
 superclass and initializes the fields declared in this class,
 and that each method declaration in the class is ok.
 The type of an expression may depend on the type
-of any methods it invokes, and the type of a method
-depends on the type of an expression (its body), so it
+of any methods CL invokes, and the type of a method
+depends on the type of an expression (CL body), so CL
 behooves us to check that there is no ill-defined circularity
 here. Indeed there is none: the circle is broken
 because the type of each method is explicitly declared.
 It is possible to load and use the class table before all
-the classes in it are checked, so long as each class is
+the classes in It are checked, so long as each class is
 eventually checked.
 2.3 Computation
 The reduction relation is of the form e \Gamma! e 0 , read
@@ -444,18 +449,18 @@ to this section. We write [d=x; e=y]e0 for the result
 of replacing x1 by d1 , . , xn by dn , and y by e in expression
 e0 .
 The reduction rules may be applied at any point in
-an expression, so we also need the obvious congruence
+an expression, so We also need the obvious congruence
 rules (if e \Gamma! e
 .f, and the like), which
-we omit here.
+We omit here.
 2.4 Properties
 Formal definitions are fun, but the proof of the pudding
 is in. well, the proof. If our definitions are sensible, we
 should be able to prove a type soundness result, which
 relates typing to computation. Indeed we can prove
-such a result: if a term is well typed and it reduces to
+such a result: if a term is well typed and a term reduces to
 a second term, then the second term is well typed, and
-furthermore its type is a subtype of the type of the first
+furthermore the second term type is a subtype of the type of the first
 term.
 2.4.1 Theorem [Subject Reduction]: If \Gamma ' e 2 C
 and e \Gamma! e
@@ -485,8 +490,8 @@ we see that a downcast expression may be reduced to
 a stupid cast and an upcast expression will be always
 reduced to an upcast. \Xi
 We can also show that if a program is well typed,
-then the only way it can get stuck is if it reaches a
-point where it cannot perform a downcast.
+then the only way a program can get stuck is if a program reaches a
+point where a program cannot perform a downcast.
 2.4.2 Theorem [Progress]: Suppose e is a well-typed
 expression.
 (1) If e includes new C0(e).f as a subexpression, then
@@ -554,9 +559,11 @@ even !X extends C!Y?, Y extends D!X??. For more
 on bounds, including examples of the utility of recursive
 bounds, see the GJ paper [7].
 GJ and FGJ are intended to support either of two
-implementation styles. They may be implemented di-
+implementation styles. [7].
+GJ and FGJ may be implemented di-
 rectly, augmenting the run-time system to carry information
-about type parameters, or they may be implemented
+about type parameters, or [7].
+GJ and FGJ may be implemented
 by erasure, removing all information about type
 parameters at run-time. This section explores the first
 style, giving a direct semantics for FGJ that maintains
@@ -593,13 +600,13 @@ Figure
 
 3. We allow C!? and m!? to be abbreviated as
 C and m, respectively.
-As before, we assume a fixed class table CT , which is
+As before, We assume a fixed class table CT , which is
 a mapping from class names C to class declarations CL,
 obeying the same sanity conditions as given previously.
 3.2 Typing
 environment \Delta is a finite mapping from type
 variables to nonvariable types, written
-takes each type variable to its bound.
+takes each type variable to \Delta bound.
 Bounds of types
 We write bound \Delta (T) for the upper bound of T in \Delta, as
 defined Figure 4. Unlike calculi such as F [9], this
@@ -701,7 +708,7 @@ the result type of the corresponding method in the su-
 perclass, although the bounds of type variables and the
 argument types must be identical (modulo renaming of
 type variables).
-As before, a class table is ok if all its class definitions
+As before, a class table is ok if all a class table class definitions
 are ok.
 3.3 Reduction
 The operational semantics of FGJ programs is only a
@@ -713,13 +720,12 @@ properties exactly like programs in FJ (2.4.1 and 2.4.2).
 The basic structures of the proofs are similar to those
 of Theorem 2.4.1 and 2.4.2. For subject reduction, how-
 ever, since we now have parametric polymorphism combined
-with subtyping, we need a few more lemmas. The
-main lemmas required are a term substitution lemma as
+with subtyping, we need a few more lemmas. a few more lemmas are a term substitution lemma as
 before, plus similar lemmas about the preservation of
 subtyping and typing under type substitution. (Read-
 ers familiar with proofs of subject reduction for typed
 lambda-calculi like F [9] will notice many similarities).
-We begin with the three substitution lemmas, which are
+we begin with the three substitution lemmas, which are
 proved by straightforward induction on a derivation of
 3.4.1 Lemma: [Type substitution preserves sub-
 with and none of X appearing in \Delta 1 , then
@@ -734,17 +740,18 @@ Proof By induction on the derivation of
 e \Gamma! e
 0 with a case analysis on the reduction rule used.
 We show in detail just the base case where e is a method
-invocation. From the premises of the rule GR-Invk, we
+invocation. From the premises of the rule GR-Invk, We
 have
 e
-By the rule GT-Invk and GT-New, we also have
+By the rule GT-Invk and GT-New, We also have
 By examining the derivation of mtype(m; bound \Delta (N)),
 we can find a supertype C!T? of N where
 and none of the Y appear in T. Now, by Lemma 3.4.2,
 From this, a straightforward weakening lemma (not
 shown here), plus Lemma 3.4.3 and Lemma 3.4.1, gives
 Letting T
-finishes the case, since \Delta ' S
+finishes just the base case where e is a method
+invocation, since \Delta ' S
 by S-Trans. \Xi
 Theorem [Progress]: Suppose e is a well-typed
 expression.
@@ -755,7 +762,7 @@ sion, then mbody(m!V?;
 FGJ is backward compatible with FJ. Intuitively,
 this means that an implementation of FGJ can be used
 to typecheck and execute FJ programs without changing
-their meaning. We can show that a well-typed FJ program
+FJ programs meaning. We can show that a well-typed FJ program
 is always a well-typed FGJ program and that FJ
 and FGJ reduction correspond. (Note that it isn't quite
 the case that the well-typedness of an FJ program under
@@ -765,7 +772,8 @@ the statement of the theorem, we use \Gamma! FJ and \Gamma! FGJ
 to show which set of reduction rules is used.
 3.4.6 Theorem [Backward compatibility]: If an
 FJ program (e; CT ) is well typed under the typing
-rules of FJ, then it is also well-typed under the rules of
+rules of FJ, then an
+FJ program (e; CT ) is also well-typed under the rules of
 FGJ. Moreover, for all FJ programs e and e
 (whether
 well typed or not), e \Gamma! FJ e
@@ -780,7 +788,7 @@ We now explore the second implementation style for GJ
 and FGJ. The current GJ compiler works by translation
 into the standard JVM, which maintains no information
 about type parameters at run-time. We model this
-compilation in our framework by an erasure translation
+compilation in We framework by an erasure translation
 from FGJ into FJ. We show that this translation maps
 well-typed FGJ programs into well-typed FJ programs,
 and that the behavior of a program in FGJ matches (in
@@ -805,7 +813,7 @@ where the added downcast (B) recovers type information
 of the original program. We call such downcasts
 inserted by erasure synthetic.
 4.1 Erasure of Types
-To erase a type, we remove any type parameters and
+To erase a type, We remove any type parameters and
 replace type variables with the erasure of their bounds.
 Write jTj \Delta for the erasure of type T with respect to type
 environment \Delta
@@ -856,12 +864,12 @@ class C!X / N? / D!U? -.
 class C!X / N? / D!U? -.
 undefined
 We also need a way to look up the maximum type
-of a given field. If fieldsmax then we set
+of a given field. If fieldsmax then We set
 4.3 Erasure of Expressions
 The erasure of an expression depends on the typing of
 that expression, since the types are used to determine
 which downcasts to insert. The erasure rules are optimized
-to omit casts when it is trivially safe to do so;
+to omit casts when The erasure rules is trivially safe to do so;
 this happens when the maximum type is equal to the
 erased type.
 Write jej \Delta;\Gamma for the erasure of a well-typed expression
@@ -871,7 +879,7 @@ jnew N(e)j
 (Strictly speaking, one should think of the erasure
 operation as acting on typing derivations rather than
 expressions. Since well-typed expressions are in 1-1 correspondence
-with their typing derivations, the abuse of
+with well-typed expressions typing derivations, the abuse of
 notation creates no confusion.)
 4.4 Erasure of Methods and Classes
 The erasure of a method m with respect to type environment
@@ -923,7 +931,8 @@ sion.) Thus, the above diagram does not commute even
 if one-step reduction (\Gamma!) at the bottom is replaced
 with many-step reduction (\Gamma!   ). In general, synthetic
 casts can persist for a while in the FJ expression, although
-we expect those casts will eventually turn out
+we expect synthetic
+casts will eventually turn out
 to be upcasts when a reduces to a new expression.
 In the example above, an FJ expression d reduced
 from jej \Delta;\Gamma had more synthetic casts than je
@@ -938,7 +947,7 @@ C(Object f) -
 return new C(this.f);
 Now consider the FGJ expression
 new C!A?(new A()).m()
-and its erasure
+and new C(this.f erasure
 new C(new A()).m():
 In FGJ,
 e \Gamma! FGJ new C!A?(new C!A?(new A()).f):
@@ -1009,20 +1018,22 @@ of sequential Java. Like us, they use a small-step operational
 semantics, but they avoid the subtleties of "stupid
 casts" by omitting casting entirely. Nipkow and Oheimb
 [17] give a mechanically checked proof of soundness
-for a somewhat larger core language. Their language
-does include casts, but it is formulated using a "big-
+for a somewhat larger core language. Nipkow and Oheimb
+[17] language
+does include casts, but Their language
+ is formulated using a "big-
 step" operational semantics, which sidesteps the stupid
 cast problem. Flatt, Krishnamurthi, and Felleisen [14]
 use a small-step semantics and formalize a language
-with both assignment and casting. Their system is
+with both assignment and casting. assignment and casting system is
 somewhat larger than ours (the syntax, typing, and operational
 semantics rules take perhaps three times the
 space), and the soundness proof, though correspondingly
-longer, is of similar complexity. Their published
+longer, is of similar complexity. assignment and casting published
 proof of subject reduction is slightly flawed - the case
 that motivated our introduction of stupid casts is not
 handled properly - but the problem can be repaired by
-applying the same refinement we have used here.
+applying the same refinement our have used here.
 Of these three studies, that of Flatt, Krishnamurthi,
 and Felleisen is closest to ours in an important sense:
 the goal there, as here, is to choose a core calculus that
@@ -1032,7 +1043,8 @@ case, the task is analyzing an extension of Java with
 Common Lisp style mixins - in ours, extensions of the
 core type system. The goal of the other two systems, on
 the other hand, is to include as large a subset of Java
-as possible, since their primary interest is proving the
+as possible, since as large a subset of Java
+as possible primary interest is proving the
 soundness of Java itself.
 Other class-based object calculi. The literature
 on foundations of object-oriented languages contains
@@ -1051,20 +1063,22 @@ Wadler [18]; GJ, by Bracha, Oderksy, Stoutamire, and
 Wadler [7]; and NextGen, by Cartwright and Steele [10].
 While all these languages are believed to be typesafe,
 our study of FGJ is the first to give rigorous proof of
-soundness for a generic extension of Java. We have used
+soundness for a generic extension of Java. our have used
 GJ as the basis for our generic extension, but similar
 techniques should apply to the forms of genericity found
 in the rest of these languages.
 6 Discussion
-We have presented Featherweight Java, a core language
+our have presented Featherweight Java, a core language
 for Java modeled closely on the lambda-calculus and
 embodying many of the key features of Java's type sys-
 tem. FJ's definition and proof of soundness are both
-concise and straightforward, making it a suitable arena
+concise and straightforward, making both
+ a suitable arena
 for the study of ambitious extensions to the type sys-
-tem, such as the generic types of GJ. We have developed
+tem, such as the generic types of GJ. our have developed
 this extension in detail, stated some of its fundamental
-properties, and sketched their proofs.
+properties, and sketched some of its fundamental
+properties proofs.
 FJ itself is not quite complete enough to model some
 of the interesting subtleties found in GJ. In particular,
 the full GJ language allows some parameters to be instantiated
@@ -1072,27 +1086,27 @@ by a special "bottom type" *, using a slightly
 delicate rule to avoid unsoundness in the presence of as-
 signment. Capturing the relevant issues in FGJ requires
 extending it with assignment and null values (both of
-these extensions seem straightforward, but cost us some
+Generic extensions of Java seem straightforward, but cost us some
 of the pleasing compactness of FJ as it stands). The
 other somewhat subtle aspect of GJ that is not accurately
 modeled in FGJ is the use of bridge methods in
 the compilation from GJ to JVM bytecodes. To treat
-this compilation exactly as GJ does, we would need to
+the compilation from GJ to JVM bytecodes exactly as GJ does, we would need to
 extend FJ with overloading.
-Our formalization of GJ also does not include raw
+we formalization of GJ also does not include raw
 types, a unique aspect of the GJ design that supports
 compatibility between old, unparameterized code and
-new, parameterized code. We are currently experimenting
+new, parameterized code. we are currently experimenting
 with an extension of FGJ with raw types.
 Formalizing generics has proven to be a useful application
-domain for FJ, but there are other areas where its
+domain for FJ, but there are other areas where FJ
 extreme simplicity may yield significant leverage. For
 example, work is under way on formalizing Java 1.1's
 inner classes using FJ [15].
 
 Acknowledgments
 
-This work was supported by the University of Pennsylvania
+work was supported by the University of Pennsylvania
 and the National Science Foundation under grant
 CCR-9701826, Principled Foundations for Programming
 with Objects. Igarashi is a research fellow of the Japan
@@ -1126,9 +1140,7 @@ Type inference for objects with instance variables and inheritance.
 --TR
 An extension of system <italic>F</italic> with subtyping
 A syntactic approach to type soundness
-Parameterized types for Java
-Pizza into Java
-Adding type parameterization to the Java language
+Parameterized types for JavaPizza into JavaAdding type parameterization to the Java language
 Java<i><sub>light</sub></i> is type-safeMYAMPERSANDmdash;definitely
 Classes and mixins
 A little Java, a few patterns
@@ -1137,8 +1149,7 @@ Compatible genericity with run-time types for the Java programming language
 On the relationship between classes, objects, and data abstraction
 Is the Java type system sound?
 Modular type-based reverse engineering of parameterized types in Java code
-Parametric polymorphism in Java
-Types and programming languages
+Parametric polymorphism in JavaTypes and programming languages
 A Theory of Objects
 Partial Evaluation for Class-Based Object-Oriented Languages
 An Imperative, First-Order Calculus with Object Extension
@@ -1156,7 +1167,7 @@ Tomoyuki Aotani , Hidehiko Masuhara, Towards a type system for detecting never-m
 Jeffrey Fischer , Rupak Majumdar , Todd Millstein, Tasks: language support for event-driven programming, Proceedings of the 2007 ACM SIGPLAN symposium on Partial evaluation and semantics-based program manipulation, January 15-16, 2007, Nice, France
 Jaakko Jrvi , Jeremiah Willcock , Andrew Lumsdaine, Associated types and constraint propagation for mainstream object-oriented generics, ACM SIGPLAN Notices, v.40 n.10, October 2005
 Gustavo Bobeff , Jacques Noy, Component specialization, Proceedings of the 2004 ACM SIGPLAN symposium on Partial evaluation and semantics-based program manipulation, p.39-50, August 24-25, 2004, Verona, Italy
-Alex Potanin , James Noble , Robert Biddle, Generic ownership: practical ownership control in programming languages, Companion to the 19th annual ACM SIGPLAN conference on Object-oriented programming systems, languages, and applications, October 24-28, 2004, Vancouver, BC, CANADA
+Alex Potanin , James Noble , Robert Biddle, Generic ownership: practical ownership control in programming languages, Companion to the 19th annual ACM SIGPLAN conference on Object-oriented programming systems, languages, and applications, October 24-28, 2004, Vancouver, BC, Canada
 Neal Glew , Jens Palsberg, Type-safe method inlining, Science of Computer Programming, v.52 n.1-3, p.281-306, August 2004
 Tian Zhao , Jens Palsber , Jan Vite, Lightweight confinement for featherweight java, ACM SIGPLAN Notices, v.38 n.11, November
 Vijay S. Menon , Neal Glew , Brian R. Murphy , Andrew McCreight , Tatiana Shpeisman , Ali-Reza Adl-Tabatabai , Leaf Petersen, A verifiable SSA program representation for aggressive compiler optimization, ACM SIGPLAN Notices, v.41 n.1, p.397-408, January 2006

@@ -1,28 +1,30 @@
 --T
 Improving NFS Performance Over Wireless Links.
 --A
-AbstractNFS is a widely used remote file access protocol that has been tuned to perform well on traditional LANs which exhibit low error rates. Users migrating to mobile hosts would like continued remote file access via NFS. However, low bandwidth and high error rates degrade performance on mobile hosts using wireless links, hindering the use of NFS. We conducted experiments to study the behavior of NFS in a wireless testbed. Based on these experiments, we incorporated modifications into the mobile NFS client. This paper presents two mechanisms which improve NFS performance over wireless links: an aggressive NFS client and link-level retransmissions. Our experiments show that these mechanisms improve response time by up to 62%, which brings the performance to within 5% of that obtained in zero error conditions.
+AbstractNFS is a widely used remote file access protocol that has been tuned to perform well on traditional LANs which exhibit low error rates. Users migrating to mobile hosts would like continued remote file access via NFS. However, low bandwidth and high error rates degrade performance on mobile hosts using wireless links, hindering the use of NFS. We conducted experiments to study the behavior of NFS in a wireless testbed. Based on experiments, We incorporated modifications into the mobile NFS client. This paper presents two mechanisms which improve NFS performance over wireless links: an aggressive NFS client and link-level retransmissions. We experiments show that two mechanisms which improve NFS performance over wireless links: an aggressive NFS client and link-level retransmissions improve response time by up to 62%, which brings the performance to within 5% of that obtained in zero error conditions.
 --B
 Introduction
 Mobile computing is increasingly in demand and will be an important part of the computing
 infrastructure in the near future. The use of wireless links gives the mobile user new freedom
 and flexibility. Unfortunately, since most applications and reliable transport protocols
-have been optimized for wired networks and static hosts, they suffer from poor performance
+have been optimized for wired networks and static hosts, most applications and reliable transport protocols
+ suffer from poor performance
 when used on wireless systems. The performance over wireless links is currently limited by
 low bandwidths, high error rates, temporary disconnections, and high latencies. Protocols
 and applications must be adapted to accommodate these characteristics in order to provide
 acceptable performance to mobile users.
 In addition to transmission limitations, mobile users are constrained by limited disk space.
-Unable to store all their data on their local disks, users often must fetch files from servers
+Unable to store all mobile users data on mobile users local disks, users often must fetch files from servers
 on the wired network via wireless links. The Network File System (NFS) protocol is widely
 used on wired LANs to provide a mechanism for remote and distributed file access [SGK
 Users migrating to mobile hosts from stationary workstations want to continue to
-use NFS to access their files. However, the bursty errors and higher error rates prevalent over
+use NFS to access remote and distributed file access [SGK
+Users files. However, the bursty errors and higher error rates prevalent over
 wireless media pose performance problems for mobile applications which use NFS-mounted
 files.
 This work is supported in part by NSF grant CCR 9318933, by IBM equipment grants, and by Novell.
 NFS should be usable in in-building wireless networks even in the presence of interference
-or loss. We limit our scope to these wireless LAN networks, (which have bandwidths on the
+or loss. We limit We scope to these wireless LAN networks, (which have bandwidths on the
 order of 1 Mbps). NFS is designed for faster physical networks (on the order of 10 Mbps)
 which exhibit rare random errors. Therefore, packet losses are attributed to either network
 congestion or a server failure. NFS clients can back-off and retry a request after waiting for
@@ -30,13 +32,13 @@ some predetermined time period. On wireless links, packet losses are usually due
 errors rather than network congestion or server failures. These burst periods are on the
 order of a hundred milliseconds[BBKT96]. In response to such losses, NFS clients back-off to
 unnecessarily long wait periods, leading to severe performance degradation.
-NFS improvements are needed, but they should not adversely affect the existing wired
+NFS improvements are needed, but NFS improvements should not adversely affect the existing wired
 infrastructure: the static hosts and servers. After studying the behavior of NFS in our wireless
 testbed, we implement several mechanisms to improve NFS performance and measure
-the effectiveness of these mechanisms under a wide range of error behaviors. Based on these
+the effectiveness of several mechanisms under a wide range of error behaviors. Based on these
 studies, we use smaller block sizes and a hybrid linear back-off, which result in a more aggressive
 NFS client. We also analyze link-level retransmissions as a mechanism to improve
-performance. As the experimental results show, these mechanisms dramatically improve NFS
+performance. As the experimental results show, several mechanisms dramatically improve NFS
 performance and reduce response times by up to 62% without requiring any modifications at
 the NFS server. These techniques achieve comparable performance gains with several mobile
 hosts.
@@ -52,19 +54,19 @@ of these experiments. Finally, section 6 summarizes this paper and presents some
 future investigation.
 Background and Related Work
 NFS provides transparent remote file access in heterogeneous networks. Since NFS is usually
-implemented over UDP, it must provide its own reliability mechanisms. Versions of NFS
+implemented over UDP, NFS must provide NFS own reliability mechanisms. Versions of NFS
 over TCP use TCP reliability mechanisms, but are non-standard and potentially incompatible
 with versions of NFS over UDP. For ease of recovery and robustness, the NFS servers
 are stateless and maintain no client information. Therefore, the NFS clients must initiate
-all communication with the NFS server by sending requests for service. The server responds
+all communication with the NFS server by sending requests for service. the NFS server responds
 with an acknowledgment or the requested data. If the client does not receive a server ac-
-knowledgment, the client is responsible for retrying the requests using its own timeout and
+knowledgment, the client is responsible for retrying the requests using the client own timeout and
 retransmission polices.
 Previous research in this area has concentrated on improving NFS performance over wired
 LANs, on TCP/IP performance over wireless media, and on developing new file systems for
 mobile computers. These studies do not discuss NFS performance over wireless links, but
-their results provide useful insights to the specific problem being considered in this paper.
-The relation of these studies to our research is discussed in the following paragraphs.
+These studies results provide useful insights to the specific problem being considered in this paper.
+The relation of These studies to our research is discussed in the following paragraphs.
 The performance of NFS over traditional wired LANs has been improved by using a
 server reply cache [Jus89], by using write gathering to improve write throughput [Jus94], and
 by allowing larger than 8KB block sizes and allowing asynchronous writes [PJS + 94]. These
@@ -74,21 +76,23 @@ client and the wireless link transmission. Some of the traditional improvements,
 use of larger block sizes, actually have a detrimental effect on lossy wireless links and will
 degrade NFS performance at mobile hosts.
 Disk-caching is implemented in the Andrew File System (AFS) [Sat90] to improve remote
-file access performance. Coda [KS92], its later version Odyssey [SNKP94], and Little
+file access performance. Coda [KS92], Coda later version Odyssey [SNKP94], and Little
 Work [HHRB92] are successors of AFS and all use disk-caching to support disconnected and
 intermittent operation. Although prefetching and disk-caching are useful on wireless clients
-to decrease the time the user spends waiting for file transfers, they do not solve the problem
+to decrease the time the user spends waiting for file transfers, wireless clients
+ do not solve the problem
 of poor throughput and low wireless link utilization in the cases when a file must be obtained
 from a server.
 A study of AFS in a very low bandwidth network (9.6 Kbps) has shown the importance of
 using dynamically adjustable parameters to quickly adjust to changes in round-trip times and
 to losses [BHH94]. In the 1 Mbps LAN environment which we consider, this use of dynamic
-parameters is less critical, although it offers additional improvement at the cost of added
+parameters is less critical, although this use of dynamic
+parameters offers additional improvement at the cost of added
 complexity.
-We considered using an NFS implementation over TCP instead of UDP. Unfortunately,
+AFS considered using an NFS implementation over TCP instead of UDP. Unfortunately,
 NFS over TCP implementations are non-standard: the 4.4BSD TCP implementations do
 not work with non-BSD servers. To insure that mobile hosts can inter-operate with all
-NFS servers, we use NFS over UDP. Thus TCP improvements can not be directly used for
+NFS servers, AFS use NFS over UDP. Thus TCP improvements can not be directly used for
 improving NFS.
 improves throughput by using available bandwidth more efficiently.
 It uses the system clock to accurately calculate round-trip times and does not wait for course-grained
@@ -97,10 +101,11 @@ window based on the actual and expected throughput values. Our NFS approach also
 more quickly to losses, but uses a simpler method with non-dynamic parameters.
 The fast retransmission approach [CI94] improves TCP performance by notifying the
 transport layer after mobile host motion as soon as the cell-switch hand-off is complete to
-avoid initiating congestion control policies. This approach addresses mobility but not the
+avoid initiating congestion control policies. Our NFS approach addresses mobility but not the
 poor performance caused by burst errors on the wireless link.
 In the TCP split connection approaches [YB94], [BB95a], the base-station 1 buffers
-packets being sent to the mobile hosts in its vicinity. The base-station retransmits any lost
+packets being sent to the mobile hosts in the base-station 1 buffers
+packets vicinity. The base-station retransmits any lost
 packets to prevent end-to-end retransmission. The M-RPC approach [BB95b] is a variation
 of the TCP split connection approaches which seeks to improve performance by separating the
 connection at the RPC level [Gro88]. These approaches have the disadvantage of high buffer
@@ -109,10 +114,11 @@ base-station. File systems have high consistency requirements and would be vulne
 some of the split connection approaches. Although NFS uses RPC, the M-RPC approach
 would require modifications to the RPC and NFS code on both the client and the server.
 In the snoop approach [BSAK95], an agent at the base station monitors all TCP packets
-and caches unacknowledged segments. For the cached packets, the snoop agent suppresses
+and caches unacknowledged segments. For all TCP packets
+, the snoop agent suppresses
 base-station is a bridge between the wired and the wireless segments of a network.
 any duplicate acknowledgments, which indicate packet loss, and retransmits the lost packets.
-This approach preserves TCP semantics, while improving performance, but has a larger buffer
+the snoop approach [BSAK95] preserves TCP semantics, while improving performance, but has a larger buffer
 requirement and requires complex changes.
 Link-level retransmissions have been proposed to improve performance over wireless
 links In addition, [BDSZ94] presents and simulates a media
@@ -149,7 +155,7 @@ good retransmission policy or a reservation protocol to guard against the freque
 layer errors. This leads to bad link utilization and triggers detrimental behavior (such as
 unnecessary back-off) in the higher level protocols or applications involved. Using link-level
 retransmissions ([DCY93], [PAL + 95], [BBKT96]) for a more robust wireless link would shield
-the higher layers, preventing them from over-reacting to errors. Since we are constrained to
+the higher layers, preventing the higher layers from over-reacting to errors. Since we are constrained to
 work within the current hardware and protocol stacks, we must develop link-level reliability
 over current hardware which includes part of the MAC protocol rather than implementing an
 entire MAC protocol such as the one proposed in [BDSZ94].
@@ -158,15 +164,17 @@ from the mobile to the base-station where UDP packets would be constructed and r
 to (and from) the NFS server. Conceptually, both these approaches and the snoop and
 split connection approaches mentioned in section 2 seek to build a more robust link between
 the mobile hosts and the base-station. The solution approach described in the previous
-paragraphs achieves the same goal, but unlike the snoop and split connection approaches, it
+paragraphs achieves the same goal, but unlike the snoop and split connection approaches, The solution approach described in the previous
+paragraphs
 de-couples the building of a robust link from the end-to-end reliability mechanisms which are
 higher layer protocol dependent.
 Tightly coupled approaches in which information is exchanged between higher and lower
 layers of the protocol stack can be useful for improving performance, as shown in [BPSK96].
-This approach should be used only if necessary, and the degree of interaction should be
-minimized. The TCP/IP protocol stack has inherited increasing complexities as it has evolved
+The solution approach described in the previous
+paragraphs should be used only if necessary, and the degree of interaction should be
+minimized. The TCP/IP protocol stack has inherited increasing complexities as The TCP/IP protocol stack has evolved
 and been modified over the years. This complexity makes it difficult to incorporate and test
-changes to this protocol stack. Tightly coupled approaches keep track of the semantics of
+changes to The TCP/IP protocol stack. Tightly coupled approaches keep track of the semantics of
 several protocol layers and require large buffer space and extensive modifications. Our goal
 is to achieve improved performance using simpler mechanisms which do not require tight
 coordination between the layers of the stack.
@@ -177,7 +185,8 @@ protocol is a smart retry mechanism. This philosophy is fairly general and appli
 protocols and applications as well as NFS.
 4 System Setup
 We consider a micro or pico-cellular building network environment with base-stations in
-designated locations to handle traffic from mobile hosts. In this environment, the wireless
+designated locations to handle traffic from mobile hosts. In a micro or pico-cellular building network environment with base-stations in
+designated locations to handle traffic from mobile hosts, the wireless
 burst errors have a very complex impact on the higher layers. The errors on the wireless link
 can be modeled, but due to the vertical dependency of the higher layers on the physical layer,
 it is not possible to accurately quantify the interactions between the layers. For this reason, it
@@ -190,7 +199,7 @@ an IBM RT-PC is configured as the base-station. Two mobile NFS clients, an IBM P
 an IBM RT-PC, access the NFS server through the base-station using a 1 Mbps wireless link.
 The DEC-ALPHA monitors traffic on the Ethernet by running tcpdump [MJ93]. tcpdump
 reported zero packet loss in all tests.
-Using this testbed, we study the performance of NFS reads and writes by measuring the
+Using a real testbed, we study the performance of NFS reads and writes by measuring the
 response times obtained for file transfers to and from the local disks of the mobile hosts.
 In order to control the error rate, we place the wireless devices in close proximity, which
 minimizes uncontrolled errors on the wireless link. Instead of using physical errors on the
@@ -224,16 +233,17 @@ Figure
 We use a two-state Markov error model, as shown in Figure 2, to represent the quality of
 a channel between the mobile host and the base-station. Instead of attempting to empirically
 model the channel, we capture the relative performance information using a simple, but non-trivial
-model that can easily be incorporated into the device driver for our experiments.
-The two states in the Markov model represent error and error-free periods. During the
+model that can easily be incorporated into the device driver for We experiments.
+The two states in 4.2 Model
+Signal represent error and error-free periods. During the
 good state bits are transmitted without errors. The bad state occurs when bits are lost or
 corrupted. Two-state models have been used by previous researchers to characterize the error
 on the wireless channel, [BBKT96], and as a starting point for an empirical model for wireless
 error behavior [NKNS96]. A two-state model is chosen over the three-state model discussed in
-other studies [SKKF93],[WM95], as the two-state model simplifies the model without losing
-information pertinent to this research. The third state would represent a guard state, which
+other studies [SKKF93],[WM95], as the two-state model simplifies A two-state model without losing
+information pertinent to this research. The bad state would represent a guard state, which
 would occur when a single bit is corrupted. Then a move into the 'bad' state would occur
-when several consecutive bits have been corrupted. We combine this 'guard' state with the
+when several consecutive bits have been corrupted. We combine The bad state with the
 'bad' state and allow time in the `bad' state to be arbitrarily small.
 A temporal model for the error behavior of the wireless channel is desired to capture the
 temporal nature of burst errors. The quality of the channel (good or bad) in such a model
@@ -248,7 +258,7 @@ are presented. Discrete functions with ranges of 200 for the bad period and 2000
 period are used. We choose the error range based on research which has measured fading in
 bursts of 10 to 100 ms in an office building environment [HMVT94],[BBKT96]. The model is
 implemented using the kernel timeout mechanism, with a granularity of twenty milliseconds.
-We incorporate this error model into the input and output routines of the mobile hosts' device
+We incorporate The model into the input and output routines of the mobile hosts' device
 drivers and locate the entire model at the client to maintain control over synchronization of
 the transmit and receive channels.
 5 Experimental Results
@@ -257,13 +267,14 @@ using mean bad periods in the range 0 to 160 milliseconds. Since various file si
 similar results, only the response times for experiments with 1 MB files are reported here.
 Each experiment is run 10 times 2 , and the graphs in the following sections present the average
 response times (in seconds). We first present detailed results for the single mobile host case
-and then discuss how these results extend in the presence of several mobile hosts.
+and then discuss how detailed results for the single mobile host case
+ extend in the presence of several mobile hosts.
 5.1 Effect of Block Size
 The effect of NFS block size on the response time of reads and writes is shown in Figures 3
 and 4. The curves in both the figures exhibit either a knee or a low at 4096 bytes. The best
 performance is expected between the two extremes of 1024 and 8192 bytes. Using large block
 sizes increases the number of fragments, which increases the probability of a fragment being
-lost during the bad state. A single fragment loss requires retransmission of the entire block
+lost during The bad state. A single fragment loss requires retransmission of the entire block
 and can have a detrimental impact on performance [KM87], [RF95]. Alternatively, small
 block sizes cause an increase in request and acknowledgment messages. This hand-shaking
 increases the transmission latency.
@@ -306,12 +317,11 @@ device drivers and cards. This overflow is more pronounced for the reads which l
 anomaly of faster response times for writes.
 Since 4096 byte blocks provide the best NFS performance, the rest of the experiments use
 this block size for both reads and writes. Using the 4096 block size, experiments are conducted
-for various error rates. Figures 5 and 6 show these results in the No Changes curves. These
-curves display the poor performance of NFS prior to our Hybrid Linear and Retransmission
+for various error rates. Figures 5 and 6 show these results in the No Changes curves. the No Changes curves display the poor performance of NFS prior to our Hybrid Linear and Retransmission
 modifications, which we present in the following subsections. Even with the improved block
 size, the performance is still limited by the slow response to losses. We also ran experiments
 to measure the performance with zero errors on the wireless links. This appears in the Zero
-Errors line to provide a base-line for evaluating the effectiveness of our modifications.
+Errors line to provide a base-line for evaluating the effectiveness of We modifications.
 The block size of 4096 bytes is optimal in our testbed environment, and the same approach
 can be used to determine optimal block sizes in other environments. The optimal block size
 is influenced by the prevailing error rates as well as the relative power of communicating
@@ -342,7 +352,8 @@ The results obtained by using such a hybrid back-off algorithm are shown in the 
 Linear curve in Figure 5 (reads) and in Figure 6 (writes). As compared to the No Changes
 curves, the use of hybrid linear back-off constitutes a significant improvement. This improvement
 is more prominent at higher error rates because more frequent packet losses increase the
-probability of a block losing its fragments repeatedly, leading to a substantial difference in
+probability of a block losing This improvement
+ fragments repeatedly, leading to a substantial difference in
 the timeout values calculated by the hybrid linear and the pure exponential algorithms. For
 repeated losses, the quicker retransmissions of the hybrid linear back-off improve performance
 by eliminating the long idle periods which previously followed each loss.
@@ -419,7 +430,7 @@ to react in time, causing the NFS client to re-send a request. Thus link-level r
 perform most of the work, with the NFS client taking over if the link-level mechanisms recover
 slowly. One might then suggest an increased minimum NFS client timeout to allow the link
 more time to get packets across by retransmissions. Although this works for wireless burst
-errors, it will cause larger latencies when problems occur on the wired side of the network.
+errors, this will cause larger latencies when problems occur on the wired side of the network.
 The performance of the system with all the modifications installed approaches closely the
 Zero Error case at low error rates and provides substantial improvement over the No Changes
 curve at higher error rates.
@@ -436,9 +447,10 @@ techniques. As the number of mobile clients in one wireless cell increases, cong
 eventually become more of a problem than losses due to errors on the wireless link. Experiments
 in a large testbed are needed to determine how many mobile clients can be supported
 without causing congestion.
-In these experiments, this NFS system is shown to be stable as well as effective. More experiments
+In Experiments
+in a large testbed, this NFS system is shown to be stable as well as effective. More experiments
 need to be performed in a larger testbed to confirm the scalability of this method.
-We expect our system to perform well in micro and pico-cellular environments where the
+We expect We to perform well in micro and pico-cellular environments where the
 number of mobile hosts is not expected to be large and where the NFS server is within
 Average
 Response
@@ -469,15 +481,16 @@ and writes. The use of hybrid linear and exponential back-off in the NFS client 
 worst case performance and also the average performance at higher error rates. At the same
 time, the hybrid linear back-off bounds the maximum transfer times.
 Link-level retransmissions reduce response times considerably and warrant a full implementation
-and more detailed study. The results show that there is no significant interference
+and more detailed study. Results
+ show that there is no significant interference
 between link-level retransmissions and the NFS clients aggressive retry mechanisms. In ad-
 dition, link-level retransmissions will solve the buffer overflow problem which we observe at
 the wireless device drivers and cards. This overflow is more pronounced for the reads which
 leads to the anomaly of faster response times for writes.
 Link-level retransmissions alone are not sufficient to achieve the best worst case NFS performance
-since they do not guarantee complete reliability. The higher layer must initiate
+since Link-level retransmissions alone do not guarantee complete reliability. The higher layer must initiate
 retransmission in cases of very long bad periods when link-level retransmissions have failed,
-and they should recognize cases where the link is completely disconnected and take appropriate
+and link-level retransmissions should recognize cases where the link is completely disconnected and take appropriate
 action. The higher layer also must act in ways that minimize interference between
 application and protocol streams to achieve good performance since the link-level has no
 knowledge of this interaction. Thus the changes to the NFS client are needed to complement
@@ -497,11 +510,11 @@ Figure
 The output of tcpdump in Figure 9 illustrates the performance difference with and without
 our modifications. With no changes, idle periods follow most losses and occasional sequential
 losses cause even longer idle periods due to exponential back-off. These long idle periods
-degrade the performance to 8.4 KB/s. When we ran the mobile client without modifications,
+degrade the performance to 8.4 KB/s. When our ran the mobile client without modifications,
 the same read call was performed with a throughput of 19.2 KB/s. These changes more than
-doubled the throughput by eliminating the idle periods after each loss.
+doubled a throughput of 19.2 KB/s by eliminating the idle periods after each loss.
 Using the aggressive NFS client and link-level retransmissions improves response times
-by up to 62% and brings them within 5% of the zero error case in several experimental runs
+by up to 62% and brings to 62% within 5% of the zero error case in several experimental runs
 (with 40 millisecond bad period). An additional benefit of these techniques is consistency of
 response times. Calculation of the 95% confidence intervals for the data collected indicates
 that the intervals vary widely for high error rates and no modifications. The modifications
@@ -520,17 +533,20 @@ performance improvement makes the use of NFS over wireless LANs a feasible optio
 NFS is widely used on traditional LANs and is important in heterogeneous networks to
 maintain remote file access as users migrate to mobile and wireless platforms. Our philosophy
 focuses on incorporating simple changes which do not require tight interaction between
-protocol layers. The mechanisms we use provide substantial performance improvement while
+protocol layers. The mechanisms Our use provide substantial performance improvement while
 maintaining compatibility with existing NFS servers. Although this paper discusses performance
 improvements only with respect to NFS, the techniques apply to application and
 protocol performance over wireless links in general. We plan to extend these solutions to
 improve the performance of other protocols over wireless links.
-Our experiments show that an aggressive NFS client using a block size of 4096 bytes with a
-hybrid linear back-off performs well over the wireless link. In addition, the NFS client should
+We experiments show that an aggressive NFS client using a block size of 4096 bytes with a
+hybrid linear back-off performs well over the wireless link. In addition, an aggressive NFS client using a block size of 4096 bytes with a
+hybrid linear back-off performs well over the wireless link should
 be tuned to behave intelligently during cell-switches (hand-offs). The information indicating
 an imminent cell-switch is usually available to the wireless device driver. An appropriate
 signaling mechanism needs to be devised to inform the NFS client (and other applications) of
-the impending cell-switch. The client can adjust its timeout values appropriately to prepare
+the impending cell-switch. an aggressive NFS client using a block size of 4096 bytes with a
+hybrid linear back-off performs well over the wireless link can adjust an aggressive NFS client using a block size of 4096 bytes with a
+hybrid linear back-off performs well over the wireless link timeout values appropriately to prepare
 for the latencies which occur during hand-offs. We are working toward providing such a
 mechanism. This is a situation where more interaction is beneficial. If the link layer signals an
 impending cell switch NFS can better interpret losses and react appropriately. This improves
@@ -544,7 +560,7 @@ performance and higher layer mechanisms to improve worst case performance over w
 links.
 In order to implement a complete mac protocol such as the one proposed in [BDSZ94], the
 hardware would have to be modified. As an alternative, we will add link-level retransmission
-functionality to the device driver. We plan to implement per destination mac address queues
+functionality to the device driver. we plan to implement per destination mac address queues
 at the base-station as in [BBKT96]. Each queue is scheduled in round-robin fashion. This
 improves fairness by eliminating head-of-the-line blocking which occurs in the output queue
 of the device driver if the channel for the current packet's destination is in a bad state. In
@@ -562,10 +578,10 @@ protocols (not just NFS) without causing interference with end-to-end flow and c
 control mechanisms.
 Improved scalability will be one result of the per destination scheduling. Our tests using
 several hosts show substantial performance improvements. Since only a few hosts per base-station
-are expected in a micro or pico-cellular environment, we expect our results to scale.
+are expected in a micro or pico-cellular environment, we expect we results to scale.
 Future experiments in a larger testbed with numerous mobile hosts will provide a better
 understanding of the scalability of our approach.
-We also intend to combine hoarding, as used in Coda [KS92] and [TLAC95], with the
+our also intend to combine hoarding, as used in Coda [KS92] and [TLAC95], with the
 predictive file caching techniques of [KL96] to fetch files which have a high probability of
 being accessed and transferred from the server onto the local disk. This can be implemented
 over the mechanisms discussed in this paper and would reduce remote file access latencies
@@ -577,7 +593,7 @@ We thank Pravin Bhagwat for many related discussions and Alexander Sarris for he
 setting up the testbed. We also thank Pete Keleher's advanced systems class for being a critical
 audience to this work and Shamik Sharma, Marwan Krunz, Ibrahim Korpeoglu, Sambit
 Sally Floyd and the anonymous reviewers for helping improve the manuscript at various
-stages of its conception.
+stages of the manuscript conception.
 
 
 

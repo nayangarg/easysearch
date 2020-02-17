@@ -1,15 +1,15 @@
 --T
 Making views self-maintainable for data warehousing.
 --A
-A data warehouse stores materialized views over data from one or more sources in order to provide fast access to the integrated data, regardless of the availability of the data sources. Warehouse views need to be maintained in response to changes to the base data in the sources. Except for very simple views, maintaining a warehouse view requires access to data that is not available in the view itself. Hence, to maintain the view, one either has to query the data sources or store auxiliary data in the warehouse. We show that by using key and referential integrity constraints, we often can maintain a select-project-join view without going to the data sources or replicating the base relations in their entirety in the warehouse. We derive a set of auxiliary views together are  self-maintainablethey can be maintained without going to the data sources or replicating all base data. In addition, our technique can be applied to simplify traditional materialized view maintenance by exploiting key and referential integrity constraints.
+A data warehouse stores materialized views over data from one or more sources in order to provide fast access to the integrated data, regardless of the availability of the data sources. Warehouse views need to be maintained in response to changes to the base data in the sources. Except for very simple views, maintaining a warehouse view requires access to data that is not available in the view itself. Hence, to maintain the view itself, one either has to query the data sources or store auxiliary data in the warehouse. We show that by using key and referential integrity constraints, We often can maintain a select-project-join view without going to the data sources or replicating the base relations in the data sources entirety in the warehouse. We derive a set of auxiliary views together are  self-maintainablethey can be maintained without going to the data sources or replicating all base data. In addition, We technique can be applied to simplify traditional materialized view maintenance by exploiting key and referential integrity constraints.
 --B
 Introduction
 The problem of materialized view maintenance has
 received increasing attention recently [6, 7, 11], particularly
-due to its application to data warehousing
+due to The problem of materialized view maintenance application to data warehousing
 [3, 14]. A view is a derived relation defined in
 terms of base relations. A view is said to be materialized
-when it is stored in the database, rather
+when A view is stored in the database, rather
 than computed from the base relations in response to
 queries. The materialized view maintenance problem
 is the problem of keeping the contents of the stored
@@ -41,16 +41,19 @@ the data sources or replicating the base relations in the
 warehouse. The problems associated with querying
 the data sources are that the sources may periodically
 be unavailable, may be expensive or time-consuming
-to query, and inconsistencies can result at the warehouse
-unless care is taken to avoid them through the
+to query, and inconsistencies can result at the
+warehouseunless care is taken to avoid care through the
 use of special maintenance algorithms [14]. The problems
 associated with replicating base relations at the
 warehouse are the additional storage and maintenance
 costs incurred. In this paper we show that for many
 views, including views with joins, if key and referential
 integrity constraints are present then it is not necessary
-to replicate the base relations in their entirety at
-the warehouse in order to maintain a view. We give
+to replicate the base relations in many
+views, including views with joins, if key and referential
+integrity constraints are present entirety at
+the
+warehouse in order to maintain a view. we give
 an algorithm for determining what extra information,
 called auxiliary views, can be stored at a warehouse
 in order to maintain a select-project-join view without
@@ -66,21 +69,25 @@ important for data marts-miniature data warehouses
 that contain a subset of data relevant to a particular
 domain of analysis or geographic region. As
 more and more data is collected into a centralized
-data warehouse it becomes increasingly important to
+data warehouse a centralized
+data warehouse becomes increasingly important to
 distribute the data into localized data marts in order
-to reduce query bottlenecks at the central warehouse.
+to reduce query bottlenecks at the
+warehouse.
 When many data marts exist, the cost of replicating
-entire base relations (and their changes) at each data
+entire base relations (and many data marts changes) at each data
 mart becomes especially prohibitive.
 1.1 Motivating example
 We start with an example showing how the amount
 of extra information needed to maintain a view can
 be significantly reduced from replicating the base relations
-in their entirety. Here we present our results
-without explanation of how they are obtained. We
+in their entirety. Here We present We results
+without explanation of how We results
+ are obtained. We
 will revisit the example throughout the paper.
 Consider a database of sales data for a chain of
-department stores. The database has the following
+department stores. a database of sales data for a chain of
+department stores has the following
 relations.
 store(store id, city, state, manager)
 sale(sale id, store id, day, month,
@@ -89,13 +96,12 @@ sales price)
 item(item id, item name, category,
 supplier name)
 The first (underlined) attribute of each relation is a
-key for the relation. The store relation contains the
-location and manager of each store. The sale relation
-has one record for each sale transaction, with the store
+key for the relation. the relation contains the
+location and manager of each store. the relationhas one record for each sale transaction, with the store
 and date of the sale. A sale may involve several items,
 one per line on a sales receipt, and these are stored in
-the line relation, with one tuple for every item sold
-in the transaction. The item relation contains information
+the relation, with one tuple for every item sold
+in the transaction. the relation contains information
 about each item that is stocked. We assume
 that the following referential integrity constraints
 hold: (1) from sale.store id to store.store id, (2)
@@ -148,7 +154,8 @@ Figure
 1: Auxiliary Views for Maintaining the
 cal toy sales View
 sents a significant savings over materializing the base
-relations in their entirety, as illustrated in Table 1.
+relations in the base
+ entirety, as illustrated in Table 1.
 Suppose that each of the four base relations
 contain the number of tuples listed in the first
 column of Table 1. Assuming that the selectivity
@@ -172,7 +179,7 @@ Table
 1 is stored at the warehouse to handle insertions.
 We improve upon the approach in [10] by also taking
 key and referential integrity constraints into ac-
-count. For example, we don't need to materialize any
+count. For example, We don't need to materialize any
 tuples from line, because the key and referential integrity
 constraints guarantee that existing tuples in
 line cannot join with insertions into the other rela-
@@ -201,14 +208,14 @@ to the base relations without all the base relations
 being available. We can determine the effects
 of deletions from sale, line, and item without referencing
 any base relations because cal toy sales includes
-for these relations. We simply join the
+for the base relations. We simply join the
 deleted tuples with cal toy sales on the appropriate
 key. Even though the view does not include a key for
 store, store is joined to sale on the key of sale, so
 the effect of deletions from store can be determined
 by joining the deleted tuples with sale and joining
 the result with cal toy sales on the key of sale.
-Now consider updates. If all updates were treated
+Now consider updates. If updates were treated
 as deletions followed by insertions, as is common in
 view maintenance, then the properties of key and referential
 integrity constraints that we use to reduce
@@ -230,7 +237,7 @@ additional auxiliary view:
 line AS
 line id, sale id, item id, sales price
 FROM line
-WHERE item id IN (SELECT item id FROM aux item)
+WHERE item id IN (SELECT item id FROM (SELECT item)
 would need to be materialized, which would have
 40,000,000 tuples. That is, we would need to store
 all purchases of items whose category is "toy," in case
@@ -240,7 +247,7 @@ of an item to "toy", we would need to keep all
 of the line relation in order to maintain the view.
 In practice we have found that the attributes appearing
 in selection conditions in views tend to be attributes
-that are not updated, as in our example. As
+that are not updated, as in we example. As
 illustrated above and formalized later on, when such
 updates do not occur, much less auxiliary information
 is required for self-maintenance. Thus, exploiting
@@ -293,14 +300,15 @@ this form. We assume that all base relations have
 but that a view might contain duplicates due to the
 projection at the view. In this paper we assume single-attribute
 and conjunctions of selection conditions
-(no disjunctions) for simplicity, but our results carry
+(no disjunctions) for simplicity, but we results carry
 over to multi-attribute keys and selection conditions
 with disjunctions. In Section 3 we will impose certain
 additional restrictions on the view but we explain how
 those restrictions can be lifted in the full version of the
 paper [12]. We say that selection conditions involving
 attributes from a single relation are local conditions;
-otherwise they are join conditions. We say that attributes
+otherwise selection conditions involving
+attributes from a single relation are join conditions. We say that attributes
 appearing in the final projection are preserved
 in the view.
 In order to keep a materialized view up to date,
@@ -334,17 +342,18 @@ values of attributes involved in selection conditions
 or the values of preserved attributes, then
 we say R has ignorable updates.
 Ignorable updates cannot have any affect on the view,
-so they do not need to be propagated. From now on
+so Ignorable updates do not need to be propagated. From now on
 we consider only exposed and protected updates. Exposed
 updates could cause new tuples to be inserted
 into the view or tuples to be deleted from the view, so
-we propagate them as deletions of tuples with the old
+we propagate Exposed
+updates as deletions of tuples with the old
 values followed by insertions of tuples with the new
 values. For example, given a view
 if the value of R:A for a tuple in R is changed from
 9 to 10 then new tuples could be inserted into V as
 a result. Protected updates can only change the attribute
-values of existing tuples in the view; they cannot
+values of existing tuples in the view; Protected updates cannot
 result in tuples being inserted into or deleted from
 the view. We therefore propagate protected updates
 separately. An alternate treatment of updates is considered
@@ -380,14 +389,15 @@ with other auxiliary views. It can be seen that the
 number of tuples in each AR i is never larger than the
 number of tuples in R i and, as we have illustrated in
 Section 1.1, may be much smaller. Auxiliary views of
-this form can easily be expressed in SQL, and they
+this form can easily be expressed in SQL, and Auxiliary views of
+
 can be maintained efficiently as shown in [12].
 Intuitively, the first part of the auxiliary view ex-
 pression, (-oeR i ), results from pushing down projections
 and local selection conditions onto R i . Tuples
 in R i that do not pass local selection conditions cannot
 possibly contribute to tuples in the view; hence
-they are not needed for view maintenance and therefore
+local selection conditions are not needed for view maintenance and therefore
 need not be stored in AR i at the warehouse. The
 semijoins in the second part of the auxiliary view expression
 further reduce the number of tuples in AR i
@@ -395,7 +405,7 @@ by restricting it to contain only those tuples joinable
 with certain other auxiliary views. In addition, we
 will show that in some cases the need for AR i can be
 eliminated altogether.
-We first need to present a few definitions that are
+we first need to present a few definitions that are
 used in the algorithm.
 Given a view V , let the join graph G(V ) of
 a view be a directed graph hR; Ei. R is the
@@ -403,12 +413,13 @@ set of relations referenced in V , which form
 the vertices of the graph. There is a directed
 edge contains
 a join condition R i and A is
-a key of R j . The edge is annotated with RI if
+a key of R j . a directed
+edge is annotated with RI if
 there is a referential integrity constraint from
 R i :B to R j :A.
 We assume for now that the graph is a forest (a set
 of trees). That is, each vertex has at most one edge
-leading into it and there are no cycles. This assumption
+leading into each vertex and there are no cycles. This assumption
 still allows us to handle a broad class of views
 that occur in practice. For example, views involving
 chain joins (a sequence of relations R
@@ -446,7 +457,8 @@ conditions on R i and join with a tuple in R j
 that passes the local selection conditions on R j (i.e.,
 the semijoin condition is the
 same as the join condition between R i and R j in the
-view). That R i can be semijoined with AR j , rather
+view). R j in the
+view) i can be semijoined with AR j , rather
 than oeR j , in the definition of AR i follows from a similar
 argument applied inductively.
 The following definition is used to determine the
@@ -488,18 +500,21 @@ otherwise
 Note that because we restrict the graph to be a forest,
 there can be at most one R j such that e(R j ; R i ) is in
 used to help determine whether
-it is necessary to store auxiliary views. In particular,
+
+ is necessary to store auxiliary views. In particular,
 an auxiliary view AR j is necessary if R j appears in
 the Need set of some R i . Intuitively, if the key of R i
 is preserved in view V , then deletions and protected
-updates to R i can be propagated to V by joining them
+updates to R i can be propagated to V by joining the key of R i
+is preserved in view V , then deletions and protected
+updates to R
 directly with V on the key of R i . Otherwise, if the
 key of R i is not preserved in V but R i is joined with
 another relation R j on the key of R i and V preserves
 the key of R j , then deletions and protected updates
 to R i can be propagated onto V by joining them first
 with R j , then joining the result with V . In this case R j
-is in the Need set of R i , and hence AR j is necessary.
+is in the Need set of R i , and AR j is necessary.
 More generally, if the key of R i is not present in V
 but R i joins with R j on the key of R i , then auxiliary
 views for R j and each of the relations in Need(R
@@ -518,10 +533,11 @@ Table
 2. Assume for now that each base relation has
 protected updates.
 Algorithm 3.1 appears in Figure 3. We will
-explain how the algorithm works on our running
+explain how Algorithm 3.1 works on We running
 cal toy sales example. The auxiliary views generated
-by the algorithm are exactly those given in Figure
-1 of Section 1.1. They are shown in relational
+by Algorithm 3.1 are exactly those given in Figure
+1 of Section 1.1. exactly those given in Figure
+1 of Section 1.1 are shown in relational
 algebra form in Table 3.
 Algorithm 3.1
 Input
@@ -554,7 +570,8 @@ For each relation R i referenced in the view V , the
 algorithm checks whether Dep (R includes every
 other relation referenced in V and R i is not in
 any relation R j referenced in V . If
-so, it is not necessary to store any part of R i in order
+so, 
+ is not necessary to store any part of R i in order
 to maintain V . Relation line is an example where an
 auxiliary view for the relation is not needed.
 Otherwise, two steps are taken to reduce the
@@ -569,7 +586,8 @@ Table
 3: Auxiliary Views for Maintaining the
 cal toy sales View
 that tuples that don't pass the selection conditions
-don't need to be stored; it is also possible to project
+don't need to be stored; the selection conditions
+ is also possible to project
 away all attributes from R i except those that are involved
 in join conditions, preserved in V , or are a key
 of R i . Second, if Dep(R i ; G) is not empty, it is possible
@@ -599,11 +617,11 @@ from A, and it is not possible to add an additional
 selection condition or semijoin to further reduce the
 number of tuples in any auxiliary view and still have
 fV g[A be self-maintainable. We show in Section 4
-how V can be maintained using A, and we explain in
+how V can be maintained using A, and We explain in
 Section 5 that we can maintain A without referencing
 base relations.
 3.1 Effect of exposed updates
-Recall that so far in our example we have considered
+Recall that so far in We example We have considered
 protected updates only. Suppose sale had exposed
 updates (i.e., updates could change the values of year,
 sale id, or store id). We note that the definition of
@@ -634,7 +652,7 @@ expressions written in terms of the changes and
 the base relations to equivalent view maintenance expressions
 written in terms of the changes, the view,
 and the auxiliary views.
-We give view maintenance expressions for each type
+we give view maintenance expressions for each type
 of change (insertions, deletions, and updates) sepa-
 rately. In addition, for each type of change we apply
 the changes to each base relation separately by
@@ -643,14 +661,15 @@ view and updating the base relation. The reason we
 give maintenance expressions of this form, rather than
 maintenance expressions propagating several types of
 changes at once, is that maintenance expressions of
-this form are easier to understand and they are sufficient
+this form are easier to understand and this form are sufficient
 for our purpose: showing that it is possible to
 maintain a view using the auxiliary views generated
 by Algorithm 3.1. View maintenance expressions for
 insertions are handled in Section 4.1, for deletions are
 handled in Section 4.2, and for protected updates are
 handled in Section 4.3. Since exposed updates are
-handled as deletions followed by insertions, they are
+handled as deletions followed by insertions, exposed updates are
+handled as deletions followed by insertions are
 treated within Sections 4.1 and 4.2.
 4.1 Insertions
 In this section we show how the effect on a view
@@ -691,7 +710,8 @@ and projections down" to the maintenance
 expressions.
 ffl We use the notation 4VR to represent the insertions
 into view V due to insertions into base relation
-R. For example, 4V St represents insertions
+R. For example, =CA St
+ represents insertions
 into V due to insertions into St.
 ffl Each of the maintenance expressions of Table 4
 calculates the effect on view V of insertions to one
@@ -718,8 +738,8 @@ In general, if the above
 conditions hold then the following is true.
 Property 4.1 holds because the referential integrity
 constraint requires that each tuple in R j join with an
-existing tuple in R i , and because it joins on a key of
-R i it cannot join with any of the tuples in 4R i , so the
+existing tuple in R i , and because Property 4.1 joins on a key of
+R i Property 4.1 cannot join with any of the tuples in 4R i , so the
 join of 4R i with R j must be empty.
 Rule 4.1 (Insertion Rule for Foreign Keys) Let
 G(V ) be the join graph for view V . The maintenance
@@ -731,7 +751,7 @@ Rule 4.1 is used to eliminate the maintenance expression
 that calculates the effect on a view V of insertions
 to a base relation R i if there is another relation
 R j in V such that R i
-the join graph for V . The rule holds because, by the
+the join graph for V . (Insertion Rule for Foreign Keys) holds because, by the
 definition of Dep, R i is in Dep(R when the view
 equates a foreign key of R j to the key of R i , there is a
 referential integrity constraint from the foreign key in
@@ -742,7 +762,7 @@ effect of insertions to R i includes a join between 4R i
 and R j , it must be empty by Property 4.1 and therefore
 can be eliminated. Joins and referential integrity
 constraints between keys and foreign keys are common
-in practice, so the conditions of Rule 4.1 are often met.
+in practice, so the conditions of (Insertion Rule for Foreign Keys) are often met.
 Being able to eliminate certain maintenance expressions
 when calculating the effect on a view V of insertions
 to base relations can significantly reduce the cost
@@ -760,8 +780,9 @@ by replacing each -oeR i subexpression with the corresponding
 auxiliary view AR i for R i .
 For example, assuming for now that the base relations
 have protected updates, the maintenance expressions
-for 4V St , 4V Sa , and 4V I , in Table 4
-can be eliminated by Rule 4.1 due to the referential
+for =CA St
+ , 4V Sa , and 4V I , in Table 4
+can be eliminated by (Insertion Rule for Foreign Keys) due to the referential
 constraints between sale.store id and
 store.store id, line.sale id and sale.sale id,
 and line.item id and item.item id, respectively.
@@ -772,11 +793,16 @@ views as follows. Recall that the auxiliary views
 are shown in Table 3.
 Notice that the base relation L is never referenced
 in the above maintenance expression, so an auxiliary
-view for L is not needed. In addition, Sa is joined with
-St in the maintenance expression, which is why it is
-acceptable to store only the tuples in Sa that join with
-existing tuples in St-tuples in Sa that don't join with
-existing tuples in St won't contribute to the result. A
+view for L is not needed. In addition, Sa
+is joined with
+St in the maintenance expression, which is why Sa
+is
+acceptable to store only the tuples in Sa
+that join with
+existing tuples in St-tuples in Sa
+that don't join with
+existing tuples in =CA St
+ won't contribute to the result. A
 proof that the auxiliary views are sufficient in general
 to evaluate the (reduced) maintenance expressions for
 insertions appears in [12].
@@ -793,35 +819,42 @@ of tuples with the new attribute values, since
 exposed updates may result in deletions or insertions
 in the view. Thus, if R i has exposed updates then
 may include tuples representing the new values
-of exposed updates. Because these tuples can join with
+of exposed updates. Because tuples representing the new values
+of exposed updates can join with
 existing tuples in R j (without violating the referential
 integrity or key constraints), Property 4.1 does not
-hold and Rule 4.1 cannot be used to eliminate the
+hold and (Insertion Rule for Foreign Keys) cannot be used to eliminate the
 maintenance expression propagating insertions to R i .
 For example, suppose updates may occur to the
-year attribute of Sa. Then an auxiliary view for L
+year attribute of Sa
+. Then an auxiliary view for L
 would be created as I as shown in
-Section 3.1. We cannot semijoin L with A Sa in the
+Section 3.1. We cannot semijoin L
+ with A Sa in the
 auxiliary view for L because new values of updated
-tuples in Sa could join with existing tuples in L, where
+tuples in Sa
+could join with existing tuples in L, where
 the old values of the updated tuples didn't pass the
-local selection conditions on Sa and hence weren't in
+local selection conditions on Sa
+and hence weren't in
 A Sa . That is, suppose the year of some sale tuple t was
 changed from 1995 to 1996. Although the old value
 of t doesn't pass the selection criteria year=1996 and
 therefore wouldn't appear in A Sa , the new value of t
-would, and since it could join with existing tuples in
+would, and since A Sa could join with existing tuples in
 L we cannot restrict AL to include only those tuples
 that join with existing tuples in A Sa .
-In this paper we assume that it is known in advance
+In this paper we assume that this paper is known in advance
 whether each relation of a view V has exposed or protected
 updates. If a relation has exposed updates, we
 may need to store more information in the auxiliary
 views in order to maintain V than if the relation had
 protected updates. For example, we had to create an
-auxiliary view for L when Sa had exposed updates,
+auxiliary view for L when Sa
+had exposed updates,
 where the auxiliary view for L wasn't needed when
-Sa had protected updates.
+Sa
+had protected updates.
 An alternate way to consider updates, which
 doesn't require advance knowledge of protected versus
 exposed, is to assume that every base relation has
@@ -836,7 +869,8 @@ in the second class could be propagated by issuing
 queries back to the data sources.
 4.1.3 Propagating insertions to multiple relations
 at once. Maintenance expressions of the form
-used in Table 4 propagate onto the view insertions to
+used in Table 4 propagate onto 4.1.3 Propagating insertions to multiple relations
+at once to
 one base relation at a time. To propagate insertions to
 multiple base relations using the formulas in Table 4,
 when 4VR i is calculated we assume that the insertions
@@ -862,10 +896,10 @@ in the relational algebra expression for V . For exam-
 ple, the view maintenance expressions for calculating
 the effects on our cal toy sales view of deletions to
 store, sale, line, and item appear respectively as
-5V St , 5V Sa , 5VL , and 5V I in Table 5. We use the
+5V St , 5V Sa , 5VL , and 5V I in Table 5. our use the
 notation 5VR to represent the deletions from view V
 due to deletions from base relation R.
-Often we can simplify maintenance expressions for
+Often our can simplify maintenance expressions for
 deletions to use the contents of the view itself if keys
 (- store id;manager oe state=CA 5St
 store id - sale id;store id;month oe year=1996 Sa
@@ -894,7 +928,8 @@ Consider the join graph G(V ) of view V . Property
 4.2 says that if V preserves the key of some relation
 then we can calculate
 the effect on V of deletions to R i by joining V with
-5R i on the key of R i . The property holds because
+5R i on the key of R i . Property
+4.2 holds because
 each tuple in V with the same value for the key of
 R i as a tuple t in 5R i must have been derived from
 t. Conversely, all tuples in V that were derived from
@@ -927,7 +962,8 @@ and does not include all the base
 relations of V ), then we can calculate the effect on V
 of deletions to R i by joining 5R i with the sequence
 of relations up to R i+k and then joining R i+k with
-. The property holds because tuples in V with the
+. Property
+4.3 generalizes Property 4.2 holds because tuples in V with the
 same value for the key of R i+k as a tuple t in R i+k
 must have been derived from t as explained in Property
 4.2. Furthermore, since the joins between R i+k
@@ -935,7 +971,8 @@ and R i are all along keys, each tuple in R i+k can join
 with at most one tuple t 0 in R i , which means that tuples
 in V that are derived from tuple t in R i+k must
 also be derived from tuple t 0 in R i . Conversely, if a
-tuple in V is derived from t 0 in R i , then it must have
+tuple in V is derived from t 0 in R i , then a
+tuple in V is derived from t 0 in R i must have
 the same value for the key of R i+k as some tuple t in
 R i+k that t 0 joins with. Therefore, the set of tuples
 in V that join on the key of R i+k with some tuple t
@@ -1009,10 +1046,10 @@ Table
 6 expressions are similar to the deletion expressions
 of Table 5.
 We simplify the maintenance expressions for protected
-updates similarly to the way we simplify
+updates similarly to the way We simplify
 the maintenance expressions for deletions, by using
 the contents of the view itself if keys are preserved
-in the view. We give the following properties
+in the view itself. We give the following properties
 and rule for updates in the presence of
 preserved keys. In the following let P (-R
 (- old
@@ -1066,8 +1103,7 @@ Properties 4.4 and 4.5 are similar to the corresponding
 properties for deletions. Attributes of R i that are
 involved in selection conditions are guaranteed not to
 be updated, so it does not matter whether we test
-the old or new value in selection conditions. Property
-4.4 is used in [4] to determine when a view is
+the old or new value in selection conditions. Property 4.5 is used in [4] to determine when a view is
 self-maintainable for base relation updates.
 Consider the join graph G(V ) of view V . Property
 4.5 generalizes Property 4.4; Property 4.5 says
@@ -1118,13 +1154,14 @@ where C i equijoins a foreign key of R with the corresponding
 for relation R i . Because the joins are
 along foreign key referential integrity constraints, each
 semijoin could be replaced by a join. Thus, each auxiliary
-view is an SPJ view, and its join graph can be
+view is an SPJ view, and each auxiliary
+view join graph can be
 constructed as discussed in Section 3. Further, note
 that the join graph for each auxiliary view is a sub-graph
 of the graph for the original view, because each
 join in an auxiliary view is also a join in the original
-view. Thus, the information needed to maintain the
-original view is also sufficient to maintain each of its
+view. Thus, the information needed to maintain the original
+view is also sufficient to maintain each of the information
 auxiliary views.
 6 Related work
 The problem of view self-maintainability was considered
@@ -1153,15 +1190,15 @@ may not be readily available.
 In [10], views are made self-maintainable by pushing
 down selections and projections to the base relations
 and storing the results at the warehouse. Thus,
-using our terminology, they consider auxiliary views
+using our terminology, our terminology consider auxiliary views
 based only on select and project operators. We improve
 upon their approach by considering auxiliary
 views based on select, project, and semijoin operators,
 along with using knowledge about key and referential
 constraints. We have shown in Section 1.1
-that our approach can significantly reduce the sizes
+that We approach can significantly reduce the sizes
 of the auxiliary views. We show in [12] that auxiliary
-views of the form our algorithm produces can be
+views of the form We algorithm produces can be
 (self-)maintained efficiently.
 In [13], inclusion dependencies (similar to referential
 integrity constraints) are used to determine when

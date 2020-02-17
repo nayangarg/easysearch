@@ -1,11 +1,12 @@
 --T
 Code generation for fixed-point DSPs.
 --A
-This paper examines the problem of code-generation for Digital Signal Processors (DSPs). We make two major contributions. First, for an important class of DSP architectures, we propose an optimal O(n) algorithm for the tasks of register allocation and instruction scheduling for expression trees. Optimality is guaranteed by sufficient conditions derived from a structural representation of the processor Instruction Set Architecture (ISA). Second, we develop heuristics for the case when basic blocks are Directed Acyclic Graphs (DAGs).
+This paper examines the problem of code-generation for Digital Signal Processors (DSPs). We make two major contributions. First, for an important class of DSP architectures, We propose an optimal O(n) algorithm for the tasks of register allocation and instruction scheduling for expression trees. Optimality is guaranteed by sufficient conditions derived from a structural representation of the processor Instruction Set Architecture (ISA). Second, we develop heuristics for the case when basic blocks are Directed Acyclic Graphs (DAGs).
 --B
 INTRODUCTION
 Digital Signal Processors (DSPs) are receiving increased attention recently due to
-their role in the design of modern embedded systems like video cards, cellular telephones
+INTRODUCTION
+Digital Signal Processors (DSPs) role in the design of modern embedded systems like video cards, cellular telephones
 and other multimedia and communication devices. DSPs are largely used
 in systems where general-purpose architectures are not capable of meeting domain
 specific constraints. In the case of portable devices, for example, the power consumption
@@ -28,7 +29,7 @@ specific permission and/or a fee. Permissions may be requested from Publications
 Inc., 1515 Broadway, New York, NY 10036 USA, fax +1 (212) 869-0481, or permissions@acm.org.
 and computer graphics applications. The increasing usage of these processors has
 revealed a new set of code generation problems, which are not efficiently handled
-by traditional compiling techniques. These techniques make implicit assumptions
+by traditional compiling techniques. traditional compiling techniques make implicit assumptions
 about the regular nature of the target architecture and microarchitecture. This is
 rarely the case with DSPs, where irregularities in the microarchitecture are the very
 basis for the efficient computation of specialized functions. Due to hard on-chip
@@ -38,21 +39,23 @@ compilation techniques are not up to this task, the vast majority of the code is
 written directly in assembly language. This research is part of a project directed
 towards developing compilation techniques that are capable of generating quality
 code for such processors (http://ee.princeton.edu/spam). The implementation of
-these techniques forms the compiling infrastructure used in this work, which is
+traditional compiling techniques forms the compiling infrastructure used in this work, which is
 called the SPAM compiler.
 There is a large body of work done in code generation for general purpose pro-
 cessors. Code generation is, in general, a hard problem. Instruction selection for
 expressions subsumes Directed Acyclic Graph (DAG) covering, which is an NP-complete
 problem [Garey and Johnson 1979]. Bruno and Sethi [1976] and Sethi
 [1975] showed that the problem of optimal code generation for DAGs is NP-complete
-even for a single register machine. It remains NP-complete for expressions in which
+even for a single register machine. the problem of optimal code generation for DAGs is NP-complete
+even for a single register machine remains NP-complete for expressions in which
 no shared term is a subexpression of any other shared term [Aho et al. 1977a]. An
 efficient solution for a restricted class of DAGs has been proposed in [Prabhala and
 1980]. Code generation for expression trees has a number of O(n) solutions,
 where n is the number of nodes in the tree. These algorithms offer solutions for the
 case of stack machines [Bruno and Sethi 1975], register machines [Sethi and Ullman
 1970] [Aho and Johnson 1976] [Appel and Supowit 1987] and machines with
-specialized instructions [Aho et al. 1977b]. They form the basis of code generation
+specialized instructions [Aho et al. 1977b]. machines with
+specialized instructions [Aho et al form the basis of code generation
 for single issue, in order execution, general-purpose architectures.
 The problem of generating code for DSPs and embedded processors has not received
 much attention though. This was probably due to the small size of the
@@ -63,7 +66,7 @@ problems associated to code generation for DSP processors were first brought to
 light by Lee in [Lee 1988] [Lee 1989], a comprehensive analysis of the architecture
 features of these processors. Code generation for DSP processors has been studied
 in the past, but only more recently a number of interesting work has tackled
-some of its important problems. Marwedel [1993] proposed a tree-based mapping
+some of a number of interesting work important problems. Marwedel [1993] proposed a tree-based mapping
 technique for compiling algorithms into microcode architectures. [Liem et al. 1994]
 uses a tree-based approach for algorithm matching and instruction selection, where
 registers are organized in classes and register allocation is based on a left-first algo-
@@ -80,7 +83,7 @@ In this paper, we propose an optimal two phase algorithm which performs instruct
 selection, register allocation and instruction scheduling for an expression tree
 in polynomial time, for a class of DSPs. The architecture model here (described in
 Section 2) is of a programmable highly-encoded Instruction Set Architecture (ISA),
-fixed-point DSP processor. Formally speaking, this class is an extension of the machine
+fixed-point DSP processor. Formally speaking, a class of DSPs is an extension of the machine
 models discussed in Coffman and Sethi [1983]. In the first pass (Section 3),
 we perform instruction selection and register allocation simultaneously, using the
 Aho-Johnson algorithm [Aho and Johnson 1976]. The second pass, described in
@@ -88,48 +91,49 @@ Section 4, is an O(n) algorithm that takes an optimally covered expression tree
 with n nodes, and schedules instructions such that no memory spills are required.
 A memory spill is an operation where the contents of a particular register is saved
 in memory due to a lack of available registers for some operation, and reloaded
-from memory after that operation is finished. Observe that a memory store operation
+from memory after some operation is finished. Observe that a memory store operation
 required by the architecture topology is not considered a memory spill. The
 proposed algorithm uses the concept of the Register Transfer Graph (RTG) that is
 a structural representation of the datapath, annotated with ISA information. We
 show that if the RTG of a machine is acyclic, then optimal code is guaranteed for
-any program expression tree written for that machine. In this case the DSP is
+any program expression tree written for a machine. In this case the DSP is
 said to have an acyclic datapath. Since DAG code generation is NP-complete, we
 develop heuristics for the case of acyclic datapaths (Section 5) which again uses the
 RTG concept. In Section 6 we show the results of applying these ideas to benchmark
 programs. Section 7 summarizes our major contributions and suggests some
 open problems.
 2. ARCHITECTURAL MODEL
-DSP processors are irregular architectures, when compared with their general purpose
-counterparts. This section analyzes the main architecture features which distinguish
+DSP processors are irregular architectures, when compared with ARCHITECTURAL MODEL
+DSP processors general purpose
+counterparts. Section 7 analyzes the main architecture features which distinguish
 DSPs from general purpose processors with respect to basic block code
-generation. It is not the purpose of this section to give a detailed and extensive
-analysis of these features. A comprehensive analysis of DSP architectures can be
+generation. It is not the purpose of Section 7 to give a detailed and extensive
+analysis of these features. A comprehensive analysis of the DSP architectures can be
 found in [Lee 1988][Lee 1989] [Lapsley et al. 1996].
 DSPs can be classified according to the type of data they use as fixed-point DSPs
 and floating-point DSPs. In applications running on a fixed-point DSP, users are
 responsible for scaling the result of the integer operations. This is automatically
 done in floating-point DSPs. Floating point units are extremely costly in terms of
 silicon area and clock cycles. For this reason, a large number of the systems based
-on DSPs uses fixed-point DSPs. In this case, the acronym DSP will be assumed
+on DSPs uses fixed-point DSPs. In this case, the DSP will be assumed
 from now on to mean fixed-point DSP.
 DSPs have on-chip data memory, based on fast static RAMs and on-chip non-volatile
 program ROM. Unlike general purpose architectures, DSPs are not designed
 with cache or virtual memory systems, since data and program streams usually fit
 into the available on-chip memories. Because on-chip memories are fast and cache
 misses are not an issue, some DSPs are designed as memory-register architectures
-[Texas Instruments 1990]. In order to achieve the bandwidth required by its appli-
+[Texas Instruments 1990]. In order to achieve the bandwidth required by 1990]. appli-
 cations, other DSPs architectures provide multiple memory banks [Motorola 1990].
-Since performance is an important factor for DSP applications, DSP instructions
+Since performance is an important factor for the DSP applications, the DSP instructions
 are usually designed to be fetched in a single machine cycle. In order to achieve
-that instructions are encoded such as to minimize the number of bits they require.
+that instructions are encoded such as to minimize the number of bits such require.
 In some architectures [Texas Instruments 1990] this is done by means of data memory
 pages, where instructions need only to carry the offset of the data within the
 current page in order to access it.
-The goal of the design of a DSP datapath is to implement those functional units
+The goal of the design of a the DSP datapath is to implement those functional units
 which can speed up costly operations that frequently occur in the processor application
 domain. A common example of such units is Multiply and Accumulate
-(MAC). Due to design requirements, DSP designers frequently constrain the inter-connectivity
+(MAC). Due to design requirements, the DSP designers frequently constrain the inter-connectivity
 between registers and functional units. There are two main reasons for
 this. First, the desired functionality usually requires a particular datapath topol-
 ogy. Second, broad interconnectivity translates into datapath buses and/or muxes,
@@ -150,8 +154,8 @@ TMS320 family of processors, which makes a large number of all commercial DSP
 processors in use today. The TMS320 family is composed of fixed-point processors
 (TMS320C1x/C2x/C5x/C54x) which are heterogeneous architectures, and also by
 a number of floating-point homogeneous architecture DSPs (TMS320C3x/C4x).
-The TMS320C25 processor contains an ISA with specialized memory-register and
-register-register instructions. It has three separate register-files (a, p and t) containing
+This processor contains an ISA with specialized memory-register and
+register-register instructions. This processor has three separate register-files (a, p and t) containing
 a single register each.
 3. OPTIMAL INSTRUCTION SELECTION AND REGISTER ALLOCATION
 In homogeneous register architectures the selection of an instruction has no connection
@@ -197,17 +201,19 @@ Table
 1. Partial ISA of the TMS320C25 processor
 These tree-patterns, are represented using three-address form in Table 1. Three-address
 is a standard compiler representation for instructions, where the destination
-of the instruction, its two operands (hence the name three address) and the operation
-it performs are present. Any reference in square brackets is associated to a
+of the instruction, Three-address
+ two operands (hence the name three address) and the operation
+Three-address
+ performs are present. Any reference in square brackets is associated to a
 memory position. Table 1 also lists the cost associated to each instruction.
-Notice that the instructions implicitly define the registers they use. For example,
-the instruction apac can only take its operands from registers a and p, and always
+Notice that the instructions implicitly define the registers the instructions use. For example,
+the instruction apac can only take the instruction apac operands from registers a and p, and always
 computes the result back into a. Observe also that operations which transfer data
 through the datapath like lac m (load register a from memory position m), and
 pac (move register p into register a) can be represented each as a single node,
 corresponding to the source register of the transfer operation. The associated cost
 in this case is only the cost of moving the data from the source register into the
-destination register. Since registers in DSP architectures are a scarce resource, the
+destination register. Since registers in the DSP architectures are a scarce resource, the
 final code quality is very sensitive to the cost of routing data through the datapath.
 3.1 Problem Definition
 Optimal instruction selection combined with register allocation is the problem of
@@ -215,15 +221,15 @@ determining the best cover of an expression tree such that the cost of each patt
 match depends not only on the number of cycles of the associated instruction, but
 also on the number of cycles required to move its operands from the location they
 6 \Delta Guido Araujo and Sharad Malik
-currently are to the location where the instruction requires them to be.
+currently are to the location where the instruction requires the instruction to be.
 3.2 Problem Solution
 A solution for this problem is to use a variation of the Aho-Johnson algorithm [Aho
 and Johnson 1976] such that at each node we keep not only all possible costs for
-matches at that node, but also all possible costs resulting from matching the node
+matches at each node, but also all possible costs resulting from matching the node
 and moving the result from where it is originally computed into any other reachable
 location in the datapath.
 Tree-grammar parsers have been used as a way to implement code-generators [Aho
-et al. 1989] [Fraser et al. 1993] [Tjiang 1993]. They combine dynamic programming
+et al. 1989] [Fraser et al. 1993] [Tjiang 1993]. Tree-grammar parsers combine dynamic programming
 and efficient tree-pattern matching algorithms [Hoffman and O'Donnell 1992] for
 optimal instruction selection. We have implemented combined instruction selection
 and register allocation using the olive [Tjiang 1993] code-generator generator.
@@ -244,31 +250,31 @@ Rules 1 to 3 and 4 to 5 correspond to instructions that take two operands and
 store the final result in a particular register (a and p respectively). Rule 6 describes
 an immediate load into register a. Rules 7 to 10 are associated to data transference
 instructions and bring the cost of moving data through the datapath into the total
-cost of a match. We should point out that, for sake of simplicity, we do not
+cost of a match. We should point out that, for sake of simplicity, We do not
 represent in Figure 2 all patterns corresponding to commutative operations. For
 example, instruction add m can be specified in two different ways: PLUS(a,m) and
 PLUS(m,a). Nevertheless, we will consider for the remainder of this paper that all
 commutative forms of any operation pattern are available whenever required.
 If we do not consider instruction scheduling and the associated spills at this
 point, then the algorithm proposed above is optimal. This follows from the fact
-that this algorithm is a variation of the provably optimal Aho-Johnson dynamic
+that the algorithm proposed above is a variation of the provably optimal Aho-Johnson dynamic
 programming algorithm [Aho and Johnson 1976].
 Code Generation for Fixed-Point DSPs \Delta 7
 4. SCHEDULING
 Optimal instruction selection and register allocation for an expression tree is not
 enough to produce optimal code. For optimal code the instructions must be scheduled
 in such a way that no memory spills are introduced. Notice that memory
-positions allocated in the previous phase are not considered spills. They result
+positions allocated in the previous phase are not considered spills. positions allocated in the previous phase result
 from the optimal selection of memory-register instructions in the ISA and not from
 the presence of resource conflicts.
 Aho and Johnson [1976] showed that, by using dynamic programming, optimal
 code can be generated in linear time for a wide class of architectures. The schedule
-they propose is based on their Strong Normal Form Theorem. This theorem guarantees
+they propose is based on they Strong Normal Form Theorem. their Strong Normal Form Theorem guarantees
 that any optimal code schedule for an expression tree, for a homogeneous
 register architectural model, can always be transformed into Strong Normal Form
-(SNF). A code sequence is in SNF if it is formed by a set of code sub-sequences
+(SNF). A code sequence is in SNF if A code sequence is formed by a set of code sub-sequences
 separated by memory storages, where each code sub-sequence is determined by a
-Strongly Contiguous (SC) schedule. A code sequence is a SC schedule if it is formed
+Strongly Contiguous (SC) schedule. A code sequence is a SC schedule if A code sequence is formed
 as follows: at every selected match m, with child subtrees T 1 and T 2 , continuously
 schedule the instructions corresponding to subtree T 1 followed by the instructions
 corresponding to T 2
@@ -276,9 +282,11 @@ corresponding to T 2
 [1990] used SNF as a heuristic to schedule instructions for the TMS320C25 DSP.
 4.1 Problem Definition
 SC schedules are not an efficient way to schedule instructions for heterogeneous
-register set architectures. They produce code sequences whose quality is extremely
+register set architectures. 4.1 Problem Definition
+SC schedules produce code sequences whose quality is extremely
 dependent on the order the subtrees are evaluated. Consider for example the IR
-tree of Figure 3(a). The expression tree was optimally matched using the approach
+tree of Figure 3(a). the IR
+tree of Figure 3(a) was optimally matched using the approach
 proposed in Section 3 and the target ISA. It takes variables at memory positions m 0
 to m 4 and stores the resulting computation into one variable at memory position
 using m 5 as temporary storage.
@@ -313,7 +321,8 @@ operation
 register a has to be used to route the result of position
 m 5 . But a still contains a live result (the result of m 0
 In this case, the
-code-generator has to emit code to spill the value of a into memory and recover it
+code-generator has to emit code to spill the value of a into memory and recover the
+code-generator
 (a)
 a
 a
@@ -340,14 +349,15 @@ Problems like the one illustrated above are very common in DSP architectures.
 The obvious question it raises is - Does there exist a guaranteed SNF schedule such
 that no spilling is required ? We will prove that this schedule exist, under certain
 conditions that depend exclusively on the ISA of the target processor. But before
-doing so, let us define the problem formally: Given an optimally covered expression
+doing so, let We define the problem formally: Given an optimally covered expression
 tree for an heterogeneous register architecture, determine an instruction schedule
 that does not introduce any spill code.
 4.2 Problem Solution
 This section is divided as follows. In Section 4.2.1 we state and prove a sufficient
 condition that an heterogeneous register architecture has to satisfy in order to
 enable spill free schedules. In Section 4.2.2 we introduce the concept of Register
-Transfer Graph (RTG) and show how it impacts the code generation task. Finally,
+Transfer Graph (RTG) and show how the concept of Register
+Transfer Graph (RTG) impacts the code generation task. Finally,
 Code Generation for Fixed-Point DSPs \Delta 9
 we prove the existence of an optimal linear time scheduling algorithm for a class
 DSP architectures which have acyclic RTGs.
@@ -384,14 +394,16 @@ register as the register assigned to the root of the other sibling tree. Using t
 definition it is possible to propose the following result.
 Fig. 4. Allocation deadlock in an expression tree
 Theorem 1. Let T be an expression tree. If T does not have a spill free schedule
-then it contains at least one subtree which has an allocation deadlock.
+then T does not have a spill free schedule
+ contains at least one subtree which has an allocation deadlock.
 Proof. Assume that all nodes u in T are such that T u is free of allocation
 deadlocks and that no valid schedule exist for T . According to Definition 1 T u does
 not have an allocation deadlock when:
 (a) In this case, a SNF schedule exists if subtree T 1
 is scheduled first followed by subtree
-This case cannot happen since no non-unary operator of an
-expression tree takes its two operands simultaneously from the same location.
+this case cannot happen since no non-unary operator of an
+expression tree takes no non-unary operator of an
+expression tree two operands simultaneously from the same location.
 (a) (b) (c)
 Fig. 5. Trees without allocation deadlock
 (c) exist for which L(w 2
@@ -403,9 +415,10 @@ of T 1
 is finished only register r 1
 is live, and therefore, since no register r 1
 exists in
-, no resource conflict will occur when this subtree is scheduled (Figure 5(a)).
+, no resource conflict will occur when subtree
+ is scheduled (Figure 5(a)).
 exist for which L(w 1
-This is symmetric to the previous case. Schedule T 2 first, followed by T 1 and the
+This is symmetric to this case. Schedule T 2 first, followed by T 1 and the
 instruction corresponding to u (Figure 5(b)).
 exist. This case is trivial, any SC
 schedule results in a spill free schedule (Figure 5(c)).
@@ -413,27 +426,26 @@ Since the above conditions can be applied to any node u, T will have a valid
 schedule that is free of memory spilling code. This contradicts the initial assumption
 
 Corollary 1. Let T be an expression tree. If T has no subtree containing an
-allocation deadlock then it must have a spill free schedule. Moreover this schedule
-can be computed using the proof of Theorem 1.
+allocation deadlock then T has no subtree containing an
+allocation deadlock must have a spill free schedule. Moreover a spill free schedulecan be computed using the proof of Theorem 1.
 Proof. Directly from the theorem above.
 4.2.2 The RTG Model and Theorem
 Definition 2. The RTG is a directed labeled graph where each node represents a
-location in the datapath architecture where data can be stored. Each edge in the
-RTG from node r i to node r j is labeled after those instructions in the ISA that
+location in the datapath architecture where data can be stored. Each edge in The RTG from node r i to node r j is labeled after those instructions in the ISA that
 take operands from location r i and store the result into location r j .
-The nodes in the RTG represent two types of storage: register files and single
+The nodes in The RTG represent two types of storage: register files and single
 registers. Register file nodes represent a set of locations of the same type which can
 store multiple operands. A datapath single register (or simply single register) is a
 register file of unitary capacity. Register file nodes are distinguished from single
 register nodes by means of a double circle. Because of its uniqueness, memory is
-not described in the RTG. Arrows are used instead to represent memory operations.
+not described in The RTG. Arrows are used instead to represent memory operations.
 An incoming (outgoing) arrow pointing to (from) an RTG node r is associated to
 Code Generation for Fixed-Point DSPs \Delta 11
-a load (store) operation from (into) memory. Notice that the RTG is a labeled
+a load (store) operation from (into) memory. Notice that The RTG is a labeled
 graph where each edge has labels corresponding to the instructions that require
-that operation. In other words, if both instructions p and q take one operand in r i
+a load (store) operation from (into) memory. In other words, if both instructions p and q take one operand in r i
 and store its result into r j , then the edge from r i to r j will have at least two labels,
-p and q. We say that an architecture RTG is acyclic if it contains no cycles. As a
+p and q. We say that an architecture RTG is acyclic if an architecture RTG contains no cycles. As a
 consequence of that any register transfer cycle in an acyclic RTG has to go through
 memory 1 .
 Example 2. Consider, for example, the partial olive description in Figure 2. The
@@ -441,7 +453,7 @@ RTG of
 
 Figure
 
-6 was formed from that description. The numbers in parenthesis
+6 was formed from the partial olive description in Figure 2. The numbers in parenthesis
 on the right side of Figure 2 are used to label each edge of the graph. Not all ISA
 instructions of the target processor are represented in the description of Figure 2,
 and therefore not all edges in the RTG of Figure 6 are labeled. Notice that the
@@ -457,7 +469,7 @@ Fig. 6. TMS320C25 architecture has an acyclic RTG
 Theorem 2. If an architecture RTG is acyclic, then for any expression tree
 there exists a schedule that is free of memory spills.
 Proof. Let T be an expression tree rooted at u, and v 1
-its children, such
+T children, such
 that
 and L(v 2
 . Let T 1
@@ -467,11 +479,11 @@ nodes
 . Let P k , be subtrees of T with root p k for which the
 result of operation p k is stored into memory (i.e. L(p k
 (dark areas in Figure 7) as the subtrees formed in T i after removing all nodes from
-subtrees P k . We will show that if the RTG is acyclic, an optimal schedule can
+subtrees P k . We will show that if The RTG is acyclic, an optimal schedule can
 always be determined by properly ordering the schedules for P k (e.g. P 1
-. Here we have to address two cases: (a) Assume that T has no
-allocation deadlock. Therefore, from Corollary 1 T has an optimal schedule. (b)
-Now consider that an allocation deadlock is present in T , and that it is caused by
+. Here We have to address two cases: (a) Assume that T has no
+allocation deadlock. Therefore, from T has an optimal schedule. (b)
+Now consider that an allocation deadlock is present in T , and that an allocation deadlock is caused by
 registers r 1 and r 2 , as shown in Figure 7. Assume also that there exist paths from
 r 2 to r 1 in the processor RTG. Observe now that for each node in T 2 (Figure 7)
 allocated to r 1 , e.g. w 2 , the path that goes from w 2 to its ancestor v 2 (allocated to
@@ -483,7 +495,8 @@ necessarily pass by a node allocated to memory, e.g. p 2
 the fact that any path from r 1
 to r 2
 has to traverse memory, given that the RTG
-is acyclic and that it contains paths from r 2
+is acyclic and that the RTG
+ contains paths from r 2
 to r 1
 . Notice that one can recursively
 schedule subtrees P 2
@@ -508,45 +521,46 @@ followed by applying Corollary 1 to schedule subtree Q 1
 fug.
 Based on the proof of Theorem 2 above, an algorithm can be designed which
 computes the best schedule for an expression tree in any acyclic RTG architecture.
-We have designed such algorithm and named it OptSchedule.
+We have designed such algorithm and named such algorithm OptSchedule.
 Theorem 3. Algorithm OptSchedule is optimal and has running time O(n),
 where n is the number of nodes in the subject tree T .
 Proof. The first part is trivial since OptSchedule implements the proof of Theorem
 2. Also from Theorem 2, the algorithm divides T into a set of disjoint subtrees
-recursively schedules each of them. Therefore, every node
+recursively schedules each of T. Therefore, every node
 in T is visited only once. Hence, the algorithm running time is O(n).
-Remark 1. If the RTG is acyclic for a particular architecture, then optimal sequential
+Remark 1. If The RTG is acyclic for a particular architecture, then optimal sequential
 code is guaranteed for any expression tree compiled from programs running
 on that architecture. Unfortunately, this is not true for those architectures which
 Code Generation for Fixed-Point DSPs \Delta 13
 do not have acyclic RTGs. Nevertheless, expression trees in those architectures can
 also benefit from this work. Observe from Corollary 1 that if an expression tree is
-free of allocation deadlocks then it can be optimally scheduled. This is valid for
+free of allocation deadlocks then an expression tree is
+free of allocation deadlocks can be optimally scheduled. This is valid for
 any expression tree generated from any architecture, no matter if this architecture
 has an acyclic RTG or not. Consider for example that a path is added from p to t
 in the RTG of Figure 6. This creates a cycle in the architecture RTG, which does
 not go through memory. On the other hand, any expression tree which do not use
 this new path is free of allocation deadlocks, and therefore can still be optimally
 scheduled. Such expression trees could be identified by a simple modification of the
-instruction selection algorithm. The question of how many of these trees exist in a
+instruction selection algorithm. The question of how many of Such expression trees exist in a
 typical program is still open though.
 5. HEURISTIC FOR DAGS
 Instruction selection for an expression DAG requires DAG covering, which is known
 to be NP-complete [Garey and Johnson 1979]. In practical solutions to this problem
-heuristics have been proposed which divide the DAG into its component trees by
-selecting an appropriate set of trees. However, this dismanteling of the DAG into
+heuristics have been proposed which divide DAG DAG into DAG component trees by
+selecting an appropriate set of trees. However, this dismanteling of DAG into
 component trees is not unique and there are several ways in which this can be
 done. Traditionally, the heuristic employed in the case of homogeneous register
 architectures is to disconnect multiple fanout nodes of the DAG [Aho et al. 1988].
-Dividing a DAG into its component trees requires disconnecting (or breaking)
-edges in the DAG. For the code generation task, breaking a DAG edge between
+Dividing a DAG into a DAG component trees requires disconnecting (or breaking)
+edges in DAG. For the code generation task, breaking a DAG edge between
 nodes u and v implies the allocation of temporary storage to save the result of
 operation u while this is not consumed by operation v. This storage location is
 traditionally the memory but it can, in general, be any location in the datapath.
 The key idea proposed here is a heuristic which uses architectural information from
 the RTG in the selection of component trees of a DAG, such that the resulting
 code has minimal spills. Consider for example the DAG of Figure 8. Notice that
-two different approaches can be used to decompose this DAG into its component
+two different approaches can be used to decompose a DAG into a DAG component
 trees, depending on which edge (e 1
 or e 2
 is selected to break. From now on, we
@@ -558,10 +572,11 @@ instead of e 1
 
 Figure
 
-8(a) is also the best sequential code one can generate from the subject
-DAG. Observe from the architectural description in Table 1, that the multiplication
-operation requests its operands from memory (m) and t, and that the result of the
-addition operation always produce its result in the accumulator a.
+8(a) is also the best sequential code one can generate from a DAG. Observe from the architectural description in Table 1, that the multiplication
+operation requests the multiplication
+operation operands from memory (m) and t, and that the result of the
+addition operation always produce the
+addition operation result in the accumulator a.
 Notice also in Figure 6 that to bring any data from a to register t one has to go
 through m. From Figure 8 one can see that the result of the addition operation
 has to be stored into a and must be moved to m or t in order to be
@@ -583,7 +598,8 @@ mpy m5 p / t * [m5]
 Fig. 8. (a) Breaking edge e 1
 Breaking edge e 2
 path from a to p must also pass through memory.
-Notice also that when edge e 2
+a.
+Notice also in Figure 6 that to bring any data from a to register t also that when edge e 2
 is broken, pattern PLUS(a,m) (instruction add m 4
 cannot be used to match the addition of m 4
 with the result of m 2
@@ -610,11 +626,11 @@ Code Generation for Fixed-Point DSPs \Delta 15
 The heuristic we propose to address the problem just described is divided into four
 phases. In the first phase (Section 5.1.1) partial register allocation is done for those
 datapath operations which can be clearly allocated before any code generation task
-is performed in the DAG. During the second phase (Section 5.1.2), architectural
-information is employed to identify special edges in the DAG which can be broken
+is performed in DAG. During the second phase (Section 5.1.2), architectural
+information is employed to identify special edges in DAG which can be broken
 without introducing any loss of optimality for the subsequent tree mapping
 stages. In the third phase (Section 5.2) edges are marked and disconnected from
-the DAG. Finally component trees are scheduled and optimal code generated for
+DAG. Finally component trees are scheduled and optimal code generated for
 each component tree (Section 5.2).
 5.1.1 Partial Register Allocation. A general property of heterogeneous register
 architectures is that the results of specific operations are always stored in well defined
@@ -627,7 +643,7 @@ to determine that registers a and p are respectively used to store the immediate
 result of operations add and mul. Thus, partial allocation can be performed well
 in advance, even before the task of breaking the edges of the expression DAG takes
 place. Again, observe that this is only possible if an operation always uses the same
-register file to store its immediate result. Consider for example the expression DAG
+register file to store an operation immediate result. Consider for example the expression DAG
 of
 
 Figure
@@ -635,8 +651,10 @@ Figure
 9. Notice that partial register allocation can be immediately performed
 for registers a and p.
 5.1.2 Natural Edges. We saw before in Figure 8 that some edges have specific
+properties originating from the target architecture, which allow We to disconnect
+some edges have specific
 properties originating from the target architecture, which allow us to disconnect
-them from the DAG without compromising optimality. These edges, termed natural
+them from the DAG without compromising optimality from DAG DAG without compromising optimality. 5.1.2 Natural Edges, termed natural
 edges, are defined as follows.
 Definition 3. If the instruction selection matching of edge (u; v) always produces
 a sequence of data transfer operations in the datapath which pass through memory,
@@ -670,7 +688,7 @@ RTG, then any loop starting at r i will go through memory. Therefore, a memory
 operation will be selected whenever instruction selection is performed on edge (u; v).
 Hence (u; v) is a natural edge.
 Notice that the task of breaking natural edges does not introduce any new operations
-into the DAG because, as the name implies, during the instruction selection
+into DAG because, as the name implies, during the instruction selection
 phase a memory operation is naturally selected due to constraints in the architecture
 datapath topology. As a result, no potential optimality is lost by breaking
 natural edges.
@@ -692,10 +710,10 @@ and thus nothing can be said regarding these edges.
 5.1.3 Pseudo-Natural Edges. In the following two lemmas we show that DAG
 edges can sometimes interact such that one edge out of a set of two edges must
 result in storage in memory. The edges in this set are called pseudo-natural edges.
-Lemma 3. Consider operation v and its operand nodes u and w in Figure 11(a).
+Lemma 3. Consider operation v and operation operand nodes u and w in Figure 11(a).
 If partial register allocation of these operations is such that
 are (w; v) pseudo-natural edges.
-Proof. Notice that no binary operation v can take both its operands simultaneously
+Proof. Notice that no binary operation v can take both no binary operation v operands simultaneously
 from the same register. We have to consider here two situations:
 Code Generation for Fixed-Point DSPs \Delta 17
 w
@@ -707,35 +725,37 @@ the edges uses a loop in the RTG; (b) One of the edges goes through memory;
 (a) If node r i has a self-loop in the architecture RTG, one of the edges, e.g.
 could be matched by an instruction which takes one operand from r i .
 On the other hand, when this same instruction matches the other edge, i.e.
-(w; v), it will make use of a register which is contained in an RTG loop (not
+(w; v), this same instruction will make use of a register which is contained in an RTG loop (not
 a self-loop) that goes from r i back to r i . Similarly as in Lemma 2, matching
 (w; v) will introduce a sequence of transfer operations which necessarily goes
 through memory, making (w; v) and (u; v) pseudo-natural edges.
 (b) If no self-loop node r i exists in the architecture RTG, then both edges are
 natural edges according to Lemma 2.
-Lemma 4. Consider operation v and its operand nodes u and w of Figure 11(b).
+Lemma 4. Consider operation v and operation operand nodes u and w of Figure 11(b).
 Let the partial register allocation of these nodes be such that
 . If all RTG paths between each pair of nodes are such that only one path
 does not go through memory, then (u; v) and (w; v) are pseudo-natural edges.
-Proof. The proof is trivial and follows from the fact that since operation v
-cannot take both of its operands from the same register r j at the same time, it has
+Proof. Proof is trivial and follows from the fact that since operation v
+cannot take both of v
+ operands from the same register r j at the same time, v
+ has
 to use two paths in the RTG to bring data from register r j . Since only one path
 from r j to r i does not go through memory, then the other path has to pass through
 memory.
 Based on the lemmas above, we need to decide which edge between (u; v) and
-(w; v) is to be disconnected from the DAG. Loss of optimality might occur depending
+(w; v) is to be disconnected from DAG. Loss of optimality might occur depending
 on which edge is selected. The selected pseudo-natural edge is identified using
-a double line segment to distinguish it from natural edges. Unlike natural edges,
+a double line segment to distinguish The selected pseudo-natural edge from natural edges. Unlike natural edges,
 breaking pseudo-natural edges might result in compromising the optimality of code
 generation for the component trees. However, there is a good chance that this
 might not happen in actual practice.
 Example 4. Consider Lemmas 3 and 4 above and the RTG of Figure 6: Observe
 the expression DAG of Figure 9 after pseudo-natural edges have been identified.
 Lemma 3 is satisfied for the case when r
-(4) In this case, if r only one path exists in the RTG from p to
+(4) In the case, if r only one path exists in the RTG from p to
 a which does not go through memory.
 After rules 1-4 of Examples 3 and 4 are applied, the expression DAG of Figure 9
-results. Each marked edge in Figure 9 has on its side the number corresponding to
+results. Each marked edge in Figure 9 has on Each marked edge in Figure 9 side the number corresponding to
 a rule used from Examples 3 and 4.
 5.2 Dismanteling Algorithm
 The task of dismanteling an expression DAG may potentially introduce cyclic Read
@@ -755,7 +775,7 @@ Figure
 12(a). Dismanteling the DAG of Figure 12(a) requires that at least one of
 the edges of the multiple fanout nodes u and T 2
 be disconnected. Assume that edges
-have been selected as the edges to break. In this case, nodes u, v
+have been selected as the edges to break. In the case, nodes u, v
 and tree T 1
 can be collapsed into a single component tree T 3
 , dismanteling the DAG
@@ -763,7 +783,7 @@ into trees T 3
 and T 4
 . When an edge between two nodes is broken, a RAW edge is
 introduced (dashed lines in Figure 12), in order to guarantee that the original data-dependencies
-are preserved by the scheduler. In this case, the resulting RAW edges
+are preserved by the scheduler. In the case, the resulting RAW edges
 form a cycle between component trees T 3
 and T 4
 , which results in an infeasible
@@ -775,30 +795,36 @@ Figure
 12(b)). When this occurs, RAW edge (u; T 2 ) is brought into the
 resulting component tree (T 3 ). As a consequence, the potential optimality of the
 tree scheduler algorithm OptSchedule can not be guaranteed anymore, since now
-it has to satisfy the constraint imposed by the new RAW edge inside T 3 . A possible
-solution to this problem is to modify the tree scheduler algorithm such that it can
-satisfy any RAW constraint inserted into the tree. Unfortunately, this is a very
+the potential optimality of the
+tree scheduler algorithm OptSchedule has to satisfy the constraint imposed by the new RAW edge inside T 3 . A possible
+solution to this problem is to modify the tree scheduler algorithm such that this problem can
+satisfy any RAW constraint inserted into the
+resulting component tree (T 3 ). Unfortunately, this is a very
 difficult task for which an efficient solution seems not to exist. Hence, we have to
-dismantle the DAG such as to avoid inserting RAW edges into the component trees.
+dismantle DAG DAG such as to avoid inserting RAW edges into the component trees.
 From the two situations analyzed above, we can conclude that edges on both
 reconvergent paths have to be disconnected in order to guarantee proper scheduling
 Code Generation for Fixed-Point DSPs \Delta 19
 of operations inside component trees and between component trees. An algorithm
-which dismantles the DAG should disconnect edges by using as many natural and
-pseudo-natural edges as possible. We have designed such an algorithm, which we
+which dismantles DAG should disconnect edges by using as many natural and
+pseudo-natural edges as possible. We have designed such an algorithm, which We
 call Dismantle.
-The Dismantle algorithm starts by first breaking all natural edges, since breaking
+An algorithm
+which dismantles starts by first breaking all natural edges, since breaking
 these edges adds no cost to the total cost of the final code. After that Dismantle
-proceeds identifying reconvergent paths. It traverses paths in the DAG looking for
+proceeds identifying reconvergent paths. Dismantle
+ traverses paths in the DAG looking for
 edges marked as pseudo-natural edges. If a pseudo-natural edge can be used to
 break an existing reconvergent path the edge is broken. Otherwise the outgoing
 edge which starts the reconvergent path at the corresponding multiple fanout node
 is broken. These edges are marked with a black dot in Figure 13. At this point
 all reconvergent paths in the expression DAG have been disconnected. Additional
 edges are then broken such that no node ends up with more than one outgoing edge
-(these edges are also marked with black dots). The resulting DAG after applying
-algorithm Dismantle is shown in Figure 13. It decomposes the original DAG into
-five expression trees Finally, these expression trees are scheduled and
+(Additional
+edges are also marked with black dots). The resulting DAG after applying
+algorithm Dismantle is shown in Figure 13. algorithm Dismantle decomposes DAG DAG into
+five expression trees Finally, 
+five expression trees are scheduled and
 code is generated for each expression tree.
 a a a
 a
@@ -806,7 +832,7 @@ a
 Fig. 13. Resulting component trees after dismanteling
 6. EXPERIMENTAL RESULTS
 DSPstone [Zivojnovic et al. 1994] is a benchmark designed to evaluate the code
-quality generated by compilers for different DSP processors. DSPstone is divided
+quality generated by compilers for different DSP processors. DSPstone [Zivojnovic et al. 1994] is divided
 into three benchmark suites: Application, DSP-kernel and C-kernel. The Application
 benchmark consists of the program adpcm, a well-known speech encoding
 algorithm. The DSP-kernel benchmark consists of a number of code fragments,
@@ -829,12 +855,12 @@ We have applied algorithm OptSchedule to expression trees extracted from program
 in the DSP-kernel benchmark. The metric used to compare the code was the number
 of cycles that takes to compute the expression tree.
 Observe from Table 2 that algorithm OptSchedule produces the best code when
-compared with two SC schedules, what is expected since we have proved its opti-
+compared with two SC schedules, what is expected since We have proved its opti-
 mality. Notice that although SC schedules can sometimes produce optimal code,
 it can also generate bad quality code, as it is the case for expression tree 6. We
 can also verify that the same expression tree generates different code quality when
 different SC schedules are used. The structure of the expression tree dictates the
-best SC schedule, and this structure is a function of the way the programmer writes
+best SC schedule, and The structure of the expression tree is a function of the way the programmer writes
 the code.
 6.2 DAG Types Distribution
 Expression DAGs were classified in trees, leaf DAGs and full DAGs. Leaf DAGs
@@ -868,9 +894,8 @@ Table
 4. Experiments with DAGs - Leaf DAG (L); Full DAG
 38% leaf DAGs and 6% full DAGs. From the set of benchmarks in Table 3 we have
 noticed that the majority of the basic blocks found in these programs are trees
-and leaf DAGs. Another experiment was performed, this time using the DSPstone
-application benchmark adpcm. As before, basic blocks were analyzed to determine
-the frequency of trees, leaf DAGs and DAGs. In this case, 94% of the basic blocks
+and leaf DAGs. Another experiment was performed, this time using the DSPstone [Zivojnovic et al. 1994]application benchmark adpcm. As before, basic blocks were analyzed to determine
+the frequency of trees, leaf DAGs and DAGs. In the case, 94% of the basic blocks
 in this program were found to be trees, 3% leaf DAGs and 3% full DAGs. Although
 dynamic counting of basic blocks is required in order to provide information on the
 impact on execution time, one can reasonably argue that a large portion of this
@@ -888,13 +913,13 @@ the purpose of comparison with hand-written code. Hand-written assembly code
 DSPstone benchmark suite [Zivojnovic et al. 1994].
 Compiled code was generated for each DAG and the resulting number of cycles
 for a single loop execution reported in Table 4. Compiled code was also generated
-using a standard heuristic, which dismantles the DAG by breaking all edges at
+using a standard heuristic, which dismantles DAG by breaking all edges at
 multiple fanout nodes (column Standard Heuristic). Table 4 shows the number
 of processor cycles and the overhead with respect to hand-written code. Notice
 that the overhead is due only to the DAG dismanteling technique. The average
 overhead when comparing the compiled (Dismantle Heuristic) and the assembly
 reference code was 7%. Leaf nodes are treated the same way in both heuristics.
-They are simply duplicated into different nodes - one for each outgoing edge. As a
+Leaf nodes are simply duplicated into different nodes - one for each outgoing edge. As a
 consequence, both heuristics have the same performance for the case of leaf DAGs.
 The average overhead (Dismantle Heuristic) for the case of full DAGs was higher
 (11%) than for the case of leaf DAGs (4%). The discrepancy is due to the existence
@@ -919,7 +944,7 @@ information to help in the task of dismanteling the expression DAG into a
 forest of trees.
 The question on how to generate good code for architectures which have cyclic
 RTGs remains open though. As it was mentioned before, expression trees generated
-in these architectures can also benefit from this optimality provided they are free
+in these architectures can also benefit from this optimality provided expression trees are free
 of any allocation deadlock. An interesting question which follows from that is how
 many of expression trees with this property are generated in programs running on
 these architectures. More work is under way in order to answer this and other
@@ -975,7 +1000,7 @@ Circuits and Systems
 Compilers: principles, techniques, and tools
 Generalization of the Sethi-Ullman algorithm for register allocation
 Code generation using tree matching and dynamic programming
-Digital signal processing applications with the TMS320 family (vol. 2)
+Digital signal processing applications with the TMS320 Family (vol. 2)
 Optimal code generation for embedded memory non-homogeneous register architectures
 Instruction selection using binate covering for code size optimization
 Optimal register assignment to loops for embedded code generation

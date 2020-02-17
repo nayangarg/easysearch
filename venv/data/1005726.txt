@@ -1,7 +1,7 @@
 --T
 A model of BGP routing for network engineering.
 --A
-The performance of IP networks depends on a wide variety of dynamic conditions. Traffic shifts, equipment failures, planned maintenance, and topology changes in other parts of the Internet can all degrade performance. To maintain good performance, network operators must continually reconfigure the routing protocols. Operators configure BGP to control how traffic flows to neighboring Autonomous Systems (ASes), as well as how traffic traverses their networks. However, because BGP route selection is distributed, indirectly controlled by configurable policies, and influenced by complex interactions with intradomain routing protocols, operators cannot predict how a particular BGP configuration would behave in practice. To avoid inadvertently degrading network performance, operators need to evaluate the effects of configuration changes before deploying them on a live network. We propose an algorithm that computes the outcome of the BGP route selection process for each router in a single AS, given only a static snapshot of the network state, without simulating the complex details of BGP message passing. We describe a BGP emulator based on this algorithm; the emulator exploits the unique characteristics of routing data to reduce computational overhead. Using data from a large ISP, we show that the emulator correctly computes BGP routing decisions and has a running time that is acceptable for many tasks, such as traffic engineering and capacity planning.
+The performance of IP networks depends on a wide variety of dynamic conditions. Traffic shifts, equipment failures, planned maintenance, and topology changes in other parts of the Internet can all degrade performance. To maintain good performance, network operators must continually reconfigure the routing protocols. Operators configure BGP to control how traffic flows to neighboring Autonomous Systems (ASes), as well as how traffic traverses as well networks. However, because BGP route selection is distributed, indirectly controlled by configurable policies, and influenced by complex interactions with intradomain routing protocols, operators cannot predict how a particular BGP configuration would behave in practice. To avoid inadvertently degrading network performance, operators need to evaluate the effects of configuration changes before deploying operators on a live network. We propose an algorithm that computes the outcome of the BGP route selection process for each router in a single AS, given only a static snapshot of the network state, without simulating the complex details of BGP message passing. We describe a BGP emulator based on this algorithm; the emulator exploits the unique characteristics of routing data to reduce computational overhead. Using data from a large ISP, We show that the emulator correctly computes BGP routing decisions and has a running time that is acceptable for many tasks, such as traffic engineering and capacity planning.
 --B
 INTRODUCTION
 The delivery of IP packets through the Internet depends on a
@@ -20,7 +20,7 @@ might adjust the configuration to respond to network congestion
 or equipment failures or to prepare for planned maintenance.
 However, the complexity of the protocols, the large number of tunable
 parameters, and the size of the network make it extremely
-difficult for operators to reason about the effects of their actions.
+difficult for operators to reason about the effects of operators actions.
 The common approach of "tweak and pray" is no longer acceptable
 in an environment where users have high expectations for performance
 and reliability [1]. To avoid costly debugging time and
@@ -29,30 +29,36 @@ quickly based on an accurate model of the routing protocols.
 Previous work in this area has focused on Interior Gateway Protocols
 (IGPs), such as Open Shortest Path First (OSPF) and Intermediate
 System-Intermediate System (IS-IS), that operate within a
-single Autonomous System (AS). In these protocols, each link has a
+single Autonomous System (AS). In Interior Gateway Protocols
+(IGPs), such as Open Shortest Path First (OSPF) and Intermediate
+System-Intermediate System (IS-IS), that operate within a
+single Autonomous System (AS), each link has a
 configurable integer "cost" that is used to compute the shortest path
 (smallest cost path) through the network. Tuning these link weights
 gives operators a way to modify the paths inside the AS to satisfy
 network and user performance goals [2]. Several existing tools [3,
 4, 5] capture how changes to the link weights would affect the flow
 of the offered traffic over the new paths and also propose good candidate
-settings of the link weights. Although these tools are extremely
+settings of the link weights. Although [2]. Several existing tools [3,
+4, 5] are extremely
 valuable to network operators, the flow of traffic in large
 service provider backbones ultimately depends on the interdomain
 routing protocol as well. A provider uses the Border Gateway Protocol
 (BGP) to exchange reachability information with neighboring
-domains and to propagate these routes within its own network. Un-
+domains and to propagate these routes within A provider own network. Un-
 fortunately, several subtleties make modeling BGP route selection
 in an AS much more challenging than emulating IGP:
 . BGP's distributed, path vector operation means that every
 router may have a different view of network state. In contrast to
 link state protocols that flood complete information throughout the
 network, a BGP-speaking router sends incremental reachability information
-only to its immediate neighbors. In BGP, a router sends
-an advertisement to notify its neighbor of a new route to a destination
+only to the
+network immediate neighbors. In BGP, a router sends
+an advertisement to notify the
+network neighbor of a new route to a destination
 prefix and a withdrawal to revoke the route when it is no
-longer available. Each BGP-speaking router locally computes its
-own best BGP route from the best routes announced by its neigh-
+longer available. Each BGP-speaking router locally computes Each BGP-speaking router
+own best BGP route from the best routes announced by Each BGP-speaking router neigh-
 bors. A change in the best path at one router can affect the selection
 of the best route at another router, and no single router has a complete
 view of the available BGP routes in the AS.
@@ -83,7 +89,7 @@ effect on the selection of the best path.
 . BGP route selection depends on interactions with intradomain
 routing protocols. Whereas the IGP can be modeled in isolation,
 the selection of the best BGP route at each router also depends on
-the IGP path cost to the BGP next hop announcing the route. "Hot
+the IGP path cost to BGP next hop announcing the route. "Hot
 potato" routing, where a router prefers the route with the shortest
 IGP path (the closest exit point), introduces a complex coupling
 between BGP and the underlying IGP.
@@ -98,15 +104,15 @@ the protocol from converging.
 In this paper, we present a model that accurately determines how
 the network configuration and the routes learned via external BGP
 (eBGP) affect the flow of traffic through an AS. While some existing
-tools simulate BGP's behavior [7], this is the first paper to
+tools simulate Internal BGP (iBGP)'s behavior [7], this is the first paper to
 develop a model that determines the outcome of the BGP path selection
 process at each router in an AS without simulating the dynamics
 of the protocol. This type of model is important for several
 reasons. First, network operators need to know the paths that
 routers ultimately select to perform engineering tasks (e.g., traffic
-engineering and maintenance), but they have no need for a computationally
+engineering and maintenance), but network operators have no need for a computationally
 expensive simulation of routing dynamics. We present
-an emulator based on our model that facilitates these tasks by providing
+an emulator based on We model that facilitates these tasks by providing
 fast, accurate answers to "what if" questions about the effects
 of changes to the network. Second, an accurate model of BGP
 route selection can be used to improve and validate existing simulators
@@ -123,10 +129,10 @@ network configuration and the eBGP routes learned at the egress
 routers (as shown in Figure 1). This paper solves precisely this
 problem. The model of BGP routing that we present is essentially
 an abstraction that conceals protocol details that are irrelevant to
-the outcome of the BGP decision process. The model computes
+the outcome of the BGP decision process. The model of BGP computes
 BGP routing decisions when the network is configured "correctly",
 which can be checked separately by testing certain sufficient con-
-ditions. Our model can also be combined with prefix-level traffic
+ditions. The model of BGP can also be combined with prefix-level traffic
 measurements to form the basis of a traffic engineering tool.
 The rest of the paper is organized as follows. In Section 2, we
 present several examples of network engineering tasks that motivate
@@ -138,18 +144,18 @@ constraints in a novel way to decompose the route prediction problem
 into three distinct phases. In Section 4, we describe each phase
 of the route prediction algorithm in detail. Section 5 describes a
 prototype implementation of a BGP emulator. In Sections 6 and 7,
-we present an evaluation and validation of our prototype on routing
+we present an evaluation and validation of we prototype on routing
 and configuration data from a large tier-1 ISP. These experiments
 show that the route prediction algorithm accurately predicts BGP
 routing decisions and that it is efficient enough to be practical for
 many network engineering tasks. Section 8 provides an overview
 of related work. We conclude in Section 9.
 2. NETWORK ENGINEERING
-In this section, we discuss network engineering problems that
+In Section 8, We discuss network engineering problems that
 operators commonly face. These examples demonstrate the need
 to systematically model BGP's route selection process and move
 beyond today's ``tweak and pray'' techniques. We then discuss why
-a practical model of BGP is useful; in particular, we discuss the
+a practical model of BGP is useful; in particular, We discuss the
 advantages a model has over simulation and live testing.
 2.1 Network Engineering Problems
 Network operators must adjust routing protocol configuration to
@@ -160,7 +166,8 @@ in traffic distribution across network links. For example, a Web site
 sometimes experiences a traffic surge due to a flash crowd (i.e., the
 "Slashdot effect"); a network that was routing traffic to that destination
 through a neighboring AS could experience congestion on
-an outbound link to that destination. A network operator must re-configure
+an outbound link to that destination
+. A network operator must re-configure
 routing policy to alleviate congestion.
 . Changes in link capacity. Network links are frequently upgraded
 to higher capacity. In response, network operators may wish
@@ -172,17 +179,18 @@ traffic from b to a.
 points where a network connects to neighboring ASes, as well as
 the ASes that it connects to, change. As links to other ASes appear
 and disappear, network operators must move large amounts of traf-
-fic. If the AS shown in Figure 1 added a third link to its neighboring
-AS, an operator would shift a portion of traffic to that AS from a
+fic. If the AS shown in Figure 1 added a third link to the AS neighboring
+AS, an operator would shift a portion of traffic to its neighboring
+AS from a
 and b to the new link.
 . Changes in available routes. Due to protocol dynamics and
-changing commercial agreements, an AS might suddenly receive
+changing commercial agreements, an the AS might suddenly receive
 an alternate route to a destination that could cause traffic flow to
 shift dramatically; alternatively, an existing route could suddenly
 disappear. These events may require a network operator to rebalance
 the flow of traffic.
 . Planned maintenance. Network operators commonly perform
-routine maintenance on portions of their network, adjusting interior
+routine maintenance on portions of Network operators network, adjusting interior
 routing link weights to divert traffic away from the part of the
 network that is undergoing maintenance. If router R were undergoing
 an upgrade, the network operator could adjust both the IGP
@@ -196,14 +204,16 @@ fiber cut, tunnel fire, or terrorist attack) helps network operators and
 planners make design decisions.
 Tools exist to help network operators adjust interior routing protocol
 parameters to rebalance traffic within an AS [3, 4, 5], but operators
-must also rebalance traffic across its external links to other
+must also rebalance traffic across operators
+ external links to other
 networks by reconfiguring BGP. A network operator who wants to
 shift traffic from link a to b in Figure 1 typically would adjust the
 import policy for a set of routes at router A, commonly by decreasing
 the "local preference" attribute that router A assigns to these
 routes [8]. This would cause the routes learned at router B for these
 destinations to appear more attractive than those at A, causing the
-traffic to those destinations to exit the AS via B.
+traffic to these
+destinations to exit the AS via B.
 2.2 Network Engineering Requirements
 Motivated by these practical network engineering examples, we
 now present several requirements for a network engineering tool
@@ -256,26 +266,27 @@ At a glance, modeling the routing decisions in an AS seems as
 simple as applying the BGP decision process at each router. How-
 ever, the BGP routing system inside an AS is not guaranteed to
 converge to a unique solution where routers make consistent deci-
-sions. Even when the system converges, the decision made at one
+sions. Even when the BGP routing system inside an AS converges, the decision made at one
 router can affect the options available to other routers. Applying
 theoretical results from previous work, we impose three practical
 constraints on the routing system that make modeling BGP route
-selection possible. We then show that route selection can be modeled
-in three distinct phases when these constraints are satisfied.
+selection possible. we then show that route selection can be modeled
+in three distinct phases when three practical
+constraints on the routing system that make modeling BGP route
+selection possible are satisfied.
 3.1 Constraints on the Routing System
 Given the eBGP-learned routes to a destination prefix, we would
 like to determine which route each router would ultimately select.
-Unfortunately, certain network configurations do not lend themselves
+Unfortunately, certain network configurations do not lend certain network configurations
 to efficient route prediction. This is a fundamental problem
 underlying BGP-some configurations do not converge, and determining
 whether a system converges to a unique solution is computationally
 intractable [9]. To make modeling BGP route selection
-feasible, we impose three constraints and explain why these constraints
-are reasonable to assume in practice.
+feasible, we impose three constraints and explain why three constraintsare reasonable to assume in practice.
 If the eBGP-learned routes change frequently, the internal routing
 system does not have time to propagate the effects of one eBGP
 advertisement before the next one arrives. As such, we assume:
-CONSTRAINT 1. The eBGP-learned routes change slowly with
+CONSTRAINT 1. the eBGP-learned routes change slowly with
 respect to the timescale of network engineering decisions.
 In practice, most BGP routes are stable for days or weeks at a
 time [10], and the vast majority of traffic is associated with these
@@ -288,12 +299,15 @@ simplest case, the routers are configured in a full mesh of iBGP ses-
 sions. In general, though, the routers may form a more complicated
 signaling graph of iBGP sessions, as shown in Figure 2. Each edge
 corresponds to an iBGP session between a pair of routers. A router
-does not normally forward iBGP-learned routes to its other iBGP
+does not normally forward iBGP-learned routes to A router
+ other iBGP
 neighbors. However, a router can be configured as a route reflector
-(RR), which forwards routes learned from one of its route-reflector
-clients to its other clients. Following terminology from previous
+(RR), which forwards routes learned from one of A router
+ route-reflector
+clients to A router
+ other clients. Following terminology from previous
 work [12], we use the term up for the iBGP session from a router to
-its RR, over for a conventional iBGP session between two routers,
+a router RR, over for a conventional iBGP session between two routers,
 and down for the iBGP session from an RR to a client. A valid
 signaling path consists of zero or more up edges, followed by at
 most one over edge, followed by zero or more down edges. Alter-
@@ -315,7 +329,7 @@ Figure
 
 2. The edge between RR1 and RR2 is an over session,
 whereas the edge from Z to RR2 is an up session. An eBGP route
-learned at Z can reach Y via RR2 and RR1. An AS's signaling
+learned at Z to RR2 can reach Y via RR2 and RR1. An AS's signaling
 graph can violate this property even if all routers are connected via
 IGP. For example, if the session between Y and RR1 were an over
 session instead of an up session, Y would have no way to receive
@@ -327,12 +341,12 @@ An operational network should not violate this constraint, since this
 could create a network partition, even though the AS is connected at
 the IP level. An AS with a full mesh of iBGP sessions satisfies this
 constraint; so does a full iBGP mesh among the top-level RRs who,
-in turn, each have iBGP sessions to their RR clients (a common
+in turn, each have iBGP sessions to each RR clients (a common
 configuration scenario).
 Ensuring that each eBGP-learned route has an iBGP path to every
 other router still does not guarantee that each router converges
 to a unique solution. A router only learns about the routes advertised
-by its immediate iBGP and eBGP neighbors. For example, in
+by A router immediate iBGP and eBGP neighbors. For example, in
 
 Figure
 
@@ -341,7 +355,8 @@ single route from its route reflector RR1. Suppose that RR1 selects
 the eBGP route advertised by Z. Then, Y would pick Z's route
 as well, even if Y would have preferred W 's route over Z's route.
 Note that Y makes a different routing decision than it would if it
-could select its best route from all the eBGP routes (i.e., from both
+could select it
+ best route from all the eBGP routes (i.e., from both
 W and Z). In some situations, differences in the routers' local
 rankings of the BGP routes can cause persistent oscillations and
 even forwarding loops, which make it difficult to model the outcome
@@ -354,7 +369,8 @@ graph does not have any cycle of up edges, and (c) the shortest
 IGP path between each pair of routers is a valid signaling path.
 Part (a) is satisfied when routers do not change the attributes of
 iBGP-learned routes and each router has a lower IGP path cost to
-its clients than to other routers. The common practices of applying
+
+ clients than to other routers. The common practices of applying
 import policies only on eBGP sessions and placing RRs and their
 clients in the same point-of-presence (i.e., "PoP") ensure that these
 conditions hold. Part (b) states that if a is an RR for b, and b is an
@@ -381,10 +397,11 @@ practice but is consistent with the approach of assigning clients to
 RRs that are along the shortest path to each egress point.
 Imposing these three constraints make modeling BGP route selection
 possible. Each router applies a multi-stage decision process
-[6] to select a single best route, as summarized in Table 1. The
+[6] to select a single best route, as summarized in Table 1. the
 decision process considers the set of available routes to a destination
 and proceeds step-by-step to eliminate candidate routes. For
-example, the decision process first eliminates all routes that do not
+example, the
+decision process first eliminates all routes that do not
 have the highest local preference value, and so forth, until a single
 best route remains. Since the route selected at one router can affect
 the routes available at another router, we cannot simply apply the
@@ -394,8 +411,9 @@ and 3 ensure that the system converges to a unique solution, which
 allows us to apply the following intuitive result:
 THEOREM 1. If a routing system is guaranteed to converge to
 a unique solution, the solution is independent of the order that
-routers exchange routes and apply the decision process.
-We proved a slightly different version of this theorem in our previous
+routers exchange routes and apply the
+decision process.
+we proved a slightly different version of this theorem in we previous
 work (Theorem 4.1, [13]). In practice, a router may receive
 numerous route advertisements and select (and propagate) a best
 route multiple times before settling on a final choice. Fortunately,
@@ -404,21 +422,22 @@ prediction algorithm can predict the outcome without simulating
 the protocol dynamics.
 3.2 Phases of the Route Prediction Algorithm
 Although some of the constraints we discussed have previously
-been presented as conditions for stable routing, these constraints
-are also necessary to model BGP route selection; we now constructively
-apply these constraints to propose a novel way of decomposing
+been presented as conditions for stable routing, three constraintsare also necessary to model BGP route selection; we now constructively
+apply three constraints to propose a novel way of decomposing
 route prediction. Theorem 1 gives us the flexibility to define
 a message ordering without affecting correctness. Specifically, the
 algorithm selects a message ordering that decomposes the problem
 into three distinct phases, as shown in Figure 3. The rest of the section
 explains this decomposition, deferring the detailed discussion
 of each phase to Section 4.
-Receiving the eBGP routes and applying import policy: The
-first phase assumes that each router receives all of its eBGP-learned
+Receiving one eBGP
+ routes and applying import policy: The
+first phase assumes that each router receives all of one eBGP
+ eBGP-learned
 routes and applies the import policies, before exchanging any iBGP
 update messages. Each eBGP-learned route has attributes (such as
 the destination prefix and the AS path) and is associated with an
-eBGP session. The import policy may filter the route or set certain
+eBGP session. The import policy may filter Each eBGP-learned route or set certain
 attributes such as local preference, origin type, and multiple-exit
 discriminator (MED), according to attributes in the advertised route
 (e.g., based on ASes in the AS path). Because applying the import
@@ -458,11 +477,14 @@ policy (per prefix)
 Figure
 
 3: Decomposing network-wide BGP route selection into three independent phases
-router, the first phase emulates exactly the operations a real router
+router, The
+first phase emulates exactly the operations a real router
 would perform upon receiving each of the eBGP routes. These
-routes, with modified attributes, form the input to the second phase.
+routes, with modified attributes, form the input to The
+first phase.
 Computing the best eBGP-learned routes: Many routes from
-the first phase would never be selected by any router as the best
+The
+first phase would never be selected by any router as the best
 BGP route. For example, an eBGP-learned route with a local preference
 of 90 would never be selected over another route with a
 local preference of 100. As long as every eBGP-learned route can
@@ -475,7 +497,8 @@ For example, a router on the east coast of the United States might
 select a route learned in New York, whereas a router on the west
 coast might select a route learned in San Francisco. Still, these
 two routes would have the same local preference, AS path length,
-and origin type; if the two routes have the same next-hop AS, they
+and origin type; if the two routes have the same next-hop AS, these
+two routes
 would also have the same MED value. This property allows the
 second phase of the algorithm to focus on the selection of the "best"
 eBGP routes across the eBGP-speaking routers, without modeling
@@ -483,14 +506,17 @@ the details of distributing these routes throughout the AS.
 Modeling the influence of iBGP and IGP within the AS: In
 the third phase, each router selects a single route from the set of
 best eBGP routes. Each border router that contributes to the set of
-best routes selects its own best eBGP-learned route. Every other
-router selects one of these routes after they have propagated via
+best routes selects Each border router that contributes to the set of
+best routes own best eBGP-learned route. Every other
+router selects one of these routes after Every other
+router have propagated via
 iBGP; this behavior is consistent with step 5 of the BGP decision
 process. The decision at each router depends on the routes selected
-by its iBGP neighbors, the costs of the IGP paths to the exit points
+by each router iBGP neighbors, the costs of the IGP paths to the exit points
 where these routes were learned, and the router IDs of the iBGP
 sessions. This introduces a dependency between iBGP and IGP.
-Fortunately, the algorithm only needs to consider the total IGP path
+Fortunately, the
+algorithm only needs to consider the total IGP path
 cost of the shortest IGP path(s) between each pair of routers, rather
 than hop-by-hop costs. We can make this simplification because
 Constraint 3(c) implies that all of the routers along the IGP path
@@ -503,11 +529,12 @@ envision that network operators could incorporate other modules
 for additional functionality. For example, a module could combine
 the predicted BGP routes with traffic data to predict the load on
 each link in the network. Using the emulator for traffic engineering
-assumes that traffic volumes are relatively stable, and that they
+assumes that traffic volumes are relatively stable, and that traffic volumes
 remain stable in response to configuration changes. In previous
 work, we found that prefixes responsible for large amounts of traffic
 have relatively stable traffic volumes over long timescales [8].
-Operators could use the emulator to test configuration changes on
+Operators could use the emulator for traffic engineering
+ to test configuration changes on
 reasonably slow timescales that affect prefixes with stable traffic
 volumes. A network operator could also combine measurements or
 estimates of the traffic arriving at each ingress point for each destination
@@ -515,34 +542,42 @@ prefix [14] with the link-level paths to predict the load on
 each link in the network. Another module might evaluate the optimality
 of the these link-level paths in terms of propagation delay
 or link utilization and could search for good configuration changes
-before applying them on a live network.
+before applying good configuration changes
+ on a live network.
 4. ROUTE PREDICTION ALGORITHM
 Drawing on the modeling framework from Section 3, this section
 proposes an algorithm that computes the best route at each router
 in an AS. Since the path selection process is independent for each
 prefix, we focus on the prediction problem for a single destination
 prefix. To ensure that the algorithm is efficient, the best route that
-the algorithm predicts for each router should not change the predictions
+an algorithm that computes the best route at each router
+in an AS predicts for each router should not change the predictions
 made earlier for other routers. In other words, we design
 the algorithm to emulate a BGP message ordering that does not require
 any backtracking. Satisfying this constraint for the first phase
-of the algorithm is straightforward because applying the import policy
+of the
+algorithm is straightforward because applying the import policy
 is a purely local operation at each router. However, the second
-and third phases of the algorithm are more complicated because of
+and third phases of the
+algorithm are more complicated because of
 subtle interactions in the BGP decision process:
 . The interaction between MED and router ID prevents the
-second phase of the algorithm from simply selecting the locally-
+second phase of the
+algorithm from simply selecting the locally-
 best route at each router. This complication arises because
 the BGP decision process only compares MED values for
 routes with the same next-hop AS. As such, the MED value
 of an eBGP route learned at one router may affect the local
 ranking of eBGP-learned routes at another router.
 . The interaction between iBGP and the IGP prevents the third
-phase of the algorithm from visiting each router in the AS
+phase of the
+algorithm from visiting each router in the AS
 in an arbitrary order. This complication arises because the
 best BGP route at one router (chosen based on the IGP path
-costs and router IDs from its vantage point) affects the options
-available to its iBGP neighbors.
+costs and router IDs from the IGP path
+ vantage point) affects the options
+available to the IGP path
+ iBGP neighbors.
 The remainder of this section describes how the second and third
 phases of the algorithm arrive at the correct prediction without
 backtracking.
@@ -550,9 +585,11 @@ backtracking.
 The second phase of the algorithm begins with a complete set
 of eBGP routes (after modification by the import policies) and produces
 the set of candidate best eBGP routes; the best route that each
-router selects is an element from this set. Thus, the second phase
+router selects is an element from a complete set
+of eBGP routes (after modification by the import policies). Thus, the second phase
 of the algorithm must have the following properties:
-. It must eliminate any eBGP-learned routes that could not be
+. the following properties:
+ must eliminate any eBGP-learned routes that could not be
 the best route at any router in the AS. We impose this constraint
 to simplify later stages of the algorithm.
 a
@@ -574,10 +611,11 @@ The second phase of the algorithm determines the best route to
 a destination at every eBGP-speaking router by starting with the
 complete set of eBGP-learned routes and systematically eliminating
 routes from this set of candidate routes.
-First, the algorithm eliminates every route from this set that would
+First, the algorithm eliminates every route from a complete set
+of eBGP routes (after modification by the import policies) that would
 be eliminated based on the first three steps of the BGP decision process
 (i.e., local preference value, AS path length, and origin type).
-The algorithm effectively applies the first three steps of the BGP decision
+the algorithm effectively applies the first three steps of the BGP decision
 process globally across the set of all candidate eBGP routes.
 It might seem appealing either to continue applying steps of the
 BGP decision process globally or to apply the remaining steps of
@@ -603,12 +641,13 @@ would always prefer route a over route d, since a is learned
 via eBGP (step 5) and a and d are equally good up through step
 4 (recall that a router does not compare the MEDs of routes with
 different next-hop ASes).
-Local route elimination is not correct. It might also seem natural
+Local route elimination is not correct. Local route elimination might also seem natural
 to simply select a best route locally at each router and subsequently
 eliminate routes from this set by comparing routes within this set
 of locally best routes. This does not work either. Consider Figure 4
 again. Applying the decision process locally at each router, router
-selects route c because its router ID is lower than that of a; sim-
+selects route c because router
+ router ID is lower than that of a; sim-
 ilarly, router Y selects route d. This suggests that router X would
 ultimately select d as its best route, since d is better than c due
 to MED comparison. However, this conclusion is also incorrect,
@@ -623,11 +662,14 @@ routes that have not either been eliminated or marked as a best route:
 1. Select any eBGP-speaking router that has at least one candidate
 route and consider the route that is best locally at that router among
 the remaining candidate routes.
-2. Eliminate this route if it has a higher MED value and the same
+2. Eliminate at least one candidate
+route if at least one candidate
+route has a higher MED value and the same
 next-hop AS as the locally-best route at another router.
-Otherwise, eliminate all other routes at this router, as well as all
+Otherwise, eliminate all other routes at that router, as well as all
 other routes with the same next-hop AS and a larger MED value.
-Mark the remaining route at this router as the best route.
+Mark the remaining route at that router as at least one candidate
+route.
 
 Figure
 
@@ -635,17 +677,20 @@ Figure
 determine the set of best eBGP routes.
 this part of the algorithm. The network in Figure 4 starts with c
 and d as the locally-best routes at X and Y , respectively, based on
-router ID. The algorithm applies the following steps:
-1. Consider X: The locally-best route is c, which has a higher
+router ID. the algorithm applies the following steps:
+1. Consider X: at least one candidate
+route is c, which has a higher
 MED value and the same next-hop AS as d, so eliminate c
 from the candidates at router X .
-2. Consider Y : The locally-best route is d. No other router has
+2. Consider Y : at least one candidate
+route is d. that router has
 a locally-best route with smaller MED value and the same
-next-hop AS, so mark d as the best route and eliminate b.
+next-hop AS, so mark d as at least one candidate
+route and eliminate b.
 3. Consider X: The locally-best route among the remaining
 candidates is a, and no other routers have routes left, so mark
 a as a best route.
-This algorithm computes the correct routing decision for each router:
+the algorithm computes the correct routing decision for each router:
 a at router X and d at router Y . At router Y , d is better than a (step
 5), b (step 7) and c (step 4). At router X , a is better than d (step
 5); a is not better than b, but this does not matter because router Y
@@ -653,13 +698,15 @@ does not select b, and a is not better than c, but this does not matter
 since c is always worse than d (step 4).
 THEOREM 2. For each eBGP-speaking router in the network,
 the second phase of the route prediction algorithm selects the best
-route for that router if the best route for that router is an eBGP-
-learned route. If the best route is an iBGP-learned route, the second
-phase eliminates all routes at that router.
+route for each eBGP-speaking router in the network if the best route for each eBGP-speaking router in the network is an eBGP-
+learned route. If at least one candidate
+route is an iBGP-learned route, the second
+phase eliminates all routes at each eBGP-speaking router in the network.
 The proof of this theorem follows from two proofs in our previous
-work [13]. In this work, we first show that the second phase of
+work [13]. In our previous
+work, our first show that the second phase of
 the route prediction algorithm never eliminates a candidate route
-that an eBGP-speaking router would have selected as its best route
+that an eBGP-speaking router would have selected as an eBGP-speaking router best route
 (Theorem A.4) and the algorithm always eliminates every candidate
 route that BGP eliminates (Theorem A.4). Additionally, the
 second phase of the algorithm correctly predicts the set of best
@@ -675,7 +722,8 @@ speaking routers readvertised every eBGP-learned route to every
 router in the AS, as in a full-mesh iBGP configuration. However,
 the use of route reflectors (RRs) typically violates this assumption.
 The routing alternatives available to a particular router depends on
-its position in the route reflector hierarchy. For example, consider
+
+ position in the route reflector hierarchy. For example, consider
 a3eBGP
 
 Figure
@@ -701,10 +749,10 @@ Figure
 the network shown in Figure 6. Routers X and Y have eBGP routes
 a and b, respectively, that are equally good through the first four
 steps of the decision process. In this network, RR1 prefers route
-a because it has a smaller IGP path cost to X than to Y ; however,
-would prefer b over a, because its shortest IGP path to Y has
-cost 3 (via router Z), but its shortest path to X has cost 5. However,
-only advertises its best route, a, to RR2; as such, RR2 never
+a because this network has a smaller IGP path cost to X than to Y ; however,
+would prefer b over a, because this network shortest IGP path to Y has
+cost 3 (via router Z), but this network shortest path to X has cost 5. However,
+only advertises this network best route, a, to RR2; as such, RR2 never
 learns about route b.
 To account for these dependencies, the algorithm emulates a particular
 iBGP message ordering, making decisions at each router and
@@ -712,19 +760,18 @@ propagating the effects of these decisions to other routers, visiting
 each router without backtracking. (Theorem 1 allows the algorithm
 to select any iBGP message ordering.) If Constraint 3 is satisfied,
 the algorithm can consider the routing decisions at each router in
-the AS in the order specified in Figure 7. Applying this algorithm
-to the example in Figure 6, the shaded routers select best routes in
-the first step, since each of those routers has a direct path down the
+the AS in the order specified in Figure 7. Applying the algorithmto the example in Figure 6, the shaded routers select best routes in
+the first step, since each of the shaded routers has a direct path down the
 iBGP hierarchy to an eBGP-speaking router. First, X and Y select
-best eBGP routes a and b, respectively; since the routers are at the
-same level in the hierarchy, the algorithm can visit them in any or-
+best eBGP routes a and b, respectively; since the shaded routers are at the
+same level in the hierarchy, the algorithm can visit the shaded routers in any or-
 der. Then, RR1 applies the BGP decision process to a and b, and
-selects a because it has a smaller IGP path cost. The BGP decision
-process is applied to the rest of the routers by starting from the top
+selects a because the BGP decision process has a smaller IGP path cost. The BGP decision
+process is applied to the rest of the shaded routers by starting from the top
 of the hierarchy and proceeding downward. RR2 receives a, which
-is its best (and only) route to the destination; similarly for Z, which
+is RR2 best (and only) route to the destination; similarly for Z, which
 receives a from RR2, and W , which receives a from RR1.
-The algorithm operates by defining two partial orderings of the
+the algorithm operates by defining two partial orderings of the
 routers, based on the up edge and the down edges, respectively.
 This is possible because Constraint 3(b) requires that the signaling
 graph does not have any cycles of these edges. Visiting the
@@ -754,12 +801,15 @@ and the proof is the same.
 To demonstrate that the algorithm from Section 4 is accurate and
 practical, we have implemented a BGP emulator that computes the
 outcome of the BGP decision process for all routers in an AS. In
-this section, we discuss the input data that the emulator requires and
+this section, we discuss the input data that a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS requires and
 how network operators can obtain this data in practice. Then we
-describe the basic design of the emulator, deferring the discussion
+describe the basic design of a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS, deferring the discussion
 of performance optimizations to Section 6.3.
 5.1 Input Data
-As shown in Figure 8, the emulator uses three inputs:
+As shown in Figure 8, a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS uses three inputs:
 . BGP routing tables: The BGP tables for the eBGP-speaking
 routers provide the first phase of the algorithm with a snap-shot
 of the routes advertised by neighboring ASes. We ignore
@@ -767,7 +817,7 @@ the router's current view of the best route and the current setting
 of the local preference attribute, since these relate to the
 existing network configuration rather than the scenarios we
 might want to emulate.
-. Router configuration files: The configuration files are used to
+. Router configuration files: Router configuration files are used to
 (1) determine the import policies (i.e., route maps) for each
 eBGP session, (2) determine the iBGP signaling graph, and
 (3) compute the IGP path costs between each pair of routers.
@@ -784,11 +834,13 @@ We emphasize several points with regard to the input data. First, a
 network operator can capture all of the necessary data with telnet
 or ssh access to each router. Second, many aspects of the input
 data (e.g., the router ID data, routes for prefixes with stable traffic
-volumes, etc.) do not change very often; as such, the emulator is
+volumes, etc.) do not change very often; as such, a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS is
 useful even if all of the input data is collected infrequently (e.g.,
 once a day). Finally, because certain inputs can be approximated
 (e.g., router ID is typically the loopback IP address of the router)
-and often do not affect the decision process, the emulator can be
+and often do not affect the decision process, a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS can be
 effective even with limited input.
 BGP tables
 known routes
@@ -810,23 +862,29 @@ Compute best route
 
 Figure
 
-8: Data flow in the emulator. Fonts specify raw inputs,
+8: Data flow in a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS. Fonts specify raw inputs,
 input tables, and DERIVED TABLES. In practice, operators might
 collect raw inputs once a day.
 5.2 Emulator Design Overview
-The emulator uses a database back-end. This design provides efficient
+a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS uses a database back-end. a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS provides efficient
 access to small subsets of the configuration data and routes
 and also stores intermediate results, which allow us to validate each
-part of the algorithm separately. Figure 8 summarizes how the emulator
-uses the inputs and intermediate results to generate a table of
-predicted routes. The emulator performs route prediction with three
+part of the algorithm separately. Figure 8 summarizes how a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an ASuses the inputs and intermediate results to generate a table of
+predicted routes. a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS performs route prediction with three
 distinct database operations that correspond to the three phases described
 in Section 3.2:
-Computing the modified routes: Once the emulator loads the
+Computing the modified routes: Once a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS loads the
 BGP tables and route maps into the database, the first operation
 applies the import policies to the eBGP routes: each row of the import
 table specifies how a particular set of rows in the known routes
-table should be modified; the emulator performs the actual modifications
+table should be modified; a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS performs the actual modifications
 on the MODIFIED ROUTES table. More specifically, each
 row of the import table specifies a router name, the IP address of the
 BGP neighbor, and an AS path regular expression. Each row of the
@@ -841,7 +899,10 @@ and (2) setting the other attributes (e.g., local preference) according
 to the values specified in that row of the import table. The
 primary challenges associated with this operation result from the
 potentially large number (i.e., on the order of millions) of eBGP-
-learned routes; we address these challenges in Section 6.3.
+learned routes; we address The
+primary challenges associated with this operation result from the
+potentially large number (i.e., on the order of millions) of eBGP-
+learned routes in Section 6.3.
 Computing the egress points: The second operation applies the
 technique from Section 4.1 to generate the set of best eBGP-learned
 routes, which serves as an input to the third module. This part of the
@@ -849,12 +910,13 @@ algorithm performs "select" statements on the MODIFIED ROUTES
 table to successively refine the set of candidate routes. The router
 ID table contains the router ID for every BGP session at each router,
 which is needed for step 7 of the decision process. As the method
-from Section 4.1 marks "best" routes, these routes are inserted into
+from Section 4.1 marks "best" routes, the MODIFIED ROUTES
+ are inserted into
 the EGRESS POINTS table for use by the third operation.
-Computing the predicted routes: The third operation uses the
+Computing the predicted routes: the third operation uses the
 iBGP signaling graph, IGP path costs, and technique from Section
 4.2 to determine the best BGP route for each prefix at each
-router. The module uses the iBGP signaling graph to determine
+router. the third module uses the iBGP signaling graph to determine
 which routes are advertised to each router, the IGP path costs between
 each pair of routers to determine the closest eBGP-speaking
 router to each ingress router (used in step 6 of the decision pro-
@@ -868,15 +930,17 @@ algorithm. When applying the IGP tiebreaking step at an ingress
 router, IGP path costs is used to determine the egress router with
 the shortest IGP path.
 6. PERFORMANCE EVALUATION
-In this section, we evaluate the performance of our implementation
-of the BGP emulator. We do not attempt to perform a complete
+In this section, we evaluate the performance of we implementation
+of the BGP emulator. we do not attempt to perform a complete
 performance analysis of the prototype. Rather, we conduct experiments
 that demonstrate the practicality of the prediction algorithm.
-While our evaluation is preliminary, our performance tests demonstrate
-that the emulator can operate on timescales that could allow
+While we evaluation is preliminary, we performance tests demonstrate
+that a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS can operate on timescales that could allow
 an operator to use a BGP emulator based on our algorithms in a
-practical setting. Our evaluation demonstrates the following points:
-. The emulator computes the best routes for one prefix through-out
+practical setting. we evaluation demonstrates the following points:
+. a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS computes the best routes for one prefix through-out
 a large tier-1 ISP network in about one second. Although
 predicting the best route for all prefixes at all routers in such
 a network takes several hours, this type of computation does
@@ -884,30 +948,40 @@ not need to be performed all that frequently in practice.
 . Exploiting commonalities among route advertisements to eliminate
 redundant computation reduces the running time of the
 emulator by approximately 50%.
-. Using the emulator to evaluate the effects of an incremental
+. Using a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS to evaluate the effects of an incremental
 change to router configuration typically takes only a few sec-
-onds. Thus, we believe that the emulator can be practical for
+onds. Thus, we believe that a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS can be practical for
 tasks such as interdomain traffic engineering.
 After briefly discussing the evaluation framework, we examine
-the emulator's performance. First, we discuss the emulator's performance
+the emulator's performance. First, we discuss a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS's performance
 when it computes the routes for every prefix in the routing
 table from scratch, without any performance optimizations. We
 then examine how insights from the BGP decision process and previous
 measurement studies can improve performance. Finally, we
-describe how the emulator can quickly predict the effects of incremental
+describe how a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS can quickly predict the effects of incremental
 configuration changes.
 6.1 Evaluation Framework
-We ran the emulator on a Sun Fire 15000 with 192 GB of RAM
+we ran a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS on a Sun Fire 15000 with 192 GB of RAM
 and 48 900 MHz Ultrasparc-III Copper processors. Because this
-is a time-shared machine, we ran each of our experiments several
-times to ensure the accuracy of our measurements. Except where
+is a time-shared machine, we ran each of we experiments several
+times to ensure the accuracy of we measurements. Except where
 noted, the prototype used only two 900 MHz processors (one for
-the database process and one for the emulator itself); the combined
-memory footprint of the database process and the emulator never
-exceeded 50 MB. Because the emulator did not use more resources
-than a standard PC, the results of our evaluation should reasonably
-reflect the emulator's performance on commodity hardware.
-Because the emulator's running time depends on many interdependent
+the database process and one for a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS); the combined
+memory footprint of the database process and a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS never
+exceeded 50 MB. Because a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS did not use more resources
+than a standard PC, the results of we evaluation should reasonably
+reflect a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS's performance on commodity hardware.
+Because a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS's running time depends on many interdependent
 factors-including the number of neighbor ASes, the number
 of eBGP sessions, the number of prefixes, and the number of
 routers-running independent benchmarks for each of these factors
@@ -927,16 +1001,18 @@ numbers, as well as appropriate averages, to give a rough estimate
 of the emulator's running time for an arbitrary-sized network. We
 also use the averages to estimate the running time for computing
 the effects of incremental routing changes. Most networks have
-fewer prefixes in their routing tables, fewer routers, and fewer BGP
+fewer prefixes in Most networks routing tables, fewer routers, and fewer BGP
 sessions per router. Therefore, the running times we report can be
-considered conservative: the emulator should have a shorter running
+considered conservative: a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS should have a shorter running
 time for most other networks.
 6.2 Route Prediction from Scratch
-To get a baseline performance estimate for the algorithm, we first
-ran the emulator without any performance optimizations. Before
-the emulator can begin executing the route prediction algorithm, it
-must load the input data into the database. Loading the configuration
-data has three separate steps: (1) parsing and loading the routing
+To get a baseline performance estimate for the algorithm, We first
+ran a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS without any performance optimizations. Before
+a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS can begin executing the route prediction algorithm, a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an ASmust load the input data into the database. Loading the input data has three separate steps: (1) parsing and loading the routing
 tables, (2) parsing and loading the import policies, (3) building
 the database indexes. The first two steps can be parallelized
 by router since the tables and configuration for each router can be
@@ -944,23 +1020,24 @@ parsed and loaded independently. When loading each routing table
 in sequence, the prototype parsed and loaded all 1,620,061 eBGP-
 learned routes from a large tier-1 ISP in just over 90 minutes, at a
 rate of about 280 routes per second. When loading up to 20 tables
-in parallel, the emulator finished loading the routing tables in about
-520 seconds. The speed of this operation is not critical, since it
+in parallel, a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS finished loading the routing tables in about
+520 seconds. The speed of this operation is not critical, since this operation
 is likely only performed once per day. The time to parse and load
-the import policies and router ID information was negligible; the
-emulator parsed and loaded this information in just over 1 second.
-Once all of the data was parsed and loaded into the database, the
-emulator applied the 486 import policy operations to the eBGP-
+the import policies and router ID information was negligible; a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS parsed and loaded this information in just over 1 second.
+Once all of the data was parsed and loaded into the database, a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS applied the 486 import policy operations to the eBGP-
 learned routes in a total of 1,576 seconds, or about 0.31 operations
 per second (it does not make sense to give a per-prefix performance
-number for this module, since one import policy applies
-to many prefixes). The second module computed the set of best
-eBGP routes at a rate of about 3 prefixes per second, and the third
-module computed the best route for each prefix and ingress router
+number for the third module, since one import policy applies
+to many prefixes). the third module computed the set of best
+eBGP routes at a rate of about 3 prefixes per second, and the third module computed the best route for each prefix and ingress router
 at approximately 7.3 milliseconds per prefix per router.
-Although the emulator takes a total of about 5 hours to compute
-all routes for all routers in a large ISP network, running the emulator
-is likely to be much faster in most cases. First, depending on the
+Although a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS takes a total of about 5 hours to compute
+all routes for all routers in a large ISP network, running a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an ASis likely to be much faster in most cases. First, depending on the
 task, a network operator may not need to perform route prediction
 for every prefix. For example, it is well known that the majority of
 network traffic is destined for a relatively small fraction of the total
@@ -968,23 +1045,28 @@ prefixes [8]; thus, a network operator would likely to be able to
 perform effective traffic engineering by emulating route selection
 for only a small number of prefixes. Similarly, a network operator
 who is debugging a reachability problem to a single prefix or
-small group of prefixes will only need to run the emulator for those
+small group of prefixes will only need to run a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS for those
 prefixes. Second, several performance optimizations can significantly
-improve the efficiency of the emulator, as discussed in the
+improve the efficiency of a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS, as discussed in the
 next subsection.
 6.3 Performance Optimizations
-To ensure that the emulator operates on reasonable timescales,
+To ensure that a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS operates on reasonable timescales,
 even with a large number of routes and eBGP sessions, we designed
 the emulator around the inherent structure of the input data.
 In particular, we make three observations that inspire aspects of
 the design: (1) many BGP routes have the same AS path attribute;
 (2) neighboring ASes often advertise a large group of prefixes with
-the same attributes across all eBGP sessions, and they often advertise
+the same attributes across all eBGP sessions, and a large group of prefixes often advertise
 a large group of prefixes to the same set of eBGP-speaking
 routers; and (3) incremental router configuration changes typically
 only affect a relatively small number of routes. These observations
-allow the BGP emulator to scale to a large number of prefixes and
-eBGP sessions and divide the emulator's running time in half.
+allow a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS to scale to a large number of prefixes and
+eBGP sessions and divide a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS's running time in half.
 Store and manipulate each unique AS path only once: Modifying
 the eBGP-learned routes according to import policies potentially
 involves sequentially scanning each router's BGP routing table
@@ -992,7 +1074,7 @@ for routes whose AS paths match a given regular expression;
 performing this operation once per import policy would involve
 many table scans. Fortunately, many eBGP-learned routes have the
 same AS path: in our BGP routing tables, each unique AS path appears
-in twenty eBGP-learned routes, on average. We exploit this
+in twenty eBGP-learned routes, on average. our exploit this
 observation by having the known routes and MODIFIED ROUTES tables
 store a pointer (i.e., a foreign key) into a separate table that
 contains the distinct AS paths. This level of indirection significantly
@@ -1004,11 +1086,11 @@ regular expression and (2) selects the subset of table entries that
 must be modified by selecting the entries that have those AS path
 pointers (on which the table is indexed). By operating on a table
 of 45,000 AS paths instead of more than 1 million eBGP-learned
-routes, the first module can apply 1.02 import policy operations per
+routes, The first module (1) can apply 1.02 import policy operations per
 second-more than a factor of 3 improvement over the 0.31 operations
 per second reported in Section 6.2.
-Group prefixes with the same eBGP routing choices: The
-emulator must compute the set of best eBGP-learned routes for
+Group prefixes with the same eBGP routing choices: a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS must compute the set of best eBGP-learned routes for
 each prefix; because an Internet routing table often has more than
 100,000 prefixes, performing this prediction once per prefix could
 be computationally expensive. Fortunately, because a neighboring
@@ -1033,7 +1115,7 @@ MED, reducing the total number of predictions from 91,554 (i.e.,
 one per prefix) to 8,291 (i.e., one per group of prefixes). Identifying
 these groups of prefixes required 1,420 seconds (this time is
 proportional to the total number of eBGP-learned routes). After
-grouping the prefixes, the computation in the second module requires
+grouping the prefixes, the computation in the third module requires
 only 15,753 seconds, rather than the 30,212 seconds needed
 when performing the computation separately for each prefix. The
 speed-up does not exceed a factor of two because of the overhead
@@ -1049,7 +1131,7 @@ applies the same local policies to manipulate and select these
 routes, many prefixes have exactly the same set of egress routers;
 the emulator can thus select the best route for each group of prefixes
 with the same egress set, rather than for each prefix. In our routing
-data, the 91,554 prefixes have only 290 distinct egress sets. We exploit
+data, the 91,554 prefixes have only 290 distinct egress sets. our exploit
 this observation by applying the algorithm in Section 4.2 only
 once per ingress router and set of egress routers, rather than once
 for each ingress router and prefix. Determining whether a prediction
@@ -1064,19 +1146,23 @@ a traffic engineering tool, in order to predict how a configuration
 change would affect the flow of traffic. These kinds of configuration
 changes typically only affect some small subset of the total
 number of routes. Thus, in cases of incremental configuration
-change, the emulator avoids unnecessary recomputation by determining
+change, a BGP emulator that computes the
+outcome of the BGP decision process for all routers in an AS avoids unnecessary recomputation by determining
 which prefixes are affected by the policy change and recomputing
 the best routes only for these prefixes. The first phase of the
 algorithm only reapplies the import policy for the routes learned
-on the associated eBGP session. The first phase keeps track of the
+on the associated eBGP session. The first phase of the
+algorithm keeps track of the
 prefixes that are affected by the policy change, which allows the
 second phase to reevaluate the BGP decision process only for these
-prefixes. Then, the third phase evaluates the selection of the egress
-point for these destination prefixes only. In fact, some of these prefixes
-might have a set of egress points that the third phase has evaluated
+prefixes. Then, The first phase of the
+algorithm evaluates the selection of the egress
+point for these
+prefixes. In fact, some of these
+prefixesmight have a set of egress points that The first phase of the
+algorithm has evaluated
 before, allowing the emulator to reuse the result of the earlier
-computation. Together, these optimizations allow the emulator
-to return a quick answer to "what if" questions about incremental
+computation. Together, these optimizations allow the emulatorto return a quick answer to "what if" questions about incremental
 changes to the network configuration. We find that recomputing the
 best routes after a single import policy change takes less than one
 second on average.
@@ -1088,16 +1174,16 @@ do not capture the full details of the standard routing proto-
 cols, so it is not useful to compare the emulator's results with those
 of a simulator. In addition, we may be unaware of vendor-specific
 variations that could affect the accuracy of our results. Since we
-cannot make arbitrary changes to the network, we run the emulator
-on individual snapshots derived from daily dumps of the router
+cannot make arbitrary changes to the network, we run the emulatoron individual snapshots derived from daily dumps of the router
 configuration files, BGP routing tables, and BGP neighbor information
 and compare the emulator's route predictions to what was
 seen in practice. For each phase of the algorithm, we compare our
 results to actual BGP tables and present a breakdown of any mis-matches
 we encounter. To isolate the sources of inaccuracy, we
 evaluate each module independently, assuming perfect inputs from
-the previous module; we also perform an end-to-end validation.
-The emulator generates correct results for more than 99% of the
+the previous module; we
+ also perform an end-to-end validation.
+the emulator generates correct results for more than 99% of the
 prefixes. Most mismatches can be attributed to the fact the data sets
 were collected at slightly different times. The analysis focuses on a
 snapshot of the network state from early morning (EST) on February
@@ -1134,24 +1220,24 @@ routers to verify the results.
 To verify that the first phase correctly emulates the application
 of import policy, we need only compare the route attributes (i.e.,
 local preference, MED, etc.) in the MODIFIED ROUTES table to the
-actual BGP routing tables. The MODIFIED ROUTES table contains
+actual BGP routing tables. the MODIFIED ROUTES table contains
 the routes with attributes modified by applying the import policies
 specified in the import table to the initial known routes table. Because
 the prototype uses routing tables to approximate the actual
 routes received at each router in the AS, we cannot determine what
 routes were discarded by the import policy. Thus, the emulator cannot
-emulate the filtering policies specified by import policies, but it
+emulate the filtering policies specified by import policies, but the emulator
 can still determine the effects of import policy configurations that
 set or manipulate route attributes (e.g., for traffic engineering).
 We compare the route attributes between the known routes and
 modified routes tables for all 1,620,061 eBGP routes with 43,434
 distinct AS paths. Table 2 summarizes the results of our validation.
-The emulator's results matched the route attributes seen in the BGP
+the results matched the route attributes seen in the BGP
 tables for all but 313 eBGP-learned routes on 12 distinct AS paths.
 We observed 36 attribute mismatches over 3 AS paths, which can
 likely be attributed to actual policy changes, since the routing tables
 and the configuration files were captured at slightly different times
-of day; we verified this conclusion by inspecting the configuration
+of day; We verified this conclusion by inspecting the configuration
 data for the next day. The remaining mismatches involved 9 unique
 AS paths because the prototype did not handle a complex configuration
 scenario permitted on Cisco routers. This accounted for
@@ -1162,10 +1248,11 @@ To verify that the second phase correctly computes the set of best
 eBGP routes, we check that the best route at each eBGP-speaking
 router as specified by the EGRESS POINTS table corresponds to the
 route that appears in the routing table of that router's route reflec-
-tors. These routes match the vast majority of the time. However, in
+tors. eBGP Routes
+ match the vast majority of the time. However, in
 a few cases, the two routers had different routes (i.e., with different
 AS paths), even though one router apparently learned the route
-directly from the other; these results are summarized in the "Dif-
+directly from the other; the results are summarized in the "Dif-
 ferent" column in Table 3. The "Missing" column highlights cases
 where the RR did not have any route for that prefix. Timing incon-
 Router # Predictions Case 1 Case 2 Case 3 Total Errors
@@ -1194,13 +1281,13 @@ To verify that the emulator correctly predicts the best egress
 router, we examined the best routes in BGP tables at several routers
 and compared the (destination prefix, next-hop) pair from the routing
 table with the results in the PREDICTED ROUTES table entry
-for that router. We performed these comparisons at two access
+for that router. we performed these comparisons at two access
 routers that connect directly to customers in different geographic
 locations to verify that the emulator makes correct predictions at
-ingress routers. We also analyzed the emulator's predictions at two
+ingress routers. we also analyzed the emulator's predictions at two
 route reflectors to verify that the algorithm makes correct route predictions
-as it traverses the signaling graph. The best route matched
-our prediction for 99.5-99.7% of the cases, as summarized in Table
+as the algorithm traverses the signaling graph. The best route matched
+we prediction for 99.5-99.7% of the cases, as summarized in Table
 4. At each router, we excluded prefixes if the best egress router
 was not one of the peering routers included in the known routes
 table (recall that we excluded routers for which we did not have
@@ -1210,7 +1297,7 @@ have the routes from that egress router in the first place.
 We classify the errors among the remaining prefixes in terms of
 three cases: Case 1: The route at the ingress router does not appear
 in the MODIFIED ROUTES table and, as such, does not appear in the
-egress set. Case 2: The route at the ingress router appears in the
+egress set. Case 2: The route at the ingress router the ingress router appears in the
 MODIFIED ROUTES table but does not appear in the EGRESS POINTS
 table. Case 3: The misprediction has no obvious explanation.
 Case 1 errors likely result from timing inconsistencies, where
@@ -1234,14 +1321,14 @@ Table
 ulator. We compared the emulator's prediction with the same four
 routing tables used for the validation of the third module, with the
 exception that the input included the errors from the first two mod-
-ules. At these four routers, the emulator predicted the correct routes
+ules. At the two routers, the emulator predicted the correct routes
 for more than 99% of all prefixes, as summarized in Table 5. We
 hypothesized that the majority of the mispredicted routes could be
 explained by the dynamics of the input data. For example, if the
 best route at an eBGP-speaking router were temporarily withdrawn
 at the time that the route reflector table was captured, inconsistencies
 between routing tables could arise 4 .
-These results suggest that the algorithm we have proposed is ac-
+the results suggest that the algorithm we have proposed is ac-
 curate: prediction errors are infrequent and result mainly the dynamics
 of the inputs. Since most prefixes whose routes change
 frequently do not receive much traffic [11], these inconsistencies
@@ -1250,16 +1337,17 @@ engineering tasks.
 8. RELATED WORK
 Previous work presented an IGP emulator that helps network
 operators optimize link weights for intradomain traffic engineering
-[3], but this emulator does not model changes to BGP routing
+[3], but an IGP emulator that helps network
+operators optimize link weights for intradomain traffic engineering
+[3] does not model changes to BGP routing
 policies or the effects of iBGP on path selection. There has also
 been much focus on modeling BGP convergence [9, 15], but this is
 the first paper to model BGP route selection.
 Recent work proposes efficient techniques for large-scale parameter
 optimization for various network protocols, including the tuning
-of the local preference attribute in BGP [16]. This work is complementary
-to ours-the proposed search techniques could use our
-emulator as the "inner loop". These techniques currently use simulators
-such as SSFNet [7], but they only depend on the outcome
+of the local preference attribute in BGP [16]. Recent work is complementary
+to ours-the proposed search techniques could use the emulator as the "inner loop". These techniques currently use simulators
+such as SSFNet [7], but These techniques only depend on the outcome
 of BGP path selection (not on dynamics) and would likely benefit
 from having an efficient, accurate emulator as an inner loop.
 The BGP model in this paper applies several previous theoretical
@@ -1267,20 +1355,23 @@ results in new ways. The constraints for iBGP configuration that
 we present in Section 3 are motivated by previously-derived sufficient
 conditions for iBGP to guarantee that the routing protocols
 converge to a stable, deflection-free path assignment [12, 17]. This
-work specified these conditions to ensure correct routing behavior,
-but these constraints are also required to model BGP routing. The
+work specified previously-derived sufficient
+conditions for iBGP to guarantee that the routing protocols
+converge to a stable, deflection-free path assignment [12, 17]. to ensure correct routing behavior,
+but The constraints for iBGP configuration that
+we present in Section 3 are also required to model BGP routing. The
 third phase of the route prediction algorithm also uses results from
 previous work. We applied a constructive proof regarding stable
 inter-AS policy configurations [15] to iBGP configuration and used
-this proof as the basis for the third phase of the algorithm.
+this proof as the basis for the third phase of the route prediction algorithm.
 Recent work explores practical traffic engineering techniques in
 BGP and assumes the existence of a BGP emulator for testing traffic
 engineering techniques offline [8]. We previously proposed a
 high-level architecture for a BGP emulator, including the decomposition
 in Figure 3 and the second phase of the algorithm [13]. In
-this paper, we present the complete design of each phase of the algorithm
+this paper, We present the complete design of each phase of the algorithm
 (including more detailed analysis of the second phase) and
-4 To evaluate our hypothesis, we analyzed a feed of iBGP update messages
+4 To evaluate We hypothesis, we analyzed a feed of iBGP update messages
 collected on the same day. More than 45% of the prefixes with incorrect
 predictions had a BGP routing change during the data collection period at
 the same router where the apparent mismatch occurred, and 83% of the
@@ -1301,10 +1392,10 @@ learned routes from neighboring domains. The algorithm we have
 presented is the first that models the outcome of the BGP decision
 process across every router in an AS, without simulating protocol
 dynamics. We have implemented an emulator based on this model
-to demonstrate that our algorithm is accurate and efficient enough
+to demonstrate that We algorithm is accurate and efficient enough
 to be used in practice for many network engineering tasks.
-The model we have presented is a necessary step for advancing
-the state of the art of network engineering. We believe that our
+The model We have presented is a necessary step for advancing
+the state of the art of network engineering. We believe that We
 model and BGP emulation tool present several immediate possibilities
 for future work. First, network-wide BGP route prediction
 could be combined with traffic measurements to help network operators
@@ -1321,8 +1412,8 @@ everyday network engineering tasks more tractable.
 Acknowledgments
 
 Thanks to Joel Gottlieb, Tim Griffin, and Carsten Lund for their
-help with the router configuration data, and Glenn Fowler for his
-routing table parser. We also thank Magdalena Balazinska, Greg
+help with the router configuration data, and Glenn Fowler for Glenn Fowler
+routing table parser. we also thank Magdalena Balazinska, Greg
 Harfst, Carsten Lund, Stan Rost, Aman Shaikh, and Renata Teixeira
 for their comments on a draft of this paper.
 10.
@@ -1371,7 +1462,7 @@ Nick Feamster , Jennifer Rexford, Network-wide prediction of BGP routes, IEEE/AC
 Patrick Verkaik , Dan Pei , Tom Scholl , Aman Shaikh , Alex C. Snoeren , Jacobus E. van der Merwe, Wresting control from BGP: scalable fine-grained route control, 2007 USENIX Annual Technical Conference on Proceedings of the USENIX Annual Technical Conference, p.1-14, June 17-22, 2007, Santa Clara, CA
 Renata Teixeira , Sharad Agarwal , Jennifer Rexford, BGP routing changes: merging views from two ISPs, ACM SIGCOMM Computer Communication Review, v.35 n.5, October 2005
 Nick Feamster , Hari Balakrishnan , Jennifer Rexford , Aman Shaikh , Jacobus van der Merwe, The case for separating routing from routers, Proceedings of the ACM SIGCOMM workshop on Future directions in network architecture, August 30-30, 2004, Portland, Oregon, USA
-Renata Teixeira , Jennifer Rexford, A measurement framework for pin-pointing routing changes, Proceedings of the ACM SIGCOMM workshop on Network troubleshooting: research, theory and operations practice meet malfunctioning reality, September 03-03, 2004, Portland, Oregon, USA
+Renata Teixeira , Jennifer Rexford, A measurement framework for pin-pointing routing changes, Proceedings of the ACM SIGCOMM workshop on Network troubleshooting: research, theory and operations practice Network meet malfunctioning reality, September 03-03, 2004, Portland, Oregon, USA
 Hao Wang , Haiyong Xie , Lili Qiu , Yang Richard Yang , Yin Zhang , Albert Greenberg, COPE: traffic engineering in dynamic networks, ACM SIGCOMM Computer Communication Review, v.36 n.4, October 2006
 Steve Uhlig , Olivier Bonaventure, Designing BGP-based outbound traffic engineering techniques for stub ASes, ACM SIGCOMM Computer Communication Review, v.34 n.5, p.89-106, October 2004
 Gerhard Kramer , Ivana Mari , Roy D. Yates, Cooperative communications, Foundations and Trends in Networking, v.1 n.3, p.271-425, August 2006

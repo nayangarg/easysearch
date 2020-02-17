@@ -1,7 +1,7 @@
 --T
 Analysis of Temporal-Based Program Behavior for Improved Instruction Cache Performance.
 --A
-AbstractIn this paper, we examine temporal-based program interaction in order to improve layout by reducing the probability that program units will conflict in an instruction cache. In that context, we present two profile-guided procedure reordering algorithms. Both techniques use cache line coloring to arrive at a final program layout and target the elimination of first generation cache conflicts (i.e., conflicts between caller/callee pairs). The first algorithm builds a call graph that records local temporal interaction between procedures. We will describe how the call graph is used to guide the placement step and present methods that accelerate cache line coloring by exploring aggressive graph pruning techniques. In the second approach, we capture global temporal program interaction by constructing a Conflict Miss Graph (CMG). The CMG estimates the worst-case number of misses two competing procedures can inflict upon one another and reducing higher generation cache conflicts. We use a pruned CMG graph to guide cache line coloring. Using several C and C++ benchmarks, we show the benefits of letting both types of graphs guide procedure reordering to improve instruction cache hit rates. To contrast the differences between these two forms of temporal interaction, we also develop new characterization streams based on the Inter-Reference Gap (IRG) model.
+AbstractIn this paper, we examine temporal-based program interaction in order to improve layout by reducing the probability that program units will conflict in an instruction cache. In that context, we present two profile-guided procedure reordering algorithms. Both techniques use cache line coloring to arrive at a final program layout and target the elimination of first generation cache conflicts (i.e., conflicts between caller/callee pairs). The first algorithm builds a call graph that records local temporal interaction between procedures. We will describe how the call graph is used to guide the placement step and present methods that accelerate cache line coloring by exploring aggressive graph pruning techniques. In the second approach, we capture global temporal program interaction by constructing a Conflict Miss Graph (CMG). The CMG estimates the worst-case number of misses two competing procedures can inflict upon one another and reducing higher generation cache conflicts. The CMG use a pruned The CMG graph to guide cache line coloring. Using several C and C++ benchmarks, we show the benefits of letting both types of graphs guide procedure reordering to improve instruction cache hit rates. To contrast the differences between these two forms of temporal interaction, we also develop new characterization streams based on the Inter-Reference Gap (IRG) model.
 --B
 Introduction
 C ACHE memories are found on most microprocessors
@@ -19,7 +19,7 @@ at a range of granularities, the coarsest being an individual
 procedure [2]. We begin by considering the procedure
 Call Graph Ordering (CGO) associated with a program.
 The CGO captures local temporal interaction by weighting
-its edges with the number of times one procedure follows
+The CGO edges with the number of times one procedure follows
 another during program execution.
 We also consider the interaction of basic blocks contained
 within procedures by identifying the number of cache lines
@@ -30,19 +30,20 @@ global temporal interaction between procedures occurring
 in a finite window, containing as many entries as there
 are cache lines. Program interaction outside this window
 is not of interest because of the finite cache effect. We use
-these graphs as input to our coloring algorithm to produce
+these graphs as input to We coloring algorithm to produce
 an improved code layout for instruction caches.
 To characterize the temporal behavior captured by these
 graphs, we extend the Inter-Reference Gap (IRG) model
 [4]. We define three new IRG-based streams that describe
 different levels of procedure-based temporal interaction.
-We show how we can use them to compare the temporal
+We show how We can use three new IRG-based streams that describe
+different levels of procedure-based temporal interaction to compare the temporal
 content between the CGO, CMG and the Temporal Relationship
 Graph (TRG) (as described by Gloy et al. in [5]).
 There has been a considerable amount of work done on
 code repositioning for improved instruction cache performance
 [3], [5], [6], [7], [8], [9], [10]. In the following section
-we discuss some of this work, as it relates to our work here.
+we discuss some of this work, as it relates to we work here.
 A. Related Work
 Pettis and Hansen [3] employ procedure and basic block
 reordering as well as procedure splitting based on frequency
@@ -50,7 +51,7 @@ counts to minimize instruction cache conflicts. The layout
 of a program is directed by traversing call graph edges in
 decreasing edge weight order using a closest-is-best placement
 strategy. Chains are formed by merging nodes, laying
-them out next to each other until the entire graph is processed
+Chains out next to each other until the entire graph is processed
 
 A number of related techniques have been proposed, focusing
 on mapping loops [6], operating system code [10],
@@ -73,7 +74,7 @@ of cache size [6], [11]), and can avoid conflicts encountered
 when either forming chains with the closest-is-best heuristic
 [3] or dealing with subgraphs having a size larger than
 the cache.
-This paper is organized as follows. In Sections II and III
+this paper is organized as follows. In Sections II and III
 we describe our graph construction algorithms. Section II
 describes an improved graph pruning technique. In Section
 IV we report simulation results. Section V reviews
@@ -105,7 +106,7 @@ We define the popular procedure set as those procedures
 which are frequently visited. The popular edge set contains
 the frequently traversed edges. The rest of the procedures
 (and edges) will be called unpopular. Unpopular
-procedures are pruned from the graph. Pruning reduces
+procedures are pruned from the Call Graph. Pruning reduces
 the amount of work for placement, and allows us to focus
 on the procedures most likely to encounter misses. A discussion
 of the base pruning algorithm used can be found
@@ -113,9 +114,10 @@ in [2].
 Note, there is a difference between popular procedures
 and procedures that consume a noticeable portion of a pro-
 gram's overall execution time. A time consuming procedure
-may be labeled unpopular because it rarely switches
+may be labeled unpopular because A time consuming procedure
+ rarely switches
 control flow to another procedure. If a procedure rarely
-switches control flow, it causes a small number of conflicts
+switches control flow, a procedure causes a small number of conflicts
 misses with the rest of procedures.
 The algorithm sorts the popular edges in descending edge
 weight order. We then traverse the sorted popular edge list,
@@ -134,19 +136,21 @@ SELECT(state of Pi, state of Pj)
 CASE I: (Pi is unmapped and Pj is unmapped) -
 Arbitrarily map Pi and Pj, forming a
 compound node Pij
-CASE II: (both Pi and Pj are mapped, but they reside
+CASE II: (both Pi and Pj are mapped, but compound node Pij
+ reside
 in two different compound nodes Ci and Cj) -
 Concatenate the two compound nodes Ci and Cj,
 minimizing the distance between Pi and Pj;
 If there is a color conflict, shift Ci in the
 color space until there is no conflict;
 If a conflict can not be avoided, return Ci to
-its original position;
+Ci to
+ original position;
 CASE III: (either Pi or Pj is mapped, but not both) -
 same as CASE II
 CASE IV: (both Pi and Pj are mapped and they belong
 to the same compound node Ck) -
-If there is no conflict, return them in position;
+If there is no conflict, return there is no conflict in position;
 Else -
 Move the procedure closest to an end of the
 compound node Ck (Pi) to that end of Ck (outside
@@ -159,12 +163,12 @@ Update the unavailable set of colors;
 Fill in holes created by CASES II, III, and IV;
 Fig. 1. Pseudo code for our cache line coloring algorithm.
 depth-first traversal of the unpopular edges joining them.
-The algorithm in Fig.1 assumes a direct-mapped cache
+The first algorithm assumes a direct-mapped cache
 organization. For associative caches our algorithm breaks
 up the address space into chunks, equal in size to
 (number of cache sets   cache line size). Therefore, the
 number of sets represents the number of available colors in
-the mapping. The modified color mapping algorithm keeps
+the mapping. The first algorithm keeps
 track of the number of times each color (set) appears in the
 procedure's unavailable-set of colors. Mapping a procedure
 to a color (set) does not cause any conflicts as long as the
@@ -178,7 +182,9 @@ A. Pruning Rules For Procedure Call Graphs
 Pruning a call graph is done using a fixed threshold value
 (selected edge weight) [2] . In this section we present pruning
 rules that can reduce the size of the graph that is used
-in cache coloring. They are specifically designed to reduce
+in cache coloring. pruning
+rules that can reduce the size of the graph that is used
+in cache coloring are specifically designed to reduce
 number of lines in the cache;
 number of procedures P (nodes) in graph G;
 Sum of all incident edges on
@@ -195,11 +201,10 @@ Prune procedure Pi and all edges
 incident on Pi;
 Fig. 2. Pseudo code for our C   pruning rule.
 the number of first-generation cache conflicts.
-We assume we are using a direct-mapped cache containing
+We assume We are using a direct-mapped cache containing
 C cache lines. The program is represented as an undirected
 graph (P,E) where nodes
-and each edge (i; represents a procedure call in the
-program. The number of cache lines spanned by each procedure
+and each edge (i; represents a procedure call in The program. The number of cache lines spanned by each procedure
 is size i
 . For each edge (i; j), weight[i; j] is the number
 of times procedures i and j follow one another in the
@@ -231,15 +236,16 @@ This pruning rule is a generalization of the rules described
 in [13] to perform graph coloring. The graph coloring
 problem is to assign one of K colors to the nodes of
 the graph such that adjacent nodes are not assigned the
-same color. If a node has neighbors it can be deleted
-because, regardless of how its neighbors are eventually col-
+same color. If a node has neighbors a node can be deleted
+because, regardless of how a node neighbors are eventually col-
 ored, there will definitely be at least one color left over that
-can be assigned to it. The deleted nodes are then colored
-in the reverse order of their deletion.
+can be assigned to that
+. The deleted nodes are then colored
+in the reverse order of The deleted nodes deletion.
 The remaining (non-prunable) graph is passed to our coloring
 algorithm. Once coloring has been performed, each
-pruned node must be mapped. The nodes are laid out in
-the opposite order of their deletion.
+pruned node must be mapped. The deleted nodes are laid out in
+the opposite order of The deleted nodes deletion.
 III. Conflict Miss Graphs
 Next we consider cache misses which can occur between
 procedures many procedures away in the call graph, as well
@@ -248,13 +254,13 @@ by weighting the edges of a procedure graph with
 an estimation of the worst case number of conflict misses
 that can occur between any two procedures. We then use
 the graph to apply cache line coloring to place procedures
-in the cache address space. We call this graph a Conflict
+in the cache address space. We call the graph a Conflict
 Miss Graph (CMG).
-The complete algorithm is described in [14]. We summarize
-it here and will contrast it with the CGO in Section V
+The first algorithm is described in [14]. We summarize
+The first algorithm here and will contrast The first algorithm with the CGO in Section V
 using Inter-Reference Gap analysis.
 A. Conflict Miss Graph Construction
-The CMG is built using profile data. We assume a worst-case
+CMG is built using profile data. CMG assume a worst-case
 scenario where procedures completely overlap in the
 cache address space every time they interact. Given a cache
 configuration we determine the size of a procedure P i in
@@ -263,8 +269,8 @@ lines spanned by every basic block executed by a procedure,
 l i
 . We identify the first time a basic block is executed, and
 label those references as globally unique accesses, gl i
-The CMG is an undirected procedure graph with edges
-being weighted according to our worst case miss model [14].
+CMG is an undirected procedure graph with edges
+being weighted according to We worst case miss model [14].
 The edge weights are updated based on the contents of an
 N-entry table, where N is the number of cache lines. The
 table is fully-associative and uses an LRU replacement pol-
@@ -298,15 +304,15 @@ We use trace-driven simulation to quantify the instruction
 cache performance of the resulting layouts. Traces are
 generated using ATOM [15] on a DEC 3000 AXP workstation
 running Digital Unix V4.0. All applications are
-compiled with the DEC C V5.2 and DEC C++ V5.5 com-
+compiled with the DEC C V5.2 and the DEC C V5.2 V5.5 com-
 pilers. The same input is used to train the algorithm
 and gather performance results. We simulated an 8KB,
 direct-mapped, instruction cache with a 32-byte line size
 (similar in design to the DEC Alpha 21064 and 21164
-instruction caches). Our benchmark suite includes perl
+instruction caches). We benchmark suite includes perl
 from SPECINT95, flex (generator of lexical analyzers), gs
 (ghostscript postscript viewer) and bison is a C parser gen-
-erator. It also includes PC++2dep (C++ front-end written
+erator. Our benchmark suite also includes PC++2dep (C++ front-end written
 in C/C++), f2dep (Fortran front-end written in C/C++),
 dep2C++ (C/C++ program translating Sage internal representation
 to C++ code) and ixx (IDL parser written in
@@ -320,16 +326,15 @@ test and train our algorithms. Columns 3-5 list the total
 number of instructions executed, the static size of the application
 in kilobytes and the number of static procedures in
 the program. Column 6 presents the percentage of the program
-that contains popular procedures in the CMG while
+that contains popular procedures in CMG while
 column 7 contains the percentage of procedures that were
 found to be popular (for CMG). The last column presents
 the percentage of unactivated procedures used to fill in the
 gaps left from the color mapping.
 To prune the CMG graph, we form the popular set from
 those procedures that are connected by edges that contribute
-up to 80% of the total sum of edge weights in the
-CMG [14]. Notice that the pruning algorithm reduces the
-size of the CMG by 80-97%, and reduces the size of the executable
+up to 80% of the total sum of edge weights in CMG [14]. Notice that the pruning algorithm reduces the
+size of CMG by 80-97%, and reduces the size of the executable
 by 77.7-94.5% of the executable. This allows us to
 concentrate on the important procedures in the program.
 A. Simulation Results
@@ -357,7 +362,7 @@ no further improvement can be achieved. Gs has a large
 number of popular procedures that can not be mapped in
 the cache with significant reduction of the miss rate.
 Next, we apply the pruning C   pruning rule to CGO for
-four benchmarks, bison, flex, gs, and perl. We have also
+four benchmarks, bison, flex, gs, and perl. we have also
 tried to apply this approach to CMG, but found we were
 unable to significantly reduce the size of the graph. As
 shown in Tables III and IV, the pruning rule deletes all
@@ -370,7 +375,8 @@ by an increase in the total number of misses. By deleting
 nodes and edges that do not contribute to first-generation
 conflict misses, the coloring algorithm is deprived of information
 that can be used to prevent higher order misses.
-In the case of the bison benchmark, the nodes are inserted
+In the case of the bison benchmark, the nodes
+ are inserted
 into the mapping with complete disregard for higher order
 conflicts.
 These results suggest that node pruning rules such as C
@@ -380,7 +386,7 @@ higher order cache conflicts from canceling out the benefits
 of reducing first-order conflicts.
 B. Input training sensitivity
 Since our procedure reordering algorithm is profile-
-driven, we tried different training and test input files as
+driven, our tried different training and test input files as
 shown in Table V. Column 2 (3) has the training (test) input
 while column 4 shows the size of the traces in millions
 of instructions for the test and the training inputs (the last
@@ -404,7 +410,8 @@ In [4], Phalke and Gopinath define the IRG for an address
 as the number of memory references between successive
 references to that address. An IRG stream for an address
 in a trace is the sequence of successive IRG values for
-that address and can be used to characterize its temporal
+that address and can be used to characterize 
+ temporal
 locality. Similarly, we can measure the temporal locality
 of larger program granules such as basic blocks, cache lines
 or procedures. The accuracy of the newly generated IRG
@@ -453,7 +460,7 @@ perl primes 209 113 4 0
 
 III
 The results of applying the C   pruning rules to Call Graphs for four applications. Passes refer to pruning iterations over
-the graph. The algorithm is finished when no more nodes can be pruned in the graph.
+the graph. our algorithm is finished when no more nodes can be pruned in the graph.
 Program CGO first higher C* first higher
 Miss Rate order order Miss Rate order order
 bison .04 1316 19812 .14 0 79888
@@ -474,7 +481,7 @@ ixx layout widget 52.7M (48.7) 5.89% 4.45% 2.54%
 perl primes jumble 71.9M (12.4) 4.36% 4.61% 4.16%
 
 
-Miss ratios when using different test and training inputs. The inputs are described in columns 2-3 while the sizes of their
+Miss ratios when using different test and training inputs. The inputs are described in columns 2-3 while the sizes of The inputs
 corresponding traces are presented in column 4. Columns 5-7 include the instruction cache miss ratios.
 The original IRG model exploits the temporal locality
 of a single procedure, but not the temporal interaction between
@@ -487,15 +494,15 @@ since they capture the IRPG values of length 1.
 In the TRG every node represents a procedure and every
 edge is weighted by the number of times procedure A
 vice versa only when both of them are found
-inside a moving time window. The window includes previously
-invoked procedures and its size is proportional to the
-size of the cache. The window's contents are managed as a
+inside a moving time window. a moving time window includes previously
+invoked procedures and a moving time window size is proportional to the
+size of the cache. a moving time window's contents are managed as a
 LRU queue. The temporal interaction recorded by a TRG
 can be characterized by the Inter-Reference Intermediate
 Line Gap (IRILG) whose elements are equal to the number
 of unique cache lines activated between successive A
 and B invocations. The decision of when to update a TRG
-edge depends on the size of the window, or equivalently on
+edge depends on the size of a moving time window, or equivalently on
 the values present in the IRILG stream. The edge weight
 is simply the count of all IRILG elements with a value
 less than the predefined window size. The TRG captures
@@ -507,14 +514,14 @@ updated only when A and B follow one another inside a
 moving time window proportional in size to the cache size.
 A CMG edge weight is updated whenever the IRILG value
 is less than the window size. In both the TRG and the
-CMG, procedures interact as long as they are found inside
-the time window. A CMG, however, replaces procedures
+CMG, procedures interact as long as procedures are found inside
+the time window. CMGCMG, however, replaces procedures
 in the time window based on the age of individual lines in
 a procedure [14], while a TRG manages replacement on an
 entire procedure basis [5].
 In addition, a CMG edge weight between A and B is
 incremented by the minimum of the unique live cache lines
-of the successive invocations of A and B. The TRG simply
+of the successive invocations of A and B. the TRG simply
 counts the number of times A and B follow each other. We
 define the Inter-Reference Active Line Set (IRALS) for a
 procedure pair as the sequence of the number of unique live
@@ -538,18 +545,18 @@ stream frequency distributions in columns 2-3, 5-6 and 8-
 approximates the temporal information captured by the
 stream under consideration. For example, while 66.1% of
 IRILG elements for e 12 lie in the range between 2 and 10
-unique cache lines, only 62.4% of them are recorded in the
+unique cache lines, only 62.4% of The numbers in parentheses are recorded in the
 CGO.
 The 3 different approaches to edge weighting have significant
 impact on the global edge ordering and the final
 procedure placement.
-Ixx CMG and CGO popular edge set intersection
+CMG and CGO popular edge set intersection
 Edge index in CGO ordering
 Edge
 index
 in
 ordering
-Fig. 3. Relative edge ordering for the intersection of the CMG and
+Fig. 3. Relative edge ordering for the intersection of CMG and
 CGO popular edge orderings in ixx.
 Fig. 3 compares the ordering of the common popular
 edges of CGO and CMG, in ixx. A point at location (3,4)
@@ -568,7 +575,7 @@ value
 VI
 Frequency distribution of the IRPG, IRILG and IRALS sequences for two procedure pairs (4th and 12th in calling
 frequency) of the ixx benchmark.
-Program CGO pop CMG pop CGO " CMG CGO pop CMG pop CGO " CMG
+CGO CGO pop CMG pop CGO " CMG CGO pop CMG pop CGO " CMG
 Procs Procs Procs Edges Edges Edges
 bison 43
 flex 28 28 26 94 23
@@ -577,9 +584,9 @@ perl 20
 
 
 VII
-Intersections of the CMG and CGO popular procedure and edge sets.
-the CGO one) and the different pruning algorithms used.
-Although a lot of highly weighted edges maintained their
+Intersections of CMG and CGO popular procedure and edge sets.
+CGO and the different pruning algorithms used.
+Although a lot of highly weighted edges maintained a lot of highly weighted edges
 relative positions, the significant performance improvement
 for CMG came from edges that were promoted higher in
 the edge list ordering.
@@ -590,7 +597,8 @@ VII shows the intersection between the CMG and
 CGO popular procedure and edge sets. Columns 2-4 (5-
 list the CGO and CMG popular procedure (edge) sets
 along with their intersection. The numbers shown in Table
-VII are sensitive to the pruning algorithm, but they are
+VII are sensitive to the pruning algorithm, but The numbers shown in Table
+VII are
 compared to better illustrate the differences between the
 CMG and CGO approach. Although one procedure set
 is always the superset of the other, the CMG edge list is
@@ -616,7 +624,7 @@ only the procedure size but the cache organization as well.
 While CGO attempts to minimize first-generation conflicts,
 CMG targets higher generation misses. Both approaches
 use pruned graph models to guide procedure placement via
-cache line coloring. The CMG algorithm improved instruction
+cache line coloring. our algorithm improved instruction
 cache miss rates on average by 30% over a static depth
 first search of procedures, and by 21% over CGO.
 We also introduced three new sequences (IRPG, IRILG

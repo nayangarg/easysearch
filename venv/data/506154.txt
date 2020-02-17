@@ -1,10 +1,10 @@
 --T
 Task assignment with unknown duration.
 --A
-We consider a distributed server system and ask which policy should be used for assigning jobs (tasks) to hosts. In our server, jobs are not preemptible. Also, the job's service demand is not known a priori. We are particularly concerned with the case where the workload is heavy-tailed, as is characteristic of many empirically measured computer workloads. We analyze several natural task assignment policies and propose a new one TAGS (Task Assignment based on Guessing Size). The TAGS algorithm is counterintuitive in many respects, including load unbalancing, non-work-conserving, and fairness. We find that under heavy-tailed workloads, TAGS can outperform all task assignment policies known to us by several orders of magnitude with respect to both mean response time and mean slowdown, provided the system load is not too high. We also introduce a new practical performance metric for distributed servers called server expansion. Under the server expansion metric, TAGS significantly outperforms all other task assignment policies, regardless of system load.
+We consider a distributed server system and ask which policy should be used for assigning jobs (tasks) to hosts. In We server, jobs are not preemptible. Also, the job's service demand is not known a priori. We are particularly concerned with the case where the workload is heavy-tailed, as is characteristic of many empirically measured computer workloads. We analyze several natural task assignment policies and propose a new one TAGS (Task Assignment based on Guessing Size). The TAGS algorithm is counterintuitive in many respects, including load unbalancing, non-work-conserving, and fairness. We find that under heavy-tailed workloads, TAGS can outperform all task assignment policies known to We by several orders of magnitude with respect to both mean response time and mean slowdown, provided the system load is not too high. We also introduce a new practical performance metric for distributed servers called server expansion. Under the server expansion metric, TAGS significantly outperforms all other task assignment policies, regardless of system load.
 --B
 Introduction
-In recent years, distributed servers have become commonplace because they allow
+In recent years, distributed servers have become commonplace because distributed servers allow
 for increased computing power while being cost-effective and easily scalable.
 In a distributed server system, requests for service (tasks) arrive and must
 be assigned to one of the host machines for processing. The rule for assigning
@@ -19,17 +19,18 @@ in which tasks are not preemptible - i.e. we are concerned with applications
 where context switches are too costly. For example, one such application is batch
 computing environments where the hosts themselves are parallel processors and
 the tasks are parallel. Context switching between tasks involves reloading all the
-processors and memory to return them to the state before the context switch.
+processors and memory to return tasks to the state before the context switch.
 Because context switching is so expensive in this environment, tasks are always
 simply run to completion. Note, the fact that context switches are too expensive
-does not preclude the possibility of killing a job and restarting it from scratch.
+does not preclude the possibility of killing a job and restarting a job from scratch.
 We assume furthermore that no a priori information is known about the
 task at the time when the task arrives. In particular, the service demand of the
 task is not known. We assume all hosts are identical and there is no cost (time
 required) for assigning tasks to hosts. Figure 1 is one illustration of a distributed
-server. In this illustration, arriving tasks are immediately dispatched by the
+server. In one illustration of a distributed
+server, arriving tasks are immediately dispatched by the
 central dispatcher to one of the hosts and queue up at the host waiting for
-service, where they are served in first-come-first-served (FCFS) order. Observe
+service, where the host are served in first-come-first-served (FCFS) order. Observe
 however that our model in general does not preclude the possibility of having a
 central queue at the dispatcher where tasks might wait before being dispatched.
 It also does not preclude the possibility of an alternative scheduling discipline
@@ -37,9 +38,9 @@ at the hosts, so long as that scheduling discipline does not require preempting
 tasks and does not rely on a priori knowledge about tasks.
 Our main performance goal, in choosing a task assignment policy, is to minimize
 mean waiting time and more importantly mean slowdown. A task's slow-down
-is its waiting time divided by its service demand. All means are per-task
+is A task waiting time divided by A task service demand. All means are per-task
 averages. We consider mean slowdown to be more important than mean waiting
-time because it is desirable that a task's delay be proportional to its size.
+time because it is desirable that a task's delay be proportional to a task's delay size.
 That is, in a system in which task sizes are highly variable, users are likely to
 anticipate short delays for short tasks, and are likely to tolerate long delays for
 longer tasks. Later in the paper we introduce a new performance metric, called
@@ -53,10 +54,12 @@ server systems: In the Random task assignment policy, an incoming task is sent
 to Host i with probability 1=h, where h is the number of hosts. This policy
 equalizes the expected number of tasks at each host. In Round-Robin task as-
 signment, tasks are assigned to hosts in a cyclical fashion with the ith task
-being assigned to Host i mod h. This policy also equalizes the expected number
+being assigned to Host i mod h. This policy
+ also equalizes the expected number
 of tasks at each host, and has slightly less variability in interarrival times than
 does Random. In Shortest-Queue task assignment, an incoming task is immediately
-dispatched to the host with the fewest number of tasks. This policy has
+dispatched to Host with the fewest number of tasks. This policy
+ has
 the benefit of trying to equalize the instantaneous number of tasks at each host,
 rather than just the expected number of tasks. All the above policies have the
 property that the tasks arriving at each host are serviced in FCFS order.
@@ -67,15 +70,16 @@ services tasks in a FCFS order, (4) incoming tasks are immediately dispatched
 to a host, and (5) the task size distribution is Exponential (see Section 2).
 If one removes restriction (4), it is possible to do even better. What we'd
 really like to do is send a task to the host which has the least total outstanding
-work (work is the sum of the task sizes at the host) because that host would
+work (work is the sum of the task sizes at Host) because Host would
 afford the task the smallest waiting time. However, we don't know a priori
 which host currently has the least work, since we don't know task sizes. It
 turns out this is actually easy to get around: we simply hold all tasks at the
-dispatcher in a FCFS queue, and only when a host is free does it request the
+dispatcher in a FCFS queue, and only when a host is free does a host request the
 next task. It is easy to prove that this holding method is exactly equivalent to
-immediately dispatching arriving tasks to the host with least outstanding work
+immediately dispatching arriving tasks to a host with least outstanding work
 (see [6] for a proof and Figure 2 for an illustration). We will refer to this policy
-as Least-Work-Remaining since it has the effect of sending each task to the host
+as Least-Work-Remaining since this policy
+ has the effect of sending each task to the host
 with the currently least remaining work. Observe that Least-Work-Remaining
 comes closest to obtaining instantaneous load balance.
 It may seem that Least-Work-Remaining is the best possible task assignment
@@ -115,7 +119,7 @@ task assignment policy. (a) Shows incoming tasks immediately being dispatched
 to the host with the least remaining work, but this requires knowing a priori
 the sizes of the tasks at the hosts. (b) Shows incoming tasks pooled at a FCFS
 queue at the dispatcher. There are no queues at the individual hosts. Only when
-a host is free does it request the next task. This implementation does not require
+a host is free does a host request the next task. This implementation does not require
 a priori knowledge of the task sizes, yet achieves the same effect as (a).
 may be the optimal (best possible) task assignment policy in the case where the
 task size distribution is Exponential (see Section 2 for a detailed statement of
@@ -138,11 +142,12 @@ by Guessing Size which is specifically designed for high variability workloads.
 We will prove analytically that when task sizes show the degree of variability
 characteristic of empirical (measured) workloads, the TAGS algorithm can out-perform
 all the above mentioned algorithms by several orders of magnitude. In
-fact, we will show that the more heavy-tailed the task size distribution, the
+fact, We will show that the more heavy-tailed the task size distribution, the
 greater the improvement of TAGS over the other task assignment algorithms.
 The above improvements are contingent on the system load not being too
 high. 2 In the case where the system load is high, we show that all the task
-assignment policies have such poor performance that they become impractical,
+assignment policies have such poor performance that all the task
+assignment policies become impractical,
 and TAGS is especially negatively affected. In practice, if the system load is
 too high to achieve reasonable performance, one adds new hosts to the server
 (without increasing the outside arrival rate), thus dropping the system load,
@@ -159,7 +164,8 @@ For example, a system with 2 hosts and system load .5 has same outside arrival r
 system with 4 hosts and system load .25. Observe that a 4 host system with system load ae
 has twice the outside arrival rate of a 2 host system with system load ae.
 is designed to minimize mean waiting time. Although very effective, these
-algorithms are not fair in their treatment of tasks. The third flavor, called
+algorithms are not fair in these
+algorithms treatment of tasks. The third flavor, called
 TAGS-opt-fairness, is designed to optimize fairness. While managing to be
 fair, TAGS-opt-fairness still achieves mean slowdown and mean waiting time
 close to the other flavors of TAGS.
@@ -177,7 +183,7 @@ priori knowledge) has been extensively studied, but many basic questions remain
 open.
 One subproblem which has been solved is that of task assignment under the
 restriction that all tasks be immediately dispatched to a host upon arrival and
-each host services its tasks in FCFS order. Under this restricted model, it has
+each host services a host tasks in FCFS order. Under this restricted model, it has
 been shown that when the task size distribution is exponential and the arrival
 process is Poisson, then the Shortest-Queue task assignment policy is optimal,
 Winston [19]. In this result, optimality is defined as maximizing the discounted
@@ -193,8 +199,8 @@ does not suggest which policy is optimal.
 The scenario has also been considered, under the same restricted model
 described in the above paragraph, but where the ages (time in service) of the
 tasks currently serving are known, so that it is possible to compute an arriving
-task's expected delay at each queue. In this scenario, Weber [17] considers the
-Shortest-Expected-Delay rule which sends each task to the host with the
+task's expected delay at each queue. In The scenario, Weber [17] considers the
+Shortest-Expected-Delay rule which sends each task to Host with the
 least expected work (note the similarity to the Least-Work-Remaining policy).
 Weber shows that this rule is optimal for task size distributions with increasing
 failure rate (including Exponential). Whitt [18] shows that there exist task size
@@ -203,18 +209,18 @@ Wolff, [20] has proven that Least-Work-Remaining is the best possible task
 assignment policy out of all policies which do not make use of task size. This
 result holds for any distribution of task sizes and for any arrival process.
 Another model which has been considered is the case of no preemption
-but where the size of each task is known at the time of arrival of the task.
-Within this model, the SITA-E algorithm (see [7]) has been shown to outperform
+but where the size of each task is known at the time of arrival of each task.
+Within Another model which has been considered, the SITA-E algorithm (see [7]) has been shown to outperform
 the Random, Round-Robin, Shortest-Queue, and Least-Work-Remaining algorithms
 by several orders of magnitude when the task size distribution is heavy-
-tailed. In contrast to SITA-E, the TAGS algorithm does not require knowledge
+tailed. In contrast to SITA-E, the SITA-E algorithm (see [7]) does not require knowledge
 of task size. Nevertheless, for not-too-high system loads (! :5), TAGS improves
 upon the performance of SITA-E by several orders of magnitude for heavy-tailed
 workloads.
 2.2 When preemption is allowed and other generalizations
 Throughout this paper we maintain the assumption that tasks are not pre-
-emptible. That is, once a task starts running, it can not be stopped and re-
-continued where it left off. By contrast there exists considerable work on the
+emptible. That is, once a task starts running, a task can not be stopped and re-
+continued where a task left off. By contrast there exists considerable work on the
 very different problem where tasks are preemptible (see [8] for many citations).
 Other generalizations of the task assignment problem include the scenario
 where the hosts are heterogeneous or there are multiple resources under contention
@@ -235,7 +241,8 @@ Many application environments show a mixture of task sizes spanning many
 orders of magnitude. In such environments there are typically many small tasks,
 and fewer large tasks. Much previous work has used the exponential distribution
 to capture this variability, as described in Section 2. However, recent measurements
-indicate that for many applications the exponential distribution is a poor
+indicate that for many applications the exponential distribution
+ is a poor
 model and that a heavy-tailed distribution is more accurate. In general a heavy-tailed
 distribution is one for which
 2. The simplest heavy-tailed distribution is the Pareto distribu-
@@ -244,7 +251,7 @@ and cumulative distribution function
 A set of task sizes following a heavy-tailed distribution has the following properties
 
 1. Decreasing failure rate: In particular, the longer a task has run, the longer
-it is expected to continue running.
+a task is expected to continue running.
 2. Infinite variance (and if ff - 1, infinite mean).
 3. The property that a very small fraction (! 1%) of the very largest tasks
 make up a large fraction (half) of the load. We will refer to this important
@@ -254,9 +261,11 @@ pronounced is the heavy-tailed property, i.e. the smaller the fraction of large
 tasks that comprise half the load.
 As a concrete example, Figure 3 depicts graphically on a log-log plot the
 measured distribution of CPU requirements of over a million UNIX processes,
-taken from paper [8]. This distribution closely fits the curve
+taken from paper [8]. the exponential distribution
+ closely fits the curve
 PrfProcess Lifetime ?
-In [8] it is shown that this distribution is present in a variety of computing en-
+In [8] it is shown that the exponential distribution
+ is present in a variety of computing en-
 vironments, including instructional, research, and administrative environments.
 In fact, heavy-tailed distributions appear to fit many recent measurements
 of computing systems. These include, for example:
@@ -271,7 +280,8 @@ In most of these cases where estimates of ff were made, ff tends to be close to
 In practice, there is some upper bound on the maximum size of a task,
 because files only have finite lengths. Throughout this paper, we therefore model
 task sizes as being generated i.i.d. from a distribution that follows a power law,
-but has an upper bound - a very high one. We refer to this distribution as a
+but has an upper bound - a very high one. We refer to a distribution that follows a power law,
+but has an upper bound - a very high one as a
 Bounded Pareto. It is characterized by three parameters: ff, the exponent of
 the power law; k, the smallest possible observation; and p, the largest possible
 observation. The probability mass function for the Bounded Pareto B(k; p; ff)
@@ -281,20 +291,23 @@ to observe the effect of changing variability of the distribution. To focus on
 the effect of changing variance, we keep the distributional mean fixed (at 3000)
 and the maximum value fixed (at which correspond to typical values
 taken from [2]. In order to keep the mean constant, we adjust k slightly as ff
-Note that the Bounded Pareto distribution has all its moments finite. Thus,
+Note that the Bounded Pareto distribution has all the Bounded Pareto distribution moments finite. Thus,
 it is not a heavy-tailed distribution in the sense we have defined above. How-
-ever, this distribution will still show very high variability if k - p. For example
+ever, a heavy-tailed distribution in the sense we have defined above will still show very high variability if k - p. For example
 
 Figure
 
 4 (right) shows the second moment E
-\Psi of this distribution as a
+\Psi of a heavy-tailed distribution in the sense we have defined above as a
 function of ff for is chosen to keep E fXg constant at 3000,
-1500). The figure shows that the second moment explodes exponentially
+1500). Figure
+
+4 (right) shows that the second moment explodes exponentially
 as ff declines. Furthermore, the Bounded Pareto distribution also still
 exhibits the heavy-tailed property and (to some extent) the decreasing failure
 rate property of the unbounded Pareto distribution. We mention these properties
-because they are important in determining our choice of the best task
+because these properties
+ are important in determining We choice of the best task
 assignment policy.
 Distribution of process lifetimes (log plot)
 (fraction of processes with duration > T)
@@ -326,23 +339,24 @@ Let h be the number of hosts in the distributed server. Think of the hosts
 as being numbered: h. The ith host has a number s i associated with
 it, where s
 TAGS works as shown in Figure 5: All incoming tasks are immediately dispatched
-to Host 1. There they are serviced in FCFS order. If they complete
-before using up s 1 amount of CPU, they simply leave the system. However, if
-a task has used s 1 amount of CPU at Host 1 and still hasn't completed, then
-it is killed (remember tasks cannot be preempted because that is too expensive
-in our model). The task is then put at the end of the queue at Host 2, where
-it is restarted from scratch 3 . Each host services the tasks in its queue in FCFS
+to Host 1. There All incoming tasks are serviced in FCFS order. If All incoming tasks complete
+before using up s 1 amount of CPU, All incoming tasks simply leave the system. However, if
+a task has used S 1 amount of CPU at Host 1 and still hasn't completed, then
+a task is killed (remember tasks cannot be preempted because that is too expensive
+in our model). a task is then put at the end of the queue at Host 2, where
+a task is restarted from scratch 3 . Each host services the tasks in Each host queue in FCFS
 order. If a task at host i uses up s i amount of CPU and still hasn't completed
-it is killed and put at the end of the queue for Host i + 1. In this way, the TAGS
+s is killed and put at the end of the queue for Host i + 1. In this way, the TAGS
 algorithm "guesses the size" of each task, hence the name.
-The TAGS algorithm may sound counterintuitive for a few reasons: First of
+the TAGS
+algorithm may sound counterintuitive for a few reasons: First of
 all, there's a sense that the higher-numbered hosts will be underutilized and the
-3 Note, although the task is restarted, it is still the same task, of course. We are therefore
-careful in our analysis not to assign it a new service requirement.
+3 Note, although a task is restarted, a task is still the same task, of course. We are therefore
+careful in We analysis not to assign our analysis a new service requirement.
 first host overcrowded since all incoming tasks are sent to Host 1. An even more
 vital concern is that the TAGS algorithm wastes a large amount of resources by
-killing tasks and then restarting them from scratch. 4 There's also the sense that
-the big tasks are especially penalized since they're the ones being restarted.
+killing tasks and then restarting tasks from scratch. 4 There's also the sense that
+the big tasks are especially penalized since the big tasks're the ones being restarted.
 TAGS comes in 3 flavors; these only differ in how the s i 's are chosen. In
 TAGS-opt-meanslowdown, the s i 's are chosen so as to optimize mean slowdown.
 In TAGS-opt-meanwaitingtime, the s i 's are chosen so as to optimize mean waiting
@@ -351,10 +365,13 @@ are not necessarily fair. In TAGS-opt-fairness the s i 's are chosen so as to op
 fairness. Specifically, the tasks whose final destination is Host i experience
 the same expected slowdown under TAGS-opt-fairness as do the tasks whose
 final destination is Host j, for all i and j.
-TAGS may seem reminiscent of multi-level feedback queueing, but they are not
+TAGS may seem reminiscent of multi-level feedback queueing, but j.
+TAGS are not
 related. In multi-level feedback queueing there is only a single host with many
-virtual queues. The host is time-shared and tasks are preemptible. When a task
-uses some amount of service time it is transferred (not killed and restarted) to
+virtual queues. only a single host with many
+virtual queues is time-shared and tasks are preemptible. When a task
+uses some amount of service time a task
+ is transferred (not killed and restarted) to
 a lower priority queue. Also, in multi-level feedback queueing, the tasks in that
 lower priority queue are only allowed to run when there are no tasks in any of
 the higher priority queues.
@@ -362,27 +379,28 @@ the higher priority queues.
 Hosts
 This section contains the results of our analysis of the TAGS task assignment
 policy and other task assignment policies. In order to clearly explain the effect
-of the TAGS algorithm, we limit the discussion in this section to the case of 2
-hosts. In this case we refer to the tasks whose final destination is Host 1 as
+of the TAGS algorithm, we limit the discussion in This section to the case of 2
+hosts. In the case of 2
+hosts we refer to the tasks whose final destination is Host 1 as
 the small tasks and the tasks whose final destination is Host 2 as the big tasks.
 Until Section 5.3, we will always assume the system load is 0:5 and there are 2
 hosts. In Section 5.3, we will consider other system loads, but still stick to the
 case of 2 hosts. Finally, in Section 6 we will consider distributed servers with
 multiple hosts.
-We evaluate several task assignment policies, all as a function of ff, where ff
+we evaluate several task assignment policies, all as a function of ff, where ff
 is the variance-parameter for the Bounded Pareto task size distribution, and ff
 ranges between 0 and 2. Recall from Section 3 that the lower ff is, the higher the
 variance in the task size distribution. Recall also that empirical measurements
 of task size distributions often show ff - 1.
 4 My dad, Micha Harchol, would add that there's also the psychological concern of what
-the angry user might do when he's told his task's been killed to help the general good.
+the angry user might do when he's told he task's been killed to help the general good.
 We will evaluate the Random, Least-Work-Remaining, and TAGS policies.
 The Round-Robin policy (see Section 1) will not be evaluated directly because
-we showed in a previous paper [7] that Random and Round-Robin have
-almost identical performance. As we'll explain in Section 5.1, our analysis of
+We showed in a previous paper [7] that Random and Round-Robin have
+almost identical performance. As we'll explain in Section 5.1, we analysis of
 Least-Work-Remaining is only an approximation, however we have confidence
-in this approximation because our extensive simulation in paper [7] showed it
-to be quite accurate in this setting. As we'll discuss in Section 5.1, our analysis
+in this approximation because we extensive simulation in paper [7] showed it
+to be quite accurate in this setting. As we'll discuss in Section 5.1, we analysis
 of TAGS is also an approximation, though to a lesser degree.
 
 Figure
@@ -406,7 +424,7 @@ Figures
 6(b) and (c) show mean slowdown of TAGS-opt-waitingtime and
 TAGS-opt-fairness, respectively, as compared with the other task assignment
 policies. Since TAGS-opt-waitingtime is optimized for mean waiting time,
-rather than mean slowdown, it is understandable that its performance improvements
+rather than mean slowdown, it is understandable that it performance improvements
 with respect to mean slowdown are not as dramatic as those of
 TAGS-opt-slowdown. However, what's interesting is that the performance of
 TAGS-opt-fairness is very close to that of TAGS-opt-slowdownand yet TAGS-opt-fairness
@@ -414,7 +432,8 @@ has the additional benefit of fairness.
 
 Figure
 
-7 is identical to Figure 6 except that in this case the performance
+7 is identical to Figure 6 except that in the case of 2
+hosts the performance
 metric is mean waiting time, rather than mean slowdown. Again the TAGS al-
 gorithm, especially TAGS-opt-waitingtime, shows several orders of magnitude
 improvement over the other task assignment policies.
@@ -465,8 +484,8 @@ task in the same queue. This is stated more formally in Theorem 1 below, which
 is derived from the Pollaczek-Kinchin formula.
 Theorem 1 Given an M/G/1 FCFS queue, where the arrival process has rate
 -, X denotes the service time distribution, and ae denotes the utilization
-fXg). Let W be a task's waiting time in queue, S be its slowdown, and Q
-be the queue length on its arrival. Then,
+fXg). Let W be a task's waiting time in queue, S be S slowdown, and Q
+be the queue length on S arrival. Then,
 Proof: The slowdown formulas follow from the fact that W and X are independent
 for a FCFS queue, and the queue size follows from Little's formula.
 Observe that every metric for the simple FCFS queue is dependent on
@@ -485,9 +504,9 @@ system load, ae. The arrival rate at the ith host is 1=h-fraction of the total
 outside arrival rate. Theorem 1 applies directly, and all performance metrics
 are proportional to the second moment of B(k; p; ff). Performance is generally
 poor because the second moment of the B(k; p; ff) is high.
-Round Robin The Round Robin policy splits the incoming stream so each
+Round-Robin The Random policy splits the incoming stream so each
 host sees an E h =B(k; p; ff)=1 queue, with utilization ae This system has
-performance close to the Random policy since it still sees high variability in
+performance close to The Random policy since This system still sees high variability in
 service times, which dominates performance.
 Least-Work-Remaining The Least-Work-Remaining policy is equivalent
 to an M/G/h queue, for which there exist known approximations, [16],[21]:
@@ -504,9 +523,10 @@ time distribution.
 TAGS The TAGS policy is the only one which reduces the variance of task sizes
 at the individual hosts. Let p i be the fraction of tasks whose final destination
 is Host i. Consider the tasks which queue at Host i: First there are those
-tasks which are destined for Host i. Their task size distribution is B(s
+tasks which are destined for Host i. those
+tasks which are destined for Host task size distribution is B(s
 because the original task size distribution is a Bounded Pareto. Then there are
-the tasks which are destined for hosts numbered greater than i. These tasks are
+the tasks which are destined for hosts numbered greater than i. the tasks which are destined for hosts numbered greater than i. are
 all capped at size s i . Thus the second moment of the task size distribution at
 Host i is lower than the second moment of the original B(k; p; ff) distribution
 (for all hosts except the highest-numbered host, it turns out). The full analysis
@@ -515,8 +535,8 @@ except for one point which we have to fudge and which we explain now: For
 analytic convenience, we need to be able to assume that the tasks arriving at
 each host form a Poisson Process. This is of course true for Host 1. However
 the arrivals at Host i are those departures from Host exceed size
-s They form a less bursty process than a Poisson Process since they are
-spaced apart by at least s i\Gamma1 . Throughout our analysis of TAGS, we make the
+s those departures from Host form a less bursty process than a Poisson Process since those departures from Host are
+spaced apart by at least s i\Gamma1 . Throughout our analysis of TAGS, our make the
 assumption that the arrival process into Host i is a Poisson Process.
 5.2 Load Unbalancing
 The second reason why TAGS performs so well has to do with "load unbalancing."
@@ -535,8 +555,7 @@ the load is balanced in the two hosts.
 We first explain why load unbalancing is desirable when optimizing overall
 mean slowdown of the system. We will later explain what happens when optimizing
 fairness. To understand why it is desirable to operate at unbalanced
-loads, we need to go back to the heavy-tailed property. The heavy-tailed property
-says that when a distribution is very heavy-tailed (very low ff), only a
+loads, we need to go back to the heavy-tailed property. the heavy-tailed propertysays that when a distribution is very heavy-tailed (very low ff), only a
 miniscule fraction of all tasks - the very largest ones - are needed to make up
 more than half the total load. As an example, for the case turns out
 that less than 10 \Gamma6 fraction of all tasks are needed to make up half the load. In
@@ -553,7 +572,7 @@ this load unbalancing game as well. Again, we would like to severely underload
 Host 1 and send .999999 fraction of the load to go to Host 2. Before we were able
 to do this by making only a very small fraction of all tasks (! 10 \Gamma4 fraction)
 go to Host 2. However now that the distribution is not as heavy-tailed, a larger
-fraction of tasks must have Host 2 as its final destination to create very high
+fraction of tasks must have Host 2 as Host 2 final destination to create very high
 load at Host 2. But this in turn means that tasks with destination Host 2 count
 more in determining the overall mean slowdown of the system, which is bad
 since tasks with destination Host 2 experience larger slowdowns. Thus we can
@@ -566,7 +585,7 @@ create the wonderful state where almost all tasks are on Host 1 and yet Host 1 i
 underloaded. The tail is just not heavy enough. No matter how we choose the
 cutoff, a significant portion of the tasks will have Host 2 as their destination.
 Thus Host 2 will inevitably figure into the overall mean slowdown and so we
-need to keep the performance on Host 2 in check. To do this, it turns out we
+need to keep the performance on Host 2 in check. To do this, this turns out we
 need to slightly underload Host 2, to make up for the fact that the task size
 variability is so much greater on Host 2 than on Host 1.
 The above has been an explanation for why load unbalancing is important
@@ -618,14 +637,21 @@ most effective at lower system loads.
 the mean slowdown experienced by the small tasks is equal to the mean slowdown
 experienced by the big tasks. However it seems in fact that we're treating the
 big tasks unfairly on 3 counts:
-1. The small tasks run on Host 1 which has very low load (for low ff).
-2. The small tasks run on Host 1 which has very low E
-3. The small tasks don't have to be restarted from scratch and wait on a
+1. the
+big tasks run on Host 1 which has very low load (for low ff).
+2. the
+big tasks run on Host 1 which has very low E
+3. the
+big tasks don't have to be restarted from scratch and wait on a
 second line.
-So how can it possibly be fair to help the small tasks so much? The answer
-is simply that the small tasks are small. Thus they need low waiting times to
-keep their slowdown low. Big tasks on the other hand can afford a lot more
-waiting time. They are better able to amortize the punishment over their long
+So how can it possibly be fair to help the
+big tasks so much? The answer
+is simply that the
+big tasks are small. Thus the
+big tasks need low waiting times to
+keep the
+big tasks slowdown low. Big tasks on the other hand can afford a lot more
+waiting time. Big tasks on the other hand are better able to amortize the punishment over Big tasks on the other hand long
 lifetimes. It is important to mention, though, that this would not be the case
 for all distributions. It is because our task size distribution for low ff is so
 heavy-tailed that the big tasks are truly elephants (way bigger than the smalls)
@@ -633,7 +659,7 @@ and thus can afford to suffer more. 5
 5.3 Different Loads
 Until now we have studied only the model of a distributed server with two hosts
 and system load :5. In this section we consider the effect of system load on the
-performance of TAGS. We continue to assume a 2 host model. Figure 9 shows the
+performance of TAGS. we continue to assume a 2 host model. Figure 9 shows the
 performance of TAGS-opt-slowdown on a distributed server with 2 hosts run at
 system load (a) 0:3, (b) 0:5, and (c) 0:7. In all three figures TAGS-opt-slowdown
 improves upon the performance of Least-Work-Remaining and Random under
@@ -644,7 +670,7 @@ in TAGS is the most dramatic. In the case where the system load is 0:3,
 TAGS-opt-slowdown improves upon Least-Work-Remaining by over 4 orders of
 magnitude at by 6 or 7 orders of magnitude when and by almost
 20 orders of magnitude when When the system load is 0:7 on the other
-5 It may interest the reader to understand the degree of unfairness exhibited by
+5 the system load may interest the reader to understand the degree of unfairness exhibited by
 TAGS-opt-slowdown and TAGS-opt-waitingtime. For TAGS-opt-slowdown, our analysis shows
 that the expected slowdown of the big tasks always exceeds that of the small tasks and
 the ratio increases exponentially as ff drops, so that at
@@ -676,7 +702,7 @@ Figure
 it is in (b).
 The second reason for the ineffectiveness of TAGS under high loads has to
 do with what we call excess. Excess is the extra work created in TAGS by tasks
-being killed and restarted. In the 2-host case, the excess is simply equal to
+being killed and restarted. In the 2-host case, Excess is simply equal to
 is the outside arrival rate, p 2 is the fraction of tasks whose
 final destination is Host 2, and s 1 is the cutoff differentiating small tasks from
 big tasks. An equivalent definition of excess is the difference between the actual
@@ -701,8 +727,9 @@ forced low because the load at Host 2 is capped at 1. Thus the excess for low
 ff is very high. To make matters worse, some of this excess must be heaped on
 Host 1. In the high ff range, excess again is high because p 2 is high.
 Fortunately, observe that for higher loads excess is at its lowest point at
-ff - 1. In fact, it is barely existent in this region. Observe also that the
-region is the region where balancing load is the optimal thing to do (with
+ff - 1. In fact, it is barely existent in the high
+ff region. Observe also that the high
+ff region is the region where balancing load is the optimal thing to do (with
 respect to minimizing mean slowdown), regardless of the system load. This
 "sweet spot" is fortunate because ff - 1 is characteristic of many empirically
 measured computer workloads, see Section 3.
@@ -717,7 +744,7 @@ hosts and system load 0:7, we could increase the number of hosts to 4 hosts
 without changing the arrival rate, and the system load would drop to 0:35. On
 the other hand, we could increase the number of hosts to 4 hosts and increase
 the arrival rate appropriately (double it) so as to maintain a system load of 0:7.
-In our discussions below we will attempt to be clear as to which view we have
+In our discussions below our will attempt to be clear as to which view our have
 in mind.
 One claim that can be made straight off is that an h host system (h ?
 with system load ae can always be configured to produce performance which is
@@ -727,9 +754,9 @@ host system as illustrated in Figure 11: Rename Hosts 1 and 2 as Subsystem 1.
 Rename Hosts 3 and 4 as Subsystem 2. Rename Hosts 5 and 6 as Subsystem 3,
 etc. Now split the traffic entering the h host system so that 2=hth of the tasks
 go to each of the h=2 Subsystems. Now apply your favorite task assignment
-policy to each Subsystem independently - in our case we choose TAGS. Each
+policy to each Subsystem independently - in our case our choose TAGS. Each
 Subsystem will behave like a 2 host system with load ae running TAGS. Since
-each Subsystem will have identical performance, the performance of the whole
+each Subsystem each Subsystem will have identical performance, the performance of the whole
 host system will be equal to the performance of any one subsystem. (Observe
 that the above cute argument works for any task assignment policy).
 
@@ -792,9 +819,10 @@ load 0:3. The cutoffs for TAGS-opt-slowdown were optimized by hand. In many
 cases it is possible to improve upon the results shown here by adjusting the cutoffs
 further, so the slight bend in the graph may not be meaningful. Observe that the
 mean slowdown of TAGS almost never exceeds 1.
-1. The performance of Random stayed the same, as it should.
+1. The performance of Random stayed the same, as The performance of Random should.
 2. The performance of Least-Work-Remaining improved by a couple orders
-of magnitude in the higher ff region, but less in the lower ff region. The
+of magnitude in the higher ff region, but less in the high
+ff region. The
 Least-Work-Remaining task assignment policy is helped by increasing
 the number of hosts, although the system load stayed the same, because
 having more hosts increases the chances of one of them being free.
@@ -821,7 +849,7 @@ mean slowdown of the number of hosts would be increased, without increasing
 the arrival rate, (thus dropping the system load) until the system's performance
 improved to a reasonable mean slowdown, like 3 or less. Consider the
 following example: Suppose we have a 2-host system running at system load .7
-and with variability parameter :6. For this system the mean slowdown under
+and with variability parameter :6. For a system the mean slowdown under
 TAGS-opt-slowdown is on the order of 10 9 , and no other task assignment policy
 that we know of does better. Suppose however we desire a system with mean
 slowdown of 3 or less. So we double the number of hosts (without increasing the
@@ -840,11 +868,11 @@ to a reasonable level (where we'll arbitrarily define ``reasonable'' as 3 or les
 Figure
 
 13 compares the performance of our task assignment policies according
-to the server expansion metric, given that we start with a 2 host system with
+to the server expansion metric, given that our start with a 2 host system with
 system load of 0:7. For TAGS-opt-slowdown, the server expansion is only 3 for
 no more than 2 for all the other ff. For Least-Work-Remaining, on
 the other hand, the number of hosts we need to add ranges from 1 to 27, as ff
-decreases. Still Least-Work-Remaining is not so bad because at least its performance
+decreases. Still Least-Work-Remaining is not so bad because at least Still Least-Work-Remaining performance
 improves somewhat quickly as hosts are added and load is decreased,
 the reason being that both these effects increase the probability of a task finding
 an idle host. By contrast Random, shown in Figure 13(b), is exponentially
@@ -884,9 +912,8 @@ variation in the task size distribution.
 Until now we have always assumed that the task sizes are distributed according
 to a Bounded Pareto distribution with upper bound fixed
 mean 3000. This means, for example, that when ff - 1 (as agrees with empirical
-data), we need to set the lower bound on task sizes to 167. However this
-implies that the range of task sizes spans 8 orders of magnitude!
-It is not clear that most applications have task sizes ranging 8 orders in mag-
+data), we need to set the lower bound on task sizes to 167. However Thisimplies that the range of task sizes spans 8 orders of magnitude!
+This is not clear that most applications have task sizes ranging 8 orders in mag-
 nitude. In this section we rederive the performance of all the task assignment
 policies when the upper bound p is set to still holding the mean
 of the task size distribution at 3000. This means, for example, that when ff - 1
@@ -904,7 +931,9 @@ which implies the range of task sizes spans just 5 orders of magnitude.
 Figure
 
 14 shows the second moment of the Bounded Pareto task size distribution
-as a function of ff when . Comparing this figure to Figure 4, we
+as a function of ff when . Comparing Figure
+
+14 to Figure 4, we
 see that the task size variability is far lower when therfore so is the
 coefficient of variation.
 Lower variance in the task size distribution suggests that the improvement
@@ -923,8 +952,8 @@ assignment policies by over 2 orders of magnitude. As ff drops, the improvement
 increases. This figure should be contrasted with Figure 9(b), which shows the
 same scenario where
 8 Conclusion and Future Work
-This paper is interesting not only because it proposes a powerful new task
-assignment policy, but more so because it challenges some natural intuitions
+This paper is interesting not only because This paper proposes a powerful new task
+assignment policy, but more so because This paper challenges some natural intuitions
 which we have come to adopt over time as common knowledge.
 Traditionally, the area of task assignment, load balancing and load sharing
 has consisted of heuristics which seek to balance the load among the multiple
@@ -932,7 +961,7 @@ hosts. TAGS, on the other hand, specifically seeks to unbalance the load, and
 sometimes severely unbalance the load. Traditionally, the idea of killing a task
 and restarting from scratch on a different machine is viewed with skepticism,
 but possibly tolerable if the new host is idle. TAGS, on the other hand, kills tasks
-and then restarts them at a target host which is typically operating at extremely
+and then restarts TAGS at a target host which is typically operating at extremely
 high load, much higher load than the original source host. Furthermore, TAGS
 proposes restarting the same task multiple times.
 It is interesting to consider further implications of these results, outside the
@@ -944,7 +973,7 @@ not be wise. This paper suggests that killing and restarting tasks may be worth
 investigating as an alternative, if the load on the CPU is low enough to tolerate
 the extra work created.
 Task assignment also has applications outside of the context of a distributed
-server system described in this paper. A very interesting recent paper by Shaikh,
+server system described in This paper. A very interesting recent paper by Shaikh,
 Rexford, and Shin [15] discusses routing of IP flows (which also have heavy-tailed
 size distributions) and recommends routing long flows differently from
 short flows.
@@ -990,7 +1019,8 @@ Implementing Multiprocessor Scheduling Disciplines
 Theory and Practice in Parallel Job Scheduling
 Improved Utilization and Responsiveness with Gang Scheduling
 Valuation of Ultra-scale Computing Systems
-A parallel workload model and its implications for processor allocation
+A parallel workload model and Ultra-scale Computing Systems
+ implications for processor allocation
 Evaluation of Task Assignment Policies for Supercomputing Servers
 Load profiling
 

@@ -1,7 +1,7 @@
 --T
 Compile-Time Scheduling of Dynamic Constructs in Dataflow Program Graphs.
 --A
-AbstractScheduling dataflow graphs onto processors consists of assigning actors to processors, ordering their execution within the processors, and specifying their firing time. While all scheduling decisions can be made at runtime, the overhead is excessive for most real systems. To reduce this overhead, compile-time decisions can be made for assigning and/or ordering actors on processors. Compile-time decisions are based on known profiles available for each actor at compile time. The profile of an actor is the information necessary for scheduling, such as the execution time and the communication patterns. However, a dynamic construct within a macro actor, such as a conditional and a data-dependent iteration, makes the profile of the actor unpredictable at compile time. For those constructs, we propose to assume some profile at compile-time and define a cost to be minimized when deciding on the profile under the assumption that the runtime statistics are available at compile-time. Our decisions on the profiles of dynamic constructs are shown to be optimal under some bold assumptions, and expected to be near-optimal in most cases. The proposed scheduling technique has been implemented as one of the rapid prototyping facilities in Ptolemy. This paper presents the preliminary results on the performance with synthetic examples.
+AbstractScheduling dataflow graphs onto processors consists of assigning actors to processors, ordering actors execution within the processors, and specifying actors firing time. While all scheduling decisions can be made at runtime, the overhead is excessive for most real systems. To reduce this overhead, compile-time decisions can be made for assigning and/or ordering actors on processors. Compile-time decisions are based on known profiles available for each actor at compile time. The profile of an actor is the information necessary for scheduling, such as the execution time and the communication patterns. However, a dynamic construct within a macro actor, such as a conditional and a data-dependent iteration, makes the profile of an actor unpredictable at compile time. For those constructs, we propose to assume some profile at compile-time and define a cost to be minimized when deciding on the profile under the assumption that the runtime statistics are available at compile-time. Our decisions on the profiles of dynamic constructs are shown to be optimal under some bold assumptions, and expected to be near-optimal in most cases. The proposed scheduling technique has been implemented as one of the rapid prototyping facilities in Ptolemy. This paper presents the preliminary results on the performance with synthetic examples.
 --B
 Introduction
 A D ataflow graph representation, either as a programming
@@ -14,7 +14,8 @@ or a group thereof to be executed according to
 the precedence constraints represented by arcs, which also
 represent the flow of data. A dataflow graph is usually
 made hierarchical. In a hierarchical graph, an actor itself
-may represent another dataflow graph: it is called a macro
+may represent another dataflow graph: an actor itself
+ is called a macro
 actor.
 Particularly, we define a data-dependent macro actor, or
 data-dependent actor, as a macro actor of which the execution
@@ -78,13 +79,14 @@ about each actor is known. We define the profile of
 an actor as the static information about the actor necessary
 for a given scheduling technique. For example, if we
 use a list scheduling technique, the profile of an actor is
-simply the computation time of the actor on a processor.
+simply the computation time of an actor on a processor.
 The communication requirements of an actor with other
 actors are included in the profile if the scheduling tech-
 HA AND LEE: COMPILE-TIME SCHEDULING OF DYNAMIC CONSTRUCTS IN DATAFLOW PROGRAM GRAPHS 769
 nique requires that information. The profile of a macro
 actor would be the number of the assigned processors and
-the local schedule of the actor on the assigned processors.
+the local schedule of a macro
+actor on the assigned processors.
 For a data-independent macro actor such as a matrix op-
 eration, the profile is deterministic. However, the profile
 of a data-dependent actor of dynamic construct cannot be
@@ -126,7 +128,8 @@ synchronization between actors is usually performed at run
 time. In this case, it is not necessary to enforce the pattern
 of processor availability by inserting idle time. Instead, idle
 time will be inserted when synchronization is required to
-execute actors. When the execution order of the actors is
+execute actors. When the execution order of 
+execute actors is
 not changed from the scheduled order, the actual schedule
 length obtained from run-time synchronization is proven to
 be not much different from what the quasi-static scheduling
@@ -135,10 +138,11 @@ profile of dynamic constructs is based on the quasi-static
 scheduling strategy, which makes analysis simpler.
 II. Previous Work
 All of the deterministic scheduling heuristics assume that
-static information about the actors is known. But almost
+static information about 
+execute actors is known. But almost
 none have addressed how to define the static information
 of data-dependent actors. The pioneering work on this issue
-was done by Martin and Estrin [11]. They calculated
+was done by Martin and Estrin [11]. Martin and Estrin calculated
 A
 A
 A
@@ -149,7 +153,7 @@ Fig. 1. (a) A dataflow graph consists of five actors among which actor
 A is a data-dependent actor. (b) Gantt chart for compile-time
 scheduling assuming a certain execution time for actor A. (c) At
 run time, if actor A takes longer, the second processor is padded
-with no-ops and (d) if actor A takes less, the first processor is
+with no-ops and (d) if actor A takes less, the second processor is
 idled to make the pattern of processor availability same as the
 scheduled one (dark line) in the quasi-static scheduling.
 the mean path length from each actor to a dummy terminal
@@ -168,8 +172,10 @@ both approaches have the common drawback that a data-dependent
 actor is assigned to a single processor, which is
 a severe limitation for a multiprocessor system.
 Two groups of researchers have proposed quasi-static
-scheduling techniques independently: Lee [10] and Loeffler
-et al [13]. They developed methods to schedule conditional
+scheduling techniques independently: E. Lee [10] and Loeffler
+et al [13]. Two groups of researchers have proposed quasi-static
+scheduling techniques independently: E. Lee [10] and Loeffler
+et al [13]. developed methods to schedule conditional
 and data-dependent iteration constructs respectively. Both
 approaches allow more than one processor to be assigned to
 dynamic constructs. Figure 2 shows a conditional and compares
@@ -177,14 +183,14 @@ three scheduling methods. In figure 2 (b), the local
 schedules of both branches are shown, where two branches
 are scheduled on three processors while the total
 number of processors is 4
-In Lee's method, we overlap the local schedules of both
-branches and choose the maximum termination for each
+In E. Lee method, we overlap the local schedules of two branches
+ and choose the maximum termination for each
 processor. For hard real-time systems, it is the proper
 choice. Otherwise, it may be inefficient if either one branch
 is more likely to be taken and the size of the likely branch
 is much smaller. On the other hand, Loeffler takes the
 local schedule of more likely branch as the profile of the
-conditional. This strategy is inefficient if both branches
+conditional. This scheduling strategy is inefficient if both branches
 are equally likely to be taken and the size of the assumed
 branch is much larger. Finally, a conditional evaluation can
 be replaced with a conditional assignment to make the construct
@@ -194,13 +200,13 @@ static; the graph is modified as illustrated in figure
 A
 (a) if-then-else construct
 (b) local schedule of two
-(d) Lee's method (e) Leoffler's method
+(d) E. Lee method (e) Leoffler's method
 (c) a fully-static schedule
 Fig. 2. Three different schedules of a conditional construct. (a) An
 example of a conditional construct that forms a data-dependent
 actor as a whole. (b) Local deterministic schedules of the two
 branches. (c) A static schedule by modifying the graph to use
-conditional assignment. (d) Lee's method to overlap the local
+conditional assignment. (d) E. Lee method to overlap the local
 schedules of both branches and to choose the maximum for each
 processor. (e) Loeffler's method to take the local schedule of the
 branch which is more likely to be executed.
@@ -220,19 +226,21 @@ same as the pattern of the start (figure (Equivalently,
 all processors are occupied for the same amount of time
 in each iteration). Then, the pattern of processor availability
 after the iteration construct is independent of the
-number of iteration cycles. This scheme breaks down if the
+number of iteration cycles. this scheme breaks down if the
 construct cannot utilize all processors effectively.
 one iteration cycle
 Fig. 3. A quasi-static scheduling of a data-dependent iteration con-
 struct. The pattern of processor availability is independent of the
 number of iteration cycles.
-The recursion construct has not yet been treated successfully
+the
+construct has not yet been treated successfully
 in any statically scheduled data flow paradigm.
 Recently, a proper representation of the recursion construct
 has been proposed [14]. But, it is not explained
 how to schedule the recursion construct onto multiproces-
 sors. With finite resources, careless exploitation of the parallelism
-of the recursion construct may cause the system to
+of the
+construct may cause the system to
 deadlock.
 In summary, dynamic constructs such as conditionals,
 data-dependent iterations, and recursions, have not been
@@ -242,20 +250,21 @@ have been introduced but proven unsuitable as general so-
 lutions. Our earlier result with data-dependent iteration [3]
 demonstrated that a systematic approach to determine the
 profile of data-dependent iteration actor could minimize
-the expected schedule length. In this paper, we extend our
+the expected schedule length. In this paper, Our extend Our
 analysis to general dynamic constructs.
-In the next section, we will show how dynamic constructs
-are assigned their profiles at compile-time. We also prove
+In the next section, Our will show how dynamic constructs
+are assigned dynamic constructs
+ profiles at compile-time. Our also prove
 the given profiles are optimal under some unrealistic as-
-sumptions. Our experiments enable us to expect that our
+sumptions. Our experiments enable us to expect that Our
 decisions are near-optimal in most cases. Section 4,5 and 6
 contains an example with data-dependent iteration, recur-
 sion, and conditionals respectively to show how the profiles
 of dynamic constructs can be determined with known
-runtime statistics. We implement our technique in the
+runtime statistics. Our implement Our technique in the
 Ptolemy framework [15]. The preliminary simulation results
-will be discussed in section 7. Finally, we discuss the
-limits of our method and mention the future work.
+will be discussed in section 7. Finally, Our discuss the
+limits of Our method and mention the future work.
 III. Compile-Time Profile of Dynamic
 Constructs
 Each actor should be assigned its compile-time profile
@@ -264,18 +273,17 @@ strategy, the proposed scheme is to decide the profile of a
 construct so that the average schedule length is minimized
 assuming that all actors except the dynamic construct are
 data-independent. This objective is not suitable for a hard
-real-time system as it does not bound the worst case be-
+real-time system as This objective does not bound the worst case be-
 havior. We also assume that all dynamic constructs are
-uncorrelated. With this assumption, we may isolate the effect
+uncorrelated. With this assumption, We may isolate the effect
 of each dynamic construct on the schedule length sep-
 arately. In case there are inter-dependent actors, we may
-group those actors as another macro actor, and decide the
+group inter-dependent actors as another macro actor, and decide the
 optimal profile of the large actor. Even though the decision
 of the profile of the new macro actor would be complicated
 in this case, the approach is still valid. For nested dynamic
 constructs, we apply the proposed scheme from the inner
-dynamic construct first. For simplicity, all examples in this
-paper will have only one dynamic construct in the dataflow
+dynamic construct first. For simplicity, all examples in this paper will have only one dynamic construct in the dataflow
 graph.
 The run-time cost of an actor i, C i , is the sum of the total
 computation time devoted to the actor and the idle time
@@ -291,7 +299,7 @@ and R is the rest of the computation including all idle time
 that may result both within the schedule and at the end.
 Therefore, we can minimize the expected schedule length
 by minimizing the expected cost of the data-dependent acHA
-AND LEE: COMPILE-TIME SCHEDULING OF DYNAMIC CONSTRUCTS IN DATAFLOW PROGRAM GRAPHS 771
+AND E. Lee: COMPILE-TIME SCHEDULING OF DYNAMIC CONSTRUCTS IN DATAFLOW PROGRAM GRAPHS 771
 tor or dynamic construct if we assume that R is independent
 of our decisions for the profile of actor i. This assumption
 is unreasonable when precedence constraints make R
@@ -356,8 +364,7 @@ number of iterations is known prior to the commencement of the
 iteration, and (b) is used otherwise.
 number of iterations need not be known prior to the commencement
 of the iteration. Here, a token coming in from
-above is routed through a "select" actor into the iteration
-body. The "D" on the arc connected to the control input
+above is routed through a "select" actor into the iteration body. The "D" on the arc connected to the control input
 of the "select" actor indicates an initial token on that arc
 with value "false". This ensures that the data coming into
 the "F" input will be consumed the first time the "select"
@@ -387,8 +394,8 @@ of iteration cycles is known or can be approximated
 at compile time. Let the number of iteration cycles be a
 random variable I with known probability mass function
 p(i). For simplicity, we set the minimum possible value of
-I to be 0. We let the number of assigned processors be
-N and the total number of processors be T . We assume a
+I to be 0. we let the number of assigned processors be
+N and the total number of processors be T . we assume a
 blocked schedule as the local schedule of the iteration body
 to remove the unnecessary complexity in all illustrations,
 although the proposed technique can be applicable to the
@@ -444,7 +451,7 @@ second term, this reduces to
 e: (3)
 Our method is to choose three parameters (N , k, and
 x) in order to minimize the expected cost in equation (3).
-First, we assume that N is fixed. Since C(N; k; x) is a decreasing
+First, Our assume that N is fixed. Since C(N; k; x) is a decreasing
 function of k with fixed N , we select the maximum
 possible number for k. The number k is bounded by two
 ratios: T
@@ -468,7 +475,8 @@ through all possible values N and select the value minimizing
 the cost in polynomial time. Moreover, our experiments
 show that the search space for N is often reduced
 significantly using some criteria.
-Our experiments show that the method is relatively insensitive
+our experiments
+show that the method is relatively insensitive
 to the approximated probability mass function for
 Using some well-known distributions which have nice
 mathematical properties for the approximation, we can reduce
@@ -503,7 +511,7 @@ represented as a macro actor that contains a SELF actor
 (figure 6). A SELF actor simply represents an instance of
 a subgraph within which it sits.
 If the recursion actor has only one SELF actor, the function
-of the actor can be identically represented by a data-dependent
+of the recursion actor can be identically represented by a data-dependent
 iteration actor as shown in figure 4 (b) in the
 previous section. This includes as a special case all tail recursive
 constructs. Accordingly, the scheduling decision for
@@ -526,11 +534,11 @@ nodes at the same depth can be executed concurrently.
 The maximum degree of parallelism, however, is usually
 not known at compile-time. When we exploit the parallelism
 of the construct, we should consider the resource
-limitations. We may have to restrict the parallelism in order
+limitations. we may have to restrict the parallelism in order
 not to deadlock the system. Restricting the parallelism
 in case the maximum degree of parallelism is too large has
 been recognized as a difficult problem to be solved in a dynamic
-dataflow system. Our approach proposes an efficient
+dataflow system. we approach proposes an efficient
 solution by taking the degree of parallelism as an additional
 component of the profile of the recursion construct.
 Suppose that the width of the recursion construct is k.
@@ -541,7 +549,7 @@ at depth d in the computation graph are assigned to different
 processor groups. A descendent recursion construct
 at depth d is called a ground construct (figure 7 (a)). If
 we denote the size of each processor group by N , the total
-number of processors devoted to the recursion becomes
+number of processors devoted to A descendent recursion becomes
 Nk d . Then, the profile of a recursion construct is defined
 by three parameters: the assumed depth of recursion x, the
 degree of parallelism d, and the size of a processor group
@@ -558,10 +566,10 @@ when x - d. At run time, some processors will be idled if
 the actual depth of recursion is different from the assumed
 depth of recursion, which is illustrated in figure 7 (c) and
 (d). When the actual depth of recursion i is smaller than
-the assumed depth x, the assigned processors are idled.
+the assumed depth x, some processors are idled.
 Otherwise, the other processors as well are idled. Let R be
 the sum of the execution times of the recursion besides the
-ground constructs. This basic cost R is equal to N-(k d \Gamma1)
+ground constructs. R is equal to N-(k d \Gamma1)
 .
 For the runtime cost, C 1 , becomes
 assuming that x is not less than d. For i ? x, the cost C 2
@@ -627,7 +635,7 @@ formulas are equivalent as expected. The optimal values
 d and x depend on each other as shown in (18) and (20).
 We may need to use iterative computations to obtain the
 optimal values of d and x starting from
-Let us consider an example in which the probability mass
+Let We consider an example in which the probability mass
 function for the depth of the recursion is geometric with
 parameter q. At each execution of depth i of the recursion,
 we proceed to depth
@@ -660,7 +668,7 @@ and that they are independent each other. This equal probability
 is considered as the probability that all nodes of
 the same depth terminate the recursion in our assumption.
 The expected number of nodes at a certain depth is the
-same in both assumptions even though they describe different
+same in both assumptions even though both assumptions describe different
 behaviors. Under the independence assumption, the
 shape of the profile would be the same as shown in figure 7:
 the degree of parallelism d is maximized. Moreover, all recursion
@@ -668,10 +676,13 @@ processors have the same schedule length for the
 ground constructs. However, the optimal schedule length
 l x of the ground construct would be different. The length
 l x is proportional to the number of executions of the recursion
-constructs inside a ground construct. This number can
+constructs inside a ground construct. the number of executions of the recursion
+ can
 be any integer under the independence assumptions, while
-it belongs to a subset f0; our assumption.
-Since the probability mass function for this number is likely
+the number of executions of the recursion
+ belongs to a subset f0; our assumption.
+Since the probability mass function for the number of executions of the recursion
+ is likely
 to be too complicated under the independence assumption,
 we sacrifice performance by choosing a sub-optimal schedule
 length under a simpler assumption.
@@ -742,22 +753,24 @@ An example of mixed domain system is shown in figure 9.
 The synchronous dataflow (SDF) domain contains all data-independent
 actors and performs compile-time scheduling.
 Two branches of the conditional constructs are represented
-as SDF subsystems, so their local schedules are generated
+as SDF subsystems, so Two branches of the conditional constructs local schedules are generated
 by a static scheduler. Using the local schedules of both
 branches, the dynamic dataflow(DDF) domain executes the
 proposed algorithm to obtain the optimal profile of the conditional
 construct. The topmost SDF domain system regards
 the DDF domain as a macro actor with the assumed
-profile when it performs the global static scheduling.
+profile when The topmost SDF domain system performs the global static scheduling.
 DDF
 Fig. 9. An example of mixed domain system. The topmost level of
-the system is a SDF domain. A dynamic construct(if-then-else)
+The topmost SDF domain system is a SDF domain. A dynamic construct(if-then-else)
 is in the DDF domain, which in turn contains two subsystems in
-the SDF domain for its branches.
+the SDF domain for 
+ branches.
 We apply the proposed scheduling technique to several
-synthetic examples as preliminary experiments. These experiments
-do not serve as a full test or proof of generality
-of the technique. However, they verify that the proposed
+synthetic examples as preliminary experiments. several
+synthetic examples as preliminary experimentsdo not serve as a full test or proof of generality
+of the technique. However, several
+synthetic examples as preliminary experiments verify that the proposed
 technique can make better scheduling decisions than other
 simple but ad-hoc decisions on dynamic constructs in many
 applications. The target architecture is assumed to be a
@@ -811,8 +824,9 @@ ever, the schedule determines that assigning one processor
 is slightly better. Rather than parallelizing the iteration
 body, the scheduler automatically parallelizes the iteration
 cycles. If we change the parameters, we may want to parallelize
-the iteration body first and the iteration cycles next.
-HA AND LEE: COMPILE-TIME SCHEDULING OF DYNAMIC CONSTRUCTS IN DATAFLOW PROGRAM GRAPHS 777
+the iteration
+first and the iteration cycles next.
+HA AND Lee: COMPILE-TIME SCHEDULING OF DYNAMIC CONSTRUCTS IN DATAFLOW PROGRAM GRAPHS 777
 14 52176
 UP- body554
 Fig. 10. An example with a For construct at the top level. The
@@ -826,8 +840,7 @@ compilers for sequential programs. The resulting
 Gantt chart for this example is shown in figure 11.
 9
 Fig. 11. A Gantt chart disply of the scheduling result over 4 processors
-from the proposed scheduling technique for the example in
-figure 10. The profile of the For construct is identified.
+from the proposed scheduling technique for this examplefigure 10. The profile of the For construct is identified.
 If the number of iteration cycles at run time is less than
 or equal to 3, the schedule length of the example is same
 as the schedule period 66. If it is greater than 3, the schedule
@@ -838,25 +851,27 @@ II. The proposed technique outperforms other realistic
 methods and achieves 85% of the ideal schedule length by
 Method 3. In this example, assigning 4 processors to the
 iteration body (Method 1) worsens the performance since
-it fails to exploit the intercycle parallelism. Confining the
+the
+iteration body (Method 1) fails to exploit the intercycle parallelism. Confining the
 dynamic construct in a single actor (Method 2) gives the
-worst performance as expected since it fails to exploit both
+worst performance as expected since the
+iteration body (Method 1) fails to exploit both
 intercycle parallelism and the parallelism of the iteration
 body. Since the range of the number of iteration cycles is
 not big, assuming the worst case iteration (Method 4) is
 not bad.
-This example, however, reveals a shortcoming of the proposed
+this example, however, reveals a shortcoming of the proposed
 technique. If we assign 2 processors to the iteration
 body to exploit the parallelism of the iteration body as well
 as the intercycle parallelism, the average schedule length
 becomes 77.7, which is slightly better than the scheduling
-result by the proposed technique. When we calculate the
+result by The proposed technique. When we calculate the
 expected total cost to decide the optimal number of processors
 to assign to the iteration body, we do not account
 for the global effect of the decision. Since the difference
 of the expected total costs between the proposed technique
 and the best scheduling was not significant, as shown in table
-I, this non-optimality of the proposed technique could
+I, this non-optimality of The proposed technique could
 be anticipated. To improve the performance of the proposed
 technique, we can add a heuristic that if the expected
 total cost is not significantly greater than the optimal
@@ -870,7 +885,7 @@ selects 3 as the assumed number of iteration cycles.
 It is proved, however, that the best assumed number is
 2 in this example even though the performance difference
 is negligible. Although the proposed technique is not always
-optimal, it is certainly better than any of the other
+optimal, the proposed technique is certainly better than any of the other
 scheduling methods demonstrated in table II.
 Experiments with other dynamic constructs as well as
 nested constructs have been performed to obtain the similar
@@ -883,7 +898,7 @@ In a nested dynamic construct, the compile-time profile of
 the inner dynamic construct affects that of the outer dynamic
 construct. In general, there is a trade-off between
 exploiting parallelism of the inner dynamic construct first
-and that of the outer construct first. The proposed technique
+and that of the outer construct first. the proposed technique
 resolves this conflict automatically. Refer to [17] for
 detailed discussion.
 Let us assess the complexity of the proposed scheme. If
@@ -944,17 +959,18 @@ a rapid prototyping environment. We illustrated the effectiveness
 of the proposed technique with a synthetic example
 in this paper and with many other examples in [17]. The
 results are only a preliminary indication of the potential in
-practical applications, but they are very promising. While
+practical applications, but The
+results are very promising. While
 the proposed technique makes locally optimal decisions for
-each dynamic construct, it is shown that the proposed technique
+each dynamic construct, the proposed technique is shown that the proposed technique
 is effective when the amount of data dependency from
-a dynamic construct is small. But, we admittedly cannot
-quantify at what level the technique breaks down.
+a dynamic construct is small. But, We admittedly cannot
+quantify at what level the proposed technique breaks down.
 
 Acknowledgments
 
 The authors would like to gratefully thank the anonymous
-reviewers for their helpful suggestions. This research
+reviewers for The authors helpful suggestions. This research
 is part of the Ptolemy project, which is supported by the
 Advanced Research Projects Agency and the U.S. Air Force
 (under the RASSP program, contract F33615-93-C-1317),

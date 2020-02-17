@@ -1,24 +1,26 @@
 --T
 vectorized software for Bessel function evaluation.
 --A
-A suite of computer programs for the evaluation of Bessel functions and modified Bessel functions of orders zero and one for a vector of real arguments is described. Distinguishing characteristics of these programs are that (a) they are portable across a wide range of machines, and (b) they are vectorized in the case when multiple function evaluations are to be performed. The performance of the new programs are compared with software from the FNLIB collection of Fullerton on which the new software is based.
+A suite of computer programs for the evaluation of Bessel functions and modified Bessel functions of orders zero and one for a vector of real arguments is described. Distinguishing characteristics of these programs are that (a) these programs are portable across a wide range of machines, and (b) these programs are vectorized in the case when multiple function evaluations are to be performed. The performance of the new programs are compared with software from the FNLIB collection of Fullerton on which the new software is based.
 --B
 Introduction
 Bessel functions of real argument and integer order are among the most commonly occurring
 special functions of applied mathematics, and most software libraries contain routines for
-their evaluation. One of the most successful collections of routines for evaluating these and
+most software libraries evaluation. One of the most successful collections of routines for evaluating these and
 other special functions is the FNLIB package developed by Wayne Fullerton at the Los
 This paper appeared in the ACM Transactions on Mathematical Software, volume
 4, pp. 456-469. Contribution of the National Institute of Standards and Technology (NIST), not subject
-to copyright in the United States. Identification of commercial products in this paper does not imply
+to copyright in the United States. Identification of commercial products in This paper does not imply
 recommendation or endorsement by NIST.
 y Authors' addresses: Computing and Applied Mathematics Laboratory, National Institute of Standards
 and Technology, Gaithersburg, MD 20899. Electronic mail: boisvert@cam.nist.gov and saun-
 ders@cam.nist.gov, respectively
 Alamos National Laboratories in the late 1970s [10]. One of the most important features of
-FNLIB is its portability. Parameterized by the PORT machine constants [9], FNLIB codes
-are regularly used on machines from IBM PCs to Cray Y-MPs. Versions of these codes have
-found their way into several well-known libraries such as the IMSL SFUN/LIBRARY [11],
+FNLIB is 
+FNLIB portability. Parameterized by the PORT machine constants [9], FNLIB codes
+are regularly used on machines from IBM PCs to Cray Y-MPs. Versions of FNLIB codes
+ have
+found Versions of these codes way into several well-known libraries such as the IMSL SFUN/LIBRARY [11],
 and the SLATEC Common Math Library [2]. They are also available from netlib [7].
 More recently, increased attention has been paid to the development of algorithms and
 software which take advantage of vector processors. On such machines, for example, special
@@ -28,28 +30,29 @@ The ability to vectorize such loops is crucial in many applications.
 In this paper we describe a set of Fortran-callable subprograms which extend this functionality
 to the Bessel functions I . This has been done by
 producing modified versions of the FNLIB routines BESI0, BESI1, BESJ0, BESJ1, BESK0,
-BESK1, BESY0 and BESY1, as well as their double precision versions. The new routines
+BESK1, BESY0 and BESY1, as well as as well double precision versions. The new routines
 maintain the portability of FNLIB with the advantage of being vectorizable in cases when
 multiple function evaluations are required. In Section 2 we review the basic design of the
 FNLIB routines. In Section 3 we discuss various issues involved in the vectorization of these
 algorithms. This is followed by a short description of the user interface of our implementation
 in Section 4. Finally, in Section 5 we describe the testing of the new software, and
-evaluate its performance on various scalar and vector processors.
+evaluate the new software performance on various scalar and vector processors.
 2 Design of FNLIB
 FNLIB is a substantial collection of software, including more than 200 Fortran subprograms.
 Double precision versions are available for most codes. Primary design criteria for the development
 of the package were portability and maintainability. In some cases, other criteria
 such as speed and accuracy were relaxed slightly in order to maximize the primary criteria
-[10]. For example, FNLIB routines are rarely accurate to the last bit, although they are almost
+[10]. For example, FNLIB routines are rarely accurate to the last bit, although FNLIB routines are almost
 always accurate to within a factor of 10 times the machine precision. This is certainly
 sufficient for the vast majority of applications. The fact that these routines have remained
 popular for more than 10 years, and have been trivially ported to many machines which did
-not exist when they were initially developed attests to the success of the basic design.
-FNLIB is based upon approximation by truncated Chebyshev series expansions [8].
-Such approximations have many well-known properties: they are widely applicable, they are
-nearly best in the minimax sense, the error is easy to estimate, they provide variable accuracy
-approximations, and they are more stable to evaluate than conventional polynomials.
-Because of these properties, such approximations have been the basis for many algorithms
+not exist when these routines were initially developed attests to the success of the basic design.
+FNLIB
+ is based upon approximation by truncated Chebyshev series expansions [8].
+Such approximations have many well-known properties: many well-known properties are widely applicable, many well-known properties are
+nearly best in the minimax sense, the error is easy to estimate, many well-known properties provide variable accuracy
+approximations, and many well-known properties are more stable to evaluate than conventional polynomials.
+Because of many well-known properties, such approximations have been the basis for many algorithms
 for the evaluation of special functions.
 The basic formula for the construction of the routines in FNLIB, which we paraphrase
 from [10], follows.
@@ -78,10 +81,12 @@ the result overflows. Errors are issued using the PORT error handler [9].
 4. Compute the approximation.
 The basic computation is the evaluation of a truncated Chebyshev series. It is not reasonable
 for a single series to be accurate over the whole argument range. Thus, the argument range
-is broken up into several subintervals (usually three or four), each with its own series. Once
+is broken up into several subintervals (usually three or four), each with the argument range
+ own series. Once
 the appropriate subinterval has been determined, the computation proceeds as follows.
 (a) Preprocess argument.
-The argument is mapped to the interval [-1,1].
+(a) Preprocess argument.
+ is mapped to the interval [-1,1].
 (b) Evaluate Chebyshev series.
 This is done using a three-term linear recurrence due to Clenshaw [3].
 (c) Postprocess result.
@@ -106,13 +111,15 @@ general, will be less than the total number of arguments.
 3.1 An Example
 To illustrate this transformation we consider the following statement from the FNLIB routine
 IF ((Y .GT. XSML) .AND. (Y .LE. 3.0))
-This statement illustrates how one particular argument range is handled. The approximation
+the following statement from the FNLIB routine
+IF ((Y .GT illustrates how one particular argument range is handled. The approximation
 in this case is simply 2.75 plus the Chebyshev series sum returned by the utility CSEVL.
 BIOCS is an array of Chebyshev series coefficients and NTI0 is the number of coefficients.
 The corresponding vector code is more complex.
 IF (N .GT.
 DO
-This statement has been modified slightly from the original code to simplify the presentation.
+the following statement from the FNLIB routine
+IF ((Y .GT has been modified slightly from The corresponding vector code to simplify the presentation.
 Here there are M arguments in the array Y for which the function is to be evaluated with
 result returned in the array F. WGTLE returns an array INDX of the N indices of elements of
 the vector Y that are between XSML and 3. These are gathered by the routine WGTHR into
@@ -124,7 +131,7 @@ postprocessing phases are trivially vectorizable. In the remainder of this secti
 investigate the vectorization of each of the indicated subprograms.
 3.2 Vectorization of Multiple Chebyshev Series Evaluation
 Next we consider how the evaluation of truncated Chebyshev series is vectorized. First we
-review how the series is evaluated in the scalar code. Given an argument x and a set of
+review how the series is evaluated in The corresponding vector code. Given an argument x and a set of
 Chebyshev coefficients c due to Clenshaw evaluates
 Recurrence - Scalar Version
 1. Recurrence for series
@@ -132,14 +139,14 @@ Recurrence - Scalar Version
 When we have a vector of arguments, x j , clear what should be done:
 x, ff, fi, fl, and f become vectors and all assignments are loops that run for
 When this is done, however, the recurrence loop has two unnecessary vector copies. These
-can be eliminated when the loop on i is unrolled to a level of three. This is illustrated in the
+can be eliminated when the recurrence loop is unrolled to a level of three. This is illustrated in the
 following vector version of the above algorithm; note that three temporary vectors of length
 are required in addition to the input vector x and the output vector f .
 Recurrence - Vector Version
 1. Recurrence for series (unrolled)
 2. Last term; cleanup for n not divisible by three
 endif
-The loop on i repeatedly utilizes four vectors which can remain in vector registers for
+the recurrence loop i repeatedly utilizes four vectors which can remain in vector registers for
 the entire computation. Unrolling the loops in this way yields a 20% to 25% improvement
 in the overall performance of our software on the Cray Y-MP.
 3.3 Vectorization of Utility Operations
@@ -148,14 +155,13 @@ performed on vectors which are stored contiguously in memory. This is quite desi
 it reduces the possibility of bank conflicts during memory references. However, arguments
 corresponding to a given range need not lie contiguously in the input vector. Thus, for each
 argument range we must gather together applicable arguments into a contiguous vector,
-compute the required function value, and then scatter them back to appropriate locations
+compute the required function value, and then scatter applicable arguments back to appropriate locations
 in the output vector. The data-handling operations necessary to do these things are not
 significant in terms of operation counts, but can lead to significant performance degradation
-if not properly vectorized. Unfortunately, these operations are among the most likely to
+if not properly vectorized. Unfortunately, The data-handling operations are among the most likely to
 thwart a vectorizing compiler; none were vectorized by the Cyber 205 compiler, for example.
-We wish to implement our code in standard Fortran, but permit easy customization in
-cases where such code is inefficient. To facilitate this we have encapsulated these operations
-into subprograms which can be replaced by more efficient versions if available. We next
+We wish to implement We code in standard Fortran, but permit easy customization in
+cases where such code is inefficient. To facilitate this We have encapsulated The data-handling operationsinto subprograms which can be replaced by more efficient versions if available. We next
 describe these utilities in more detail. In each case our implementation is quite straightfor-
 ward. Although, each is "vectorized" by the compilers on the Convex C-120 and the Cray
 Y-MP, the most efficient implementation of these utilities is necessarily system-dependent.
@@ -167,7 +173,7 @@ operation collects the elements of the vector x j with these indices into a cont
 . Scatter is the inverse of this, x
 We have placed simple gather and scatter
 loops into the subprograms WGTHR(N,X,INDX,Y) and WSCTR(N,Y,INDX,X), respectively.
-Out-of-range Tests. Before we apply our algorithm we must determine whether any
+Out-of-range Tests. Before we apply we algorithm we must determine whether any
 element of the input vector is out of range, i.e., greater than (or less than) a given scalar. If
 so, we would like to provide the index of the first occurence as a diagnostic. If one attempts
 to combine both of these operations into a single loop, one gets something that is, in general,
@@ -185,7 +191,7 @@ Single Double Description Single Double
 VI0 DVI0 Evaluates I 0 for a vector of arguments. BESI0 DBESI0
 VI1 DVI1 Evaluates I 1 for a vector of arguments. BESI1 DBESI1
 VJ0 DVJ0 Evaluates J 0 for a vector of arguments. BESJ0 DBESJ0
-VJ1 DVJ1 Evaluates J 1 for a vector of arguments. BESJ1 DBESJ1
+VJ1 Evaluates J 0 for a vector of arguments J 1 for a vector of arguments. BESJ1 DBESJ1
 VK0 DVK0 Evaluates K 0 for a vector of arguments. BESK0 DBESK0
 VK1 DVK1 Evaluates K 1 for a vector of arguments. BESK1 DBESK1
 VY0 DVY0 Evaluates Y 0 for a vector of arguments. BESY0 DBESY0
@@ -198,7 +204,7 @@ Vectorized Software
 Using techniques described in the section above, we have produced portable vectorized routines
 for evaluating the following Bessel functions of real argument and orders zero and one:
 I our codes employ the basic algorithms of FNLIB
-retooled for a vector environment we have called our collection of codes VFNLIB. Although
+retooled for a vector environment we have called we collection of codes VFNLIB. Although
 we have produced new user-callable versions of only a small portion of the original FNLIB,
 the techniques which we have used can be readily applied to many other FNLIB routines.
 VFNLIB includes the user-callable Fortran subprograms which are listed in Table 1.
@@ -206,7 +212,7 @@ Each has an identical calling sequence.
 CALL name (M, X, F, WORK, IWORK, INFO)
 X is an array containing the M arguments for which the function is to be evaluated. The results
 are returned in the corresponding positions of the array F. WORK and IWORK are workspace
-arrays. IWORK is of length M, while WORK is of length 7M. INFO is a return code. Both single
+arrays. IWORK is of length M, while F. WORK is of length 7M. INFO is a return code. Both single
 precision and double precision versions of each subprogram are provided. These routines are
 actually drivers which partition the work arrays and call lower-level routines which perform
 the actual computations. A list of all subsidiary routines included in VFNLIB is given in
@@ -264,7 +270,8 @@ options for flagging non-ANSI constructs.
 5.1 Portability and Accuracy
 Since VFNLIB represents a vectorization of a subset of FNLIB, our first goal is to assure
 that VFNLIB routines return results comparable to the corresponding FNLIB routines. A
-test program that is distributed with the package compares each function with its FNLIB
+test program that is distributed with the package compares each function with A
+test program that is distributed with the package FNLIB
 counterpart for approximately 23,000 arguments, verifying that the two differ by no more
 than five times the machine epsilon. (Relative difference is used for function values greater
 than one, absolute difference for those less than one.) This code was run on three separate
@@ -275,8 +282,7 @@ using cf77. In each case available options were used to check for conformance to
 X3.9-1978 FORTRAN.
 Some additional testing was done to verify that both sets of routines were indeed producing
 correct function values. Ideally, function routines return results with relative error
-near the machine precision. This is rarely the case in practice. The accuracy of the VFNLIB
-routines was assessed by evaluating each function for four to five thousand arguments on
+near the machine precision. This is rarely the case in practice. The accuracy of VFNLIBroutines was assessed by evaluating each function for four to five thousand arguments on
 the Cray Y-MP with both FNLIB and VFNLIB and then comparing the results with those
 computed in extended precision using Mathematica [12]. In most cases the results returned
 by FNLIB and VFNLIB have relative error less than about 10 times the machine epsilon
@@ -306,7 +312,9 @@ have small relative error. This occurs even if g is computed to full machine pre
 The chief motivation for using VFNLIB is the prospect of improved computation rates on
 vector processors. To assess the advantage of using VFNLIB, we compare the use of VFN-
 routines ("vector codes") with repeated calls of corresponding FNLIB routines ("scalar
-codes"). We compare the codes on the three systems described in Section 5.1: Sun SPARCstation
+codes"). We compare To assess the advantage of using VFNLIB, we compare the use of VFN-
+routines ("vector codes") with repeated calls of corresponding FNLIB routines ("scalar
+codes") on the three systems described in Section 5.1: Sun SPARCstation
 1+, Convex C-120, and Cray Y-MP2. The first is a scalar workstation, the second a
 vector minisupercomputer, and the third a 2-processor vector supercomputer (although we
 only use one processor in these tests). We include the Sun to demonstrate the portability
@@ -324,7 +332,7 @@ figures, the observed rate for vectorized Chebyshev series evaluation on the Con
 Unfortunately, as we have seen, there is more to the computation of Bessel functions
 than the evaluation of Chebyshev series. Overhead must be paid for the gathering and
 scattering of vector elements, as well as for various error checks. It is easy to assess the
-effect of this overhead on the Cray Y-MP using its hardware performance monitor. Table 4
+effect of this overhead on the Cray Y-MP using the Cray Y-MP hardware performance monitor. Table 4
 lists the measured asymptotic computation rate in megaflops for each user-callable function.
 To obtain this data, we evaluated each function for 19 different sets of 2000 arguments,
 each with a different argument distribution. Comparing Table 3 and Table 4 we see that
@@ -357,7 +365,8 @@ Max 8.8 8.2 7.6 7.0 10.9 10.4 10.3 9.7
 Cray Y-MP2 Min 16.2 15.3 14.5 13.9 20.8 20.9 14.8 14.9
 Ave 17.8 16.8 16.0 15.3 21.5 21.6 19.6 19.8
 ways among three different argument ranges. The test includes cases where all arguments
-are in a single range as well as cases where only one per cent of the arguments are in a
+are in a single range as well as cases where only one per cent of all arguments
+ are in a
 given range. Table 5 lists minimum, average, and maximum speedups observed with the
 single precision codes on each computer. The speedups for the Convex are in the range of
 4.4 to 9.6 while the speedups on the Cray are in the range 13.9 to 23.0. (The entry labeled
@@ -365,7 +374,7 @@ single precision codes on each computer. The speedups for the Convex are in the 
 the vectorized codes run faster than the scalar codes on the Sun in most cases.
 The speedups that one might predict from Table 3 are 1.6, 12.5, and 14.3 for the Sun,
 Convex, and Cray, respectively. The average speedups for the Cray Y-MP given in Table 5
-are somewhat better than this. In contrast, the speedups for the Convex are not as large
+are somewhat better than this. In contrast, The speedups for the Convex the Convex are not as large
 as predicted. To investigate this further we generated an execution profile of the subroutine
 evaluating I 0 for a vector of length 2000 with x i. The first two columns of
 
@@ -396,9 +405,10 @@ Machine length I 0 I 1 J
 Cray
 on the Convex, however. The Convex VECLIB library [4] contains Fortran-callable utilities
 which optimize the performance of the the index compression and gather/scatter operations.
-Since we were careful in our implementation to isolate these very operations into low-level
+Since we were careful in we implementation to isolate these very operations into low-level
 utilities, we can easily replace the badly vectorized loops by calls to VECLIB. When this
-is done the entries in the third column of Table 6 are obtained. This is is a more reason-able
+is done the entries in the third column of Table 6 are obtained. this
+ is is a more reason-able
 distribution, although the gather/scatter operations still occupy a significantly larger
 percentage of time than on the Cray. Using the modified version of VFNLIB's utilities on
 the Convex leads to the the improved scalar/vector speedups labeled "Convex C-120 with

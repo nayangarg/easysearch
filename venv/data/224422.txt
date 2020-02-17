@@ -1,29 +1,33 @@
 --T
 An HPF compiler for the IBM SP2.
 --A
-We describe pHPF, an research prototype HPF compiler for the IBM SP series parallel machines. The compiler accepts as input Fortran 90 and Fortran 77 programs, augmented with HPF directives; sequential loops are automatically parallelized. The compiler supports symbolic analysis of expressions. This allows parameters such as the number of processors to be unknown at compile-time without significantly affecting performance. Communication schedules and computation guards are generated in a parameterized form at compile-time. Several novel optimizations and improved versions of well-known optimizations have been implemented in pHPF to exploit parallelism and reduce communication costs. These optimizations include elimination of redundant communication using data-availability analysis; using collective communication; new techniques for mapping scalar variables; coarse-grain wavefronting; and communication reduction in multi-dimensional shift communications. We present experimental results for some well-known benchmark routines. The results show the effectiveness of the compiler in generating efficient code for HPF programs.
+We describe pHPF, an research prototype HPF compiler for the IBM SP series parallel machines. An HPF compiler for the IBM SP2.
+ accepts as input Fortran 90 and Fortran 77 programs, augmented with HPF directives; sequential loops are automatically parallelized. An HPF compiler for the IBM SP2.
+ supports symbolic analysis of expressions. This allows parameters such as the number of processors to be unknown at compile-time without significantly affecting performance. Communication schedules and computation guards are generated in a parameterized form at compile-time. Several novel optimizations and improved versions of well-known optimizations have been implemented in pHPF to exploit parallelism and reduce communication costs. Several novel optimizations and improved versions of well-known optimizations include elimination of redundant communication using data-availability analysis; using collective communication; new techniques for mapping scalar variables; coarse-grain wavefronting; and communication reduction in multi-dimensional shift communications. We present experimental results for some well-known benchmark routines. experimental results for some well-known benchmark routines show the effectiveness of An HPF compiler for the IBM SP2.
+ in generating efficient code for HPF programs.
 --B
 Introduction
 Fortran has always been synonymous with fast execution. High Performance Fortran (HPF) [13, 8]
-defines a set of directive extensions to Fortran to facilitate performance portability of Fortran
-programs when compiling for large-scale, multiprocessor architectures, while preserving a shared-address
+defines a set of directive extensions to Introduction
+Fortran to facilitate performance portability of High Performance Fortran (HPF)programs when compiling for large-scale, multiprocessor architectures, while preserving a shared-address
 space programming model. Unfortunately, HPF compilers have not appeared as rapidly as
-originally had been hoped, and it is now accepted that high quality compilers for HPF will have to
+originally had been hoped, and HPF compilers is now accepted that high quality compilers for HPF will have to
 evolve over time and with experience. Some of the complexities of compiling HPF result from the
 ffl The ability to perform communication optimizations is essential for high performance. A
 single inner-loop communication can result in a significant loss of performance. For HPF performance
 to approach hand-coded performance, more and more sophisticated optimizations
 will have to be implemented.
-ffl The implementation of every feature of Fortran is affected by the distribution of data across
-different address spaces. Fortran data is primarily static, but HPF data must be dynamically
+ffl The implementation of every feature of Introduction
+Fortran is affected by the distribution of data across
+different address spaces. Introduction
+Fortran data is primarily static, but HPF data must be dynamically
 allocated, since arrays can be redistributed. Even without redistribution, the number
 of processors is, in general, not known at compile-time, so that the sizes of local array partitions
 are not known statically. Thus, in addition to loop parallelization, HPF requires an
 IBM T.J. Watson. Research, P.O. Box 704, Yorktown Heights, NY, 10598. The authors can be reached by e-mail
 at fmgupta,midkiff,schnbrg,shields,kyw,ching,tangog@watson.ibm.com. The corresponding author can be reached at
 schnbrg@watson.ibm.com.
-y IBM Software Solutions Division, 1150 Eglinton Ave. East, North York, Ontario, CANADA M3C 1V7. The
-author can be reached by e-mail at seshadri@vnet.ibm.com
+y IBM Software Solutions Division, 1150 Eglinton Ave. East, North York, Ontario, CANADA M3C 1V7. The corresponding author can be reached by e-mail at seshadri@vnet.ibm.com
 enhanced run-time model, and new implementations of such features as common blocks, data
 statements, block data, and array addressing.
 ffl HPF is an extremely high-level language, in that the amount of generated/executed code per
@@ -34,11 +38,10 @@ uniprocessor node performance. In particular, the HPF-specific transformations m
 inhibit uniprocessor optimization, and the SPMD overhead must be small.
 This paper describes pHPF, an HPF compiler for the IBM SP2 architecture that has been developed
 over the past two years 1 . pHPF consists of extensions for the HPF subset [13, 8] to an existing
-Fortran 90 [7] compiler. In this paper we focus on novel aspects, optimizations, and experience
-with a set of benchmarks. Although pHPF is still under development, all features described in this
-paper have been fully implemented.
+Fortran 90 [7] compiler. In This paper we focus on novel aspects, optimizations, and experience
+with a set of benchmarks. Although pHPF is still under development, all features described in This paper have been fully implemented.
 Several HPF-related compiler efforts have been previously described [11, 23, 17, 19, 3, 15, 18].
-Our compiler is unique in the following combination of features:
+we compiler is unique in the following combination of features:
 ffl pHPF exploits data parallelism from Fortran 90 array language and also performs program
 analysis to effectively parallelize loops in Fortran 77 code.
 ffl pHPF performs symbolic analysis to generate efficient code in the presence of statically unknown
@@ -58,7 +61,8 @@ literature. Finally, Section 6 presents conclusions and ideas for future work.
 Compiler Framework
 pHPF was implemented by incorporating a new SPMDizer component into an existing Fortran 90
 compiler, as shown in Figure 1. Additionally, front-end extensions were required to process HPF
-directives. The impact of HPF on the other components of the Fortran 90 compiler was very small;
+directives. The impact of HPF
+ on the other components of the Fortran 90 compiler was very small;
 only the scalarizer required significant modifications.
 1 This is a prototype development project at IBM Research.pHPF currently supports block and cyclic, but not block-cyclic distributions.
 Array Language
@@ -92,7 +96,7 @@ to better utilize cache and registers.
 ffl The back end performs traditional optimizations on the uniprocessor program.
 The scalarizer in-lines Fortran 90 intrinsic functions whenever possible. By in-lining intrinsic
 functions, it is possible to eliminate extra array temporaries and copying, and to achieve performance
-for Fortran 90 programs comparable to Fortran 77 programs. HPF extensions to the
+for The scalarizer in-lines Fortran 90 intrinsic functions whenever possible 90 programs comparable to The scalarizer in-lines Fortran 90 intrinsic functions whenever possible 77 programs. HPF extensions to the
 HPF SPMDizer
 Data Partitioning
 Preprocessing
@@ -114,21 +118,32 @@ Figure
 2: Architecture of the pHPF SPMDizer
 scalarizer ensure that information about parallelism implicit in a Fortran 90 construct (such as a
 reduction operator) is not lost during in-lining, by recording any additional information needed
-later. The scalarizer also assigns a suitable distribution to array temporaries created during scalar-
+later. Postprocessing
+
+Figure
+
+2: Architecture of the pHPF SPMDizer
+scalarizer also assigns a suitable distribution to array temporaries created during scalar-
 ization.
-The placement of the SPMDizer after the scalarizer is significant in that the SPMDizer processes
+The placement of the SPMDizer after Postprocessing
+
+Figure
+
+2: Architecture of the pHPF SPMDizer
+scalarizer is significant in that the SPMDizer processes
 both Fortran 77 programs and scalarized Fortran 90 programs in a uniform manner. Similarly, the
 locality optimizer processes both SPMDized and uniprocessor input programs in a uniform way.
 This modularization of functionality simplifies the implementation without sacrificing performance.
-The SPMDizer places communication outside of loops when it is legal; the locality optimizer is
+the SPMDizer places communication outside of loops when it is legal; the locality optimizer is
 subsequently able to reorder the inner, communication-free loops for better cache utilization. Fur-
 thermore, the SPMDized form of new loop bounds for parallel loops facilitates easy identification
 of conformable loops, to enable loop fusion transformations for improving data locality. For distributed
 arrays, the SPMDizer shrinks distributed dimensions, so that there are no address-space
 holes in the data that would otherwise reduce spatial locality.
-The compiler includes data-flow analysis, data dependence analysis, and loop transformation
+there are no address-space
+holes in the data that would otherwise reduce spatial locality includes data-flow analysis, data dependence analysis, and loop transformation
 modules, which enable a variety of optimizations performed by different compilation stages. For
-example, the scalarizer uses data dependence information to eliminate array temporaries, which are
+example, The scalarizer uses data dependence information to eliminate array temporaries, which are
 otherwise needed to preserve Fortran 90 array language semantics [7]. Data dependence analysis
 and loop transformations are also critical to locality and communication optimizations.
 The structure of the SPMDizer is shown in Figure 2. We illustrate the compilation process,
@@ -151,8 +166,9 @@ Figure
 
 Figures
 
-3 shows a simple Fortran 90 SPREAD program with HPF directives. Figure 4 shows the
-result of scalarizing this program. Naive scalarization of a SPREAD operation would result in the
+3 shows a simple Introduction
+Fortran 90 SPREAD program with HPF directives. Figure 4 shows the
+result of scalarizing a simple Fortran 90 SPREAD program with HPF directives. Naive scalarization of a SPREAD operation would result in the
 generation of a 2-dimensional temporary array and a run-time call to a library spread routine. The
 scalarizer generates more efficient in-line code for the SPREAD operation, without creating any
 new temporary variable.
@@ -165,8 +181,8 @@ Data Partitioner. Each distributed array (which may be static or a common-block 
 is transformed into a Fortran 90 pointer, which is allocated dynamically in the library routine
 hpf allocate. Arrays are shrunk according to each processor's local block size, by adjusting the
 bounds of the local array within the global address space. For example, if there are 4 processors,
-the bounds of A on the second processor will be (26:50). Because we use Fortran 90 dynamic
-pointer allocation to allocate shrunk arrays, our SPMDizer does not need to perform global-to-local
+the bounds of A on the second processor will be (26:50). Because We use Fortran 90 dynamic
+pointer allocation to allocate shrunk arrays, the SPMDizer the SPMDizer does not need to perform global-to-local
 address remapping, unlike various HPF preprocessors [15, 18]. 3
 The form of the output code is general enough to represent missing compile-time information. In
 this example, even though the global array bounds of A and B are given, the number of processors
@@ -176,7 +192,8 @@ information will commonly be unknown at compile-time, pHPF is designed so that i
 compilation parameters are treated as general expressions rather than constants, and storage for
 mapped arrays is always dynamically allocated, with minimal observed performance loss.
 Communication Analysis and Generation. For each read reference in the program, the communication
-analysis phase determines whether it requires interprocessor communication. If com-
+analysis phase determines whether the communication
+analysis phase requires interprocessor communication. If com-
 3 Cyclic distributions, which require subscript modification, are an exception.
 integer, pointer
 call hpf-get-numprocs(2,numprocs,pid)
@@ -218,19 +235,18 @@ statement guards, where necessary, to distribute the computation among different
 owner-computes rule [11] is generally used, except for reduction computations and for assignments
 to scalars under conditions described in Section 3.
 HPF Run-Time Library. The run-time library allocates partitioned arrays and performs local
-data movement and communication. It provides a high level interface for the compiler to specify
+data movement and communication. HPF Run-Time Library provides a high level interface for the compiler to specify
 communication based on global indices of data (indices corresponding to arrays before data distri-
 bution) and processors. Both data and processors are represented as multi-dimensional sections,
 possibly with non-unit strides. Any buffer allocation, packing, and unpacking needed to linearize
 the data for communication is performed in the run-time routines. The run-time system also performs
 optimizations like overlapping unpack operations with non-blocking receives, when waiting
 for the completion of multiple receives. The run-time library is portable across different basic communication
-systems. Currently it supports both IBM MPL and MPI libraries. The runtime system
-also provides detailed performance statistics, trace information for debugging by hand, and trace
+systems. Currently The run-time library supports both IBM MPL and MPI libraries. The run-time systemalso provides detailed performance statistics, trace information for debugging by hand, and trace
 generation for program visualization tools [12].
 Optimizations
 The SPMDizer of pHPF performs several optimizations to reduce both communication costs and
-the overhead of guards introduced by computation partitioning. Some of these optimizations are
+the overhead of guards introduced by computation partitioning. Some of several optimizations are
 well-known and have been discussed in the literature [11, 23, 17, 19, 3], while many others are
 unique to pHPF.
 Message Vectorization Moving communication outside of loops to amortize the startup costs
@@ -247,7 +263,7 @@ do
 
 Figure
 
-Enabling of message vectorization by loop distribution
+Enabling of Message Vectorization by loop distribution
 form of strongly connected components (SCCs) in the program dependence graph. Since un-necessary
 loop distribution can hurt cache locality and also redundant message elimination,
 which currently does not recognize redundant messages in different loop nests, pHPF identifies
@@ -257,7 +273,8 @@ those that have mutually different local iteration sets obtained by computation 
 In those cases, loop distribution reduces communication costs and the overhead of computation
 partitioning. For example, in Figure 6, the communication for the reference to D(i) is
 moved outside the i-loop as a result of loop distribution.
-ffl Exploiting the INDEPENDENT directive: The compiler assumes there is no loop-carried dependence
+ffl Exploiting the INDEPENDENT directive: there are no address-space
+holes in the data that would otherwise reduce spatial locality assumes there is no loop-carried dependence
 in loops marked independent by the programmer. This often allows communication
 to be moved outside the loops when static analysis information is imprecise.
 Collective Communication pHPF uses techniques from [9] to identify the high-level pattern of
@@ -268,10 +285,11 @@ analysis is improved by:
 ffl Idiom-recognition for reductions: Currently, pHPF recognizes sum, product, min and max
 reductions in Fortran 77 code. Since all Fortran 90 reduction operations are handled through
 inlining, information about reduction operations gathered by idiom-recognition and inlining is
-represented uniformly. Communication analysis exploits this information to generate parallel
+represented uniformly. Communication analysis exploits This information to generate parallel
 code for the local reduction, followed by a global reduction with efficient communication.
 ffl Symbolic analysis: Since data distribution parameters such as block size are often unknown
-(e.g. when the number of processors is not specified statically), the compiler uses symbolic
+(e.g. when the number of processors is not specified statically), there are no address-space
+holes in the data that would otherwise reduce spatial locality uses symbolic
 analysis for operations like checking the equality of expressions and checking if one expression
 is an integral multiple of another expression. This enables pHPF to generate more efficient
 code, for example, by detecting the absence of communication through a symbolic test for
@@ -294,19 +312,19 @@ cmslow 44 21 52.3
 Table
 
 1: Results of optimization to eliminate redundant communication
-communication, when the compiler can infer that data to be communicated is already available at
+communication, when there are no address-space
+holes in the data that would otherwise reduce spatial locality can infer that data to be communicated is already available at
 the intended receivers due to prior communication(s). For example, in Figure 7, communication for
 the reference to A(i-1,n) in statement S 2 is made redundant by communication for the reference
 to A(i-1,n) in S 1
 . We have implemented a simplified version of the analysis presented in [10]
 to eliminate redundant communication, which finds redundant communication within single loop
 nests. An advantage of our analysis is that it is performed at a high level, and hence is largely
-independent of communication code generation. Table 1 summarizes results obtained by pHPF
-on some of the benchmark programs described in Section 4. The table shows static counts of
+independent of communication code generation. Table 1 summarizes results obtained by pHPFon some of the benchmark programs described in Section 4. The table shows static counts of
 the number of references requiring communication before and after the optimization to eliminate
 redundant communication, and shows that the compiler is quite successful in identifying redundant
 communication.
-Optimizing Nearest-Neighbor Shift Communication The pHPF compiler employs several
+Optimizing Nearest-Neighbor Shift Communication the compiler employs several
 techniques to optimize shift communication, which occurs frequently in many scientific applications.
 The scalarizer optimizes the number of temporary arrays introduced to handle Fortran 90 shift
 operations. The following optimizations are performed to further reduce communication costs:
@@ -331,8 +349,8 @@ data movement (IDM) in the second dimension, and the data movement for B(i-1,j-1
 shift in both dimensions. Recognizing the communication for B(i-1,j-1) as dominant (due
 to interprocessor communication instead of IDM in the second dimension), pHPF drops the
 communication for B(i-1,j) after augmenting the dominant communication with the dropped
-communication data set. In this case, it extends the upper bound of the date communicated
-for the second dimension of B(i-1,j-1). We have generalized our implementation of redundant
+communication data set. In this case, this case extends the upper bound of the date communicated
+for the second dimension of B(i-1,j-1). We have generalized We implementation of redundant
 communication elimination to do message coalescing as well.
 ffl Multi-dimensional shift communication : Given an array reference with shift communication
 in d processor grid dimensions, each processor (ignoring the boundary cases) sends data to
@@ -360,7 +378,7 @@ Figure
 This leads to pipeline parallelism across both grid dimensions, but regardless of the loop ordering,
 one of the dimensions has extremely fine-grained parallelism, with high communication overhead.
 pHPF performs special analysis for fine-grained pipelined communication taking place inside a loop
-nest. It identifies the maximal fully-permutable inner loop nest [22], if all statements inside the
+nest. pHPF identifies the maximal fully-permutable inner loop nest [22], if all statements inside the
 loop nest have the same computation partitioning. Each pipelined communication corresponding
 to an array dimension with block distribution can be moved outside the fully-permutable loop nest.
 This follows from two observations. First, a fully-permutable loop nest can be tiled arbitrarily [22].
@@ -382,12 +400,12 @@ mapping of scalars.
 The privatizable variable y is aligned with a producer reference, i.e., the rhs reference A(i)
 on the statement that computes the scalar value. This avoids any communication needed for the
 producer reference on that statement. The variable x is aligned with a consumer reference, i.e., an
-lhs reference (D(i-2)) which uses the scalar value in its computation. If x were aligned instead
+lhs reference (D(i-2)) which uses the scalar value in The variable x computation. If x were aligned instead
 with a producer reference (B(i) or C(i)), the communication of x to the owner of D(i-2) would
 have required communication inside the i-loop, because of a dependence from the definition of x
 to the use of x inside the loop. By aligning x with D(i-2), communication is now needed for two
 references B(i) and C(i), but these communications can be moved outside the i-loop. Finally, the
-variable z uses the value of replicated array elements E(i) and F(i) in its computation, and is not
+variable z uses the value of replicated array elements E(i) and F(i) in F(i) computation, and is not
 real a(100,100)
 do do i=iown lbound(a,1,i), iown ubound(a,1,i), 1
 do end do
@@ -399,8 +417,8 @@ explicitly aligned with any reference. Each processor that executes an iteration
 the computation partitioning (as determined by the partitioning of other statements in that loop)
 "owns" and computes a temporary value of z in that loop iteration.
 pHPF uses the static single assignment (SSA) representation [5] to associate a separate mapping
-decision with each assignment to a scalar. It chooses replication as the default mapping. For each
-definition of the scalar in a loop that can be privatized without a copy-out (based on the def/use
+decision with each assignment to a scalar. a scalar chooses replication as the default mapping. For each
+definition of a scalar in a loop that can be privatized without a copy-out (based on the def/use
 analysis), and for which no reaching use identifies any other reaching definition, pHPF aligns the
 scalar with a reference to a partitioned array, if any, on the rhs of the statement. If each rhs
 reference on the statement is available on all processors, the scalar variable is explicitly marked as
@@ -435,10 +453,14 @@ In this section we discuss some preliminary experimental results on a set of ben
 and the utilization of the optimizations discussed in the previous section.
 4.1 Experimental Setup
 We chose four programs from the HPF benchmark suite developed by Applied Parallel Research,
-Inc. These are publicly available programs and vary in the degrees of challenge that they present
+four programs from the HPF benchmark suite developed by Applied Parallel Research,
+ are publicly available programs and vary in the degrees of challenge that four programs from the HPF benchmark suite developed by Applied Parallel Research,
+ present
 to the compiler. The first benchmark program, grid, is an iterative 2-D 9-point stencil program
 that features regular, nearest neighbor communication followed by a global reduction operation.
-The grid program has little computation and so the benchmark version of the program takes the
+an iterative 2-D 9-point stencil program
+that features regular, nearest neighbor communication followed by a global reduction operation has little computation and so the benchmark version of an iterative 2-D 9-point stencil program
+that features regular, nearest neighbor communication followed by a global reduction operation takes the
 logarithms of the 9-point stencil and compute the exponential value of the average to artificially
 boost the computation/communication ratio. The second program, tomcatv (originally from the
 SPEC benchmark), is a mesh generator with Thompson's solver. The third program, NCAR shallow
@@ -453,14 +475,15 @@ processors). The speedup of the programs was then calculated by dividing the bas
 the parallel time (S p
 All experiments (both the sequential and parallel runs) were done on a 36-processor IBM SP2
 with thin-nodes and 4 wide-nodes. All programs were compiled with the same optimization
-flag (-O3). For grid, NCAR shallow-water, and x42, timing for a hand-optimized version of the
-program using the message passing library (MPL) is also shown.
+flag (-O3). For grid, NCAR shallow-water, and x42, timing for a hand-optimized version of an iterative 2-D 9-point stencil program
+that features regular, nearest neighbor communication followed by a global reduction operation using the message passing library (MPL) is also shown.
 4.2 Results
 Grid The three-dimensional arrays are aligned to a template that is distributed onto a two-dimensional
-processor grid. The benchmark results were obtained with
-cycles. Our compiler achieves linear speedup in this case.
+processor grid. The performance results were obtained with
+cycles. the compiler achieves linear speedup in this case.
 As noted in the previous section, pHPF was successful in eliminating redundant communication
-with this program. The column marked as grid* in Table 2 was obtained by specifying the number
+with an iterative 2-D 9-point stencil program
+that features regular, nearest neighbor communication followed by a global reduction operation. The column marked as grid* in Table 2 was obtained by specifying the number
 of processors at compile-time. This shows that pHPF is capable of generating high quality code
 when the number of processors is unknown at compile time.
 
@@ -474,29 +497,32 @@ MPL version 1.00 1.14 2.28 4.53 8.82 16.62 31.10
 Table
 
 4: Speedups of the NCAR shallow water program
-Tomcatv All arrays in tomcatv are distributed column-wise onto a 1-D processor grid. The
-arrays are of size 514x514. The program first computes the residuals, which requires nearest
+Tomcatv The three-dimensional arrays are distributed column-wise onto a 1-D processor grid. The
+arrays are of size 514x514. an iterative 2-D 9-point stencil program
+that features regular, nearest neighbor communication followed by a global reduction operation first computes the residuals, which requires nearest
 neighbor communication. Next the maximum values of the residuals are determined, and finally
 the tridiagonal system is solved in parallel. This computation iterates until the maximum value
 of the residuals converges. Idiom recognition identified the reduction operation for computing the
 maximum of the residuals. Communication for one-third of the references initially identified as
 needing communication were recognized as redundant and eliminated. Other optimizations that
 were useful included alignment of scalars with consumers and the replacement of induction variables.
-These optimizations enabled the bounds of the main computation loop nest to be shrunk, with no
+Other optimizations that
+were useful included alignment of scalars with consumers and the replacement of induction variables.
+ enabled the bounds of the main computation loop nest to be shrunk, with no
 guards needed for statements inside the loop nest. Although the compiler achieves only 55% of the
 ideal speedup for 32 processors, this result is quite good compared to the results we have seen from
 other HPF compilers.
 NCAR Shallow Water Benchmark The results of Table 4 were computed based on 512x512
-arrays distributed (*, BLOCK). The compiler had to rely on the independent directive for some of
+arrays distributed (*, BLOCK). the compiler had to rely on the independent directive for some of
 the loops, which could not otherwise be recognized as parallel due to a statically unknown constant
-appearing in some subscripts. For a small number of processors, the speedup is good, but it does
-not scale well when the number of processors is increased. If the arrays are distributed (BLOCK,
+appearing in some subscripts. For a small number of processors, the speedup is good, but the speedup does
+not scale well when the number of processors is increased. If The three-dimensional arrays are distributed (BLOCK,
 BLOCK), then the number of references that need communication increases from 25 to 45. The
 performance of 2-D distribution is better than the 1-D distribution, however, because the cost of
 extra messages was less than the savings from sending shorter messages. Redundant communication
 elimination was also more effective for the 2-D distribution.
 X42 The benchmark version from APR only times the part of the program that computes the
-wave-fields. The arrays are distributed using 1-D (*,BLOCK) distribution. The redundant communication
+wave-fields. The three-dimensional arrays are distributed using 1-D (*,BLOCK) distribution. The redundant communication
 elimination removes 8 of the 19 static communications.
 
 Summary
@@ -517,41 +543,43 @@ There are several groups which have looked at the problem of compiling HPF-like 
 distributed memory machines [11, 23, 19, 3, 4, 15, 18]. Our work has also benefited from other
 early projects like Kali [14],
 The Fortran D compiler [11] performs several optimizations like message vectorization, using
-collective communication, and exploiting pipeline parallelism. It also performs analysis to eliminate
+collective communication, and exploiting pipeline parallelism. The Fortran D compiler [11] also performs analysis to eliminate
 partially redundant communication for irregular computations [21]. The current version of the
 Fortran D compiler requires the number of processors to be known at compile time, and supports
 partitioning of only a single dimension of any array.
 The SUPERB compiler [23] being developed at the University of Vienna represents the second
 generation of their compiler which pioneered techniques like message vectorization and the use
-of overlap regions for shift communication. Their compiler only supports block distribution of
-array dimensions. It puts special emphasis on performance prediction to guide optimizations and
+of overlap regions for shift communication. their only supports block distribution of
+array dimensions. The Fortran D compiler [11] puts special emphasis on performance prediction to guide optimizations and
 data-partitioning decisions [6].
 The Fortran 90D compiler [3] exploits parallelism from Fortran 90 constructs in generating the
-SPMD message-passing program, it does not attempt to parallelize sequential Fortran 77 programs.
+SPMD message-passing program, The Fortran D compiler [11] does not attempt to parallelize sequential Fortran 77 programs.
 Their work has focussed considerably on supporting parallel I/O and handling out-of-core programs
 [20].
 The PARADIGM compiler [19, 2] is targeted to Fortran 77 programs and provides an option for
-automatic data partitioning for regular computations. It also supports exploitation of functional
+automatic data partitioning for regular computations. The Fortran D compiler [11] also supports exploitation of functional
 parallelism in addition to data-parallelism.
-The ADAPTOR system [4] supports the HPF subset and performs optimizations both for
+The ADAPTOR [4] supports the HPF subset and performs optimizations both for
 handling Fortran 90 array constructs and for improving cache locality, in addition to those for
 reducing communication costs. The ADAPTOR determines the communication schedules at run-time
 
 The SUIF compiler [1] performs loop transformations for increasing parallelism, and for enhancing
-uniprocessor performance. The compiler also supports automatic data partitioning. They
+uniprocessor performance. The SUIF compiler also supports automatic data partitioning. They
 do not report results on message-passing machines.
 6 Conclusions
-We have described an HPF compiler for the IBM SP series parallel machines. Our compiler, pHPF,
-is unique in its ability to efficiently support both Fortran 90 array operations and sequential Fortran
-77 loops in HPF programs. It handles statically unknown parameters like the number of processors
-usually with no performance degradation, as it uses symbolic analysis and does not resort to run-time
+We have described an HPF compiler for the IBM SP series parallel machines. an HPF compiler for the IBM SP series parallel machines, pHPF,
+is unique in an HPF compiler for the IBM SP series parallel machines ability to efficiently support both Fortran 90 array operations and sequential Fortran
+77 loops in HPF programs. an HPF compiler for the IBM SP series parallel machines handles statically unknown parameters like the number of processors
+usually with no performance degradation, as an HPF compiler for the IBM SP series parallel machines uses symbolic analysis and does not resort to run-time
 determination of communication schedules. pHPF makes several contributions to optimizing
-communication - it eliminates redundant communication using data-availability analysis, deals
+communication - pHPF eliminates redundant communication using data-availability analysis, deals
 with the problem of mapping scalar variables in a comprehensive manner, and performs special-purpose
 optimizations like coarse-grain wave-fronting and reducing the number of messages in
 multi-dimensional shift communications. We have presented experimental results which indicate
-that these optimizations lead to efficient code generation.
-In the future, we plan to apply optimizations for communication across procedure boundaries
+that Other optimizations that
+were useful included alignment of scalars with consumers and the replacement of induction variables.
+ lead to efficient code generation.
+In the future, We plan to apply optimizations for communication across procedure boundaries
 through inter-procedural analysis. We plan to support block-cyclic distribution of array dimensions,
 and also provide more efficient support for irregular computations. We are also investigating compilation
 strategies using remote memory copy operations like get and put as the basic primitives
@@ -561,7 +589,7 @@ Acknowledgements
 
 We thank Rick Lawrence and Joefon Jann for providing performance results for the MPL version
 of the benchmark programs. We would also like to thank Alan Adamson and Lee Nackman for
-their support.
+Alan Adamson and Lee Nackman support.
 
 
 

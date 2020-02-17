@@ -1,7 +1,7 @@
 --T
 Typed compilation of recursive datatypes.
 --A
-Standard ML employs an opaque (or generative) semantics of datatypes, in which every datatype declaration produces a new type that is different from any other type, including other identically defined datatypes. A natural way of accounting for this is to consider datatypes to be abstract. When this interpretation is applied to type-preserving compilation, however, it has the unfortunate consequence that datatype constructors cannot be inlined, substantially increasing the run-time cost of constructor invocation compared to a traditional compiler. In this paper we examine two approaches to eliminating function call overhead from datatype constructors. First, we consider a transparent interpretation of datatypes that does away with generativity, altering the semantics of SML; and second, we propose an interpretation of datatype constructors as coercions, which have no run-time effect or cost and faithfully implement SML semantics.
+Standard ML employs an opaque (or generative) semantics of datatypes, in which every datatype declaration produces a new type that is different from any other type, including other identically defined datatypes. A natural way of accounting for this is to consider datatypes to be abstract. When this interpretation is applied to type-preserving compilation, however, this interpretation has the unfortunate consequence that datatype constructors cannot be inlined, substantially increasing the run-time cost of constructor invocation compared to a traditional compiler. In this paper we examine two approaches to eliminating function call overhead from datatype constructors. First, we consider a transparent interpretation of datatypes that does away with generativity, altering the semantics of SML; and second, we propose an interpretation of datatype constructors as coercions, which have no run-time effect or cost and faithfully implement SML semantics.
 --B
 Introduction
 The programming language Standard ML (SML) [9] provides a
@@ -27,8 +27,8 @@ a new type name, but does not associate that name with a defini-
 tion; in this sense, datatypes are similar to abstract types. Harper
 and Stone [7] (hereafter, HS) give a type-theoretic interpretation of
 SML by exhibiting a translation from SML into a simpler, typed
-internal language. This translation is faithful to the Definition of
-SML in the sense that, with a few well-known exceptions, it translates
+internal language. a translation from SML is faithful to the Definition of
+SML in the sense that, with a few well-known exceptions, a translation from SML translates
 an SML program into a well-typed IL program if and only
 if the SML program is well-formed according to the Definition.
 Consequently, we consider HS to be a suitable foundation for type-directed
@@ -49,7 +49,8 @@ calls to functions exported by the module defining the datatype;
 this is unacceptable given the ubiquity of datatypes in SML code.
 Conventional compilers, which disregard type information after an
 initial type-checking phase, may dispense with this cost by inlining
-those functions; that is, they may replace the function calls with
+those functions; that is, Conventional compilers, which disregard type information after an
+initial type-checking phase may replace the function calls with
 the actual code of the corresponding functions to eliminate the call
 overhead. A type-directed compiler, however, does not have this
 option since all optimizations, including inlining, must be type-
@@ -58,16 +59,16 @@ across the module boundary violates type abstraction and thus results
 in ill-typed intermediate code. This will be made more precise
 in Section 2.
 In this paper, we will discuss two potential ways of handling this
-performance problem. We will present these alternatives in the context
-of the TILT/ML compiler developed at CMU [11, 14]; they are
+performance problem. we will present these alternatives in the context
+of the TILT/ML compiler developed at CMU [11, 14]; these alternatives are
 relevant, however, not just to TILT, but to understanding the definition
 of the language and type-preserving compilation in general.
 The first approach is to do away with datatype generativity alto-
 gether, replacing the abstract types in the HS interpretation with
-concrete ones. We call this approach the transparent interpretation
+concrete ones. We call The first approach the transparent interpretation
 of datatypes. Clearly, a compiler that does this is not an implementation
-of Standard ML, and we will show that, although the
-modified language does admit inlining of datatype constructors, it
+of Standard ML, and We will show that, although the
+modified language does admit inlining of datatype constructors, this
 has some unexpected properties. In particular, it is not the case that
 every well-formed SML program is allowed under the transparent
 interpretation.
@@ -80,7 +81,8 @@ observe that the mediating functions produced by the HS interpretation
 all behave like the identity function at run time. We replace
 these functions with special values that are distinguished from ordinary
 functions by the introduction of "coercion types". We call this
-the coercion interpretation of datatypes, and argue that it allows a
+the coercion interpretation of datatypes, and argue that this
+the coercion interpretation of datatypes allows a
 compilation strategy that generates code with a run-time efficiency
 comparable to what would be attained if datatype constructors were
 inlined.
@@ -88,21 +90,22 @@ The paper is structured as follows: Section 2 gives the details of the
 HS interpretation of datatypes (which we also refer to as the opaque
 interpretation of datatypes) and illustrates the problems with inlin-
 ing. Section 3 discusses the transparent interpretation. Section 4
-gives the coercion interpretation and discusses its properties. Section
+gives the coercion interpretation and discusses Section 4
+ properties. Section
 5 gives a performance comparison of the three interpretations.
 Section 6 discusses related work and Section 7 concludes.
 2 The Opaque Interpretation of Datatypes
-In this section, we review the parts of Harper and Stone's interpretation
-of SML that are relevant to our discussion of datatypes. In par-
+In Section
+5, we review the parts of Harper and Stone's interpretation
+of SML that are relevant to we discussion of datatypes. In par-
 ticular, after defining the notation we use for our internal language,
-we will give an example of the HS elaboration of datatypes. We
-will refer to this example throughout the paper. We will also review
-the way Harper and Stone define the matching of structures against
-signatures, and discuss the implications this has for datatypes. This
-will be important in Section 3, where we show some differences
+our will give an example of the HS elaboration of datatypes. We
+will refer to an example of the HS elaboration of datatypes throughout the paper. We will also review
+the way Harper and and Stone define the matching of structures against
+signatures, and discuss the implications this has for datatypes. thiswill be important in Section 3, where we show some differences
 between signature matching in SML and signature matching under
-our transparent interpretation of datatypes.
-Types s,t ::= - | a | d
+We transparent interpretation of datatypes.
+Recursive Types ::= - | a | d
 Recursive Types d
 Terms e ::= - | x | roll d (e)
 | unroll d (e)
@@ -119,24 +122,26 @@ Figure
 
 2. Shorthand Definitions
 2.1 Notation
-Harper and Stone give their interpretation of SML as a translation,
+Harper and Stone give 2.1 Notation
+Harper and Stone interpretation of SML as a translation,
 called elaboration, from SML into a typed internal language (IL).
 We will not give a complete formal description of the internal language
-we use in this paper; instead, we will use ML-like syntax for
+We use in this paper; instead, We will use ML-like syntax for
 examples and employ the standard notation for function, sum and
 product types. For a complete discussion of elaboration, including
 a thorough treatment of the internal language, we refer the reader
-to Harper and Stone [7]. Since we are focusing our attention on
-datatypes, recursive types will be of particular importance. We will
+to Harper and Stone [7]. Since we are focusing we attention on
+datatypes, recursive types will be of particular importance. we will
 therefore give a precise description of the semantics of the form of
 recursive types we use.
 The syntax for recursive types is given in Figure 1. Recursive types
-are separated into their own syntactic subcategory, ranged over by d.
+are separated into Recursive types
+ own syntactic subcategory, ranged over by d.
 This is mostly a matter of notational convenience, as there are many
 times when we wish to make it clear that a particular type is a recursive
 one. A recursive type has the form -
 and each a j is a type variable that may appear free
-in any or all of t 1 , ., t n . Intuitively, this type is the ith in a system
+in any or all of t 1 , ., t n . Intuitively, A recursive type is the ith in a system
 of n mutually recursive types. As such, it is isomorphic to t i
 with each a j replaced by the jth component of the recursive bun-
 dle. Formally, it is isomorphic to the following somewhat unwieldy
@@ -167,14 +172,15 @@ Figure
 rolling" rule stating that d # expand(d); type theories in which this
 equality holds are said to have equi-recursive types and are significantly
 more complex [5]. The recursive types in our theory are iso-
-recursive types that are isomorphic, but not equal, to their expan-
+recursive types that are isomorphic, but not equal, to The recursive types in our theory expan-
 sions. The isomorphism is embodied by the roll and unroll operations
 at the term level; the former turns a value of type expand(d)
 into one of type d, and the latter is its inverse.
 2.2 Elaborating Datatype Declarations
 The HS interpretation of SML includes a full account of datatypes,
 including generativity. The main idea is to encode datatypes as recursive
-sum types but hide this implementation behind an opaque
+sum types but hide the implementation of a datatype constructor
+across the module boundary violates behind an opaque
 signature. A datatype declaration therefore elaborates to a structure
 that exports a number of abstract types and functions that construct
 and deconstruct values of those types. For example, consider the
@@ -228,15 +234,15 @@ occur very frequently in SML code, this performance penalty
 is significant.
 One strategy that can alleviate this somewhat is to hold the implementation
 of a datatype abstract during elaboration, but to expose
-its underlying implementation after elaboration to other code defined
+datatype underlying implementation after elaboration to other code defined
 in the same compilation unit. Calls to the constructors of
 a locally-defined datatype can then be safely inlined. In the setting
 of whole-program compilation, this approach can potentially
 eliminate constructor call overhead for all datatypes except those
 appearing as arguments to functors. However, in the context of separate
 compilation, the clients of a datatype generally do not have
-access to its implementation, but rather only to the specifications
-of its constructors. As we shall see in Section 3, the specifications
+access to a datatype implementation, but rather only to the specifications
+of a datatype constructors. As we shall see in Section 3, the specifications
 of a datatype's constructors do not provide sufficient information to
 correctly predict how the datatype is actually implemented, so the
 above compilation strategy will have only limited success in a true
@@ -263,14 +269,15 @@ definition produced by the HS interpretation for the datatype
 intlist defined in Section 1 has this signature, so that datatype
 declaration matches the specification above.
 What is necessary in general for a datatype declaration to match a
-specification under this interpretation? Since datatype declarations
+specification under the HS
+interpretation? Since datatype declarations
 are translated as opaquely sealed structures, and datatype specifications
 are translated as structure specifications, matching a datatype
 declaration against a spec boils down to matching one signature-
 the one opaquely sealing the declaration structure-against another
 signature.
 Suppose we wish to know whether the signature S matches the signature
-T; that is, whether a structure with signature S may also be
+T; that is, whether a structure with S may also be
 given the signature T. Intuitively, we must make sure that for every
 specification in T there is a specification in S that is compatible
 with it. For instance, if T contains a value specification of the form
@@ -323,22 +330,26 @@ datatype module with a transparent type definition, so we call this
 modified interpretation the transparent interpretation of datatypes
 (TID).
 3.1 Making Datatypes Transparent
-The idea of the transparent interpretation is to expose the implementation
+The idea of this
+modified interpretation is to expose the implementation
 of datatypes as recursive sum types during elaboration,
-rather than hiding it. In our expdec example, this corresponds to
+rather than hiding this
+modified interpretation. In our expdec example, this corresponds to
 changing the declaration shown in Figure 5 to that shown in Figure
 6 (we continue to use ML-like syntax for readability).
 Importantly, this change must extend to datatype specifications as
 well as datatype declarations. Thus, a structure that exports a
-datatype must export its implementation transparently, using a signature
+datatype must export a
+datatype implementation transparently, using a signature
 similar to the one in the figure-otherwise a datatype inside
-a structure would appear to be generative outside that structure, and
+a structure would appear to be generative outside a structure, and
 there would be little point to the new interpretation.
 As we have mentioned before, altering the interpretation of
-datatypes to expose their implementation as recursive types really
+datatypes to expose 
+datatypes implementation as recursive types really
 creates a new language, which is neither a subset nor a superset
 of Standard ML. An example of the most obvious difference can
-be seen in Figure 7. In the figure, two datatypes are defined by
+be seen in Figure 7. In Figure 7, two datatypes are defined by
 seemingly identical declarations. In SML, because datatypes are
 generative, the two types List1.t and List2.t are distinct; since
 the variable l has type List1.t but is passed to List2.Cons,
@@ -363,8 +374,10 @@ a datatype specification if the types of the datatype's in and out
 functions match the types of the in and out functions in the speci-
 fication. (Note: the types of the out functions match if and only if
 the types of the in functions match, so we will hereafter refer only
-to the in functions.) Under the transparent interpretation, how-
-ever, it is also necessary that the recursive type implementing the
+to the in functions.) Under this
+modified interpretation, how-
+ever, how-
+ is also necessary that the recursive type implementing the
 datatype match the one given in the specification. This is not a trivial
 requirement; we will now give two examples of matchings that
 succeed in SML but fail under the transparent interpretation.
@@ -383,7 +396,8 @@ substituted for u, since it is abstract in the structure.) After sub-
 stitution, the type required by the signature for the in function
 is which is exactly the type of the function
 given by the structure, so the matching succeeds.
-Under the transparent interpretation, however, the structure defines
+Under this
+modified interpretation, however, the structure defines
 u to be u imp
 int but the signature specifies u as
 int. In order for matching to succeed, these two types must
@@ -393,7 +407,8 @@ Observe that the type on the right is none other than
 -a.expand(u imp ). (Notice also that the bound variable a does not
 appear free in the body of this -type. Hereafter we will write such
 types with a wildcard in place of the type variable to indicate that
-it is not used in the body of the -.) This equivalence does not hold
+
+ is not used in the body of the -.) This equivalence does not hold
 for iso-recursive types, so the matching fails.
 3.2.2 A More Complex Example
 Another example of a datatype matching that is legal in SML but
@@ -433,10 +448,10 @@ that two or more type names (possibly in different structures)
 refer to the same type. Both of these forms of constraints are restricted
 so that multiple inconsistent definitions are not given to a
 single type name. In the case of sharing type, for example, it
-is required that all the names be flexible, that is, they must either
+is required that all the names be flexible, that is, all the names must either
 be abstract or defined as equal to another type that is abstract. Under
 the opaque interpretation, datatypes are abstract and therefore
-flexible, meaning they can be shared; under the transparent inter-
+flexible, meaning datatypes can be shared; under the transparent inter-
 pretation, datatypes are concretely defined and hence can never be
 shared. For example, the following signature is legal in SML:
 type s
@@ -448,7 +463,7 @@ We can write an equivalent signature by replacing the
 sharing type line with where type which is
 also valid SML. Neither of these signatures elaborates successfully
 under the transparent interpretation of datatypes, since under that
-interpretation the datatypes are transparent and therefore ineligible
+interpretation datatypes are transparent and therefore ineligible
 for either sharing or where type.
 Another example is the following signature:
 signature
@@ -465,7 +480,7 @@ We will now describe a way of weakening type equivalence (i.e.,
 making it equate more types) so that the problematic datatype
 matchings described in Section 3.2 succeed under the transparent
 interpretation. (This will not help with the problematic sharing constraints
-of Section 3.3.) The ideas in this section are based upon
+of Section 3.3.) The ideas in Section 3.2 are based upon
 the equivalence algorithm adopted by Shao [8] for the FLINT/ML
 compiler.
 To begin, consider the simple u-v example of Section 3.2.1. Recall
@@ -475,11 +490,13 @@ where the type on the right-hand side is just - . expand(u imp ). By
 simple variations on this example, it is easy to show that in general,
 for the transparent interpretation to be as permissive as the opaque,
 the following recursive type equivalence must hold:
-We refer to this as the boxed-unroll rule. It says that a recursive type
-is equal to its unrolling "boxed" by a -. An alternative formulation,
+We refer to this as the boxed-unroll rule. this says that a recursive type
+is equal to a recursive type
+ unrolling "boxed" by a -. An alternative formulation,
 equivalent to the first one by transitivity, makes two recursive types
-equal if their unrollings are equal, i.e.:
-Intuitively, this rule is needed because datatype matching succeeds
+equal if two recursive types
+ unrollings are equal, i.e.:
+Intuitively, the boxed-unroll rule is needed because datatype matching succeeds
 under the opaque interpretation whenever the unrolled form of the
 datatype implementation equals the unrolled form of the datatype
 spec (because these are both supposed to describe the domain of
@@ -512,7 +529,8 @@ conclusions of equivalence rules when proving their premises [1, 2].
 Applying this idea provides a natural solution to the problem discussed
 in the previous section. We can maintain a "trail" of type-
 equivalence assumptions; when deciding the equivalence of two recursive
-types, we add that equivalence to the trail before comparing
+types, We add the equivalence of two recursive
+types to the trail before comparing
 their unrollings.
 Formally, the equivalence judgement itself becomes G;A # s # t,
 where A is a set of assumptions, each of the form t 1 # t 2 . All
@@ -520,13 +538,12 @@ the equivalence rules in the static semantics must be modified to
 account for the trail. In all the rules except those for recursive types,
 the trail is simply passed unchanged from the conclusions to the
 premises. There are two new rules that handle recursive types:
-The first rule allows an assumption from the trail to be used; the second
-rule is an enhanced form of the boxed-unroll rule that adds the
+The first rule allows an assumption from the trail to be used; The first rule is an enhanced form of the boxed-unroll rule that adds the
 conclusion to the assumptions of the premise. It is clear that the trail
 is just what is necessary in order to resolve the exp-dec anomaly
 described above; before comparing the unrollings of dec spec and
 dec imp , we add the assumption dec spec # dec imp to the trail; we
-then use this assumption to avoid the cyclic dependency we encountered
+then use the assumption to avoid the cyclic dependency we encountered
 before.
 In fact, the trailing version of the boxed-unroll rule is sufficient
 to ensure that the transparent interpretation accepts all datatype
@@ -542,12 +559,11 @@ given in the spec is t i # t i , and the type of its implementation is
 interpretation, we know that these types are equal after each d i has
 been substituted for t i ; thus we know that expand(d i
 each i.
-When the specification is elaborated under the transparent interpre-
+When this datatype specification is elaborated under the transparent interpre-
 tation, however, the resulting signature declares that the implementation
 of each t i is the appropriate projection from a recursive bundle
 determined by the spec itself. That is, each t i is transparently
-specified as - i ( # t).( # t). In order for the implementation to match this
-transparent specification, it is thus sufficient to prove the following
+specified as - i ( # t).( # t). In order for the implementation to match this datatype specification, it is thus sufficient to prove the following
 theorem:
 Theorem 1 If #i # 1.n, G; /
 1.n, G; /
@@ -603,12 +619,12 @@ of type expand(d). Thus the roll operator plays a similar role
 to that of the inj 1 operator for sum types, as far as the high-level
 language semantics is concerned.
 Although we specify the behavior of programs in our language with
-a formal operational semantics, it is our intent that programs be
+a formal operational semantics, it is we intent that programs be
 compiled into machine code for execution, which forces us to take
 a slightly different view of data. Rather than working directly with
 high-level language values, compiled programs manipulate representations
 of those values. A compiler is free to choose the representation
-scheme it uses, provided that the basic operations of the
+scheme A compiler uses, provided that the basic operations of the
 language can be faithfully performed on representations. For exam-
 ple, most compilers construct the value inj 1 (v) by attaching a tag
 to the value v and storing this new object somewhere. This tagging
@@ -619,7 +635,8 @@ and recover a representation of the injected value.
 What are the requirements for representations of values of recursive
 It turns out that they are somewhat weaker than for sums.
 The elimination form for recursive types is unroll, which (unlike
-case) does not need to extract any information from its argument
+case) does not need to extract any information from 
+case argument
 other than the original rolled value. In fact, the only requirement is
 that a representation of v can be extracted from any representation
 of roll d (v). Thus one reasonable representation strategy is to represent
@@ -637,7 +654,7 @@ values of type t by induction on t as might be expected.
 The TILT compiler adopts this strategy of identifying the representations
 of roll d (v) and v, which has the pleasant consequence that
 the roll and unroll operations are "no-ops". For instance, the
-untyped machine code generated by the compiler for the expression
+untyped machine code generated by The TILT compiler for the expression
 roll d (e) need not differ from the code for e alone, since if
 the latter evaluates to v then the former evaluates to roll d (v), and
 Types
@@ -651,40 +668,45 @@ the representations of these two values are the same. The reverse
 happens for unroll.
 This, in turn, has an important consequence for datatypes. Since the
 in and out functions produced by the HS elaboration of datatypes
-do nothing but roll or unroll their arguments, the code generated
+do nothing but roll or unroll the
+in and out functions produced by the HS elaboration of datatypes
+ arguments, the code generated
 for any in or out function will be the same as that of the identity
 function. Hence, the only run-time cost incurred by using an in
 function to construct a datatype value is the overhead of the function
-call itself. In the remainder of this section we will explain how to
+call the function
+. In the remainder of this section we will explain how to
 eliminate this cost by allowing the types of the in and out functions
-to reflect the fact that their implementations are trivial.
+to reflect the fact that in and out implementations are trivial.
 4.2 The Coercion Interpretation
 To mark in and out functions as run-time no-ops, we use coer-
 cions, which are similar to functions, except that they are known
 to be no-ops and therefore no code needs to be generated for coercion
 applications. We incorporate coercions into the term level
-of our language and introduce special coercion types to which they
+of We language and introduce special coercion types to which our language
 belong. Figure 8 gives the changes to the syntax of our calculus.
-Note that while we have so far confined our discussion to monomorphic
+Note that while we have so far confined we discussion to monomorphic
 datatypes, the general case of polymorphic datatypes will require
 polymorphic coercions. The syntax we give here is essentially
-that used in the TILT compiler; it does not address non-uniform
+that used in The TILT compiler; it does not address non-uniform
 datatypes.
-We extend the type level of the language with a type for (possibly
-polymorphic) coercions, a value of this type is a coercion
+we extend the type level of the language with a type for (possibly
+polymorphic) coercions, a value of a type for (possibly
+polymorphic) coercions is a coercion
 that takes length(# a) type arguments and then can change a
 value of type t 1 into one of type t 2 (where, of course, variables
 from # a can appear in either of these types). When # a is empty, we
 will
 Similarly, we extend the term level with the (possibly polymorphic)
-coercion values L# a.fold d and L# a.unfold d ; these take the place
+coercion values L# a.fold d and L# a.unfold d ; L# a.fold d and L# a.unfold d take the place
 of roll and unroll expressions. Coercions are applied to (type
 and value) arguments in an expression of the form v@( # t;e); here
 v is the coercion, # t are the type arguments, and e is the value to
 be coerced. Note that the coercion is syntactically restricted to be
 a value; this makes the calculus more amenable to a simple code
 generation strategy, as we will discuss in Section 4.3. The typing
-rules for coercions are essentially the same as if they were ordinary
+rules for coercions are essentially the same as if The typing
+rules for coercions were ordinary
 polymorphic functions, and are shown in Figure 9.
 With these modifications to the language in place, we can elaborate
 the datatypes exp and dec using coercions instead of functions to
@@ -692,7 +714,8 @@ implement the in and out operations. The result of elaborating
 this pair of datatypes is shown in Figure 10. Note that the interface
 is exactly the same as the HS interface shown in Section 2 except
 that the function arrows (->) have been replaced by coercion arrows
-(#). This interface is implemented by defining exp and dec in the
+(#). the interface
+ is implemented by defining exp and dec in the
 same way as in the HS interpretation, and implementing the in and
 out coercions as the appropriate fold and unfold values. The
 elaboration of a constructor application is superficially similar to
@@ -700,12 +723,12 @@ the opaque interpretation, but a coercion application is generated
 instead of a function call. For instance, LetExp(d,e) elaborates as
 exp in@(inj 2 (d,e)).
 4.3 Coercion Erasure
-We are now ready to formally justify our claim that coercions may
+We are now ready to formally justify We claim that coercions may
 be implemented by erasure, that is, that it is sound for a compiler
 to consider coercions only as "retyping operators" and ignore them
-when generating code. First, we will describe the operational semantics
-of the coercion constructs we have added to our internal
-language. Next, we will give a translation from our calculus into an
+when generating code. First, We will describe the operational semantics
+of the coercion constructs we have added to We internal
+language. Next, We will give a translation from We calculus into an
 untyped one in which coercion applications disappear. Finally, we
 will state a theorem guaranteeing that the translation is safe.
 The operational semantics of our coercion constructs are shown in
@@ -719,7 +742,7 @@ respectively. The two inference rules shown in Figure 11 define
 the manner in which coercion applications are evaluated. The evaluation
 of a coercion application is similar to the evaluation of a
 normal function application where the applicand is already a value.
-The rule on the left specifies that the argument is reduced until it is
+The rule on the left specifies that the argument is reduced until the argument is
 a value. If the applicand is a fold, then the application itself is a
 value. If the applicand is an unfold, then the argument must have a
 recursive type and therefore (by canonical forms) consist of a fold
@@ -732,9 +755,11 @@ unfold. Thus it seems intuitive that to generate code for a coercion
 application v@( # t;e), the compiler can simply generate code for e,
 with the result that datatype constructors and destructors under the
 coercion interpretation have the same run-time costs as Harper and
-Stone's functions would if they were inlined. To make this more
+Stone's functions would if datatype constructors and destructors under the
+coercion interpretation have the same run-time costs as Harper and
+Stone's functions were inlined. To make this more
 precise, we now define an erasure mapping to translate terms of
-our typed internal language into an untyped language with no coercion
+we typed internal language into an untyped language with no coercion
 application. The untyped nature of the target language (and of
 machine language) is important: treating v as foldv would destroy
 the subject reduction property of a typed language.
@@ -744,7 +769,7 @@ Figure
 12 gives the syntax of our untyped target language and the
 coercion-erasing translation. The target language is intended to be
 essentially the same as our typed internal language, except that all
-types and coercion applications have been removed. It contains
+types and coercion applications have been removed. The target language contains
 untyped coercion values fold and unfold, but no coercion application
 form. The erasure translation turns expressions with type annotations
 into expressions without them (l-abstraction and coercion
@@ -753,8 +778,8 @@ so that the erasure of v@( # t;e) is just the erasure of e. In particular,
 for any value v, v and foldv are identified by the translation, which
 is consistent with our intuition about the compiler. The operational
 semantics of the target language is analogous to that of the source.
-The language with coercions has the important type-safety property
-that if a term is well-typed, its evaluation does not get stuck. An
+the target language has the important type-safety property
+that if a term is well-typed, the target language evaluation does not get stuck. An
 important theorem is that the coercion-erasing translation preserves
 the safety of well-typed programs:
 Theorem 2 (Erasure Preserves Safety) If G # e : t, then e - is
@@ -811,9 +836,10 @@ Note that the value restriction on coercions is crucial to the soundness
 of this "coercion erasure" interpretation. Since a divergent expression
 can be given an arbitrary type, including a coercion type,
 any semantics in which a coercion expression is not evaluated before
-it is applied fails to be type-safe. Thus if arbitrary expressions
+a coercion expression is applied fails to be type-safe. Thus if arbitrary expressions
 of coercion type could appear in application positions, the compiler
-would have to generate code for them. Since values cannot diverge
+would have to generate code for Thus if arbitrary expressions
+of coercion type could appear in application positions. Since values cannot diverge
 or have effects, we are free to ignore coercion applications when
 we generate code.
 Performance
@@ -823,7 +849,7 @@ three different versions of the TILT compiler: one that implements
 a na-ve Harper-Stone interpretation in which the construction of a
 non-locally-defined datatype requires a function call 2 ; one that implements
 the coercion interpretation of datatypes; and one that implements
-the transparent interpretation. We compiled ten different
+the transparent interpretation. we compiled ten different
 benchmarks using each version of the compiler; the running times
 for the resulting executables (averaged over three trials) are shown
 in
@@ -849,7 +875,8 @@ based on the one implemented by Shao in the FLINT intermediate
 language of the Standard ML of New Jersey compiler [12]. The
 typing rules in Section 3.4 are based on the formal semantics for
 FLINT given by League and Shao [8], although we are the first to
-give a formal argument that their trailing algorithm actually works.
+give a formal argument that we are the first to
+ trailing algorithm actually works.
 It is important to note that SML/NJ only implements the transpar-
 In particular, we implement the strategy described at the end of
 Section 2.2.
@@ -864,7 +891,7 @@ rejected by the SML/NJ compiler.
 Curien and Ghelli [4] and Crary [3] have defined languages that use
 coercions to replace subsumption rules in languages with subtyp-
 ing. Crary's calculus of coercions includes roll and unroll for
-recursive types, but since the focus of his paper is on subtyping he
+recursive types, but since the focus of his paper is on subtyping his
 does not explore the potential uses of these coercions in detail. Nev-
 ertheless, our notion of coercion erasure, and the proof of our safety
 preservation theorem, are based on Crary's. The implementation of
@@ -873,11 +900,11 @@ allows operands to be annotated with coercions that change their
 types but not their representations; these coercions include roll
 and unroll as well as introduction of sums and elimination of universal
 quantifiers.
-Our intermediate language differs from these in that we include coercions
+Our intermediate language differs from these in that Our include coercions
 in the term level of the language rather than treating them
 specially in the syntax. This simplifies the presentation of the coercion
-interpretation of datatypes, and it simplified our implementation
-because it required a smaller incremental change from earlier
+interpretation of datatypes, and This simplified our implementation
+because This required a smaller incremental change from earlier
 versions of the TILT compiler. However, including coercions in the
 term level is a bit unnatural, and our planned extension of TILT
 with a type-preserving back-end will likely involve a full coercion
@@ -908,10 +935,10 @@ functions of datatypes with coercions that may be erased during
 code generation, eliminates the function call overhead without
 changing the static semantics of the external language. However,
 the erasure of coercions only makes sense in a setting where a
-recursive-type value and its unrolling are represented the same at
+recursive-type value and the erasure of coercions unrolling are represented the same at
 run time. The coercion interpretation of datatypes has been implemented
 in the TILT compiler.
-Although we have presented our analysis of SML datatypes in the
+Although we have presented we analysis of SML datatypes in the
 context of Harper-Stone and the TILT compiler, the idea of "co-
 ercion types" is one that we think is generally useful. Terms that
 serve only as retyping operations are pervasive in typed intermediate
@@ -921,7 +948,7 @@ informal coercions cannot in general be erased if there is no way to
 distinguish coercions from ordinary functions by their types; this is
 a problem especially in the presence of true separate compilation.
 Our contribution is to provide a simple mechanism that permits coercive
-terms to be recognized as such and their applications to be
+terms to be recognized as such and such applications to be
 safely eliminated, without requiring significant syntactic and metatheoretic
 overhead.
 

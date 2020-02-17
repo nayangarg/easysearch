@@ -1,7 +1,7 @@
 --T
 Tradeoffs in power-efficient issue queue design.
 --A
-A major consumer of microprocessor power is the issue queue. Several microprocessors, including the Alpha 21264 and POWER4TM, use a compacting latch-based issue queue design which has the advantage of simplicity of design and verification. The disadvantage of this structure, however, is its high power dissipation.In this paper, we explore different issue queue power optimization techniques that vary not only in their performance and power characteristics, but in how much they deviate from the baseline implementation. By developing and comparing techniques that build incrementally on the baseline design, as well as those that achieve higher power savings through a more significant redesign effort, we quantify the extra benefit the higher design cost techniques provide over their more straightforward counterparts.
+A major consumer of microprocessor power is the issue queue. Several microprocessors, including the Alpha 21264 and POWER4TM, use a compacting latch-based issue queue design which has the advantage of simplicity of design and verification. The disadvantage of this structure, however, is its high power dissipation.In this paper, we explore different issue queue power optimization techniques that vary not only in different issue performance and power characteristics, but in how much different issue deviate from the baseline implementation. By developing and comparing techniques that build incrementally on the baseline design, as well as those that achieve higher power savings through a more significant redesign effort, we quantify the extra benefit the higher design cost techniques provide over the higher design cost techniques more straightforward counterparts.
 --B
 INTRODUCTION
 There are many complex tradeoffs that must be made to achieve
@@ -34,10 +34,10 @@ by instruction issue. New instructions are always added to the tail
 position of the queue. In this manner, the queue maintains an oldest
 to youngest program order within the queue. This simplifies
 the implementation of an oldest-first issue priority scheme. Additional
-important advantages of this implementation are that it is
+important advantages of this implementation are that this implementation is
 highly modular and can use scannable latches, which simplifies issue
 queue design and verification.
-However, the high price of this approach is its power consump-
+However, the high price of this approach is the high price of this approach power consump-
 tion: for instance, the integer queue on the Alpha 21264 is the highest
 power consumer on the chip [11]. Similarly, the issue queue is
 one of the highest power-density regions within a POWER4-class
@@ -84,9 +84,12 @@ shifts and therefore, a large amount of power dissipation.
 To eliminate the power-hungry compaction operation, we can
 make the issue queue non-compacting [7]. In a non-compacting
 queue, holes that result from an instruction issue from a particular
-entry are not immediately filled. Rather, these holes remain
-until a new entry is dispatched into the queue. At this point, the
-holes are filled in priority order from bottom to top. However, in a
+entry are not immediately filled. Rather, a non-compacting
+queue, holes that result from an instruction issue from a particular
+entry remain
+until a new entry is dispatched into the queue. At this point, a non-compacting
+queue, holes that result from an instruction issue from a particular
+entry are filled in priority order from bottom to top. However, in a
 non-compacting queue the oldest to youngest priority order of the
 instructions is lost. Thus, the use of a simple position-based selection
 mechanism like that described in [9] will not give priority to
@@ -110,19 +113,19 @@ as a RAM with head and tail pointers. For example, assume for
 simplicity an 8-entry ROB where the oldest instruction lies in location
 111 and the youngest in 000. When an instruction commits,
 the head pointer of the ROB is decremented to point to the next en-
-try. Similarly, the tail pointer is decremented when an instruction
+try. Similarly, the head pointer of the ROB is decremented when an instruction
 is dispatched. With such an implementation, the oldest instruction
 may no longer lie in location 111 in our working example, but in
-any location. In fact, the tail pointer may wrap around back to entry
+any location. In fact, the head pointer of the ROB may wrap around back to entry
 111 such that newer entries (those nearest to the tail) may occupy a
 higher-numbered ROB entry than older entries [6]. When this oc-
 curs, the oldest-first selection scheme will no longer work properly.
 This problem can be solved by adding an extra high-order sequence
 number bit which we call the sorting bit that is kept in the
 issue queue. As instructions are dispatched, they are allocated a
-sequence number consisting of their ROB entry number appended
+sequence number consisting of they ROB entry number appended
 to a sorting bit of 0. These sequence numbers are stored with the
-entry in the issue queue. Whenever the ROB tail pointer wraps
+entry in the issue queue. Whenever the head pointer of the ROB ROB wraps
 around to entry 111 in our example, all sorting bits are flash set
 to 1 in the issue queue. Newly dispatched instructions, however,
 including the one assigned to ROB entry 111, continue to receive
@@ -141,7 +144,8 @@ consideration are ORed together. If the result of the OR is 1, all
 ready instructions still under consideration whose second most significant
 bits are 0, will be removed from consideration. The Nth
 step is the same as step 2, except the least significant bit of the
-sequence number is used. At the end of this step, all ready instructions
+sequence number is used. At the end of The Nth
+step, all ready instructions
 will have been removed from consideration except for
 the oldest.
 However, this OR-based arbitration mechanism requires a final
@@ -178,7 +182,8 @@ placed in the CAM structure and the remaining instruction information
 is placed in the RAM structure. The number of entries corresponds
 to the size of the issue queue. The CAM/RAM structure
 is arguably more complex in terms of design and verification time
-and it does not support compaction. However, because of the lower
+and The CAM/RAM structure
+ does not support compaction. However, because of the lower
 power dissipation of CAM/RAM logic relative to random logic, the
 CAM/RAM-based issue queue approach has the potential to reduce
 the average power dissipation of the queue.
@@ -186,12 +191,12 @@ While potentially consuming less power than a latch-based so-
 lution, a CAM/RAM-based issue queue still offers opportunities
 for further power reductions. CAM and RAM structures require
 precharging and discharging internal high capacitance lines and
-nodes for every operation. The CAM needs to perform tag matching
+nodes for every operation. CAM CAM needs to perform tag matching
 operations every cycle. This involves driving and clearing high
 capacitance tag-lines, and also precharging and discharging high
 capacitance matchline nodes every cycle. Similarly, the RAM also
-needs to charge and discharge its bitlines for every read operation.
-In the following sub-sections we discuss our approaches to reduce
+needs to charge and discharge the RAM bitlines for every read operation.
+In the following sub-sections we discuss we approaches to reduce
 the power of a CAM/RAM-based issue queue.
 3.1 Dynamic Adaptation of the Issue Queue
 While fine-grain clock gating is suitable for latch-based issue
@@ -215,19 +220,21 @@ after which the appropriate control signals disable and enable queue
 chunks [2].
 3.2 Banked Issue Queue
 Banking is a common practice for RAM-based structures (e.g.,
-caches) that can both reduce the delay of the RAM and its power
+caches) that can both reduce the delay of the RAM and Banking power
 dissipation. CAM-based structures can also be banked [8], albeit
 with some potential impact on CPI performance. The low-order n
 address bits normally used for the comparison are instead used to
 select one of 2
-subarrays. The remaining bits are compared
+subarrays. The low-order n
+address bits normally used for the comparison are compared
 against the appropriate bits in each CAM subarray entry. Similarly,
-these n bits are used to pick which subarray a new entry is placed
+The low-order n
+address bits normally used for the comparison are used to pick which subarray a new entry is placed
 in. Thus, only one of the n subarrays is activated for each CAM
 access. The CPI degradation comes about when there is a non-uniform
 usage of the different subarrays, causing some subarrays
-to become full before others. This inefficient usage of the entries
-compared to a single CAM structure results in either entries being
+to become full before others. a non-uniform
+usage of the different subarrayscompared to a single CAM structure results in either entries being
 needlessly replaced or new entries not being able to be inserted
 even with available space in other subarrays. The result is CPI
 degradation relative to the single CAM structure.
@@ -246,11 +253,12 @@ two source operands are ready when instructions are dispatched
 into the integer queue. The simulation is on six of the SPEC2000
 integer programs using the methodology described in Section 4.
 On average, 13% of the dispatched integer instructions have neither
-operand ready. The remaining 87% of the instructions have at
+operand ready. The remaining 87% of the dispatched integer instructions have at
 least one operand available and therefore require at most one match
 operation for the instruction to wake up.
 A banked issue queue organization that exploit this property is
-shown in Figure 4. The organization uses four banks, each of
+shown in Figure 4. A banked issue queue organization that exploit this property is
+shown in Figure 4 uses four banks, each of
 which holds two source operand IDs. One is the full six-bit source
 operand field (assuming 64 physical registers) held in the instruction
 info (RAM) section of the entry while the other consists of
@@ -274,7 +282,7 @@ Figure
 operands available on dispatch. Also shown is the percentage
 of cases in which neither source operand is available and where
 the source operand IDs are associated with different banks.
-one of the two source operand IDs from the CAM. Note that the
+one of the two source operand IDs from CAM. Note that the
 match logic is guaranteed to be active for only one cycle. How-
 ever, the ready logic, selection logic, and the RAM part may be
 active for more than one cycle. Multiple instructions (say N) may
@@ -286,21 +294,19 @@ As shown in the top of Figure 4 for an example add instruction,
 three of the cases of source operands being ready or not on dispatch
 are easy to handle. The instruction is steered to the bank
 corresponding to the ID number of the unavailable source operand.
-In the case where both operands of an instruction are available, the
-instruction is steered to the bank corresponding to the first operand.
-An instruction in the selected bank wakes up when there is a match
+In the case where both operands of an instruction are available, The instruction is steered to the bank corresponding to the first operand.
+An instruction in the bank
+ wakes up when there is a match
 between the lower four bits of the destination ID and those of the
 source ID corresponding to the unavailable operand. The fourth
 case, that of neither operand being available on dispatch, is treated
 as a special case. Here, instructions that have neither source operand
-available are placed in the Conflict Queue. The Conflict Queue is
+available are placed in the Conflict Queue. the Conflict Queue is
 simply a conventional issue queue that performs comparisons with
 both source operands. Because a small percentage of the instructions
-have neither source operand available on dispatch, the Conflict
-Queue need only contain a few entries. The destination IDs
+have neither source operand available on dispatch, the Conflict Queue need only contain a few entries. The destination IDs
 of completing instructions are compared with the entries in one of
-the banks, as well as with those in the Conflict Queue. Because the
-Conflict Queue is small, its energy dissipation pales in comparison
+the banks, as well as with those in the Conflict Queue. Because the Conflict Queue is small, the Conflict Queue energy dissipation pales in comparison
 to the savings afforded by banking.
 assume 64 physical registers,
 instruction that has dependency to a register number ranging in between
@@ -365,7 +371,7 @@ alternative clock-gated design the main clock as well as the latch
 clocks are gated by a control signal whenever an entry does not
 have the Valid bit set and is not being loaded. We first examine the
 benefits of clock gating the issue queue, which largely depends on
-what fraction of the entries can be clock gated for our application
+what fraction of the entries can be clock gated for We application
 suite.
 
 Figure
@@ -388,7 +394,8 @@ oldest-first mechanism used by default). With such a scheme, older
 instructions may remain in the queue for a long time period, thereby
 delaying the completion of important dependence chains. The left-most
 bar in Figure 6 shows CPI degradation for our six SPEC2000
-integer benchmarks. The degradation is significant, around 8% for
+integer benchmarks. CPI degradation for our six SPEC2000
+integer benchmarks is significant, around 8% for
 mcf and parser and 5.5% overall. The right-most bar shows the
 CPI degradation when the previously described oldest-first selection
 scheme is implemented by using four bit sequence number
@@ -433,7 +440,10 @@ for the newly dispatched instructions. Even with these additional
 overheads, the elimination of the frequent high-power compacting
 events has a considerable impact across all benchmarks, achieving
 a power savings of 25-45% and 36% overall.
-This figure also shows the relative power savings of the non-compacting
+Figure
+
+3: Percentage of instructions with various numbers of
+operands available on dispatch also shows the relative power savings of the non-compacting
 CAM/RAM-based issue queue, and a non-compacting
 issue queue implemented with clock gating. Redesigning the issue
 queue as a CAM/RAM structure achieves a considerable power
@@ -553,7 +563,8 @@ savings and 3% CPI degradation of the adaptive approach, yet the
 banked scheme is arguably more straightforward to implement.
 5.1 Comparison of Different Alternatives
 Clock gating the issue queue has a significant impact on power
-dissipation with no CPI degradation. Despite its implementation
+dissipation with no CPI degradation. Despite 5.1 Comparison of Different Alternatives
+Clock gating the issue queue implementation
 and verification challenges it is a well-known and established approach
 and therefore represents the most straightforward, albeit
 not the most effective, solution to the issue queue power problem.
@@ -620,7 +631,8 @@ that this combination would produce much greater power savings
 than any of the other techniques investigated in this study.
 6. CONCLUSIONS
 In this paper, we have presented a range of issue queue power
-optimization techniques that differ in their effectiveness as well
+optimization techniques that differ in issue queue power
+ effectiveness as well
 as design and verification effort. As part of this study, we propose
 a sequencing mechanism for non-compacting issue queues
 that allows for a straightforward implementation of oldest-first se-

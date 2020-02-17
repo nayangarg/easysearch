@@ -1,7 +1,7 @@
 --T
 A real-time garbage collector with low overhead and consistent utilization.
 --A
-Now that the use of garbage collection in languages like Java is becoming widely accepted due to the safety and software engineering benefits it provides, there is significant interest in applying garbage collection to hard real-time systems. Past approaches have generally suffered from one of two major flaws: either they were not provably real-time, or they imposed large space overheads to meet the real-time bounds. We present a mostly non-moving, dynamically defragmenting collector that overcomes both of these limitations: by avoiding copying in most cases, space requirements are kept low; and by fully incrementalizing the collector we are able to meet real-time bounds. We implemented our algorithm in the Jikes RVM and show that at real-time resolution we are able to obtain mutator utilization rates of 45% with only 1.6--2.5 times the actual space required by the application, a factor of 4 improvement in utilization over the best previously published results. Defragmentation causes no more than 4% of the traced data to be copied.
+Now that the use of garbage collection in languages like Java is becoming widely accepted due to the safety and software engineering benefits Java provides, there is significant interest in applying garbage collection to hard real-time systems. Past approaches have generally suffered from one of two major flaws: either Past approaches were not provably real-time, or Past approaches imposed large space overheads to meet the real-time bounds. We present a mostly non-moving, dynamically defragmenting collector that overcomes both of these limitations: by avoiding copying in most cases, space requirements are kept low; and by fully incrementalizing the collector we are able to meet real-time bounds. we implemented we algorithm in the Jikes RVM and show that at real-time resolution we are able to obtain mutator utilization rates of 45% with only 1.6--2.5 times the actual space required by the application, a factor of 4 improvement in utilization over the best previously published results. Defragmentation causes no more than 4% of the traced data to be copied.
 --B
 INTRODUCTION
 Garbage collected languages like Java are making significant inroads
@@ -26,13 +26,13 @@ the same language. Therefore, there is a pressing practical need
 for a system that can provide real-time guarantees for Java without
 imposing major penalties in space or time.
 We present a design for a real-time garbage collector for Java,
-an analysis of its real-time properties, and implementation results
-that show that we are able to run applications with high mutator
+an analysis of Java real-time properties, and implementation results
+that show that We are able to run applications with high mutator
 utilization and low variance in pause times.
 The target is uniprocessor embedded systems. The collector is
 therefore concurrent, but not parallel. This choice both complicates
 and simplifies the design: the design is complicated by the fact that
-the collector must be interleaved with the mutators, instead of being
+The collector must be interleaved with the mutators, instead of being
 able to run on a separate processor; the design is simplified since
 the programming model is sequentially consistent.
 Previous incremental collectors either attempt to avoid overhead
@@ -42,11 +42,11 @@ to prevent fragmentation by performing concurrent copying (and
 therefore require a minimum of a factor of two overhead in space,
 as well as requiring barriers on reads and/or writes, which are costly
 and tend to make response time unpredictable).
-Our collector is unique in that it occupies an under-explored portion
-of the design space for real-time incremental collectors: it
-is a mostly non-copying hybrid. As long as space is available, it
+The collector is unique in that The collector occupies an under-explored portion
+of the design space for real-time incremental collectors: The collector
+is a mostly non-copying hybrid. As long as space is available, The collector
 acts like a non-copying collector, with the consequent advantages.
-When space becomes scarce, it performs defragmentation with limited
+When space becomes scarce, space performs defragmentation with limited
 copying of objects. We show experimentally that such a design
 is able to achieve low space and time overhead, and high and consistent
 mutator CPU utilization.
@@ -55,7 +55,7 @@ we have developed optimization techniques for the Brooks-style
 read barrier [10] using an "eager invariant" that keeps read barrier
 overhead to 4%, an order of magnitude faster than previous software
 read barriers.
-Our collector can use either time- or work-based scheduling.
+The collector can use either time- or work-based scheduling.
 Most previous work on real-time garbage collection, starting with
 Baker's algorithm [5], has used work-based scheduling. We show
 both analytically and experimentally that time-based scheduling is
@@ -68,11 +68,12 @@ approaches to real-time collection and some of the common
 problems encountered. Section 3 presents an informal overview of
 our collector. Section 4 analyzes the conditions under which real-time
 bounds can be met. Section 5 analyzes the space requirements
-of our collector and compares them to other real-time collectors.
+of The collector and compares the space requirements
+of our collector to other real-time collectors.
 Section 6 describes the implementation of the collector, and Section
 7 presents our experimental results. Section 8 discusses issues
 in real-time garbage collection that are raised by our work. Finally,
-we present our conclusions.
+our present our conclusions.
 2. PROBLEMS WITH PREVIOUS WORK
 Previous approaches to real-time garbage collection have generally
 suffered from a variety of problems. In this section we will
@@ -85,7 +86,7 @@ Johnstone [17] showed that fragmentation was often not a major
 problem for a family of C and C++ benchmarks, and built a non-moving
 "real-time" collector based on the assumption that fragmentation
 could be ignored. However, these measurements are
-based on relatively short-running programs, and we believe they do
+based on relatively short-running programs, and we believe these measurements do
 not apply to long-running systems like continuous-loop embedded
 devices, PDAs, or web servers. Fundamentally, this is an average-case
 rather than a worst-case assumption, and meeting real-time
@@ -95,7 +96,11 @@ combined with the heavy use of strings in web-related processing
 is likely to make object sizes less predictable.
 Dimpsey et al. [14] describe the compaction avoidance techniques
 in the IBM product JVM, which are based on Johnstone's
-work. They show that these techniques can work quite well in prac-
+work. the compaction avoidance techniques
+in the IBM product JVM, which are based on Johnstone's
+work show that the compaction avoidance techniques
+in the IBM product JVM, which are based on Johnstone's
+work can work quite well in prac-
 tice. However, when compaction does occur it is very expensive.
 Siebert [23] suggests that a single block size can be used for
 Java by allocating large objects as linked lists and large arrays as
@@ -120,21 +125,26 @@ often a factor of 6-8.
 Much of the literature has focused on maximum pause times induced
 by collection, but in fact an equally important metric is mutator
 utilization (the fraction of the processor devoted to mutator
-execution). If there is a period of low utilization, the mutator may
-be unable to meet its real-time requirements even though all individual
+execution). If there is a period of low utilization, mutator
+ may
+be unable to meet mutator
+ real-time requirements even though all individual
 pause times are short.
 Uneven utilization is endemic to collectors that use a to-space invariant
-(that is, the mutator only sees objects in to-space). Such collectors
+(that is, mutator
+ only sees objects in to-space). Such collectors
 are implemented with a read-barrier that checks if an object
-being accessed is in from-space, and if so, copies it into to-space
-before returning the pointer to the mutator. There is therefore a tight
-coupling between the operations of the mutator and the scheduling
+being accessed is in from-space, and if so, copies an object
+being accessed is in from-space into to-space
+before returning the pointer to mutator
+. There is therefore a tight
+coupling between the operations of mutator
+ and the scheduling
 of operations by the collector.
 Examples are Baker's copying algorithm [5] which uses an explicit
 read-barrier, and the Appel-Ellis-Li collector [2], which uses
 virtual memory protection. Both of these collectors have the property
-that mutator utilization is very poor right after the collector
-starts, when the "fault rate" is high.
+that mutator utilization is very poor right after the collectorstarts, when the "fault rate" is high.
 An alternative is to use a replicating collector which maintains
 a from-space invariant, and to perform mutator updates on both
 from-space and to-space, as in the ML collectors of Nettles and
@@ -152,7 +162,7 @@ a parallel incremental collector that operates on a fixed
 fraction of the heap at a time to minimize pause times for large
 heaps.
 The fundamental problem with all algorithms that attempt to collect
-a subset of the heap at a time is that they can be defeated by
+a subset of the heap at a time is that all algorithms can be defeated by
 adversarial mutators. Large cyclic structures, objects with high in-
 degree, and high mutation rates are ways to force such collectors to
 perform work without fixed bound.
@@ -161,12 +171,12 @@ perform work without fixed bound.
 OVERVIEW
 
 Our collector is an incremental uni-processor collector targeted
-at embedded systems. It overcomes the problems of the previous
+at embedded systems. Our collector overcomes the problems of the previous
 section by using a hybrid approach of non-copying mark-sweep
 (in the common case) and copying collection (when fragmentation
 occurs).
-The collector is a snapshot-at-the-beginning algorithm that allocates
-objects black (marked). While it has been argued that such a
+Our collector is a snapshot-at-the-beginning algorithm that allocates
+objects black (marked). While Our collector has been argued that such a
 collector can increase floating garbage, the worst-case performance
 is no different from other approaches and the termination condition
 is easier to enforce. Other real-time collectors have used a similar
@@ -181,7 +191,8 @@ object.
 Mostly Non-copying. Since fragmentation is rare, objects are usually
 not moved.
 Defragmentation. If a page becomes fragmented due to garbage
-collection, its objects are moved to another (mostly full) page.
+collection, a page becomes fragmented due to garbage
+collection objects are moved to another (mostly full) page.
 Read Barrier. Relocation of objects is achieved by using a forwarding
 pointer located in the header of each object [10]. A
 read barrier maintains a to-space invariant (mutators always
@@ -197,32 +208,31 @@ Arraylets. Large arrays are broken into fixed-size pieces (which
 we call arraylets) to bound the work of scanning or copying
 an array and to avoid external fragmentation caused by large
 objects.
-Since our collector is not concurrent, we explicitly control the
-interleaving of the mutator and the collector. We use the term collection
+Since Our collector is not concurrent, our explicitly control the
+interleaving of the mutator and the collector. our use the term collection
 to refer to a complete mark/sweep/defragment cycle and the
 term collector quantum to refer to a scheduler quantum in which the
 collector runs.
 3.2 Object Allocation and Fragmentation
 Allocation is performed using a simple segregated free-list ap-
 proach. When a free list is empty, a new page is chosen, broken
-into equal-size blocks, and the resulting blocks are placed onto that
-list. Note that the allocator page size  is not necessarily the
-same as the operating system page size. We use
+into equal-size blocks, and the resulting blocks are placed onto a free list. Note that the allocator page size  is not necessarily the
+same as the operating system page size. our use
 KB.
 Internal fragmentation is regulated by using a geometric progression
 list sizes, such that if there is a free list whose blocks
 are of size s, the next larger size is s(1 generally choose
 resulting in worst-case fragmentation of 12.5%. How-
-ever, the measured internal fragmentation in our collector has never
+ever, the measured internal fragmentation in Our collector has never
 exceeded 2% at
 Most programs obey a "locality of size" property, that is, the object
 sizes allocated frequently in the past will tend to have a high
 correlation with object sizes allocated in the future. Therefore, we
-expect that in the normal case, the garbage collector will find unused
+expect that in the normal case, Our collector will find unused
 blocks in a particular size class that can simply be re-used.
 Only in relatively rare cases will object allocation cause external
 fragmentation.
-Because our collector performs defragmentation, we can choose
+Because Our collector performs defragmentation, we can choose
 a  that results in low internal fragmentation, but allows a relatively
 large number of size classes. Most collectors based on segregated
 lists must be concerned about external fragmentation, and therefore
@@ -234,7 +244,7 @@ size, the number of size classes C is bounded by
 The free lists are actually kept as chains of pages, rather than
 chains of blocks. Each page has an associated mark array. The
 allocation cursor is actually a pair pointing to a page and a block
-within the page. This organization allows formatting of pages to be
+within Each page. This organization allows formatting of pages to be
 performed lazily and therefore avoids a full sweep of the memory
 on each collection.
 3.3 Defragmentation
@@ -250,26 +260,27 @@ is performed as follows: for each page, we compute
 the number of live objects. Then the pages within each size class
 are sorted by occupancy. Finally, we move objects from the least
 occupied to the most occupied pages within a list (note that this
-never causes new pages to be allocated; it only transfers objects
+never causes new pages to be allocated; this
+ only transfers objects
 between pages within a size class).
 3.4 Read Barrier
-We use a Brooks-style read barrier [10] to maintain a to-space
+we use a Brooks-style read barrier [10] to maintain a to-space
 invariant in the mutator: each object contains a forwarding pointer
-that normally points to itself, but when the object has been moved,
+that normally points to a Brooks-style read barrier [10], but when the object has been moved,
 points to the moved object.
-Our collector thus maintains a to-space invariant, but the sets
+we thus maintains a to-space invariant, but the sets
 comprising from-space and to-space have a large intersection, rather
 than being completely disjoint as in a pure copying collector.
-While we use a read barrier and a to-space invariant, our collector
-does not suffer from variations in mutator utilization because
+While we use a read barrier and a to-space invariant, Our collectordoes not suffer from variations in mutator utilization because
 all of the work of finding and moving objects is performed by the
 collector.
 Read barriers, especially when implemented in software, are frequently
-avoided because they are considered to be too costly. We
-will show that this is not the case when they are implemented carefully
+avoided because barriers are considered to be too costly. We
+will show that this is not the case when We
+ are implemented carefully
 in an optimizing compiler and the compiler is able to optimize
 the barriers.
-A fundamental design choice for the read barrier is whether it is
+A fundamental design choice for the read barrier is whether the read barrier is
 "lazy" or "eager". A lazy barrier has the property that registers and
 stack cells can point to either from-space or to-space objects, and
 the forwarding operation is performed at the time of use.
@@ -283,13 +294,14 @@ the eager barrier will only perform the forwarding operation once,
 while the lazy barrier will perform the forwarding operation for every
 array access.
 Of course, there is a cost: because the eager invariant is more
-strict, it is more complex to maintain. Whenever the collector
-moves objects, it must find all outstanding register and stack cells
-and re-execute the forwarding operation on them.
+strict, the eager invariant is more complex to maintain. Whenever the collector
+moves objects, the collector
+ must find all outstanding register and stack cells
+and re-execute the forwarding operation on all outstanding register.
 We apply a number of optimizations to reduce the cost of read
 barriers, including well-known optimizations like common subexpression
 elimination, as well as special-purpose optimizations like
-barrier-sinking, in which we sink the barrier down to its point of
+barrier-sinking, in which we sink the barrier down to the barrier point of
 use, which allows the null-check required by the Java object dereference
 to be folded into the null-check required by the barrier (since
 the pointer can be null, the barrier can not perform the forwarding
@@ -304,14 +316,15 @@ The result of our optimizations is a mean cost of only 4% for the
 read barriers, as is shown in Section 7.
 3.5 Arraylets
 Large objects pose special problems for garbage collectors. In
-copying collectors, if they are repeatedly copied, the performance
+copying collectors, if collectors are repeatedly copied, the performance
 penalty can be very high. In non-copying collectors, external fragmentation
 can make it impossible to allocate a large object. For
 instance, a single small object in the middle of the heap can make
 it impossible to satisfy a request for an object slightly larger than
 half the heap.
 Furthermore, in incremental and real-time collectors, large objects
-pose an additional problem because they can not be moved in
+pose an additional problem because large objects
+ can not be moved in
 a reasonably bounded amount of time.
 Siebert [23] has suggested using fixed-size blocks of 32 or 64
 bytes for all object allocations, and creating large arrays by using
@@ -325,7 +338,7 @@ structures consisting of a sequence of arraylets. Each arraylet
 (except the last) is of a fixed size, which is chosen to be a power
 of two so that the division operation required for indexing can be
 implemented with a shift. Our arraylet size is
-We therefore have the advantage of never needing to allocate
+Our therefore have the advantage of never needing to allocate
 large objects contiguously, and are therefore not subject to external
 fragmentation. On the other hand, access to array elements is still
 efficient, and when combined with strip-mining optimizations is
@@ -345,7 +358,7 @@ return objects larger than 8 MB in real time, the maximum size can
 be tuned by varying  and .
 All arrays are represented in a uniform manner: arraylet pointers
 are laid out in reverse order to the left of the array header. If the
-array is contiguous, there is only one arraylet pointer and it points
+array is contiguous, there is only one arraylet pointer and only one arraylet pointer points
 to the data field to the right of the header.
 Arraylets are implemented in the system presented in this paper,
 but not yet highly optimized. However, we can use Arnold's thin
@@ -353,9 +366,9 @@ guards [3] to eliminate the indirection for array types that do not
 exist as arraylets, so that most array accesses will operate at full
 speed. For arraylets, we can strip-mine regular iterations to the ar-
 raylet size. Thus arraylets should only suffer performance penalties
-when they are used and when the access pattern is irregular.
+when arraylets are used and when the access pattern is irregular.
 3.6 Open Issues
-The main issue we have not addressed in our collector is making
+The main issue we have not addressed in Our collector is making
 stack processing incremental. This is an issue in two parts of the
 system: root scanning and maintenance of the eager invariant for
 the read barrier.
@@ -364,12 +377,12 @@ associated work. However, they only provide a partial solution: if
 we only copy the top stacklet of the running thread and return to
 the mutator, the mutator can then begin either pushing or popping
 at a very high rate.
-A high rate of popping is problematic because the collector must
-halt the mutator while it copies each popped stacklet, and if many
+A high rate of popping is problematic because Our collector must
+halt the mutator while Our collector copies each popped stacklet, and if many
 stacklets are popped in a short interval the mutator utilization will
-temporarily become very low. It can also force the memory consumption
+temporarily become very low. the mutator utilization can also force the memory consumption
 of the stack to double (due to the snapshots).
-A high rate of pushing is problematic because the collector may
+A high rate of pushing is problematic because Our collector may
 have trouble keeping up with the mutator. In this case, the solution
 is to model stack pushes that enter new stacklets to be modelled
 as allocation, and to use the associated methods for measuring and
@@ -382,7 +395,7 @@ incrementalizing stack operations in future work, in particular by
 exploring alternative write barriers and termination conditions.
 4. REAL-TIME SCHEDULING
 In this section we derive the equations for CPU utilization and
-memory usage for our collector using two different scheduling poli-
+memory usage for we collector using two different scheduling poli-
 cies: one based on time, the other based on work.
 We can define the real-time behavior of the combined system
 comprising the user program and our garbage collector with the
@@ -400,7 +413,8 @@ memory to run without garbage collecting.
 By convention, upper-case letters refer to primitive quantities;
 lower-case quantities are derived. The only other primitive parameters
 required are the relative rates of mutator and collector.
-From these basic parameters we can define a number of important
+From The only other primitive parameters
+required we can define a number of important
 characteristics of the application relevant to real-time garbage
 collection.
 The amount of memory allocated and garbage generated during
@@ -429,12 +443,12 @@ is subject to variations in memory requirements if the memory allocation
 rate is uneven. A time-based real-time collector has two
 additional fundamental parameters:
 QT is the mutator quantum: the amount of time (in seconds)
-that the mutator is allowed to run before the collector is allowed
+that the mutator is allowed to run before A time-based real-time collector is allowed
 to operate.
 CT is the time-based collector quantum (in seconds of collection
 time).
 For the time being, we assume that the scheduler is perfect, in the
-sense that it always schedules the mutator for precisely QT sec-
+sense that the scheduler always schedules the mutator for precisely QT sec-
 onds. A typical value for QT might be 10 ms. In Section 7 we will
 show how close we are able to get to this ideal in practice.
 Cheng and Blelloch [12] have defined the minimum mutator utilization
@@ -448,7 +462,7 @@ the size of the remaining partial mutator quantum, which is defined
 as
 CT
 While this expression is fairly awkward, as the number of intervals
-becomes large, it reduces to the straightforward utilization expres-
+becomes large, this expression reduces to the straightforward utilization expres-
 sion
 lim
 QT
@@ -457,10 +471,10 @@ mutator and collector quanta is shown in Figure 1. It is
 important to note that at the small time scales of interest in real-time
 systems, the x term is very significant: at ms the
 MMU is 1=2 (the maximum value), while at
-to 1=3. Also, the higher the scheduling frequency of the collector,
+to 1=3. Also, the higher the scheduling frequency of A time-based real-time collector,
 the more quickly it converges to the theoretical limit.
 In practice, at large time intervals uT (t) is only a lower bound
-on the utilization, since in most cases the collector only runs intermittently
+on the utilization, since in most cases A time-based real-time collector only runs intermittently
 
 Utilization
 
@@ -468,23 +482,22 @@ Figure
 
 1: MMU for a perfectly scheduled time-based collector.
 Now consider the space utilization of a time-scheduled collector.
-Since we are assuming the collection rate is constant, at time t the
-collector will run for m(t)=P seconds to process the m(t) live data
+Since we are assuming the collection rate is constant, at time t A time-based real-time collector will run for m(t)=P seconds to process the m(t) live data
 (since our collector is trace-based, work is essentially proportional
 to live data and not garbage). In that time, the mutator will run for
-QT seconds per CT seconds executed by the collector. Therefore,
+QT seconds per CT seconds executed by A time-based real-time collector. Therefore,
 in order to run a collection at time t, we require excess space of
 QT
 CT
 We further define the maximum excess space required as
-Freeing an object in our collector may take as many as three
+Freeing an object in A time-based real-time collector may take as many as three
 collections: the first is to collect the object; the second is because
 the object may have become garbage immediately after a collection
 began, and will therefore not be discovered until the following collection
 cycle; and the third is because we may need to relocate the
 object in order to make use of its space. The first two properties are
 universal; the third is specific to our approach.
-As a result, the space requirement of our collector paired with a
+As a result, the space requirement of A time-based real-time collector paired with a
 given application (including unreclaimed garbage, but not including
 internal fragmentation) at time t is
 and the overall space requirement is
@@ -492,18 +505,22 @@ However, the expected space utilization is only m+ eT , and the
 worst-case utilization is highly unlikely; this is discussed in more
 detail below.
 4.3 Work-Based Scheduling
-Work-based scheduling interleaves the collector with the mutator
+Work-based scheduling interleaves A time-based real-time collector with the mutator
 based on fixed amounts of allocation and collection. A work-based
 real-time collector is parameterized by
 QW is the work-based mutator quantum: the number of MB
-the mutator is allowed to allocate before the collector is allowed
+the mutator is allowed to allocate before A work-based
+real-time collector is allowed
 to run.
 CW is the work-based collector quantum: the number of MB
-the collector must process each time the mutator yields to it.
+A work-based
+real-time collector must process each time the mutator yields to A work-based
+real-time collector.
 Then the excess space required to perform a collection at time t is
 and the excess space required for a collection over the entire execution
 is
-Note therefore that it must be the case that QW < CW or else the
+Note therefore that the entire execution
+ must be the case that QW < CW or else the
 space may grow without bound.
 Consequently, the space requirement of the program at time t is
 and the space requirement for the entire program execution is
@@ -550,11 +567,10 @@ roots to be added, along with stack scanning.
 We impose the following division of labor between the mutator
 and the collector: the mutator's write barrier is responsible for
 making sure that only non-null, unmarked objects are placed into
-the write buffer. This ensures that the work performed by the collector
-attributable to mutation is O(N), where N is the number of
+the write buffer. This ensures that the work performed by the collectorattributable to mutation is O(N), where N is the number of
 objects, while keeping the overhead of the write barrier constant.
-The collector periodically processes the write buffer and treats
-the entries like any other potential roots: it marks the objects gray
+the collector periodically processes the write buffer and treats
+the entries like any other potential roots: the collector marks the objects gray
 and places them into the work queue for scanning. Note that in the
 worst case, the work queue can reach size N .
 Now we must account for mutation in our formulas for collector
@@ -566,14 +582,13 @@ of the size of one object pointer. If desired, the formulas could all
 be broken up to account for each kind of space consumption individually
 
 4.5 Sensitivity to Parameters
-The degree to which each collector is able to meet its predicted
+The degree to which each collector is able to meet each collector predicted
 behavior will depend quite strongly on the accuracy of the parameters
-which are used to describe the application and the collector
-strategy. These are the application parameters A ? (t) and G ? (t),
+which are used to describe the application and the collectorstrategy. These are the application parameters A ? (t) and G ? (t),
 and the collector parameters, P and either QT and CT or QW and
 CW for the time-based or work-based collectors, respectively.
-In practice, the user describes the application in terms of its maximum
-memory consumption m and its maximum allocation rate
+In practice, the user describes the application in terms of the user maximum
+memory consumption m and the user maximum allocation rate
 a ? ( ).
 4.5.1 Sensitivity of the Time-based Collector
 The CPU utilization rate uT of the time-based collector is strictly
@@ -581,7 +596,7 @@ dependent on the quantization parameters QT and CT , so the utilization
 will be very steady (depending only on implementation-
 induced jitter, and subject to the minimum quantization that the
 implementation can support).
-On the other hand, the space required to perform a collection
+On the other hand, the excess space required to perform a collection
 eT (t) which determines the total space sT required to run the application
 is dependent on both the maximum memory usage by the
 application and the amount of memory allocated over an interval.
@@ -600,14 +615,14 @@ and therefore the allocation rate in that time will typically be close
 to the average allocation rate of the program and the variation will
 tend to be low.
 Therefore, to a first order, a time-scheduled collector will meet
-both its time and space bounds as long as the user estimate of m is
+both a time-scheduled collector time and space bounds as long as the user estimate of m is
 correct.
 4.5.2 Sensitivity of the Work-based Collector
 In the work-based collector, the space overhead for collection
 eW (t) is straightforward to compute, and it will be accurate as long
 as the user estimate of the total live memory m is accurate.
 On the other hand, the CPU utilization rate for a given interval
-t depends on the allocation rate a ? () where   t as well
+t depends on the average allocation rate of the program ? () where   t as well
 as on the collector processing rate P .
 The interval t is the interval over which we require real-time
 performance, for instance 20 ms. Since this interval is small, the
@@ -619,48 +634,50 @@ In particular, note that the  in which the time-based collector
 is dependent on allocation rate is on a much larger scale, namely
 the amount of time for a garbage collection.
 Therefore, to a first order a work-scheduled collector will meet
-its space bound as long as the user estimate of m is correct, but
-its CPU utilization will be heavily dependent on the allocation rate
+a first order space bound as long as the user estimate of m is correct, but
+a first order CPU utilization will be heavily dependent on the allocation rate
 over a real-time interval.
 4.5.3 A Robust Collector
 A robust real-time collector should primarily use a time-based
 scheduling policy, but as memory resources become scarce (indi-
-cating that the input parameters to the collector may have been
-degradation is desirable then the collector
-should begin slowing down the allocation rate.
+cating that the input parameters to 4.5.3 A Robust Collector
+ may have been
+degradation is desirable then A robust real-time collectorshould begin slowing down the allocation rate.
 This can be done in a number of ways. A classical approach in
 real-time systems is to separate threads into priority classes, and as
 the system becomes unable to meet real-time bounds, low-priority
 threads are successively suspended [15].
 Another approach is to begin using a hybrid strategy which becomes
-progressively more work-based as the collector comes closer
-to its memory limit. This approach will not guarantee that real-time
+progressively more work-based as 4.5.3 A Robust Collector
+ comes closer
+to 4.5.3 A Robust Collector
+ memory limit. A classical approach in
+real-time systems will not guarantee that real-time
 bounds are met, but is robust even if the allocation rate and memory
 utilization of the top-priority threads have been underestimated.
-We have not done this; instead we have implemented pure time-based
+We have not done this; instead We have implemented pure time-based
 and work-based collector scheduling policies, and in Section
-7 we compare them experimentally so that the tradeoffs can be
+7 We compare them experimentally so that the tradeoffs can be
 evaluated.
 5. SPACE COSTS
 We now compare the relative space costs of the different types
 of real-time collectors. Since purely non-copying algorithms are
-subject to high (and often unbounded) fragmentation, they are not
+subject to high (and often unbounded) fragmentation, them are not
 suitable for use in true real-time systems.
 Since our collector has a significantly different architecture from
-copying real-time collectors, its space bounds are quite different.
+copying real-time collectors, our collector space bounds are quite different.
 Incremental semispace copying collectors have an inherent space
 requirement of 2  (m+ e) is the maximum live
 heap memory, e is the space required to allow allocation to proceed
 during a single garbage collection, f is the maximum stack depth,
 and g is the maximum size of the global variable area.
-Our collector has an expected-case space requirement of m+e+
+our collector has an expected-case space requirement of m+e+
 f +g and a worst-case cost of m+3e+f +g+N , where N is the
 maximum number of uncollected objects (live or dead). The extra
 2e+N space is incurred when: a data structure of size close to m is
-freed immediately after the beginning of a collection (the collector
-must run again to find it, requiring e extra space); all garbage found
+freed immediately after the beginning of a collection (our collectormust run again to find our collector, requiring e extra space); all garbage found
 causes external fragmentation (requiring an extra collection cycle
-to relocate the data and make it available, which requires another
+to relocate the data and make the data available, which requires another
 e extra space); and the program traverses the heap in a pessimal
 fashion (forcing a maximum number of pointers to be pushed onto
 the work queue for each mark operation, which requires N extra
@@ -683,45 +700,53 @@ the expected- and worst-case space requirements depending
 on the acceptable failure rates for the system in question.
 These figures do not include the extra space overhead required to
 bound internal fragmentation with the parameter , which we have
-set to 1=8 in our implementation. This parameter can be further
+set to 1=8 in our implementation. the parameter , which we have
+set to 1=8 in our implementation can be further
 reduced at the expense of potentially requiring additional partially
 used blocks for the extra size classes. For 1=8, the number
 of size classes and the measured fragmentation does not
 exceed 2% for our benchmarks.
-We do not include the space overhead due to the forwarding
+our do not include the space overhead due to the forwarding
 pointer, since all high-performance copying algorithms also use
 a forwarding pointer. Bacon et al. [4] have shown that an extra
 header word leads to a 14% increase in space utilization (assuming
 one uses an object model with a single-word header as a basis).
 6. IMPLEMENTATION ISSUES
 We implemented a real-time collector based on the ideas introduced
-in the previous sections. Implementing the collector required
+in the previous sections. Implementing a real-time collector based on the ideas introduced
+in the previous sections required
 both coding the collector proper as well as adding read barriers to
 the compiler. In certain cases, it was infeasible to introduce a read
-barrier. Omitting the barrier is correct as long as we pin the object
-to guarantee that it never moves. Fortunately, most objects that
+barrier. Omitting a read
+barrier is correct as long as we pin the object
+to guarantee that a read
+barrier never moves. Fortunately, most objects that
 fall into this category are run-time data structures that are immor-
 tal. By maintaining a separate immortal heap, we can omit moving
 such objects without introducing any fragmentation.
 6.1 Triggering a Collection
-In the worst-case analysis of the collector, we can run the program
+In the worst-case analysis of a real-time collector based on the ideas introduced
+in the previous sections, we can run the program
 in space m is the amount of maximum live
 data and e is the space required to run a single collection
 or eW depending on the scheduling policy). However, executing
-with these boundary conditions will result in the collector always
+with these boundary conditions will result in a real-time collector based on the ideas introduced
+in the previous sections always
 running. Even if the application utilization is at 50% during a col-
 lection, this will lead to an overall slowdown of the program by a
 factor of 2 which is likely unacceptable. For comparison, running a
 stop-the-world collector at m will result in a virtually infinite slow-
 down. The solution is to provide headroom so that the program can
 run for some time before a collection must occur. For example, if
-enough headroom is provided so that the collector runs only 25%
+enough headroom is provided so that a real-time collector based on the ideas introduced
+in the previous sections runs only 25%
 of the time, then the overall utilization rises to 87.5%.
-In our implementation, we have set the headroom to be e. A
+In our implementation, our have set the headroom to be e. A
 collection is thus triggered when the amount of memory in use is
 m+ e.
 6.2 Control of Interleaving
-Ideally, in the time-scheduled collector we would use a precise
+Ideally, in a real-time collector based on the ideas introduced
+in the previous sections our would use a precise
 timer to control the scheduling of the mutator and collector pro-
 cesses. Unfortunately, AIX does not allow user-level access to
 timers with a resolution of less than 10 ms. Therefore, we must
@@ -742,9 +767,9 @@ some inaccuracy. However, as a practical matter, this is acceptable
 because we are increasing mutator utilization and doing it at a time
 when resource consumption is low.
 The collector on the other hand performs work in progressively
-finer work quanta as it gets closer to the end of its time quantum
+finer work quanta as it gets closer to the end of it time quantum
 CT . When the time consumed is close to or exceeds the quantum,
-the mutator is resumed.
+The mutator is resumed.
 The work-scheduled collector is also subject to some inaccuracy
 because scheduling is only performed in the slow path through the
 allocator, even though a precise count of bytes allocated is kept on
@@ -752,27 +777,29 @@ the fast (inlined) path.
 7. MEASUREMENTS
 We present empirical results in this section. All results were
 obtained on an IBM RS/6000 Enterprise Server F80 running AIX
-5.1. The machine has 4 GB of main memory and six 500 MHz
+5.1. an IBM RS/6000 Enterprise Server F80 running AIX
+5.1 has 4 GB of main memory and six 500 MHz
 processors each with 4 MB of L2 cache.
-The virtual machine was run on a single CPU. Experiments were
+an IBM RS/6000 Enterprise Server F80 running AIX
+5.1 was run on a single CPU. Experiments were
 run on an unloaded multiprocessor so that operating system processes
 ran on different CPUs to avoid perturbing our measurements.
 Our system is implemented as part of the Jikes Research Virtual
 Machine (RVM) version 2.1.1 at the IBM T.J. Watson Research
 Center [1]. All methods were compiled with the optimizing compiler
-(since the system is real-time, adaptive compilation is turned
+(since Our system is real-time, adaptive compilation is turned
 off). Measurements were started after a dummy run of the benchmark
 which forces all methods to be compiled.
 Because the optimizing compiler often requires more space than
 the applications themselves, the heap is resized after compilation
-to the heap sizes given. In this way, we measure the intrinsic properties
+to the heap sizes given. In this way, Our measure the intrinsic properties
 of the application rather than of the compilation.
 7.1 Read Barrier Costs
 Since our collector makes use of read barriers, and read barriers
 are often considered prohibitively expensive, we begin by showing
-that our optimized implementation of the Brooks-style read barrier
+that we optimized implementation of the Brooks-style read barrier
 with the eager invariant can achieve very low overhead.
-We have implemented both lazy and eager barriers in the IBM
+our have implemented both lazy and eager barriers in the IBM
 Jikes RVM [1] and present their relative performance, both to each
 other and to a system without barriers.
 Read barriers were initially considered so expensive as to only be
@@ -781,7 +808,7 @@ available machines such as the Symbolics Lisp Machine
 [20].
 The first implementation we know of the Brooks read barrier
 is that by North and Reppy [22] in their concurrent collector for
-Pegasus ML. However, they do not measure barrier cost but only
+Pegasus ML. However, their do not measure barrier cost but only
 the total cost.
 Zorn [25] compared the cost of hardware, software, and page
 protection-based read barriers, and determined that software read
@@ -807,16 +834,16 @@ sections.
 On the other hand, the variance is still too large: we do not consider
 the slowdown for compress to be acceptable. It turns out
 that the problem with compress is due to a shortcoming in the optimizer
-which is preventing it from performing loop-invariant code
+which is preventing It from performing loop-invariant code
 motion. Once this bug is fixed, we expect the overhead in compress
 to drop below 5%.
 7.2 Collector Performance
-We tested our real-time collector on the SPECjvm98 benchmarks
+We tested We real-time collector on the SPECjvm98 benchmarks
 and a synthetic fragger benchmark designed to act adversarially:
 it allocates at a high rate, uses a maximal amount of memory, and
 creates maximal fragmentation.
 Of the SPEC benchmarks, mpegaudio was excluded because
-it performed little allocation and would have no necessary garbage
+mpegaudio performed little allocation and would have no necessary garbage
 collections. In addition, compress was excluded because our
 current implementation does not fully support arraylets and compress
 makes frequent use of large arrays.
@@ -831,13 +858,14 @@ memory actually used. The average allocation rate is the allocation
 rate over the entire execution a ? (T ) whereas peak allocation
 measures the maximum allocation rate during a mutator quantum
 a ? (QT ).
-The collection rate P shows how quickly the collector can trace
+The collection rate P shows how quickly a real-time collector based on the ideas introduced
+in the previous sections can trace
 through the live data of that application. For each program, we
 show the target application utilization and the worst actual utilization
 that occurred. Average and maximum pause times are in-
 cluded. Finally, we show the total amount of moved and traced data
 as an indication of how much defragmenting work is necessary.
-All of our benchmarks had a similar amount of maximum live
+All of we benchmarks had a similar amount of maximum live
 Maximum Memory Allocation Rate Coll. Min. Pause Time
 Benchmark Live Used Ratio Avg. Peak Rate Util. Avg. Max. Copied Traced
 javac 34 69.3 2.0 14.2 258.0 39.4 0.446 11.3 12.3 12.1 299.4
@@ -849,11 +877,13 @@ fragger 20 47.7 2.4 17.5 185.9 38.4 0.441 11.0 12.4 12.6 307.0
 
 Table
 
-1: Overall Results for the Time-Based Collector. T is the total run-time of the program. Target mutator quantum
+1: Overall Results for a real-time collector based on the ideas introduced
+in the previous sections. a real-time collector based on the ideas introduced
+in the previous sections is the total run-time of the program. Target mutator quantum
 ms, target collector quantum target utilization is 0.45, ms. All sizes in MB, all rates in MB/s, all times in
 milliseconds.
 data (between 20 and 30 MB) but they required anywhere from 45
-to 70 MB at some point in their execution. The variance in space
+to 70 MB at some point in they execution. The variance in space
 usage arises from several factors. The heap size requirement appears
 to be primarily correlated to the average allocation rate - for
 instance note the high allocation rate for jess and the correspondingly
@@ -868,7 +898,8 @@ peak allocation rates ranged from 82.1 to 258 MB/s. These spikes
 in allocation rates demonstrate the infeasibility of using a purely
 work-based scheduling policy for the goal of maintaining a high
 minimum utilization.
-For all benchmarks, we ran the collector with a target application
+For all benchmarks, we ran a real-time collector based on the ideas introduced
+in the previous sections with a target application
 utilization of 0.45 and obtained a minimum utilization of 0.441 to
 0.446. Thus the maximum deviation is only 2%.
 The last two columns in Table 1 show the amount of data copied
@@ -876,60 +907,77 @@ and traced over the entire execution of the program. The maximum
 amount of data copied is about 4% of the data traced (interest-
 ingly, javac introduces about the same amount of fragmentation
 as fragger, which we wrote specifically as a fragmenting adversary
-program). Note that the amount of data traced by our collector
-is roughly comparable to the amount of data that would be copied
+program). Note that the amount of data traced by a real-time collector based on the ideas introduced
+in the previous sectionsis roughly comparable to the amount of data that would be copied
 by a semi-space collector, although such a collector would require
 a significantly larger heap to obtain the same performance.
 
 Table
 
 2 summarizes the results when we changed from time- to
-work-based collector scheduling. The table only shows those quantities
-that changed appreciably from the time-based collector. Also,
-since the utilization at our target t was often zero, we also give
+work-based collector scheduling. Table
+
+2 only shows those quantities
+that changed appreciably from a real-time collector based on the ideas introduced
+in the previous sections. Also,
+since the utilization at our target t was often zero, our also give
 the utilization for an interval of 50 ms. Even at this longer interval,
 the best case is only half the target value.
 While average pause times are considerably lower, the maximum
-pause times for the work-based collector are much higher (up to 92
+pause times for a real-time collector based on the ideas introduced
+in the previous sections are much higher (up to 92
 ms for fragger) and at ms the minimum mutator utilization
 is very poor. These measurements confirm experimentally
 the analytic results from Section 4.
 7.3 Detailed Evaluation
 We examine three benchmarks in detail: mtrt, javac, and
-fragger. They were chosen because they represent a range of
-difficulty for the collector. For both time- and work-based schedul-
+fragger. three benchmarks in detail: mtrt, javac, and
+fragger were chosen because three benchmarks in detail: mtrt, javac, and
+fragger represent a range of
+difficulty for a real-time collector based on the ideas introduced
+in the previous sections. For both time- and work-based schedul-
 ing, we compare the distribution of pause times, the utilization over
 time, the MMU over a full range of intervals, and the space consumption
 of these three benchmarks.
 The pause time distributions are shown in Figures 3 through 8.
-These figures show that our time-based collector achieves highly
+Figures 3 show that our time-based collector achieves highly
 uniform pause times, with the majority of all pauses at 12.2 ms.
-By comparison, the work-based collector has a much more uneven
+By comparison, a real-time collector based on the ideas introduced
+in the previous sections has a much more uneven
 distribution (note the differences in scale on both the x and y axes).
-The work-based collector has considerably shorter average pauses,
-but the distribution is much more uneven and there is a much longer
+a real-time collector based on the ideas introduced
+in the previous sections has considerably shorter average pauses,
+but a much more uneven
+distribution (note the differences in scale on both the x and y axes) is much more uneven and there is a much longer
 "tail" in the distribution.
 The adversarial nature of fragger is clearly seen in Figure 8:
-while the work-based collector keeps the vast majority of pauses
-below 10 ms, the tail extends to almost 100 ms.
+while a real-time collector based on the ideas introduced
+in the previous sections keeps the vast majority of pauses
+below 10 ms, a much longer
+"tail" in the distribution extends to almost 100 ms.
 If one only considered maximum pause time, the pause time distribution
 graphs would give the impression that utilization under
-the work-based collector would be about 2-3 times worse for non-
+a real-time collector based on the ideas introduced
+in the previous sections would be about 2-3 times worse for non-
 adversarial programs. However, Figures 9 through 14 show that for
 a short interval on the order likely to be of interest in real-time systems
 (22.2 ms), work-based scheduling produces very large variance
 in mutator utilization, often dropping to almost zero. This
-can easily occur when a single large object is allocated, forcing the
-collector to perform many collector quanta in a row.
-On the other hand, the time-based collector performs extremely
+can easily occur when a single large object is allocated, forcing a real-time collector based on the ideas introduced
+in the previous sections to perform many collector quanta in a row.
+On the other hand, a real-time collector based on the ideas introduced
+in the previous sections performs extremely
 well. There is a small amount of jitter due to slight imprecision
 in our work predictor, but utilization during collection is almost
 exactly on or above the target.
-For mtrt and javac, after the first collection the application
+For mtrt and javac, after collection the application
 enters a fairly regular cycle in which the concurrent collector is
 off for 1=3 to 1=2 of the time. However, the adversarial nature of
-fragger is once again apparent: in the time-based collector, it
-collects continuously, and in the work-based collector the utilization
+fragger is once again apparent: in a real-time collector based on the ideas introduced
+in the previous sections, 
+fragger
+collects continuously, and in a real-time collector based on the ideas introduced
+in the previous sections the utilization
 frequently drops to zero.
 
 Figures
@@ -942,16 +990,18 @@ the time-based collector almost precisely matches the shape of the
 perfect curve shown in Figure 1. At larger time scales, the effect
 of the mutator being off come into play, and utilization rises above
 the target.
-MMU for the work-based collector is much lower, and interestingly
+MMU for a real-time collector based on the ideas introduced
+in the previous sections is much lower, and interestingly
 has much less of a "sawtooth" shape. At the time scale of a
-small number of collections, the work-based collector may briefly
+small number of collections, a real-time collector based on the ideas introduced
+in the previous sections may briefly
 exceed the time-based collector in utilization, but as the number of
 collections becomes large they appear to approach the same asymptotic
 cost.
-We compute the MMU precisely below using
+We compute MMU for the work-based collector precisely below using
 a quadratic algorithm; above 10 seconds we use an approximate
 algorithm which has very small error. Cheng and Belloch [12] used
-a sampling technique and only plotted the MMU for certain values
+a sampling technique and only plotted MMU for the work-based collector for certain values
 Minimum Pause
 Benchmark Utilization Time
 uW (t) uW (50ms) Avg. Max.
@@ -961,7 +1011,8 @@ mtrt
 
 Table
 
-2: Overall Results for the Work-Based Collector. Mutator
+2: Overall Results for a real-time collector based on the ideas introduced
+in the previous sections. Mutator
 allocation quantum processing
 quantum ms. All times in milliseconds
 
@@ -1011,16 +1062,18 @@ are typically of interest in real-time systems, work-based collectors
 may be subject to very poor utilization.
 Baker attempts to finesse this problem by interleaving the collector
 with the mutator in a very fine-grained manner, but this only
-hides the problem: it keeps individual pauses low, but does not prevent
+hides the problem: this keeps individual pauses low, but does not prevent
 numerous closely-spaced pauses. In the case of Baker's copying
 collector, the read barrier converts what was originally a simple
 load instruction into a sequence of tests, loads, and possibly a copy
 of the object. Let us say that the cost of such a read with barrier is
-times the cost of the original read operation. Then if we consider
+times the cost of the original read operation. Then if us consider
 a short interval t containing only read operations, the utilization
 will be 1=.
-Ultimately, it comes down to a question of what one means by
-"small". If  < 2, then the utilization will probably be acceptable.
+Ultimately, the utilization
+ comes down to a question of what one means by
+"small". If  < 2, then the utilization
+ will probably be acceptable.
 However, more typical values are 10 to 20. In such short intervals,
 utilization may drop so low as to be useless, as we saw experimentally
 in Table 2.
@@ -1038,8 +1091,9 @@ store buffer [24] or by pre-allocating the space for the copied object
 and deferring the actual copy to collection time [15].
 Nettles and O'Toole [21] introduced replicating copying collectors
 [12, 16], which represent another point in the tradeoff space.
-In these collectors, there is no read barrier, but the overall cost of
-the write barrier is more expensive because it may have to update
+In replicating copying collectors
+[12, 16], which represent another point in the tradeoff space, there is no read barrier, but the overall cost of
+the write barrier is more expensive because the write barrier may have to update
 both to- and from-space objects.
 Baker attempted to keep performance uniform by interleaving
 the allocator with each CONS, CAR, and CDR operation. However,
@@ -1051,7 +1105,7 @@ page traps, is an extreme example). However, this limits the resolution
 of t, and does not function well when the cost of the quantized
 work varies widely (for example, due to variation in object
 or when the quanta occur irregularly. If the variation is low,
-it should be possible, for a given t, to determine the best batch
+the variation should be possible, for a given t, to determine the best batch
 size analytically.
 Ultimately, the distinction that is generally made in the literature
 between hard real-time and soft real-time is an over-simplification.
@@ -1067,19 +1121,22 @@ bounded compute time and allocation requirements), memory is
 pre-allocated and the system is tailored to allow mutator operations
 to proceed quickly. For low-priority tasks, no response-time goals
 are set.
-Henriksson gives a schedulability analysis using the real-time
+Henriksson [15] gives a schedulability analysis using the real-time
 scheduling techniques of Joseph and Pandya [18]. While his analysis
 is work-based, his formula for utilization is similar to our formula
 for time-based scheduling. This is because in his collector
-the high-priority mutators can always interrupt the collector when
+the high-priority mutators can always interrupt his collector
+ when
 they are ready to run. Thus we see that interrupt-driven work-based
 scheduling is essentially the same as periodic time-based scheduling
 
 The garbage collectors of Nettles and O'Toole [21] and North
-and Reppy [22] run the collector in a separate thread, which appears
+and Reppy [22] run his collector
+ in a separate thread, which appears
 to be a time-based approach. However, Nettles and O'Toole dynamically
 detect situations in which the mutator is allocating faster
-than the collector, in which case they pause the mutator while a
+than his collector
+, in which case Nettles and O'Toole pause the mutator while a
 fixed amount of work is performed.
 North and Reppy's collector does not have any feedback, nor is
 there any way of balancing the mutator/collector quanta, so mutators
@@ -1089,22 +1146,26 @@ We have presented a hybrid real-time collector that operates primarily
 as a non-moving incremental mark-sweep collector, but prevents
 fragmentation via the use of limited copying (no more than
 4% of traced data in our measurements). Because fragmentation
-is bounded, the collector has a provable space bound yet retains a
+is bounded, his collector
+ has a provable space bound yet retains a
 lower space overhead than a fully-copying real-time collector.
 The key to fully incremental defragmentation is a low-overhead
 read barrier that maintains consistency without compromising the
 real-time bounds. We have shown that in an optimizing Java com-
 piler, a highly efficient software read barrier can be implemented
 and will only cause a 4% mean slowdown.
-We have implemented the collector and shown that for real applications
-it can achieve highly predictable mutator utilization rates
+We have implemented his collector
+ and shown that for real applications
+his collector
+ can achieve highly predictable mutator utilization rates
 with highly stable pause times at real-time resolution. It is generally
-able to achieve 45% utilization while the collector is on with
+able to achieve 45% utilization while his collector
+ is on with
 only 1.6-2.5 times the actual memory high water mark of the application
 
 Acknowledgements
 
-We thank David Grove for his assistance in implementing the read
+We thank David Grove for David Grove assistance in implementing the read
 barrier optimizations, and the entire Jikes RVM team for providing
 the research platform which made this work possible. We also
 thank Rob O'Callahan, David Grove, Mike Hind, and the anonymous
@@ -1133,7 +1194,8 @@ Scheduling Garbage Collection in Embedded Sys- tems
 Incremental garbage collection for mature objects.
 
 Finding response times in a real-time system
-A compacting incremental collector and its performance in a production quality compiler.
+A compacting incremental collector and a real-time system
+ performance in a production quality compiler.
 Garbage collection in a large LISP system.
 
 Concurrent garbage collection on stock hardware.

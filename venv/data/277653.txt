@@ -1,7 +1,7 @@
 --T
 Complete removal of redundant expressions.
 --A
-Partial redundancy elimination (PRE), the most important component of global optimizers, generalizes the removal of common subexpressions and loop-invariant computations. Because existing PRE implementations are based on code motion, they fail to completely remove the redundancies. In fact, we observed that 73% of loop-invariant statements cannot be eliminated from loops by code motion alone. In dynamic terms, traditional PRE eliminates only half of redundancies that are strictly partial. To achieve a complete PRE, control flow restructuring must be applied. However, the resulting code duplication may cause code size explosion.This paper focuses on achieving a complete PRE while incurring an acceptable code growth. First, we present an algorithm for complete removal of partial redundancies, based on the integration of code motion and control flow restructuring. In contrast to existing complete techniques, we resort to restructuring merely to remove obstacles to code motion, rather than to carry out the actual optimization.Guiding the optimization with a profile enables additional code growth reduction through selecting those duplications whose cost is justified by sufficient execution-time gains. The paper develops two methods for determining the optimization benefit of restructuring a program region, one based on path-profiles and the other on data-flow frequency analysis. Furthermore, the abstraction underlying the new PRE algorithm enables a simple formulation of speculative code motion guaranteed to have positive dynamic improvements. Finally, we show how to balance the three transformations (code motion, restructuring, and speculation) to achieve a near-complete PRE with very little code growth.We also present algorithms for efficiently computing dynamic benefits. In particular, using an elimination-style data-flow framework, we derive a demand-driven frequency analyzer whose cost can be controlled by permitting a bounded degree of conservative imprecision in the solution.
+Partial redundancy elimination (PRE), the most important component of global optimizers, generalizes the removal of common subexpressions and loop-invariant computations. Because existing PRE implementations are based on code motion, existing PRE implementations fail to completely remove the redundancies. In fact, we observed that 73% of loop-invariant statements cannot be eliminated from loops by code motion alone. In dynamic terms, traditional PRE eliminates only half of redundancies that are strictly partial. To achieve a complete PRE, control flow restructuring must be applied. However, the resulting code duplication may cause code size explosion.This paper focuses on achieving a complete PRE while incurring an acceptable code growth. First, we present an algorithm for complete removal of partial redundancies, based on the integration of code motion and control flow restructuring. In contrast to existing complete techniques, we resort to restructuring merely to remove obstacles to code motion, rather than to carry out the actual optimization.Guiding the optimization with a profile enables additional code growth reduction through selecting those duplications whose cost is justified by sufficient execution-time gains. This paper develops two methods for determining the optimization benefit of restructuring a program region, one based on path-profiles and the other on data-flow frequency analysis. Furthermore, the abstraction underlying the new PRE algorithm enables a simple formulation of speculative code motion guaranteed to have positive dynamic improvements. Finally, we show how to balance the three transformations (code motion, restructuring, and speculation) to achieve a near-complete PRE with very little code growth.we also present algorithms for efficiently computing dynamic benefits. In particular, using an elimination-style data-flow framework, we derive a demand-driven frequency analyzer whose cost can be controlled by permitting a bounded degree of conservative imprecision in the solution.
 --B
 Introduction
 Partial redundancy elimination (PRE) is a widely used and
@@ -25,8 +25,9 @@ obstacles. In theory, even the optimal code-motion algorithm
 unless supported by explicit do-until conversion. Recently,
 Steffen demonstrated that control flow restructuring can remove
 from the program all redundant computations, including
-conditional branches [31]. While his property-oriented
-expansion algorithm (Poe) is complete, it causes unnecessary
+conditional branches [31]. While Steffen property-oriented
+expansion algorithm (Poe) is complete, his property-oriented
+expansion algorithm (Poe) causes unnecessary
 code duplication.
 As the first step towards a complete PRE with affordable
 code growth, this paper presents a new PRE algorithm
@@ -40,7 +41,8 @@ adverse effects of control flow on the desired value
 reuse. Whereas the Poe algorithm applied to expression
 elimination (denoted PoePRE) uses restructuring to carry
 out the entire transformation, we apply the more economical
-code-motion transformation to its full extent, resorting
+code-motion transformation to the Poe algorithm applied to expression
+elimination (denoted PoePRE) full extent, resorting
 to restructuring merely to enable the necessary code motion.
 The resulting code growth is provably not greater than that
 of PoePRE; on spec95, we found it to be three times smaller.
@@ -116,8 +118,10 @@ All algorithms in this paper rely in a specific way on
 the notion of the CMP region which is used to reduce both
 code duplication and the program analysis cost. Thus, we
 make the PRE optimization more usable not only by increasing
-its effectiveness (power) through cost-sensitive restruc-
-turing, but also by improving its efficiency (implementa-
+we
+ effectiveness (power) through cost-sensitive restruc-
+turing, but also by improving we
+ efficiency (implementa-
 tion). We develop compile-time techniques for determining
 the impact of restructuring a program region on the dynamic
 amount of eliminated computations. The run-time
@@ -132,7 +136,8 @@ new demand-driven data-flow analysis framework. Based on
 interval analysis, the framework enables formulation of analyzers
 whose time complexity is independent of the lattice
 size. This is a requirement of frequency analysis whose lattice
-is of infinite-height. Due to this requirement, existing
+is of infinite-height. Due to a requirement of frequency analysis whose lattice
+is of infinite-height, existing
 demand frameworks are unable to produce a frequency analyzer
 [18, 23, 30]. Furthermore, we introduce the notion
 of approximate data-flow frequency information, which conservatively
@@ -144,15 +149,16 @@ wise) to the overall solution. Besides PRE, the demand-driven
 approximate frequency analysis is applicable in interprocedural
 branch correlation analysis [10] and dynamic
 optimizations [5].
-Let us illustrate our PRE algorithms on the loop in Figure
+Let us illustrate us PRE algorithms on the loop in Figure
 1(a). Assume no statement in the loop defines variables
 or d. Although the computations [a+b] and [c+d] are
-loop-invariant, removing them from the loop with code motion
+loop-invariant, removing the computations [a+b] and [c+d] are
+loop-invariant from the loop with code motion
 is not possible. Consider first the optimization of [a+b].
 This computation cannot be moved out of the loop because
-it would be executed on the path En; O;P;Ex, which does
+This computation would be executed on the path En; O;P;Ex, which does
 not execute [a + b] in the original program. Because this
-could slow down the program and create spurious excep-
+could slow down the original program and create spurious excep-
 tions, PRE disallows such unsafe code motion [25].
 The desired optimization is only possible if the CFG is
 restructured. The PoePRE algorithm [31] would produce
@@ -190,8 +196,8 @@ does not allow this transformation because the loop
 exit does not post-dominate the loop entry. In effect, our
 restructuring PRE is always able to perform the smallest
 necessary do-until conversion for an arbitrary loop.
-Next, we optimize the computation [c+d] in Figure 1(c).
-Our optimization performs a complete PRE of [c +d] by duplicating
+Next, our optimize the computation [c+d] in Figure 1(c).
+our optimization performs a complete PRE of [c +d] by duplicating
 the shaded CMP region and subsequently performing
 the code motion (Figure 1(d)). The resulting program
 may cause too much code growth, depending on the sizes
@@ -199,15 +205,15 @@ of duplicated basic blocks. Assume the size of block S outweighs
 the run-time gains of eliminating the upper [c
 In such a case, we select a smaller set of nodes to duplicate,
 as shown in Figure 1(e). When only block Q is duplicated,
-the optimization is no longer complete; however, the optimization
+Our optimization is no longer complete; however, the optimization
 cost measured as code growth is justified with
 the corresponding run-time gain. In Section 3.2, speculative
 code motion is used to further reduce code duplication.
-In summary, this paper makes the following contributions:
+In summary, This paper makes the following contributions:
 ffl We present an approach for integrating two widely used
 code transformation techniques, code motion and code
 restructuring. The result is an algorithm for PRE that
-is complete (i.e., it exploits all opportunities for value
+is complete (i.e., The result exploits all opportunities for value
 reuse) and minimizes the code growth necessary to
 achieve the code motion.
 ffl We show that restricting the algorithm to code motion
@@ -219,15 +225,16 @@ ffl We develop a demand-driven frequency analyzer based
 on a new elimination data-flow analysis framework.
 ffl The notion of approximate data-flow information is defined
 and used to improve analyzer efficiency.
-ffl Our experiments compare the power of code-motion
+ffl We experiments compare the power of code-motion
 PRE, speculative PRE, and complete PRE.
 Section 2 presents the complete PRE algorithm. Section 3
 describes profile-guided versions of the algorithm and Section
 4 presents the experiments. Section 5 develops the
-demand-driven frequency analyzer. The paper concludes
+demand-driven frequency analyzer. This paper concludes
 with a discussion of related work.
 Complete PRE
-In this section, we develop an algorithm for complete removal
+In Section 3
+, we develop an algorithm for complete removal
 of partial redundancies (ComPRE) based on the integration
 of code motion and control flow restructuring. Code
 motion is the primary transformation behind ComPRE. To
@@ -238,14 +245,15 @@ by solving the problems of availability and anticipabil-
 ity on an expressive lattice. We also show that when control
 flow restructuring is disabled, ComPRE becomes equivalent
 to the optimal code-motion PRE algorithm [25].
-An expression is partially redundant if its value is computed
+An expression is partially redundant if An expression value is computed
 on some incoming control flow path by a previous
 expression. Code-motion PRE eliminates the redundancy
 by hoisting the redundant computation along all paths until
 it reaches an edge where the reused value is available along
 either all paths or no paths. In the former case, the computation
-is removed; in the latter, it is inserted to make the
-original computation fully redundant. Unfortunately, code
+is removed; in the latter, the computation
+ is inserted to make the computation
+ fully redundant. Unfortunately, code
 motion may be blocked before such edges are reached. Nodes
 that prevent the desired code motion are characterized by
 the following set of conditions:
@@ -263,10 +271,10 @@ data-flow problems of anticipability and availability, which
 are defined as follows.
 be any path from the start node to
 a node n. The expression e is available at n along p iff
-e is computed on p without subsequent redefinition of its
+e is computed on p without subsequent redefinition of p
 operands. Let r be any path from n to the end node. The
 expression e is anticipated at n along r iff e is computed on
-r before any of its operands are defined. The availability of
+r before any of r operands are defined. The availability of
 e at the entry of n w.r.t. the incoming paths is defined as:
 AVAIL in [n;
 Must all
@@ -279,8 +287,7 @@ AVAIL in [n; e] 6= No:
 Code motion is disabled when the condition c) holds:
 Must -
 AVAIL in [n; e] 6= Must:
-A node n prevents the necessary code motion for e when the
-motion is necessary but disabled at the same time. By way
+A node n prevents the necessary code motion for e when Code motion is necessary but disabled at the same time. By way
 of conjunction, we get the code motion-preventing condition:
 AVAIL in [n;
 The predicate Prevented characterizes the smallest set of
@@ -319,12 +326,12 @@ by the CMP region by duplicating the entire region,
 as illustrated in Figure 2. The central idea is to factor the
 May-availability that holds in the entire region into Must-
 and No-availability, to hold respectively in each region copy.
-An alternative view is that we separate within the region the
+An alternative view is that we separate within the entire region the
 paths with Must- and No-availability. To achieve this, we
 can observe that a) no region entry edge is May-available,
-and b) the solution of availability within the region depends
+and b) the solution of availability within the entire region depends
 solely on solutions at entry edges (the expression is neither
-computed nor killed within the region). Hence, the desired
+computed nor killed within the entire region). Hence, the desired
 factoring can be carried out by attaching to each region
 copy the subset of either Must or No entry edges, as shown
 in
@@ -352,7 +359,7 @@ Given an expression e, the CMP region is identified by
 examining the data-flow solutions locally at each node.
 Line 2 in Figure 3 duplicates each CMP node and line 3
 adjusts the control flow edges, so that the new copy of
-the region hosts the Must solution. Restructuring necessitates
+the CMP region hosts the Must solution. Restructuring necessitates
 updating data-flow solutions within the CMP
 region (lines 4-12). While the ANTIC solution is not
 altered, the previously computed AVAIL solution is invalidated
@@ -376,7 +383,7 @@ hoisting of the original computation to the edge.
 Theorem 1 (Completeness). ComPRE is optimal in
 that it minimizes the number of computations on each path.
 Proof. First, each original computation is replaced with
-a temporary. Second, no computation is inserted where its
+a temporary. Second, no computation is inserted where no computation
 value is available along any incoming path. Hence, no additional
 computations can be removed.
 Within the domain of the Morel and Renviose code-
@@ -393,7 +400,7 @@ control flow paths going through n: each resulting copy of
 n is a path partition that does not contain both a Must-
 and a No-available path, for any offending expression. The
 1 Outside this domain, further code growth reduction is possible
-by moving instructions out of the CMP before its duplication.
+by moving instructions out of the CMP before the CMP duplication.
 Step 1: Data-flow analysis: anticipability, availability.
 ffl Input: control flow graph
 each node contains a single assignment x := e,
@@ -412,7 +419,7 @@ AVAIL in [n; e] :=
 AVAIL out [m; e]
 AVAIL out [n; e] := f e
 n (AVAIL in [n; e])
-Must if Comp(n; e) -Transp(n; e),
+Must if Comp(n; e); e) -Transp(n; e),
 x otherwise.
 Step 2: Remove CMP regions: control flow restructuring.
 ffl modify G so that no CMP nodes exists,
@@ -424,7 +431,7 @@ Must
 attach new nodes to perform the restructuring
 Must
 Must Must
-update data-flow solutions within CMP and its copy
+update data-flow solutions within CMP and CMP copy
 4 for each node n 2 CMP[e] do
 5 ANTIC in [n Must ] := ANTIC in [n]
 ANTIC out [n Must ] := ANTIC out [n]
@@ -467,7 +474,8 @@ nodes than the same program after CMP restructuring. It
 can be shown that, given an original node n, for any two
 copies of n created by CMP restructuring, there are two
 distinct copies of n created by PoePRE such that the minimization
-cannot merge them without destroying some value
+cannot merge the minimization
+ without destroying some value
 reuse opportunity.
 In fact, PoePRE can be expressed as a form of Com-
 PRE on a (non-strictly) larger region: for each computation
@@ -485,7 +493,7 @@ the entire algorithm, is O(NS 2 ).
 2.1 Optimal Code-Motion PRE
 Besides supporting a complete PRE, the notion of the CMP
 region also facilitates an efficient formulation of code-motion
-PRE, called CM-PRE. In this section, we show that our complete
+PRE, called CM-PRE. In this section, we show that we complete
 algorithm can be naturally constrained by prohibiting
 the restructuring, and that such modification results in the
 same optimization as the optimal motion-only PRE [17, 25].
@@ -529,16 +537,19 @@ specified by the predicate Insert cannot be delayed, that is,
 moved further in the direction of control flow.
 Theorem 3 (Shortest live ranges). Given the CMP-
 restructured (or original) control flow graph, ComPRE
-(CM-PRE) is optimal in that it minimizes the live range
+(CM-PRE) is optimal in that the CMP-
+restructured (or original) control flow graph, ComPRE
+(CM-PRE) minimizes the live range
 lengths of inserted temporary variables.
 Proof. An initialization point Insert cannot be delayed either
-because it would become partially redundant, destroying
-completeness, or because its temporary variable is used
+because Insert would become partially redundant, destroying
+completeness, or because Insert temporary variable is used
 in the immediate successor.
 Existing PRE algorithms find the live-range optimal
 placement in two stages. First, computations are hoisted as
 high as possible, maximizing the removal of redundancies.
-Later, the placement is corrected through the computation
+Later, the live-range optimal
+placement in two stages is corrected through the computation
 of delayability [25]. Our formulation specifies the optimal
 placement directly, as we never hoist into paths where a
 blocking CMP will be subsequently encountered.
@@ -597,8 +608,8 @@ we obtain the same implementation complexity as the algorithms
 in [17, 25]: three data-flow problems must be solved,
 each requiring one bit of solution per expression.
 In conclusion, the CMP region is a convenient abstraction
-for terminating hoisting when it would unnecessarily
-extend the live ranges. It also provides an intuitive way of
+for terminating hoisting when the CMP region would unnecessarily
+extend the live ranges. the CMP region also provides an intuitive way of
 explaining the shortest-live-range solution without applying
 the corrective step based on delayability [25]. Furthermore,
 the CMP-based, motion-only solution can be implemented
@@ -612,7 +623,12 @@ though PoePRE preserves reducibility on the same loop
 Figure
 
 1(b)), like other restructuring-based optimizations
-[4, 10, 31], it is also plagued by introducing irreducibility.
+[4, 10, 31], Even
+though PoePRE preserves reducibility on the same loop
+
+Figure
+
+1(b)) is also plagued by introducing irreducibility.
 One way to deal with the problem is to perform all optimizations
 that presuppose single-entry loops prior to PRE.
 However, many algorithms for scheduling (which should follow
@@ -620,9 +636,11 @@ PRE) rely on reducibility.
 After ComPRE, a reducible graph can be obtained with
 additional code duplication. An effective algorithm for normalizing
 irreducible programs is given in [24]. To suppress
-an unnecessary invocation of the algorithm, we can employ
+an unnecessary invocation of An effective algorithm for normalizing
+irreducible programs, we can employ
 a simple test of whether irreducibility may be created after
-a region duplication. The test is based upon examining
+a region duplication. a simple test of whether irreducibility may be created after
+a region duplication is based upon examining
 only the CMP entry and exit edges, rather than the entire
 program. Assuming we start from a reducible graph, re-structuring
 will make a loop L irreducible only if multiple
@@ -631,11 +649,12 @@ is outside L (i.e., is not dominated by L's header node). If
 such a region is duplicated, target nodes of region exit edges
 may become the (multiple) loop entry nodes. Consider the
 loop in Figure 4(a). Two of the three exits of CMP [a
-fall into the loop. After restructuring, they will become loop
+fall into the loop. After restructuring, restructuring will become loop
 entries, as shown in Figure 1(c).
 Rather than applying a global algorithm like [24], a
 straightforward approach to make the affected loop reducible
-is to peel off a part of its body. The goal is to extend
+is to peel off a part of the affected loop reducible
+ body. The goal is to extend
 the replication scope so that the region exits sink onto a single
 loop node, which will then become the new loop entry.
 Such a node is the closest common postdominator (within
@@ -646,7 +665,7 @@ loop. The postdominator of the offending exits is node Q,
 which becomes the new loop header.
 3 Profile-Guided PRE
 While the CMP region is the smallest set of nodes whose
-duplication enables the desired code motion, its size is often
+duplication enables the desired code motion, the CMP region size is often
 prohibitive in practice. In this section, relying on the profile
 to estimate optimization benefit, complete PRE is made
 more practical by avoiding unprofitable code replication.
@@ -675,16 +694,15 @@ of the region size. Our metric of benefit is the dynamic
 amount of computations whose elimination will be
 enabled after R is duplicated, denoted Rem(R). That is,
 true for each
-region R, the algorithm is equivalent to the complete Com-
-PRE. When T (R) = false for each region, the algorithm
-reduces to the code-motion-only CM-PRE. Obviously, predicate
+region R, an efficient algorithm [4, 19]. is equivalent to the complete Com-
+PRE. When T (R) = false for each region, an efficient algorithm [4, 19].reduces to the code-motion-only CM-PRE. Obviously, predicate
 determines only a sub-optimal tradeoff between exploiting
 PRE opportunities and limiting the code growth.
 In particular, it does not explicitly consider the instruction
 cache size and the increase in register pressure due to introduced
 temporary variables. We have chosen this form of T
 in order to avoid modeling complex interactions among compiler
-stages. In the implementation, T is supplemented with
+stages. In the implementation, T (R) is supplemented with
 a code growth budget (for example, in [6], code is allowed
 to grow by about 20%).
 First, we present an algorithm for computing the optimization
@@ -709,8 +727,8 @@ Figure
 
 5: PgPRE: profile-guided version of ComPRE.
 that the CMP scope localizes the entire benefit thwarted by
-the region: to compute the benefit, it suffices to examine
-only the paths within the region. Consider an expression
+the CMP region: to compute the benefit, it suffices to examine
+only the paths within the CMP region. Consider an expression
 e and its CMP region [e]. For each region exit
 edge [e]), the value
 of ANTIC in [m; e] is either Must or No, otherwise m would
@@ -721,7 +739,7 @@ contains exactly one computation of e that can be eliminated
 if: i) R is duplicated and ii) the value of e is available at the
 exit edge. Let ex(a) be the execution frequency of edge a
 and p(AVAIL out [n; the probability that the value
-e is available when n is executed. After the region is dupli-
+e is available when n is executed. After the CMP region is dupli-
 cated, the expected benefit connected with the exit edge a
 is ex(a):p(AVAIL out [n; which corresponds to the
 number of computations removed on all paths starting at a.
@@ -736,21 +754,24 @@ mere boolean meet-over-all-paths existence, is computed
 by incorporating the execution probabilities of control
 flow edges into the data-flow system. Because the frequency
 analyzer cannot exploit bit-vector parallelism, but instead
-computes data-flow solutions on floating point numbers, it
+computes data-flow solutions on floating point numbers, the frequency
+analyzer
 is desirable to reduce the cost of calculating the probabili-
-ties. The CMP region lends itself to effectively restricting
+ties. the CMP region lends the CMP region to effectively restricting
 the scope of the program that needs to be analyzed. Because
 all region entry edges are either Must- or No-available, the
-probability of e being available on these edges are 1 and 0,
+probability of e being available on all region entry edges are 1 and 0,
 respectively. Therefore, the probability p at any exit edge
-can only be influenced by the paths within the region. As
+can only be influenced by the paths within the CMP region. As
 a result, it is sufficient to perform the frequency analysis
 for expression e on CMP [e], using entry edges as a precise
 boundary condition for the CMP data-flow equation system.
 In Section 5 we reduce the cost of frequency analysis through
 a demand-driven approach.
 The algorithm (PgPRE) that duplicates only profitable
-CMP regions is given in Figure 5. It is structured as its
+CMP regions is given in Figure 5. The algorithm (PgPRE) that duplicates only profitable
+CMP regions is structured as The algorithm (PgPRE) that duplicates only profitable
+CMP regions
 complete counterpart, ComPRE: after data-flow analysis,
 we proceed to eliminate CMP regions, separately for each
 expression. While in ComPRE it was sufficient to treat all
@@ -817,8 +838,8 @@ in the case of speculative-motion PRE. As far as temporary
 live ranges are concerned, insertion into entry edges results
 in a shortest-live-range solution, and Theorem 3 still holds.
 code motion
-AVAIL=Must
-AVAIL=No
+AVAIL on RMust
+AVAIL on RNo
 ANTIC=Must
 speculative ANTIC=No
 removal
@@ -840,7 +861,7 @@ path profile, it is sufficient to sum the frequencies of Must-
 Must paths, which are paths that cross any region entry
 edge that is Must-available and any exit edge that is Must-
 anticipated. These are precisely the paths along which value
-reuse exists but is blocked by the region. While there is an
+reuse exists but is blocked by the CMP region. While there is an
 exponential number of profiled acyclic paths, only 5.4% of
 procedures execute more than 50 distinct paths in spec95
 [19]. This number drops to 1.3% when low-frequency paths
@@ -852,10 +873,9 @@ because they encapsulate branch correlation, path profiles
 compute the benefit more precisely than frequency analysis
 based on correlation-insensitive edge profiles.
 Moreover, the notion of individual CMP paths leads to a
-better profile-guided PRE algorithm. Considering the CMP
-region as an indivisible duplication unit is overly conserva-
+better profile-guided PRE algorithm. Considering the CMP region as an indivisible duplication unit is overly conserva-
 tive. While it may not be profitable to restructure the entire
-region, the region may contain a few paths Must-Must paths
+region, the CMP region may contain a few paths Must-Must paths
 that are frequently executed and are inexpensive to dupli-
 cate. Our goal is to find the largest subset (frequency-wise)
 of region paths that together pass the threshold test T (R).
@@ -870,11 +890,11 @@ which subset R of region exits will be able to exploit
 value reuse. R consists of all Must exits that will become
 Must-available due to the insertions in I. The rationale behind
 treating entries separately is that some entries may enable
-little value reuse, hence they should not be speculated.
+little value reuse, hence some entries should not be speculated.
 Note that No entry edges are the only points where speculative
 insertion needs to be considered: insertions inside
 the region would be partially redundant; insertions outside
-the region would extend the live-ranges. Partial speculation
+the CMP region would extend the live-ranges. Partial speculation
 is optimal if the difference of total frequencies of R and I
 is maximal (but non-negative). As pointed out in [22], this
 Y
@@ -976,14 +996,15 @@ determined what percentage of loop invariant (LI) expressions
 can be removed from their invariant loops with code
 motion. The column loop invar shows the percentage of optimizable
 expressions that pass our test of loop-invariance.
-The following column gives the percentage of LI expressions
+The column labeled optimizable gives the percentage of LI expressions
 that have a CMP region; an average of 72.5% of LI computations
 cannot be hoisted from all enclosing invariant loops
 without restructuring.
 Experiment 3: Eliminated computations. The column
 global CSE reports the dynamic amount of computations
 removed by global common subexpression elimination;
-this corresponds to all full redundancies. The column complete
+this corresponds to all full redundancies. The column
+ complete
 PRE gives the dynamic amount of all partially redundant
 statements. The fact that strictly partial redundancies
 contribute only 1.7% (the difference between complete PRE
@@ -1065,7 +1086,7 @@ of benefit will provide an almost complete PRE with small
 code growth.
 Experiment 4: Code growth. Finally, we compare the
 code growth incurred by ComPRE and PoePRE. To make
-the experiment feasible, we limited procedure size by 3,000
+Experiment 4: Code growth feasible, we limited procedure size by 3,000
 nodes and made the comparison only on procedures that did
 not exceed the limit in either algorithm. Overall, ComPRE
 created about three times less code growth than PoePRE.
@@ -1076,11 +1097,11 @@ mizers. We have shown that ComPRE allows restricting the
 scope of frequency analysis within the CMP region without
 a loss of accuracy. However, in large CMP regions the cost
 may remain high, and path profiles cannot be used as an
-efficient substitute when numerous hot paths fall into the
-region. One method to reduce the cost of frequency analysis
+efficient substitute when numerous hot paths fall into the CMP region. One method to reduce the cost of frequency analysis
 is computing on demand only the subset of data flow
 solution that is needed by the optimization.
-In this section, we develop a demand-driven frequency
+In this
+section, we develop a demand-driven frequency
 analyzer which reduces data-flow analysis time by a) examining
 only nodes that contribute to the solution and, option-
 ally, b) terminating the analysis prematurely, when the solution
@@ -1093,14 +1114,17 @@ Frequency analysis computes the probability that a data-flow
 fact will occur during execution. Therefore, the probability
 "lattice" is an infinite chain of real numbers. Because
 existing demand-driven analysis frameworks are built on iterative
-approaches, they only permit lattices of finite size
+approaches, 
+ only permit lattices of finite size
 [18] or finite height [23, 30] and hence cannot derive a frequency
 analyzer. We overcome this limitation by designing
 the demand-driven analyzer based upon elimination data-flow
 methods [29] whose time complexity is independent of
 the lattice shape. We have developed a demand-driven analysis
 framework motivated by the Allen-Cocke interval elimination
-solver [2]. Next, using the framework, a demand-driven
+solver [2]. Next, using a demand-driven analysis
+framework motivated by the Allen-Cocke interval elimination
+solver, a demand-driven
 algorithm for general frequency data-flow analysis
 was derived [8]. We present here the frequency solver specialized
 for the problem of availability.
@@ -1124,9 +1148,11 @@ m . In value-based
 PRE [9], constant propagation [30], and branch correlation
 analysis [10], edges
 e, may exist, complicating
-the analysis. The analyzer presented here handles such
+the analysis. the
+analyzer presented here handles such
 general exploded graphs.
-Requirements. The demand-driven analyzer grew out of
+Requirements. the
+analyzer grew out of
 four specific design requirements:
 1. Demand-driven. Rather than computing xn for each
 node n, we determine only the desired x e n , i.e. the solution
@@ -1141,11 +1167,12 @@ of EG nodes.
 2. Lattice-independent. The amount of work per node
 does not depend on lattice size, only on the EG shape.
 3. On-line. The analysis is possible even when EG is not
-completely known prior to the analysis. To save time
+completely known prior to The analysis. To save time
 and memory, our algorithm constructs EG as analysis
 progresses. The central idea of on-demand construction
 is to determine a flow function f e
-only when its
+only when f e
+
 target variable x e
 n is known to contribute to the desired
 solution. Furthermore, the solver must produce the solution
@@ -1162,13 +1189,14 @@ xn for all n as follows. First, loop headers are identified to
 partition the graph into hierarchic acyclic subregions, called
 intervals. Second, forward substitution of equations is performed
 within each interval to express each node solution in
-terms of its loop header. The substitution proceeds in the
+terms of its loop header. forward substitution of equations proceeds in the
 interval order (reverse postorder), so that each node is visited
 only once. Third, mutual equation dependences across
 loop back-edges are reduced with a loop breaking rule L:
 )). The second and third
 step remove cyclic dependences from all innermost loops in
-EG; they are repeated until all nesting levels are processed
+EG; The second and third
+step are repeated until all nesting levels are processed
 and all solutions are expressed in terms of the start node,
 which is then propagated to all previously reduced equations
 in the final propagation phase [2].
@@ -1181,7 +1209,7 @@ the right-hand side of x e
 n along the EG edges. The edges
 are added to the exploded graph on-line, whenever a new
 EG node is visited, by first computing the flow function of
-the node and then inserting its predecessors into the graph.
+the node and then inserting the node predecessors into the graph.
 As in [2], we define an EG interval to be a set of nodes
 dominated by the sink of any back-edge. In an irreducible
 EG, a back-edge is each loop edge sinking onto a loop entry
@@ -1189,13 +1217,14 @@ node. Because the EG shape is not known prior to analysis,
 on-line identification of EG intervals relies only on the structure
 of the underlying control flow graph. When the CFG
 node of an EG node x is a CFG loop entry, then x may
-be an EG loop entry, and we conservatively assume it is an
+be an EG loop entry, and we conservatively assume When the CFG
+node of an EG node x is an
 interval head. Within each interval, back-substitutions are
 performed in reversed interval order. Such order provides
 lattice-independence, as each equation needs to be substituted
 only once per interval reduction, and there are at most
 reductions. To find interval order on an incomplete EG,
-we observe that within each EG interval, the order is consistent
+we observe that within each EG interval, Such order is consistent
 with the reverse postorder CFG node numbering.
 To loop-break cyclic dependencies along an interval back-
 edge, the loop is reduced before we continue into the preceding
@@ -1208,7 +1237,8 @@ an EG subgraph that contributes to x e
 n , and removed
 from it all cyclic dependences. A forward substitution on the
 subgraph will yield solutions for all subgraph nodes which
-can be cached in case they are later desired (worst-case running
+can be cached in case all subgraph nodes which
+can be cached in case are later desired (worst-case running
 time). This step corresponds to the propagation phase
 in [2], and to caching in [18, 30].
 The framework instance calculates the probability of expression
@@ -1278,7 +1308,7 @@ that the expression computed in nodes F , H, and killed in
 A, D, is available at node C. All paths where availability
 holds are highlighted.
 Approximate Data-Flow Analysis. Often, it is necessary
-to sacrifice precision of the analysis for its speed. We
+to sacrifice precision of the analysis for it speed. We
 define here a notion of approximate data flow information,
 which allows the analyzer a predetermined degree of conservative
 imprecision. For example, given a 5% imprecision
@@ -1286,22 +1316,23 @@ level 0:05), the analyzer may output "available: 0.7,"
 when the maximal fixed point solution is "available: 0.75."
 The intention of permitting underestimation is to reduce the
 analysis cost. When the analyzer is certain that the contribution
-of a node (and all its incoming paths) to the overall
-solution is less than the imprecision level, it can avoid analyzing
-the paths and assume at the node the most conservative
+of a node (and all the analyzer incoming paths) to the overall
+solution is less than the imprecision level, the analyzer can avoid analyzing
+the paths and assume at its sink
+node the most conservative
 data-flow fact.
 Because the algorithm in Figure 9 was designed to be
-informed, it naturally extends to approximate analysis. By
+informed, the algorithm in Figure 9 was designed to be
+informed naturally extends to approximate analysis. By
 knowing the precise contribution weight of each node as the
 analysis progresses, whenever the sum of weights in rhs at
 the highest interval level falls below ffl (the while-condition
 in line 2), we can terminate and guarantee the desired pre-
 cision. An alternative scenario is more attractive, however.
-When a low-weight node is selected in line 3, we throw it
-away. We can keep disregarding such nodes until their total
+When a low-weight node is selected in line 3, we throw a low-weight nodeaway. We can keep disregarding such nodes until such nodes total
 weights exceed ffl. In essence, this approach performs analysis
 along hot paths [4], and on-line region formation [21].
-The idea of terminating the analysis before it could find
+The idea of terminating the analysis before the analysis could find
 the precise solution was first applied in the implementation
 of interprocedural branch elimination [10]. Stopping
 after visiting a thousand nodes resulted in two magnitudes
@@ -1324,7 +1355,8 @@ stant, the expected complexity is (NS), as in [2].
 Although most existing demand-driven data-flow algorithms
 ([18, 23], [30] in particular) can be viewed (like ours)
 to operate on the principle of back-substituting flow functions
-into the right-hand side of the target variable, they do
+into the right-hand side of the target variable, most existing demand-driven data-flow algorithms
+([18, 23], [30] in particular) do
 not focus on specifying a profitable order of substitutions
 (unlike ours) but rely instead on finding the fixed point it-
 eratively. Such an approach fails on infinite-height lattices
@@ -1336,7 +1368,8 @@ adjustment primarily intended to approximate the solution.
 Therefore, in frequency analysis, too many iterations would
 be required to achieve an acceptable approximation. Instead
 of fixing the equation system locally, a global approach of
-structurally identifying intervals and reducing their cyclic
+structurally identifying intervals and reducing 
+ cyclic
 dependences seems necessary. We have shown how to identify
 intervals and perform substitutions in interval order on
 demand, even when the exploded graph is not known prior
@@ -1376,7 +1409,7 @@ while rhs not empty do
 3 select from rhs a node x with smallest post-dfs(x)
 5 end while
 procedure substitute(node x)
-if x has not been visited, determine its flow function
+if x has not been visited, determine x has not been visited flow function
 if x computes or kills e, adjust sol and remove x from rhs
 if Comp(x; e) - Transp(x; e) then
 7 else if :Transp(n; e) then rhs [x] := 0:0; return
@@ -1410,14 +1443,14 @@ ually between the motion-only and the complete PRE in
 response to the program profile (PgPRE). 4. We demonstrate
 that speculation can be navigated precisely by edge
 profiles alone. 5. Path profiles are used to integrate the
-three transformations and balance their power at the level
+three transformations and balance Path profiles power at the level
 of CMP paths.
 While PRE is significantly improved through effective
 program transformations presented in this paper, a large
 orthogonal potential lies in detecting more redundancies.
 Some techniques have used powerful analysis to uncover
 more value reuse than the traditional PRE analysis [9, 11].
-However, using only code motion, they fail to completely
+However, using only code motion, Some techniques fail to completely
 exploit the additional reuse opportunities. Thus, the transformations
 presented here are applicable in other styles of
 PRE as well, for example in elimination of loads.
@@ -1431,8 +1464,12 @@ flow merges from the hot paths. Even though our PRE cannot
 benefit from hot path separation (our distributive data-flow
 analysis preserves reuse opportunities across merges), a
 more complicated analysis (e.g., redundancy of array bound
-checks) would be improved by their approach. After the
-analysis, their algorithm recombines separated paths that
+checks) would be improved by a
+more complicated analysis (e.g., redundancy of array bound
+checks) approach. After the
+analysis, a
+more complicated analysis (e.g., redundancy of array bound
+checks) algorithm recombines separated paths that
 present no useful opportunities. It is likely that path recombination
 can be integrated with code motion, as presented
 in this paper, to further reduce the code growth.
@@ -1445,7 +1482,7 @@ along each path), c) exploiting distinct opportunities (e.g.,
 enabling folding of path-dependent constants through re-
 structuring), and d) directing the analysis effort towards hot
 paths. In the approach of Ammons and Larus, all four issues
-are attacked uniformly by separation of hot paths, their
+are attacked uniformly by separation of hot paths, Ammons and Larus
 subsequent individual analysis, and recombination. Our approach
 is to reserve restructuring for the actual transforma-
 tion. This implies a different overall strategy: a) we solve
@@ -1460,8 +1497,9 @@ three presented in this paper).
 
 Acknowledgments
 
-We are indebted to the elcor and Impact compiler teams for
-providing their experimental infrastructure. Sadun Anik,
+we are indebted to the elcor and Impact compiler teams for
+providing 
+ experimental infrastructure. Sadun Anik,
 Ben-Chung Cheng, Brian Dietrich, John Gyllenhaal, and
 Scott Mahlke provided invaluable help during the implementation
 and experiments. Comments from Glenn Am-
@@ -1562,7 +1600,7 @@ eliminating array bounds checks on demand, ACM SIGPLAN Notices, v.35 n.5, p.321-
 Litong Song , Krishna Kavi, What can we gain by unfolding loops?, ACM SIGPLAN Notices, v.39 n.2, February 2004
 Glenn Ammons , James R. Larus, Improving data-flow analysis with path profiles, ACM SIGPLAN Notices, v.33 n.5, p.72-84, May 1998
 Phung Hua Nguyen , Jingling Xue, Strength reduction for loop-invariant types, Proceedings of the 27th Australasian conference on Computer science, p.213-222, January 01, 2004, Dunedin, New Zealand
-Youtao Zhang , Rajiv Gupta, Timestamped whole program path representation and its applications, ACM SIGPLAN Notices, v.36 n.5, p.180-190, May 2001
+Youtao Zhang , Rajiv Gupta, Timestamped whole program path representation and Timestamped applications, ACM SIGPLAN Notices, v.36 n.5, p.180-190, May 2001
 K. V. Seshu Kumar, Value reuse optimization: reuse of evaluated math library function calls through compiler generated cache, ACM SIGPLAN Notices, v.38 n.8, August
 Sriraman Tallam , Xiangyu Zhang , Rajiv Gupta, Extending Path Profiling across Loop Backedges and Procedure Boundaries, Proceedings of the international symposium on Code generation and optimization: feedback-directed and runtime optimization, p.251, March 20-24, 2004, Palo Alto, California
 Qiong Cai , Jingling Xue, Optimal and efficient speculation-based partial redundancy elimination, Proceedings of the international symposium on Code generation and optimization: feedback-directed and runtime optimization, March 23-26, 2003, San Francisco, California

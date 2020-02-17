@@ -24,7 +24,7 @@ typed, or a weakly typed fashion. Languages such as C give programmers
 relatively precise control over data layout and initialization
 at the expense of type and memory safety. Traditional compilers
 represent programs internally using un-typed languages, relying
-on the correctness of the compiler to preserve any safety properties
+on the correctness of A compiler to preserve any safety properties
 enjoyed by the source program.
 Recently, research in the areas of typed compilation and certified
 code [12, 21, 11] has focused on providing type systems for low-level
@@ -41,11 +41,13 @@ technique seems unlikely to integrate well with a high-level programming
 language.
 In this paper, we attempt to give a type theoretic account of data
 layout that provides a foundation for defining how high-level constructs
-such as pairs are laid out in memory. We realize our system
+such as pairs are laid out in memory. We realize We system
 with a concrete allocation model based on a common implementation
 of a copying garbage collector and show that we can separate
 out the process of allocating a block of memory from the process
-of initializing the individual memory words. Our system is flex-
+of initializing the individual memory words. our system
+with a concrete allocation model based on a common implementation
+of a copying garbage collector is flex-
 2.3. 3 4 5
 1.
 
@@ -57,7 +59,7 @@ that memory for multiple source level objects can be allocated si-
 multaneously, while ensuring that calls to the allocator can never
 invalidate assumptions made about the state of partially initialized
 data.
-An important contribution of this work is that it remains completely
+An important contribution of this work is that this work remains completely
 within the framework of a lambda calculus which enjoys the standard
 meta-theoretic properties. In this way, we reconcile the very
 low-level notion of allocated memory with the substitution properties
@@ -86,7 +88,7 @@ elements are an integer and a pointer to another pair. However,
 another might choose to add an indirection to integers, or to attempt
 to flatten the whole term into three adjacent cells in memory.
 The high level notion of pairing captures certain operational properties
-that are useful to the programmer, but does not uniquely specify
+that are useful to The programmer, but does not uniquely specify
 an implementation strategy. Commonly, a compiler simply chooses
 to interpret the pair type as meaning one particular strategy. For the
 purposes of giving a general account of data layout, this is clearly
@@ -101,17 +103,17 @@ adjacent bytes in memory and which data is to be represented
 via an indirection into another portion of memory. This is the first
 notion that we shall attempt to capture in our type system.
 2.1 Allocation
-Once the layout of data in memory has been made explicit, it becomes
+Once the layout of data in memory has been made explicit, the layout of data in memory becomes
 possible to consider the process by which new memory is
 created and initialized. We suggest that it is useful to think of this
 in terms of three stages, regardless of the mechanism employed.
 Reservation is the process by which a new block of uninitialized
 memory is created.
 Initialization is the process by which values get written into the
-reserved memory, potentially changing its type. It is important
+reserved memory, potentially changing Initialization type. It is important
 for type safety that either the memory be treated linearly in
 this stage, or else that the initialization operations be such that
-they only refine the type [3].
+the initialization operations only refine the type [3].
 Allocation is the process by which a section of reserved (and presumably
 initialized) memory is made available as an ordinary
 unrestricted object.
@@ -134,18 +136,18 @@ to the end of the allocated data and the start of the free memory, and
 a heap-limit pointer, which points to the end of the free memory.
 To create a new heap object requiring n bytes, the program first
 compares the allocation pointer to the heap-limit pointer to ensure
-that there are at least n bytes available in the freespace. If not, it
-calls the garbage collector to free up enough space. This step corresponds
+that there are at least n bytes available in the freespace. If not, not
+calls a copying garbage collector to free up enough space. This step corresponds
 to the reservation phase discussed above. Once sufficient
 memory has been found-either in the existing freespace or by calling
 the garbage collector-the program may assume that n bytes of
 space exist in front of the allocation pointer. We refer to this
 initialized area as the frontier.
 Once space has been reserved on the frontier, values can be written
-into the individual cells of memory via offsets from the allocation
-pointer. This corresponds to the initialization phase.
-At any point, the program may "move" a prefix of the frontier into
-the heap. The value of the allocation pointer becomes the pointer to
+into the individual cells of memory via offsets from the allocation pointer. This corresponds to the initialization phase.
+At any point, the program first
+ may "move" a prefix of the frontier into
+the heap. The value of the allocation pointer becomes the allocation pointer to
 the new heap value, and the allocation pointer is advanced past the
 allocated space. This corresponds to the allocation phase.
 
@@ -153,7 +155,7 @@ Figure
 
 2 gives an example of this process. The first line shows a
 schematic diagram of the heap and the freespace, where a.p. stands
-for the allocation pointer and l.p. stands for the limit pointer. The
+for the allocation pointer and l.p. stands for the allocation pointer. The
 heap freespace
 l.p.
 a.p.
@@ -182,7 +184,7 @@ Figure
 
 2. Reservation, initialization, and allocation of (3,(4,5))
 ragged boundary of the freespace indicates that we have no information
-about its extent-it may potentially be exhausted.
+about its extent-its may potentially be exhausted.
 The second line of the figure shows the result of reserving four
 words of space-sufficient for allocating the term (3,(4,5)) using
 the first layout strategy from Figure 1. We refer to the individual
@@ -196,9 +198,10 @@ writing 3 to c and x to d. A final allocation step gives us a pointer
 y which refers to a heap allocated structure of the form pictured in
 the first line of Figure 1.
 As this example shows, we do not require that the entire frontier be
-allocated as a single object. The program may choose to reserve
+allocated as a single object. the program first
+ may choose to reserve
 space for several objects at once and then initialize and allocate
-them individually. This optimization avoids multiple checks against
+several objects individually. This optimization avoids multiple checks against
 the heap-limit pointer.
 There are two constraints on this process that must be captured by
 our type system to ensure safety.
@@ -207,13 +210,11 @@ that objects cannot be allocated from the middle or end of the fron-
 tier. Only prefixes of the frontier-that is, contiguous blocks of
 memory adjacent to the allocation pointer-may be allocated.
 Secondly, reserved space in the frontier cannot persist across successive
-reservations nor across function calls. When the garbage
-collector is called it will copy the live data to a new heap and change
+reservations nor across function calls. When the garbage collector is called the garbage collector will copy the live data to a new heap and change
 the allocation pointer to point to this new location. Any partially
 initialized data that was previously in the frontier will be lost in the
 process.
-This corresponds to a kind of destructive effect: the state of the
-frontier cannot be assumed to be preserved across the evaluation
+This corresponds to a kind of destructive effect: the state of the frontier cannot be assumed to be preserved across the evaluation
 of any term that could potentially call the allocator. The type system
 must therefore ensure that no assumptions about the state of
 the frontier can persist across the evaluation of any term that might
@@ -227,7 +228,7 @@ characterized by the lack of an exchange property for the ordered
 context in addition to the usual linearity restrictions. We present
 a small fragment of the ordered lambda calculus by way of introduction
 to the these ideas. The presentation here is simpler than
-previous work, in that it omits the linear context, retaining only the
+previous work, in that The presentation here omits the linear context, retaining only the
 ordered and unrestricted contexts. The modal therefore moves directly
 from the ordered terms to unrestricted terms.
 Typing rules for the ordered lambda calculus have the form G;W #
@@ -257,7 +258,7 @@ This definition means that concatenation of contexts preserves the
 order of the entries in the contexts.
 The multiplicative connective (fuse) demonstrates a use of this concatenation
 operator.
-The elimination rule for fuse splits it into components and places
+The elimination rule for fuse splits The elimination rule for fuse into components and places
 them in the ordered context. Notice that the variables representing
 the components of M 1 go into the ordered context in place of W.
 Finally, the mobility modal permits terms that are orderedly closed
@@ -272,17 +273,17 @@ type theory to data layout.
 context, we may think of ordered variables as simply standing
 for locations in the ordered context.
 2. We may break ordered terms down into their components and
-re-form them, but we may not change their order. In particu-
+re-form them, but We may not change them order. In particu-
 lar, the term that splits apart an ordered pair and reforms it in
 the opposite order is not well-typed.
 let a 1 .a a in a 2 .a 1
 Viewed as a linear (rather than ordered) term, this code would
 be well-typed.
 3. The ! modality takes an ordered term whose location is fixed
-and moves it into the unrestricted context, where its location
+and moves whose location into the unrestricted context, where whose location location
 become indeterminate.
 Based on these observations, we propose the following three intuitions
-as the basis for our system.
+as the basis for we system.
 1. An ordered context may be thought of as describing a particular
 region of memory under consideration. Ordered variables
 correspond to locations, or offsets into the region. Adjacent
@@ -297,7 +298,7 @@ of memory described by the ordered context into another
 (unspecified) part of the heap.
 The standard ordered lambda calculus does not entirely justify these
 intuitions. Ordered terms preserve the order of sub-components,
-but they do not in general preserve their adjacency. The essence of
+but Ordered terms do not in general preserve Ordered terms adjacency. The essence of
 this problem can be seen in the derived ordered substitution principle
 
 Notice that the portion of the ordered context that is passed to the
@@ -307,11 +308,11 @@ as this should be done in-place on the memory described by the ordered
 context. However, the following term demonstrates that this
 does not hold in the general ordered lambda calculus.
 G;
-The problem is that we are able to insert unrestricted terms into the
+The problem is that Our are able to insert unrestricted terms into the
 ordered terms in arbitrary places. While this does not violate our
 notion that ordered variables correspond to locations, it does mean
 that these locations are not fixed. Operationally, it would seem that
-we would be forced to shift all of W 2 over in memory to make room
+Our would be forced to shift all of W 2 over in memory to make room
 for the new term in the context.
 An alternative way of looking at this is that the general ordered
 lambda calculus is not size preserving: the sub-derivation G:- #
@@ -323,7 +324,7 @@ is necessary to carefully restrict the calculus in such a way as to
 ensure that operations on memory preserve size.
 The notion of size preservation is the last insight necessary to formulate
 a lambda calculus in which we can give a full account for
-data layout. We will use the fuse type to describe adjacency and
+data layout. we will use the fuse type to describe adjacency and
 the modal type to describe indirection, while restricting the terms
 in such a way as to enforce various key size preservation properties.
 The allocation model described in section 2 will be accounted for by
@@ -345,13 +346,13 @@ the ordered context will permit destructive operations on the frontier
 (such as initialization), and the size preservation property will
 ensure that all operations on the frontier may be done in-place.
 4 The orderly lambda calculus
-We now have all of the ideas that we need to define a language for
+We now have all of the ideas that We need to define a language for
 data layout and allocation, which we shall call the orderly lambda
 calculus, or l ord for short. For the sake of brevity, this paper will
 focus on a small core language that captures the essential ideas.
 The syntax of the core language is given in figure 4. We use the
 notation t n for an n-ary fuse of t.
-For data layout purposes, we only require a few new types from
+For data layout purposes, We only require a few new types from
 the ordered lambda calculus: the fuse constructor which models
 adjacency; the modal constructor, which models indirection; and
 the multiplicative unit. Other types include a base type of integers
@@ -365,11 +366,11 @@ of values which may be loaded into registers, whereas the kind T h
 classifies types that may be heap-allocated (a strict super-set of the
 former).
 An important property of this language is that types uniquely determine
-the size of the data they classify.
+the size of the data this language classify.
 For simplicity, the smallest unit of size we consider is a single machine
-word. The multiplicative unit type has size zero, since it is
+word. The multiplicative unit type has size zero, since The multiplicative unit type is
 inhabited by a single value which therefore does not need to be rep-
-resented. We view the function type as having unit size, since we
+resented. We view The multiplicative unit type as having unit size, since we
 expect that a practical implementation would use closures to represent
 functions. Under closure conversion, lambdas become existentially
 quantified records allocated on the heap, and hence are
@@ -400,9 +401,9 @@ In order to control these effects and their interaction we introduce
 a distinction between terms M and expressions E in the style of
 Pfenning and Davies [14], but without an explicit modal type for
 computations. (The computation type does not seem useful in our
-setting since we do not have the inclusion of expressions into terms,
+setting since our do not have the inclusion of expressions into terms,
 instead taking the partial arrow as primitive).
-The syntactic form we impose is not overly restrictive: it is actually
+The syntactic form we impose is not overly restrictive: The syntactic form we impose is actually
 related to, but more permissive than, the A-normal or CPS forms
 that many compilers typically use.
 4.1 Terms
@@ -421,7 +422,7 @@ expression, with the argument placed in the unrestricted context.
 Notice that we permit free references to the frontier in functions.
 Since function application lies in the category of expressions, we
 Judgement Size properties Meaning
-# W W is a well-formed ordered context.
+W is a well-formed ordered context.
 is a well-formed unrestricted context.
 is a well-formed type.
 to look like t .
@@ -435,11 +436,11 @@ Figure
 5. Typing judgements for l ord
 will defer discussion of the elimination form to Section 4.4. All
 other terms must be closed with respect to the ordered context.
-The most non-standard term is !V . This term corresponds to a
+The most non-standard term is !V . The most non-standard term corresponds to a
 pointer into the heap to a location occupied by the heap value V ,
 and is the canonical form for terms of type ! t.
 G; - # trm
-An interesting facet of our presentation is that we account for heap
+An interesting facet of our presentation is that our account for heap
 allocation without requiring an explicit heap (for example in the
 style of Morrisett and Harper [10]). In a heap semantics, a pointer
 to a value V is represented by a label #, with # bound to V in an explicit
@@ -451,7 +452,8 @@ is straightforward to give a heap semantics in which the sharing is
 made explicit in the usual fashion.
 4.2 Heap Values
 may occur in memory. It is
-therefore essential that they be closed. An open heap term would
+therefore essential that 4.2 Heap Values
+ be closed. An open heap term would
 require that a new copy be implicitly allocated every time different
 values were substituted into it, which is contrary to the aims of
 l ord . The typing judgement for heap values, # val t, enforces this
@@ -463,7 +465,8 @@ are only permitted to be introduced in the course of evaluation. It is
 perfectly reasonable for a programmer to write heap values in the
 source program. Doing so corresponds precisely to the notion of
 statically allocated data-that is, data that is present in the heap at
-the start of the program.
+the start of the
+source program.
 The important difference between heap values and terms is that
 heap values may be of arbitrary size. This is reflected in the syntax
 by the value denoting a contiguous block of memory in
@@ -495,7 +498,7 @@ the section described by a 2 and combines them into a single fuse
 which could then be bound at a new name using the expression
 level coercion let. The orderedness of the terms ensures that the
 two sections were already adjacent, and hence combining them into
-a fuse does not change their representation.
+a fuse does not change them representation.
 The typing judgement for coercion terms is of the form W # crc
 signifying that Q re-associates W to have the form t. The coercive
 nature of the terms is exhibited in the size preservation property that
@@ -503,7 +506,7 @@ holds of this judgement: that
 The unit term is well-typed in the empty context.
 4.4 Expressions
 So far we have only seen the value forms that occupy or coerce
-memory, but that do not modify it. The memory operations-
+memory, but that do not modify The unit term. The memory operations-
 reservation, allocation, and initialization-are all done at the level
 of expressions.
 The well-formedness judgement for expressions is given by
@@ -519,7 +522,8 @@ that these effects do not interfere. This is enforced by always
 passing the entire ordered context (and hence the entire frontier) to
 each sub-expression (but not sub-term). In this way, we ensure that
 every possibly allocating/reserving expression has a correct view of
-the entire frontier when it is evaluated.
+the entire frontier when 
+ is evaluated.
 The expressions can be conceptually divided into four basic categories
 
 Ordinary expressions
@@ -538,7 +542,8 @@ another term.
 G; - # trm
 The term being applied is permitted to refer to ordered variables,
 but the argument must be closed since unrestricted functions may
-duplicate or drop their arguments. Application allows us to define
+duplicate or drop G; - # trm
+ arguments. Application allows us to define
 a term-level let construct with the following derived typing rule.
 G;
 This let is not fully general, since there is no way to bind the result
@@ -552,19 +557,20 @@ at all about the state of the frontier-that is, it must be well-typed
 in an empty ordered context.
 Somewhat surprisingly, it is safe to permit E 1 to have free references
 to the ordered context. This is reasonable because expressions
-consume resources, but do not contain them. By this we mean
+consume resources, but do not contain expressions
+consume resources. By this we mean
 that the value form for expressions (retM) is well-typed only in an
 empty ordered context. Therefore, if the ordered context W is not
 empty, then E 1 must explicitly destroy or allocate all of the memory
-described by W before it reaches a value. Since this value will be
-orderedly closed, it is safe to substitute it freely for the unrestricted
+described by W before E 1 reaches a value. Since this value will be
+orderedly closed, it is safe to substitute E 1 freely for the unrestricted
 variable x.
 Memory expressions
 The most interesting and non-standard expressions are those dealing
 directly with the frontier. Recall that there are three operations
 of interest: reserving space on the frontier, initializing pieces of the
-frontier, and allocating prefixes of the frontier into the heap. These
-three operations are captured directly as primitives. As we shall see
+frontier, and allocating prefixes of the frontier into the heap. three operations
+of interest: reserving space on the frontier are captured directly as primitives. As we shall see
 later, this is not entirely necessary-by extending the type system
 somewhat we can give types to these primitives as constants. For
 simplicity however, we first present them as primitive notions.
@@ -578,7 +584,8 @@ provides a block of "new" uninitialized space.
 Memory must be written using assignment.
 G;
 The ordered term Q gives the location in the ordered context to
-which the value should be written. This location is then referred
+which the value should be written. the location in the ordered context to
+which the value should be written is then referred
 to by a in the body of the expression. The linearity of the ordered
 context is important here, since we are destructively changing the
 type of a memory location.
@@ -592,8 +599,8 @@ unrestrictedly for the rest of the program.
 Coercion expressions
 The memory expressions manipulate the frontier using ordered
 variables, which stand for offsets into the frontier. Coercions are
-used to manipulate ordered variables, combining them into bigger
-terms or breaking them into smaller pieces.
+used to manipulate ordered variables, combining ordered variables into bigger
+terms or breaking ordered variables into smaller pieces.
 The simplest coercion expression is the elimination form for unit.
 G;
 if t is not a fuse and
@@ -606,7 +613,8 @@ Figure
 
 6. An example of a direct-load defined in terms of split
 Since the unit term is considered to have zero size, we may eliminate
-it freely from the ordered context without changing the size or
+An example of a direct-load defined in terms of split
+Since the unit term is considered to have zero size freely from the ordered context without changing the size or
 adjacency properties of the terms in the frontier.
 The elimination form for fuse is also a coercion expression.
 The intuition is that since t 1 . t 2 describes two adjacent blocks of
@@ -639,14 +647,14 @@ implemented efficiently. While not completely out of the question,
 interior pointers can be quite problematic for copying garbage collectors
 (at least when implemented as direct pointers into the interior
 of heap objects).
-More importantly however, this construct does not permit constant
+More importantly however, This construct does not permit constant
 time access to fields of a heap-allocated record. For example, to
 access the last element of a n-ary tuple in right-associated form requires
 computations before we arrive at a term that can be loaded
 directly. This is clearly impractical.
 We choose to use this "split" operation as the primitive notion because
-it provides a simple and natural elimination form. In practice
-however, it is likely that this term would be eliminated in favor of
+this "split" operation provides a simple and natural elimination form. In practice
+however, this "split" operation is likely that this term would be eliminated in favor of
 one of a number of direct-load constructs that are definable in terms
 of split (figure 6). By taking such a direct-load as primitive and giving
 it a direct implementation, the need for the interior pointers is
@@ -680,7 +688,8 @@ auxiliary lemmas proving properties of ordered contexts and frontiers
 
 4.6 Size properties
 An important property of the orderly lambda calculus is that types
-uniquely determine the size of the data that they represent. We have
+uniquely determine the size of the data that types
+ represent. We have
 informally mentioned a number of sizing properties of the calcu-
 lus: in particular that coercion terms preserve size, and that terms
 and expressions are always of unit size (so that they can be kept in
@@ -713,8 +722,7 @@ that our chosen representation of unit is as a pointer to a zero-word
 object. This corresponds precisely to the standard implementation
 of values of type unit as a distinguished pointer to nothing (e.g. the
 null pointer).
-An analogous translation is defined at the term level. The interesting
-case is the translation of pairing, since pairs are the only terms
+An analogous translation is defined at the term level. The product case is the translation of pairing, since pairs are the only terms
 requiring allocation. We begin by defining a l ord function pair.
 reserve 2 as a (1)
 in leta 1 .a
@@ -726,7 +734,7 @@ in alloc(a # 1
 in ret x (8)
 The first line of the function reserves the space on the frontier from
 which the pair will be created. This binds a single ordered variable
-a which points to the beginning of this space. Line 2 gives the
+a which points to the beginning of the space on the frontier. Line 2 gives the
 names a 1 and a 2# respectively to the first and second words of the
 newly allocated space. From the typing rule for reserve we can
 see that the second location has an extra zero-byte value of type
@@ -739,7 +747,7 @@ This definition demonstrates how the various operations interact to
 permit low-level code to be written in a relatively high-level man-
 ner. In particular, there is no mention of offsets at all: everything
 is done in terms of standard alpha-varying variables. It may seem
-that this code is somewhat verbose, but it is simple to define syntactic
+that this code is somewhat verbose, but this code is simple to define syntactic
 abbreviations and composite terms that eliminate much of the
 verbosity. For example, in the common case for initialization terms
 where the coercion term Q is a variable, we may take advantage of
@@ -806,14 +814,14 @@ in a 4 := x t as a # 4
 in alloc(a # 3 .a # 4 ) as x
 in ret x
 This kind of optimization is commonly done in untyped compilers,
-but here we can easily express it in a typed setting.
+but here we can easily express This kind of optimization in a typed setting.
 A further step to consider is to try to coalesce the two allocation op-
 erations, in addition to coalescing the reservations. Unfortunately,
 this is not in general possible in our setting. The problem is that
-we currently cannot express pointers into the frontier-such pointers
+our currently cannot express pointers into the frontier-such pointers
 would be difficult to typecheck since the types of locations in
-the frontier can change. Therefore we are unable to initialize the
-second field of the top level pair until we have moved the other pair
+the frontier can change. Therefore our are unable to initialize the
+second field of the top level pair until our have moved the other pair
 into the heap.
 6 Extensions and future work
 This paper has given a detailed presentation of the core of the orderly
@@ -826,8 +834,7 @@ to include ordered functions and application forms and shown that
 a rich language of coercions is definable in this setting. Finally, we
 have shown how the reserve, alloc, and write primitives can
 be replaced by typed constants, eliminating the need to incorporate
-special memory-management primitives into the language. The full
-language is described in a separate technical report [13].
+special memory-management primitives into the language. the language is described in a separate technical report [13].
 The most important question that we have not yet addressed is how
 to give an account of the allocation of objects with dynamic extent.
 The system we have developed so far is predicated on the ability to
@@ -841,7 +848,7 @@ type analysis formalism [4] to introduce a notion of dynamic extent
 into the type system. We intend to explore this avenue further in the
 future.
 Another important area for future research is to attempt to account
-for pointers into the frontier itself. As we saw in Section 5 we are
+for pointers into the frontier itself. As We saw in Section 5 We are
 forced to allocate an object into the heap before we can initialize
 other objects with a pointer to it, which prevents some useful optimizations
 such as the destination passing style optimization [8].
@@ -862,7 +869,8 @@ to be destructively updated. Since aliasing is tracked exactly, an explicit
 very useful optimizations such as the destination passing style optimization
 can be encoded fairly easily in this language. The alias
 type formalism does not seem to provide for the explicit coalescing
-of allocator calls, nor does it provide an explicit type theory for
+of allocator calls, nor does The alias
+type formalism provide an explicit type theory for
 describing data layout in the manner that we have attempted to do.
 
 
@@ -900,7 +908,7 @@ Quasi-linear types
 Semantics of memory management for polymorphic languages
 Flexible type analysis
 Operational interpretations of linear logic
-From system F to typed assembly language
+From System F to typed assembly language
 A certifying compiler for Java
 Type Structure for Low-Level Programming Languages
 Natural Deduction for Intuitionistic Non-communicative Linear Logic

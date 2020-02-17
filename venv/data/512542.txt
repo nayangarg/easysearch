@@ -1,7 +1,7 @@
 --T
 Profile-guided code compression.
 --A
-As computers are increasingly used in contexts where the amount of available memory is limited, it becomes important to devise techniques that reduce the memory footprint of application programs while leaving them in an executable form. This paper describes an approach to applying data compression techniques to reduce the size of infrequently executed portions of a program. The compressed code is decompressed dynamically (via software) if needed, prior to execution. The use of data compression techniques increases the amount of code size reduction that can be achieved; their application to infrequently executed code limits the runtime overhead due to dynamic decompression; and the use of software decompression renders the approach generally applicable, without requiring specialized hardware. The code size reductions obtained depend on the threshold used to determine what code is "infrequently executed" and hence should be compressed: for low thresholds, we see size reductions of 13.7% to 18.8%, on average, for a set of embedded applications, without excessive runtime overhead.
+As computers are increasingly used in contexts where the amount of available memory is limited, the amount of available memory becomes important to devise techniques that reduce the memory footprint of application programs while leaving application programs in an executable form. This paper describes an approach to applying data compression techniques to reduce the size of infrequently executed portions of a program. The compressed code is decompressed dynamically (via software) if needed, prior to execution. The use of data compression techniques increases the amount of code size reduction that can be achieved; their application to infrequently executed code limits the runtime overhead due to dynamic decompression; and the use of software decompression renders the approach generally applicable, without requiring specialized hardware. The code size reductions obtained depend on the threshold used to determine what code is "infrequently executed" and hence should be compressed: for low thresholds, we see size reductions of 13.7% to 18.8%, on average, for a set of embedded applications, without excessive runtime overhead.
 --B
 INTRODUCTION
 In recent years there has been an increasing trend towards the
@@ -18,15 +18,15 @@ in palm-tops, fault diagnosis software in embedded processors, etc.
 Since these devices typically have no secondary storage, an application
 that requires more memory than is available will not be able
 to run. This makes it desirable to reduce the application's runtime
-memory requirements for both instructions and data - its memory
+memory requirements for both instructions and data - it memory
 footprint - where possible. We focus in this work on reducing the
 overall memory footprint by reducing the space required for instructions
 
-The intuition underlying our work is very simple. Most programs
+The intuition underlying We work is very simple. Most programs
 obey the so-called "80-20 rule," which states, in essence,
 that most of a program's execution time is spent in a small portion
 of its code (see [17]); a corollary is that the bulk of a program's
-code is generally executed infrequently. Our work aims at exploiting
+code is generally executed infrequently. We work aims at exploiting
 this aspect of programs by using compression techniques that
 yield smaller compressed representations, but may require greater
 decompression effort at runtime, on infrequently executed portions
@@ -46,7 +46,7 @@ compression and decompression (Section 4); as well as optimizations
 that improve the overall performance of the system (Section
 6). Our work combines aspects of profile-directed optimization,
 runtime code generation/modification, and program compression.
-We discuss other related work in Section 8.
+Our discuss other related work in Section 8.
 call sites
 (a) Original
 compressed
@@ -78,22 +78,22 @@ code for a function into the runtime buffer and then to transfer control
 to this decompressed code. A function offset table specifies the
 location within the compressed code where the code for a given
 function starts. The stub for each compressed function passes an
-argument to the decompressor that is an index into this table; this
-argument is indicated in Figure 1(b) by the label ([0], [1], etc.)
-on the edge from each stub to the decompressor. The decompressor
-uses this argument to index into the function offset table, retrieve
+argument to the decompressor that is an index into A function offset table; an
+argument to the decompressor that is an index into this table is indicated in Figure 1(b) by the label ([0], [1], etc.)
+on the edge from each stub to the decompressor. the decompressoruses an
+argument to the decompressor that is an index into this table to index into the function offset table, retrieve
 the start address of the compressed code for the appropriate func-
 tion, and start generating uncompressed executable code into the
 runtime buffer. Decompression stops when the decompressor encounters
 a sentinel (an illegal instruction) that is inserted at the end
-of the code for each function. The decompressor then (flushes the
-instruction cache, then) transfers control to the code it has generated
+of the code for each function. the decompressor then (flushes the
+instruction cache, then) transfers control to the code the decompressor has generated
 in the runtime buffer. When this decompressed function finishes
-its execution, it returns to its caller in the usual way. Since the
+the decompressor execution, the decompressor returns to the decompressor caller in the usual way. Since the
 control transfers from the stubs to the decompressor, and from the
 decompressor to the runtime buffer do not alter the return address
 transmitted from the original call site, no special action is necessary
-to return from a decompressed function to its call site.
+to return from a decompressed function to no special action call site.
 This method partitions the original program code into two parts.
 Infrequently executed functions (such as f, g, and h) are placed
 in a compressed code part, while frequently executed functions remain
@@ -112,46 +112,46 @@ tion" in Section 4.
 2.2 Buffer Management
 The scheme described above is conceptually fairly straightforward
 but fails to mention several issues whose resolution determines
-its performance. The most important of these is the issue
+The scheme described above performance. The most important of these is the issue
 of function calls in the compressed code. Suppose that in Figure 1,
 the code for f contains a call to g. Since f is compressed, the call
-site is in the runtime buffer when the call is executed. As described
-above, this call will be to the stub for g, and the code for g will
+site is in the Runtime Buffer when the call is executed. As described
+above, the call will be to the stub for g, and the code for g will
 be decompressed and executed as expected. What happens when g
 returns? The return address points to the instruction following the
 call in f. This is a problem: the instructions for f were over-written
 when g was decompressed. The return address points to a
 location in the runtime buffer that now contains g's code.
 The question that we have to address, therefore, is: If a function
-call is executed from the runtime buffer, how can we guarantee that
+call is executed from the Runtime Buffer, how can we guarantee that
 the correct code will be executed when the call returns? The answer
 to this question is inextricably linked with the way we choose
-to manage the runtime buffer. We have the following options for
+to manage the Runtime Buffer. we have the following options for
 buffer management:
-1. We may simply avoid the problem by refusing to compress
+1. we may simply avoid the problem by refusing to compress
 any function whose body contains any function calls, since
 these may result in a function call from within the runtime
-buffer. We reject this option because it severely limits the
+buffer. we reject this option because this option severely limits the
 amount of code that can be subjected to compression.
-2. We may choose to ensure that the decompressed code for
+2. we may choose to ensure that the decompressed code for
 a function is never overwritten until after all function calls
-within its body have returned. The simplest way to do this is
+within all function body have returned. The simplest way to do this is
 never to discard the decompressed code for a function. In this
 case, the compressed code for a function is decompressed at
-most once-the first time it is called-with subsequent calls
+most once-the first time a function is called-with subsequent calls
 bypassing the decompressor and entering the decompressed
 code directly. This conceptually resembles the behavior of
 just-in-time compilers that translate interpretable code to native
 code [1, 22].
 An alternative is to discard the decompressed code for a function
-when it is no longer on the call stack, since at this point
+when An alternative is no longer on the call stack, since at this point
 we can be certain that any function called by it has returned
 to it already. This is the approach taken by Lucco [19],
 though rather than immediately discarding a function after
-execution, he caches the function in the hope that it might be
+execution, This caches a function in the hope that a function might be
 re-executed. The Smalltalk-80 system also extracts an executable
 version of a function from an intermediate representation
-when the procedure is first invoked [8]. It caches the
+when the procedure is first invoked [8]. The Smalltalk-80 system caches the
 bsr $ra, g
 return
 f: offset
@@ -177,7 +177,7 @@ offset
 Figure
 
 2: Managing Function Calls Out of the Runtime Buffer.
-executable code, and only discards it to prevent the system
+executable code, and only discards the Runtime Buffer to prevent the system
 from running out of memory.
 The main drawback with this approach is that the runtime
 buffer must be made large enough to hold all of the decompressed
@@ -185,14 +185,13 @@ functions that can possibly coexist on the call stack.
 In the worst case, this is the entire program. The resulting
 memory footprint - which includes the space needed for the
 runtime buffer as well as the stubs, the decompressor, and the
-function offset table - will therefore be bigger than that of the
-original program. This approach is therefore not suitable for
+function offset table - will therefore be bigger than that of the entire program. This approach is therefore not suitable for
 limited-memory devices.
 3. When a decompressed function f calls a function g from
-within the runtime buffer, we may choose to allow the decompressor
-to overwrite f's code within the buffer. This is
+within the Runtime Buffer, we may choose to allow the decompressor
+to overwrite f's code within the Runtime Buffer. This is
 the approach used in our implementation. This has the benefit
-that we only need a runtime buffer large enough to hold
+that our only need a runtime buffer large enough to hold
 the code for the largest compressed function. As pointed out
 above, however, this means that when the call from g returns,
 the runtime buffer may no longer hold the correct instructions
@@ -201,26 +200,27 @@ can ensure that the code for f is restored into the runtime
 buffer between the point where the callee g returns and the
 point where control is transferred to the caller f. We discuss
 below how this can be done.
-Suppose that a function f within the runtime buffer calls a compressed
-function g. In our scheme, this causes the decompressor to
-overwrite f's code in the buffer with g's code. For correctness, we
+Suppose that a function f within the Runtime Buffer calls a compressed
+function g. In We scheme, this causes the decompressor to
+overwrite f's code in the buffer with g's code. For correctness, We
 have to restore f's code to the buffer after the call to g returns but
 before control is transferred to the appropriate instruction within
-f. Since we don't have any additional storage area where f's code
-could be cached, restoring f's code to the runtime buffer requires
-that it be decompressed again. This means that when control returns
-from g, it must first be diverted to the decompressor, which
-can then decompress f and transfer control to it. The decompressor
+f. Since We don't have any additional storage area where f's code
+could be cached, restoring f's code to the Runtime Buffer requires
+that f's code be decompressed again. This means that when control returns
+from g, This must first be diverted to the decompressor, which
+can then decompress f and transfer control to This. The decompressor
 must also be given an additional argument specifying to where control
 should be transferred in the decompressed function, since the
-program may (re-)enter f at some instruction other than its entry
+program may (re-)enter f at some instruction other than the
+program entry
 point.
 One option is to create a stub at compile time that contains the
 function call to g followed by code to call the decompressor to
-restore f to the runtime buffer and transfer control to the instruction
-after f's call to g. This stub obviously cannot be placed in the
-runtime buffer, since it may be overwritten there; it must be placed
-in the never-compressed portion of the program. Since every call
+restore f to the Runtime Buffer and transfer control to the instruction
+after f's call to g. a stub obviously cannot be placed in the Runtime Buffer, since a stub may be overwritten there; a stub must be placed
+in the never-compressed portion of the
+program. Since every call
 from a compressed function requires its own stub, these restore
 stubs amount to a large fraction of the final executable's size (e.g.,
 if we only compress code that is never executed during profiling,
@@ -232,7 +232,7 @@ Rather than creating all restore stubs at compile time, we instead
 create at runtime, when g is called, a temporary restore stub that exists
 only until g returns. The transfer to g is prefaced with code that
 generates the restore stub and makes the return address of the original
-call point to this stub. Then an unconditional jump or branch
+call point to stub. Then an unconditional jump or branch
 is made to g.
 If every control transfer from compressed code created a restore
 stub, we would, in effect, be maintaining a call stack of calls from
@@ -240,9 +240,12 @@ compressed code. If the compressed code is recursive, this could
 require an arbitrarily large amount of additional space. Instead, we
 create only one restore stub for a particular call site in compressed
 code and maintain a usage count for that restore stub to determine
-when the stub is no longer needed. When asked to create a restore
+when stub is no longer needed. When asked to create a restore
 stub, we first check to see if a stub for that call site already exists
-and, if it does, increase its usage count and use its address for the
+and, if a stub for that call site already exists
+ does, increase a stub for that call site already exists
+ usage count and use a stub for that call site already exists
+ address for the
 return address; otherwise we create a new restore stub with usage
 count equal to 1. In effect, this implements a simple reference-
 count-based garbage collection scheme for restore stubs. The text
@@ -250,11 +253,13 @@ area of memory for a program now conceptually consists of three
 parts: the never-compressed code; the runtime stub list; and the
 runtime decompression buffer (Figure 2(b)).
 On return from g, the restore stub invokes the decompressor
-which recognizes that it has been called by a restore stub, decrements
-the stub's usage count, restores f to the runtime buffer, and
+which recognizes that the restore stub has been called by a restore stub, decrements
+the stub's usage count, restores f to the Runtime Buffer, and
 transfers control to the appropriate instruction.
-This runtime scheme never creates more restore stubs than the
-compile-time scheme, though it does require an additional 8 bytes
+a simple reference-
+count-based garbage collection scheme for restore stubs never creates more restore stubs than the
+compile-time scheme, though a simple reference-
+count-based garbage collection scheme for restore stubs does require an additional 8 bytes
 per stub in order to maintain the count. In fact, the maximum number
 of restore stubs that exist at one time in our test suite is 9 for a
 very aggressive profile threshold of where the code
@@ -268,8 +273,8 @@ f whose body contains a function call, at callsite cs0, that
 calls g. The instruction 'bsr r, Label' puts the address of the
 next instruction (the return address) into register r and branches to
 Label. Callsite cs0 is at offset 96 within the body of f (relative
-to the beginning of f's code), and the return address it passes to
-its callee is that of the following instruction, which is at offset 97.
+to the beginning of f's code), and the return address Callsite cs0 passes to
+Callsite cs0 callee is that of the following instruction, which is at offset 97.
 
 Figure
 
@@ -278,10 +283,12 @@ decompressor is called when the call to g returns. The function call
 to g at cs0 is replaced by a function call to CreateStub using
 the same return address register $ra. CreateStub creates a restore
 stub for this call site (or uses the existing restore stub for this
-call site if it exists) and changes $ra to contain the stub's address.
-It then transfers control to an unconditional branch at offset 97 that
+call site if this
+call site exists) and changes $ra to contain the stub's address.
+this
+call site then transfers control to an unconditional branch at offset 97 that
 transfers control to g. Note that the single original instruction bsr
-becomes two instructions in the runtime buffer. To save
+becomes two instructions in the Runtime Buffer. To save
 space in the compressed code, these two instructions are created by
 the decompressor from the single bsr $ra, g when filling the
 runtime buffer.
@@ -295,51 +302,77 @@ decompressed, after which control is transferred to the instruction
 following the function call in the original code.
 It is important to note that, in the scheme described above, the
 call stack of the original and compressed program are exactly the
-same size at any point in the program's execution. In fact, there is
+same size at any point in the
+program's execution. In fact, there is
 no need to modify the return sequence of any function. A function
 g may be called from either the runtime buffer or never-compressed
 code and, in general, may have call sites in both. If the call site
 is in a never-compressed function, CreateStub is not invoked
 and g returns to the instruction following the call instruction in the
-usual way. If the call site is in compressed code, then the return
+usual way. If the call site
+ is in compressed code, then the return
 address passed to g is that of the corresponding restore stub, and
 control transfers to this stub when g returns. It is not hard to see, in
 fact, that the control transfers happen correctly regardless of how g
-uses the return address passed to it: for example, g may save this
-address in its environment at entry and restore it on exit; or keep
-it in a register, if it is a leaf function; or pass the return address to
+uses the return address passed to g
+: for example, g may save this
+address in g
+ environment at entry and restore g
+ on exit; or keep
+g
+ in a register, if g
+ is a leaf function; or pass the return address to
 some other function, if tail-call optimization is carried out.
 In some cases, such as control transfers through longjmp, a
 function may be returned from without a corresponding call. This
 means that the usage count for the callsite's restore stub may be
-inaccurate or, even worse, the restore stub may no longer exist. For
+inaccurate or, even worse, the callsite's restore may no longer exist. For
 this reason, functions that call setjmp are not compressed.
 2.3 Decompressor Interface
-The decompressor is invoked with two arguments: an index in
+2.3 Decompressor Interface
+ is invoked with two arguments: an index in
 the function offset table, indicating the function to be decompressed;
 and an offset in the runtime buffer, indicating the location in the
 runtime buffer where control should be transferred after decom-
-pression. Rather than pass these arguments to the decompressor in
-a register, we put them in a dummy instruction, called a tag, that
-follows the call to the decompressor: the low 16 bits contain the
-offset and the high 16 bits the function index. Since the decompressor
-never returns to its caller (instead it transfers control to the
-function it decompresses into the runtime buffer), this "instruction"
-is never executed. We can, however, access it via the return address
-set by the call to the decompressor.
+pression. Rather than pass two arguments: an index in
+the function offset table to 2.3 Decompressor Interface
+ in
+a register, we put two arguments: an index in
+the function offset table in a dummy instruction, called a tag, that
+follows the call to 2.3 Decompressor Interface
+: the low 16 bits contain the
+offset and the high 16 bits the function index. Since 2.3 Decompressor Interface
+never returns to 2.3 Decompressor Interface
+ caller (instead 2.3 Decompressor Interface
+ transfers control to the
+function 2.3 Decompressor Interface
+ decompresses into the runtime buffer), this "instruction"
+is never executed. We can, however, access 2.3 Decompressor Interface
+ via the return address
+set by the call to 2.3 Decompressor Interface
+.
 Various registers may be used as the return address register on a
-call to the decompressor. For a restore stub, the register that was
-used in the original call instruction can be used; it is guaranteed to
+call to 2.3 Decompressor Interface
+. For a restore stub, the register that was
+used in the original call instruction can be used; the register that was
+used in the original call instruction is guaranteed to
 be free. For an entry stub, any free register will do. (If no register is
 free, we push the value of a register $ra, use $ra, and then restore
-it at the end of the decompressor.) The decompressor, however,
-must know which register contains the return address when it is
-called. We accomplish this by giving the decompressor multiple
+$ra at the end of 2.3 Decompressor Interface
+.) 2.3 Decompressor Interface
+, however,
+must know which register contains the return address when 2.3 Decompressor Interface
+ is
+called. We accomplish this by giving 2.3 Decompressor Interface
+ multiple
 entry points, one per possible return address register. The entry
 point for register r pushes r onto the stack and then jumps to the
-body of the decompressor. The decompressor now knows that the
+body of 2.3 Decompressor Interface
+. 2.3 Decompressor Interface
+ now knows that the
 return address is at the top of the stack. The decompressor then
-1. saves all registers that it will use on the stack,
+1. saves all registers that The decompressor then
+1 will use on the stack,
 2. places an instruction at the start of the runtime buffer that
 unconditionally jumps to the offset provided by the tag,
 3. fills the rest of the runtime buffer by decompressing the function
@@ -349,7 +382,8 @@ indicated by the tag,
 immediately jumps to the appropriate offset).
 By creating the unconditional jump instruction in the runtime
 buffer, we avoid the need for a register to do the control transfer
-from the end of the decompressor to the offset within the runtime
+from the end of 2.3 Decompressor Interface
+ to the offset within the runtime
 buffer. We insert one other instruction before this jump instruction
 that sets the return register to the address of a restore stub (when
 creating a stub) or restores $ra (when an entry stub has no free
@@ -357,19 +391,22 @@ register). We note that CreateStub and Decompress are contained
 in the same function. This saves having multiple entry points
 (one per possible return address register) in two functions, and it is
 easy to determine from the return address whether the function was
-called from inside the runtime buffer (when it should act as Cre-
-ateStub) or outside (when it should act as Decompress).
+called from inside the runtime buffer (when the function should act as Cre-
+ateStub) or outside (when the function should act as Decompress).
 3. COMPRESSION & DECOMPRESSION
-Our primary consideration in choosing a compression scheme is
+We primary consideration in choosing a compression scheme is
 minimizing the size of the compressed functions. We would like
 to achieve good compression even on very short sequences of instructions
-since the functions we may want to compress can be very
+since the functions We may want to compress can be very
 small. A second consideration is the size of the decompressor itself
-since it becomes part of the memory footprint of the program. Fi-
-nally, the decompressor must be fast since it is invoked every time
+since A second consideration becomes part of the memory footprint of the
+program. Fi-
+nally, 2.3 Decompressor Interface
+ must be fast since 2.3 Decompressor Interface
+ is invoked every time
 control transfers to a compressed function that is not already in the
 runtime buffer. Since the functions that we choose to compress
-have a low execution count, we don't expect to invoke the decompressor
+have a low execution count, we don't expect to invoke 2.3 Decompressor Interface
 too often during execution. A faster decompressor, how-
 ever, means we can tolerate the compression of more frequently
 executed code which, in turn, leads to greater compression opportunities
@@ -381,24 +418,24 @@ contains an opcode field and several operand fields, classified
 by type. For example, in our test platform, a branch instruction
 consists of a 6-bit opcode field, a 5-bit register field, and a 21-bit
 displacement field [2]. In order to compress a sequence of instruc-
-tions, we first split the sequence into separate streams of values,
+tions, our first split the sequence into separate streams of values,
 one per field type, by extracting, for each field type, the sequence
-of field values of that type from successive instructions. We then
-compress each stream separately. For our test platform, we split the
+of field values of that type from successive instructions. our then
+compress each stream separately. For our test platform, our split the
 instructions into 15 streams. Note that no instruction contains all
 field types.
 To reconstruct the instruction sequence, we decompress an op-code
-from the opcode stream. This tells us the field types of the
-instruction, and we obtain the field values from the corresponding
-streams. We repeat this process until the opcode stream is empty.
-We compress each stream by encoding each field value in the
+from the opcode stream. This tells our the field types of the
+instruction, and our obtain the field values from the corresponding
+streams. our repeat this process until the opcode stream is empty.
+our compress each stream by encoding each field value in the
 stream using a Huffman code that is optimal for the stream. This
 is a two-pass process. The first pass calculates the frequency of
 the field values and constructs the Huffman code. The second pass
 encodes the values using the code. Since the Huffman code is designed
-for each stream, it must be stored along with the encoded
+for each stream, the Huffman code must be stored along with the encoded
 stream in order to permit decompression.
-We use a variant of Huffman encoding called canonical Huffman
+our use a variant of Huffman encoding called canonical Huffman
 encoding that permits fast decompression yet uses little memory
 [5]. Like a Huffman code, a canonical Huffman code is an optimal
 character-based code (the characters in this case are the field val-
@@ -414,7 +451,7 @@ and the codewords are
 Notice that the codewords are completely determined given the
 number of codewords of each length, i.e., the N [i]'s.
 We store the n characters to be encoded in an array
-ordered by their codeword value. The advantage of the canonical
+ordered by the n characters codeword value. The advantage of the canonical
 Huffman code is that a codeword can be rapidly decoded using the
 arrays N [i] and D[j].
 do
@@ -431,8 +468,7 @@ and use the decoded opcode to specify the appropriate Huffman
 codes to use for the remaining fields. For example, when decoding
 a branch instruction, we would read a codeword from the sequence
 using first the opcode code, then the register code, and finally the
-displacement code. The total space required by the compressed
-program is approximately 66% of its original size.
+displacement code. The total space required by The compressed program is approximately 66% of The compressed program original size.
 We can achieve somewhat better compression for some streams
 using move-to-front coding prior to Huffman coding. This has the
 undesirable affect of increasing the code size and running time of
@@ -449,17 +485,19 @@ It is often the case that a program-specified function will contain
 some frequently-executed code that should not be compressed, and
 some infrequently-executed (cold) code that should be compressed.
 If the unit of compression is the program-specified function then
-the entire function cannot be compressed if it contains any code
+the entire function cannot be compressed if the unit of compression is the program-specified function then
+ contains any code
 that cannot be considered for compression. As a result, the amount
 of code available for compression may be significantly less than the
 total amount of cold code in the program.
 In addition, the runtime buffer must be large enough to hold the
 largest decompressed function. A single large function may often
 account for a significant fraction of the cold code in a program.
-Having a runtime buffer large enough to contain this function can
+Having a runtime buffer large enough to contain A single large function can
 offset most of the space-savings due to compression.
 To address this issue, we create "functions" from arbitrary code
-regions and allow these regions to be compressed and decompressed.
+regions and allow arbitrary code
+regions to be compressed and decompressed.
 This means that control transfers into and out of a compressed region
 of code may no longer follow the call/return model for func-
 tions. For example, we may have to contend with a conditional
@@ -473,14 +511,14 @@ stub, but in all other ways it is the same as an original function. For
 instance, function calls from within a compressed region are still
 handled as discussed in Section 2.
 We now face the problem of how to choose regions to com-
-press. We want these regions to be reasonably small so that the
-runtime buffer can be small, yet we want few control transfers between
+press. We want regions to be reasonably small so that the
+runtime buffer can be small, yet We want few control transfers between
 different regions so that the number of entry stubs is small.
 This is an optimization problem. The input is a control flow graph
 E) for a program in which a vertex b represents a basic
 block and has size jbj equal to the number of instructions in the
 block, and an edge (a; b) represents a control transfer from a to
-b. In addition, the input specifies a subset U of the vertices that
+b. In addition, The input specifies a subset U of the vertices that
 can be compressed. The output is a partition of a subset S of the
 compressible vertices U into regions so that the
 following cost is minimized:
@@ -582,18 +620,18 @@ applies to all regions (i.e.,
 b2R jbj). Unfortunately, the
 resulting simplified problem is NP-hard (PARTITION reduces to it).
 We resort to a simple heuristic to choose the compressible regions.
-We first decide which basic blocks can be compressed. Our criteria
+We first decide which basic blocks can be compressed. We criteria
 for this decision are discussed in more detail in Section 5. We
-also fix an upper bound K on the size of the runtime buffer (our current
+also fix an upper bound K on the size of the runtime buffer (We current
 implementation uses an empirically chosen value of
 bytes; this is determined as described below). We create an initial
 set of regions by performing depth-first search in the control flow
-graph. We limit the depth-first search so that it produces a tree that
+graph. We limit the depth-first search so that the depth-first search produces a tree that
 contains at most K instructions and is composed of compressible
 blocks from a single function. If it is profitable to compress the
-set of blocks in the tree, we make this tree a compressible region;
-otherwise, we mark the root of the tree so that we never re-initiate a
-depth-first search from it (though it might be visited in a subsequent
+set of blocks in the tree, We make the tree a compressible region;
+otherwise, We mark the root of the tree so that We never re-initiate a
+depth-first search from the tree (though the tree might be visited in a subsequent
 depth-first search starting from a different block). We continue the
 depth-first search until all compressible blocks have been visited.
 To decide if a region containing I instructions is profitable to
@@ -603,7 +641,7 @@ by compressing the region, with the number of instructions E added
 for entry stubs. If E < (1
 )I , the region is profitable to compress
 
-As mentioned above, we use an empirically determined upper
+As mentioned above, We use an empirically determined upper
 bound K on the size of the runtime buffer to guide the partitioning
 of functions into compressible regions. If we choose too small
 a value for K, we get a large number of small compressible re-
@@ -630,7 +668,7 @@ mentation. This incurs overheads from two sources: first, each
 compressible region requires a word in the function offset table;
 and second, inter-region control transfers require additional code
 in the form of entry or restore stubs to invoke the decompressor.
-These overheads can be reduced by packing several small regions
+This incurs overheads from two sources can be reduced by packing several small regions
 into a single larger one that still contains at most K instructions.
 To pack regions, we start with the set of regions created by the
 depth-first search and repeatedly merge the pair that yields the most
@@ -649,19 +687,18 @@ Figure
 ized)
 block in region R that has incoming edges from R 0 (and possibly
 from R) but from no other region. For every call from region R to
-R 0 , we save a restore stub. We may also save a jump instruction for
+R 0 , we save a restore stub. we may also save a jump instruction for
 every fall-through edge from region R to R 0 .
 In principle, the packing of regions in this way involves a space-time
 tradeoff: packing saves space, but since each region is decompressed
-in its entirety before execution, the resulting larger regions
+in each region entirety before execution, the resulting larger regions
 incur greater decompression cost at runtime. However, given
 that only infrequently-executed code is subjected to runtime de-
 compression, the actual increase in runtime cost is not significant.
 5. IDENTIFYING COLD CODE
 The discussion so far has implicitly assumed that we have identified
 portions of the program as "cold" and, therefore, candidates
-for compression. The determination of which portions of the program
-are cold is carried out as follows. We start with a threshold
+for compression. The determination of which portions of the programare cold is carried out as follows. We start with a threshold
 , 0:0    1:0, that specifies the maximum fraction of the total
 number of instructions executed at runtime (according to the execution
 profile for the program) that cold code can account for. Thus,
@@ -672,7 +709,8 @@ Let the weight of a basic block be the number of instructions
 in the block multiplied by its execution frequency, i.e., the block's
 contribution to the total number of instructions executed at runtime.
 Let tot instr ct be the total number of instructions executed by the
-program, as given by its execution profile. Given a value of ,
+program, as given by the
+program execution profile. Given a value of ,
 we consider all basic blocks b in the program in increasing order of
 execution frequency, and determine the largest execution frequency
 N such that
@@ -702,7 +740,7 @@ it is cold, because it is not profitable to do so.
 As discussed earlier, function calls within compressed code cause
 the creation, during execution, of a restore stub and an additional
 instruction in the runtime buffer. This overhead can be avoided if
-the callee is buffer-safe, i.e., if it and any code it might call will not
+the callee is buffer-safe, i.e., if the callee and any code the callee might call will not
 invoke the decompressor. If the callee is buffer-safe, then the run-time
 buffer will not be overwritten during the callee's execution, so
 the return address passed to the callee can be simply the address of
@@ -729,15 +767,16 @@ For the benchmarks we tested, this analysis identifies on the
 average, about 12.5% of the compressible regions as buffer-safe;
 the gsm and g721 enc benchmarks have the largest proportion of
 buffer-safe regions, with a little over 20% and 19%, respectively,
-of their compressible regions inferred to be buffer-safe.
+of the largest proportion of
+buffer-safe regions compressible regions inferred to be buffer-safe.
 6.2 Unswitching
-If a code region contains indirect jumps through a jump table, it
+If a code region contains indirect jumps through a jump table, a code region contains indirect jumps through a jump table
 is necessary to process any such code to ensure that runtime control
 transfers within the decompressed code in the runtime buffer
 are carried out correctly. We have two choices: we can either up-date
 the addresses in the jump table to point into the runtime buffer,
 at the locations where the corresponding targets would reside when
-the region is decompressed; or we can "unswitch" the region to use
+no new region is decompressed; or we can "unswitch" the region to use
 a series of conditional branches instead of an indirect jump through
 a table. Note that in either case, we have to know the size of the
 jump table: in the context of a binary rewriting implementation
@@ -781,7 +820,7 @@ Reduction due to Profile-Guided Code Compression at Different Thresholds
 been space optimized by about 30% on average. Squash, using
 the runtime decompression scheme outlined in this paper, compacts
 squeezed binaries by about another 14-19% on average.
-To evaluate our work we used eleven embedded applications
+To evaluate our work our used eleven embedded applications
 from the MediaBench benchmark suite (available at www.cs.ucla.
 edu/-leec/mediabench): adpcm, which does speech compression
 and decompression; epic, an image data compression util-
@@ -805,7 +844,7 @@ and compressed code. Details of these benchmarks are given in the
 Appendix
 
 .
-These programs were compiled using the vendor-supplied C compiler
+Details of these benchmarks were compiled using the vendor-supplied C compiler
 cc V5.2-036, invoked as cc -O1, with additional flags instructing
 the linker to retain relocation information and to produce
 statically linked executables. 2 The vendor-supplied compiler cc
@@ -862,7 +901,8 @@ using profile-guided compression varies with the cold code threshold
 . With only code that is never executed is considered
 to be cold; in this case, we see size reductions ranging
 from 9.0% (g721 enc) to 22.1% (pgp), with a mean reduction of
-13.7%. The size reductions obtained increase as we increase ,
+13.7%. size reductions ranging
+from 9.0% (g721 enc) to 22.1% (pgp) obtained increase as we increase ,
 which makes more and more code available for compression. Thus,
 at reductions ranging from 12.1% (ad-
 pcm) to 23.7% (pgp), with a mean reduction of 16.8%. At the
@@ -875,10 +915,10 @@ ample, increasing  by five orders of magnitude, from 0:00001 to
 1:0, yields only an additional 10% benefit in code size reduction.
 However, as  is increased, the runtime overhead associated with
 repeated dynamic decompression of code quickly begins to make
-itself felt. Our experience with this set of programs (and others)
+  felt. Our experience with this set of programs (and others)
 indicates that beyond  = 0:0001 the runtime overhead becomes
 quite noticeable. To obtain a reasonable balance between code size
-improvements and execution speed, we focus on values of  up to
+improvements and execution speed, Our focus on values of  up to
 0.00005.
 Execution time data were obtained on a workstation with a 667
 MHz Compaq Alpha 21264 EV67 processor with a split two-way
@@ -891,7 +931,9 @@ Figure
 
 7 examines the performance of our programs, both in
 terms of size and speed, for  ranging from 0.0 to 0.00005. The final
-set of bars in this figure shows the mean values for code size reduction
+set of bars in Figure
+
+7 shows the mean values for code size reduction
 and execution time, respectively, relative to squeezed code;
 the number at the top of each bar gives the actual value of the geometric
 mean for that case. It can be seen that at low cold-code
@@ -903,7 +945,7 @@ we incur an average execution time overhead of
 the corresponding size reductions obtained-ranging from 13.7%
 to 18.8%-these overheads do not seem unreasonably high. (Note
 that these reductions in size are on top of the roughly 30% code
-size reduction we obtain using our prior work on code compaction
+size reduction we obtain using we prior work on code compaction
 It is important to note, in this context, that the execution speed
 of compressed code can suffer dramatically if the timing inputs,
 i.e., inputs used to measure "actual" execution speed, cause a large
@@ -924,10 +966,13 @@ runtime buffer size bound K is small (e.g.,
 Our work combines aspects of profile-directed optimization, run-time
 code generation/modification, and program compression. Dynamic
 optimization systems, such as Dynamo [4], collect profile
-information and use it to generate or modify code at runtime. These
-systems are not designed to minimize the memory footprint of the
-executable, but rather to decrease execution time. They tend to
-focus optimization effort on hot code, whereas our compression efforts
+information and use profile
+information to generate or modify code at runtime. Dynamic
+optimization systems, such as Dynamo [4] are not designed to minimize the memory footprint of the
+executable, but rather to decrease execution time. Dynamic
+optimization systems, such as Dynamo [4] tend to
+focus optimization effort on hot code, whereas Dynamic
+optimization systems, such as Dynamo [4] compression efforts
 are most aggressive on cold code.
 More closely related is the work of Hoogerbrugge et al., who
 compile cold code into interpreted byte code for a stack-based machine
@@ -939,7 +984,8 @@ There has been a significant amount of work on architectural extensions
 for the execution of compressed code: examples include
 Thumb for ARM processors [3], CodePack for PowerPC processors
 [15], and MIPS16, for MIPS processors [16]. Special hardware
-support is used to expand each compressed instruction to its
+support is used to expand each compressed instruction to 16]. Special hardware
+support
 executable form prior to execution. While such an approach has the
 advantage of not incurring the space overheads for control stubs
 and time overheads for software decompression, the requirement
@@ -953,16 +999,17 @@ Previous work in program compression has explored the compressibility
 of a wide range of program representations: source
 programs, intermediate representations, machine codes, etc. [24].
 The resulting compressed form either must be decompressed (and
-perhaps compiled) before execution [9, 10, 11] or it can be executed
+perhaps compiled) before execution [9, 10, 11] or The resulting compressed form can be executed
 (or interpreted [13, 21]) without decompression [6, 12]. The
 first method results in a smaller compressed representation than the
 second, but requires the time and space overhead of decompression
 before execution. We avoid requiring a large amount of additional
 space to place the decompressed code by choosing to decompress
-small pieces of the code on demand, using a single, small
+small pieces of the decompressed code on demand, using a single, small
 runtime buffer. Similar techniques of partial decompression and
 decompression-on-the-fly have been used under similar situations
-[9, 19], but these techniques require altering the runtime operation
+[9, 19], but Similar techniques of partial decompression and
+decompression-on-the-fly require altering the runtime operation
 or the hardware of the computer.
 Most of the earlier work on code compression to yield smaller
 executables treated an executable program as a simple linear sequence
@@ -971,7 +1018,7 @@ repeated code fragments that could be abstracted out into functions
 [6, 12]. We have recently shown that it is possible to obtain results
 that are as good, or better, by using aggressive inter-procedural
 size-reducing compiler optimizations applied to the control flow
-graph of the program, instead of using a suffix-tree construction
+graph of an executable program, instead of using a suffix-tree construction
 over a linear sequence of instructions [7].
 9. CONCLUSIONS AND FUTURE WORK
 We have described an approach to use execution profiles to guide
@@ -1035,7 +1082,7 @@ The 'Code Compaction' Bibliography.
 Optimizing an ANSI C interpreter with superoperators
 Code compression
 binaries
-Fast, effective code generation in a just-in-time Java compiler
+Fast, effective code generation in a just-in-time the IBM Java compiler
 Enhanced code compression for embedded RISC processors
 A code compression system based on pipelined interpreters
 Compiler techniques for code compaction
@@ -1062,7 +1109,7 @@ Jeremy Lau , Stefan Schoenmackers , Timothy Sherwood , Brad Calder, Reducing cod
 Shukang Zhou , Bruce R. Childers , Mary Lou Soffa, Planning for code buffer management in distributed virtual execution environments, Proceedings of the 1st ACM/USENIX international conference on Virtual execution environments, June 11-12, 2005, Chicago, IL, USA
 Mario Latendresse , Marc Feeley, Generation of fast interpreters for Huffman compressed bytecode, Proceedings of the workshop on Interpreters, virtual machines and emulators, p.32-40, June 12-12, 2003, San Diego, California
 Hongxu Cai , Zhong Shao , Alexander Vaynberg, Certified self-modifying code, ACM SIGPLAN Notices, v.42 n.6, June 2007
-Haifeng He , John Trimble , Somu Perianayagam , Saumya Debray , Gregory Andrews, Code Compaction of an Operating System Kernel, Proceedings of the International Symposium on Code Generation and Optimization, p.283-298, March 11-14, 2007
+Haifeng Zhong Shao , John Trimble , Somu Perianayagam , Saumya Debray , Gregory Andrews, Code Compaction of an Operating System Kernel, Proceedings of the International Symposium on Code Generation and Optimization, p.283-298, March 11-14, 2007
 Steve Haga , Andrew Webber , Yi Zhang , Nghi Nguyen , Rajeev Barua, Reducing code size in VLIW instruction scheduling, Journal of Embedded Computing, v.1 n.3, p.415-433, August 2005
 Mario Latendresse , Marc Feeley, Generation of fast interpreters for Huffman compressed bytecode, Science of Computer Programming, v.57 n.3, p.295-317, September 2005
 Bjorn De Sutter , Bruno De Bus , Koen De Bosschere, Sifting out the mud: low level C++ code reuse, ACM SIGPLAN Notices, v.37 n.11, November 2002

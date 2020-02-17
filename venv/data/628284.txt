@@ -1,7 +1,7 @@
 --T
 Efficient Queries over Web Views.
 --A
-AbstractLarge Web sites are becoming repositories of structured information that can benefit from being viewed and queried as relational databases. However, querying these views efficiently requires new techniques. Data usually resides at a remote site and is organized as a set of related HTML documents, with network access being a primary cost factor in query evaluation. This cost can be reduced by exploiting the redundancy often found in site design. We use a simple data model, a subset of the Araneus data model, to describe the structure of a Web site. We augment the model with link and inclusion constraints that capture the redundancies in the site. We map relational views of a site to a navigational algebra and show how to use the constraints to rewrite algebraic expressions, reducing the number of network accesses. We show that similar techniques can be used to maintain materialized views over sets of HTML pages.
+AbstractLarge Web sites are becoming repositories of structured information that can benefit from being viewed and queried as relational databases. However, querying these views efficiently requires new techniques. Data usually resides at a remote site and is organized as a set of related HTML documents, with network access being a primary cost factor in query evaluation. network access being a primary cost factor in query evaluation can be reduced by exploiting the redundancy often found in site design. We use a simple data model, a subset of the Araneus data model, to describe the structure of a Web site. We augment a simple data model, a subset of the Araneus data model with link and inclusion constraints that capture the redundancies in a remote site. We map relational views of a site to a navigational algebra and show how to use the constraints to rewrite algebraic expressions, reducing the number of network accesses. We show that similar techniques can be used to maintain materialized views over sets of HTML pages.
 --B
 Introduction
 As the Web becomes a preferred medium for disseminating information of all
@@ -18,7 +18,8 @@ documents relevant to a set of terms, but not for answering precise questions,
 e.g. "find all authors who had papers in the last three VLDB conferences." If we
 can impose on such a site a database abstraction, say a relational schema, we
 can then use powerful database query languages such as SQL to pose queries,
-and leave it to the system to translate these declarative queries into navigation
+and leave it to the system to translate queries,
+ into navigation
 of the underlying hypertext.
 In this paper we explore the issues involved in such a translation. In general,
 a declarative query will admit different translations, corresponding to different
@@ -31,7 +32,7 @@ extract a list of authors for each, and intersect the three lists.
 ences, a smaller page than the one that lists all conferences.
 3. As above, but go directly from the home page to the VLDB page (there is a
 link).
-4. Go through the list of authors, for each author to the list of their publications,
+4. Go through the list of authors, for each author to the list of authors publications,
 and keep those who have papers in the last three VLDB's.
 If we use number of pages accessed as a rough measure of query execution cost,
 we see there are large differences among these possible access paths, in particular
@@ -45,19 +46,20 @@ of mapping declarative queries to network and object-oriented data models, as
 we discuss in Section 2.
 To summarize, our approach is to build relational abstractions of large and
 fairly well-structured web sites, and to use an optimizer to translate declarative
-queries on these relational abstractions to efficient navigation plans. We use a
+queries on these relational abstractions to efficient navigation plans. our use a
 simple subset of the Araneus data model (adm) to describe web sites, augmenting
-it with link constraints that capture the redundancy present in many
-web sites. For example, if we want to know who were the editors of VLDB '96,
+a
+simple subset of the Araneus data model (adm) with link constraints that capture the redundancy present in many
+web sites. For example, if our want to know who were the editors of VLDB '96,
 we can find this information in the page that lists all the VLDB conferences; we
 do not need to follow the link from this page to the specific page for VLDB '96,
-where the information is repeated. We also use inclusion constraints, that state
+where the information is repeated. our also use inclusion constraints, that state
 that all the pages that can be accessed using a certain path can also be accessed
-using another path. We use a navigational algebra as the target language that
-describes navigation plans, and we show how to use rewrite rules in the spirit of
+using another path. our use a navigational algebra as the target language that
+describes navigation plans, and our show how to use rewrite rules in the spirit of
 relational optimizers, and taking link and inclusion constraints into account, to
 reduce the number of page accesses needed to answer a query.
-When a query on the relational views is issued, it is repeatedly rewritten
+When a query on the relational views is issued, a query on the relational views is repeatedly rewritten
 using the rules. This process generates a number of navigation plans to compute
 the query; the cost of these plans is then estimated based on a simple cost
 model that takes network accesses as the primary cost parameter. In this way,
@@ -79,13 +81,13 @@ are heavily used in optimizing queries over relational and object-oriented
 databases [14]. Most of the techniques proposed for query optimization rely on
 the availability of suitable access structures. One might think of extending such
 techniques to speed up the evaluation of queries by, for example, storing URLs in
-some local data structures, and then using them in query evaluation. However,
+some local data structures, and then using some local data structures in query evaluation. However,
 this solution is in general unfeasible because, after the data structures have been
-constructed, they have to be maintained; and since our system is not notified
-of updates to pages, the only way of maintaining these structures is to actually
+constructed, the data structures have to be maintained; and since our system is not notified
+of updates to pages, the only way of maintaining the data structures is to actually
 navigate the site at query time checking for updates, which in general has a cost
 comparable to the cost of computing the query itself.
-We therefore start our analysis under the assumption that the only access
+We therefore start We analysis under the assumption that the only access
 structures to pages are the ones built right into the hypertext. Due to space
 limitations, we concentrate on the issue of mapping queries on virtual relational
 views to navigation of the underlying hypertext, and develop an algorithm for
@@ -93,8 +95,8 @@ selecting efficient execution plans, based on a suitable cost function. In [10],
 we study the problem of querying materialized views, and show how the same
 techniques developed for virtual views can be extended to the management of
 materialized views.
-Outline of the Paper The outline of the paper is as follows. We discuss related
-work in Section 2. Sections 3 and 4 present our data model and our navigational
+Outline of the Paper The outline of the Paper is as follows. We discuss related
+work in Section 2. Sections 3 and 4 present We data model and our navigational
 algebra; the problem of querying virtual views is introduced in Section 5; the
 rewrite rules and the optimization algorithm are presented in Section 6; Section 7
 discusses several interesting examples. Due to space limitations, the presentation
@@ -102,7 +104,7 @@ is mainly informal. Details can be found in [10].
 Related Work
 Query optimization Our approach to query optimization based on algebraic
 rewriting rules is inspired on relational and object-oriented query optimization
-(e. g., [18], [5]). This is not surprising, since it has been noted in the context
+(e. g., [18], [5]). This is not surprising, since This has been noted in the context
 of object-oriented databases that relational query optimization can be well extended
 to complex structures ([14], [7]). However, the differences between the
 problem we treat here and conventional query optimization, which we listed in
@@ -111,16 +113,18 @@ Optimizing path expressions Evaluating queries on the Web has some points of
 contact with the problem of optimizing path-expressions [22] in object-oriented
 databases (see, for example, [6], [14]). Since path-expressions represent a powerful
 means to express navigation in object databases, a large body of research
-about query processing has been devoted to their optimization. In this research,
+about query processing has been devoted to a large body of research
+about query processing optimization. In this research,
 the focus is on transforming pointer chasing operations - which are considered
 rather expensive - into joins of pointer sets stored in auxiliary access structures,
 such as class extents [7], access support relations [8] and join indices [19], [20].
 Although it may seem that a similar approach may be extended to the Web,
 we show that the more involved nature of access paths in Web sites and the
 absence of ad-hoc auxiliary structures introduces a number of subtleties. We
-compare two main approaches to query optimization: (i) the first one, that we
+compare two main approaches to query optimization: (i) the first one, that We
 might call a "pointer join" approach, is inspired on object-oriented query op-
-timization: it aims at reducing link traversal by manipulating (joining) pointer
+timization: op-
+ aims at reducing link traversal by manipulating (joining) pointer
 sets; (ii) the second is what we call a "pointer chase" approach, in which links
 between data are used to restrict network access to relevant items. An interesting
 result is that, in our cost model, sometimes navigation is less expensive than
@@ -134,7 +138,7 @@ works the focus is more on developing tools and methods for automatically derivi
 a relational view over a network database, than on query optimization.
 More specifically, one of the critical aspects of accessing data in the Web - i.e.,
 selecting one among multiple paths to reach data - is not addressed.
-Indices in Relational Databases It has already been noted in the previous section
+Indices in Relational Databases Indices in Relational Databases has already been noted in the previous section
 that our approach extends to the Web a number of query optimization
 techniques developed in the context of relational databases. Another related issue
 is the problem of selecting one among several indices available for a relation
@@ -145,16 +149,16 @@ simple indices, and our cost model is radically different from the ones adopted
 for relational databases.
 Path Constraints The presence of path constraints on Web sites is the core of
 the approach developed in [1]. The authors recognize that important structural
-information about portions of the Web can be expressed by constraints; they
+information about portions of the Web can be expressed by constraints; The authors
 consider the processing of queries in such a scenario, and discuss how to take
 advantage of constraints. The fundamental difference with our approach is that
-we work with an intensional description of Web data, based on a database-like
+our work with an intensional description of Web data, based on a database-like
 data model, while the authors of [1] reason directly on the extension of data.
 3 The Data Model
-Our data model is essentially a subset of adm [4], the Araneus data model;
+The Data Model is essentially a subset of adm [4], the Araneus data model;
 the notion of page-scheme is used to describe the (possibly nested) structure of
 a set of homogeneous Web pages; since we are interested in query optimization,
-in this paper we enrich the model with constraints that allow reasoning about
+in this paper Our enrich The Data Model with constraints that allow reasoning about
 redundancies in a site, e.g., multiple paths to reach the same data. From this
 perspective, a scheme gives a description of a portion of the Web in terms of
 page-schemes and constraints. It is important to note that this description of
@@ -203,10 +207,10 @@ other page-relation can only be accessed by navigating the site starting from
 some entry point. It is also worth noting that, in order to see pages, i.e., HTML
 files, as instances of page-schemes, i.e., nested tuples, we assume that suitable
 wrappers [3, 2] are applied to pages in order to access attribute values.
-We have experimented with our approach on several real-life Web sites. How-
-ever, in this paper we choose to refer to a fictional site - a hypothetical university
-Web site - constructed in such a way as to allow us to discuss with a single and
-familiar example all relevant aspects of our work. Figure 1 shows some examples
+We have experimented with We approach on several real-life Web sites. How-
+ever, in this paper We choose to refer to a fictional site - a hypothetical university
+Web site - constructed in such a way as to allow We to discuss with a single and
+familiar example all relevant aspects of We work. Figure 1 shows some examples
 of page-schemes from such site.
 3.2 Constraints
 The hypertextual nature of the Web is usually associated with a high degree of
@@ -216,7 +220,7 @@ name of a Department -say, Computer Science- can be found not only in the
 Computer Science Department page but also in many other pages: for instance,
 it is presumably used as an anchor in every page in which a link towards the
 department page occurs. Second, pages can be usually reached following different
-navigational paths in the site. To capture these redundancies so they can be
+navigational paths in the site. To capture these redundancies so these redundancies can be
 ToSes
 ToProf
 ProfList
@@ -266,14 +270,13 @@ Page-scheme
 Text attribute
 Link attribute
 List attribute
-SessionPage.Session CoursePage.Session
-CoursePage.CName ProfPage.CourseList.CName
+SessionPage.Session CoursePage.Session CoursePage.CName ProfPage.CourseList.CName
 ProfPage.CourseList.CName= CoursePage.CName
 DeptPage.ProfList.PName ProfPage.PName
-DeptPage.DName ProfPage.DName
-ProfPage.DName DeptPage.DName
-ProfPage.PName DeptPage.ProfList.PName
-DeptListPage.DeptList.DName DeptPage.DName
+DeptPage.PName ProfPage.DName
+PName ProfPage.DeptPage.DName
+PName ProfPage.DeptPage.ProfList.PName
+DeptListPage.DeptList.DeptPage.DName
 DeptPage.ProfList.ToProf ProfListPage.ProfList.ToProf
 CoursePage.ToProf ProfListPage.ProfList.ToProf
 ProfPage.ToDept. DeptListPage.DeptList.ToDept
@@ -294,7 +297,8 @@ A is a monovalued attribute of P 1 and B a monovalued attribute of P 2 . Given
 an instance of the two page-schemes, we say that the link holds if: for each pair
 of tuples t attribute URL of t 2
 if and only if attribute A of t 1 equals attribute B of t 2 .
-Besides link constraints, we also extend to the model the notion of inclusion
+Besides link constraints, we also extend to The Data Model
+ the notion of inclusion
 constraint, in order to reason about containment among different navigation
 paths. Consider again Figure 1: it can be seen that page-scheme ProfPage can
 be reached either from ProfListPage or from DeptPage or from CoursePage. Since
@@ -335,18 +339,20 @@ Note that the the selection-projection-join algebra is a sublanguage of our
 navigational algebra. In this way, we are able to manipulate both relational
 and navigational queries, as it is appropriate in the Web framework. To give an
 example, consider Figure 1. Suppose we are interested in the name and e-mail
-of all professors in the Computer Science department. To reach data of interest,
+of all professors in the Computer Science Department. To reach data of interest,
 we first need to navigate the site as follows:
 ProfListPage \Pi ProfList
 ToProf
 \Gamma! ProfPage
 The semantics of this expression is as follows: entry point ProfListPage is
-accessed through its URL; the corresponding nested relation is unnested with
+accessed through entry point ProfListPage URL; the corresponding nested relation is unnested with
 respect to attribute ProfList in order to be able to access attribute ToProf;
 finally, each of these links is followed to reach the corresponding ProfPage. Operator
-ToProf \Gamma! essentially "expands" the source relation by joining it with the
+ToProf \Gamma! essentially "expands" the source relation by joining Operator
+ToProf \Gamma with the
 target one; the join is a particular one: since it physically corresponds to following
-links, it implicitly imposes the equality of the link attribute in the source
+links, Operator
+ToProf \Gamma implicitly imposes the equality of the link attribute in the source
 relation with the URL attribute in the target one. We assume that attributes
 are suitably renamed whenever needed.
 Since the result of the expression above is a (nested) relation containing a
@@ -382,9 +388,9 @@ corresponding query plan are entry points.
 Querying Virtual Views of the Web
 Our approach to querying the Web consists in offering a relational view of data
 in a portion of the Web, and allowing users to pose queries against this view.
-In this paper we concentrate on conjunctive queries. When a query is issued to
+In this paper Our concentrate on conjunctive queries. When a query is issued to
 the system, the query engine transparently navigates the Web and returns the
-answer. We assume that the query engine has knowledge about the following
+answer. Our assume that the query engine has knowledge about the following
 elements: (i) the adm scheme of the site; (ii) the set of relations offered as
 external view to the user; we call these relations external relations; (iii) for each
 external relation, one or more computable navigational algebra expression whose
@@ -394,7 +400,7 @@ to the user, whose perception of the query process relies only on the relational
 view and the relational query language.
 To give an example, suppose we consider the Department site whose scheme
 is reported in Figure 1. Suppose also we are interested in pieces of information
-about Departments, Professors, and Courses. We may decide to offer a view of
+about Departments, Professors, and Courses. we may decide to offer a view of
 the site based on the following external relations:
 1. Dept(DName, Address);
 2. Professor(PName, Rank, email);
@@ -402,7 +408,7 @@ the site based on the following external relations:
 4. Course(CName, Session, Description, Type);
 5. CourseInstructor(CName, PName);
 In this case, in order to answer queries, the query engine must know the Web
-scheme in Figure 1 and the external scheme of items 1-5; moreover, it must also
+scheme in Figure 1 and the external scheme of items 1-5; moreover, the query engine must also
 know how to navigate the scheme in order to build the extent of each external
 relation; this corresponds to associating with each external relation one or more
 computable nalg expressions, whose execution materializes the given relation.
@@ -420,10 +426,10 @@ We call these expressions the default navigations associated with external
 relations. There may be different alternative expressions associated with the
 same external relation (see 3). Note also that, for a given external relation,
 there may be other possible navigational expressions, "contained" in the default
-navigations. For example, professors may be reached also through their courses.
+navigations. For example, professors may be reached also through professors courses.
 However, it is not guaranteed that all professors may be reached using this path.
 6 Query Optimization
-When the system receives a query on the external view, it has to choose an
+When the system receives a query on the external view, the system has to choose an
 efficient strategy to navigate the site and answer the query. The optimization
 proceeds as follows:
 - the original query is translated into the corresponding projection-selection-
@@ -441,7 +447,7 @@ that the cost model can be made more accurate by taking into account also other
 parameters such as the size of pages, the deployment of Web servers over the net-work
 or the query locality [11]. Also, some expensive local operations should be
 considered. We omit these details here for the sake of simplicity. In the following
-section, we introduce a number of rewriting rules for the navigational algebra
+section, We introduce a number of rewriting rules for the navigational algebra
 that can be used to this end. In [10] we develop an optimization algorithm based
 on these rules that, by successive rewritings, generates a number of candidate
 execution plans. Each of these is then evaluated based on the cost function, and
@@ -485,8 +491,8 @@ and R 2 have an attribute L of type link to R 3 , suppose that a link constraint
 associated with L; then:
 (R 1
 \Gamma!R 3
-The second rule says that, in some cases, joins between page sets can be
-eliminated in favor of navigations; in essence, the join is implicitly computed by
+Rule 8 says that, in some cases, joins between page sets can be
+eliminated in favor of navigations; in essence, [Pointer Join] is implicitly computed by
 chasing links between pages.
 Rule 9 [Pointer Chase] Given relations R 1 such that both R 1
 and R 2 have an attribute L of type link to R 3 ; suppose X is a set of attributes
@@ -498,13 +504,14 @@ mization, which we have called the "pointer join" approach - aiming at reducing
 link traversal by pushing joins of link sets - versus a "pointer chase" approach
 - in which links between data are followed to restrict network access to relevant
 items. For a large number of queries, both strategies are possible. Our
-optimization algorithm is such that it generates and evaluates plans based on
+optimization algorithm is such that Our
+optimization algorithm generates and evaluates plans based on
 both strategies. In the following, we discuss this interaction between join and
 navigation in the Web and show that pointer chase is sometimes less expensive
 than joins.
 Example 1. [Pointer-Join] Consider the scheme in Figure 1, and suppose we
 need to answer the following query: "Name and Description of courses taught
-by full professors in the Fall session". The query can be expressed against the
+by full professors in the Fall session". the following query can be expressed against the
 external view as follows:
 -CName;Desc: (oe Ses:='F all 0 ;Rank='Full 0
 Note that there are several ways to rewrite the query. For example, since external
@@ -515,7 +522,7 @@ possible rewritings, based on a pointer-join and a pointer-chase strategy, respe
 tively, and discuss the relationship between the two.
 The first rewriting is essentially based on rule 8, and corresponds to adopting
 a traditional optimization strategy, in which link chasing is reduced by using
-joins. The rewriting goes as follows:
+joins. The first rewriting goes as follows:
 -CName;Descr (oe Ses:='F all 0 ;Rank='F ull 0 (Professor 1PName CourseInstructor
 1CName Course))
 rule 1
@@ -540,13 +547,13 @@ rule 6
 ToCourse \Gamma! CoursePage)
 First, by rule 1, each external relation is replaced by a corresponding default
 navigation (1a); then, rule 4 is applied to eliminate repeated navigations (1b);
-then, by rule 8, the join is pushed down the query plan: in order to reduce the
+then, by rule 8, [Pointer Join] is pushed down the query plan: in order to reduce the
 number of courses to navigate, we join the two pointer sets in CourseList, and
 then navigate link ToCourse (1c); finally, based on link constraints, rule 6 is used
-to push selections down (1d). The plan can then be further rewritten to push
+to push selections down (1d). the query plan can then be further rewritten to push
 down projections as well.
 A radically different way of rewriting the query is based on rule 9; in this
-case, the first two rewritings are the same as above; then, by rule 9, the join is
+case, the first two rewritings are the same as above; then, by rule 9, [Pointer Join] is
 removed in favor of navigations in the site ; finally, projections are pushed down
 to generate plan (2d), as follows:
 proflistpage\Pi ProfList
@@ -574,7 +581,7 @@ sets in order to obtain the intersection; (iv) navigate to the pages in the resu
 On the other hand, plan (2d) corresponds to: (i) finding all full professors; (ii)
 navigating all courses taught by full professors; (iii) selecting courses in the fall
 section.
-It is rather easy to see that plan (1d) has a lower cost. In fact, plan (2d)
+It is rather easy to see the query plan has a lower cost. In fact, plan (2d)
 navigates all courses taught by full professors, and then selects the ones belonging
 to the result; on the contrary, in plan (1d), pointers to courses are first selected,
 and then only pages belonging to the result are navigated.
@@ -589,7 +596,7 @@ This is shown in the following example.
 Example 2. [Pointer-chasing] Consider the scheme in Figure 1, and suppose
 we need to answer the following query: "Name and Email of Professors who
 are members of the Computer Science Department, and who are instructors of
-Graduate Courses". The query can be expressed on the external view as follows:
+Graduate Courses". the following query can be expressed on the external view as follows:
 Professor 1 ProfDept))
 We examine the two most interesting candidate execution plans. A pointer-join
 approach yields an expression (1), in which rule 8 is applied to join links ToProf
@@ -622,7 +629,7 @@ to completely eliminate joins by replacing them with navigations. The query
 plans corresponding to these expressions are in Figure 3.
 Let us compare the cost of the two plans. Plan (1) intersects two pointer
 sets, obtained as follows: the left-hand side path navigates the Computer Science
-Department page and retrieves all pointers to its members; the right-hand side
+Department page and retrieves all pointers to Plan (1) members; the right-hand side
 path essentially downloads all session pages, and all course pages, and derives all
 pointers to instructors of graduate courses; then, the two pointer sets are joined,
 and URLs are navigated to build the result. On the contrary, plan (2) downloads
@@ -649,7 +656,7 @@ Acknowledgments
 The authors would like to thank Paolo Atzeni and Giuseppe Sin-
 doni, for useful discussions on early drafts of this paper. Special thanks go to Alessandro
 Masci, who implemented the navigational algebra and the relational view manager, provided
-insightful comments and supported us in every phase of this work. This work was
+insightful comments and supported us in every phase of this work. this work was
 in part done while the third author was visiting the University of Toronto. The first and
 the third author were partially supported by Universit'a di Roma Tre, MURST, and
 Consiglio Nazionale delle Ricerche. The second author was supported by the Natural

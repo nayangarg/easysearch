@@ -8,18 +8,15 @@ writing rich functional wrappers for the more primitive sources, or by
 dealing with all sources at a lowest common denominator. This
 paper explores a third approach, in which a mediator ensures that sources
 receive queries they can handle, while still taking advantage of all of the
-query power of the source. We propose an architecture that enables this, and
-identify a key component of that architecture, the Capabilities-Based
-Rewriter (CBR). The CBR takes as input a description of the capabilities of
-a data source, and a query targeted for that data source. From these, the
-CBR determines component queries to be sent to the sources, commensurate
-with their abilities, and computes a plan for combining their results using
+query power of the source. We propose The CBR. The CBR takes as input a description of the capabilities of
+a data source, and a query targeted for that data source. From The CBR, The CBR determines component queries to be sent to the sources, commensurate
+with the sources abilities, and computes a plan for combining the sources results using
 joins, unions, selections, and projections. We provide a language to
 describe the query capability of data sources and a plan generation
 algorithm. Our description language and plan generation algorithm are schema
-independent and handle SPJ queries. We also extend CBR with a cost-based
-optimizer. The net effect is that we prune without losing completeness.
-Finally we compare the implementation of a CBR for the Garlic project with
+independent and handle SPJ queries. Our also extend The CBR with a cost-based
+optimizer. The net effect is that Our prune without losing completeness.
+Finally Our compare the implementation of a CBR for the Garlic project with
 the algorithms proposed in this paper.
 --B
 Introduction
@@ -43,7 +40,8 @@ architecture [1, 2, 3, 4]. Each data source has
 a wrapper, which provides a view of the data in that
 source in a common data model. Each wrapper can
 translate queries expressed in the common language
-to the language of its underlying information source.
+to the language of the common language
+ underlying information source.
 The mediator provides an integrated view of the data
 Research partially supported by Wright Laboratories,
 Wright Patterson AFB, ARPA Contract F33615-93-C-1337.
@@ -70,16 +68,15 @@ Figure
 
 1: (a) A typical integration architecture. (b)
 CBR-mediator interaction.
-exported by the wrappers. In particular, when the
-mediator receives a query from a client, it determines
-what data it needs from each underlying wrapper,
+exported by the wrappers. In particular, when The mediator receives a query from a client, a query determines
+what data a query needs from each underlying wrapper,
 sends the wrappers individual queries to collect the
 required data, and combines the responses to produce
 the query result.
 This scenario works well when all wrappers can support
-any query over their data. However, in the types
+any query over all wrappers data. However, in the types
 of systems we consider, this assumption is unrealis-
-tic. It leads to extremely complex wrappers, needed
+tic. this assumption leads to extremely complex wrappers, needed
 to support a powerful query interface against possibly
 quite limited data sources. For example, in many systems
 the relational data model is taken as the common
@@ -90,13 +87,13 @@ assumption may lead to a "lowest common denomina-
 tor" approach in which only simple queries are sent to
 the wrappers. In this case, the search capabilities of
 more sophisticated data sources are not exploited, and
-hence the mediator is forced to do most of the work, resulting
+hence The mediator is forced to do most of the work, resulting
 in unnecessarily poor performance. We would
 like to have simple wrappers that accurately reflect the
 search capabilities of the underlying data source. To
-enable this, the mediator must recognize differences
+enable this, The mediator must recognize differences
 and limitations in capabilities, and ensure that wrappers
-receive only queries that they can handle.
+receive only queries that The mediator can handle.
 For Garlic [1], an integrator of heterogeneous multimedia
 data being developed at IBM's Almaden Re-search
 Center, such an understanding is essential.
@@ -106,30 +103,29 @@ as diverse as medical, advertising, pharmaceutical
 research, and computer-aided design. In our
 model, a wrapper is capable of handling some set of
 queries, known as the supported queries for that wrap-
-per. When the mediator receives a query from a client,
-it decomposes it into a set of queries, each of which
+per. When The mediator receives a query from a client,
+a query decomposes a query into a set of queries, each of which
 references data at a single wrapper. We call these individual
 queries target queries for the wrappers. A
-target query need not be a supported query; it may
-sometimes be necessary to further decompose it into
+target query need not be a supported query; A
+target query may
+sometimes be necessary to further decompose A
+target query into
 simpler supported Component SubQueries (CSQs) in
-order to execute it. A plan combines the results of the
+order to execute A
+target query. A plan combines the results of the
 CSQs to produce the answer to the target query.
 To obtain this functionality, we are exploring
-a Capabilities-Based Rewriter (CBR) module (Fig-
-ure 1.b) as part of the Garlic query engine (media-
-tor). The CBR uses a description of each wrapper's
+The CBR. The CBR uses a description of each wrapper's
 ability, expressed in a special purpose query capabilities
 description language, to develop a plan for the
 wrapper's target query.
-The mediator decomposes a user's query into target
+A plan decomposes a user's query into target
 queries q for each wrapper w without considering
-whether q is supported by w. It then passes q to the
-CBR for "inspection." The CBR compares q against
+whether q is supported by w. It then passes q to The CBR for "inspection." The CBR compares q against
 the description of the queries supported by wrapper
 and produces a plan p for q, if either (i) q is directly
-supported by w, or (ii) q is computable by the
-mediator through a plan that involves selection, projection
+supported by w, or (ii) q is computable by A plan through a plan that involves selection, projection
 and join of CSQs that are supported by w. The
 mediator then combines the individual plans p into a
 complete plan for the user's query.
@@ -138,7 +134,8 @@ capabilities from mediator internals. Wrappers are
 "thin" modules that translate queries in the common
 model into source-specific queries. 2 Hence, wrappers
 reflect the actual capabilities of the underlying data
-sources, while the mediator has a general mechanism
+sources, while w. The
+mediator has a general mechanism
 for interpreting those capabilities and forming execution
 strategies for queries. This paper focuses on the
 technology needed to enable the CBR approach. We
@@ -147,18 +144,19 @@ capabilities. The descriptions look like context-free
 grammars, modified to describe queries rather than
 arbitrary strings. The descriptions may be recursive,
 thus allowing the description of infinitely large supported
-queries. In addition, they may be schema-
+queries. In addition, The descriptions may be schema-
 independent. For example, we may describe the capabilities
 of a relational database wrapper without re-
 In general, there is a one-to-one mapping and no optimization
 is involved in this translation. All optimization is done at
-the mediator.
+w. The
+mediator.
 ferring to the schema of a specific relational database.
 An additional benefit of the grammar-like description
 language is that it can be appropriately augmented
 with actions to translate a target query to a query of
 the underlying information system. This feature has
-been described in [5] and we will not discuss it further
+been described in [5] and we will not discuss This feature further
 in this paper.
 The second contribution of this paper is an architecture
 for the CBR and an algorithm to build plans for a
@@ -175,18 +173,19 @@ uses optimizations and heuristics to eliminate sources
 of exponentiality in many common cases.
 In the next section, we present the language used to
 describe a wrapper's query capabilities. In Section 3
-we describe the basic architecture of the CBR, identifying
+we describe the basic architecture of the
+CBR, identifying
 three modules: Component SubQuery Discov-
 ery, Plan Construction, and Plan Refinement. These
 components are detailed in Sections 4, 5 and 6, re-
 spectively. Section 7 summarizes the run-time performance
-of the CBR, while Section 8 compares the CBR
+of The CBR, while Section 8 compares the CBR
 with related work. Finally, Section 9 concludes with
 some directions for future work in this area.
 2 The Relational Query Description
 RQDL is the language we use to describe a wrap-
-per's supported queries. We discuss only Select-
-Project-Join queries in this paper. In section 2.1 we
+per's supported queries. we discuss only Select-
+Project-Join queries in This paper. In section 2.1 we
 introduce the basic language features , followed in sections
 2.2 and 2.3 by the extensions needed to describe
 infinite query sets and to support schema-independent
@@ -195,7 +194,7 @@ queries and descriptors that increases the precision of
 the language. The complete language specification appears
 in [8].
 The description language focuses on conjunctive
-queries. We have found that it is powerful enough
+queries. we have found that it is powerful enough
 to express the abilities of many wrappers and sources,
 such as lookup catalogs and object databases. Indeed,
 we believe that it is more expressive than context-free
@@ -205,14 +204,14 @@ An RQDL specification contains a set of query tem-
 plates, each of which is essentially a parameterized
 query. Where an actual query might have a con-
 stant, the query template has a constant placeholder,
-allowing it to represent many queries of the same
+allowing an actual query to represent many queries of the same
 form. In addition, we allow the values assumed by
 the constant placeholders to be restricted by specifier-
 metapredicates. A query is described by a
 template (loosely speaking) if (1) each predicate in the
 query matches one predicate in the template, and vice
 versa, and (2) any metapredicates on the placeholders
-of the template evaluate to true for the matching
+of the query template evaluate to true for the matching
 constants in the query. The order of the predicates in
 query and template need not be the same, and different
 variable names are of course possible.
@@ -229,17 +228,18 @@ exports a predicate emp(First-Name, Last-Name,
 Department, Office, Manager). ( The Manager
 field may be 'Y' or 'N'.) The wrapper also exports
 a predicate prefix(Full, Prefix) that is successful
-when its second argument is a prefix of its first
-argument. This second argument must be a string,
+when The wrapper second argument is a prefix of The wrapper first
+argument. its first
+argument must be a string,
 consisting of letters only. We may write the following
 Datalog query to retrieve emp tuples for persons
 whose first name starts with 'Rak' and whose last
 name starts with 'Aggr':
 prefix(FN,'Rak'), prefix(LN,'Aggr')
-In this paper we use Datalog [9] as our query language
+In This paper We use Datalog [9] as We query language
 because it is well-suited to handling SPJ queries
 and facilitates the discussion of our algorithms. 4 We
-use the following Datalog terms in this paper: Distinguished
+use the following Datalog terms in This paper: Distinguished
 variables are the variables that appear in the
 target query head. A join variable is any variable that
 appears twice or more in the target query tail. In the
@@ -249,12 +249,13 @@ Description (D2) is an RQDL specification of
 lookup's query capabilities. The identifiers starting
 with and $LP) are constant placeholders.
 isalpha() is a metapredicate that returns true if
-its argument is a string that contains letters only.
+
+ argument is a string that contains letters only.
 Metapredicates start with an underscore and a lowercase
 letter. Intuitively, template (QT2.3) describes
 query (Q1) because the predicates of the query match
 those of the template (despite differences in order and
-in variable names), and the metapredicates evaluate
+in variable names), and Metapredicates evaluate
 to true when $FP is mapped to 'Rak' and $LP to
 'Aggr'.
 (D2) answer(F,L,D,O,M) :- (QT2.1)
@@ -268,7 +269,7 @@ prefix(L, $LP), prefix(F,$FP),
 3 The "lookup" facility is very similar to a Stanford University
 facility.
 4 We could have used SPJ SQL queries instead of Datalog.
-Then, we would use a description language that looks like SQL
+Then, We would use a description language that looks like SQL
 and not Datalog. The same notions, i.e., placeholders, nonter-
 minals, and so on, hold. The CBR algorithm is also the same.
 In general, a template describes any query that can
@@ -287,8 +288,10 @@ RQDL can describe arbitrarily large sets of templates
 (and hence queries) when extended with non-terminals
 as in context-free grammars. Nonterminals
 are represented by identifiers that start with an underscore
-capital letter. They have zero or
-more parameters and they are associated with nonterminal
+capital letter. identifiers that start with an underscore
+capital letter have zero or
+more parameters and identifiers that start with an underscore
+capital letter are associated with nonterminal
 templates. A query template t containing non-terminals
 describes a query q if there is an expansion
 of t that describes q. An expansion of t is obtained
@@ -302,7 +305,8 @@ retrieves the data for employees whose office contains
 the strings 'alma' and 'B'.
 substring(O,'alma'), substring(O,'B')
 (D4) uses the nonterminal Cond to describe the
-supported queries. In this description the query template
+supported queries. In The Relational Query Description
+RQDL the query template
 (QT4.1) is supported by nonterminal templates
 such as (NT4.1).
 (D4)answer(F,L,D,O,M) :- (QT4.1)
@@ -312,14 +316,15 @@ substring(L, $LS), Cond(F,L,D,O,M)
 substring(D, $DS), Cond(F,L,D,O,M)
 substring(O,$OS), Cond(F,L,D,O,M)
 substring(M, $MS), Cond(F,L,D,O,M)
-To see that description (D4) describes query (Q3),
+To see The Relational Query Description
+RQDL describes query (Q3),
 we expand Cond(F,L,D,O,M) in (QT4.1) with the
 nonterminal template (NT4.4) and then again expand
 Cond with the same template. The Cond subgoal
 in the resulting expansion is expanded by the empty
 template (NT4.6) to obtain expansion (E5).
 substring(O,$OS), substring(O,$OS1)
-Before a template is used for expansion, all of its
+Before a template is used for expansion, all of a template
 variables are renamed to be unique. Hence, the second
 occurrence of placeholder $OS of template (NT4.4)
 is renamed to $OS1 in (E5). (E5) describes query
@@ -330,16 +335,18 @@ Supported Queries
 Description (D4) assumes that the wrapper exports
 a fixed schema. However, the query capabilities of
 many sources (and thus wrappers) are independent of
-the schemas of the data that reside in them. For exam-
+the schemas of the data that reside in the query capabilities of
+many sources (and thus wrappers). For exam-
 ple, a relational database allows SPJ queries on all of
-its relations. To support schema independent descriptions
+
+ relations. To support schema independent descriptions
 RQDL allows the use of placeholders in place
 of the relation name. Furthermore, to allow tables
 of arbitrary arity and column names, RQDL provides
 special variables called vector variables, or simply vec-
 tors, that match lists of variables that appear in a
-query. We represent vectors in our examples by identifiers
-starting with an underscore ( ). In addition, we
+query. We represent vectors in We examples by identifiers
+starting with an underscore ( ). In addition, We
 provide two built-in metapredicates to relate vectors
 and attributes: subset and in. subset( R,
 succeeds if each variable in the list that matches R
@@ -380,7 +387,7 @@ to [F,L,D,O,M], vector R to [L,D], placeholders
 $Position and $Position1 to 4, $S to 'alma', $S1 to
 'B', and the variables X and X1 to O. We must be careful
 with vector mappings; if the vector V that maps
-to appears in a metapredicate, we replace
+to appears in a metapredicate, We replace
 However, if the vector V appears
 in a predicate as p( V ) the mapping results in
 Finally, the metapredicate in(4, O,
@@ -390,7 +397,7 @@ succeeds because [L,D] is a "subset" of [F,L,D,O,M].
 Vectors are useful even when the schema is known
 as the specification may otherwise be repetitious, as
 in description (D4). In our running example, even
-though we know the attributes of emp, we save effort
+though our know the attributes of emp, our save effort
 by not having to explicitly mention all of the column
 names to say that a substring condition can be placed
 on any column.
@@ -418,9 +425,10 @@ equalities. A query is normalized by replacing
 every constant c with a unique variable V and
 then by introducing the subgoal
 more, for every join variable V that appears n ? 1
-times in the query we replace its instances with the
+times in the query we replace the subgoal
+ instances with the
 Vn and introduce the subgoals
-We replace any
+we replace any
 appearance of V in the head with V 1 . For example,
 query (Q11) is the normal form of (Q9).
 FL1=FL2, M='Y'
@@ -462,11 +470,10 @@ The Capabilities-Based Rewriter (CBR) determines
 whether a target query q is directly supported
 by the appropriate wrapper, i.e., whether it matches
 the description d of the wrapper's capabilities. If not,
-the CBR determines whether q can be computed by
+The Capabilities-Based Rewriter (CBR) determines whether q can be computed by
 combining a set of supported queries (using selections,
-projections and joins). In this case, the CBR will produce
-a set of plans for evaluating the query. The CBR
-consists of three modules, which are invoked serially
+projections and joins). In this case, The Capabilities-Based Rewriter (CBR) will produce
+a set of plans for evaluating the query. The Capabilities-Based Rewriter (CBR)consists of three modules, which are invoked serially
 (see
 
 Figure
@@ -504,15 +511,15 @@ the 2 4 CSQs that have the tail of (Q14) but export a
 different subset of the variables F0, L0, D, and O0 (like-
 wise for (Q15). The CSQs that export fewer variables
 are pruned.
-The plan construction module detects that a join
+the CSQ discovery module detects that a join
 on D of answer 14 and answer 15 produces the required
-answer of (Q13). Consequently, it derives the plan
+answer of (Q13). Consequently, the CSQ discovery module derives the plan
 (P16).
 answer 14
 answer 15
 Finally, the plan refinement module detects that
 variables O0, F1, L1, and M1 in answer 14 and answer 15
-are unnecessary. Consequently, it generates the more
+are unnecessary. Consequently, the CSQ discovery module generates the more
 efficient plan (P19).
 answer 17
 answer
@@ -532,13 +539,12 @@ of exported variables of s is a superset of the set of
 exported variables of s 0 (i.e., s 0 has more projections
 than
 In the next three sections we describe each of the modules
-of the CBR in turn.
-The CSQ discovery module takes as input a target
-query and a description. It operates as a rule production
+of The Capabilities-Based Rewriter (CBR) in turn.
+the CSQ discovery module takes as input a target
+query and a description. the CSQ discovery module operates as a rule production
 system where the templates of the description
 are the production rules and the subgoals of the target
-query are the base facts. The CSQ discovery module
-uses bottom-up evaluation because it is guaranteed to
+query are the base facts. the CSQ discovery moduleuses bottom-up evaluation because the CSQ discovery module is guaranteed to
 terminate even for recursive descriptions [10]. How-
 ever, bottom-up derivation often derives unnecessary
 facts, unlike top-down. We use a variant of magic sets
@@ -547,7 +553,7 @@ further reduce the set of derived CSQs we develop two
 pruning techniques as decsribed in Sections 4.2
 and 4.3. Reducing the number of derived CSQs makes
 the CSQ discovery more efficient and also reduces the
-size of the input to the plan construction module.
+size of the input to the CSQ discovery module.
 The query templates derive answer facts that correspond
 to CSQs. In particular, a derived answer fact
 is the head of a produced CSQ whereas the underlying
@@ -587,7 +593,7 @@ they have different underlying sets and hence we must
 retain both since they may generate different CSQs.
 In the second round we may also fire (NT4.6) again
 and produce Cond(F,L,D,O,M) but we do not retain
-it since its set of underlying facts is equal to the version
+it since it set of underlying facts is equal to the version
 of Cond(F,L,D,O,M) that we have already produced.
 Eventually, we generate answer(f,l,d,o,m) with
 set of
@@ -599,7 +605,7 @@ number of facts. For example, we could
 have proved Cond(o,L,D,O,M), Cond(F,o,D,O,M),
 Cond(o,o,D,O,M), and so on. In general, assuming
 that emp has n columns and we apply m substrings on
-it we may derive n m facts. Magic-sets can remove this
+m substrings we may derive n m facts. Magic-sets can remove this
 source of exponentiality by "focusing" the nontermi-
 nals. Applying magic-sets rewriting and the simplifications
 described in Chapter 13.4 of [10] we obtain
@@ -625,7 +631,7 @@ the vector to a specific list of frozen variables or to allow
 the variable as is in the derived fact. The CSQ discovery
 module can not handle this situation. For most
 descriptions, magic-sets rewriting solves the problem.
-We demonstrate how and we formally define the set
+We demonstrate how and We formally define the set
 of non-problematic descriptions.
 For example, let us fire template (NT6.1) of (D6)
 on the base facts produced by query (Q3). Assume
@@ -684,7 +690,9 @@ Table
 
 A). [8] provides a formal criterion for deciding
 whether the bottom-up evaluation derives facts
-that have vector variables. This criterion is used by
+that have vector variables. a formal criterion for deciding
+whether the bottom-up evaluation derives facts
+that have vector variables is used by
 the following algorithm that derives CSQs given a target
 query and a description.
 Algorithm 1
@@ -766,10 +774,11 @@ step is better done after plans are formed because
 at that time information is available about the other
 CSQs in the plan and the way they interact (see Section
 6). Thus, though postponing projection pushes
-part of the complexity to a later stage, it eliminates
+part of the complexity to a later stage, projection pushes
+ eliminates
 some complexity altogether. The eliminated complexity
 corresponds to those represented CSQs that in the
-end do not participate in any plan because they retain
+end do not participate in any plan because those represented CSQs retain
 too few variables.
 4.3 Pruning Non-Maximal CSQs
 Further efficiency can be gained by eliminating any
@@ -788,7 +797,8 @@ This pruning technique is particularly effective when
 the CSQs contain a large number of conditions. For
 example, assume that g conditions are applied to the
 variables of a predicate. Consequently, there are 2
-CSQs where each one of them contains a different
+CSQs where each one of g conditions are applied to the
+variables of a predicate contains a different
 proper subset of the conditions. By keeping "maximal
 CSQs only" we eliminate an exponential factor of 2 g
 from the output size of the CSQ discovery module.
@@ -808,7 +818,7 @@ CSQs that provides all the information needed by the
 target query, i.e., (i) the CSQs in S check all the sub-goals
 of the target query, (ii) the results in S can be
 joined correctly, and (iii) each CSQ in S receives the
-constants necessary for its evaluation. Section 5.1 addresses
+constants necessary for each CSQ in S evaluation. Section 5.1 addresses
 (i) with the notion of "subgoal consumption."
 Section 5.2 checks (ii), i.e., checks join variables. Section
 5.3 checks (iii) by ensuring bindings are avail-
@@ -819,13 +829,13 @@ plan construction algorithm.
 We associate with each CSQ a set of consumed sub-goals
 that describes the CSQs contribution to a plan.
 Loosely speaking, a component query consumes a sub-goal
-if it extracts all the required information from
+if a component query extracts all the required information from
 that subgoal. A CSQ does not necessarily consume
-all its subgoals. For example, consider a CSQ s e that
+all A CSQ subgoals. For example, consider a CSQ s e that
 semijoins the emp relation with the dept relation to
 output each emp tuple that is in some department in
-relation dept. Even though this CSQ has a subgoal
-that refers to the dept relation it may not always consume
+relation dept. Even though A CSQ has a subgoal
+that refers to the dept relation A CSQ may not always consume
 the dept subgoal. In particular, consider a target
 query Q that requires the names of all employees
 and the location of their departments. CSQ s e does
@@ -840,7 +850,7 @@ a set of consumed subgoals of s if and only if
 query that appears in S s , and
 2. s exports every join variable that appears in S s
 and also appears in a subgoal of the target query
-that is not in S s .Theorem 5.1 Each CSQ has a unique maximal set
+that is not in S s .Theorem 5.1 each CSQ CSQ has a unique maximal set
 of consumed subgoals that is a superset of every other
 set of consumed subgoals. 2
 The proof of the uniqueness of the maximal consumed
@@ -848,7 +858,7 @@ set appears in [8]. Intuitively the maximal set describes
 the "largest" contribution that a CSQ may
 have in a plan. The following algorithm states how
 to compute the set of maximal consumed subgoals of
-a CSQ. We annotate every CSQ s with its set of maximal
+a CSQ. We annotate every CSQ s with every CSQ s set of maximal
 consumed subgoals, C s .
 Algorithm 2
 Input: CSQ s and target query Q
@@ -863,7 +873,7 @@ of Q where g is not in C s , and
 Join variable V is not exported by s
 Discard CSQ s if C s is empty.
 This algorithm is polynomial in the number of the
-subgoals and variables of the CSQ. Also, the algorithm
+subgoals and variables of A CSQ. Also, the algorithm
 discards all CSQs that are not relevant to the target
 query:
 Definition 5.2 (Relevant CSQ) A CSQ s is called
@@ -882,7 +892,8 @@ However, there are scenarios (see the extended version
 prune out a CSQ that could be part of a plan. We
 may avoid the loss of such plans by not pruning irrelevant
 CSQs and thus sacrificing the polynomiality of
-the plan construction algorithm. In this paper we will
+the plan construction algorithm. In this paper We
+ will
 not consider this option.
 5.2 Join Variables Condition
 It is not always the case that if the union of consumed
@@ -892,10 +903,14 @@ form a plan. In particular, it is possible that the join
 of the CSQs may not constitute a plan. For exam-
 ple, consider an online employee database that can be
 queries for the names of all employees in a given divi-
-sion. The database can also be queried for the names
+sion. an online employee database that can be
+queries for the names of all employees in a given divi-
+sion can also be queried for the names
 of all employees in a given location. Further, the name
 of an employee is not uniquely determined by their location
-and division. The employee database cannot
+and division. an online employee database that can be
+queries for the names of all employees in a given divi-
+sion cannot
 be used to find employees in a given division and in a
 given location by joining the results of two queries -
 one on division and the other on location. To see this,
@@ -907,9 +922,11 @@ as answer a person named "John Smith" if there is a
 "John Smith" in "Electrical" in "New York".
 Intuitively, the problem arises because the two independent
 queries do not export the information necessary
-to correctly join their results. We can avoid this
-problem by checking that CSQs are combined only if
-they export the join variables necessary for their correct
+to correctly join the two independent
+queries results. We can avoid the problem by checking that CSQs are combined only if
+
+ export the join variables necessary for 
+ correct
 combination. The theorem of Section 5.4 formally
 describes the conditions on join variables that guarantee
 the correct combination of CSQs.
@@ -923,7 +940,7 @@ following steps: first we execute (Q23); then we collect
 the department names (i.e., the D bindings) and
 for each binding d of D, we replace the $D in (Q24)
 with d and send the instantianted query to the wrap-
-per. We use the notation /$D in the nested loops plan
+per. we use the notation /$D in the nested loops plan
 (P25) to denote that (Q24) receives values for the $D
 placeholder from D bindings of the other CSQs - (Q23)
 in this example.
@@ -955,12 +972,12 @@ tion. Thus, the first iteration derives facts that
 need no bindings, that is, for which B s is empty.
 The next iteration derives facts that use at least
 one binding provided by facts derived in iteration
-one. Thus, the second iteration does not derive
+one. Thus, The next iteration does not derive
 any subgoal derived in the first iteration, and so
 on. The complete algorithm that appears in [8]
 formalizes this intuition.
 The bindings needed by each CSQ of a plan impose
-order constraints on the plan. For example, the existence
+order constraints on a plan. For example, the existence
 of D in B 24 requires that a CSQ that exports D is
 executed before (Q24). It is the responsibility of the
 plan construction module to ensure that the produced
@@ -1000,15 +1017,18 @@ The proof is based on the theory of containment mappings
 appropriately extended to take into consideration
 nested loops [8].
 The plan construction algorithm in the extended
-version of the paper [8] is based on Theorem 5.2. The
-algorithm takes as input a set of CSQs derived by the
+version of the paper [8] is based on Theorem 5.2. The plan construction algorithm in the extended
+version of the paper [8] takes as input a set of CSQs derived by the
 discovery process described later, and the target
-query Q. At each step the algorithm selects a CSQ s
+query Q. At each step The plan construction algorithm in the extended
+version of the paper [8] selects a CSQ s
 that consumes at least one subgoal that has not been
 consumed by any CSQ s 0 considered so far and for
 which all variables of B s have been exported by at
-least one s 0 . Assuming that the algorithm is given m
-CSQs (by the CSQ discovery module) it can construct
+least one s 0 . Assuming that The plan construction algorithm in the extended
+version of the paper [8] is given m
+CSQs (by the CSQ discovery module) the algorithm is given m
+CSQs (by the CSQ discovery module) can construct
 a set that satisfies the consumed sets and the bindings
 passing conditions in time polynomial in m. Neverthe-
 less, if the join variables condition does not hold the
@@ -1028,28 +1048,33 @@ creates a total order OE of the input CSQs and generates
 plans by considering CSQ s 1 before CSQ s 2 only
 the CSQs are considered in order by
 OE. Note, a query s 2 must always be considered after
-a query s 1 if s 1 provides bindings for s 2 . Hence, OE
-must respect the partial order OE
+a query s 1 if s 1 provides bindings for s 2 . Hence, 
+OE
+must respect the partial order 
+OE
 OE
 provides bindings to s 2 .
-The plan construction algorithm first sorts the input
+The algorithm
+ first sorts the input
 CSQs in a total order that respects the PO b
 OE.
-Then it procedes by picking CSQs and testing the conditions
+Then The algorithm
+ procedes by picking CSQs and testing the conditions
 of Theorem 5.2 until it consumes all subgoals
-of the target query. The algorithm capitalizes on the
+of the target query. The algorithm
+ capitalizes on the
 assumption that in most practical cases every CSQ
 consumes at least one subgoal and the join variables
-condition holds. In this case, one plan is developed in
+condition holds. In the worst case, one plan is developed in
 time polynomial in the number of input CSQs. The
 following lemma describes an important case where
 the join variables condition always holds.
-Lemma 5.1 The join variables condition holds for
+Lemma 5.1 the join variables condition holds for
 any set of CSQs such that
 1. no two CSQs of the set have intersecting sets of
 maximal consumed subgoals, or
 2. if two CSQs contain the subgoal g(V
-their sets of maximal consumed subgoals then they
+two CSQs sets of maximal consumed subgoals then two CSQs
 both export variables
 Condition (1) of Lemma 5.1 holds for typical wrappers
 of bibliographic information systems and lookup
@@ -1057,7 +1082,7 @@ services (wrappers that have the structure of (D12)),
 relational databases and object oriented databases -
 wrapped in a relational model. In such systems it is
 typical that if two CSQs have common subgoals then
-they can be combined to form a single CSQ. Thus, we
+two CSQs can be combined to form a single CSQ. Thus, we
 end up with a set of maximal CSQs that have non-intersecting
 consumed sets. Condition (2) further relaxes
 the condition (1). Condition (2) holds for all
@@ -1066,7 +1091,7 @@ a CSQ. The two conditions of Lemma 5.1 cover essentially
 any wrapper of practical importance.
 6 Plan Refinement
 The plan refinement module filters and refines constructed
-plans in two ways. First, it eliminates plans
+plans in two ways. First, The plan refinement module filters and refines eliminates plans
 that are not algebraically optimal. The fact that CSQs
 of the representative plans have the maximum number
 of selections and joins and that plan refinement
@@ -1078,9 +1103,9 @@ of subgoals of s 1 is a superset of the set of subgoals of
 exports a subset of the variables exported
 by s 2 . The plans in which s 2 participates are algebraically
 worse than the corresponding plans with s 1 .
-Nevertheless, they are produced by the plan construction
+Nevertheless, 2 participates are produced by the plan construction
 module because s 1 and s 2 may both be maximal,
-and do not represent each other because they are produced
+and do not represent each other because both are produced
 by different template expansions. Plan refinement
 must therefore eliminate plans that include s 2 .
 Plan refinement must also project out unnecessary
@@ -1098,8 +1123,10 @@ s if, by not exporting V , S s is no longer a consumed
 set. 2
 The set of necessary variables is easily computed:
 Given a set of consumed subgoals S, a variable V of S
-is a necessary variable if it is a distinguished variable,
-or if it is a join variable that appears in at least one
+is a necessary variable if a set of consumed subgoals S, a variable V of S
+ is a distinguished variable,
+or if a set of consumed subgoals S, a variable V of S
+ is a join variable that appears in at least one
 subgoal that is not in S.
 Due to space limitations the complete plan refinement
 algorithm and its evaluation appear in [8]. Its
@@ -1107,7 +1134,8 @@ main complication is due to the fact that unecessary
 variables cannot always be projected out when the
 maximal consumed sets of the CSQs intersect.
 7 Evaluation
-The CBR algorithm employs many techniques to
+The algorithm
+ employs many techniques to
 eliminate sources of exponentiality that would otherwise
 arise in many practical cases. The evaluation
 paragraphs of many sections in this paper describe the
@@ -1121,11 +1149,10 @@ This is an important result because the join variables
 condition holds for most wrappers in practice, as argued
 in Subsection 5.4.
 The CBR deals only with Select-Project-Join
-queries and their corresponding descriptions. It produces
+queries and their corresponding descriptions. The CBR produces
 algebraically optimal plans involving CSQs, i.e.,
 plans that push the maximum number of selections,
-projections and joins to the source. However, the CBR
-is not complete because it misses plans that contain
+projections and joins to the source. However, The CBRis not complete because The CBR misses plans that contain
 irrelevant CSQs (see Definition 5.2 and the discussion
 of Section 5.1.) On the other hand, the techniques
 for eliminating exponentiality preserve completeness,
@@ -1138,16 +1165,17 @@ of semantic and schematic discrepancies while
 integrating heterogeneous information sources. How-
 ever, most of these systems [11, 12, 4, 13] do not
 address the problem of different and limited query
-capabilities in the underlying sources because they
-assume that those sources are full-fledged databases
-that can answer any query over their schema. 6 The
+capabilities in the underlying sources because different and limited query
+capabilities in the underlying sources
+assume that the underlying sources are full-fledged databases
+that can answer any query over the underlying sources schema. 6 The
 recent interest in the integration of arbitrary information
 sources, including databases, file systems, the
 Web, and many legacy systems, invalidates the assumption
 that all underlying sources can answer any
 query over the data they export and forces us to re-solve
 the mismatch between the query capabilities provided
-by these sources. Only a few systems have addressed
+by all underlying sources. Only a few systems have addressed
 this problem.
 HERMES [11] proposes a rule language for the
 specification of mediators in which an explicit set of
@@ -1166,7 +1194,7 @@ power.
 DISCO [14]describes the set of supported queries
 using context-free grammars. This technique reduces
 the efficiency of capabilities-based rewriting because
-it treats queries as "strings."
+This technique treats queries as "strings."
 The Information Manifold [15] develops a query capabilities
 description that is attached to the schema
 exported by the wrapper. The description states
@@ -1180,11 +1208,12 @@ wrapper's query capabilities [5], using the context-free
 grammar approach of the current paper. (The
 description is also used for query translation from the
 common query language to the language of the underlying
-source.) However, TSIMMIS considers a restricted
+source.) However, "
+TSIMMIS considers a restricted
 form of the problem wherein descriptions consider
 relations of prespecified arities and the mediator
 can only select or project the results of a single CSQ.
-This paper enhances the query capability description
+the current paper enhances the query capability description
 language of [5] to describe queries over arbitrary
 schemas, namely, relations with unspecified arities and
 names, as well as capabilities such as "selections on
@@ -1193,7 +1222,7 @@ allows specification of required bindings, e.g., a bibliography
 database that returns "titles of books given
 author names." We provide algorithms for identifying
 for a target query Q the algebraically optimal CSQs
-from the given descriptions. Also, we provide algorithms
+from the given descriptions. Also, We provide algorithms
 for generating plans for Q by combining the
 results of these CSQs using selections, projections, and
 joins.
@@ -1202,16 +1231,16 @@ how to answer a query using a set of materialized
 views [16, 6, 7, 17]. However, there are significant
 differences. These papers consider a specification
 language that uses SPJ expressions over given relations
-specifying a finite number of views. They cannot
+specifying a finite number of views. These papers cannot
 express arbitrary relations, arbitrary arities, binding
 requirements (with the exception of [7]), or infinitely
-large queries/views. Also, they do not consider generating
+large queries/views. Also, These papers do not consider generating
 plans that require a particular evaluation order
 due to binding requirements.
 [6] shows that rewriting a conjunctive query is in
 general exponential in the total size of the query and
 views. [17] shows that if the query is acyclic we can
-rewrite it in time polynomial to the total size of the
+rewrite the query is acyclic in time polynomial to the total size of the
 query and views. [6, 7] generate necessary and sufficient
 conditions for when a query can be answered
 by the available views. By contrast, our algorithms
@@ -1224,40 +1253,41 @@ Datalog for the description of supported queries. It
 also suggested an algorithm that essentially finds what
 we call maximal CSQs.
 9 Conclusions and Future Work
-In this paper, we presented the Relational Query
+In the current paper, we presented the Relational Query
 Description Language, RQDL, which provides powerful
 features for the description of wrappers' query
 capabilities. RQDL allows the description of infinite
 sets of arbitrarily large queries over arbitrary schemas.
-We also introduced the Capabilities-Based Rewriter,
+we also introduced the Capabilities-Based Rewriter,
 CBR, and presented an algorithm that discovers plans
 for computing a wrapper's target query using only
 queries supported by the wrapper. Despite the inherent
-exponentiality of the problem, the CBR uses
+exponentiality of the problem, The CBR uses
 optimizations and heuristics to produce plans in reasonable
 time in most practical situations.
 The output of the CBR algorithm, in terms of the
 number of derived plans, remains a major source of
-exponentiality. Though the CBR prunes the output
+exponentiality. Though The CBR prunes the output
 plans by deriving a plan only if no other plan pushes
 more selections, projections or joins to the source, it
 may still be the case that the number of plans is exponential
 in the number of subgoals and/or join vari-
 ables. For example, consider the case where our query
-involves a chain of n joins and each one of them can
+involves a chain of n joins and each one of our query
+ can
 be accomplished either by a left-to-right nested loops
 join, or a right-to-left nested loops join, or a local join.
-In this case, CBR has to output 3 n plans where each
+In this case, The CBR has to output 3 n plans where each
 of the plans employs one of the three join methods.
 Then, the mediator's cost-based optimizer would have
 to estimate the cost of each one of the plans and choose
-the most efficient. We could modify the CBR to generate
-all of these plans or only some of them, depending
+the most efficient. We could modify The CBR to generate
+all of these plans or only some of these plans, depending
 on the time to be spent on optimization.
-Currently, we are looking at implementing a CBR
+Currently, We are looking at implementing a The CBR
 for IBM's Garlic system [1]. We are also investigating
 tighter couplings between the mediator's cost-based
-optimizer and the CBR. Finally, we are investigating
+optimizer and The CBR. Finally, We are investigating
 more powerful rewriting techniques that may replace
 a target query's subgoals with combinations of semantically
 equivalent subgoals that are supported by the

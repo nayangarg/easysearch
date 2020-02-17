@@ -1,7 +1,7 @@
 --T
 Compiler Design for an Industrial Network Processor.
 --A
-One important problem in code generation for embedded processors is the design of efficient compilers for ASIPs with application specific architectures. This paper outlines the design of a C compiler for an industrial ASIP for telecom applications. The target ASIP is a network processor with special instructions for bit-level access to data registers, which is required for packet-oriented communication protocol processing. From a practical viewpoint, we describe the main challenges in exploiting these application specific features in a C compiler, and we show how a compiler backend has been designed that accomodates these features by means of compiler intrinsics and a dedicated register allocator. The compiler is fully operational, and first experimental results indicate that C-level programming of the ASIP leads to good code quality without the need for time-consuming assembly programming.
+One important problem in code generation for embedded processors is the design of efficient compilers for ASIPs with application specific architectures. This paper outlines the design of a C compiler for an industrial ASIP for telecom applications. an industrial ASIP for telecom applications is a network processor with special instructions for bit-level access to data registers, which is required for packet-oriented communication protocol processing. From a practical viewpoint, we describe the main challenges in exploiting these application specific features in a C compiler, and we show how a compiler backend has been designed that accomodates these features by means of compiler intrinsics and a dedicated register allocator. The compiler is fully operational, and first experimental results indicate that C-level programming of an industrial ASIP for telecom applications leads to good code quality without the need for time-consuming assembly programming.
 --B
 INTRODUCTION
 The use of application specic instruction set processors
@@ -64,7 +64,7 @@ e-cient bit-level processing. In [16] it is shown that narrow
 bitwidth operations are detectable in hardware at runtime.
 The processor uses the knowledge about the bitwidth of an
 operation either to reduce power consumption or to increase
-performance. Furthermore it is possible to identify a significant
+performance. Furthermore The processor is possible to identify a significant
 number of unused bits at compile time. According to
 [17] up to 38% of all computed most signicant bits in the
 SpecINT95 benchmarks are discarded. Therefore, for ecient
@@ -92,7 +92,8 @@ words into the send buer, they have to be packed into the
 bitstream format required by the network protocol. After
 transmission over the communication channel, the packets
 have to be extracted again at the receiver side, so as to
-align them to the receiver wordlength, which may even be
+align the packets
+ to the receiver wordlength, which may even be
 dierent from the transmitter wordlength.
 Obviously, this data conversion overhead reduces the benets
 of the bitstream-oriented protocol. In contrast, NPs may
@@ -133,7 +134,7 @@ is based on the retargetable FlexWare tool suite [22], we decided
 to develop a nearly full custom compiler backend. This
 is essentially motivated by the need to incorporate C language
 extensions and a dedicated register allocator, which
-will become clear later. Another approach related to our
+will become clear later. Another approach related to we
 work is the Valen-C compiler [23], a retargetable compiler
 that allows the specication of arbitrary bitwidths of C vari-
 ables. However, there is no direct support for NP applications
@@ -145,20 +146,20 @@ techniques. We believe that these or similar techniques can
 also be used for further NP architectures, for which a growing
 compiler demand may be expected in the future.
 The remainder of this paper is structured as follows. In section
-2, the Inneon NP architecture and its instruction set
+2, the Inneon NP architecture and Inneon NP instruction set
 are described in more detail. Section 3 outlines the problems
 associated with modeling bit-level processing in the C lan-
 guage. The next two sections describe the actual compiler
 design, which is coarsely subdivided into frontend (section
 and backend (section 5) components. Experimental results
-are presented in section 6. Finally we give conclusions
+are presented in section 6. Finally We give conclusions
 and mention directions for future work.
 2. TARGET ARCHITECTURE
 Fig. 2 shows the overall architecture of our target machine,
 the Inneon NP [21]. The NP core shows a 16-bit RISC-like
 basic architecture with special extensions for bit-level data
 access. This principle is illustrated in g. 3.
-The NP instruction set permits performing ALU computations
+The Inneon NP instruction set permits performing ALU computations
 on bit packets which are not aligned to the proces-
 Code NP core
 Buffer I/O
@@ -221,7 +222,7 @@ operands
 
 Figure
 
-5: NP assembly instruction format
+5: Inneon NP assembly instruction format
 Register n+1 Register n
 Offset within Registern n
 Machine word size
@@ -253,7 +254,7 @@ packets. The code readability (and thus maintainability)
 is poor, and furthermore the masking constants generally
 make the code highly machine-dependent.
 3.1 Use of compiler-known functions
-As outlined in section 2, the NP instruction set allows to
+As outlined in section 2, the Inneon NP instruction set allows to
 avoid these costly shift and mask operations by means of
 special instructions for packet-level addressing. In the C
 compiler, bit packet manipulation is made visible to the
@@ -264,11 +265,12 @@ or instruction sequences. Thus, CKFs can be considered as
 C-level macros without any calling overhead. The CKF approach
 has also been used in several C compilers for DSPs,
 e.g. for the Texas Instruments C62xx.
-Using CKFs, the programmer still has to have detailed knowledge
+Using CKFs, the
+programmer still has to have detailed knowledge
 about the underlying target processor, but readability
 of the code is improved signicantly. In addition, by providing
 a suitable set of simulation functions for the CKFs, C
-code written for the NP is no longer machine-dependent but
+code written for Inneon NP is no longer machine-dependent but
 can also be compiled to other host machines for debugging
 purposes.
 We illustrate the use of CKFs with a simple example. Consider
@@ -277,7 +279,7 @@ a 7-bit wide packet stored in bits 2 to 8 of some register
 denoted by the C variable a. In standard C this can only be
 expressed by means of a complex assignment as follows:
 On a standard processor, this would translate into a relatively
-large instruction sequence. In contrast, the NP can
+large instruction sequence. In contrast, Inneon NP can
 implement the entire assignment within a single instruction.
 For this purpose, we introduce a packet access (PA) CKF as
 shown in g. 8. The CKF directly re
@@ -348,7 +350,7 @@ if (offset>15) { elem++; offset -= 16; }
 Figure
 
 10: Bit packet array access in a loop
-In order to avoid such overhead, the NP instruction set architecture
+In order to avoid such overhead, the Inneon NP instruction set architecture
 provides means for indirect access to unaligned
 bit packet arrays via a bit packet pointer register. In the
 compiler, we again exploit this feature by CKFs. The mod-
@@ -358,12 +360,12 @@ attribute register. This attribute instructs our compiler
 backend to assign the whole array to the register le.
 In contrast, a regular C compiler would store the array (like
 other complex data structures) in memory. This concept of
-register arrays is required, since the NP machine operations
+register arrays is required, since the Inneon NP machine operations
 using packet-level addressing only work on registers, not on
 memory.
 The variables PR1 and PR2 are pointers. By being operands
 of the CKF INIT they are introduced to the backend as
-pointers to bit packets. The backend uses the knowledge
+pointers to bit packets. the backend uses the knowledge
 about which pointer belongs to which element/array for life
 time analysis in the register allocation. In the example, PR2
 is used to traverse the dierent bit packets of array A, while
@@ -376,7 +378,8 @@ which have to be loaded into the register le for a given
 indirect bit packet operation. The INIT CKF translates to
 assembly code as the load of a constant into a register. In
 this constant the name of the register, the oset, and the
-width of the bit packet where the pointer points to is en-
+width of the bit packet where some pointer c
+ points to is en-
 coded. In the example from g. 11 the pointer PR2 points
 to the rst element of the bit packet array. The name of
 the register where the bit packet is located is not known
@@ -385,21 +388,22 @@ symbolic addresses before register allocation. The symbolic
 are automatically replaced after the register allocation
 phase. PAI(ADD,.) is the CKF for a single indirect
 addition, like in the C expression "*p *q". The backend
-creates a single machine operation for this CKF. In order to
+creates a single machine operation for The INIT CKF. In order to
 keep the number of CKFs low, we specify the arithmetic operation
-as the rst parameter of the CKF instead of having
+as the rst parameter of The INIT CKF instead of having
 a dedicated CKF for each operation.
 The CKF INC denotes the increment of a bit packet pointer.
 Like the increment of a pointer in ANSI C the pointer will
-point to the next array element after the call to INC. Because
-the NP supports bit packet pointer arithmetic in hard-
+point to the next array element after the call to The CKF INC. Because
+Inneon NP supports bit packet pointer arithmetic in hard-
 ware, this requires again only a single machine instruction,
-independent of whether or not advancing the pointer requires
+independent of whether or not advancing some pointer c
+ requires
 crossing a register boundary.
 Obviously, the source code in the example is specied in a
 very low level programming style. However, the programmer
 still gets a signicant benet from use of the compiler. First
-of all, it permits the use of high level language constructs,
+of all, The CKF INC permits the use of high level language constructs,
 e.g. for control code and loops. In addition, address generation
 and register allocation are performed by the compiler,
 which keeps the code reusable and saves a lot of development
@@ -423,7 +427,7 @@ Figure
 tions, while the backend maps the machine-independent IR
 into machine-specic assembly code (see section 5).
 As a frontend, we use the LANCE compiler system developed
-at the University of Dortmund [28]. We give a brief
+at the University of Dortmund [28]. we give a brief
 description here for sake of completeness. LANCE is a
 machine-independent, optimizing C frontend system, that
 includes a backend interface for retargeting to dierent pro-
@@ -438,8 +442,7 @@ ted. The IR is almost machine-independent, only the
 bit width of the C data types and their memory alignment
 have to be specied in the form of a conguration
 le.
-library: LANCE comprises a C++ class library for IR
-access, analysis, and manipulation. This includes le
+library: LANCE comprises a C++ class library for The IRaccess, analysis, and manipulation. This includes le
 I/O, control and data
 ow analysis, symbol table main-
 tenance, and modication of IR statements. In addi-
@@ -455,7 +458,7 @@ or can be iterated via a shell script. Since all
 optimization tools operate on the same IR format, new
 optimizations can be plugged in at any time.
 Backend interface: The backend interface transforms the
-three address code IR into data
+three address code The IR into data
 ow trees (DFTs) of
 maximum size. Each DFT represents of piece of computation
 in the C code and comprises arguments, oper-
@@ -465,13 +468,11 @@ to code generator generator tools like iburg and
 olive. This feature strongly facilitates retargeting to
 new processors.
 What mainly distinguishes LANCE from other C frontends
-such as those provided with gcc [30] or lcc [32], is the executable
-IR. The basic IR structure is three address code,
+such as those provided with gcc [30] or lcc [32], is The IR. The basic IR structure is three address code,
 that consists of assignments, jumps, branches, labels, and
 return statements, together with the corresponding symbol
 table information for identiers. The three address code
-mainly serves to facilitate the implementation of IR
-optimization tools, since the IR structure is much simpler
+mainly serves to facilitate the implementation of The IRoptimization tools, since the IR structure is much simpler
 than that of the original C source language.
 Executability is achieved by dening the IR itself as a very
 low level, assembly-like subset of the C language. In the
@@ -480,8 +481,8 @@ generated by the C frontend, all high-level constructions
 by equivalent branch statement constructs. In addition, all
 implicit loads and stores, address arithmetic for array and
 structure accesses, as well as type casts are made explicit
-in the IR. The SUIF compiler system [31] has similar C
-export facilities for the IR, but it does not generate pure
+in The IR. The SUIF compiler system [31] has similar C
+export facilities for The IR, but The SUIF compiler system [31] does not generate pure
 three address code.
 int main()
 {
@@ -495,10 +496,10 @@ Figure
 
 12: Example C source code
 An example for a C source code (taken from DSPStone [33])
-and a fraction of its corresponding IR is given in gs. 12 and
-13. The IR contains auxiliary variables and labels inserted
+and a fraction of The IR The IR is given in gs. 12 and
+13. The IR The IR contains auxiliary variables and labels inserted
 by the frontend. All local identiers have been assigned
-a unique numerical su-x. As can be seen, the IR is still
+a unique numerical su-x. As can be seen, The IR is still
 valid low-level C code, which can be compiled, linked, and
 executed on the compiler host machine.
 The most signicant advantage of this executable C-based
@@ -507,16 +508,16 @@ where correctness is more important than optimizations) is
 that a validation methodology as sketched in g. 14 can be
 applied to check correctness of the frontend part of the com-
 piler. The key idea is that both the original C program and
-its IR are compiled with a native C compiler on the host
+The key idea The IR are compiled with a native C compiler on the host
 machine. The equivalence of the two executables is checked
 by means of a comparison between their outputs for some
 test input data. Any dierence in the outputs indicates an
 implementation error. For regression tests, this validation
 process can be easily automated.
 Although this approach naturally cannot provide a correctness
-proof, it ensures a good fault coverage in practice, when
+proof, this approach ensures a good fault coverage in practice, when
 using a representative suite of C programs and test inputs.
-In our case, we used a large and heterogeneous set of C applications
+In our case, our used a large and heterogeneous set of C applications
 (including complex program packages like MP3,
 JPEG, GSM, a BDD package, GNU
 ex, bison, and gzip,
@@ -622,10 +623,11 @@ with the register allocator, is still responsible for a correct
 register mapping, since CKFs are called with symbolic C
 variables instead of register names. The result of the code
 selection phase is symbolic assembly code with references to
-virtual registers. This code is passed to the register allocator
+virtual registers. symbolic assembly code with references to
+virtual registers is passed to the register allocator
 described in the following.
 5.2 Register allocation
-Although the NP shows a RISC-like basic architecture, the
+Although NP shows a RISC-like basic architecture, the
 classical graph coloring approach to global register allocation
 [27] cannot be directly used. The reason is the need to
 handle register arrays. As explained in section 3 (see also
@@ -673,7 +675,7 @@ maximum number of internal virtual registers of n's neighbors
 in the SIG. The supernodes are mapped to physical
 registers according to descending weights. This heuristic is
 motivated by the fact that supernodes of a lower weight are
-generally easier to allocate, because they cause less lifetime
+generally easier to allocate, because a lower weight cause less lifetime
 con
 icts. Furthermore, in case of a con
 ict, it is cheaper to
@@ -700,7 +702,8 @@ case of insu-cient physical registers using indirect access,
 spill code is generated for all virtual registers within a register
 array. Otherwise only the particular virtual register is
 spilled. After register allocation all symbolic addresses for
-bit packets have to be recalculated because now they specify
+bit packets have to be recalculated because now 
+bit packets specify
 a physical register within the register le instead of the
 name of a virtual register. The size of arrays of bit packets
 is restricted by the size of the register array. Therefore the
@@ -719,7 +722,7 @@ virtual registers in the original interference graph are mapped
 to physical registers by traditional graph coloring, while inserting
 spill code whenever required.
 6. RESULTS
-The C compiler for the NP described in the previous sections
+The C compiler for NP described in the previous sections
 is fully operational. The performance of the generated code
 has been measured by means of a cycle-true NP instruction
 set simulator for a set of test programs. These mainly include
@@ -768,7 +771,7 @@ to the NP hardware itself. However, from a system-level
 perspective it has been very important to prove that this
 performance gain can also be achieved by means of compiled
 C programs instead of hand-written assembly code.
-As a result of our evaluation, we believe that the introduction
+As a result of our evaluation, our believe that the introduction
 of CKFs and register arrays represents a reasonable
 compromise between programming eort and code quality.
 CKFs give the programmer direct access to dedicated instructions
@@ -777,7 +780,7 @@ in a C application program, while the compiler still performs
 the otherwise time-consuming task of register allocation.
 For non-critical program parts, where high performance bit-level
 operations are hardly an issue, the productivity gain
-oered by the compiler versus assembly programming clearly
+oered by The C compiler for NP NP versus assembly programming clearly
 compensates the potential loss in code quality.
 7. CONCLUSIONS AND FUTURE WORK
 Modern embedded systems are frequently designed on the
@@ -791,9 +794,9 @@ use of the dedicated architectural features of ASIPs.
 In this contribution, we have outlined compiler challenges
 encountered for Network Processors, a new class of ASIPs,
 that allow for e-cient protocol processing by means of packet-level
-addressing. We have described the implementation
+addressing. we have described the implementation
 of a C compiler for a representative, industrial NP. The
-main concepts in this compiler, in order to make packet-level
+main concepts in The C compiler for NP, in order to make packet-level
 addressing accessible at the C language level, are the
 use of compiler-known functions and a special register allocation
 technique. Experimental results indicate that these
@@ -850,7 +853,7 @@ BitValue Inference: Detecting and Exploiting Narrow Bitwidth Computations
 Bitwidth Analysis with Application to Silicon Compilation
 A Coprocessor for Streaming multimedia Acceleration
 A New Network Processor Architecture for High-Speed Communications
-Retargetable Compilers for Embedded Core Processors
+Retargetable Compilers for DSP Processors
 Language and Compiler for Optimizing Datapath Widths of Embedded Systems
 
 Engineering a Simple
@@ -898,6 +901,7 @@ Jinhwan Kim , Yunheung Paek , Gangryung Uh, Code optimizations for a VLIW-style 
 Jinhwan Kim , Sungjoon Jung , Yunheung Paek , Gang-Ryung Uh, Experience with a retargetable compiler for a commercial network processor, Proceedings of the 2002 international conference on Compilers, architecture, and synthesis for embedded systems, October 08-11, 2002, Grenoble, France
 Sriraman Tallam , Rajiv Gupta, Bitwidth aware global register allocation, ACM SIGPLAN Notices, v.38 n.1, p.85-96, January
 section instruction set extension of ARM for embedded applications, Proceedings of the 2002 international conference on Compilers, architecture, and synthesis for embedded systems, October 08-11, 2002, Grenoble, France
+France
 Bengu Li , Rajiv Gupta, Simple offset assignment in presence of subword data, Proceedings of the international conference on Compilers, architecture and synthesis for embedded systems, October 30-November 01, 2003, San Jose, California, USA
 V. Krishna Nandivada , Jens Palsberg, Efficient spill code for SDRAM, Proceedings of the international conference on Compilers, architecture and synthesis for embedded systems, October 30-November 01, 2003, San Jose, California, USA
 Chidamber Kulkarni , Matthias Gries , Christian Sauer , Kurt Keutzer, Programming challenges in network processor deployment, Proceedings of the international conference on Compilers, architecture and synthesis for embedded systems, October 30-November 01, 2003, San Jose, California, USA

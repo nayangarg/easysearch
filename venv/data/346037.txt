@@ -1,15 +1,17 @@
 --T
 Reducing virtual call overheads in a Java VM just-in-time compiler.
 --A
-Java, an object-oriented language, uses virtual methods to support the extension and reuse of classes. Unfortunately, virtual method calls affect performance and thus require an efficient implementation, especially when just-in-time (JIT) compilation is done. Inline caches and type feedback are solutions used by compilers for dynamically-typed object-oriented languages such as SELF [1, 2, 3], where virtual call overheads are much more critical to performance than in Java. With an inline cache, a virtual call that would otherwise have been translated into an indirect jump with two loads is translated into a simpler direct jump with a single compare. With type feedback combined with adaptive compilation, virtual methods can be inlined using checking code which verifies if the target method is equal to the inlined one.This paper evaluates the performance impact of these techniques in an actual Java virtual machine, which is our new open source Java VM JIT compiler called LaTTe [4]. We also discuss the engineering issues in implementing these techniques.Our experimental results with the SPECjvm98 benchhmarks indicate that while monomoprhic inline caches and polymorphic inline caches achieve a speedup as much as a geometric mean of 3% and 9% respectively, type feedback cannot improve further over polymorphic inline caches and even degrades the performance for some programs.
+Java, an object-oriented language, uses virtual methods to support the extension and reuse of classes. Unfortunately, virtual method calls affect performance and thus require an efficient implementation, especially when just-in-time (JIT) compilation is done. Inline caches and type feedback are solutions used by compilers for dynamically-typed object-oriented languages such as SELF [1, 2, 3], where virtual call overheads are much more critical to performance than in Java. With an inline cache, a virtual call that would otherwise have been translated into an indirect jump with two loads is translated into a simpler direct jump with a single compare. With type feedback combined with adaptive compilation, virtual methods can be inlined using checking code which verifies if the target method is equal to the inlined one.This paper evaluates the performance impact of these techniques in an actual Java virtual machine, which is our new open source Java VM JIT compiler called LaTTe [4]. our also discuss the engineering issues in implementing these techniques.our experimental results with the SPECjvm98 benchhmarks indicate that while monomoprhic inline caches and polymorphic inline caches achieve a speedup as much as a geometric mean of 3% and 9% respectively, type feedback cannot improve further over polymorphic inline caches and even degrades the performance for some programs.
 --B
 Introduction
 Java is a recently created object-oriented programming
 language [5]. As an object-oriented programming
-language, it supports virtual methods, which allow different
+language, Introduction
+Java supports virtual methods, which allow different
 code to be executed for objects of dierent types
 with the same call.
-Virtual method calls in Java incur a performance
+Virtual method calls in Introduction
+Java incur a performance
 penalty because the target of these calls can only be
 determined at run-time based on the actual type of
 objects, requiring run-time type resolution. For exam-
@@ -22,30 +24,40 @@ as for other static method calls.
 In dynamically-typed object-oriented languages
 such as SELF, however, virtual calls cannot be implemented
 by using simple sequences of loads followed by
-an indirect jump like in Java [1]. Furthermore, virtual
-calls are much more frequent than in Java. So, two
+an indirect jump like in Introduction
+Java [1]. Furthermore, virtual
+calls are much more frequent than in Introduction
+Java. So, two
 aggressive techniques have been employed to reduce
 virtual call overheads: inline caches and type feedback.
-With these techniques, a virtual method call can be
+With two
+aggressive techniques, a virtual method call can be
 translated into a simpler sequence of compare then direct
 jump or can even be inlined with type checking
 code. Although both techniques are certainly applicable
-to Java, little is known about their performance
+to Introduction
+Java, little is known about both techniques performance
 impact. Since virtual method calls are less frequent and
-less costly in Java while both techniques involve additional
+less costly in Introduction
+Java while both techniques involve additional
 translation overhead, it is important to evaluate
 these technques separately since the results from SELF
 may not apply.
 This paper evaluates both techniques in an actual
-Java JIT compiler. The compiler is included in our
-open source Java virtual machine called
+Introduction
+Java compiler. an actual
+Java JIT compiler is included in our
+open source Introduction
+Java virtual machine called
 Although the implementation of both techniques in
 was straightforward, there were a few trade-
 os and optimization opportunities which we want to
-discuss in this paper. We also provide detailed analysis
-of their performance impact on Java programs in the
-The rest of the paper is organized as follows. Chapter
-y reviews method calls in Java and summarizes
+discuss in This paper. we also provide detailed analysis
+of their performance impact on Introduction
+Java programs in the
+The rest of This paper is organized as follows. Chapter
+y reviews method calls in Introduction
+Java and summarizes
 the virtual method call mechanism used by the
 JVM. Chapter 3 describes how we implemented
 inline caches and type feedback in LaTTe. Chapter 4
@@ -55,8 +67,10 @@ Background
 2.1 Method invocation in Java
 The Java programming language provides two types
 of methods: instance methods and class methods [9]. A
-class method is invoked based on the class it is declared
-in via invokestatic. Because it is bound statically,
+class method is invoked based on the class 9]. A
+class method is declared
+in via invokestatic. Because 9]. A
+class method is bound statically,
 the JIT compiler knows which method will be invoked
 at compile time.
 An instance method, on the other hand, is always
@@ -64,7 +78,7 @@ invoked with respect to an object, which is sometimes
 called a receiver, via invokevirtual. Because the actual
 type of the object is known only at run-time (i.e.,
 bound dynamically), the JIT compiler cannot generally
-determine its target at compile time. There are
+determine the JIT compiler target at compile time. There are
 some instance methods that can be bound statically,
 though. Examples are nal methods, private meth-
 ods, all methods in nal classes, and instance methods
@@ -80,9 +94,12 @@ head).
 2.2 LaTTe JIT Compiler and Virtual Method Table
 
 LaTTe is a virtual machine which is able to execute
-Java bytecode. It includes a novel JIT compiler
+Java bytecode. a virtual machine which is able to execute
+Java bytecode includes a novel JIT compiler
 targeted to RISC machines (specically the Ul-
-traSPARC). The JIT compiler generates code with
+traSPARC). a novel JIT compiler
+targeted to RISC machines (specically the Ul-
+traSPARC) generates code with
 good quality through a clever mapping of Java stack
 operands to registers with negligible overhead [8]. It
 also performs some traditional optimizations such as
@@ -98,7 +115,7 @@ each loaded class. The table contains the start address
 of each method dened in the class or inherited from
 the superclass. Due to the use of single inheritance in
 Java, if the start address of a method is placed at oset
-n in the virtual method table of a class, it can also be
+n in the virtual method table of a class, the start address of a method can also be
 placed at oset n in the virtual method tables of all
 subclasses of the class. Consequently, the oset n is a
 translation-time constant. Since each object includes a
@@ -115,8 +132,8 @@ depth is large (to prevent recursive calls from being
 inlined innitely).
 3 Inline Caches and Type Feedback
 In this section, we review the techniques of inline
-caches and type feedback and describe our implemen-
-tations. We use the example class hierarchy in Figure 1
+caches and type feedback and describe we implemen-
+tations. we use the example class hierarchy in Figure 1
 throughout this section. Both classes B and C are sub-classes
 of A and have an additional eld as well as the
 one inherited from class A. Class B inherits the method
@@ -170,11 +187,11 @@ cache (MIC), where the call site just jumps to a system
 lookup routine called method dispatcher via a stub.
 This stub code sets the register %g1 to #index, and thus
 method dispatcher can determine the called method.
-It is called an empty inline cache because there is no
+This stub code is called an empty inline cache because there is no
 history for the target method yet. When the call is
 executed for the rst time, method dispatcher nds
 the target method based on the type of the receiver,
-translates it if it has not been translated yet, and updates
+translates the target method based on the type of the receiver if the target method based on the type of the receiver has not been translated yet, and updates
 the call site to point to the translated method,
 which is prepended by the type checking code 1 . Figure
 3(b) shows the state of the inline cache when the
@@ -211,15 +228,15 @@ the call site.
 3.1.2 Polymorphic Inline Caches
 A polymorphic inline cache (PIC) diers from a MIC
 in dealing with the failure of type checking. Instead of
-updating the call site repeatedly, it creates a PIC stub
-code, and makes the call site point to this stub code.
-The PIC stub code is composed of a sequence of com-
+updating the call site repeatedly, the call site creates a PIC stub
+code, and makes the call site point to This stub code.
+This stub code is composed of a sequence of com-
 pare, branch, and direct jump instructions where all
 previously encountered receiver types and corresponding
 method addresses are inlined. Figure 5(a) shows
 the status of a call site and the corresponding PIC stub
 code when the call site encounters objects of class A
-and class C. The detailed PIC stub code is as shown in
+and class C. This stub code is as shown in
 
 Figure
 
@@ -269,8 +286,8 @@ It is not practical for the PIC stub code to grow
 without limit. If the number of entries in a PIC stub
 code exceeds a pre-determined value, the corresponding
 call site is called a megamorphic site, and we use VMT-
-style code instead. Since this code only depends on the
-index value in the VMT, it can be shared among many
+style code instead. Since This stub code only depends on the
+index value in the VMT, This stub code can be shared among many
 call sites. Figure 5(b) explains how megamorphic sites
 are handled. Although MICs are used in SELF for
 megamorphic sites, this is only because the VMT-style
@@ -282,16 +299,17 @@ ushes
 as a result.
 There are several variations of PICs. If space is
 tight, the PIC stub can be shared among identical call
-sites 2 . This type of PIC is called a shared PIC, while
+sites 2 . This type of the PIC stub is called a shared PIC, while
 the former type is called a non-shared PIC when the
 distinction is required.
 The PIC stub code can contain counting code for
 each type test hit and can be reordered based on the
-frequency of them to reduce the number of type tests
+frequency of 
+ to reduce the number of type tests
 needed to nd the target. If the reordering is performed
 only once, and then a PIC stub which had been re-ordered
-but without counting code is used, it is called
-a counting PIC. It is also possible that the reordering
+but without counting code is used, counting code is called
+a counting PIC. counting code is also possible that the reordering
 is performed periodically and PIC stubs always have
 2 If the possible sets of target methods are the same, we call
 these call sites identical.
@@ -341,7 +359,8 @@ to the lack of a BTB (Branch Target Buer).
 itself still remains. In order to reduce the call overhead,
 we need to inline the method.
 The idea of type feedback [3] is to extract type information
-of virtual calls from previous runs and feed it
+of virtual calls from previous runs and feed type information
+of virtual calls from previous runs
 back to the compiler for optimization. With type feed-
 back, a virtual call can be inlined with guards which
 veries if the target method is equal to the inlined
@@ -354,16 +373,16 @@ an adaptive compilation framework, and has
 been implemented on an adaptive version of LaTTe,
 which selects methods to aggressively optimize based
 on method run counts. When a method is called for the
-rst time, it is translated with register allocation and
+rst time, a method is translated with register allocation and
 traditional optimizations 4 while virtual method calls
 4 We optimize even during the initial translation to isolate
 the performance impact of inlining for a fair comparison with
 the other congurations in our experiments; See section 4.1
 within it are handled by PICs. If the number of times
-this method is called exceeds a certain threshold, it is
+a method is called exceeds a certain threshold, a method is
 retranslated with conditional inlining also being done.
 3.2.2 Conditional Inlining
-The compiler decides whether a call site is inlined or
+the compiler decides whether a call site is inlined or
 not based on the status of inline caches. For example,
 if the call site in gure 3(b) remains as a monomorphic
 site, at retranslation time it will be inlined with type
@@ -392,7 +411,8 @@ one case is dominant among the other cases in the PIC
 stub. Currently, the criteria value to decide whether a
 case is dominant or not is 80%: If the count of type
 test hits in a PIC stub exceeds 80% of the total count
-of PIC stub, it is inlined with type checking code.
+of PIC stub, the count of type
+test hits in a PIC stub is inlined with type checking code.
 3.2.3 Static Type Prediction
 For those call sites located at untaken execution paths
 during initial runs, we do not have any information on
@@ -410,7 +430,8 @@ if () {
 3.2.4 Inlining Heuristic: single vs. multiple
 In previous section, we inlined only a method for a
 virtual call site. It can be possible that a call site has
-more than two target methods, and neither of them are
+more than two target methods, and neither of a call site has
+more than two target methods are
 not dominant. In such a case, we might lose inlining
 opportunities by restricting the number of inlineable
 methods for a call site. However, we found that this is
@@ -420,10 +441,10 @@ a single callee, and enabling to inline multiple methods
 for a call site does not increase the number of inlined
 virtual calls signicantly.
 4 Experimental results
-In this section, we evaluate the performance impact
+In previous section, we evaluate the performance impact
 of inline caches and type feedback.
 4.1 Experimental Environment
-Our benchmarks are composed of the SPECjvm98
+we benchmarks are composed of the SPECjvm98
 benchmark suite 5 [17], and table 1 shows the list of
 programs and a short description for each.
 Benchmark Description Bytes
@@ -442,7 +463,7 @@ Table
 
 2 lists the congurations used in our experi-
 ments. LaTTe-VMT, LaTTe-MIC, and LaTTe-PIC are
-all the same except in how they handle virtual calls: by
+all the same except in how LaTTe-VMT, LaTTe-MIC, and LaTTe-PIC handle virtual calls: by
 using VMTs, MICs and PICs respectively. LaTTe-TF
 inlines virtual calls using type feedback on an adaptive
 version of LaTTe, where initial translation is identical
@@ -456,7 +477,8 @@ PIC[] when the distinction is needed.
 System Description
 Virtual calls are handled by VMT.
 Virtual calls are handled by MIC.
-Virtual calls are handled by PIC.
+Virtual calls are handled by 
+PIC.
 Virtual calls are inlined using type
 feedback at the retranslation time.
 
@@ -484,7 +506,8 @@ like 213 javac, 227 mtrt, and 228 jack have
 many call sites where the target method is one, even
 though there are multiple receiver tyeps, and thus we
 can expect that address check inlining may be eec-
-tive on these programs. We can also expect that
+tive on Some programs
+like 213 javac, 227 mtrt, and 228 jack. We can also expect that
 compress will not be much aected by how virtual
 calls are implemented, since the number of virtual
 calls is extremely small.
@@ -519,19 +542,21 @@ the threshold value which determines when reordering
 takes place. This value is applied to both PIC[C] and
 PIC[P], although the reordering takes place just once in
 the former while it takes place periodically in the latter.
-If the threshold value is zero, it means no counting.
+If the threshold value is zero, the threshold value is zero means no counting.
 At rst glance, we nd that the numbers of average
 type checkings are very small, even though monomorphic
 sites are not included in the numbers. If the average
 number is calculated for every inline cache, including
-monomorphic sites, the number will be even more
+monomorphic sites, the average
+number will be even more
 closer to 1. However, only if counting is enabled are
 the numbers are less than 2 in every case.
 From table 5 and 6, it is clear that counting PICs
 are eective in reducing the number of type checks in
 a PIC stub, except for 228 jack. Although the numbers
 are generally reduced as the threshold value is
-increased, they are unchanged or even increased for
+increased, the numbers
+ are unchanged or even increased for
 some programs and seem to saturate at certain values.
 simply increasing the threshold does not guarantee
 improvements. 228 jack has very dierent characteristics
@@ -580,7 +605,7 @@ Tables
 
 7 and 8 are shown for comparison with tables
 5 and 6. Although a periodically reordered PIC is
-hard to use in real implementations because it always
+hard to use in real implementations because a periodically reordered PIC always
 incurs counting overhead which involves load-add-store
 sequences, it can be seen as a somewhat ideal cong-
 uration in terms of the number of type checks. The
@@ -596,7 +621,8 @@ the number of PIC stubs, and max means the possible
 maximum number of entries in each PIC stub. The
 overhead seems to be small in most programs except for
 213 javac, where the shared version can greatly reduce
-the overhead. Since the sharing of PIC stubs does not
+the overhead. Since the sharing of 
+PIC stubs does not
 degrade the performance severely for most programs,
 shared PICs can be useful when space is tight.
 4.5 Analysis of Type Feedback
@@ -624,7 +650,7 @@ inlined. In this case, inlining such a method is related
 to the inlining heuristic and is beyond the scope of this
 paper. The other possiblility is that a single method is
 not dominant for a call site. However, this is not the
-case for SPECjvm98 benchmarks, and it will be shown
+case for SPECjvm98 benchmarks, and this will be shown
 in following section.
 For some programs like 213 javac and 227 mtrt,
 which are aected by the type of PICs used, the counting
@@ -639,7 +665,8 @@ inlined if one method is dominant. While 213 javac
 is in
 uenced by both eects, i.e., the amount of type
 check inlining and address check inlining are increased,
-8 Since a PIC is reused for a call site where method inlining is
+8 Since a 
+PIC is reused for a call site where method inlining is
 not done, the value should not be too large.
 Benchmark PIC
 compress 1.540 1.480 1.498 1.526 1.540 1.540 1.480 1.498 1.526 1.540
@@ -689,7 +716,7 @@ If many call sites still remain as not inlined, this is due
 to other factors like method size or inlining depth.
 9 Counting version is excluded since there is no dierence from
 non-counting version when all the possible methods are inlined.
-And shared version is also excluded since it causes code explosion
+And shared version is also excluded since shared version causes code explosion
 in 213 javac.
 4.7 Performance Impact of Inline Caches and
 Type Feedback
@@ -762,40 +789,41 @@ type feedback. Polymorphic inline caches were studied
 by Urs Holzle et al. [2] in the SELF compiler and
 achieved a median speedup of 11% over monomorphic
 inline caches. Type feedback was proposed by Urs
-Holzle and David Ungar [3]. They implemented type
+Holzle and David Ungar [3]. Urs
+Holzle and David Ungar implemented type
 feedback in the SELF compiler using PICs and improved
 performance by a factor of 1.7 compared with
 non-feedback compiler. Since virtual calls are more frequent
 in SELF, and also since the default dispatching
 overhead is much larger than that of the VMTs which
 can be used in Java, they achieved larger speedup than
-ours. Furthermore, their measurements compare execution
+ours. Furthermore, they measurements compare execution
 time while excluding translation time overhead.
 The most relevant study was done by David Detlefs
-and Ole Agesen [18]. They also targetted Java, used
+and Ole Agesen [18]. they also targetted Java, used
 conditional inlining, and proposed a method test which
 is identical to an address test. However, they mainly
 concentrated on inlining rather than on inline caches,
 and they did not use prole information to inline virtual
 calls.
 Gerald Aigner and Urs Holzle [19] implemented op-
-timizaing source-to-source C++ compiler. They used
+timizaing source-to-source C++ compiler. Gerald Aigner and Urs Holzle used
 static prole information to inline virtual calls, and
 improves the performance by a median of 18% and reduces
 the number of virtual function calls by a median
 factor of ve.
 Karel Driesen et al. [16] extensively studied various
 dynamic dispatching mechanisms on several modern
-architectures. They mainly compared inline cache
+architectures. dispatching mainly compared inline cache
 mechanisms and table-based mechanisms which employ
 indirect branches, and showed that the latter does
-not perform well on current hardware. They also expected
+not perform well on current hardware. dispatching also expected
 that table-based approaches may not perform
 well on future hardware.
 Olver Zendra et al. [20] have implemented polymorphism
-in the SmallEiel compiler. They also eliminated
+in the SmallEiel compiler. dispatching also eliminated
 use of VMTs by using a static variation of PICs
-and inlined monomorphic call sites. However, they relied
+and inlined monomorphic call sites. However, dispatching relied
 on static type inference and did not use runtime
 feedback.
 Benchmark non-shared shared
@@ -837,7 +865,7 @@ If memory is a matter of concern, then shared PICs
 can save space with only a reasonable degradation in
 performance.
 The eect of type feedback is not fully shown in
-this study. The overall performance is even worse than
+The most relevant study. The overall performance is even worse than
 that of counting PICs. Although it is true that some
 programs have little opportunity to improve in terms
 of virtual calls, the result is partly because we cannot

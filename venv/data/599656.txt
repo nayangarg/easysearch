@@ -1,7 +1,7 @@
 --T
 Linear Programming Boosting via Column Generation.
 --A
-We examine linear program (LP) approaches to boosting and demonstrate their efficient solution using LPBoost, a column generation based simplex method. We formulate the problem as if all possible weak hypotheses had already been generated. The labels produced by the weak hypotheses become the new feature space of the problem. The boosting task becomes to construct a learning function in the label space that minimizes misclassification error and maximizes the soft margin. We prove that for classification, minimizing the 1-norm soft margin error function directly optimizes a generalization error bound. The equivalent linear program can be efficiently solved using column generation techniques developed for large-scale optimization problems. The resulting LPBoost algorithm can be used to solve any LP boosting formulation by iteratively optimizing the dual misclassification costs in a restricted LP and dynamically generating weak hypotheses to make new LP columns. We provide algorithms for soft margin classification, confidence-rated, and regression boosting problems. Unlike gradient boosting algorithms, which may converge in the limit only, LPBoost converges in a finite number of iterations to a global solution satisfying mathematically well-defined optimality conditions. The optimal solutions of LPBoost are very sparse in contrast with gradient based methods. Computationally, LPBoost is competitive in quality and computational cost to AdaBoost.
+We examine linear program (LP) approaches to boosting and demonstrate boosting efficient solution using LPBoost, a column generation based simplex method. We formulate the problem as if all possible weak hypotheses had already been generated. The labels produced by the weak hypotheses become the new feature space of the problem. The boosting task becomes to construct a learning function in the label space that minimizes misclassification error and maximizes the soft margin. We prove that for classification, minimizing the 1-norm soft margin error function directly optimizes a generalization error bound. linear program (LP) can be efficiently solved using column generation techniques developed for large-scale optimization problems. The resulting LPBoost algorithm can be used to solve any LP boosting formulation by iteratively optimizing the dual misclassification costs in a restricted LP and dynamically generating weak hypotheses to make new LP columns. We provide algorithms for soft margin classification, confidence-rated, and regression boosting problems. Unlike gradient boosting algorithms, which may converge in the limit only, LPBoost converges in a finite number of iterations to a global solution satisfying mathematically well-defined optimality conditions. The optimal solutions of LPBoost are very sparse in contrast with gradient based methods. Computationally, LPBoost is competitive in quality and computational cost to AdaBoost.
 --B
 Introduction
 Recent papers [16] have shown that boosting, arcing, and related ensemble methods (hereafter summarized as
@@ -11,13 +11,13 @@ authors have noted the possibility of choosing cost functions that can be formul
 but then dismiss the approach as intractable using standard LP algorithms [14, 6]. In this paper we show
 that LP boosting is computationally feasible using a classic column generation simplex algorithm [11]. This
 method performs tractable boosting using any cost function expressible as an LP.
-We specifically examine the variations of the 1-norm soft margin cost function used for support vector
+we specifically examine the variations of the 1-norm soft margin cost function used for support vector
 machines [15, 3, 9]. One advantage of these approaches is that immediately the method of analysis for
 support vector machine problems becomes applicable to the boosting problem. In Section 2, we prove that
 the LPBoost approach to classification directly minimizes a bound on the generalization error. We can adapt
 the LP formulations developed for support vector machines. In Section 3, we discuss the soft margin LP
 formulation. By adopting linear programming, we immediately have the tools of mathematical programming
-at our disposal. By use of duality theory and optimality conditions, we can gain insight into how LP boosting
+at we disposal. By use of duality theory and optimality conditions, we can gain insight into how LP boosting
 works mathematically. In Section 4 we examine how column generation approaches for solving large scale
 LPs can be adapted to boosting.
 For classification, we examine both standard and confidence-rated boosting. Standard boosting algorithms
@@ -32,13 +32,13 @@ demonstrate this by adapting the approach to regression in Section 6. Computatio
 issues for implementation of the method are given in Section 7.
 Motivation for Soft Margin Boosting
 We begin with an analysis of the boosting problem using methodology developed for support vector machines.
-The function classes that we will be considering are of the form
+The function classes that We will be considering are of the form
 a set of weak learners which we assume is closed under complementation. Initially, these will be classification
 functions with outputs in the set {-1, 1}, though this can be taken as [-1, 1] in confidence-rated boosting.
 We begin, however, by looking at a general function class and quoting a bound on the generalization error
 in terms of the margin and covering numbers. We first introduce some notation. If D is a distribution
-on inputs and targets, X -1, 1}, we define the error err D (f) of a function f # F to be the probability
-we assume that we obtain a classification function by thresholding at 0 if
+on inputs and targets, X -1, 1}, We define the error err D (f) of a function f # F to be the probability
+We assume that we obtain a classification function by thresholding at 0 if
 f is real-valued.
 Definition 2.1. Let F be a class of real-valued functions on a domain X. A #-cover of F with respect
 to a sequence of inputs set of functions A such that for all f # F, there
@@ -49,7 +49,8 @@ In the remainder of this section we will assume a training set . For a real-valu
 function f # F we define the margin of an example (x, y) to be yf(x), where again we implicitly assume
 that we are thresholding at 0. The margin of the training set S is defined to be m S
 Note that this quantity is positive if the function correctly classifies all of the training examples. The
-following theorem is given in [8] but it is implicit in the results of [18].
+following theorem is given in [8] but The
+following theorem is implicit in the results of [18].
 Theorem 2.1. Consider thresholding a real-valued function space F and fix # R + . For any probability
 distribution D on X -1, 1}, with probability 1 - # over m random examples S, any hypothesis f # F that
 has margin m S (f) # on S has error no more than
@@ -61,7 +62,7 @@ derived from X.
 Definition 2.2. Let L(X) be the set of real-valued functions f on X with countable support supp(f), that
 is, functions in L(X) are non-zero only for countably many points. Formally, we require
 countable and
-We define the inner product of two functions f, g # L(X) by #f - g# x#supp(f) f(x)g(x). This implicitly
+we define the inner product of two functions f, g # L(X) by #f - g# x#supp(f) f(x)g(x). This implicitly
 defines a norm # 2 . We also introduce
 |f(x)|.
 Note that the sum that defines the inner product is well-defined by the Cauchy-Schwarz inequality.
@@ -89,8 +90,8 @@ random examples S, any hypothesis f # F for which (f, g f ) # G has generalizati
 err D (f) #(m, F, #) =m
 # log N(G, 2m, #)
 2/#, and there is no discrete probability on misclassified training points.
-We are now in a position to apply these results to our function class which will be in the form described
-we have left open for the time being what the class H of
+We are now in a position to apply these results to We function class which will be in the form described
+We have left open for the time being what the class H of
 learners might contain. The sets G of Theorem 2.2 will be chosen as follows:
 a h h, g #
 Hence, the condition that a function satisfies the conditions of Theorem 2.2 for
@@ -106,16 +107,17 @@ In this subsection we analyze the covering numbers N(GB , m, #) of the set
 a h h, g #
 in terms of B, the class H, and the scale #. Assume first that we have an #/B-cover G of the function class
 H with respect to the set is a class of binary-valued functions
-then we will take # to be zero and G will be the set of dichotomies that can be realized by the class. Now
+then we will take # to be zero and G will be the set of dichotomies that can be realized by a class of binary-valued functions
+. Now
 consider the set V of vectors of positive real numbers indexed by G # {1, . , m}. Let VB be the function
 class suppose that U be an (# -cover of VB . We
 claim that the set
 is a #-cover of GB with respect to the set # (S). We prove this assertion by taking a general function
 h, g # GB , and finding a function in A within # of it on all of the points # (x i ). First,
 for each h with non-zero coe#cient a h , select - h # G, such that #h(x i
-m. Now we form the function -
+m. Now We form the function -
 which lies in the set VB , since # h#G a h
-Furthermore we have that
+Furthermore We have that
 Since U is a # cover of VB there exists - v # U such that -
 f on # It follows that -
 f is within # of f on this same set. Hence, A forms a # cover of
@@ -131,9 +133,9 @@ Boosting LP for Classification
 From the above discussion we can see that a soft margin cost function should be valuable for boosting
 classification functions. Once again using the techniques used in support vector machines, we can formulate
 this problem as a linear program. The quantity B defined in Equation (1) can be optimized directly using
-an LP. The LP is formulated as if all possible labelings of the training data by the weak learners were
-known. The LP minimizes the 1-norm soft margin cost function used in support vector machines with the
-added restrictions that all the weights are positive and the threshold is assumed to be zero. This LP and
+an LP. an LP is formulated as if all possible labelings of the training data by the weak learners were
+known. an LP an LP minimizes the 1-norm soft margin cost function used in support vector machines with the
+added restrictions that all the weights are positive and the threshold is assumed to be zero. This an LP and
 variants can be practically solved using a column generation approach. Weak learners are generated as
 needed to produce the optimal support vector machine based on the output of the all weak learners. In
 essence the base learner become an 'oracle' that generates the necessary columns. The dual variables of the
@@ -146,21 +148,22 @@ is the label (1 or - 1) given by weak learner h j # H on the training point x i 
 Each column H .j of the matrix H constitutes the output of weak learner h j on the training data, while each
 row H i gives the outputs of all the weak learners on the example x i . There may be up to 2 m distinct weak
 learners.
-The following linear program can be used to minimize the quantity in Equation (1):
+the
+linear program can be used to minimize the quantity in Equation (1):
 min a,# n
 a
 (2)
 where C > 0 is the tradeo# parameter between misclassification error and margin maximization. The dual
-of LP (2) is
-Alternative soft margin LP formulations exist, such as this one for the #-LP Boosting 1 . [14]:
+of an LP (2) is
+Alternative soft margin an LP formulations exist, such as this one for the #-LP Boosting 1 . [14]:
 a
 a
 We remove the constraint # 0 since # > 0 at optimality under the complementation assumption.
 The dual of this LP (4) is:
 min u,#
 These LP formulations are exactly equivalent given the appropriate choice of the parameters C and D.
-Proofs of this fact can be found in [15, 5] so we only state the theorem here.
-Theorem 3.1 (LP Formulation Equivalence). If LP (4) with parameter D has a primal solution (-a, -
+Proofs of this fact can be found in [15, 5] so We only state the theorem here.
+Theorem 3.1 (LP Formulation Equivalence). If an LP with parameter D has a primal solution (-a, -
 #) and dual solution (-u, -
 #), then
 are the primal and dual solutions of LP (2)
@@ -172,7 +175,7 @@ a-
 #) are the primal and dual solutions of
 LP (4) with parameter
 #.
-Practically we found #-LP (4) with
+Practically We found #-LP (4) with
 m#
 preferable because of the interpretability of the
 parameter. A more extensive discussion and development of these characteristics for SVM classification can
@@ -183,7 +186,7 @@ vectors will be the number of points misclassified plus the points on the margin
 heuristic for choice of #. The reader should consult [14, 15] for a more in-depth analysis of this family of
 cost functions.
 3.2 Properties of LP formulation
-We now examine the characteristics of LP (4) and its optimality conditions to gain insight into the properties
+We now examine the characteristics of an LP and an LP optimality conditions to gain insight into the properties
 of LP Boosting. This will be useful in understanding both the e#ects of the choice of parameters in the
 model and the performance of the eventual algorithm. The optimality conditions [11] of LP (4) are primal
 feasibility:
@@ -193,27 +196,28 @@ and complementarity here stated as equality of the primal and dual objectives:
 Complementarity can be expressed using many equivalent formulations. For example, from the complementarity
 property, the following equations hold:
 a
-As in SVM, the optimality conditions tell us many things. First we can characterize the set of base
+As in SVM, the optimality conditions tell us many things. First us can characterize the set of base
 learners that are positively weighted in the optimal ensemble. Recall that the primal variables a i multiply
-each base learner. The dual LP assigns misclassification costs u i to each point such that the u i sum to 1.
+each base learner. an LP an LP assigns misclassification costs u i to each point such that the u i sum to 1.
 The dual constraint # m
 "scores" each weak learner h .j . The score is the weighted sum of the
 correctly classified points minus the weighted sum of the incorrectly classified points. The weak learners with
 lower scores have greater weighted misclassification costs. The formulation is pessimistic in some sense. The
 set of best weak learners for a given u will all have a score of #. The dual objective minimizes # so the optimal
-misclassification cost u will be the most pessimistic one, i.e., it minimizes the maximum score over all the
+misclassification cost u will be the most pessimistic one, i.e., the optimal
+misclassification cost u minimizes the maximum score over all the
 learners. From the complementary slackness condition, a
 the weak learners with scores equal to # can have positive weights a j in the primal space. So the resulting
 ensemble will be a linear combination of the weak learners that perform best under the most pessimistic
 choice of misclassification costs. This interpretation closely corresponds to the game strategy approach of
-[6] (which is also a LP boosting formulation solvable by LPBoost.) A notable di#erence is that LP (5) has
+[6] (which is also a an LP boosting formulation solvable by LPBoost.) A notable di#erence is that an LP has
 an additional upper bound on the misclassification costs u, 0 # that is produced by
 the introduction of the soft margin in the primal.
 From SVM research, we know that both the primal and dual solutions will be sparse and the degree of
 sparsity will be greatly influenced by the choice of parameter
 . The size of the dual feasible region
 depends on our choice of #. If # is too large, forcing D small, then the dual problem is infeasible. For large
-but still feasible # (D very small but still feasible), the problem degrades to something very close to the
+but still feasible # (D very small but still feasible), the dual problem degrades to something very close to the
 equal-cost case, u All the u i are forced to be nonzero. Practically, this means that as # increases,
 the optimal solution is frequently a single weak learner that is best assuming equal costs. As # decreases
 (D grows), the misclassification costs, u i , will increase for hard-to-classify points or points on the margin
@@ -223,44 +227,43 @@ classified as one class, becomes optimal.
 For a good choice of #, a sparse solution for the primal ensemble weights a will be optimal. This implies
 that few weak learners will be used. Also a sparse dual u will be optimal. This means that the solution will
 be dependent only on a smaller subset of data (the support vectors.) Data with are well-classified
-with su#cient margin, so the performance on these data is not critical. From LP sensitivity analysis, we
+with su#cient margin, so the performance on Data is not critical. From an LP sensitivity analysis, we
 know that the u i are exactly the sensitivity of the optimal solution to small perturbations in the margin.
 In some sense the sparseness of u is good because the weak learners can be constructed using only smaller
 subsets of the data. But as we will see in Section 7, this sparseness of the misclassification costs can lead to
 problems when practically implementing algorithms.
 LPBoost Algorithms
-We now examine practical algorithms for solving the LP (4). Since the matrix H has a very large number of
-columns, prior authors have dismissed the idea of solving LP formulations for boosting as being intractable
-using standard LP techniques. But column generation techniques for solving such LPs have existed since the
-1950s and can be found in LP text books; see for example [11, Section 7.4]. Column generation is frequently
+We now examine practical algorithms for solving an LP. Since the matrix H has a very large number of
+columns, prior authors have dismissed the idea of solving an LP formulations for boosting as being intractable
+using standard an LP techniques. But column generation techniques for solving such LPs have existed since the
+1950s and can be found in an LP text books; see for example [11, Section 7.4]. Column generation is frequently
 used in large-scale integer and linear programming algorithms so commercial codes such as CPLEX have
 been optimized to perform column generation very e#ciently [7]. The simplex method does not require that
 the matrix H be explicitly available. At each iteration, only a subset of the columns is used to determine the
 current solution (called a basic feasible solution). The simplex method needs some means for determining
-if the current solution is optimal, and if it is not, some means for generating some column that violates the
+if the current solution is optimal, and if The simplex method is not, some means for generating some column that violates the
 optimality conditions. The tasks of verification of optimality and generating a column can be performed by
-the learning algorithm. A simplex-based boosting method will alternate between solving an LP for a reduced
+the learning algorithm. A simplex-based boosting method will alternate between solving an an LP for a reduced
 H corresponding to the weak learners generated so far and using the weak learning algorithm to
-generate the best-scoring weak learner based on the dual misclassification cost provided by the LP. This will
+generate the best-scoring weak learner based on the dual misclassification cost provided by an LP. This will
 continue until a well-defined exact or approximate stopping criterion is reached.
 The idea of column generation (CG) is to restrict the primal problem (2) by considering only a subset of
 all the possible labelings based on the weak learners generated so far; i.e., only a subset -
 H of the columns
-of H is used. The LP solved using -
-H is typically referred to as the restricted master problem. Solving the
-restricted primal LP corresponds to solving a relaxation of the dual LP. The constraints for weak learners
+of H is used. an LP an LP solved using -
+H is typically referred to as the restricted master problem. Solving an LP an LP corresponds to solving a relaxation of an LPan LP. The constraints for weak learners
 that have not been generated yet are missing. One extreme case is when no weak learners are considered.
-In this case the optimal dual solution is -
+In One extreme case the optimal dual solution is -
 (with appropriate choice of D). This will provide the
 initialization of the algorithm.
-If we consider the unused columns to have -a then -a is feasible for the original primal LP. If (-u, -
+If we consider the unused columns to have -a then -a is feasible for the original primal an LP. If (-u, -
 #) is
 feasible for the original dual problem then we are done since we have primal and dual feasibility with equal
 objectives. If - a is not optimal then (-u, -
 #) is infeasible for the dual LP with full matrix H. Specifically, the
 # is violated for at least one weak learner. Or equivalently, # m
 # for
-some j. Of course we do not want to a priori generate all columns of H (H .j ), so we use our weak learner
+some j. Of course we do not want to a priori generate all columns of H (H .j ), so we use we weak learner
 as an oracle that either produces H.j,
 # for some j or a guarantee that no such H .j exists.
 To speed convergence we would like to find the one with maximum deviation, that is, the weak learning
@@ -273,7 +276,7 @@ criterion. If there is no weak learner h for which
 is the optimal solution over all linear combinations of weak learners.
 We can also gauge the cost of early stopping since if max h#H # m
 #, for some # > 0,
-we can obtain a feasible solution of the full dual problem by taking (-u, -
+We can obtain a feasible solution of the full dual problem by taking (-u, -
 #). Hence, the value V of the
 optimal solution can be bounded between -
 #. This implies that, even if we were to potentially
@@ -308,16 +311,16 @@ the one with maximum infeasibility. This is merely done to improve convergence s
 columns using "steepest edge" criteria that look for the column that leads to the biggest actual change in
 the objective may lead to even faster convergence. If the learning algorithm fails to find a dual infeasible
 learner when one exists than the algorithm may prematurely stop at a nonoptimal solution.
-small changes this algorithm can be adapted to perform any of the LP boosting formulations by
-simply changing the restricted master LP solved, the costs given to the learning algorithm, and the optimality
+small changes the algorithm can be adapted to perform any of the an LP boosting formulations by
+simply changing the restricted master an LP solved, the costs given to the learning algorithm, and the optimality
 conditions checked. Assuming the base learner solves (10) exactly, LPBoost is a variant of the dual simplex
-algorithm [11]. Thus it inherits all the benefits of the simplex algorithm. Benefits include: 1) Well-defined
+algorithm [11]. Thus LPBoost inherits all the benefits of the simplex algorithm. Benefits include: 1) Well-defined
 exact and approximate stopping criteria. Typically, ad hoc termination schemes, e.g. a fixed number of
 iterations, must be used for the gradient-based boosting algorithms. 2) Finite termination at a globally
-optimal solution. In practice the algorithm generates few weak learners to arrive at an optimal solution.
-The optimal solution is sparse and thus uses few weak learners. 4) The algorithm is performed in the
+optimal solution. In practice the simplex algorithm generates few weak learners to arrive at an optimal solution.
+an optimal solution is sparse and thus uses few weak learners. 4) the simplex algorithm is performed in the
 dual space of the classification costs. The weights of the optimal ensemble are only generated and fixed at
-optimality. 5) High-performance commercial LP algorithms optimized for column generation exist that do
+optimality. 5) High-performance commercial an LP algorithms optimized for column generation exist that do
 not su#er from the numeric instability problems reported for boosting [2].
 5 Confidence-rated Boosting
 The derivations and algorithm of the last two sections did not rely on the assumption that L ij # {-1, +1}.
@@ -342,15 +345,15 @@ END
 a # Lagrangian multipliers from last LP
 return
 6 LPBoost for Regression
-The LPBoost algorithm can be extended to optimize any ensemble cost function that can be formulated as a
-linear program. To solve alternate formulations we need only change the LP restricted master problem solved
+the simplex algorithm can be extended to optimize any ensemble cost function that can be formulated as a
+linear program. To solve alternate formulations we need only change an LP an LP restricted master problem solved
 at each iteration and the criteria given to the base learner. The only assumptions in the current approach are
 that the number of weak learners be finite and that if an improving weak learner exists then the base learner
 can generate it. To see a simple example of this consider the problem of boosting regression functions. We
-use the following adaptation of the SVM regression formulations. This LP was also adapted to boosting
-using a barrier algorithm in [13]. We assume we are given a training set of data
+use the following adaptation of the SVM regression formulations. an LP an LP was also adapted to boosting
+using a barrier algorithm in [13]. We assume We are given a training set of data
 but now y i may take on any real value.
-First we reformulate the problem slightly di#erently:
+First We reformulate the problem slightly di#erently:
 s.t. -H i a
 We introduce Lagrangian multipliers (u, u #), construct the dual, and convert to a minimization problem
 to yield:
@@ -409,20 +412,20 @@ three classification tasks: one boosting decision tree stumps on smaller dataset
 For decision tree stumps six datasets were used. For the C4.5 experiments, we report results for four large
 datasets with and without noise. Finally, to further validate C4.5, we experimented with ten more additional
 datasets. The rationale was to first evaluate LPBoost where the base learner solves (10) exactly, then to
-examine LPBoost in a more realistic environment by using C4.5 as a base learner. All of the datasets were
+examine LPBoost in a more realistic environment by using C4.5 as a base learner. All of six datasets were
 obtained from the UC-Irvine data repository [10]. For the C4.5 experiments we performed both traditional
 and confidence- rated boosting.
 7.1 Boosting Decision Tree Stumps
-We used decision tree stumps as a base learner on the following six datasets: Cancer (9,699), Diagnostic
+we used decision tree stumps as a base learner on the following six datasets: Cancer (9,699), Diagnostic
 (30,569), Heart (13,297), Ionosphere (34,351), Musk (166,476), and Sonar (60,208). The number of features
-and number of points in each dataset are shown, respectively, in parentheses. We report testing set accuracy
-for each dataset based on 10-fold Cross Validation (CV). We generate the decision tree stumps based on the
+and number of points in each dataset are shown, respectively, in parentheses. we report testing set accuracy
+for each dataset based on 10-fold Cross Validation (CV). we generate the decision tree stumps based on the
 mid-point between two consecutive points for a given variable. Since there is limited confidence information
 in stumps, we did not perform confidence-rated boosting. All boosting methods search for the best weak
 learner which returns the least weighted misclassification error at each iteration. LPBoost can take advantage
 of the fact that each weak learner need only be added into the ensemble once. Thus once a stump is added
-to the ensemble it is never evaluated by the learning algorithm again. The weights of the weak learners are
-adjusted dynamically by the LP. This is an advantage over AdaBoost, since AdaBoost adjust weights by
+to the ensemble a stump is never evaluated by the learning algorithm again. The weights of the weak learners are
+adjusted dynamically by an LP. This is an advantage over AdaBoost, since AdaBoost adjust weights by
 repeatedly adding the same weak learner into the ensemble.
 The parameter # for LPBoost was set using a simple heuristic: 0.1 added to previously-reported error
 rates on each dataset in [4] except for the Cancer dataset. Specifically the values of # in the same order
@@ -432,34 +435,34 @@ deviations are reported in Table 1.
 LPBoost performed very well both in terms of classification accuracy, number of weak learners, and
 training time. There is little di#erence between the accuracy of LPBoost and the best accuracy reported
 for AdaBoost using either 100 or 1000 iterations. The variation in AdaBoost for 100 and 1000 iterations
-illustrates the importance of well-defined stopping criteria. Typically, AdaBoost only obtains its solution in
+illustrates the importance of well-defined stopping criteria. Typically, AdaBoost only obtains AdaBoost solution in
 the limit and thus stops when the maximum number of iterations (or some other heuristic stopping criteria)
 is reached. There is no magic number of iterations good for all datasets. LPBoost has a well-defined stopping
-criterion that is reached in a few iterations. It uses few weak learners. There are only 81 possible stumps
+criterion that is reached in a few iterations. LPBoost uses few weak learners. There are only 81 possible stumps
 on the Breast Cancer dataset (nine attributes having nine possible values), so clearly AdaBoost may require
 the same tree to be generated multiple times. LPBoost generates a weak learner only once and can alter
 the weight on that weak learner at any iteration. The run time of LPBoost is proportional to the number
-of weak learners generated. Since the LP package that we used, CPLEX 4.0 [7], is optimized for column
-generation, the cost of adding a column and reoptimizing the LP at each iteration is small. An iteration
+of weak learners generated. Since the an LP package that we used, CPLEX 4.0 [7], is optimized for column
+generation, the cost of adding a column and reoptimizing an LP at each iteration is small. An iteration
 of LPBoost is only slightly more expensive that an iteration of AdaBoost. The time is proportional to the
 number of weak learners generated. For problems in which LPBoost generates far fewer weak learners it is
 much less computationally costly.
-In the next subsection, we test the practicality of our methodology on di#erent datasets using C4.5.
+In the next subsection, we test the practicality of we methodology on di#erent datasets using C4.5.
 7.2 Boosting C4.5
 LPBoost with C4.5 as the base algorithm performed well after some operational challenges were solved.
 In concept, boosting using C4.5 is straightforward since the C4.5 algorithm accepts misclassification costs.
 One problem is that C4.5 only finds a good solution not guaranteed to maximize (10). This can e#ect the
 convergence speed of the algorithm and may cause the algorithm to terminate at a suboptimal solution.
 Another challenge is that the misclassification costs determined by LPBoost are sparse, i.e.
-of the points. The dual LP has a basic feasible solution corresponding to a vertex of the dual feasible region.
+of the points. an LP an LP has a basic feasible solution corresponding to a vertex of the dual feasible region.
 Only the variables corresponding to the basic solution can be nonnegative. So while a face of the region
 corresponding to many nonnegative weights may be optimal, only a vertex solution will be chosen. In practice
 we found that when many LPBoost converged slowly. In the limited number of iterations that we
-allowed (25), LPBoost frequently failed to find weak learners that improved significantly over the initial
+allowed (25), many LPBoost frequently failed to find weak learners that improved significantly over the initial
 equal cost solution. The weak learners generated using only subsets of the variables were not necessarily
 good over the full data set. Thus the search was too slow. Alternative optimization algorithms may alleviate
 this problem. For example, an interior point strategy may lead to significant performance improvements.
-Note that other authors have reported problems with underflow of boosting [2]. When LPBoost was solved
+Note that other authors have reported problems with underflow of boosting [2]. When many LPBoost was solved
 to optimality on decision tree stumps with full evaluation of the weak learners, this problem did not occur.
 Boosting unpruned decision trees helped somewhat but did not completely eliminate this problem.
 Stability and convergence speed was greatly improved by adding minimum misclassification costs to the
@@ -485,22 +488,23 @@ was adopted to the multiclass problem by defining h j instance x i is correctly 
 learner h j and -1 otherwise. Forest is a 54-dimension dataset with seven possible classes. The data are
 divided into 11340 training, 3780 validation, and 565892 testing instances. There are no missing values.
 The 15-dimensional Adult dataset has 32562 training and 16283 testing instances. One training point that
-has a missing value for a class label has been removed. We use 8140 instances as our training set and the
+has a missing value for a class label has been removed. We use 8140 instances as We training set and the
 remaining 24421 instances as the validation set. Adult is a two-class dataset with missing values. The default
 handling in C4.5 has been used for missing values. USPS and Optdigits are optical character recognition
-datasets. USPS has 256 dimensions without missing value. Out of 7291 original training points, we use
+datasets. USPS has 256 dimensions without missing value. Out of 7291 original training points, USPS use
 1822 points as training data and the rest 5469 as validation data. There are 2007 test points. Optdigits
-on the other hand has 64 dimensions without missing values. Its original training set has 3823 points. We
-use 955 of them as training data and the remaining 2868 as validation data. Parameter selection for both
+on the other hand has 64 dimensions without missing values. USPS original training set has 3823 points. We
+use 955 of We
+ as training data and the remaining 2868 as validation data. Parameter selection for both
 LPBoost and AdaBoost was done based on validation set results. Since initial experiments resulted in the
 same parameter set for both LPBoost and CRB, we set the parameters equal for CRB and LPBoost to
-expedite computational work. In order to investigate the performance of boosted C4.5 with noisy data, we
+expedite computational work. In order to investigate the performance of C4.5 with noisy data, we
 introduced 15% label noise for all four datasets.
-The # parameter used in LPBoost and the number of iterations of AdaBoost can significantly a#ect
+The # parameter used in many LPBoost and the number of iterations of AdaBoost can significantly a#ect
 their performance. Thus accuracy on the validation set was used to pick the parameter # for LPBoost and
 the number of iterations for AdaBoost. Due to the excessive computational work, we limit the maximum
 number of iterations at 25 for all boosting methods as in [2]. We varied parameter # between 0.03 and 0.11.
-Initial experiments indicated that for very small # values, LPBoost results in one classifier which assigns all
+Initial experiments indicated that for very small # values, many LPBoost results in one classifier which assigns all
 training points to one class. On the other extreme, for larger values of #, LPBoost returns one classifier
 Parameter0.800.840.03
 Parameter0.800.84
@@ -517,18 +521,18 @@ on all four datasets. Based on validation set results, we use (22,19), (25,4), (
 of iterations for original and 15%noisy data respectively for AdaBoost in the Forest, Adult, USPS, and
 Optdigits datasets. The testing set results using the value of # with the best validation set accuracy are
 given in Table 2. LPBoost was very comparable with AdaBoost in terms of CPU time. As seen in Table
-2, LPBoost is also comparable with AdaBoost in terms of classification accuracy when the validation set is
+2, LPBoost
+ is also comparable with AdaBoost in terms of classification accuracy when the validation set is
 used to pick the best parameter settings. AdaBoost performs better in the case of noisy data. CRB is the
 least e#ective method in terms of classification accuracy among boosting methods. All boosting methods
 outperform C4.5.
-The computational costs of 25 iterations of LPBoost (either variant) and AdaBoost were very similar. We
-provide some sample CPU times. These timings should be considered only rough estimates. Our experiments
+The computational costs of 25 iterations of LPBoost (either variant) and AdaBoost were very similar. AdaBoostprovide some sample CPU times. These timings should be considered only rough estimates. We experiments
 were performed on a cluster of IBM RS-6000s used in batch mode. Since the machines are not all identical
 and are subject to varying loads, run times vary considerable from run to run. For each dataset we give
 the seconds of CPU time on an RS-6000: Forest AdaBoost =717, LPBoost = 930; Adult AdaBoost = 107,
 We also conducted experiments by boosting C4.5 on small datasets. Once again there was no strong
 evidence of superiority of any of the boosting approaches. In addition to six UCI datasets used in decision
-tree stumps experiments, we use four additional UCI datasets here. These are the House(16,435), Hous-
+tree stumps experiments, We use four additional UCI datasets here. four additional UCI datasets are the House(16,435), Hous-
 datasets. As in the decision tree stumps experiments, we
 report results from 10-fold CV. Since the best # value for LPBoost varies between 0.05 and 0.1 for the large
 datasets, we pick parameter the small datasets. Results are reported in Table 3. C4.5 performed
@@ -544,13 +548,13 @@ Cancer 0.9585 -
 House 0.9586 -
 Housing
 Ionosphere 0.9373 -
-3, LPBoost would in this case perform the best in five datasets, although the parameter # has not been
+3, many LPBoost would in this case perform the best in five datasets, although the parameter # has not been
 tuned.
 8 Discussion and Extensions
-We have shown that LP formulations of boosting are both attractive theoretically in terms of generalization
+We have shown that an LP formulations of boosting are both attractive theoretically in terms of generalization
 error bound and computationally via column generation. The LPBoost algorithm can be applied to any
-boosting problem formulated as an LP. We examined algorithms based on the 1-norm soft margin cost
-functions for support vector machines. A generalization error bound was found for the classificaiton case.
+boosting problem formulated as an an LP. We examined algorithms based on the 1-norm soft margin cost
+functions for support vector machines. A generalization error bound was found for this case.
 The LP optimality conditions allowed us to provide explanations for how the methods work. In classification,
 the dual variables act as misclassification costs. The optimal ensemble consists of a linear combination of
 learners that work best under the worst possible choice of misclassification costs. This explanation
@@ -559,14 +563,14 @@ formulation [13], the dual multipliers act like error residuals to be used in a 
 We demonstrated the ease of adaptation to other boosting problems by examining the confidence-rated
 and regression cases. Extensive computational experiments found that the method performed well versus
 AdaBoost both with respect to classification quality and solution time. We found little clear benefit for
-confidence-rated boosting of C4.5 decision trees. From an optimization perspective, LPBoost has many
+confidence-rated boosting of C4.5 decision trees. From an optimization perspective, many LPBoost has many
 benefits over gradient-based approaches: finite termination, numerical stability, well-defined convergence
 criteria, fast algorithms in practice, and fewer weak learners in the optimal ensemble. LPBoost may be more
 sensitive to inexactness of the base learning algorithm. But through modification of the base LP, we were able
 to obtain very good performance over a wide spectrum of datasets even in the boosting decision trees where
-the assumptions of the learning algorithm were violated. The questions of what is the best LP formulation
-for boosting and the best method for optimizing the LP remain open. Interior point column generation
-algorithms may be much more e#cient. But clearly LP formulations for classification and regression are
+the assumptions of the learning algorithm were violated. The questions of what is the best an LP formulation
+for boosting and the best method for optimizing an LP an LP remain open. Interior point column generation
+algorithms may be much more e#cient. But clearly an LP formulations for classification and regression are
 tractable using column generation, and should be the subject of further research.
 
 Acknowledgements
