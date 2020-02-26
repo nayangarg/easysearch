@@ -84,7 +84,7 @@ def write_list_to_file(path, file_name, li):
     with open(file_name, 'w') as file:
         for item in li:
             i = str(item)
-            file.write("%s\n" % i)
+            file.write("%s" % i)
         file.close()    
     
 def read_dict_from_file(path, file_name):

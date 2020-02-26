@@ -2,7 +2,7 @@
 
 from __future__ import division
 from igraph import *
-# from jgraph import *
+#from jgraph import *
 import sys
 import copy
 import random
