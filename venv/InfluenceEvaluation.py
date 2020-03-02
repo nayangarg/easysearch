@@ -11,6 +11,7 @@ import numpy.random as nprnd
 import pandas as pd
 import os
 from read_write_create import *
+import sys
 
 
 def triangles(G, nodes=None):
@@ -122,7 +123,7 @@ def getnodetrussness(graph):
     return nodetruss
 
 
-def influencemeasure(graph):
+def influencemeasure(graph, ur):
     n = graph.vcount()
     degree = graph.degree()
     influence = [0] * n
@@ -153,7 +154,7 @@ def influencemeasure(graph):
         entropy[v.index] = ent
 
         bridging[v.index] = sum([strength[w] * nodetruss[w] for w in graph.neighbors(v)])
-    influence = [1 / (a * 1.0) * b * (c + 1) for a, b, c in zip(nodetruss, bridging, entropy)]
+    influence = [ur[0] / (a * 1.0) + ur[1]*b + ur[2]*(c) for a, b, c in zip(nodetruss, bridging, entropy)]
     return influence, entropy, bridging, nodetruss
 
 
@@ -175,7 +176,7 @@ def SortedRankedToFile(graphname, vnames, centrality, measurename):
     return
 
 
-def getInfluence(graphname):
+def getInfluence(graphname, ur):
     g = mysrcdir + '/' + graphname
     # print (g)
 
@@ -207,7 +208,7 @@ def getInfluence(graphname):
 
     # print ('Computing Influence')
     # start_time = time.time()
-    influence, entropy, influencebridging, nodetruss = influencemeasure(graph)
+    influence, entropy, influencebridging, nodetruss = influencemeasure(graph, ur)
     # Timings["IF"] = time.time() - start_time
     measurename = "IF"
     SortedRankedToFile(graphname, vnames, influence, 'IF')
@@ -222,15 +223,27 @@ def getTopK(whichfile, k=10):
 
 if __name__ == '__main__':
 
+    ur = sys.argv
+    ur = ur[1:]
+    #print(w)
+
+    for i in range(3):
+        ur[i] = float(ur[i])
+        #print(i)
+
+    #print("Influence")
+
+    #print(type(w[0]))
+
     global outputdirectory, mysrcdir
 
-    cwd = os.getcwd()
-    create_folder(cwd, "SCScore")
-    outputdirectory = cwd + '/SCScore/'
+    cwd = '/home/nayan/coding/Major/EasySearch/venv'
+    create_folder(cwd, "SCScorePSO")
+    outputdirectory = cwd + '/SCScorePSO/'
     mysrcdir = cwd + "/edgelists/"
 
     print("InfluenceEvaluation")
     myfiles = os.listdir(mysrcdir)
-    for f in myfiles:
+    for f in myfiles[:5]:
         print(f)
-        getInfluence(f)
+        getInfluence(f,ur)
