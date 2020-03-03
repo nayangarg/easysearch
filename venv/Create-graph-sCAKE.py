@@ -87,7 +87,7 @@ punctuation_ex = re.compile("[^a-z ]")
 newline_ex = re.compile("\n")
 
 print("Create-graph-sCake")
-for every_file in (os.listdir(data_path))[1823:]:
+for every_file in (os.listdir(data_path)):
 
     file_name = every_file[:-4]
     print(every_file)
