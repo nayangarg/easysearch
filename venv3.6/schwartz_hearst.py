@@ -341,9 +341,10 @@ def extract_abbreviation_definition_pairs(file_path=None,
 
 if __name__ == '__main__':
 
-
+    # li = ['587833.txt']
     for every_file in (os.listdir(data_path)):
         doc = nlp(read_text_from_file(data_path, every_file))
+        print(every_file)
         dc = extract_abbreviation_definition_pairs(file_path=data_path+'/'+every_file)
 
         doc = str(doc)

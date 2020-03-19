@@ -230,6 +230,7 @@ if __name__ == '__main__':
     mysrcdir = cwd + "/edgelists/"
 
     print("InfluenceEvaluation")
+    # li = ['329461.csv']
     myfiles = os.listdir(mysrcdir)
     for f in myfiles:
         print(f)

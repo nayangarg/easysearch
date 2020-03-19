@@ -23,6 +23,7 @@ data_path = cwd + "/data"
 create_folder(cwd, "positions")
 
 newline_ex = re.compile("\n")
+hyphen = re.compile("-")
 numbers_ex = re.compile("[0-9]+(-[0-9]+)?")
 punctuation_ex = re.compile("[^a-z ]")
 roman_num_ex = re.compile("\\b[i|v|x|l|c|d|m]{1,3}\\b")
@@ -31,11 +32,13 @@ ps = PorterStemmer()
 # lemmatizer = WordNetLemmatizer()
 
 print("create-position-info-sCake")
-for every_file in (os.listdir(data_path)):
+li = ['255519.txt']
+for every_file in li:#(os.listdir(data_path)):
 
     print(every_file)
     text = read_text_from_file(data_path, every_file)
     text = re.sub(newline_ex, ' ', text)
+    text = re.sub(hyphen, ' ', text)
     text = unicode(text, errors='replace')
     sen = convert_text_to_sentences(text)
 
@@ -68,12 +71,16 @@ for every_file in (os.listdir(data_path)):
 
     bigrams = nltk.collocations.BigramAssocMeasures()
     bigramFinder = nltk.collocations.BigramCollocationFinder.from_words(words)
-    # for k, v in bigramFinder.ngram_fd.items():
-    #     if (v>=2):
-    #         print(k, v)
+    for k, v in bigramFinder.ngram_fd.items():
+        if (v==3):
+            print(k)
+    # print(bigramFinder.ngram_fd["(u'except', u'ada')"])
 
-    bigramFinder.apply_freq_filter(2)
+    bigramFinder.apply_freq_filter(3)
     bi = list(bigramFinder.score_ngrams(bigrams.pmi))
+
+    
+    # print(bi)
     # bigramPMITable = pd.DataFrame(list(bigramFinder.score_ngrams(bigrams.pmi)), columns=['bigram', 'PMI']).sort_values(
     #     by='PMI', ascending=False)
 
@@ -84,12 +91,12 @@ for every_file in (os.listdir(data_path)):
     # for k, v in trigramFinder.ngram_fd.items():
     #     if (v >= 2):
     #         print(k, v)
-    trigramFinder.apply_freq_filter(2)
+    trigramFinder.apply_freq_filter(3)
     # trigramPMITable = pd.DataFrame(list(trigramFinder.score_ngrams(trigrams.pmi)),
     #                                columns=['trigram', 'PMI']).sort_values(by='PMI', ascending=False)
 
     tri = list(trigramFinder.score_ngrams(trigrams.pmi))
-    #print(tri[0])
+    # print(tri)
 
     #     unicodedata.normalize('NFKD', t[0][0]).encode('ascii', 'ignore')
     #     unicodedata.normalize('NFKD', t[0][1]).encode('ascii', 'ignore')
@@ -100,7 +107,7 @@ for every_file in (os.listdir(data_path)):
 
 
     l = len(sen)
-    print(len(sen))
+    # print(sen[0])
 
     s = 0
     new_sen = sen[s].strip()
@@ -115,6 +122,7 @@ for every_file in (os.listdir(data_path)):
     sen_words = [i for i in sen_words if i not in stopwords]
     # print(words)
     sen_words = [ps.stem(sw) for sw in sen_words]
+    # print(sen_words)
 
     if sen_words == []:
         last = ''
@@ -129,23 +137,24 @@ for every_file in (os.listdir(data_path)):
     new_sen = re.sub(roman_num_ex, '', new_sen)
     # print(new_sen)
     sen_words = nltk.word_tokenize(new_sen)
-    # print(words)
+    # print(sen_words)
 
     sen_words = [i for i in sen_words if i not in stopwords]
     # print(words)
     sen_words = [ps.stem(sw) for sw in sen_words]
+    # print(sen_words)
 
     if sen_words == []:
         first = ''
     else:
         first = sen_words[0]
-
+    # print(words)
 
     w = 0
     while w < len(words) - 2:
         # print('bahar', w, len(words))
         for b in bi:
-
+            # print(b)
             if s < l-1 and last == b[0][0] and first == b[0][1]:
                 s += 1
                 if sen_words == []:
@@ -216,6 +225,8 @@ for every_file in (os.listdir(data_path)):
 
                 break
         w += 1
+
+    # print(words)
 
     #
 

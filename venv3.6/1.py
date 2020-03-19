@@ -16,6 +16,6 @@ for every_file in (os.listdir(data_path)):
 	print(every_file)
 	doc = nlp(read_text_from_file(data_path, every_file))
 
-	write_text_to_file(data_path1, every_file, doc._.coref_resolved)
+	write_text_to_file(data_path, every_file, doc._.coref_resolved)
 	#print(doc._.coref_clusters)
 	#print(doc._.coref_resolved)

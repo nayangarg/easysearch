@@ -85,8 +85,11 @@ roman_num_ex = re.compile("\\b[i|v|x|l|c|d|m]{1,3}\\b")
 numbers_ex = re.compile("[0-9]+(-[0-9]+)?")
 punctuation_ex = re.compile("[^a-z ]")
 newline_ex = re.compile("\n")
+hyphen = re.compile("-")
 
 print("Create-graph-sCake")
+
+# li = ['329461.txt']
 for every_file in (os.listdir(data_path)):
 
     file_name = every_file[:-4]
@@ -96,6 +99,11 @@ for every_file in (os.listdir(data_path)):
         df_pos = pd.read_pickle(f, compression=None)
 
     text = read_text_from_file(data_path, every_file)
+
+    text = read_text_from_file(data_path, every_file)
+    text = re.sub(newline_ex, ' ', text)
+    text = re.sub(hyphen, ' ', text)
+    text = unicode(text, errors='replace')
 
     ## pre-processing text
     text = text.strip()
@@ -118,7 +126,7 @@ for every_file in (os.listdir(data_path)):
     bigrams = nltk.collocations.BigramAssocMeasures()
     bigramFinder = nltk.collocations.BigramCollocationFinder.from_words(words)
 
-    bigramFinder.apply_freq_filter(2)
+    bigramFinder.apply_freq_filter(3)
     bi = list(bigramFinder.score_ngrams(bigrams.pmi))
     # bigramPMITable = pd.DataFrame(list(bigramFinder.score_ngrams(bigrams.pmi)), columns=['bigram', 'PMI']).sort_values(
     #     by='PMI', ascending=False)
@@ -127,7 +135,7 @@ for every_file in (os.listdir(data_path)):
 
     trigrams = nltk.collocations.TrigramAssocMeasures()
     trigramFinder = nltk.collocations.TrigramCollocationFinder.from_words(words)
-    trigramFinder.apply_freq_filter(2)
+    trigramFinder.apply_freq_filter(3)
     # trigramPMITable = pd.DataFrame(list(trigramFinder.score_ngrams(trigrams.pmi)),
     #                                columns=['trigram', 'PMI']).sort_values(by='PMI', ascending=False)
 
@@ -135,6 +143,7 @@ for every_file in (os.listdir(data_path)):
 
     text = read_text_from_file(data_path, every_file)
     text = re.sub(newline_ex, ' ', text)
+    text = re.sub(hyphen, ' ', text)
     text = unicode(text, errors='replace')
 
     ## creating corpus s.t. two sentences are considered one document.
@@ -299,6 +308,7 @@ for every_file in (os.listdir(data_path)):
         # print(words)
         new_sen = ' '.join(words)
         corpus.append(new_sen)
+    # print(corpus[0])
 
     words = df_pos["words"]
     selected_words = sorted(list(set(words)))
