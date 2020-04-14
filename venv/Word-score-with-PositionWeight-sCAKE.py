@@ -32,7 +32,7 @@ create_folder(cwd,"SCScore_W")
 word_score_path = cwd + "/SCScore/"
 
 print("Word-score-with-PositionWeight-sCake")
-# li = ['329461.txt']
+# li = ['255519.txt']
 for every_file in (os.listdir(data_path)):
     
     print(every_file)

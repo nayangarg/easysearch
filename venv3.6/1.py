@@ -9,10 +9,10 @@ import neuralcoref
 neuralcoref.add_to_pipe(nlp)
 
 # You're done. You can now use NeuralCoref as you usually manipulate a SpaCy document annotations.
-
+li = ['255519.txt']
 data_path = '/home/nayan/coding/Major/EasySearch/venv/data'
 
-for every_file in (os.listdir(data_path)):
+for every_file in li:#(os.listdir(data_path)):
 	print(every_file)
 	doc = nlp(read_text_from_file(data_path, every_file))
 

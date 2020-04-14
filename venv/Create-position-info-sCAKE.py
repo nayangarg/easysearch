@@ -32,8 +32,8 @@ ps = PorterStemmer()
 # lemmatizer = WordNetLemmatizer()
 
 print("create-position-info-sCake")
-li = ['255519.txt']
-for every_file in li:#(os.listdir(data_path)):
+# li = ['255519.txt']
+for every_file in (os.listdir(data_path)):
 
     print(every_file)
     text = read_text_from_file(data_path, every_file)
@@ -71,13 +71,24 @@ for every_file in li:#(os.listdir(data_path)):
 
     bigrams = nltk.collocations.BigramAssocMeasures()
     bigramFinder = nltk.collocations.BigramCollocationFinder.from_words(words)
-    for k, v in bigramFinder.ngram_fd.items():
-        if (v==3):
-            print(k)
+    # x = []
+    # for k, v in bigramFinder.ngram_fd.items():
+    #     if (v<3):
+    #         x.append(k)
+            # print(k, v)
     # print(bigramFinder.ngram_fd["(u'except', u'ada')"])
 
-    bigramFinder.apply_freq_filter(3)
+    bigramFinder.apply_freq_filter(4)
+    # print(bigramFinder.ngram_fd["(u'except', u'asynchron')"])
     bi = list(bigramFinder.score_ngrams(bigrams.pmi))
+
+    # for b in bi:
+    #     if b[0] == "(u'except', u'asynchron')":
+    #         print('bfrdsn')
+
+    # for k, v in bigramFinder.ngram_fd.items():
+    #     if (v==2):
+    #         print(k, v)
 
     
     # print(bi)
@@ -91,7 +102,7 @@ for every_file in li:#(os.listdir(data_path)):
     # for k, v in trigramFinder.ngram_fd.items():
     #     if (v >= 2):
     #         print(k, v)
-    trigramFinder.apply_freq_filter(3)
+    trigramFinder.apply_freq_filter(4)
     # trigramPMITable = pd.DataFrame(list(trigramFinder.score_ngrams(trigrams.pmi)),
     #                                columns=['trigram', 'PMI']).sort_values(by='PMI', ascending=False)
 
@@ -117,10 +128,10 @@ for every_file in li:#(os.listdir(data_path)):
     new_sen = re.sub(roman_num_ex, '', new_sen)
     # print(new_sen)
     sen_words = nltk.word_tokenize(new_sen)
-    # print(words)
+    # print(sen_words)
 
     sen_words = [i for i in sen_words if i not in stopwords]
-    # print(words)
+    # print(sen_words)
     sen_words = [ps.stem(sw) for sw in sen_words]
     # print(sen_words)
 
@@ -234,11 +245,13 @@ for every_file in li:#(os.listdir(data_path)):
     # print(trigramPMITable[:50])
     #
     selected_words = list(set(words))
+
+    # print(selected_words[:10])
     # print(selected_words)
 
     # for w in range(len(selected_words)):
-    #     if selected_words[w] is 'machin learn':
-    #         print(w)
+    #     if selected_words[w] == 'except-asynchron':
+    #         print(selected_words[w])
 
     ## end of pre-processing
 

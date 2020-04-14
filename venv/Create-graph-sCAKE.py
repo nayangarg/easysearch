@@ -89,8 +89,8 @@ hyphen = re.compile("-")
 
 print("Create-graph-sCake")
 
-# li = ['329461.txt']
-for every_file in (os.listdir(data_path)):
+li = ['566390.txt']
+for every_file in li:#(os.listdir(data_path))[346:]:
 
     file_name = every_file[:-4]
     print(every_file)
@@ -126,7 +126,7 @@ for every_file in (os.listdir(data_path)):
     bigrams = nltk.collocations.BigramAssocMeasures()
     bigramFinder = nltk.collocations.BigramCollocationFinder.from_words(words)
 
-    bigramFinder.apply_freq_filter(3)
+    bigramFinder.apply_freq_filter(4)
     bi = list(bigramFinder.score_ngrams(bigrams.pmi))
     # bigramPMITable = pd.DataFrame(list(bigramFinder.score_ngrams(bigrams.pmi)), columns=['bigram', 'PMI']).sort_values(
     #     by='PMI', ascending=False)
@@ -135,7 +135,7 @@ for every_file in (os.listdir(data_path)):
 
     trigrams = nltk.collocations.TrigramAssocMeasures()
     trigramFinder = nltk.collocations.TrigramCollocationFinder.from_words(words)
-    trigramFinder.apply_freq_filter(3)
+    trigramFinder.apply_freq_filter(4)
     # trigramPMITable = pd.DataFrame(list(trigramFinder.score_ngrams(trigrams.pmi)),
     #                                columns=['trigram', 'PMI']).sort_values(by='PMI', ascending=False)
 
